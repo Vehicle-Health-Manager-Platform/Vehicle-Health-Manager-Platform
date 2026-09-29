@@ -4,9 +4,9 @@
 
 | 路径 | 用途 | 来源 |
 | --- | --- | --- |
-| `apps/owner/` | 车主 uni-app 3 / Vue3 小程序，另编译 H5；`src/pages/` 按 C01–C25 建立精确路由位置 | §3.1、§6.1–6.2 |
-| `apps/merchant/` | 商家 uni-app 小程序；页面文件按 §3.1 的页面清单创建，具体路由待 S0 契约固定 | §1.4、§3.1 |
-| `apps/technician/` | 技师 uni-app 小程序；页面文件按 §3.1 清单创建，具体路由待 S0 契约固定 | §1.4、§3.1 |
+| `apps/owner/` | 车主 Vue3 + Vite 响应式网页；`src/pages/` 按 C01–C25 建立精确路由位置 | §3.1、§6.1–6.2 |
+| `apps/merchant/` | 商家 Vue3 + Vite 响应式网页；页面文件按 §3.1 的页面清单创建，具体路由待 S0 契约固定 | §1.4、§3.1 |
+| `apps/technician/` | 技师 Vue3 + Vite 响应式网页；页面文件按 §3.1 清单创建，具体路由待 S0 契约固定 | §1.4、§3.1 |
 | `apps/admin/` | Vue3 / Vite / Element Plus 运营 PC 后台；页面文件按 §3.1 清单创建 | §1.4、§3.1、§6.1 |
 | `backend/src/main/java/com/autocare/platform/` | Java 17 / Spring Boot 3.x 模块化单体，子包与 §6.5 一致 | §6.1、§6.5 |
 | `backend/src/main/resources/`、`backend/src/test/` | 后端配置与测试位置 | §6、§9 |
