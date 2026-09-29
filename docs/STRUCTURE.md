@@ -14,6 +14,7 @@
 | `docs/sql/` | 初始化 SQL 与后续数据库迁移；当前 `init.sql` 只是不可执行占位 | §7、§12.2 |
 | `docs/api/`、`docs/ui/` | OpenAPI/Swagger 与 UI 原型、设计规范 | §4–5、§8、§12.2 |
 | `docs/operations/`、`docs/testing/`、`docs/user-guides/` | 部署回滚、测试报告和三端使用手册 | §9–10、§12.2 |
+| `docs/progress/` | 当前项目进度、下一步规划和阶段完成记录 | 本项目工程约定 |
 | `deploy/` | Compose、Nginx、监控配置的预留位置 | §10 |
 | `tests/e2e/`、`tests/load/`、`tests/security/` | 跨端、性能与安全测试的预留位置 | §9 |
 | `scripts/scaffold.ps1` | 以现有结构清单补齐缺失的空目录和页面占位文件；不会覆盖已实现文件 | 本项目工程约定 |
