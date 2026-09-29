@@ -1,0 +1,40 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+      - run: mvn -B test
+        working-directory: backend
+  schema-and-ocr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python scripts/generate_traceability.py
+      - run: python scripts/build_init_sql.py
+      - run: git diff --exit-code -- docs/progress/S0_TRACEABILITY.csv docs/sql/init.sql docs/sql/migrations/V001__baseline.sql
+      - run: python -m py_compile services/ocr/src/server.py

@@ -1,3 +1,3 @@
 # 后端
 
-Java 17 + Spring Boot 3.x 模块化单体。`src/main/java/com/autocare/platform/` 下的子包严格对应交付文档 §6.5。当前只有包目录；Maven 工程、应用入口、配置、数据访问和接口会在 S0 根据已确认的契约创建。
+Java 17 + Spring Boot 3.x 模块化单体。`src/main/java/com/autocare/platform/` 下的子包对应交付文档 §6.5。执行 `mvn test` 验证上下文，`mvn spring-boot:run` 在 8080 端口启动，`GET /actuator/health` 用于健康检查。业务接口、鉴权、数据访问将在 S0 后续步骤加入。
