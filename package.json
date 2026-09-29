@@ -1,0 +1,25 @@
+{
+  "name": "vehicle-health-manager-platform",
+  "private": true,
+  "type": "module",
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "dev:owner": "npm run dev --workspace @autocare/owner",
+    "dev:merchant": "npm run dev --workspace @autocare/merchant",
+    "dev:technician": "npm run dev --workspace @autocare/technician",
+    "dev:admin": "npm run dev --workspace @autocare/admin",
+    "build": "npm run build --workspaces",
+    "build:owner": "npm run build --workspace @autocare/owner",
+    "build:merchant": "npm run build --workspace @autocare/merchant",
+    "build:technician": "npm run build --workspace @autocare/technician",
+    "build:admin": "npm run build --workspace @autocare/admin"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.0",
+    "vite": "^7.1.0"
+  },
+  "dependencies": {
+    "vue": "^3.5.0",
+    "vue-router": "^4.5.0"
+  }
+}

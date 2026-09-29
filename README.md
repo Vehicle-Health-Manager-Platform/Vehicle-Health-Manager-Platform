@@ -1,6 +1,10 @@
 # 汽车健康管家平台
 
-本仓库目前处于开发准备阶段，已建立四端、后端、OCR 服务、部署和测试的目录骨架。页面文件仅用于保留路由位置，业务功能尚未实现。
+本仓库处于 S0 基础搭建阶段。四端为响应式网页；页面路由占位已建立，业务功能尚未实现。
+
+## 本地运行四端网页
+
+需要 Node.js 20.19+ 和 npm。执行 `npm install` 后，可分别运行 `npm run dev:owner`、`npm run dev:merchant`、`npm run dev:technician`、`npm run dev:admin`，本地端口依次为 5173–5176。`npm run build` 构建四端。开发服务器将 `/api` 代理到 `http://127.0.0.1:8080`；后端启动步骤见 `backend/README.md`。
 
 ## 项目文档
 

@@ -1,6 +1,6 @@
 # 工程目录说明
 
-本目录骨架依据[全栈开发交付文档](../汽车健康管家平台全栈开发交付文档.md)第 3、6、10、12 章和[MVP Spec](SPEC.md)建立。当前是**文件与页面占位阶段**：尚未安装依赖、生成可运行工程、实现功能或编写完整 SQL。不要将占位页面或 `docs/sql/init.sql` 视作已交付功能。
+本目录骨架依据[全栈开发交付文档](../汽车健康管家平台全栈开发交付文档.md)第 3、6、10、12 章和[MVP Spec](SPEC.md)建立。四端 Vue3/Vite 工程已可构建，63 个页面仍是占位，业务功能尚未实现。`docs/sql/init.sql` 已生成，但空库执行仍待验证。
 
 | 路径 | 用途 | 来源 |
 | --- | --- | --- |
@@ -11,7 +11,7 @@
 | `backend/src/main/java/com/autocare/platform/` | Java 17 / Spring Boot 3.x 模块化单体，子包与 §6.5 一致 | §6.1、§6.5 |
 | `backend/src/main/resources/`、`backend/src/test/` | 后端配置与测试位置 | §6、§9 |
 | `services/ocr/` | 自建 PaddleOCR 服务的位置；实现行驶证和仪表盘里程识别 | §6.1 |
-| `docs/sql/` | 初始化 SQL 与后续数据库迁移；当前 `init.sql` 只是不可执行占位 | §7、§12.2 |
+| `docs/sql/` | 39 张表的初始化 SQL、V001 迁移、字段字典及合成测试种子；空库执行待验证 | §7、§12.2 |
 | `docs/api/`、`docs/ui/` | OpenAPI/Swagger 与 UI 原型、设计规范 | §4–5、§8、§12.2 |
 | `docs/operations/`、`docs/testing/`、`docs/user-guides/` | 部署回滚、测试报告和三端使用手册 | §9–10、§12.2 |
 | `docs/progress/` | 当前项目进度、下一步规划和阶段完成记录 | 本项目工程约定 |

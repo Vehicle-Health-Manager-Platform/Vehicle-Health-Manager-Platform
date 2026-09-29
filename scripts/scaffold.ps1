@@ -65,9 +65,9 @@ $adminPages = @(
 )
 
 $pageGroups = @(
-  @{ app = 'owner'; files = $ownerPages; element = 'view' },
-  @{ app = 'merchant'; files = $merchantPages; element = 'view' },
-  @{ app = 'technician'; files = $technicianPages; element = 'view' },
+  @{ app = 'owner'; files = $ownerPages; element = 'div' },
+  @{ app = 'merchant'; files = $merchantPages; element = 'div' },
+  @{ app = 'technician'; files = $technicianPages; element = 'div' },
   @{ app = 'admin'; files = $adminPages; element = 'div' }
 )
 
