@@ -1,0 +1,142 @@
+﻿类型,编号,名称,目标阶段,优先级,关联功能,页面或路由,接口,数据实体,计划用例,用例状态,验收结果,负责人,来源
+功能,F01,车主注册登录,S1,P0,F01,C01,"/api/auth/login,/api/auth/refresh",user,TC-F01,待编写,未执行,待分配,交付文档 §2.1
+功能,F02,车辆录入（4 种方式）,S1,P0,F02,C02-C06,"/api/vehicle/list,/api/vehicle/add,/api/vehicle/vin-decode,/api/vehicle/ocr-license,/api/brand/list,/api/series/list,/api/model/list","vehicle,brand,series,model",TC-F02,待编写,未执行,待分配,交付文档 §2.1
+功能,F03,车辆档案（拍照/语音/手动录入）,S1,P0,F03,C13-C14,"/api/archive/add,/api/archive/list","vehicle_archive,vehicle",TC-F03,待编写,未执行,待分配,交付文档 §2.1
+功能,F04,首页驾驶舱,S1,P0,F04,"C07,C15","/api/home/dashboard,/api/home/reminders","vehicle,vehicle_archive,maintenance_rule",TC-F04,待编写,未执行,待分配,交付文档 §2.1
+功能,F05,AI 管家对话,S3,P0,F05,C11-C12,"/api/ai/chat,/api/ai/plan","vehicle_archive,ai_plan_rule",TC-F05,待编写,未执行,待分配,交付文档 §2.1
+功能,F06,服务聚合与报价,S2,P0,F06,C08-C10,"/api/service/projects,/api/service/project/:id/merchants,/api/merchant/:id,/api/merchant/:id/reviews/summary","standard_project,merchant_project,merchant",TC-F06,待编写,未执行,待分配,交付文档 §2.1
+功能,F07,预约下单与支付,S2+S3券,P0,F07,C18,/api/order/create,"order,user_coupon",TC-F07,待编写,未执行,待分配,交付文档 §2.1
+功能,F08,订单进度与核销码,S2+S4核销,P0,F08,"C16-C17,C24-C25","/api/order/list,/api/order/:id,/api/order/cancel,/api/order/review",order,TC-F08,待编写,未执行,待分配,交付文档 §2.1
+功能,F09,券体系,S3,P0,F09,C19,"/api/coupon/receive,/api/coupon/mine","coupon,user_coupon",TC-F09,待编写,未执行,待分配,交付文档 §2.1
+功能,F10,邀请裂变（月度循环双向）,S3,P0,F10,C20,"/api/invite/qrcode,/api/invite/records,/api/invite/progress",invite_record,TC-F10,待编写,未执行,待分配,交付文档 §2.1
+功能,F11,积分体系,S3,P1,F11,C21,"/api/point/exchange,/api/point/flow","point_flow,point_exchange",TC-F11,待编写,未执行,待分配,交付文档 §2.1
+功能,F12,车友圈,S3读取+S4卡片,P1,F12,C22,/api/community/hot,"community_content,community_interaction,circle_follow",TC-F12,待编写,未执行,待分配,交付文档 §2.1
+功能,F13,商家入驻审核,S4+S5审核,P0,F13,"M30,O62",/api/admin/merchant/audit,merchant,TC-F13,待编写,未执行,待分配,交付文档 §2.1
+功能,F14,接车检查,S4,P0,F14,"M34,M35,C23","/api/check/pickup/submit,/api/check/pickup/confirm,/api/check/delivery/compare","pickup_check,delivery_compare",TC-F14,待编写,未执行,待分配,交付文档 §2.1
+功能,F15,施工防护拍照,S4,P1,F15,"M36,C24",/api/check/protection/upload,repair_protection,TC-F15,待编写,未执行,待分配,交付文档 §2.1
+功能,F16,订单管理,S4,P0,F16,"M32-M33,M37-M39","/api/order/:id,/api/order/cancel",order,TC-F16,待编写,未执行,待分配,交付文档 §2.1
+功能,F17,选品定价,S4,P0,F17,M40,/api/service/projects,"standard_project,merchant_project",TC-F17,待编写,未执行,待分配,交付文档 §2.1
+功能,F18,技师报工,S4,P0,F18,T50-T59,"/api/tech/orders,/api/tech/report/submit,/api/tech/sign",technician_report,TC-F18,待编写,未执行,待分配,交付文档 §2.1
+功能,F19,考核与等级,S5,P1,F19,"M42,O66",/api/admin/assessment,assessment,TC-F19,待编写,未执行,待分配,交付文档 §2.1
+功能,F20,运营后台,S5,P0,F20,O60-O72,"/api/admin/standard-project,/api/admin/dashboard","merchant,standard_project,model,coupon",TC-F20,待编写,未执行,待分配,交付文档 §2.1
+页面,C01,车主登录,S1,见关联功能,F01,/pages/auth/login,"/api/auth/login,/api/auth/refresh",user,TC-C01,待编写,未执行,待分配,交付文档 §3.1
+页面,C02,车辆录入（4 入口）,S1,见关联功能,F02,/pages/vehicle/add,"/api/vehicle/list,/api/vehicle/add,/api/vehicle/vin-decode,/api/vehicle/ocr-license,/api/brand/list,/api/series/list,/api/model/list","vehicle,brand,series,model",TC-C02,待编写,未执行,待分配,交付文档 §3.1
+页面,C03,车牌输入,S1,见关联功能,F02,/pages/vehicle/plate,"/api/vehicle/list,/api/vehicle/add,/api/vehicle/vin-decode,/api/vehicle/ocr-license,/api/brand/list,/api/series/list,/api/model/list","vehicle,brand,series,model",TC-C03,待编写,未执行,待分配,交付文档 §3.1
+页面,C04,行驶证识别,S1,见关联功能,F02,/pages/vehicle/license,"/api/vehicle/list,/api/vehicle/add,/api/vehicle/vin-decode,/api/vehicle/ocr-license,/api/brand/list,/api/series/list,/api/model/list","vehicle,brand,series,model",TC-C04,待编写,未执行,待分配,交付文档 §3.1
+页面,C05,VIN 输入,S1,见关联功能,F02,/pages/vehicle/vin,"/api/vehicle/list,/api/vehicle/add,/api/vehicle/vin-decode,/api/vehicle/ocr-license,/api/brand/list,/api/series/list,/api/model/list","vehicle,brand,series,model",TC-C05,待编写,未执行,待分配,交付文档 §3.1
+页面,C06,手动选车型,S1,见关联功能,F02,/pages/vehicle/manual,"/api/vehicle/list,/api/vehicle/add,/api/vehicle/vin-decode,/api/vehicle/ocr-license,/api/brand/list,/api/series/list,/api/model/list","vehicle,brand,series,model",TC-C06,待编写,未执行,待分配,交付文档 §3.1
+页面,C07,首页,S1,见关联功能,F04,/pages/home/index,"/api/home/dashboard,/api/home/reminders","vehicle,vehicle_archive,maintenance_rule",TC-C07,待编写,未执行,待分配,交付文档 §3.1
+页面,C08,服务首页,S2,见关联功能,F06,/pages/service/index,"/api/service/projects,/api/service/project/:id/merchants,/api/merchant/:id,/api/merchant/:id/reviews/summary","standard_project,merchant_project,merchant",TC-C08,待编写,未执行,待分配,交付文档 §3.1
+页面,C09,服务项目详情,S2,见关联功能,F06,/pages/service/detail,"/api/service/projects,/api/service/project/:id/merchants,/api/merchant/:id,/api/merchant/:id/reviews/summary","standard_project,merchant_project,merchant",TC-C09,待编写,未执行,待分配,交付文档 §3.1
+页面,C10,商家详情,S2,见关联功能,F06,/pages/merchant/detail,"/api/service/projects,/api/service/project/:id/merchants,/api/merchant/:id,/api/merchant/:id/reviews/summary","standard_project,merchant_project,merchant",TC-C10,待编写,未执行,待分配,交付文档 §3.1
+页面,C11,AI 管家,S3,见关联功能,F05,/pages/ai/index,"/api/ai/chat,/api/ai/plan","vehicle_archive,ai_plan_rule",TC-C11,待编写,未执行,待分配,交付文档 §3.1
+页面,C12,AI 推荐方案,S3,见关联功能,F05,/pages/ai/plan,"/api/ai/chat,/api/ai/plan","vehicle_archive,ai_plan_rule",TC-C12,待编写,未执行,待分配,交付文档 §3.1
+页面,C13,档案页,S1,见关联功能,F03,/pages/archive/index,"/api/archive/add,/api/archive/list","vehicle_archive,vehicle",TC-C13,待编写,未执行,待分配,交付文档 §3.1
+页面,C14,录入记录,S1,见关联功能,F03,/pages/archive/record-add,"/api/archive/add,/api/archive/list","vehicle_archive,vehicle",TC-C14,待编写,未执行,待分配,交付文档 §3.1
+页面,C15,我的,S1,见关联功能,F04,/pages/mine/index,"/api/home/dashboard,/api/home/reminders","vehicle,vehicle_archive,maintenance_rule",TC-C15,待编写,未执行,待分配,交付文档 §3.1
+页面,C16,我的订单,S2+S4核销,见关联功能,F08,/pages/order/list,"/api/order/list,/api/order/:id,/api/order/cancel,/api/order/review",order,TC-C16,待编写,未执行,待分配,交付文档 §3.1
+页面,C17,订单详情,S2+S4核销,见关联功能,F08,/pages/order/detail,"/api/order/list,/api/order/:id,/api/order/cancel,/api/order/review",order,TC-C17,待编写,未执行,待分配,交付文档 §3.1
+页面,C18,预约下单,S2+S3券,见关联功能,F07,/pages/order/book,/api/order/create,"order,user_coupon",TC-C18,待编写,未执行,待分配,交付文档 §3.1
+页面,C19,我的福利,S3,见关联功能,F09,/pages/welfare/index,"/api/coupon/receive,/api/coupon/mine","coupon,user_coupon",TC-C19,待编写,未执行,待分配,交付文档 §3.1
+页面,C20,邀请有礼,S3,见关联功能,F10,/pages/welfare/invite,"/api/invite/qrcode,/api/invite/records,/api/invite/progress",invite_record,TC-C20,待编写,未执行,待分配,交付文档 §3.1
+页面,C21,积分中心,S3,见关联功能,F11,/pages/points/index,"/api/point/exchange,/api/point/flow","point_flow,point_exchange",TC-C21,待编写,未执行,待分配,交付文档 §3.1
+页面,C22,车友圈,S3读取+S4卡片,见关联功能,F12,/pages/community/circle,/api/community/hot,"community_content,community_interaction,circle_follow",TC-C22,待编写,未执行,待分配,交付文档 §3.1
+页面,C23,接车确认,S4,见关联功能,F14,/pages/check/confirm,"/api/check/pickup/submit,/api/check/pickup/confirm,/api/check/delivery/compare","pickup_check,delivery_compare",TC-C23,待编写,未执行,待分配,交付文档 §3.1
+页面,C24,施工进度查看,S2+S4核销+S4,见关联功能,"F08,F15",/pages/order/progress,"/api/order/list,/api/order/:id,/api/order/cancel,/api/order/review,/api/check/protection/upload","order,repair_protection",TC-C24,待编写,未执行,待分配,交付文档 §3.1
+页面,C25,评价,S2+S4核销,见关联功能,F08,/pages/order/review,"/api/order/list,/api/order/:id,/api/order/cancel,/api/order/review",order,TC-C25,待编写,未执行,待分配,交付文档 §3.1
+页面,M30,登录,S4,见关联功能,"F13,F16,F17,F09,F19",M30,"/api/admin/merchant/audit,/api/order/:id,/api/order/cancel,/api/service/projects,/api/coupon/receive,/api/coupon/mine,/api/admin/assessment","merchant,order,standard_project,merchant_project,coupon,user_coupon,assessment",TC-M30,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,M31,工作台,S4,见关联功能,"F13,F16,F17,F09,F19",M31,"/api/admin/merchant/audit,/api/order/:id,/api/order/cancel,/api/service/projects,/api/coupon/receive,/api/coupon/mine,/api/admin/assessment","merchant,order,standard_project,merchant_project,coupon,user_coupon,assessment",TC-M31,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,M32,订单列表,S4,见关联功能,"F13,F16,F17,F09,F19",M32,"/api/admin/merchant/audit,/api/order/:id,/api/order/cancel,/api/service/projects,/api/coupon/receive,/api/coupon/mine,/api/admin/assessment","merchant,order,standard_project,merchant_project,coupon,user_coupon,assessment",TC-M32,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,M33,订单详情,S4,见关联功能,"F13,F16,F17,F09,F19",M33,"/api/admin/merchant/audit,/api/order/:id,/api/order/cancel,/api/service/projects,/api/coupon/receive,/api/coupon/mine,/api/admin/assessment","merchant,order,standard_project,merchant_project,coupon,user_coupon,assessment",TC-M33,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,M34,接车检查（含损伤标注）,S4,见关联功能,"F13,F16,F17,F09,F19",M34,"/api/admin/merchant/audit,/api/order/:id,/api/order/cancel,/api/service/projects,/api/coupon/receive,/api/coupon/mine,/api/admin/assessment","merchant,order,standard_project,merchant_project,coupon,user_coupon,assessment",TC-M34,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,M35,车主确认等待,S4,见关联功能,"F13,F16,F17,F09,F19",M35,"/api/admin/merchant/audit,/api/order/:id,/api/order/cancel,/api/service/projects,/api/coupon/receive,/api/coupon/mine,/api/admin/assessment","merchant,order,standard_project,merchant_project,coupon,user_coupon,assessment",TC-M35,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,M36,施工防护拍照,S4,见关联功能,"F13,F16,F17,F09,F19",M36,"/api/admin/merchant/audit,/api/order/:id,/api/order/cancel,/api/service/projects,/api/coupon/receive,/api/coupon/mine,/api/admin/assessment","merchant,order,standard_project,merchant_project,coupon,user_coupon,assessment",TC-M36,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,M37,派工给技师,S4,见关联功能,"F13,F16,F17,F09,F19",M37,"/api/admin/merchant/audit,/api/order/:id,/api/order/cancel,/api/service/projects,/api/coupon/receive,/api/coupon/mine,/api/admin/assessment","merchant,order,standard_project,merchant_project,coupon,user_coupon,assessment",TC-M37,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,M38,核销验码,S4,见关联功能,"F13,F16,F17,F09,F19",M38,"/api/admin/merchant/audit,/api/order/:id,/api/order/cancel,/api/service/projects,/api/coupon/receive,/api/coupon/mine,/api/admin/assessment","merchant,order,standard_project,merchant_project,coupon,user_coupon,assessment",TC-M38,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,M39,退款处理,S4,见关联功能,"F13,F16,F17,F09,F19",M39,"/api/admin/merchant/audit,/api/order/:id,/api/order/cancel,/api/service/projects,/api/coupon/receive,/api/coupon/mine,/api/admin/assessment","merchant,order,standard_project,merchant_project,coupon,user_coupon,assessment",TC-M39,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,M40,选品定价,S4,见关联功能,"F13,F16,F17,F09,F19",M40,"/api/admin/merchant/audit,/api/order/:id,/api/order/cancel,/api/service/projects,/api/coupon/receive,/api/coupon/mine,/api/admin/assessment","merchant,order,standard_project,merchant_project,coupon,user_coupon,assessment",TC-M40,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,M41,券管理,S4,见关联功能,"F13,F16,F17,F09,F19",M41,"/api/admin/merchant/audit,/api/order/:id,/api/order/cancel,/api/service/projects,/api/coupon/receive,/api/coupon/mine,/api/admin/assessment","merchant,order,standard_project,merchant_project,coupon,user_coupon,assessment",TC-M41,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,M42,考核中心,S4,见关联功能,"F13,F16,F17,F09,F19",M42,"/api/admin/merchant/audit,/api/order/:id,/api/order/cancel,/api/service/projects,/api/coupon/receive,/api/coupon/mine,/api/admin/assessment","merchant,order,standard_project,merchant_project,coupon,user_coupon,assessment",TC-M42,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,M43,数据看板,S4,见关联功能,"F13,F16,F17,F09,F19",M43,"/api/admin/merchant/audit,/api/order/:id,/api/order/cancel,/api/service/projects,/api/coupon/receive,/api/coupon/mine,/api/admin/assessment","merchant,order,standard_project,merchant_project,coupon,user_coupon,assessment",TC-M43,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,M44,客户管理,S4,见关联功能,"F13,F16,F17,F09,F19",M44,"/api/admin/merchant/audit,/api/order/:id,/api/order/cancel,/api/service/projects,/api/coupon/receive,/api/coupon/mine,/api/admin/assessment","merchant,order,standard_project,merchant_project,coupon,user_coupon,assessment",TC-M44,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,T50,登录（工号绑定）,S4,见关联功能,F18,T50,"/api/tech/orders,/api/tech/report/submit,/api/tech/sign",technician_report,TC-T50,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,T51,工作台（待接单）,S4,见关联功能,F18,T51,"/api/tech/orders,/api/tech/report/submit,/api/tech/sign",technician_report,TC-T51,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,T52,工单详情,S4,见关联功能,F18,T52,"/api/tech/orders,/api/tech/report/submit,/api/tech/sign",technician_report,TC-T52,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,T53,接单,S4,见关联功能,F18,T53,"/api/tech/orders,/api/tech/report/submit,/api/tech/sign",technician_report,TC-T53,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,T54,施工过程拍照,S4,见关联功能,F18,T54,"/api/tech/orders,/api/tech/report/submit,/api/tech/sign",technician_report,TC-T54,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,T55,故障件拍照,S4,见关联功能,F18,T55,"/api/tech/orders,/api/tech/report/submit,/api/tech/sign",technician_report,TC-T55,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,T56,完工拍照,S4,见关联功能,F18,T56,"/api/tech/orders,/api/tech/report/submit,/api/tech/sign",technician_report,TC-T56,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,T57,维修方案填写,S4,见关联功能,F18,T57,"/api/tech/orders,/api/tech/report/submit,/api/tech/sign",technician_report,TC-T57,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,T58,配件记录,S4,见关联功能,F18,T58,"/api/tech/orders,/api/tech/report/submit,/api/tech/sign",technician_report,TC-T58,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,T59,质检签字,S4,见关联功能,F18,T59,"/api/tech/orders,/api/tech/report/submit,/api/tech/sign",technician_report,TC-T59,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,O60,登录,S5,见关联功能,"F20,F13,F19",O60,"/api/admin/standard-project,/api/admin/dashboard,/api/admin/merchant/audit,/api/admin/assessment","merchant,standard_project,model,coupon,assessment",TC-O60,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,O61,工作台,S5,见关联功能,"F20,F13,F19",O61,"/api/admin/standard-project,/api/admin/dashboard,/api/admin/merchant/audit,/api/admin/assessment","merchant,standard_project,model,coupon,assessment",TC-O61,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,O62,商家审核,S5,见关联功能,"F20,F13,F19",O62,"/api/admin/standard-project,/api/admin/dashboard,/api/admin/merchant/audit,/api/admin/assessment","merchant,standard_project,model,coupon,assessment",TC-O62,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,O63,商家列表,S5,见关联功能,"F20,F13,F19",O63,"/api/admin/standard-project,/api/admin/dashboard,/api/admin/merchant/audit,/api/admin/assessment","merchant,standard_project,model,coupon,assessment",TC-O63,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,O64,标准项目管理,S5,见关联功能,"F20,F13,F19",O64,"/api/admin/standard-project,/api/admin/dashboard,/api/admin/merchant/audit,/api/admin/assessment","merchant,standard_project,model,coupon,assessment",TC-O64,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,O65,车型库管理,S5,见关联功能,"F20,F13,F19",O65,"/api/admin/standard-project,/api/admin/dashboard,/api/admin/merchant/audit,/api/admin/assessment","merchant,standard_project,model,coupon,assessment",TC-O65,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,O66,商家考核,S5,见关联功能,"F20,F13,F19",O66,"/api/admin/standard-project,/api/admin/dashboard,/api/admin/merchant/audit,/api/admin/assessment","merchant,standard_project,model,coupon,assessment",TC-O66,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,O67,券池管理,S5,见关联功能,"F20,F13,F19",O67,"/api/admin/standard-project,/api/admin/dashboard,/api/admin/merchant/audit,/api/admin/assessment","merchant,standard_project,model,coupon,assessment",TC-O67,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,O68,内容审核,S5,见关联功能,"F20,F13,F19",O68,"/api/admin/standard-project,/api/admin/dashboard,/api/admin/merchant/audit,/api/admin/assessment","merchant,standard_project,model,coupon,assessment",TC-O68,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,O69,价格监控,S5,见关联功能,"F20,F13,F19",O69,"/api/admin/standard-project,/api/admin/dashboard,/api/admin/merchant/audit,/api/admin/assessment","merchant,standard_project,model,coupon,assessment",TC-O69,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,O70,社区审核,S5,见关联功能,"F20,F13,F19",O70,"/api/admin/standard-project,/api/admin/dashboard,/api/admin/merchant/audit,/api/admin/assessment","merchant,standard_project,model,coupon,assessment",TC-O70,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,O71,数据看板,S5,见关联功能,"F20,F13,F19",O71,"/api/admin/standard-project,/api/admin/dashboard,/api/admin/merchant/audit,/api/admin/assessment","merchant,standard_project,model,coupon,assessment",TC-O71,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+页面,O72,系统设置,S5,见关联功能,"F20,F13,F19",O72,"/api/admin/standard-project,/api/admin/dashboard,/api/admin/merchant/audit,/api/admin/assessment","merchant,standard_project,model,coupon,assessment",TC-O72,待编写,未执行,待分配,交付文档 §3.1；ID 为仓库追踪编号
+核心API,API01,手机号验证码登录,S1,见关联功能,F01,见关联功能,POST /api/auth/login,见关联功能,TC-API01,待编写,未执行,待分配,交付文档 §8.3
+核心API,API02,刷新token,S1,见关联功能,F01,见关联功能,POST /api/auth/refresh,见关联功能,TC-API02,待编写,未执行,待分配,交付文档 §8.3
+核心API,API03,我的车辆,S1,见关联功能,F02,见关联功能,GET /api/vehicle/list,见关联功能,TC-API03,待编写,未执行,待分配,交付文档 §8.3
+核心API,API04,录入车辆,S1,见关联功能,F02,见关联功能,POST /api/vehicle/add,见关联功能,TC-API04,待编写,未执行,待分配,交付文档 §8.3
+核心API,API05,VIN解码,S1,见关联功能,F02,见关联功能,GET /api/vehicle/vin-decode,见关联功能,TC-API05,待编写,未执行,待分配,交付文档 §8.3
+核心API,API06,行驶证OCR,S1,见关联功能,F02,见关联功能,GET /api/vehicle/ocr-license,见关联功能,TC-API06,待编写,未执行,待分配,交付文档 §8.3
+核心API,API07,品牌列表,S1,见关联功能,F02,见关联功能,GET /api/brand/list,见关联功能,TC-API07,待编写,未执行,待分配,交付文档 §8.3
+核心API,API08,车系列表,S1,见关联功能,F02,见关联功能,GET /api/series/list,见关联功能,TC-API08,待编写,未执行,待分配,交付文档 §8.3
+核心API,API09,车型列表,S1,见关联功能,F02,见关联功能,GET /api/model/list,见关联功能,TC-API09,待编写,未执行,待分配,交付文档 §8.3
+核心API,API10,录入档案,S1,见关联功能,F03,见关联功能,POST /api/archive/add,见关联功能,TC-API10,待编写,未执行,待分配,交付文档 §8.3
+核心API,API11,档案列表,S1,见关联功能,F03,见关联功能,GET /api/archive/list,见关联功能,TC-API11,待编写,未执行,待分配,交付文档 §8.3
+核心API,API12,首页驾驶舱,S1,见关联功能,F04,见关联功能,GET /api/home/dashboard,见关联功能,TC-API12,待编写,未执行,待分配,交付文档 §8.3
+核心API,API13,强提醒流,S1,见关联功能,F04,见关联功能,GET /api/home/reminders,见关联功能,TC-API13,待编写,未执行,待分配,交付文档 §8.3
+核心API,API14,AI对话,S3,见关联功能,F05,见关联功能,POST /api/ai/chat,见关联功能,TC-API14,待编写,未执行,待分配,交付文档 §8.3
+核心API,API15,AI推荐方案,S3,见关联功能,F05,见关联功能,POST /api/ai/plan,见关联功能,TC-API15,待编写,未执行,待分配,交付文档 §8.3
+核心API,API16,标准项目分类,S2+S4,见关联功能,"F06,F17",见关联功能,GET /api/service/projects,见关联功能,TC-API16,待编写,未执行,待分配,交付文档 §8.3
+核心API,API17,项目商家列表,S2,见关联功能,F06,见关联功能,GET /api/service/project/:id/merchants,见关联功能,TC-API17,待编写,未执行,待分配,交付文档 §8.3
+核心API,API18,商家详情,S2,见关联功能,F06,见关联功能,GET /api/merchant/:id,见关联功能,TC-API18,待编写,未执行,待分配,交付文档 §8.3
+核心API,API19,AI评价总结,S2,见关联功能,F06,见关联功能,GET /api/merchant/:id/reviews/summary,见关联功能,TC-API19,待编写,未执行,待分配,交付文档 §8.3
+核心API,API20,创建预约,S2+S3券,见关联功能,F07,见关联功能,POST /api/order/create,见关联功能,TC-API20,待编写,未执行,待分配,交付文档 §8.3
+核心API,API21,我的订单,S2+S4核销,见关联功能,F08,见关联功能,GET /api/order/list,见关联功能,TC-API21,待编写,未执行,待分配,交付文档 §8.3
+核心API,API22,订单详情(含核销码),S2+S4核销+S4,见关联功能,"F08,F16",见关联功能,GET /api/order/:id,见关联功能,TC-API22,待编写,未执行,待分配,交付文档 §8.3
+核心API,API23,取消订单,S2+S4核销+S4,见关联功能,"F08,F16",见关联功能,POST /api/order/cancel,见关联功能,TC-API23,待编写,未执行,待分配,交付文档 §8.3
+核心API,API24,评价,S2+S4核销,见关联功能,F08,见关联功能,POST /api/order/review,见关联功能,TC-API24,待编写,未执行,待分配,交付文档 §8.3
+核心API,API25,领券,S3,见关联功能,F09,见关联功能,POST /api/coupon/receive,见关联功能,TC-API25,待编写,未执行,待分配,交付文档 §8.3
+核心API,API26,我的券,S3,见关联功能,F09,见关联功能,GET /api/coupon/mine,见关联功能,TC-API26,待编写,未执行,待分配,交付文档 §8.3
+核心API,API27,邀请码,S3,见关联功能,F10,见关联功能,GET /api/invite/qrcode,见关联功能,TC-API27,待编写,未执行,待分配,交付文档 §8.3
+核心API,API28,邀请记录,S3,见关联功能,F10,见关联功能,GET /api/invite/records,见关联功能,TC-API28,待编写,未执行,待分配,交付文档 §8.3
+核心API,API29,本月进度,S3,见关联功能,F10,见关联功能,GET /api/invite/progress,见关联功能,TC-API29,待编写,未执行,待分配,交付文档 §8.3
+核心API,API30,积分兑换,S3,见关联功能,F11,见关联功能,POST /api/point/exchange,见关联功能,TC-API30,待编写,未执行,待分配,交付文档 §8.3
+核心API,API31,积分明细,S3,见关联功能,F11,见关联功能,GET /api/point/flow,见关联功能,TC-API31,待编写,未执行,待分配,交付文档 §8.3
+核心API,API32,车友圈热门,S3读取+S4卡片,见关联功能,F12,见关联功能,GET /api/community/hot,见关联功能,TC-API32,待编写,未执行,待分配,交付文档 §8.3
+核心API,API33,提交接车检查,S4,见关联功能,F14,见关联功能,POST /api/check/pickup/submit,见关联功能,TC-API33,待编写,未执行,待分配,交付文档 §8.3
+核心API,API34,车主确认接车单,S4,见关联功能,F14,见关联功能,POST /api/check/pickup/confirm,见关联功能,TC-API34,待编写,未执行,待分配,交付文档 §8.3
+核心API,API35,上传防护照,S4,见关联功能,F15,见关联功能,POST /api/check/protection/upload,见关联功能,TC-API35,待编写,未执行,待分配,交付文档 §8.3
+核心API,API36,取车对比,S4,见关联功能,F14,见关联功能,POST /api/check/delivery/compare,见关联功能,TC-API36,待编写,未执行,待分配,交付文档 §8.3
+核心API,API37,技师待办,S4,见关联功能,F18,见关联功能,GET /api/tech/orders,见关联功能,TC-API37,待编写,未执行,待分配,交付文档 §8.3
+核心API,API38,技师报工,S4,见关联功能,F18,见关联功能,POST /api/tech/report/submit,见关联功能,TC-API38,待编写,未执行,待分配,交付文档 §8.3
+核心API,API39,质检签字,S4,见关联功能,F18,见关联功能,POST /api/tech/sign,见关联功能,TC-API39,待编写,未执行,待分配,交付文档 §8.3
+核心API,API40,商家审核,S4+S5审核,见关联功能,F13,见关联功能,POST /api/admin/merchant/audit,见关联功能,TC-API40,待编写,未执行,待分配,交付文档 §8.3
+核心API,API41,标准项目CRUD,S5,见关联功能,F20,见关联功能,GET /api/admin/standard-project,见关联功能,TC-API41,待编写,未执行,待分配,交付文档 §8.3
+核心API,API42,考核列表,S5,见关联功能,F19,见关联功能,GET /api/admin/assessment,见关联功能,TC-API42,待编写,未执行,待分配,交付文档 §8.3
+核心API,API43,运营数据看板,S5,见关联功能,F20,见关联功能,GET /api/admin/dashboard,见关联功能,TC-API43,待编写,未执行,待分配,交付文档 §8.3
+验收,AC01,功能：车辆录入4种方式 — 每种均可成功录入并匹配车型,S6（首次验收见阶段计划）,验收门禁,F02,C02-C06,"/api/vehicle/list,/api/vehicle/add,/api/vehicle/vin-decode,/api/vehicle/ocr-license,/api/brand/list,/api/series/list,/api/model/list","vehicle,brand,series,model",TC-AC01,待编写,未执行,待分配,交付文档 §12.1
+验收,AC02,功能：首页驾驶舱 — 5类提醒齐全、评分与指标正确,S6（首次验收见阶段计划）,验收门禁,F04,"C07,C15","/api/home/dashboard,/api/home/reminders","vehicle,vehicle_archive,maintenance_rule",TC-AC02,待编写,未执行,待分配,交付文档 §12.1
+验收,AC03,功能：AI诊断 — 能结合档案回答、推荐商家、附带同款经验,S6（首次验收见阶段计划）,验收门禁,"F05,F12","C11-C12,C22","/api/ai/chat,/api/ai/plan,/api/community/hot","vehicle_archive,ai_plan_rule,community_content,community_interaction,circle_follow",TC-AC03,待编写,未执行,待分配,交付文档 §12.1
+验收,AC04,功能：服务聚合 — 标准项目报价、排序、评价总结正常,S6（首次验收见阶段计划）,验收门禁,F06,C08-C10,"/api/service/projects,/api/service/project/:id/merchants,/api/merchant/:id,/api/merchant/:id/reviews/summary","standard_project,merchant_project,merchant",TC-AC04,待编写,未执行,待分配,交付文档 §12.1
+验收,AC05,功能：预约下单 — 选商家/时间/用券、核销码生成、状态流转正确,S6（首次验收见阶段计划）,验收门禁,"F07,F08,F09","C18,C16-C17,C24-C25,C19","/api/order/create,/api/order/list,/api/order/:id,/api/order/cancel,/api/order/review,/api/coupon/receive,/api/coupon/mine","order,user_coupon,coupon",TC-AC05,待编写,未执行,待分配,交付文档 §12.1
+验收,AC06,功能：接车检查 — 5向拍照、里程比对、损伤标注、车主确认阻断生效,S6（首次验收见阶段计划）,验收门禁,F14,"M34,M35,C23","/api/check/pickup/submit,/api/check/pickup/confirm,/api/check/delivery/compare","pickup_check,delivery_compare",TC-AC06,待编写,未执行,待分配,交付文档 §12.1
+验收,AC07,功能：施工防护 — 未上传阻断报工,S6（首次验收见阶段计划）,验收门禁,"F15,F18","M36,C24,T50-T59","/api/check/protection/upload,/api/tech/orders,/api/tech/report/submit,/api/tech/sign","repair_protection,technician_report",TC-AC07,待编写,未执行,待分配,交付文档 §12.1
+验收,AC08,功能：技师报工 — 三类照片、方案、配件、工时、质检签字齐全,S6（首次验收见阶段计划）,验收门禁,F18,T50-T59,"/api/tech/orders,/api/tech/report/submit,/api/tech/sign",technician_report,TC-AC08,待编写,未执行,待分配,交付文档 §12.1
+验收,AC09,功能：券/邀请/积分 — 双向奖励、月度循环、兑换兑换正确到账,S6（首次验收见阶段计划）,验收门禁,"F09,F10,F11","C19,C20,C21","/api/coupon/receive,/api/coupon/mine,/api/invite/qrcode,/api/invite/records,/api/invite/progress,/api/point/exchange,/api/point/flow","coupon,user_coupon,invite_record,point_flow,point_exchange",TC-AC09,待编写,未执行,待分配,交付文档 §12.1
+验收,AC10,功能：商家考核 — 拉新40/券40/过程20 计算与等级正确,S6（首次验收见阶段计划）,验收门禁,F19,"M42,O66",/api/admin/assessment,assessment,TC-AC10,待编写,未执行,待分配,交付文档 §12.1
+验收,AC11,权限：越权 — 跨用户/跨商家访问全部 403,S6（首次验收见阶段计划）,验收门禁,"F01,F02,F03,F14,F16,F18,F20","C01,C02-C06,C13-C14,M34,M35,C23,M32-M33,M37-M39,T50-T59,O60-O72","/api/auth/login,/api/auth/refresh,/api/vehicle/list,/api/vehicle/add,/api/vehicle/vin-decode,/api/vehicle/ocr-license,/api/brand/list,/api/series/list,/api/model/list,/api/archive/add,/api/archive/list,/api/check/pickup/submit,/api/check/pickup/confirm,/api/check/delivery/compare,/api/order/:id,/api/order/cancel,/api/tech/orders,/api/tech/report/submit,/api/tech/sign,/api/admin/standard-project,/api/admin/dashboard","user,vehicle,brand,series,model,vehicle_archive,pickup_check,delivery_compare,order,technician_report,merchant,standard_project,coupon",TC-AC11,待编写,未执行,待分配,交付文档 §12.1
+验收,AC12,数据：档案自动更新 — 订单完成自动写档案并生成社区卡片,S6（首次验收见阶段计划）,验收门禁,"F03,F12,F18","C13-C14,C22,T50-T59","/api/archive/add,/api/archive/list,/api/community/hot,/api/tech/orders,/api/tech/report/submit,/api/tech/sign","vehicle_archive,vehicle,community_content,community_interaction,circle_follow,technician_report",TC-AC12,待编写,未执行,待分配,交付文档 §12.1
+验收,AC13,性能：核心接口 — P95<300ms，压测 500 并发错误率<0.1%,S6（首次验收见阶段计划）,验收门禁,"F04,F06,F07","C07,C15,C08-C10,C18","/api/home/dashboard,/api/home/reminders,/api/service/projects,/api/service/project/:id/merchants,/api/merchant/:id,/api/merchant/:id/reviews/summary,/api/order/create","vehicle,vehicle_archive,maintenance_rule,standard_project,merchant_project,merchant,order,user_coupon",TC-AC13,待编写,未执行,待分配,交付文档 §12.1
+验收,AC14,兼容：多端 — 移动网页 iOS/Android 真机 + PC 三断点正常,S6（首次验收见阶段计划）,验收门禁,"F01,F02,F14,F18,F20","C01,C02-C06,M34,M35,C23,T50-T59,O60-O72","/api/auth/login,/api/auth/refresh,/api/vehicle/list,/api/vehicle/add,/api/vehicle/vin-decode,/api/vehicle/ocr-license,/api/brand/list,/api/series/list,/api/model/list,/api/check/pickup/submit,/api/check/pickup/confirm,/api/check/delivery/compare,/api/tech/orders,/api/tech/report/submit,/api/tech/sign,/api/admin/standard-project,/api/admin/dashboard","user,vehicle,brand,series,model,pickup_check,delivery_compare,technician_report,merchant,standard_project,coupon",TC-AC14,待编写,未执行,待分配,交付文档 §12.1
+验收,AC15,安全：扫描 — 无高危，上传/限流/脱敏生效,S6（首次验收见阶段计划）,验收门禁,"F01,F02,F03,F07,F14,F16,F18,F20","C01,C02-C06,C13-C14,C18,M34,M35,C23,M32-M33,M37-M39,T50-T59,O60-O72","/api/auth/login,/api/auth/refresh,/api/vehicle/list,/api/vehicle/add,/api/vehicle/vin-decode,/api/vehicle/ocr-license,/api/brand/list,/api/series/list,/api/model/list,/api/archive/add,/api/archive/list,/api/order/create,/api/check/pickup/submit,/api/check/pickup/confirm,/api/check/delivery/compare,/api/order/:id,/api/order/cancel,/api/tech/orders,/api/tech/report/submit,/api/tech/sign,/api/admin/standard-project,/api/admin/dashboard","user,vehicle,brand,series,model,vehicle_archive,order,user_coupon,pickup_check,delivery_compare,technician_report,merchant,standard_project,coupon",TC-AC15,待编写,未执行,待分配,交付文档 §12.1
