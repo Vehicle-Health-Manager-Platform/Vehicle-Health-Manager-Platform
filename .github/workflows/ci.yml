@@ -36,5 +36,6 @@ jobs:
           python-version: '3.11'
       - run: python scripts/generate_traceability.py
       - run: python scripts/build_init_sql.py
-      - run: git diff --exit-code -- docs/progress/S0_TRACEABILITY.csv docs/sql/init.sql docs/sql/migrations/V001__baseline.sql
+      - run: python scripts/generate_openapi.py
+      - run: git diff --exit-code -- docs/progress/S0_TRACEABILITY.csv docs/sql/init.sql docs/sql/migrations/V001__baseline.sql docs/api/openapi.json
       - run: python -m py_compile services/ocr/src/server.py
