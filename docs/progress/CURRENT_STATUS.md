@@ -16,5 +16,6 @@
 | S0-5 工程骨架 | 部分验证 | Vue3/Vite 四端及 63 个路由占位已就绪，`npm run build` 四端通过；Java 17 后端和 OCR 健康服务已建工程与 CI，本地缺 JDK，后端构建待 CI 验证 |
 | S0-6 基础设施 | Compose 配置通过 | MySQL、Redis、RabbitMQ、MinIO、Milvus、后端、OCR、Nginx 与 Prometheus 已写入 Compose；`docker compose config --quiet` 通过；本机 Docker Engine 未运行，容器健康和空库执行未验证 |
 | S0-7 横向能力 | 样例待构建验证 | JWT 保护的本地车辆资源样例、40300 越权校验和 61 操作 OpenAPI 草案已编写；本机无 Maven/JDK 17，需 CI 验证，上传/幂等/限流/审计仍待实现 |
+| S0-8 UI 基础 | 构建通过 | 共享色值、响应式导航、五类列表/详情状态和四态表单已实现；四端构建通过，浏览器视觉检查尚未执行 |
 
 当前没有已交付的业务功能。`docs/sql/init.sql` 是占位文件，不能用于部署。下一次更新应在 S0 工作取得可验证结果后填写具体提交、运行命令及测试结果。
