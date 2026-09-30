@@ -130,7 +130,7 @@ def main():
     headers = ("类型", "编号", "名称", "目标阶段", "优先级", "关联功能", "页面或路由",
                "接口", "数据实体", "计划用例", "用例状态", "验收结果", "负责人", "来源")
     with OUTPUT.open("w", encoding="utf-8-sig", newline="") as handle:
-        writer = csv.writer(handle)
+        writer = csv.writer(handle, lineterminator="\n")
         writer.writerow(headers)
         writer.writerows(rows)
     print(f"Wrote {len(rows)} rows to {OUTPUT.relative_to(ROOT)}")
