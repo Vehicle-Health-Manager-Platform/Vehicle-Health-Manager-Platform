@@ -5,3 +5,5 @@ S0 本地环境：复制 `.env.example` 为仓库根目录的 `.env` 并设置�
 MySQL 首次创建卷时执行 `docs/sql/init.sql`；再次启动不会重跑初始化，后续结构变更必须执行版本化迁移。`docs/sql/seed_test.sql` 仅用于测试环境，不能通过 Compose 自动导入。OCR `/health` 可用，但识别接口仍返回 501。
 
 MinIO 社区版原 Docker Hub 镜像已无法拉取；Compose 现从官方 GitHub Release 的固定版本二进制构建本地 AMD64 镜像，并校验发布页 SHA-256。该上游仓库已归档，正式部署前需确定持续维护的对象存储方案。
+
+CI 的 `compose-smoke` 作业会启动 MySQL、Redis、RabbitMQ、MinIO、OCR、后端和 Nginx，验证四端网页入口和匿名请求的 401 响应。Milvus、Prometheus 以及用户设备上的浏览器联调尚未覆盖。
