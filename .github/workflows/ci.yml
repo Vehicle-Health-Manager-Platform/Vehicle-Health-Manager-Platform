@@ -44,3 +44,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: bash scripts/verify_mysql_schema.sh
+  compose-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [web, backend, schema-mysql]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: bash scripts/verify_compose.sh
