@@ -3,7 +3,8 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-compose=(docker compose --env-file .env.example -f deploy/compose/compose.yml -p s0smoke)
+compose=(docker compose --env-file .env.example -f deploy/compose/compose.yml \
+  -f deploy/compose/ci.override.yml -p s0smoke)
 cleanup() {
   "${compose[@]}" down --volumes --remove-orphans >/dev/null 2>&1 || true
 }
@@ -42,4 +43,28 @@ status=$(curl --silent --output /dev/null --write-out '%{http_code}' \
   exit 1
 }
 
-echo "Compose smoke: four web entries returned HTML; protected API returned 401"
+login=$(curl --fail --silent --show-error \
+  --header 'Content-Type: application/json' \
+  --data '{"user_id":"1001"}' \
+  http://127.0.0.1:8081/api/dev/token)
+token=$(printf '%s' "$login" | python3 -c \
+  'import json,sys; print(json.load(sys.stdin)["data"]["access_token"])')
+
+own=$(curl --fail --silent --show-error \
+  --header "Authorization: Bearer $token" \
+  http://127.0.0.1:8081/api/demo/vehicles/1001)
+printf '%s' "$own" | python3 -c \
+  'import json,sys; value=json.load(sys.stdin); assert value["code"] == 0 and value["data"]["owner_id"] == 1001'
+
+denied_body=$(mktemp)
+denied_status=$(curl --silent --output "$denied_body" --write-out '%{http_code}' \
+  --header "Authorization: Bearer $token" \
+  http://127.0.0.1:8081/api/demo/vehicles/2001)
+[[ "$denied_status" == 403 ]] || {
+  echo "::error title=API ownership::Expected HTTP 403, got $denied_status"
+  exit 1
+}
+python3 -c 'import json,sys; assert json.load(open(sys.argv[1]))["code"] == 40300' "$denied_body"
+rm "$denied_body"
+
+echo "Compose smoke: four web entries, anonymous 401, owner 200, cross-owner 40300 passed"
