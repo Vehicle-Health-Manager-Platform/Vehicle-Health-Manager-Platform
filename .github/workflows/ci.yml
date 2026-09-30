@@ -39,3 +39,8 @@ jobs:
       - run: python scripts/generate_openapi.py
       - run: git diff --exit-code -- docs/progress/S0_TRACEABILITY.csv docs/sql/init.sql docs/sql/migrations/V001__baseline.sql docs/api/openapi.json
       - run: python -m py_compile services/ocr/src/server.py
+  schema-mysql:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash scripts/verify_mysql_schema.sh
