@@ -13,7 +13,9 @@ trap cleanup EXIT
 startup_log=$(mktemp)
 if ! "${compose[@]}" up --detach --build mysql redis rabbitmq minio ocr backend nginx >"$startup_log" 2>&1; then
   tail -n 80 "$startup_log"
-  summary=$(tail -n 8 "$startup_log" | tr '\n' ' ' | cut -c 1-1800)
+  summary=$(grep -Ei 'curl:|sha256sum:|failed|error:|denied|temporary failure|unable to select' "$startup_log" \
+    | head -n 6 | tr '\n' ' ' | cut -c 1-1800 || true)
+  [[ -n "$summary" ]] || summary=$(tail -n 8 "$startup_log" | tr '\n' ' ' | cut -c 1-1800)
   echo "::error title=Compose startup::$summary"
   "${compose[@]}" ps --all
   "${compose[@]}" logs --tail=80
