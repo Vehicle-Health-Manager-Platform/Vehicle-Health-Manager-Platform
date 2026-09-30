@@ -16,7 +16,8 @@ trap 'docker stop "$container" >/dev/null 2>&1 || true' EXIT
 ready=false
 for attempt in $(seq 1 60); do
   if docker exec --env "MYSQL_PWD=$password" "$container" \
-      mysqladmin ping --user=root --silent >/dev/null 2>&1; then
+      mysql --protocol=tcp --host=127.0.0.1 --user=root \
+      --database="$database" --execute 'SELECT 1' >/dev/null 2>&1; then
     ready=true
     break
   fi
@@ -30,7 +31,7 @@ fi
 
 run_sql_file() {
   docker exec --interactive --env "MYSQL_PWD=$password" "$container" \
-    mysql --user=root "$database" < "$1"
+    mysql --default-character-set=utf8mb4 --user=root "$database" < "$1"
 }
 
 query() {
