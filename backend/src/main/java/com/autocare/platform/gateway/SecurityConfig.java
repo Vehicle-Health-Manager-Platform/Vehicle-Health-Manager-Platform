@@ -3,6 +3,8 @@ package com.autocare.platform.gateway;
 import com.autocare.platform.common.ApiResponse;
 import com.autocare.platform.gateway.identity.IdentityRepository;
 import com.autocare.platform.gateway.identity.AuthSessionRepository;
+import com.autocare.platform.gateway.identity.AuthTokens;
+import com.autocare.platform.gateway.identity.MerchantIdentityRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import java.nio.charset.StandardCharsets;
@@ -35,7 +37,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/actuator/health", "/actuator/prometheus", "/api/dev/token", "/api/auth/wx-login", "/api/auth/refresh").permitAll()
+                .requestMatchers("/actuator/health", "/actuator/prometheus", "/api/dev/token", "/api/auth/wx-login", "/api/auth/refresh", "/api/auth/merchant/code", "/api/auth/merchant/login").permitAll()
                 .requestMatchers("/api/auth/technician/bind").authenticated()
                 .anyRequest().access((authentication, context) -> {
                     boolean allowed = authentication.get().getPrincipal() instanceof org.springframework.security.oauth2.jwt.Jwt jwt
@@ -61,6 +63,7 @@ public class SecurityConfig {
     JwtDecoder jwtDecoder(@Value("${JWT_SECRET:}") String secret,
                           @Value("${WECHAT_APP_ID:}") String appId,
                           ObjectProvider<IdentityRepository> repositories,
+                          ObjectProvider<MerchantIdentityRepository> merchants,
                           ObjectProvider<AuthSessionRepository> sessions) {
         byte[] key = checkedKey(secret);
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(new SecretKeySpec(key, "HmacSHA256"))
@@ -84,11 +87,17 @@ public class SecurityConfig {
                     case "staff_account" -> {
                         Number bindingId = jwt.getClaim("binding_id");
                         Number merchantId = jwt.getClaim("merchant_id");
-                        yield "TECHNICIAN".equals(jwt.getClaimAsString("role")) && bindingId != null && merchantId != null
+                        boolean technician = "TECHNICIAN".equals(jwt.getClaimAsString("role")) && bindingId != null && merchantId != null
                             && appId.equals(jwt.getClaimAsString("app_id"))
                             && repository.technicianByBindingId(bindingId.longValue())
                                 .filter(staff -> staff.active() && staff.staffId() == subjectId
                                     && staff.merchantId() == merchantId.longValue()).isPresent();
+                        MerchantIdentityRepository merchantRepository = merchants.getIfAvailable();
+                        boolean merchant = "MERCHANT".equals(jwt.getClaimAsString("role")) && bindingId == null
+                            && merchantId != null && AuthTokens.MERCHANT_APP_ID.equals(jwt.getClaimAsString("app_id"))
+                            && merchantRepository != null && merchantRepository.byId(subjectId)
+                                .filter(staff -> staff.active() && staff.merchantId() == merchantId.longValue()).isPresent();
+                        yield technician || merchant;
                     }
                     default -> false;
                 };

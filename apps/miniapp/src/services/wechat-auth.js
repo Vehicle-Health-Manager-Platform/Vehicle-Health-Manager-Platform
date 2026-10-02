@@ -94,3 +94,27 @@ export function logoutWechat(accessToken) {
     })
   })
 }
+
+export function requestMerchantCode(account, password) {
+  return merchantRequest('/api/auth/merchant/code', { account, password })
+}
+
+export function requestMerchantLogin(account, password, smsCode) {
+  return merchantRequest('/api/auth/merchant/login', { account, password, sms_code: smsCode })
+}
+
+function merchantRequest(path, data) {
+  if (!endpoint) return Promise.reject(new Error('尚未配置服务端地址，商家登录接口无法联调'))
+  return new Promise((resolve, reject) => {
+    uni.request({
+      url: `${endpoint}${path}`,
+      method: 'POST',
+      data,
+      success: ({ statusCode, data: response }) => {
+        if (statusCode >= 200 && statusCode < 300 && response?.code === 0) resolve(response.data)
+        else reject(new Error(response?.message || '商家身份验证失败'))
+      },
+      fail: () => reject(new Error('无法连接服务端，请检查网络')),
+    })
+  })
+}

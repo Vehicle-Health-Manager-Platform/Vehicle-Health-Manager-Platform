@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { bindOwnerPhone, bindTechnician, logoutWechat, requestWechatLogin } from '../services/wechat-auth'
+import { bindOwnerPhone, bindTechnician, logoutWechat, requestMerchantCode, requestMerchantLogin, requestWechatLogin } from '../services/wechat-auth'
 import { clearOwnerSession, setOwnerSession } from '../services/owner-session'
 
 const props = defineProps({
@@ -14,6 +14,9 @@ const busy = ref(false)
 const status = ref('微信登录服务端已接入；真实联调仍需私有凭据和后端地址')
 const bindingToken = ref('')
 const employeeCode = ref('')
+const merchantAccount = ref('')
+const merchantPassword = ref('')
+const smsCode = ref('')
 const accessToken = ref(props.role === 'owner' ? ownerSession.accessToken : '')
 const supportsWechatLogin = computed(() => props.role !== 'merchant')
 
@@ -90,6 +93,35 @@ async function tryLogout() {
   }
 }
 
+async function tryMerchantCode() {
+  if (busy.value) return
+  busy.value = true
+  try {
+    await requestMerchantCode(merchantAccount.value.trim(), merchantPassword.value)
+    status.value = '验证码已发送至商家账号绑定的手机号，5 分钟内有效'
+  } catch (error) {
+    status.value = error.message || '验证码发送失败'
+  } finally {
+    busy.value = false
+  }
+}
+
+async function tryMerchantLogin() {
+  if (busy.value) return
+  busy.value = true
+  try {
+    const result = await requestMerchantLogin(merchantAccount.value.trim(), merchantPassword.value, smsCode.value.trim())
+    accessToken.value = result.access_token
+    merchantPassword.value = ''
+    smsCode.value = ''
+    status.value = '商家账号与短信验证码已验证；订单等业务页面尚未接入'
+  } catch (error) {
+    status.value = error.message || '商家登录失败'
+  } finally {
+    busy.value = false
+  }
+}
+
 function ownerPhoneBound() {
   setOwnerSession({ access_token: accessToken.value, user: { phone_bound: true } })
 }
@@ -126,7 +158,14 @@ function openOwnerTabs() {
         <input v-model="employeeCode" password placeholder="商家发放的员工码" />
         <button class="login-button" :loading="busy" :disabled="busy || !employeeCode.trim()" @tap="tryBind">绑定技师身份</button>
       </view>
-      <text v-if="!supportsWechatLogin" class="hint">商家按原文使用账号密码及短信验证，接入后端后开放。</text>
+      <view v-if="role === 'merchant' && !accessToken" class="binding">
+        <input v-model="merchantAccount" placeholder="商家账号" maxlength="64" />
+        <input v-model="merchantPassword" password placeholder="密码" maxlength="256" />
+        <button class="login-button" :loading="busy" :disabled="busy || !merchantAccount.trim() || !merchantPassword" @tap="tryMerchantCode">获取短信验证码</button>
+        <input v-model="smsCode" type="number" placeholder="六位短信验证码" maxlength="6" />
+        <button class="login-button" :loading="busy" :disabled="busy || !merchantAccount.trim() || !merchantPassword || smsCode.length !== 6" @tap="tryMerchantLogin">验证并登录商家端</button>
+        <text class="hint">需先由运营配置商家账号和短信服务商；本页不会显示验证码。</text>
+      </view>
     </view>
     <text class="footer">角色入口仅供测试预览，不能替代后端授权。</text>
   </view>
@@ -150,6 +189,7 @@ function openOwnerTabs() {
 .logout-button { margin-top: 16rpx; border-radius: 16rpx; color: #4e5969; background: #f2f3f5; font-size: 26rpx; }
 .binding { margin-top: 20rpx; }
 .binding input { padding: 20rpx; border: 1rpx solid #d9dfe8; border-radius: 12rpx; }
+.binding input + input, .binding button + input { margin-top: 16rpx; }
 .hint, .footer { display: block; margin-top: 20rpx; color: #86909c; font-size: 23rpx; line-height: 36rpx; }
 .footer { text-align: center; }
 </style>

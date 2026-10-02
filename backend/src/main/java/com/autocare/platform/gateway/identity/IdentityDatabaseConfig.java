@@ -36,6 +36,11 @@ public class IdentityDatabaseConfig {
     }
 
     @Bean
+    MerchantIdentityRepository merchantIdentityRepository(JdbcTemplate identityJdbc) {
+        return new JdbcMerchantIdentityRepository(identityJdbc);
+    }
+
+    @Bean
     AuthSessionRepository authSessionRepository(JdbcTemplate identityJdbc) {
         return new JdbcAuthSessionRepository(identityJdbc);
     }
