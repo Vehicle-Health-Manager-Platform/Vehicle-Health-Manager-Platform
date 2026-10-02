@@ -12,6 +12,12 @@
 ## 2026-10-02 · S0-7.1a 微信临时登录凭证交换适配器
 
 - **已完成**：后端新增服务端 `code2Session` 适配器，使用 `WECHAT_APP_ID`/`WECHAT_APP_SECRET` 私有配置请求微信官方接口；校验临时 code，分类处理无配置、无效 code、频率限制及上游故障；结果仅保留 `openid` 和可选 `unionid`。`.env.example` 只存公开测试 AppID 与不可用密钥占位值。
-- **验证**：新增本地 HTTP 伪服务测试，覆盖请求参数、成功响应、`session_key` 隔离及失败分类。当前 Windows 环境无 Maven，Docker daemon 未启动，无法在本机运行测试；本次推送后以 GitHub CI 的后端作业结果作为执行验证。此项在 CI 通过前为“代码完成，验证待确认”。
+- **验证**：新增本地 HTTP 伪服务测试，覆盖请求参数、成功响应、`session_key` 隔离及失败分类。当前 Windows 环境无 Maven，Docker daemon 未启动，无法在本机运行测试；[GitHub CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/36979821415) 的后端测试、小程序构建和整条流水线均已通过。
 - **尚未完成**：`/api/auth/wx-login` 控制器、微信身份落库、手机号与员工码绑定、JWT 签发和真实微信联调均未实现；聊天中披露过的 AppSecret 须先轮换并仅用私有环境变量提供。
 - **下一步**：完成 S0-7.1b：定义并实现 `openid` 到用户身份的持久化和角色授权规则，接入 `/api/auth/wx-login` 与 JWT；分别验证首次登录、重复登录、无效 code、角色越权和失败响应。真实联调待密钥轮换及后端可达地址。
+
+## 2026-10-02 · S0-7.1b 单测试号身份与角色契约
+
+- **已完成**：[微信身份设计](../api/WECHAT_IDENTITY_DESIGN.md) 明确同一 `openid` 下车主与技师可对应不同平台主体；技师必须绑定有效员工并校验商家状态，入口和请求 `role` 均不直接授权。定义了车主手机号未绑定时的权限边界、失败响应、JWT 声明及迁移顺序。
+- **验证**：对照现有 `user`/`staff_account` 表结构、前端 `wx-login` 请求、后端本地 JWT 与 S0 业务接口草案逐项核对；本项是设计契约，尚无可运行的身份落库或角色授权实现。
+- **下一步**：S0-7.1c 先增加技师微信绑定的版本化迁移与数据库验证，再实现仓储、`wx-login`、受限绑定凭证和真实业务 JWT；随后补手机号绑定与刷新/撤销机制。真实联调仍待密钥轮换及后端可达地址。
