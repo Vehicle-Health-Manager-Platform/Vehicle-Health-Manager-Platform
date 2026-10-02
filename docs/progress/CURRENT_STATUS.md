@@ -13,7 +13,7 @@
 | S0-4 数据模型 | 空库 CI 通过 | 39 表 `init.sql` 与 V001 已恢复 `user.openid` 和可空 `phone`；MySQL 8 空库及重复迁移通过；旧网页开发库需单独迁移或重建 |
 | S0-5 目标前端工程 | 单测试号骨架已预览 | `apps/miniapp` 的微信小程序和 H5 产物已通过 CI；微信开发者工具已打开并成功生成预览码，用户确认可以打开。三角色业务页、真机和真实登录仍未验证。运营 PC 后台后续由其他团队负责 |
 | S0-6 基础设施 | 既有 CI 冒烟通过 | MySQL、Redis、RabbitMQ、MinIO、OCR、后端和 Nginx 曾在 CI 启动；网页入口验证不能代替小程序构建、提审或真机验证，Milvus 与 Prometheus 尚未运行验收 |
-| S0-7 横向能力 | 权限样例通过 | 本地 JWT 车辆归属样例经后端测试及 Nginx 请求验证 200/40300；微信身份接入、私有上传、幂等、限流和审计仍待实现 |
+| S0-7 横向能力 | 权限样例通过；微信凭证交换适配器代码完成，待 CI 验证 | 本地 JWT 车辆归属样例经后端测试及 Nginx 请求验证 200/40300；服务端 `code2Session` 适配器及伪服务测试已添加，但登录接口、身份落库、私有上传、幂等、限流和审计仍待实现 |
 | S0-8 UI 基础 | 三角色入口已搭建 | 小程序使用原文色值与 rpx 设计入口；完整五 Tab、授权流程、业务状态与真机验证尚未实现 |
 
 当前没有已交付的业务功能或已验收的真机主流程。[单测试号工程 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/36977349309)六项作业通过，其中小程序作业验证微信小程序和 H5 构建；网页与 Compose 作业主要验证过渡原型和容器，不代表微信授权登录或真机验收。逐步记录见 [S0_EXECUTION_LOG.md](S0_EXECUTION_LOG.md)。
