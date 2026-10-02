@@ -2,10 +2,19 @@
 
 Java 17 + Spring Boot 3.x 模块化单体。`src/main/java/com/autocare/platform/` 下的子包对应交付文档 §6.5。设置至少 32 字节的 `JWT_SECRET` 后执行 `mvn test` 和 `mvn spring-boot:run`，默认监听 8080；`GET /actuator/health` 用于健康检查。
 
-本地权限样例需设置 `SPRING_PROFILES_ACTIVE=local`。`POST /api/dev/token` 的 JSON 请求为 `{ "user_id": "1001" }` 或 `2001`，返回 15 分钟 JWT；以 `Bearer` 令牌访问 `GET /api/demo/vehicles/1001` 时本人成功，用户 1001 访问车辆 2001 返回 HTTP 403、业务码 `40300`。`local` profile 仅供开发环境使用，不可用于生产部署。正式业务登录、数据访问、上传和幂等服务尚未实现。
+本地权限样例需设置 `SPRING_PROFILES_ACTIVE=local`。`POST /api/dev/token` 的 JSON 请求为 `{ "user_id": "1001" }` 或 `2001`，返回 15 分钟 JWT；以 `Bearer` 令牌访问 `GET /api/demo/vehicles/1001` 时本人成功，用户 1001 访问车辆 2001 返回 HTTP 403、业务码 `40300`。`local` profile 仅供开发环境使用，不可用于生产部署。其他业务数据访问、上传和幂等服务尚未实现。
 
 微信登录的服务端 `code2Session` 适配器位于 `gateway/wechat`。通过私有环境变量 `WECHAT_APP_ID` 和 `WECHAT_APP_SECRET` 配置；仓库的 `.env.example` 只保留公开测试 AppID 和不可用的密钥占位值。适配器向微信官方接口交换一次性 `wx.login` code，解析 `openid`/可选 `unionid`，不把 `session_key` 放入返回对象。
 
 S0-7.1d 提供 `POST /api/auth/wx-login`：请求 `{ "code": "...", "role": "owner|technician" }`。车主按 `user.openid` 查找/创建，并返回 15 分钟 JWT、`user.phone_bound`；技师已绑定且员工与商家有效时返回 JWT，未绑定时返回 `status=BIND_REQUIRED`、5 分钟 `binding_token`。使用该凭证调用 `POST /api/auth/technician/bind`，请求 `{ "employee_code": "..." }`，成功后获得技师 JWT。员工码按现有 `staff_account.employee_code_hash` 的 SHA-256 十六进制摘要匹配，必须由受信任的商家员工管理流程预先设置为高熵码。绑定冲突返回 409；禁用或解绑后已有业务 JWT 在下次请求时失效。绑定凭证不能访问业务 API。
 
-数据库需要先应用 V001 与 V002。新建 Compose 数据卷会依次自动执行两个脚本；**已有数据卷须人工执行 `docs/sql/migrations/V002__staff_wechat_identity.sql`**，不能靠 MySQL 初始化目录补迁移。Compose 从私有环境读取 MySQL 与微信变量；其他运行方式设置 `MYSQL_HOST`、`MYSQL_DATABASE`、`MYSQL_USER`、`MYSQL_PASSWORD` 后才启用身份仓储。缺少仓储或微信凭据时登录返回 503。此前在聊天中披露过的 AppSecret 须先轮换，再通过私有环境配置真实联调。手机号绑定、商家登录、刷新/撤销令牌、绑定限流及真实微信联调仍未完成。
+S0-7.1e 进一步提供 `POST /api/auth/phone/bind`，需车主业务 JWT 和微信手机号按钮返回的独立一次性 `code`；服务端用稳定版 access_token 兑换手机号，并校验返回水印 AppID 后写入 `user.phone`。`POST /api/auth/refresh` 用 30 天不透明刷新凭证轮换，返回新刷新凭证及 15 分钟访问 JWT；旧刷新凭证立即失效。`POST /api/auth/logout` 撤销当前会话，旧访问 JWT 随即失效。技师绑定按微信身份和员工码在数据库中共享 15 分钟窗口限流；车主手机号绑定按账号在一小时窗口限流。小程序预览入口提供手机号授权和退出按钮，但尚未做持久化登录态。
+
+员工码由受信任的运维终端发放/回收，**没有公开发码 HTTP 接口**。在后端 JAR 运行环境中设置私有 `MYSQL_*` 与 `JWT_SECRET` 后执行：
+
+```bash
+java -jar app.jar --spring.profiles.active=staff-admin --spring.main.web-application-type=none --staff.action=issue --staff.id=31
+java -jar app.jar --spring.profiles.active=staff-admin --spring.main.web-application-type=none --staff.action=revoke --staff.id=31
+```
+
+发码命令只打印一次高熵员工码；安全交付给对应员工，不写入仓库、日志或工单。重新发码和回收都会解除该员工现有微信绑定；员工须重新绑定。命令必须在无 HTTP 服务的模式运行。数据库先应用 V001、V002、V003；新建 Compose 数据卷会依次自动执行三个脚本，**已有数据卷须人工按顺序补迁移 V002、V003**。Compose 从私有环境读取 MySQL 与微信变量；其他运行方式设置 `MYSQL_HOST`、`MYSQL_DATABASE`、`MYSQL_USER`、`MYSQL_PASSWORD` 后才启用身份仓储。缺少仓储或微信凭据时相关请求返回 503。此前在聊天中披露过的 AppSecret 须先轮换，再通过私有环境配置真实联调。微信手机号能力还要求符合[官方主体资质与额度条件](https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/getPhoneNumber.html)。商家登录、真机微信联调和完整业务 API 仍未完成。

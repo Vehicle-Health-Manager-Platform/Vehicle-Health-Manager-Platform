@@ -14,6 +14,8 @@ public interface IdentityRepository {
 
     Optional<Owner> ownerByOpenid(String openid);
     Optional<Owner> ownerById(long id);
+    Optional<String> ownerOpenidById(long id);
+    Owner bindOwnerPhone(long id, String phone);
     Owner createOwnerOrRead(String openid);
     Optional<Technician> technicianByOpenid(String appId, String openid);
     Optional<Technician> technicianByBindingId(long bindingId);

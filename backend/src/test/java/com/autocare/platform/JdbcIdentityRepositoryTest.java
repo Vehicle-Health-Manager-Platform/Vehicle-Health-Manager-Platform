@@ -1,6 +1,11 @@
 package com.autocare.platform;
 
 import com.autocare.platform.gateway.identity.JdbcIdentityRepository;
+import com.autocare.platform.gateway.identity.JdbcAuthSessionRepository;
+import com.autocare.platform.gateway.identity.AuthSessionRepository;
+import com.autocare.platform.gateway.identity.AuthRateLimiter;
+import com.autocare.platform.gateway.identity.StaffCodeOperations;
+import java.time.Instant;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.security.MessageDigest;
@@ -34,6 +39,8 @@ class JdbcIdentityRepositoryTest {
     void setUp() throws Exception {
         var dataSource = new DriverManagerDataSource(mysql.getJdbcUrl(), mysql.getUsername(), mysql.getPassword());
         jdbc = new JdbcTemplate(dataSource);
+        jdbc.execute("DROP TABLE IF EXISTS auth_session");
+        jdbc.execute("DROP TABLE IF EXISTS auth_rate_limit");
         jdbc.execute("DROP TABLE IF EXISTS staff_wechat_identity");
         jdbc.execute("DROP TABLE IF EXISTS staff_account");
         jdbc.execute("DROP TABLE IF EXISTS merchant");
@@ -46,6 +53,8 @@ class JdbcIdentityRepositoryTest {
         try (var connection = dataSource.getConnection()) {
             ScriptUtils.executeSqlScript(connection, new FileSystemResource(
                 Path.of("..", "docs", "sql", "migrations", "V002__staff_wechat_identity.sql")));
+            ScriptUtils.executeSqlScript(connection, new FileSystemResource(
+                Path.of("..", "docs", "sql", "migrations", "V003__auth_lifecycle.sql")));
         }
         repository = new JdbcIdentityRepository(jdbc);
     }
@@ -83,5 +92,41 @@ class JdbcIdentityRepositoryTest {
         assertFalse(repository.technicianByBindingId(bound.id()).orElseThrow().active());
         jdbc.update("UPDATE staff_wechat_identity SET status='REVOKED', unbound_at=UTC_TIMESTAMP() WHERE id=?", bound.id());
         assertTrue(repository.technicianByBindingId(bound.id()).isEmpty());
+    }
+
+    @Test
+    void refreshRotationRejectsReplayAndLogoutRevokesAccess() {
+        var sessions = new JdbcAuthSessionRepository(jdbc);
+        var session = new AuthSessionRepository.Session("00000000-0000-0000-0000-000000000001",
+            "user", 1001, "OWNER", "app", null, null);
+        sessions.create(session, "first-hash", Instant.now().plusSeconds(3600));
+        assertTrue(sessions.active(session.id()));
+        assertEquals(session, sessions.rotate("first-hash", "second-hash").orElseThrow());
+        assertTrue(sessions.rotate("first-hash", "third-hash").isEmpty());
+        sessions.revoke(session.id());
+        assertFalse(sessions.active(session.id()));
+        assertTrue(sessions.rotate("second-hash", "third-hash").isEmpty());
+    }
+
+    @Test
+    void rateLimitsAreSharedAndStaffCodeRotationRevokesBinding() {
+        var first = new AuthRateLimiter(jdbc);
+        var second = new AuthRateLimiter(jdbc);
+        first.check("bind-openid", "secret-openid", 2, 900);
+        second.check("bind-openid", "secret-openid", 2, 900);
+        assertEquals(429, assertThrows(ResponseStatusException.class,
+            () -> first.check("bind-openid", "secret-openid", 2, 900)).getStatusCode().value());
+        jdbc.update("INSERT INTO merchant (id,status) VALUES (9,1)");
+        jdbc.update("INSERT INTO staff_account (id,merchant_id,role,status) VALUES (31,9,'TECHNICIAN','ACTIVE')");
+        var operations = new StaffCodeOperations(jdbc);
+        String firstCode = operations.issue(31);
+        var binding = repository.bindTechnician("app", "openid-tech", firstCode);
+        assertTrue(binding.active());
+        String replacement = operations.issue(31);
+        assertFalse(firstCode.equals(replacement));
+        assertTrue(repository.technicianByBindingId(binding.id()).isEmpty());
+        operations.revoke(31);
+        assertEquals(403, assertThrows(ResponseStatusException.class,
+            () -> repository.bindTechnician("app", "another-openid", replacement)).getStatusCode().value());
     }
 }

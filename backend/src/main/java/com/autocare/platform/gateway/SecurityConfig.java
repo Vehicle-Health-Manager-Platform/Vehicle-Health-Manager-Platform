@@ -2,6 +2,7 @@ package com.autocare.platform.gateway;
 
 import com.autocare.platform.common.ApiResponse;
 import com.autocare.platform.gateway.identity.IdentityRepository;
+import com.autocare.platform.gateway.identity.AuthSessionRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import java.nio.charset.StandardCharsets;
@@ -34,7 +35,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/actuator/health", "/actuator/prometheus", "/api/dev/token", "/api/auth/wx-login").permitAll()
+                .requestMatchers("/actuator/health", "/actuator/prometheus", "/api/dev/token", "/api/auth/wx-login", "/api/auth/refresh").permitAll()
                 .requestMatchers("/api/auth/technician/bind").authenticated()
                 .anyRequest().access((authentication, context) -> {
                     boolean allowed = authentication.get().getPrincipal() instanceof org.springframework.security.oauth2.jwt.Jwt jwt
@@ -59,7 +60,8 @@ public class SecurityConfig {
     @Bean
     JwtDecoder jwtDecoder(@Value("${JWT_SECRET:}") String secret,
                           @Value("${WECHAT_APP_ID:}") String appId,
-                          ObjectProvider<IdentityRepository> repositories) {
+                          ObjectProvider<IdentityRepository> repositories,
+                          ObjectProvider<AuthSessionRepository> sessions) {
         byte[] key = checkedKey(secret);
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(new SecretKeySpec(key, "HmacSHA256"))
             .macAlgorithm(MacAlgorithm.HS256).build();
@@ -70,8 +72,11 @@ public class SecurityConfig {
             String type = jwt.getClaimAsString("subject_type");
             if (type == null || "wechat_binding".equals(type)) return result;
             IdentityRepository repository = repositories.getIfAvailable();
-            if (repository == null) return invalidIdentity();
+            AuthSessionRepository sessionRepository = sessions.getIfAvailable();
+            if (repository == null || sessionRepository == null) return invalidIdentity();
             try {
+                String sessionId = jwt.getClaimAsString("jti");
+                if (sessionId == null || !sessionRepository.active(sessionId)) return invalidIdentity();
                 long subjectId = Long.parseLong(jwt.getSubject());
                 boolean valid = switch (type) {
                     case "user" -> "OWNER".equals(jwt.getClaimAsString("role"))

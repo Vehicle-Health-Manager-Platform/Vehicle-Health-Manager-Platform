@@ -43,11 +43,13 @@ run_sql_file docs/sql/init.sql
 run_sql_file docs/sql/migrations/V001__baseline.sql
 run_sql_file docs/sql/migrations/V002__staff_wechat_identity.sql
 run_sql_file docs/sql/migrations/V002__staff_wechat_identity.sql
+run_sql_file docs/sql/migrations/V003__auth_lifecycle.sql
+run_sql_file docs/sql/migrations/V003__auth_lifecycle.sql
 run_sql_file docs/sql/seed_test.sql
 run_sql_file docs/sql/seed_test.sql
 
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
-[[ "$tables" == 40 ]] || { echo "Expected 40 tables after V002, got $tables" >&2; exit 1; }
+[[ "$tables" == 42 ]] || { echo "Expected 42 tables after V003, got $tables" >&2; exit 1; }
 
 for index in uk_active_app_openid uk_active_app_staff; do
   found=$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema = '$database' AND table_name = 'staff_wechat_identity' AND index_name = '$index' AND non_unique = 0")

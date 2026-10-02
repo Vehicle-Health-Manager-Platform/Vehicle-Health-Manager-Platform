@@ -17,6 +17,8 @@ public class ApiExceptionHandler {
             case NOT_FOUND -> 40400;
             case CONFLICT -> 40900;
             case SERVICE_UNAVAILABLE -> 50300;
+            case TOO_MANY_REQUESTS -> 42900;
+            case UNAUTHORIZED -> 40100;
             default -> 40001;
         };
         return ResponseEntity.status(status).body(ApiResponse.error(code, exception.getReason()));
