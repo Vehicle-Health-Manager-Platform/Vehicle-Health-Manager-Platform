@@ -31,7 +31,7 @@
 
 ## 2026-10-02 · S0-7.1d 身份仓储与服务端角色授权
 
-- **已完成**：后端接入 MySQL 身份仓储；`/api/auth/wx-login` 用服务端交换得到的 `openid` 查找/创建车主，并在有效技师绑定、员工及商家状态通过时签发短时业务 JWT。未绑定技师只获得短时绑定凭证，`/api/auth/technician/bind` 校验员工码及唯一绑定约束后签发技师 JWT。受保护请求重新核对数据库状态，禁用或解绑后拒绝旧 token。新建 Compose 数据卷自动执行 V002；既有数据卷须单独补迁移。
-- **验证**：MockMvc 测试覆盖首次/重复车主登录、无效角色和 code、微信限流、未绑定凭证的业务越权、技师绑定及商家禁用后的 token 失效；新增 MySQL 容器测试验证并发首次登录、员工码绑定唯一约束、商家禁用及解绑。前一版 [PR #2 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/36982466966) 六项作业全部通过；本次新增数据库测试及小程序绑定页面的 CI 仍待完成。本机小程序构建通过，微信开发者工具端口 11927 已打开本 worktree 的持续监听开发产物；未使用真实 AppSecret 联调。
+- **已完成**：后端接入 MySQL 身份仓储；`/api/auth/wx-login` 用服务端交换得到的 `openid` 查找/创建车主，并在有效技师绑定、员工及商家状态通过时签发短时业务 JWT。未绑定技师只获得短时绑定凭证，`/api/auth/technician/bind` 校验员工码及唯一绑定约束后签发技师 JWT。小程序预览入口可识别待绑定状态并提交员工码。受保护请求重新核对数据库状态，禁用或解绑后拒绝旧 token。新建 Compose 数据卷自动执行 V002；既有数据卷须单独补迁移。
+- **验证**：[PR #2](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/2) 的 [CI 运行 36982849238](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/36982849238) 六项作业全部通过。后端共 14 项测试，失败/跳过均为 0；其中 2 项 MySQL 容器测试实际执行，验证并发首次登录、员工码绑定唯一约束、商家禁用及解绑。MockMvc 覆盖首次/重复车主登录、无效角色和 code、微信限流、未绑定凭证的业务越权、技师绑定及旧 token 失效。本机小程序构建通过，微信开发者工具端口 11927 已打开本 worktree 的持续监听开发产物；未使用真实 AppSecret 联调。
 - **尚未完成**：手机号绑定、员工码的管理发放与限流、刷新/撤销令牌、商家登录和真实微信登录联调。先前披露的 AppSecret 尚须轮换，并仅以私有环境变量配置；现有数据库需先应用 V002。
 - **下一步 S0-7.1e**：实现经验证的车主手机号绑定与技师员工码发放/回收及限流；补齐刷新与撤销策略，然后使用轮换后的 AppSecret、已迁移数据库和 HTTPS 后端进行真实小程序联调。
