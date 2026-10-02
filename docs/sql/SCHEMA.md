@@ -2,6 +2,8 @@
 
 > 2026-10-02。`init.sql` 和 `migrations/V001__baseline.sql` 由 `python scripts/build_init_sql.py` 按恢复的原始交付文档 v1.0 生成。16 张表取自 §7.2，缺失的公共字段及 23 张扩展表按 [决策记录](../DECISIONS.md) G01–G03 补齐。
 
+`migrations/V002__staff_wechat_identity.sql` 是独立版本化迁移，不改变上述生成的 V001 基线。它为技师添加按 AppID 区分的微信绑定历史；同一 AppID 下一个微信身份和一个员工账号各只能有一条有效绑定。解除绑定保留历史记录。应用层仍需校验员工角色、账号状态和商家状态；唯一索引不能代替授权。
+
 ## 表清单
 
 | 领域 | 表 | 关键字段及作用 |
@@ -16,7 +18,7 @@
 | 商家履约支撑 | `merchant_application`, `technician_assignment`, `merchant_commission_policy` | 入驻审核、派工归属、带生效期的佣金政策 |
 | 安全与通知 | `notification`, `audit_log`, `idempotency_record`, `file_object`, `staff_account`, `sms_code` | 站内消息、审计、24 小时幂等、私有文件、员工与验证码 |
 
-共 39 张表：来源给出 16 张 DDL、另行点名 10 张、S0 业务契约新增 13 张。来源正文写“25 张”与实际列名不符，不作为建表数量约束。所有表使用 InnoDB、`utf8mb4`、无物理外键；应用层在同一事务校验归属和存在性。
+V001 基线共 39 张表：来源给出 16 张 DDL、另行点名 10 张、S0 业务契约新增 13 张；应用 V002 后共 40 张。来源正文写“25 张”与实际列名不符，不作为建表数量约束。所有表使用 InnoDB、`utf8mb4`、无物理外键；应用层在同一事务校验归属和存在性。
 
 ## 公共字段和数据规则
 

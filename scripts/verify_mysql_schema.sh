@@ -41,15 +41,37 @@ query() {
 
 run_sql_file docs/sql/init.sql
 run_sql_file docs/sql/migrations/V001__baseline.sql
+run_sql_file docs/sql/migrations/V002__staff_wechat_identity.sql
+run_sql_file docs/sql/migrations/V002__staff_wechat_identity.sql
 run_sql_file docs/sql/seed_test.sql
 run_sql_file docs/sql/seed_test.sql
 
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
-[[ "$tables" == 39 ]] || { echo "Expected 39 tables, got $tables" >&2; exit 1; }
+[[ "$tables" == 40 ]] || { echo "Expected 40 tables after V002, got $tables" >&2; exit 1; }
+
+for index in uk_active_app_openid uk_active_app_staff; do
+  found=$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema = '$database' AND table_name = 'staff_wechat_identity' AND index_name = '$index' AND non_unique = 0")
+  [[ "$found" == 1 ]] || { echo "Missing unique index $index" >&2; exit 1; }
+done
+
+query "INSERT INTO staff_account (id, role, account) VALUES (900001, 'TECHNICIAN', 'schema-tech-1'), (900002, 'TECHNICIAN', 'schema-tech-2')" >/dev/null
+query "INSERT INTO staff_wechat_identity (app_id, openid, staff_account_id) VALUES ('test-app', 'wx-one', 900001)" >/dev/null
+if query "INSERT INTO staff_wechat_identity (app_id, openid, staff_account_id) VALUES ('test-app', 'wx-one', 900002)" >/dev/null 2>&1; then
+  echo "Active openid could be bound to two staff accounts" >&2
+  exit 1
+fi
+if query "INSERT INTO staff_wechat_identity (app_id, openid, staff_account_id) VALUES ('test-app', 'wx-two', 900001)" >/dev/null 2>&1; then
+  echo "One staff account could have two active openids" >&2
+  exit 1
+fi
+query "UPDATE staff_wechat_identity SET status = 'REVOKED', unbound_at = UTC_TIMESTAMP() WHERE app_id = 'test-app' AND openid = 'wx-one'" >/dev/null
+query "INSERT INTO staff_wechat_identity (app_id, openid, staff_account_id) VALUES ('test-app', 'wx-one', 900002)" >/dev/null
+bindings=$(query "SELECT COUNT(*) FROM staff_wechat_identity WHERE app_id = 'test-app' AND openid = 'wx-one'")
+[[ "$bindings" == 2 ]] || { echo "Revoked binding history was not retained" >&2; exit 1; }
 
 for table in brand series model standard_project merchant merchant_project; do
   rows=$(query "SELECT COUNT(*) FROM \`$table\` WHERE id = 900001")
   [[ "$rows" == 1 ]] || { echo "Expected one synthetic row in $table, got $rows" >&2; exit 1; }
 done
 
-echo "MySQL 8.0 schema: 39 tables; repeat migration and synthetic seed passed"
+echo "MySQL 8.0 schema: 40 tables after V002; repeat migration and synthetic seed passed"
