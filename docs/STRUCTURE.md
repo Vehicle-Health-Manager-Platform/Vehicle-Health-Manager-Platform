@@ -1,6 +1,6 @@
 # 工程目录说明
 
-当前目录最初按四端网页方案建立；2026-10-02 起以恢复的[原始交付文档](../汽车健康管家平台全栈开发交付文档.md)和[MVP Spec](SPEC.md)为目标基线。现有车主、商家、技师 Vue3/Vite 工程仅为过渡网页原型，尚无三端微信小程序工程；运营 PC 网页可沿用。`docs/sql/init.sql` 已按原始文档重生，须重新执行 CI 验证。
+当前目录最初按四端网页方案建立；2026-10-02 起以恢复的[原始交付文档](../汽车健康管家平台全栈开发交付文档.md)和[MVP Spec](SPEC.md)为目标基线。现有车主、商家、技师 Vue3/Vite 工程仅为过渡网页原型，尚无三端微信小程序工程；运营 PC 网页可沿用。`docs/sql/init.sql` 已按原始文档重生并通过 CI 空库验证。
 
 | 路径 | 用途 | 来源 |
 | --- | --- | --- |
@@ -11,7 +11,7 @@
 | `backend/src/main/java/com/autocare/platform/` | Java 17 / Spring Boot 3.x 模块化单体，子包与 §6.5 一致 | §6.1、§6.5 |
 | `backend/src/main/resources/`、`backend/src/test/` | 后端配置与测试位置 | §6、§9 |
 | `services/ocr/` | 自建 PaddleOCR 服务的位置；实现行驶证和仪表盘里程识别 | §6.1 |
-| `docs/sql/` | 39 张表的初始化 SQL、V001 迁移、字段字典及合成测试种子；恢复微信身份字段后的版本待 CI 复验 | §7、§12.2 |
+| `docs/sql/` | 39 张表的初始化 SQL、V001 迁移、字段字典及合成测试种子；恢复微信身份字段后的版本已通过 CI 空库验证 | §7、§12.2 |
 | `docs/api/`、`docs/ui/` | OpenAPI/Swagger 与 UI 原型、设计规范 | §4–5、§8、§12.2 |
 | `docs/operations/`、`docs/testing/`、`docs/user-guides/` | 部署回滚、测试报告和三端使用手册 | §9–10、§12.2 |
 | `docs/progress/` | 当前项目进度、下一步规划和阶段完成记录 | 本项目工程约定 |

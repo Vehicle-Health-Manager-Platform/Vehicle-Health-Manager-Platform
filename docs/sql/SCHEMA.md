@@ -33,4 +33,4 @@
 
 `migrations/V001__baseline.sql` 是版本化初始迁移，`init.sql` 是空库快速初始化的同内容副本。两者**择一执行**；不要顺序执行以掩盖迁移问题。重跑 V001 只会跳过已有表，不会修改旧结构；后续字段变化必须新增 V002 等迁移，并记录回滚/灰度策略。测试环境可单独执行 `seed_test.sql`；生产环境不得执行该文件。
 
-此前网页方案的 39 表脚本已在 MySQL 8 CI 空库通过。本次按原始小程序文档重生 V001 后，须重新验证空库与重复迁移；已存在的网页方案开发数据库不会因 `CREATE TABLE IF NOT EXISTS` 自动增加 `openid` 或放宽 `phone`，需要单独的版本化迁移或重建可丢弃的开发库，不可直接用于生产升级。
+本次按原始小程序文档重生的 V001 已在 [CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/36974338523) 通过 MySQL 8 空库与重复迁移验证。已存在的网页方案开发数据库不会因 `CREATE TABLE IF NOT EXISTS` 自动增加 `openid` 或放宽 `phone`，需要单独的版本化迁移或重建可丢弃的开发库，不可直接用于生产升级。
