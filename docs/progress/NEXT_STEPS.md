@@ -2,7 +2,7 @@
 
 > 更新日期：2026-10-02｜当前目标：按原始 v1.0 交付文档完成 S0，达到 M0“骨架就绪”
 
-**刚完成：**S0-7.1d 身份仓储、`/api/auth/wx-login`、技师绑定与服务端角色授权已通过 [PR #2 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/36982849238)。**S0-7.1e 进行中：**车主手机号绑定、员工码发放/回收、数据库限流及刷新/撤销机制已实现，等待 CI 验证，详情见 [S0 执行记录](S0_EXECUTION_LOG.md)。**下一步 S0-7.1f：**先用轮换后的私有 AppSecret、已迁移数据库和可访问的 HTTPS 后端做真实微信联调；同时推进商家账号身份、车主五 Tab 与三角色基础业务状态。微信手机号能力还需符合[官方账号资质与额度要求](https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/getPhoneNumber.html)。
+**刚完成：**S0-7.1d 身份仓储与角色授权已通过 [PR #2 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/36982849238)；S0-7.1e 车主手机号绑定、员工码发放/回收、数据库限流及刷新/撤销机制已通过 [PR #3 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37001116839)，详情见 [S0 执行记录](S0_EXECUTION_LOG.md)。**当前下一步 S0-7.1f：**在轮换私有 AppSecret、迁移已有数据库并取得 HTTPS 后端后做真实微信联调；并行推进商家账号身份、车主五 Tab 与三角色基础业务状态。微信手机号能力还需符合[官方账号资质与额度要求](https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/getPhoneNumber.html)。
 
 | 顺序 | 任务 | 完成判定 | 依据 |
 | --- | --- | --- | --- |
