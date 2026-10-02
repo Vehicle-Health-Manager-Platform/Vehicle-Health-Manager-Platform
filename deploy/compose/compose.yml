@@ -12,6 +12,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ../../docs/sql/init.sql:/docker-entrypoint-initdb.d/001-init.sql:ro
+      - ../../docs/sql/migrations/V002__staff_wechat_identity.sql:/docker-entrypoint-initdb.d/002-staff-wechat-identity.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent"]
       interval: 10s
@@ -122,6 +123,8 @@ services:
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
       MINIO_ENDPOINT: http://minio:9000
       JWT_SECRET: ${JWT_SECRET}
+      WECHAT_APP_ID: ${WECHAT_APP_ID:-}
+      WECHAT_APP_SECRET: ${WECHAT_APP_SECRET:-unconfigured}
     depends_on:
       mysql: { condition: service_healthy }
       redis: { condition: service_healthy }

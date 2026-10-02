@@ -1,11 +1,13 @@
 package com.autocare.platform.gateway;
 
 import com.autocare.platform.common.ApiResponse;
+import com.autocare.platform.gateway.identity.IdentityRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import java.nio.charset.StandardCharsets;
 import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -18,6 +20,8 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -30,8 +34,13 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/actuator/health", "/actuator/prometheus", "/api/dev/token").permitAll()
-                .anyRequest().authenticated())
+                .requestMatchers("/actuator/health", "/actuator/prometheus", "/api/dev/token", "/api/auth/wx-login").permitAll()
+                .requestMatchers("/api/auth/technician/bind").authenticated()
+                .anyRequest().access((authentication, context) -> {
+                    boolean allowed = authentication.get().getPrincipal() instanceof org.springframework.security.oauth2.jwt.Jwt jwt
+                        && !"wechat_binding".equals(jwt.getClaimAsString("subject_type"));
+                    return new org.springframework.security.authorization.AuthorizationDecision(allowed);
+                }))
             .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
             .exceptionHandling(errors -> errors
                 .authenticationEntryPoint((request, response, exception) -> {
@@ -48,12 +57,46 @@ public class SecurityConfig {
     }
 
     @Bean
-    JwtDecoder jwtDecoder(@Value("${JWT_SECRET:}") String secret) {
+    JwtDecoder jwtDecoder(@Value("${JWT_SECRET:}") String secret,
+                          @Value("${WECHAT_APP_ID:}") String appId,
+                          ObjectProvider<IdentityRepository> repositories) {
         byte[] key = checkedKey(secret);
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(new SecretKeySpec(key, "HmacSHA256"))
             .macAlgorithm(MacAlgorithm.HS256).build();
-        decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(ISSUER));
+        var standard = JwtValidators.createDefaultWithIssuer(ISSUER);
+        decoder.setJwtValidator(jwt -> {
+            var result = standard.validate(jwt);
+            if (result.hasErrors()) return result;
+            String type = jwt.getClaimAsString("subject_type");
+            if (type == null || "wechat_binding".equals(type)) return result;
+            IdentityRepository repository = repositories.getIfAvailable();
+            if (repository == null) return invalidIdentity();
+            try {
+                long subjectId = Long.parseLong(jwt.getSubject());
+                boolean valid = switch (type) {
+                    case "user" -> "OWNER".equals(jwt.getClaimAsString("role"))
+                        && repository.ownerById(subjectId).filter(owner -> owner.status() == 1 && !owner.deleted()).isPresent();
+                    case "staff_account" -> {
+                        Number bindingId = jwt.getClaim("binding_id");
+                        Number merchantId = jwt.getClaim("merchant_id");
+                        yield "TECHNICIAN".equals(jwt.getClaimAsString("role")) && bindingId != null && merchantId != null
+                            && appId.equals(jwt.getClaimAsString("app_id"))
+                            && repository.technicianByBindingId(bindingId.longValue())
+                                .filter(staff -> staff.active() && staff.staffId() == subjectId
+                                    && staff.merchantId() == merchantId.longValue()).isPresent();
+                    }
+                    default -> false;
+                };
+                return valid ? result : invalidIdentity();
+            } catch (RuntimeException exception) {
+                return invalidIdentity();
+            }
+        });
         return decoder;
+    }
+
+    private static OAuth2TokenValidatorResult invalidIdentity() {
+        return OAuth2TokenValidatorResult.failure(new OAuth2Error("invalid_token", "Identity inactive", null));
     }
 
     @Bean
