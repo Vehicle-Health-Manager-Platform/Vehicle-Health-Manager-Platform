@@ -122,9 +122,9 @@ public class AuthTokens {
         }
         if ("staff_account".equals(session.subjectType()) && "MERCHANT".equals(session.role())
             && MERCHANT_APP_ID.equals(session.appId()) && session.merchantId() != null) {
-            MerchantIdentityRepository repository = merchants.getIfAvailable();
-            if (repository == null) throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "身份数据库尚未配置");
-            return repository.byId(session.subjectId())
+            MerchantIdentityRepository merchantRepository = merchants.getIfAvailable();
+            if (merchantRepository == null) throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "身份数据库尚未配置");
+            return merchantRepository.byId(session.subjectId())
                 .filter(merchant -> merchant.active() && merchant.merchantId() == session.merchantId())
                 .map(AuthTokens::merchantUser)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "员工或商家不可用"));
