@@ -12,7 +12,9 @@ npm run dev:miniapp
 npm run build:miniapp
 ```
 
-将 `apps/miniapp/dist/dev/mp-weixin`（开发构建）或 `apps/miniapp/dist/build/mp-weixin`（发行构建）导入微信开发者工具。测试号 AppID 已写入 `src/manifest.json`；它是公开项目标识，**AppSecret 不应放入此工程、前端环境变量、构建产物或 Git**。
+**微信开发者工具须导入编译产物目录，不要导入整个仓库或 `apps/miniapp/src`。**首次预览建议只运行 `npm ci`、`npm run build:miniapp`，确认仓库内生成 `apps/miniapp/dist/build/mp-weixin/app.json` 和 `project.config.json`，再在开发者工具的“导入项目”中把项目目录选为 `apps/miniapp/dist/build/mp-weixin`，点击“编译”。如果已经把仓库根目录导入，出现“在项目根目录未找到 app.json”，请关闭该错误项目并按上述路径重新导入。
+
+需要热更新时，在终端持续运行 `npm run dev:miniapp`，改为导入 `apps/miniapp/dist/dev/mp-weixin`；终端停止后，先重新运行开发命令。测试号 AppID 已写入 `src/manifest.json`，编译后也会出现在产物的 `project.config.json`。它是公开项目标识，**AppSecret 不应放入此工程、前端环境变量、构建产物或 Git**。
 
 如果需要联调后端，将 `.env.example` 复制为本目录 `.env.local` 并设置 `VITE_API_BASE_URL` 为可从小程序访问的 HTTPS 服务地址。没有服务端地址时，登录按钮会明确提示不可用；当前后端尚未实现 `/api/auth/wx-login`。真机请求域名和 HTTPS 需按微信要求配置；开发者工具的域名校验设置只用于开发预览。
 

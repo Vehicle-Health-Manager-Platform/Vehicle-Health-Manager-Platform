@@ -4,7 +4,7 @@
 
 ## 当前过渡原型
 
-现有 `apps/owner`、`apps/merchant`、`apps/technician` 是此前网页方案留下的 Vue3/Vite 原型，**不是微信小程序工程**。`apps/admin` 是交给其他团队的运营 PC 网页骨架。需要 Node.js 20.19+ 和 npm；执行 `npm ci` 后运行 `npm run dev:miniapp` 或 `npm run build:miniapp` 开发/编译目标小程序。`npm run build:legacy-web` 验证旧网页原型；`npm run build` 同时验证旧网页与新小程序。小程序工程详情见 [apps/miniapp/README.md](apps/miniapp/README.md)，后端步骤见 [backend/README.md](backend/README.md)。
+现有 `apps/owner`、`apps/merchant`、`apps/technician` 是此前网页方案留下的 Vue3/Vite 原型，**不是微信小程序工程**。`apps/admin` 是交给其他团队的运营 PC 网页骨架。需要 Node.js 20.19+ 和 npm；执行 `npm ci` 后运行 `npm run dev:miniapp` 或 `npm run build:miniapp` 开发/编译目标小程序。微信开发者工具应导入编译后的 `apps/miniapp/dist/build/mp-weixin`，不能直接导入仓库根目录。`npm run build:legacy-web` 验证旧网页原型；`npm run build` 同时验证旧网页与新小程序。导入步骤见 [apps/miniapp/README.md](apps/miniapp/README.md)，后端步骤见 [backend/README.md](backend/README.md)。
 
 `apps/miniapp` 是正在搭建的单测试号三角色 uni-app 工程；其目标是先完成开发者工具编译与角色入口预览，真实微信授权登录及业务接口仍未实现。车主 H5 兜底、正式小程序主体/AppID 与支付资质仍待处理。此前网页构建、截图和 Nginx 冒烟结果不能算作小程序验收。PC 运营后台交由其他团队负责，本团队聚焦小程序与共用接口契约。
 
