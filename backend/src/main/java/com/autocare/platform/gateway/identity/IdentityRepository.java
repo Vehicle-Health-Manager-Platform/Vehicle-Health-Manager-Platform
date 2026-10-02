@@ -6,7 +6,7 @@ public interface IdentityRepository {
     record Owner(long id, String phone, int status, boolean deleted) {}
     record Technician(long id, long staffId, long merchantId, String staffRole, String staffStatus,
                       boolean staffDeleted, int merchantStatus, boolean merchantDeleted) {
-        boolean active() {
+        public boolean active() {
             return "TECHNICIAN".equals(staffRole) && "ACTIVE".equals(staffStatus)
                 && !staffDeleted && merchantStatus == 1 && !merchantDeleted;
         }
