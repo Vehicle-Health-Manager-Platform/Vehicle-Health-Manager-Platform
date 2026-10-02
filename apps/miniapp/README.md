@@ -16,7 +16,7 @@ npm run build:miniapp
 
 需要热更新时，在终端持续运行 `npm run dev:miniapp`，改为导入 `apps/miniapp/dist/dev/mp-weixin`；终端停止后，先重新运行开发命令。测试号 AppID 已写入 `src/manifest.json`，编译后也会出现在产物的 `project.config.json`。它是公开项目标识，**AppSecret 不应放入此工程、前端环境变量、构建产物或 Git**。
 
-如果需要联调后端，将 `.env.example` 复制为本目录 `.env.local` 并设置 `VITE_API_BASE_URL` 为可从小程序访问的 HTTPS 服务地址。没有服务端地址时，登录按钮会明确提示不可用；后端已实现 `/api/auth/wx-login` 和受保护的技师绑定接口。技师首次登录返回待绑定状态时，页面可输入商家发放的员工码。真实登录仍需轮换后的私有 AppSecret、已迁移数据库和可访问的后端。真机请求域名和 HTTPS 需按微信要求配置；开发者工具的域名校验设置只用于开发预览。
+如果需要联调后端，将 `.env.example` 复制为本目录 `.env.local` 并设置 `VITE_API_BASE_URL` 为可从小程序访问的 HTTPS 服务地址。没有服务端地址时，登录按钮会明确提示不可用；后端已实现 `/api/auth/wx-login`、技师绑定、车主手机号绑定与退出。技师首次登录返回待绑定状态时，页面可输入商家发放的员工码；车主登录成功后可通过微信手机号按钮授权并绑定。真实登录仍需轮换后的私有 AppSecret、V003 之前全部数据库迁移和可访问的后端；手机号能力需要微信账号主体资质及额度。真机请求域名和 HTTPS 需按微信要求配置；开发者工具的域名校验设置只用于开发预览。
 
 `src/pages/index` 是测试入口，`src/pages/owner`、`merchant`、`technician` 为三个角色模块。入口切换不代表登录或授权。车主和技师调用 `wx.login` 的边界在 `src/services/wechat-auth.js`；商家按原文使用账号密码与短信，待后端阶段接入。
 

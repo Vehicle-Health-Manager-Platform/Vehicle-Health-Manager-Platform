@@ -1,11 +1,15 @@
 package com.autocare.platform;
 
 import com.autocare.platform.gateway.identity.IdentityRepository;
+import com.autocare.platform.gateway.identity.AuthSessionRepository;
+import com.autocare.platform.gateway.identity.AuthRateLimiter;
 import com.autocare.platform.gateway.wechat.WechatCode2SessionClient;
+import com.autocare.platform.gateway.wechat.WechatPhoneClient;
 import com.autocare.platform.gateway.wechat.WechatExchangeException;
 import com.autocare.platform.gateway.wechat.WechatSession;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,6 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -28,7 +34,15 @@ class WechatAuthTest {
     @Autowired MockMvc mvc;
     @Autowired ObjectMapper mapper;
     @MockitoBean WechatCode2SessionClient wechat;
+    @MockitoBean WechatPhoneClient phone;
     @MockitoBean IdentityRepository identities;
+    @MockitoBean AuthSessionRepository sessions;
+    @MockitoBean AuthRateLimiter limiter;
+
+    @BeforeEach
+    void activeSession() {
+        when(sessions.active(anyString())).thenReturn(true);
+    }
 
     @Test
     void firstAndRepeatOwnerLoginReuseDatabaseIdentity() throws Exception {
@@ -106,6 +120,49 @@ class WechatAuthTest {
             .andExpect(status().isNotFound());
         mvc.perform(get("/api/private").header("Authorization", "Bearer " + token))
             .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void ownerPhoneCodeIsExchangedForCurrentOpenidAndOtherRoleIsForbidden() throws Exception {
+        when(wechat.exchange("owner-phone")).thenReturn(new WechatSession("openid-owner", ""));
+        when(identities.createOwnerOrRead("openid-owner"))
+            .thenReturn(new IdentityRepository.Owner(1001, null, 1, false));
+        when(identities.ownerById(1001)).thenReturn(Optional.of(new IdentityRepository.Owner(1001, null, 1, false)));
+        when(identities.ownerOpenidById(1001)).thenReturn(Optional.of("openid-owner"));
+        when(phone.exchange("phone-code", "openid-owner")).thenReturn("13800138000");
+        when(identities.bindOwnerPhone(1001, "13800138000"))
+            .thenReturn(new IdentityRepository.Owner(1001, "13800138000", 1, false));
+        String token = login("owner-phone", "owner");
+        mvc.perform(post("/api/auth/phone/bind").header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON).content("{\"code\":\"phone-code\"}"))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.data.phone_bound").value(true))
+            .andExpect(jsonPath("$.data.phone_masked").value("138****8000"));
+        verify(phone).exchange("phone-code", "openid-owner");
+        mvc.perform(post("/api/auth/phone/bind").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"code\":\"phone-code\"}"))
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void refreshRotatesAndLogoutRevokesSession() throws Exception {
+        when(wechat.exchange("owner-session")).thenReturn(new WechatSession("openid-session", ""));
+        when(identities.createOwnerOrRead("openid-session"))
+            .thenReturn(new IdentityRepository.Owner(1001, null, 1, false));
+        when(identities.ownerById(1001)).thenReturn(Optional.of(new IdentityRepository.Owner(1001, null, 1, false)));
+        String body = mvc.perform(post("/api/auth/wx-login").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"code\":\"owner-session\",\"role\":\"owner\"}"))
+            .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        String accessToken = mapper.readTree(body).path("data").path("access_token").asText();
+        String refreshToken = mapper.readTree(body).path("data").path("refresh_token").asText();
+        when(sessions.rotate(anyString(), anyString())).thenReturn(Optional.of(new AuthSessionRepository.Session(
+            "00000000-0000-0000-0000-000000000001", "user", 1001, "OWNER", "test-app", null, null)));
+        mvc.perform(post("/api/auth/refresh").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"refresh_token\":\"" + refreshToken + "\"}"))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.data.access_token").exists())
+            .andExpect(jsonPath("$.data.refresh_token").exists());
+        mvc.perform(post("/api/auth/logout").header("Authorization", "Bearer " + accessToken))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.data.revoked").value(true));
+        verify(sessions).revoke(anyString());
     }
 
     private String login(String code, String role) throws Exception {

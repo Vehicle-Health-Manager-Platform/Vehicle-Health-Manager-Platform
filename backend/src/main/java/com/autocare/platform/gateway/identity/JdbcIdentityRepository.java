@@ -28,6 +28,22 @@ public class JdbcIdentityRepository implements IdentityRepository {
             .stream().findFirst();
     }
 
+    public Optional<String> ownerOpenidById(long id) {
+        return jdbc.query("SELECT openid FROM `user` WHERE id=? AND status=1 AND is_deleted=0",
+            (rs, row) -> rs.getString(1), id).stream().findFirst();
+    }
+
+    public Owner bindOwnerPhone(long id, String phone) {
+        try {
+            int changed = jdbc.update("UPDATE `user` SET phone=? WHERE id=? AND status=1 AND is_deleted=0",
+                phone, id);
+            if (changed != 1) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "账号不可用");
+        } catch (DataIntegrityViolationException exception) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "手机号已绑定其他账号");
+        }
+        return ownerById(id).orElseThrow();
+    }
+
     public Owner createOwnerOrRead(String openid) {
         // The database unique key resolves simultaneous first logins for one openid.
         jdbc.update("INSERT INTO `user` (openid) VALUES (?) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)", openid);

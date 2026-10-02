@@ -57,3 +57,40 @@ export function bindTechnician(bindingToken, employeeCode) {
     })
   })
 }
+
+export function bindOwnerPhone(accessToken, phoneCode) {
+  if (!endpoint || !accessToken || !phoneCode) {
+    return Promise.reject(new Error('请先登录并同意微信手机号授权'))
+  }
+  return new Promise((resolve, reject) => {
+    uni.request({
+      url: `${endpoint}/api/auth/phone/bind`,
+      method: 'POST',
+      header: { Authorization: `Bearer ${accessToken}` },
+      data: { code: phoneCode },
+      success: ({ statusCode, data }) => {
+        if (statusCode >= 200 && statusCode < 300 && data?.code === 0 && data?.data?.phone_bound) {
+          resolve(data.data)
+        } else {
+          reject(new Error(data?.message || '手机号绑定失败'))
+        }
+      },
+      fail: () => reject(new Error('无法连接服务端，请检查网络')),
+    })
+  })
+}
+
+export function logoutWechat(accessToken) {
+  return new Promise((resolve, reject) => {
+    uni.request({
+      url: `${endpoint}/api/auth/logout`,
+      method: 'POST',
+      header: { Authorization: `Bearer ${accessToken}` },
+      success: ({ statusCode, data }) => {
+        if (statusCode >= 200 && statusCode < 300 && data?.code === 0) resolve()
+        else reject(new Error(data?.message || '退出失败'))
+      },
+      fail: () => reject(new Error('无法连接服务端，请检查网络')),
+    })
+  })
+}

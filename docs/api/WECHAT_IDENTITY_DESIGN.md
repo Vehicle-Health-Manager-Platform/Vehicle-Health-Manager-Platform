@@ -19,8 +19,10 @@
 1. `POST /api/auth/wx-login` 请求 `{ "code": "...", "role": "owner|technician" }`。仅服务端持有 AppSecret 并调用微信 `code2Session`；一次性 code 不缓存、不记录日志。拒绝不支持的角色。
 2. 车主：以数据库唯一 `openid` 并发安全地查找/创建 `user`。`status=2` 或已删除时拒绝。成功返回访问 token、有效期和 `user` 摘要；手机号未绑定时明确返回 `phone_bound=false`，后续需要手机号的业务接口继续阻断。
 3. 技师：未绑定时返回明确的 `BIND_REQUIRED` 状态和短时、仅允许绑定操作的凭证；绑定流程校验商家员工码、员工角色、员工/商家状态与重复绑定冲突。绑定成功后重新签发技师业务 token。无有效绑定时不得返回技师业务 token。
-4. `refresh_token` 与撤销机制须有服务端持久化或可验证的轮换方案后再返回；未实现时不得伪造该字段。当前 OpenAPI 草案中的刷新字段仅是目标契约。
+4. `refresh_token` 与撤销机制须有服务端持久化或可验证的轮换方案后再返回；S0-7.1e 采用下述 `auth_session` 方案。OpenAPI 草案中的刷新字段不代表真实微信联调已通过。
 5. code 无效返回 HTTP 400；请求过频返回 HTTP 429；微信上游故障返回 HTTP 503；未配置服务端凭据返回 HTTP 503。响应沿用 `ApiResponse`，不暴露 AppSecret、`session_key`、完整上游响应或内部异常。
+
+S0-7.1e 实现补充：业务登录创建数据库 `auth_session`，访问 JWT 带会话 ID，刷新凭证为随机值且仅存 SHA-256 摘要；`/api/auth/refresh` 在事务中轮换，`/api/auth/logout` 撤销会话，受保护请求校验会话仍有效。刷新凭证有效期 30 天，访问 JWT 15 分钟；绑定凭证仍只有 5 分钟且不能刷新。车主手机号使用微信 `getPhoneNumber` 按钮独立 code，并由服务端携带对应 `openid` 换取及校验水印 AppID。员工码通过无 HTTP 入口的运维命令发放/回收，绑定按微信身份和员工码共享数据库限流。真实微信联调仍受私有凭据、HTTPS 后端、账号资质和额度约束。
 
 ## 数据与迁移顺序
 

@@ -36,6 +36,21 @@ public class IdentityDatabaseConfig {
     }
 
     @Bean
+    AuthSessionRepository authSessionRepository(JdbcTemplate identityJdbc) {
+        return new JdbcAuthSessionRepository(identityJdbc);
+    }
+
+    @Bean
+    AuthRateLimiter authRateLimiter(JdbcTemplate identityJdbc) {
+        return new AuthRateLimiter(identityJdbc);
+    }
+
+    @Bean
+    StaffCodeOperations staffCodeOperations(JdbcTemplate identityJdbc) {
+        return new StaffCodeOperations(identityJdbc);
+    }
+
+    @Bean
     DataSourceTransactionManager transactionManager(DataSource identityDataSource) {
         return new DataSourceTransactionManager(identityDataSource);
     }

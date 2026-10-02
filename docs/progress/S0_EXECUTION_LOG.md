@@ -35,3 +35,10 @@
 - **验证**：[PR #2](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/2) 的 [CI 运行 36982849238](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/36982849238) 六项作业全部通过。后端共 14 项测试，失败/跳过均为 0；其中 2 项 MySQL 容器测试实际执行，验证并发首次登录、员工码绑定唯一约束、商家禁用及解绑。MockMvc 覆盖首次/重复车主登录、无效角色和 code、微信限流、未绑定凭证的业务越权、技师绑定及旧 token 失效。本机小程序构建通过，微信开发者工具端口 11927 已打开本 worktree 的持续监听开发产物；未使用真实 AppSecret 联调。
 - **尚未完成**：手机号绑定、员工码的管理发放与限流、刷新/撤销令牌、商家登录和真实微信登录联调。先前披露的 AppSecret 尚须轮换，并仅以私有环境变量配置；现有数据库需先应用 V002。
 - **下一步 S0-7.1e**：实现经验证的车主手机号绑定与技师员工码发放/回收及限流；补齐刷新与撤销策略，然后使用轮换后的 AppSecret、已迁移数据库和 HTTPS 后端进行真实小程序联调。
+
+## 2026-10-02 · S0-7.1e 手机号、员工码与会话生命周期
+
+- **已完成**：车主通过微信手机号按钮独立 code 在服务端换取号码，携带当前 `openid` 校验并检查水印 AppID 后落库；员工码由无 HTTP 入口的运维命令高熵生成、轮换和回收，轮换/回收同步解除技师绑定。V003 增加持久化会话与共享限流表；刷新凭证只存摘要并按事务轮换，退出后撤销业务 JWT；技师绑定和手机号授权加入数据库限流。小程序预览页增加手机号授权和退出操作。
+- **验证**：[PR #3](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/3) 的 [CI 运行 37001116839](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37001116839) 六项作业全部通过。后端 23 项测试无失败、无跳过，其中 6 项 MySQL 容器测试实际执行，覆盖并发刷新只能成功一次、旧凭证重放、退出撤销、手机号唯一绑定、共享限流和员工码轮换。伪微信 HTTP 测试验证稳定版 access_token、手机号独立 code、`openid` 与水印；MockMvc 验证角色边界和响应。小程序开发产物持续编译并已在微信开发者工具端口 11927 打开。
+- **尚未完成**：真实微信登录和手机号授权联调尚待轮换后的私有 AppSecret、符合[微信官方主体资质与额度](https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/getPhoneNumber.html)的小程序账号、已迁移数据库及 HTTPS 后端；商家账号身份与完整业务页面尚未实现。已有数据库须按顺序补 V003，不能依赖 MySQL 初始化目录自动补迁移。
+- **下一步 S0-7.1f**：完成真实微信登录和手机号授权联调，补齐商家账号身份、车主五 Tab 与三角色基础业务状态；在具备外部条件前，继续实现可离线验证的页面和接口。
