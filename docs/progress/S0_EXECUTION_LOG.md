@@ -25,6 +25,6 @@
 ## 2026-10-02 · S0-7.1c 技师微信绑定迁移
 
 - **已完成**：新增 V002 `staff_wechat_identity`，按 AppID 保存绑定历史；数据库生成列与唯一索引约束同一 AppID 下一个微信身份及一个员工账号各只有一条有效绑定。V001 生成基线保持不变。
-- **验证**：MySQL CI 脚本增加 V002 重复执行、唯一索引、重复有效绑定拒绝及解绑后保留历史的检查。本机 Docker daemon 未启动，当前推送后的 CI 结果待确认。
+- **验证**：MySQL CI 脚本增加 V002 重复执行、唯一索引、重复有效绑定拒绝及解绑后保留历史的检查。本机 Docker daemon 未启动；[GitHub CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/36980400681) 的 MySQL 作业和整条流水线均已通过。
 - **尚未完成**：数据库迁移尚未接入后端运行时；员工角色/商家状态校验、绑定 API、微信登录接口和 JWT 签发仍待实现。
 - **下一步**：S0-7.1d 接入数据库仓储，服务端以 `openid` 查找/创建车主并校验技师有效绑定；实现受保护的绑定流程和 `/api/auth/wx-login`，补齐并发与越权测试。真实微信联调待私有凭据和后端可达地址。
