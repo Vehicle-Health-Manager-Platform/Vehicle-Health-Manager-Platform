@@ -16,6 +16,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.web.server.ResponseStatusException;
@@ -33,11 +35,12 @@ class JdbcIdentityRepositoryTest {
     @Container
     static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0");
     JdbcTemplate jdbc;
+    DriverManagerDataSource dataSource;
     JdbcIdentityRepository repository;
 
     @BeforeEach
     void setUp() throws Exception {
-        var dataSource = new DriverManagerDataSource(mysql.getJdbcUrl(), mysql.getUsername(), mysql.getPassword());
+        dataSource = new DriverManagerDataSource(mysql.getJdbcUrl(), mysql.getUsername(), mysql.getPassword());
         jdbc = new JdbcTemplate(dataSource);
         jdbc.execute("DROP TABLE IF EXISTS auth_session");
         jdbc.execute("DROP TABLE IF EXISTS auth_rate_limit");
@@ -46,7 +49,7 @@ class JdbcIdentityRepositoryTest {
         jdbc.execute("DROP TABLE IF EXISTS merchant");
         jdbc.execute("DROP TABLE IF EXISTS `user`");
         jdbc.execute("CREATE TABLE `user` (id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, openid VARCHAR(128) UNIQUE, "
-            + "phone VARCHAR(20), status TINYINT NOT NULL DEFAULT 1, is_deleted TINYINT NOT NULL DEFAULT 0)");
+            + "phone VARCHAR(20) UNIQUE, status TINYINT NOT NULL DEFAULT 1, is_deleted TINYINT NOT NULL DEFAULT 0)");
         jdbc.execute("CREATE TABLE merchant (id BIGINT UNSIGNED PRIMARY KEY, status TINYINT NOT NULL, is_deleted TINYINT NOT NULL DEFAULT 0)");
         jdbc.execute("CREATE TABLE staff_account (id BIGINT UNSIGNED PRIMARY KEY, merchant_id BIGINT UNSIGNED, "
             + "role VARCHAR(24), status VARCHAR(24), is_deleted TINYINT NOT NULL DEFAULT 0, employee_code_hash CHAR(64) UNIQUE)");
@@ -128,5 +131,37 @@ class JdbcIdentityRepositoryTest {
         operations.revoke(31);
         assertEquals(403, assertThrows(ResponseStatusException.class,
             () -> repository.bindTechnician("app", "another-openid", replacement)).getStatusCode().value());
+    }
+
+    @Test
+    void phoneCannotBeBoundToTwoOwners() {
+        jdbc.update("INSERT INTO `user` (id,openid,phone) VALUES (1001,'openid-a','13800138000')");
+        jdbc.update("INSERT INTO `user` (id,openid) VALUES (1002,'openid-b')");
+        assertEquals(409, assertThrows(ResponseStatusException.class,
+            () -> repository.bindOwnerPhone(1002, "13800138000")).getStatusCode().value());
+        assertTrue(repository.ownerById(1002).orElseThrow().phone() == null);
+    }
+
+    @Test
+    void concurrentRefreshCanRotateOnlyOnce() throws Exception {
+        var sessions = new JdbcAuthSessionRepository(jdbc);
+        String id = "00000000-0000-0000-0000-000000000002";
+        sessions.create(new AuthSessionRepository.Session(id, "user", 1001, "OWNER", "app", null, null),
+            "initial-hash", Instant.now().plusSeconds(3600));
+        var transaction = new TransactionTemplate(new DataSourceTransactionManager(dataSource));
+        var ready = new CountDownLatch(2);
+        var start = new CountDownLatch(1);
+        var workers = Executors.newFixedThreadPool(2);
+        try {
+            var first = workers.submit(() -> { ready.countDown(); start.await();
+                return transaction.execute(status -> sessions.rotate("initial-hash", "new-hash-a").isPresent()); });
+            var second = workers.submit(() -> { ready.countDown(); start.await();
+                return transaction.execute(status -> sessions.rotate("initial-hash", "new-hash-b").isPresent()); });
+            ready.await();
+            start.countDown();
+            assertTrue(first.get() ^ second.get());
+        } finally {
+            workers.shutdownNow();
+        }
     }
 }

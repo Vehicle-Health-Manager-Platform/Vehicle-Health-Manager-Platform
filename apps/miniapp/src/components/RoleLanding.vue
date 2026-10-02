@@ -113,7 +113,7 @@ async function tryLogout() {
         <input v-model="employeeCode" password placeholder="商家发放的员工码" />
         <button class="login-button" :loading="busy" :disabled="busy || !employeeCode.trim()" @tap="tryBind">绑定技师身份</button>
       </view>
-      <text v-else class="hint">商家按原文使用账号密码及短信验证，接入后端后开放。</text>
+      <text v-if="!supportsWechatLogin" class="hint">商家按原文使用账号密码及短信验证，接入后端后开放。</text>
     </view>
     <text class="footer">角色入口仅供测试预览，不能替代后端授权。</text>
   </view>
