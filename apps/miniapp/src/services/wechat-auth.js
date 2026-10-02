@@ -1,0 +1,36 @@
+const endpoint = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
+
+export function requestWechatLogin(role) {
+  if (!['owner', 'technician'].includes(role)) {
+    return Promise.reject(new Error('当前角色不使用微信授权登录'))
+  }
+  if (!endpoint) {
+    return Promise.reject(new Error('尚未配置服务端地址，微信登录接口无法联调'))
+  }
+
+  return new Promise((resolve, reject) => {
+    uni.login({
+      provider: 'weixin',
+      success: ({ code }) => {
+        if (!code) {
+          reject(new Error('微信未返回临时登录凭证'))
+          return
+        }
+        uni.request({
+          url: `${endpoint}/api/auth/wx-login`,
+          method: 'POST',
+          data: { code, role },
+          success: ({ statusCode, data }) => {
+            if (statusCode >= 200 && statusCode < 300 && data?.code === 0 && data?.data?.access_token) {
+              resolve(data.data)
+            } else {
+              reject(new Error(data?.message || '服务端尚未实现微信登录'))
+            }
+          },
+          fail: () => reject(new Error('无法连接服务端，请检查合法域名与网络')),
+        })
+      },
+      fail: () => reject(new Error('微信授权未完成，请重试')),
+    })
+  })
+}

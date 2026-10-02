@@ -4,9 +4,9 @@
 
 ## 当前过渡原型
 
-现有 `apps/owner`、`apps/merchant`、`apps/technician` 是此前网页方案留下的 Vue3/Vite 原型，**不是微信小程序工程**。`apps/admin` 是可沿用的运营 PC 网页骨架。需要 Node.js 20.19+ 和 npm；执行 `npm install` 后可分别运行 `npm run dev:owner`、`npm run dev:merchant`、`npm run dev:technician`、`npm run dev:admin`，本地端口依次为 5173–5176。`npm run build` 目前仅验证这些网页原型。开发服务器将 `/api` 代理到 `http://127.0.0.1:8080`；后端步骤见 `backend/README.md`。
+现有 `apps/owner`、`apps/merchant`、`apps/technician` 是此前网页方案留下的 Vue3/Vite 原型，**不是微信小程序工程**。`apps/admin` 是交给其他团队的运营 PC 网页骨架。需要 Node.js 20.19+ 和 npm；执行 `npm ci` 后运行 `npm run dev:miniapp` 或 `npm run build:miniapp` 开发/编译目标小程序。`npm run build:legacy-web` 验证旧网页原型；`npm run build` 同时验证旧网页与新小程序。小程序工程详情见 [apps/miniapp/README.md](apps/miniapp/README.md)，后端步骤见 [backend/README.md](backend/README.md)。
 
-目标三端小程序及车主 H5 兜底工程尚待搭建；微信主体/AppID、授权登录和支付资质尚未核实。此前网页构建、截图和 Nginx 冒烟结果不能算作小程序验收。
+`apps/miniapp` 是正在搭建的单测试号三角色 uni-app 工程；其目标是先完成开发者工具编译与角色入口预览，真实微信授权登录及业务接口仍未实现。车主 H5 兜底、正式小程序主体/AppID 与支付资质仍待处理。此前网页构建、截图和 Nginx 冒烟结果不能算作小程序验收。PC 运营后台交由其他团队负责，本团队聚焦小程序与共用接口契约。
 
 ## 项目文档
 
@@ -16,4 +16,4 @@
 - [工程目录说明](docs/STRUCTURE.md)：目录与交付文档模块、页面的对应关系及当前状态。
 - [项目进度与下一步](docs/progress/README.md)：当前状态、近期任务和阶段推进记录。
 
-后续开发以恢复的原始交付文档和[2026-10-02 决策](docs/DECISIONS.md)为准，逐步补齐 uni-app 小程序工程、微信身份字段迁移、真实接口、测试与提审流程。
+后续开发以恢复的原始交付文档、[2026-10-02 决策](docs/DECISIONS.md)和[单测试号设计](docs/superpowers/specs/2026-10-02-single-test-miniapp-design.md)为准，逐步补齐小程序页面、微信身份映射、真实接口、测试与提审流程。

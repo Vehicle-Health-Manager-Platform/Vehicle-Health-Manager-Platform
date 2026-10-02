@@ -14,7 +14,20 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - run: npm run build
+      - run: npm run build:legacy-web
+  miniapp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run build:miniapp
+      - run: test -f apps/miniapp/dist/build/mp-weixin/app.json
+      - run: npm run build:h5 --workspace @autocare/miniapp
+      - run: test -f apps/miniapp/dist/build/h5/index.html
   backend:
     runs-on: ubuntu-latest
     steps:
@@ -55,5 +68,5 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - run: npm run build
+      - run: npm run build:legacy-web
       - run: bash scripts/verify_compose.sh
