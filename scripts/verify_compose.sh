@@ -25,8 +25,19 @@ fi
 rm "$startup_log"
 
 for port in 8081 8082 8083 8084; do
-  if ! response=$(curl --fail --silent --show-error "http://127.0.0.1:$port/"); then
-    echo "::error title=Web entry::Port $port did not return HTTP 200"
+  response=''
+  ready=false
+  for attempt in {1..15}; do
+    if response=$(curl --fail --silent --show-error --max-time 3 "http://127.0.0.1:$port/" 2>/dev/null); then
+      ready=true
+      break
+    fi
+    sleep 2
+  done
+  if [[ "$ready" != true ]]; then
+    echo "::error title=Web entry::Port $port did not return HTTP 200 after 15 attempts"
+    "${compose[@]}" ps --all
+    "${compose[@]}" logs --tail=40 nginx backend
     exit 1
   fi
   if [[ "$response" != *'<html'* ]]; then
