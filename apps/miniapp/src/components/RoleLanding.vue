@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { bindOwnerPhone, bindTechnician, logoutWechat, requestWechatLogin } from '../services/wechat-auth'
+import { clearOwnerSession, setOwnerSession } from '../services/owner-session'
 
 const props = defineProps({
   role: { type: String, required: true },
@@ -13,7 +14,7 @@ const busy = ref(false)
 const status = ref('微信登录服务端已接入；真实联调仍需私有凭据和后端地址')
 const bindingToken = ref('')
 const employeeCode = ref('')
-const accessToken = ref('')
+const accessToken = ref(props.role === 'owner' ? ownerSession.accessToken : '')
 const supportsWechatLogin = computed(() => props.role !== 'merchant')
 
 async function tryLogin() {
@@ -23,6 +24,7 @@ async function tryLogin() {
   try {
     const result = await requestWechatLogin(props.role)
     accessToken.value = result.access_token || ''
+    if (props.role === 'owner' && accessToken.value) setOwnerSession(result)
     bindingToken.value = result.binding_token || ''
     if (result.status === 'BIND_REQUIRED') {
       status.value = '微信身份已验证，请输入商家发放的员工码完成技师绑定'
@@ -63,6 +65,7 @@ async function tryBindPhone(event) {
   busy.value = true
   try {
     const result = await bindOwnerPhone(accessToken.value, code)
+    ownerPhoneBound()
     status.value = `手机号已验证并绑定：${result.phone_masked}`
   } catch (error) {
     status.value = error.message || '手机号绑定失败'
@@ -77,6 +80,7 @@ async function tryLogout() {
   try {
     await logoutWechat(accessToken.value)
     accessToken.value = ''
+    if (props.role === 'owner') clearOwnerSession()
     bindingToken.value = ''
     status.value = '已退出登录，业务令牌已撤销'
   } catch (error) {
@@ -84,6 +88,14 @@ async function tryLogout() {
   } finally {
     busy.value = false
   }
+}
+
+function ownerPhoneBound() {
+  setOwnerSession({ access_token: accessToken.value, user: { phone_bound: true } })
+}
+
+function openOwnerTabs() {
+  uni.switchTab({ url: '/pages/home/index' })
 }
 </script>
 
@@ -108,6 +120,7 @@ async function tryLogout() {
       <text class="state-text">{{ status }}</text>
       <button v-if="supportsWechatLogin" class="login-button" :loading="busy" :disabled="busy" @tap="tryLogin">验证微信登录接口</button>
       <button v-if="role === 'owner' && accessToken" class="login-button" open-type="getPhoneNumber" :disabled="busy" @getphonenumber="tryBindPhone">授权并绑定手机号</button>
+      <button v-if="role === 'owner' && accessToken" class="login-button" :disabled="busy" @tap="openOwnerTabs">进入车主首页</button>
       <button v-if="accessToken" class="logout-button" :disabled="busy" @tap="tryLogout">退出并撤销令牌</button>
       <view v-if="role === 'technician' && bindingToken" class="binding">
         <input v-model="employeeCode" password placeholder="商家发放的员工码" />

@@ -42,3 +42,9 @@
 - **验证**：[PR #3](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/3) 的 [CI 运行 37001116839](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37001116839) 六项作业全部通过。后端 23 项测试无失败、无跳过，其中 6 项 MySQL 容器测试实际执行，覆盖并发刷新只能成功一次、旧凭证重放、退出撤销、手机号唯一绑定、共享限流和员工码轮换。伪微信 HTTP 测试验证稳定版 access_token、手机号独立 code、`openid` 与水印；MockMvc 验证角色边界和响应。小程序开发产物持续编译并已在微信开发者工具端口 11927 打开。
 - **尚未完成**：真实微信登录和手机号授权联调尚待轮换后的私有 AppSecret、符合[微信官方主体资质与额度](https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/getPhoneNumber.html)的小程序账号、已迁移数据库及 HTTPS 后端；商家账号身份与完整业务页面尚未实现。已有数据库须按顺序补 V003，不能依赖 MySQL 初始化目录自动补迁移。
 - **下一步 S0-7.1f**：完成真实微信登录和手机号授权联调，补齐商家账号身份、车主五 Tab 与三角色基础业务状态；在具备外部条件前，继续实现可离线验证的页面和接口。
+
+## 2026-10-03 · S0-7.1f-1 车主五 Tab 导航骨架
+
+- **已完成**：小程序新增首页、服务、AI、档案、我的五个原生 Tab，车主微信登录成功后可进入首页；未登录时各 Tab 提示先验证身份。已登录页面仅展示对应能力的待接入说明，不填充虚构车辆、订单或健康数据。会话只在本次应用运行的内存中共享；“我的”可返回身份页退出并撤销服务端令牌。
+- **验证**：本机 `npm run build:mp-weixin --workspace @autocare/miniapp` 和 `npm run build:h5 --workspace @autocare/miniapp` 均通过；小程序生成的 `app.json` 包含五个 Tab 路由。真实微信授权与业务数据仍未联调。
+- **下一步**：补齐可由真实接口结果驱动的加载、空、错误和无权限状态；商家账号身份按账号密码与短信二次验证契约实现。真实微信联调仍需轮换后的私有 AppSecret、已迁移 V003 的数据库、HTTPS 后端及可用的手机号测试账号。
