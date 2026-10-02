@@ -21,7 +21,8 @@ export function requestWechatLogin(role) {
           method: 'POST',
           data: { code, role },
           success: ({ statusCode, data }) => {
-            if (statusCode >= 200 && statusCode < 300 && data?.code === 0 && data?.data?.access_token) {
+            if (statusCode >= 200 && statusCode < 300 && data?.code === 0 &&
+                (data?.data?.access_token || (role === 'technician' && data?.data?.status === 'BIND_REQUIRED' && data?.data?.binding_token))) {
               resolve(data.data)
             } else {
               reject(new Error(data?.message || '服务端尚未实现微信登录'))
@@ -31,6 +32,28 @@ export function requestWechatLogin(role) {
         })
       },
       fail: () => reject(new Error('微信授权未完成，请重试')),
+    })
+  })
+}
+
+export function bindTechnician(bindingToken, employeeCode) {
+  if (!endpoint || !bindingToken || !employeeCode) {
+    return Promise.reject(new Error('请输入有效员工码并重新登录'))
+  }
+  return new Promise((resolve, reject) => {
+    uni.request({
+      url: `${endpoint}/api/auth/technician/bind`,
+      method: 'POST',
+      header: { Authorization: `Bearer ${bindingToken}` },
+      data: { employee_code: employeeCode },
+      success: ({ statusCode, data }) => {
+        if (statusCode >= 200 && statusCode < 300 && data?.code === 0 && data?.data?.access_token) {
+          resolve(data.data)
+        } else {
+          reject(new Error(data?.message || '员工码绑定失败'))
+        }
+      },
+      fail: () => reject(new Error('无法连接服务端，请检查网络')),
     })
   })
 }

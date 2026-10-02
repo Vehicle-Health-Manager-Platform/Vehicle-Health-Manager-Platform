@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { requestWechatLogin } from '../services/wechat-auth'
+import { bindTechnician, requestWechatLogin } from '../services/wechat-auth'
 
 const props = defineProps({
   role: { type: String, required: true },
@@ -10,7 +10,9 @@ const props = defineProps({
 })
 
 const busy = ref(false)
-const status = ref('业务接口尚未接入')
+const status = ref('微信登录服务端已接入；真实联调仍需私有凭据和后端地址')
+const bindingToken = ref('')
+const employeeCode = ref('')
 const supportsWechatLogin = computed(() => props.role !== 'merchant')
 
 async function tryLogin() {
@@ -18,10 +20,32 @@ async function tryLogin() {
   busy.value = true
   status.value = '正在请求微信身份…'
   try {
-    await requestWechatLogin(props.role)
-    status.value = '登录接口已响应，后续需完成身份绑定与权限校验'
+    const result = await requestWechatLogin(props.role)
+    bindingToken.value = result.binding_token || ''
+    if (result.status === 'BIND_REQUIRED') {
+      status.value = '微信身份已验证，请输入商家发放的员工码完成技师绑定'
+    } else if (props.role === 'owner') {
+      status.value = result.user?.phone_bound ? '车主身份已验证' : '车主身份已验证；手机号尚未绑定'
+    } else {
+      status.value = '技师身份与商家权限已验证'
+    }
   } catch (error) {
     status.value = error.message || '登录请求失败，请检查网络与服务端配置'
+  } finally {
+    busy.value = false
+  }
+}
+
+async function tryBind() {
+  if (busy.value) return
+  busy.value = true
+  try {
+    await bindTechnician(bindingToken.value, employeeCode.value.trim())
+    bindingToken.value = ''
+    employeeCode.value = ''
+    status.value = '技师身份绑定成功，业务权限已验证'
+  } catch (error) {
+    status.value = error.message || '员工码绑定失败'
   } finally {
     busy.value = false
   }
@@ -48,6 +72,10 @@ async function tryLogin() {
       <text class="state-label">接入状态</text>
       <text class="state-text">{{ status }}</text>
       <button v-if="supportsWechatLogin" class="login-button" :loading="busy" :disabled="busy" @tap="tryLogin">验证微信登录接口</button>
+      <view v-if="role === 'technician' && bindingToken" class="binding">
+        <input v-model="employeeCode" password placeholder="商家发放的员工码" />
+        <button class="login-button" :loading="busy" :disabled="busy || !employeeCode.trim()" @tap="tryBind">绑定技师身份</button>
+      </view>
       <text v-else class="hint">商家按原文使用账号密码及短信验证，接入后端后开放。</text>
     </view>
     <text class="footer">角色入口仅供测试预览，不能替代后端授权。</text>
@@ -69,6 +97,8 @@ async function tryLogin() {
 .state-text { display: block; margin-top: 10rpx; font-size: 27rpx; line-height: 40rpx; }
 .login-button { margin-top: 26rpx; border-radius: 16rpx; background: #00b42a; color: #fff; font-size: 28rpx; }
 .login-button::after { border: 0; }
+.binding { margin-top: 20rpx; }
+.binding input { padding: 20rpx; border: 1rpx solid #d9dfe8; border-radius: 12rpx; }
 .hint, .footer { display: block; margin-top: 20rpx; color: #86909c; font-size: 23rpx; line-height: 36rpx; }
 .footer { text-align: center; }
 </style>
