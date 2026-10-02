@@ -46,12 +46,18 @@
 ## 2026-10-03 · S0-7.1f-1 车主五 Tab 导航骨架
 
 - **已完成**：小程序新增首页、服务、AI、档案、我的五个原生 Tab，车主微信登录成功后可进入首页；未登录时各 Tab 提示先验证身份。已登录页面仅展示对应能力的待接入说明，不填充虚构车辆、订单或健康数据。会话只在本次应用运行的内存中共享；“我的”可返回身份页退出并撤销服务端令牌。
-- **验证**：本机 `npm run build:mp-weixin --workspace @autocare/miniapp` 和 `npm run build:h5 --workspace @autocare/miniapp` 均通过；小程序生成的 `app.json` 包含五个 Tab 路由。真实微信授权与业务数据仍未联调。
+- **验证**：本机 `npm run build:mp-weixin --workspace @autocare/miniapp` 和 `npm run build:h5 --workspace @autocare/miniapp` 均通过；小程序生成的 `app.json` 包含五个 Tab 路由。[PR #4 CI 37042304336](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37042304336) 六项作业通过。真实微信授权与业务数据仍未联调。
 - **下一步**：补齐可由真实接口结果驱动的加载、空、错误和无权限状态；商家账号身份按账号密码与短信二次验证契约实现。真实微信联调仍需轮换后的私有 AppSecret、已迁移 V003 的数据库、HTTPS 后端及可用的手机号测试账号。
 
 ## 2026-10-03 · S0-7.1f-2 商家账号身份核心
 
 - **已完成**：新增商家账号密码与一次性短信码双重校验接口及小程序输入入口；复用 `staff_account`、`sms_code`、`auth_session` 和共享限流表。只有已审核通过商家下的有效 `MERCHANT` 员工可取得商家 JWT，受保护请求和刷新均复核数据库状态；短信码按账号隔离并只存 BCrypt 摘要。
-- **验证**：后端 MockMvc 覆盖密码、短信码、重复消费、角色边界与禁用后旧令牌失效；MySQL 容器测试覆盖账号隔离、单次消费、重发失效及发送失败事务回滚。小程序和 H5 构建通过；远端 CI 结果以本步骤 PR 为准。
+- **验证**：后端 MockMvc 覆盖密码、短信码、重复消费、角色边界与禁用后旧令牌失效；MySQL 容器测试覆盖账号隔离、单次消费、重发失效及发送失败事务回滚。小程序和 H5 构建通过；[PR #5 CI 37044187253](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37044187253) 六项作业通过，后端 28 项测试无失败、无跳过。
 - **尚未完成**：短信服务商未确定，生产环境无 `MerchantSmsSender` 实现，验证码请求返回 503；商家账号可信创建与密码重置、三角色业务页面状态、真实微信及短信联调仍待完成。
 - **下一步**：选择短信服务商后接入私有发送实现；同时继续真实接口驱动的加载、空、错误和无权限状态。真实微信联调需外部凭据、数据库、HTTPS 和测试账号条件齐备。
+
+## 2026-10-03 · 文档与计划核对
+
+- **已核对**：PR #3 已合入仍对 `main` 开放的 PR #2 分支；PR #4、#5 保持堆叠。更新[当前进度](CURRENT_STATUS.md)、[下一步规划](NEXT_STEPS.md)和[依赖清单](S0_DEPENDENCIES.md)，区分 CI、模拟器、真机与真实服务联调。OpenAPI 生成器补齐已实现认证接口及其 Bearer 边界；原始 43 个核心接口追踪基线保持不变。
+- **开发者工具现状**：此前编译产物预览成功；最近截图的启动失败来自把源码仓库根目录导入开发者工具，当前提交的模拟器复核尚未完成。操作步骤见[小程序 README](../../apps/miniapp/README.md)。
+- **下一步**：先完成 S0-7.1f-3 的真实状态处理，同时复核当前产物导入；外部条件齐备后再执行 S0-7.1f-4 身份联调。

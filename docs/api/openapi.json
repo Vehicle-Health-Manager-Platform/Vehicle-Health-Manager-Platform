@@ -13,7 +13,7 @@
   "paths": {
     "/api/auth/wx-login": {
       "post": {
-        "summary": "微信登录",
+        "summary": "微信车主或技师登录",
         "operationId": "post_api_auth_wx_login",
         "tags": [
           "auth"
@@ -21,17 +21,7 @@
         "x-feature-ids": [
           "F01"
         ],
-        "parameters": [
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "统一成功响应",
@@ -58,6 +48,12 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "429": {
+            "description": "认证请求受限，code=42900"
+          },
+          "503": {
+            "description": "所需数据库或外部服务尚未配置，code=50300"
           }
         },
         "security": [],
@@ -67,17 +63,30 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "additionalProperties": true
+                "required": [
+                  "code",
+                  "role"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
               }
             }
           }
         },
-        "x-roles": "车主/技师"
+        "x-roles": "车主/技师",
+        "x-implementation-status": "core-implemented"
       }
     },
     "/api/auth/refresh": {
       "post": {
-        "summary": "刷新token",
+        "summary": "轮换刷新凭证",
         "operationId": "post_api_auth_refresh",
         "tags": [
           "auth"
@@ -85,17 +94,7 @@
         "x-feature-ids": [
           "F01"
         ],
-        "parameters": [
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "统一成功响应",
@@ -122,6 +121,12 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "429": {
+            "description": "认证请求受限，code=42900"
+          },
+          "503": {
+            "description": "所需数据库或外部服务尚未配置，code=50300"
           }
         },
         "security": [],
@@ -131,11 +136,21 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "additionalProperties": true
+                "required": [
+                  "refresh_token"
+                ],
+                "properties": {
+                  "refresh_token": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
               }
             }
           }
-        }
+        },
+        "x-roles": "车主/商家/技师",
+        "x-implementation-status": "core-implemented"
       }
     },
     "/api/vehicle/list": {
@@ -2408,17 +2423,7 @@
           "auth"
         ],
         "x-feature-ids": [],
-        "parameters": [
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "统一成功响应",
@@ -2470,17 +2475,7 @@
           "auth"
         ],
         "x-feature-ids": [],
-        "parameters": [
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "统一成功响应",
@@ -3387,6 +3382,349 @@
           }
         ],
         "x-roles": "已登录用户"
+      }
+    },
+    "/api/auth/technician/bind": {
+      "post": {
+        "summary": "绑定技师员工码",
+        "operationId": "post_api_auth_technician_bind",
+        "tags": [
+          "auth"
+        ],
+        "x-feature-ids": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "429": {
+            "description": "认证请求受限，code=42900"
+          },
+          "503": {
+            "description": "所需数据库或外部服务尚未配置，code=50300"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "employee_code"
+                ],
+                "properties": {
+                  "employee_code": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "x-roles": "持有绑定凭证的技师",
+        "x-implementation-status": "core-implemented"
+      }
+    },
+    "/api/auth/phone/bind": {
+      "post": {
+        "summary": "绑定车主微信手机号",
+        "operationId": "post_api_auth_phone_bind",
+        "tags": [
+          "auth"
+        ],
+        "x-feature-ids": [
+          "F01"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "429": {
+            "description": "认证请求受限，code=42900"
+          },
+          "503": {
+            "description": "所需数据库或外部服务尚未配置，code=50300"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "code"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "x-roles": "车主",
+        "x-implementation-status": "core-implemented"
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "summary": "撤销当前会话",
+        "operationId": "post_api_auth_logout",
+        "tags": [
+          "auth"
+        ],
+        "x-feature-ids": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "429": {
+            "description": "认证请求受限，code=42900"
+          },
+          "503": {
+            "description": "所需数据库或外部服务尚未配置，code=50300"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "车主/商家/技师",
+        "x-implementation-status": "core-implemented"
+      }
+    },
+    "/api/auth/merchant/code": {
+      "post": {
+        "summary": "请求商家登录短信码",
+        "operationId": "post_api_auth_merchant_code",
+        "tags": [
+          "auth"
+        ],
+        "x-feature-ids": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "429": {
+            "description": "认证请求受限，code=42900"
+          },
+          "503": {
+            "description": "所需数据库或外部服务尚未配置，code=50300"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "account",
+                  "password"
+                ],
+                "properties": {
+                  "account": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "x-roles": "商家",
+        "x-implementation-status": "core-implemented",
+        "x-external-dependency": "生产短信发送器尚未配置，当前返回 503"
+      }
+    },
+    "/api/auth/merchant/login": {
+      "post": {
+        "summary": "商家密码与短信码登录",
+        "operationId": "post_api_auth_merchant_login",
+        "tags": [
+          "auth"
+        ],
+        "x-feature-ids": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "429": {
+            "description": "认证请求受限，code=42900"
+          },
+          "503": {
+            "description": "所需数据库或外部服务尚未配置，code=50300"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "account",
+                  "password",
+                  "sms_code"
+                ],
+                "properties": {
+                  "account": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "sms_code": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "x-roles": "商家",
+        "x-implementation-status": "core-implemented"
       }
     },
     "/api/dev/token": {
