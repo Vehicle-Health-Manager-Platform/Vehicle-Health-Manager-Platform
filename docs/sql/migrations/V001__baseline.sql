@@ -4,9 +4,10 @@
 SET NAMES utf8mb4;
 CREATE TABLE IF NOT EXISTS `user` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `phone` VARCHAR(20) NOT NULL,
+  `phone` VARCHAR(20) DEFAULT NULL,
   `nickname` VARCHAR(64) DEFAULT NULL,
   `avatar_url` VARCHAR(512) DEFAULT NULL,
+  `openid` VARCHAR(128) DEFAULT NULL,
   `inviter_id` BIGINT UNSIGNED DEFAULT NULL COMMENT '邀请人ID',
   `point_balance` INT NOT NULL DEFAULT 0 COMMENT '积分余额',
   `status` TINYINT NOT NULL DEFAULT 1 COMMENT '1正常2禁用',
@@ -14,6 +15,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `is_deleted` TINYINT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_openid` (`openid`),
   UNIQUE KEY `uk_phone` (`phone`),
   KEY `idx_inviter` (`inviter_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';

@@ -17,7 +17,7 @@ OUTPUT = ROOT / "docs" / "progress" / "S0_TRACEABILITY.csv"
 # The mapping is intentionally explicit so reviewers can correct a contract
 # without silently changing it when the source document is reformatted.
 FEATURES = {
-    "F01": ("S1", "C01", "/api/auth/login,/api/auth/refresh", "user"),
+    "F01": ("S1", "C01", "/api/auth/wx-login,/api/auth/refresh", "user"),
     "F02": ("S1", "C02-C06", "/api/vehicle/list,/api/vehicle/add,/api/vehicle/vin-decode,/api/vehicle/ocr-license,/api/brand/list,/api/series/list,/api/model/list", "vehicle,brand,series,model"),
     "F03": ("S1", "C13-C14", "/api/archive/add,/api/archive/list", "vehicle_archive,vehicle"),
     "F04": ("S1", "C07,C15", "/api/home/dashboard,/api/home/reminders", "vehicle,vehicle_archive,maintenance_rule"),

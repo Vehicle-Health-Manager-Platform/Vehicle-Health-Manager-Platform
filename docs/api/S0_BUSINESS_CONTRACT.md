@@ -1,6 +1,6 @@
 # S0 业务接口与状态契约 v0.1
 
-> 2026-09-29。此文件定义 S0 后续实现的接口草案；标【假设】的规则是工程口径，尚未与真实支付、短信、AI/OCR 服务联调。交付文档 §8.3 的 43 个核心 API 仍在 `S0_TRACEABILITY.csv` 中逐项追踪，网页登录路径按用户决定改为 `/api/auth/login`。
+> 2026-10-02。此文件定义 S0 后续实现的接口草案；标【假设】的规则是工程口径，尚未与真实微信登录、支付、短信、AI/OCR 服务联调。交付文档 §8.3 的 43 个核心 API 仍在 `S0_TRACEABILITY.csv` 中逐项追踪；车主/技师登录路径按原文恢复为 `/api/auth/wx-login`。
 
 ## 通用约束
 
@@ -38,8 +38,8 @@ stateDiagram-v2
 
 | 方法与路径 | 角色 | 关键请求/响应字段 | 前置条件与失败处理 |
 | --- | --- | --- | --- |
-| `POST /api/auth/sms-code` | 车主/技师/商家 | `phone, purpose` → `retry_after_seconds` | 60 秒内重复发送和每日超限返回 `42900`；真实短信凭据缺失时不可伪装发送成功 |
-| `POST /api/auth/login` | 车主/技师 | `phone, sms_code, role` → `access_token, refresh_token, expires_in, user` | 验证码一次性消费；禁用账号拒绝；技师首次登录后须绑定工号 |
+| `POST /api/auth/sms-code` | 商家/需短信验证的账号 | `phone, purpose` → `retry_after_seconds` | 60 秒内重复发送和每日超限返回 `42900`；真实短信凭据缺失时不可伪装发送成功 |
+| `POST /api/auth/wx-login` | 车主/技师 | 微信临时 `code, role` → `access_token, refresh_token, expires_in, user` | 服务端换取微信身份并关联本平台用户；车主手机号绑定与技师首次工号绑定须完成相应校验；禁用账号拒绝。微信平台字段及授权方式待资质和开发环境确认 |
 | `POST /api/auth/staff-login` | 商家/运营 | `account, password, second_factor` → token 与角色 | 密码 bcrypt；商家状态和运营权限二次校验 |
 | `GET /api/order/slots` | 车主 | `merchant_id, project_id, date` → `slot_id, starts_at, ends_at, capacity_left` | 项目下架或无可用时段返回空列表 |
 | `POST /api/order/create` | 车主 | `merchant_project_id, vehicle_id, slot_id, coupon_id?` → `order_id, amount_due, expires_at` | 服务端重算价格并保存项目/商家/报价快照；锁时段及预占券必须同一事务；冲突返回 `40001` |

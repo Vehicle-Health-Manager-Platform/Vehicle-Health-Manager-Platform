@@ -11,10 +11,10 @@
     }
   ],
   "paths": {
-    "/api/auth/login": {
+    "/api/auth/wx-login": {
       "post": {
-        "summary": "手机号验证码登录",
-        "operationId": "post_api_auth_login",
+        "summary": "微信登录",
+        "operationId": "post_api_auth_wx_login",
         "tags": [
           "auth"
         ],
@@ -2459,7 +2459,7 @@
             }
           }
         },
-        "x-roles": "车主/技师/商家"
+        "x-roles": "商家/需短信验证的账号"
       }
     },
     "/api/auth/staff-login": {

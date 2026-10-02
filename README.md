@@ -1,10 +1,12 @@
 # 汽车健康管家平台
 
-本仓库处于 S0 基础搭建阶段。四端为响应式网页；页面路由占位已建立，业务功能尚未实现。
+本仓库处于 S0 基础搭建阶段。2026-10-02 起按用户提供的原始交付文档 v1.0 开发：车主微信小程序为主、H5 兜底，商家和技师使用微信小程序，运营使用 PC 网页。业务功能尚未实现。
 
-## 本地运行四端网页
+## 当前过渡原型
 
-需要 Node.js 20.19+ 和 npm。执行 `npm install` 后，可分别运行 `npm run dev:owner`、`npm run dev:merchant`、`npm run dev:technician`、`npm run dev:admin`，本地端口依次为 5173–5176。`npm run build` 构建四端。开发服务器将 `/api` 代理到 `http://127.0.0.1:8080`；后端启动步骤见 `backend/README.md`。
+现有 `apps/owner`、`apps/merchant`、`apps/technician` 是此前网页方案留下的 Vue3/Vite 原型，**不是微信小程序工程**。`apps/admin` 是可沿用的运营 PC 网页骨架。需要 Node.js 20.19+ 和 npm；执行 `npm install` 后可分别运行 `npm run dev:owner`、`npm run dev:merchant`、`npm run dev:technician`、`npm run dev:admin`，本地端口依次为 5173–5176。`npm run build` 目前仅验证这些网页原型。开发服务器将 `/api` 代理到 `http://127.0.0.1:8080`；后端步骤见 `backend/README.md`。
+
+目标三端小程序及车主 H5 兜底工程尚待搭建；微信主体/AppID、授权登录和支付资质尚未核实。此前网页构建、截图和 Nginx 冒烟结果不能算作小程序验收。
 
 ## 项目文档
 
@@ -14,4 +16,4 @@
 - [工程目录说明](docs/STRUCTURE.md)：目录与交付文档模块、页面的对应关系及当前状态。
 - [项目进度与下一步](docs/progress/README.md)：当前状态、近期任务和阶段推进记录。
 
-后续开发按计划从 S0 的需求契约与可运行工程配置开始。实施时以交付文档为需求依据，并在仓库中维护完整的数据库迁移、接口文档与测试结果。
+后续开发以恢复的原始交付文档和[2026-10-02 决策](docs/DECISIONS.md)为准，逐步补齐 uni-app 小程序工程、微信身份字段迁移、真实接口、测试与提审流程。
