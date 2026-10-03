@@ -187,6 +187,24 @@ class JdbcWriteIntegrityTest {
         assertEquals(3, count("audit_log"));
     }
 
+    @Test void serializationFailureRollsBackEarlierBusinessWrite() {
+        Object unserializable = new Object() {
+            public String getValue() { throw new IllegalStateException("private serialization detail"); }
+        };
+        ResponseStatusException error = assertThrows(ResponseStatusException.class, () -> integrity.execute(
+            new WriteIntegrityService.Actor("user", 1001), "POST", "/api/test/write", key,
+            mapper.valueToTree(Map.of("current_mileage", 20)), () -> {}, () -> {
+                jdbc.update("UPDATE vehicle SET current_mileage=20 WHERE id=1001");
+                return new WriteIntegrityService.Change("TEST_WRITE", "vehicle", 1001,
+                    Map.of("current_mileage", 10), Map.of("current_mileage", 20), Map.of("value", unserializable));
+            }));
+        assertEquals(503, error.getStatusCode().value());
+        assertFalse(error.getReason().contains("private"));
+        assertEquals(10, mileage());
+        assertEquals(0, count("audit_log"));
+        assertEquals(0, count("idempotency_record"));
+    }
+
     @Test void canonicalJsonAndActorTypeScopeWorkForReusableService() throws Exception {
         AtomicInteger executions = new AtomicInteger();
         var change = new WriteIntegrityService.Change("TEST_WRITE", "vehicle", 1001,
