@@ -5,6 +5,7 @@ services:
     ports: ["127.0.0.1:9000:9000"]
   upload-init:
     profiles: [upload-init]
+    platform: linux/amd64
     build: ../upload-init
     environment:
       MINIO_ENDPOINT: http://minio:9000

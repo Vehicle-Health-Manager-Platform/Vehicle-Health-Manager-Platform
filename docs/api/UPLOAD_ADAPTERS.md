@@ -36,7 +36,7 @@ docker compose --env-file .env -f deploy/compose/compose.yml -f deploy/compose/u
 docker compose --env-file .env -f deploy/compose/compose.yml -f deploy/compose/upload.yml --profile uploads up -d --build
 ```
 
-首次初始化显式创建/检查专用私有桶、新建仅能查询该桶策略、列举该桶并读写删除 `uploads/*` 的独立账号。已有账号或同名 IAM 策略时拒绝覆盖；已有桶策略不私有时拒绝更改。部分初始化失败可能留下新建资源，需要操作方检查并恢复，不能直接删除用户已有配置。已人工配置好桶/账号时跳过初始化命令，使用已有配置直接启动。root 配置只传给初始化容器；应用只收到上传专用凭据。初始化工具固定 `minio/mc:RELEASE.2025-08-13T08-35-41Z`。
+首次初始化显式创建/检查专用私有桶、新建仅能查询该桶策略、列举该桶并读写删除 `uploads/*` 的独立账号。已有账号或同名 IAM 策略时拒绝覆盖；已有桶策略不私有时拒绝更改。部分初始化失败可能留下新建资源，需要操作方检查并恢复，不能直接删除用户已有配置。已人工配置好桶/账号时跳过初始化命令，使用已有配置直接启动。root 配置只传给初始化容器；应用只收到上传专用凭据。初始化工具使用官方固定版本 `RELEASE.2025-08-13T08-35-41Z` 的 linux-amd64 发布资产并校验官方 SHA-256；对应 Docker Hub 镜像已无法拉取，不依赖它。
 
 开发叠加配置仅把 MinIO S3 端口映射到 `127.0.0.1:9000`，可配 `MINIO_PUBLIC_ENDPOINT=http://127.0.0.1:9000` 做本机验证。真实微信客户端不能访问开发机回环地址；实际部署须提供合法 HTTPS S3 域名，反向代理保留签名涉及的 host、路径及查询，不共用仅代理 `/api/` 的前端地址。
 
