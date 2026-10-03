@@ -157,4 +157,26 @@ class PrivateUploadTest {
         try { rejected(UNAVAILABLE, () -> upload("a.png", PNG)); assertTrue(calls.isEmpty()); }
         finally { TransactionSynchronizationManager.setActualTransactionActive(false); }
     }
+    @Test void cleanupEventFailureDoesNotExposeItsPrivateError() {
+        putFails = true; deleteFails = true;
+        var service = new PrivateUploadService(scanner, store, repository,
+            key -> { throw new IllegalStateException("private monitoring output"); });
+        rejected(UNAVAILABLE, () -> service.upload(OWNER, "a.png", new ByteArrayInputStream(PNG)));
+        assertEquals(List.of("scan", "put", "delete"), calls);
+    }
+    @Test void privateTargetCheckAndReadDatabaseFailuresAreSafe() {
+        var failingStore = new PrivateObjectStore() {
+            public boolean isPrivate() { throw new IllegalStateException("private bucket policy"); }
+            public void put(String key, String type, byte[] bytes) { fail("Must not store"); }
+            public void delete(String key) { fail("Must not delete"); }
+        };
+        rejected(UNAVAILABLE, () -> new PrivateUploadService(scanner, failingStore, repository)
+            .upload(OWNER, "a.png", new ByteArrayInputStream(PNG)));
+        assertTrue(calls.isEmpty());
+        var failingRepository = new FileMetadataRepository() {
+            public long saveClean(Actor actor, String key, String type, long size) { throw new IllegalStateException(); }
+            public Optional<Metadata> findOwned(Actor actor, long id) { throw new IllegalStateException("private SQL query"); }
+        };
+        rejected(UNAVAILABLE, () -> new PrivateUploadService(scanner, store, failingRepository).readable(OWNER, 7));
+    }
 }

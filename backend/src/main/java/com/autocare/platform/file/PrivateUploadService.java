@@ -18,9 +18,7 @@ public class PrivateUploadService {
     private final CleanupEvents events;
 
     public PrivateUploadService(VirusScanner scanner, PrivateObjectStore store, FileMetadataRepository repository) {
-        this(scanner, store, repository, key -> LoggerFactory.getLogger(PrivateUploadService.class)
-            .atWarn().addKeyValue("event", "upload_cleanup_failed").addKeyValue("object_key", key)
-            .log("Private upload cleanup requires retry"));
+        this(scanner, store, repository, PrivateUploadService::logOrphan);
     }
     public PrivateUploadService(VirusScanner scanner, PrivateObjectStore store,
                                 FileMetadataRepository repository, CleanupEvents events) {
@@ -49,9 +47,17 @@ public class PrivateUploadService {
             return new Uploaded(id, file.contentType(), file.bytes().length);
         } catch (RuntimeException exception) {
             try { store.delete(key); }
-            catch (RuntimeException cleanup) { events.orphaned(key); }
+            catch (RuntimeException cleanup) {
+                try { events.orphaned(key); }
+                catch (RuntimeException eventFailure) { logOrphan(key); }
+            }
             throw new UploadException(UNAVAILABLE);
         }
+    }
+    private static void logOrphan(String key) {
+        LoggerFactory.getLogger(PrivateUploadService.class).atWarn()
+            .addKeyValue("event", "upload_cleanup_failed").addKeyValue("object_key", key)
+            .log("Private upload cleanup requires retry");
     }
     /** Trusted internal use only. A future URL adapter must recheck access before signing. */
     public FileMetadataRepository.Metadata readable(FileMetadataRepository.Actor actor, long id) {

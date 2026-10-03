@@ -6,6 +6,8 @@ Java 17 + Spring Boot 3.x 模块化单体。`src/main/java/com/autocare/platform
 
 S0 写入完整性提供可复用的 24 小时幂等事务服务：业务变更、成功响应缓存和成功审计一同提交，失败全部回滚；缓存重放前仍复核权限。仅 `local` profile 的 `POST /api/demo/vehicles/{id}/mileage` 首次接入，需车主 JWT、UUID `Idempotency-Key` 和已配置的测试数据库，不自动创建车辆。请求契约、复现与接入限制见[写入完整性说明](../docs/api/WRITE_INTEGRITY.md)。完整 `mvn test` 需要可运行的 Docker，以实际执行 MySQL Testcontainers 测试；未连接 Docker 的运行不能作为完整测试通过证据。
 
+S0 [私有上传核心](../docs/api/PRIVATE_UPLOAD_CORE.md)提供内部文件校验、扫描与存储接口、JDBC 元数据仓储及失败删除补偿；仅明确扫描通过的文件可存储，内部读取检查归属和扫描状态。真实 MinIO/ClamAV 适配器、HTTP 上传、签名 URL 和业务附件接入尚未实现，缺少依赖时服务拒绝上传。
+
 微信登录的服务端 `code2Session` 适配器位于 `gateway/wechat`。通过私有环境变量 `WECHAT_APP_ID` 和 `WECHAT_APP_SECRET` 配置；仓库的 `.env.example` 只保留公开测试 AppID 和不可用的密钥占位值。适配器向微信官方接口交换一次性 `wx.login` code，解析 `openid`/可选 `unionid`，不把 `session_key` 放入返回对象。
 
 S0-7.1d 提供 `POST /api/auth/wx-login`：请求 `{ "code": "...", "role": "owner|technician" }`。车主按 `user.openid` 查找/创建，并返回 15 分钟 JWT、`user.phone_bound`；技师已绑定且员工与商家有效时返回 JWT，未绑定时返回 `status=BIND_REQUIRED`、5 分钟 `binding_token`。使用该凭证调用 `POST /api/auth/technician/bind`，请求 `{ "employee_code": "..." }`，成功后获得技师 JWT。员工码按现有 `staff_account.employee_code_hash` 的 SHA-256 十六进制摘要匹配，必须由受信任的商家员工管理流程预先设置为高熵码。绑定冲突返回 409；禁用或解绑后已有业务 JWT 在下次请求时失效。绑定凭证不能访问业务 API。
