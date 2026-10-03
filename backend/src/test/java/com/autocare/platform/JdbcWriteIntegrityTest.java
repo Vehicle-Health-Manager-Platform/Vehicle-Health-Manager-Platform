@@ -28,7 +28,9 @@ import static org.junit.jupiter.api.Assertions.*;
 // Required in CI: absence of Docker is a failure, never a silent skip.
 @Testcontainers
 class JdbcWriteIntegrityTest {
-    @Container static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0");
+    // Only this disposable container permits triggers for fault injection.
+    @Container static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0")
+        .withCommand("--log-bin-trust-function-creators=1");
     static JdbcTemplate jdbc;
     static final ObjectMapper mapper = new ObjectMapper();
     WriteIntegrityService integrity;
