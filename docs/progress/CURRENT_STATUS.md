@@ -11,10 +11,11 @@
 | 车主与技师微信身份 | 自动化验证通过，真实微信未联调 | [PR #2](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/2) 实现身份持久化、角色授权与绑定；[PR #3](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/3) 实现手机号授权、员工码、限流及会话轮换/撤销。测试使用伪微信响应。 |
 | 商家账号身份 | 核心与 CI 已验证，短信未接通 | [PR #5](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/5) 实现密码加一次性短信码、商家状态复核及小程序入口。[PR #5 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37044187253) 六项通过，后端 28 项测试无失败、无跳过。服务商未定，生产环境没有短信发送实现，验证码请求返回 503。 |
 | 数据库 | V001–V003 在 CI 验证 | 基线 39 表，V002 增至 40 表，V003 增至 42 表；已有数据库是否应用 V002、V003 尚未确认。不能把新数据卷的自动初始化视作已有库迁移。 |
-| S0 基础设施与横向能力 | 部分 CI 验证，M0 未通过 | Compose 冒烟已覆盖既有基础服务；私有上传、24 小时幂等、审计、完整健康监控及真实部署验收仍待完成。运营 PC 后台由协作团队负责。 |
+| S0 基础设施与横向能力 | 部分 CI 验证，M0 未通过 | Compose 冒烟已覆盖既有基础服务；幂等事务与成功审计核心已验证，私有上传、正式业务接入、完整安全审计、健康监控及真实部署验收仍待完成。运营 PC 后台由协作团队负责。 |
+| 写入幂等与成功审计核心 | CI 与真实 MySQL 容器验证通过 | [PR #8](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/8) 实现 24 小时幂等、权限复核、并发去重与业务/响应/审计原子提交；首次接入仅为 local 里程写入示例。后端 45 项测试无失败、无跳过，其中本步 12 项 MySQL 测试实际执行；[CI 37100103549](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37100103549) 六项通过。[接口与接入范围](../api/WRITE_INTEGRITY.md)。 |
 | 三角色身份页面状态（S0-7.1f-3） | 离线与模拟器验证通过 | 统一加载、失败与重试状态；修复车主会话引用；16 项 Node 测试和 H5 22 项页面交互检查通过。微信开发者工具在当前编译产物中验证测试入口、三角色和五 Tab 共 9 条路由；真实登录、短信和业务列表空状态不在此次验证结果内。 |
 
-截至本次更新，[PR #3](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/3) 已合入 PR #2 的分支；PR #2 仍对 `main` 开放，PR #4、#5 仍为堆叠 PR。**上述功能尚未全部进入 `main`。** 计划中的合并与基线调整见 [下一步规划](NEXT_STEPS.md)。
+截至本次更新，[PR #3](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/3) 已合入 PR #2 的分支；PR #2 仍对 `main` 开放，PR #4–#8 为堆叠 PR，PR #8 以 PR #7 为基线。**上述功能尚未全部进入 `main`。** 计划中的合并与基线调整见 [下一步规划](NEXT_STEPS.md)。
 
 ## 开发者工具与真实联调
 

@@ -6,15 +6,19 @@
 
 S0-7.1f-3 已完成现有身份接口的页面状态处理：16 项离线测试、H5 22 项交互断言、小程序/H5 构建和微信模拟器 9 条路由验证通过。业务读接口尚未接入，列表加载与空状态随对应接口逐项完成，不以待接入页充当空列表验收。
 
+S0 幂等与成功审计核心已在 [PR #8](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/8) 完成：后端 45 项测试无失败、无跳过，本步 12 项 MySQL 测试实际执行，六项 CI 通过。首次接入为 local 里程示例，正式业务写请求仍需逐项接入；完整安全审计尚未完成。
+
 | 顺序 | 工作项 | 完成判定 | 依赖 |
 | --- | --- | --- | --- |
 | 1 | **S0-7.1f-4：真实身份联调** | 使用轮换后的私有 AppSecret 和已迁移数据库验证车主首次/重复登录、技师绑定、手机号授权、刷新及退出；记录 HTTP 结果与脱敏证据。商家短信通道就绪后验证验证码送达、一次性消费和失效。 | 私有凭据、V002/V003、HTTPS 后端、合法请求域名、具备手机号能力的测试账号；商家还需短信服务商。 |
-| 2 | **S0 横向能力** | 优先为受保护写请求补齐 24 小时幂等和审计的可离线验证实现；随后处理私有上传与健康监控。各项需要失败路径、并发与 CI 证据，并接入实际使用它们的接口。 | 身份联调条件未具备时可先推进幂等与审计；私有上传仍需存储与扫描方案。 |
+| 2 | **S0 私有上传，然后健康监控** | 下一步先核对上传需求与存储/扫描边界，形成可审阅方案；实现私有对象访问、文件类型与大小校验、扫描状态及失败路径验证，随后补健康监控。正式业务写请求逐项复用幂等与成功审计服务，完整安全审计随对应功能接入。 | 身份联调条件未具备时继续可离线验证的核心；真实上传验收需要私有存储与扫描资源，健康监控需要运行环境。 |
 | 3 | **M0 验收** | 记录 iOS/Android 真机、车主 H5、数据库迁移、后端及协作团队运营 PC 的验收结果。业务列表空状态随读接口验证，未满足项保持未通过。 | 前两项和[S0 依赖清单](S0_DEPENDENCIES.md)。 |
 
 ## 仓库合并顺序
 
 截至 2026-10-03：[PR #3](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/3) 已合入 [PR #2](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/2) 的分支，**尚未进入 `main`**。先复核并合入 PR #2；随后将以旧 PR #3 分支为基线的 [PR #4](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/4) 调整到已合入的基线并合入；最后处理以 PR #4 为基线的 [PR #5](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/5)。每次变更基线后重新确认差异和 CI。此处是合并计划，不表示 PR 已合并。
+
+后续按 PR #6（文档）→ PR #7（三角色页面状态）→ PR #8（幂等与审计）的顺序处理堆叠基线；PR #8 当前以 PR #7 分支为基线。各项合并前重新确认差异和 CI。
 
 ## 外部条件与范围
 

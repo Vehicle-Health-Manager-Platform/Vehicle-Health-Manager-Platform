@@ -68,3 +68,11 @@
 - **本机验证**：16 项 Node 离线测试无失败、无跳过，已加入小程序 CI；小程序/H5 构建通过。gstack browse 在本机 H5 实际页面使用测试专用 uni 响应替身，22 项交互断言通过，覆盖五 Tab 会话、失败重试、短信未配置、401/429 和技师 403 后重新绑定。页面无 JavaScript 错误，仅 uni-app 的 vue-router 导入弃用警告。
 - **模拟器验证**：微信开发者工具 CLI 在端口 11927 打开当前仓库的 `apps/miniapp/dist/build/mp-weixin`，自动化端口 9420 验证测试入口、三角色和五 Tab 共 9 条路由；保存并检查车主身份页截图，模拟器启动成功。复现方式与验证脚本见[小程序 README](../../apps/miniapp/README.md)。截图在本机被 Git 忽略的 `test-results` 目录中。
 - **边界与下一步**：真实微信、手机号与短信仍未联调；业务列表空状态随读接口接入。外部条件齐备后执行 S0-7.1f-4；条件未齐备时先推进 S0 受保护写请求的幂等与审计。此步分支 `codex/s0-7-1f-page-states` 以文档 PR #6 为基线，尚未合入 `main`。
+
+## 2026-10-03 · S0 写入幂等与成功审计核心
+
+- **已完成**：经用户确认设计后，实现 JDBC 幂等事务服务，按服务端主体、方法、路径与 UUID 隔离请求；正文规范化摘要、24 小时有效期、并发去重与成功响应重放。每次重放前复核资源归属和状态；业务变更、成功审计及缓存响应在同一事务提交，任一写入或序列化失败均回滚。复用现有 V001 表，无新增数据库迁移。
+- **首次接入**：仅 `local` profile 的 `POST /api/demo/vehicles/{id}/mileage`，限定车主本人、非负整数里程且不得降低；未配置数据库返回 503，生产 profile 不暴露入口。不自动创建测试车辆。审计只存里程数字、内部资源/主体 ID 和请求 ID，成功重放不新增审计。接入与复现见[写入完整性说明](../api/WRITE_INTEGRITY.md)，OpenAPI 草案更新为 67 项操作，原始 43 个核心 API 追踪基线不变。
+- **验证**：代码提交 `595dc45` 的 [CI 37100103549](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37100103549) 六项作业全通过；后端 45 项测试无失败、无错误、无跳过，其中本步 12 项 MySQL Testcontainers 用例实际执行，覆盖并发同/异正文、过期、主体/路径隔离、权限复核、业务/审计/缓存/序列化失败回滚及重试。MockMvc 验证角色、UUID、正文、无数据库与生产入口边界。此前 CI 的两项故障注入测试因 MySQL binlog 限制无法创建触发器，已仅在可丢弃测试容器启用相应配置后复跑通过；部署配置未更改。本机没有 Java/Maven 且 Docker 引擎未运行，本机后端测试未执行，以 CI 为证据。
+- **仓库与边界**：[PR #8](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/8) 已推送，分支 `codex/s0-write-integrity` 以 PR #7 为基线，尚未合入 `main`。本步验证可复用事务核心和本地示例；正式车辆业务、全部业务接口幂等及全平台安全审计仍待实现。
+- **下一步**：先核对私有上传需求与存储/扫描方案，再实现可离线验证的上传核心和失败路径；随后补健康监控。外部条件齐备后继续 S0-7.1f-4 真实身份联调。
