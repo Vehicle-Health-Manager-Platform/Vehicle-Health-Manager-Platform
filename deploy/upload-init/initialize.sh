@@ -1,6 +1,8 @@
 #!/bin/sh
 set -eu
 umask 077
+# Local administrative operations must not wait indefinitely on a broken endpoint.
+mc() { timeout -k 2 10 /usr/local/bin/mc "$@"; }
 for value in "${MINIO_ENDPOINT:-}" "${MINIO_ROOT_USER:-}" "${MINIO_ROOT_PASSWORD:-}" \
   "${UPLOAD_MINIO_BUCKET:-}" "${UPLOAD_MINIO_ACCESS_KEY:-}" "${UPLOAD_MINIO_SECRET_KEY:-}"; do
   case "$value" in ''|change-me*|unconfigured) echo 'Incomplete private upload initialization configuration' >&2; exit 1;; esac

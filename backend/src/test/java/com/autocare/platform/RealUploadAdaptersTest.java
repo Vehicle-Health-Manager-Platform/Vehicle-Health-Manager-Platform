@@ -13,6 +13,8 @@ import java.security.MessageDigest;
 import java.time.Duration;
 import java.util.HexFormat;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +37,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Testcontainers
 class RealUploadAdaptersTest {
     static final Network network = Network.newNetwork();
+    static Future<String> image(String name, String directory, boolean includeScript) {
+        if (Boolean.getBoolean("upload.test.images.prebuilt")) return CompletableFuture.completedFuture(name);
+        var image = new ImageFromDockerfile(name, false).withDockerfile(Path.of("..", "deploy", directory, "Dockerfile"));
+        if (includeScript) image.withFileFromPath("initialize.sh", Path.of("..", "deploy", directory, "initialize.sh"));
+        return image;
+    }
     // Deliberately synthetic signatures: real engine/protocol evidence, not production coverage.
     static final byte[] INFECTED = "\u0089PNG\r\n\u001a\nAutocareScannerTestMarker".getBytes(StandardCharsets.ISO_8859_1);
     static String signature() {
@@ -42,8 +50,7 @@ class RealUploadAdaptersTest {
             + ":" + INFECTED.length + ":Autocare.Test.Malware\n"; }
         catch (Exception error) { throw new IllegalStateException(error); }
     }
-    @Container static GenericContainer<?> minio = new GenericContainer<>(
-        new ImageFromDockerfile("autocare-upload-minio-ci", false).withDockerfile(Path.of("..", "deploy", "minio", "Dockerfile")))
+    @Container static GenericContainer<?> minio = new GenericContainer<>(image("autocare-upload-minio-ci", "minio", false))
         .withEnv("MINIO_ROOT_USER", "ci-upload-root").withEnv("MINIO_ROOT_PASSWORD", "ci-upload-private-password")
         .withNetwork(network).withNetworkAliases("upload-minio")
         .withCommand("server", "/data").withExposedPorts(9000)
@@ -130,14 +137,12 @@ class RealUploadAdaptersTest {
         assertThrows(UploadException.class, () -> new PrivateFileAccessService(uploads,store,120).sign(PrivateUploadTest.OWNER,file.id()));
     }
     GenericContainer<?> initializer(String account) {
-        return new GenericContainer<>(new ImageFromDockerfile("autocare-upload-init-ci", false)
-            .withDockerfile(Path.of("..", "deploy", "upload-init", "Dockerfile"))
-            .withFileFromPath("initialize.sh", Path.of("..", "deploy", "upload-init", "initialize.sh")))
+        return new GenericContainer<>(image("autocare-upload-init-ci", "upload-init", true))
             .withNetwork(network).withEnv("MINIO_ENDPOINT", "http://upload-minio:9000")
             .withEnv("MINIO_ROOT_USER", "ci-upload-root").withEnv("MINIO_ROOT_PASSWORD", "ci-upload-private-password")
             .withEnv("UPLOAD_MINIO_BUCKET", bucket).withEnv("UPLOAD_MINIO_ACCESS_KEY", account)
             .withEnv("UPLOAD_MINIO_SECRET_KEY", "ci-dedicated-upload-password")
-            .withStartupCheckStrategy(new OneShotStartupCheckStrategy().withTimeout(Duration.ofMinutes(2)));
+            .withStartupCheckStrategy(new OneShotStartupCheckStrategy().withTimeout(Duration.ofSeconds(30)));
     }
     @Test void initializationCreatesDedicatedLimitedAccountAndRefusesToOverwriteIt() {
         String account = "upload-" + UUID.randomUUID();

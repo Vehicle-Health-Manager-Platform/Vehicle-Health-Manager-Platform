@@ -69,4 +69,37 @@ class ClamdProtocolTest {
         assertEquals(VirusScanner.Result.UNAVAILABLE, scanner.scan(new byte[FileValidator.MAX_BYTES + 1]));
         assertEquals(VirusScanner.Result.UNAVAILABLE, scanner.scan(null));
     }
+    VirusScanner.Result strictScan(String version, boolean expectScan) throws Exception {
+        try (var server = new ServerSocket(0)) {
+            var executor = Executors.newSingleThreadExecutor();
+            var peer = executor.submit(() -> {
+                try {
+                    try (var socket = server.accept()) {
+                        socket.setSoTimeout(2000);
+                        assertArrayEquals("zVERSION\0".getBytes(StandardCharsets.US_ASCII),socket.getInputStream().readNBytes(9));
+                        socket.getOutputStream().write((version + "\0").getBytes(StandardCharsets.US_ASCII));
+                    }
+                    if (expectScan) try (var socket = server.accept()) {
+                        socket.setSoTimeout(2000); assertArrayEquals(new byte[]{1},readFrames(socket));
+                        socket.getOutputStream().write("stream: OK\0".getBytes(StandardCharsets.US_ASCII));
+                    }
+                } catch (Exception exception) { throw new RuntimeException(exception); }
+            });
+            try {
+                var result = new ClamdVirusScanner("127.0.0.1",server.getLocalPort(),100,1000,true).scan(new byte[]{1});
+                peer.get(3,TimeUnit.SECONDS); return result;
+            } finally { executor.shutdownNow(); }
+        }
+    }
+    @Test void runtimeConfigurationRequiresFreshOfficialDefinitionsBeforeStreaming() throws Exception {
+        String date = java.time.format.DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss yyyy",java.util.Locale.ENGLISH)
+            .withZone(java.time.ZoneOffset.UTC).format(java.time.Instant.now());
+        assertEquals(VirusScanner.Result.CLEAN,strictScan("ClamAV 1.4.3/12345/" + date,true));
+    }
+    @Test void staleMissingMalformedAndFutureDefinitionsNeverStream() throws Exception {
+        for (String version : new String[]{"ClamAV 1.4.3", "ClamAV 1.4.3/12345/Sat Jan 1 00:00:00 2000",
+            "ClamAV 1.4.3/12345/not-a-date", "ClamAV 1.4.3/12345/Sat Jan 1 00:00:00 2050"}) {
+            assertEquals(VirusScanner.Result.UNAVAILABLE,strictScan(version,false));
+        }
+    }
 }

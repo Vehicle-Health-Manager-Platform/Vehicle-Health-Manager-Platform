@@ -45,7 +45,7 @@ jobs:
         run: |
           docker build --progress=plain --tag autocare-upload-minio-ci deploy/minio
           docker build --progress=plain --tag autocare-upload-init-ci deploy/upload-init
-      - run: mvn -B test
+      - run: mvn -B -Dupload.test.images.prebuilt=true test
         working-directory: backend
   schema-and-ocr:
     runs-on: ubuntu-latest

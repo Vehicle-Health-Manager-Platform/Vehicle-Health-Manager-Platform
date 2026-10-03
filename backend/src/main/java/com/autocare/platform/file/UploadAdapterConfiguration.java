@@ -21,7 +21,7 @@ public class UploadAdapterConfiguration {
     @ConditionalOnProperty(name="UPLOAD_SCAN_ENABLED", havingValue="true")
     ClamdVirusScanner clamdVirusScanner(Environment env) {
         return new ClamdVirusScanner(required(env, "CLAMAV_HOST"), env.getProperty("CLAMAV_PORT", Integer.class, 3310),
-            env.getProperty("CLAMAV_CONNECT_TIMEOUT_MS", Integer.class, 3000), env.getProperty("CLAMAV_SCAN_TIMEOUT_MS", Integer.class, 30000));
+            env.getProperty("CLAMAV_CONNECT_TIMEOUT_MS", Integer.class, 3000), env.getProperty("CLAMAV_SCAN_TIMEOUT_MS", Integer.class, 30000), true);
     }
     @Bean
     PrivateFileAccessService privateFileAccessService(PrivateUploadService uploads,
