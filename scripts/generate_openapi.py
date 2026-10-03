@@ -33,10 +33,27 @@ def operation(method, path, summary, features, protected=True):
         "security": [{"bearerAuth": []}] if protected else [],
     }
     if method == "post":
-        data["parameters"].append({"name": "Idempotency-Key", "in": "header", "required": protected,
-                                   "schema": {"type": "string", "format": "uuid"}})
+        # Auth endpoints currently do not consume the business idempotency header.
+        if not path.startswith("/api/auth/"):
+            data["parameters"].append({"name": "Idempotency-Key", "in": "header", "required": protected,
+                                       "schema": {"type": "string", "format": "uuid"}})
         data["requestBody"] = {"required": True, "content": {"application/json": {
             "schema": {"type": "object", "additionalProperties": True}}}}
+    return data
+
+
+def implemented_auth_operation(path, summary, role, protected, fields, features=""):
+    data = operation("post", path, summary, features, protected)
+    data["x-roles"] = role
+    data["x-implementation-status"] = "core-implemented"
+    data["responses"]["429"] = {"description": "认证请求受限，code=42900"}
+    data["responses"]["503"] = {"description": "所需数据库或外部服务尚未配置，code=50300"}
+    if fields:
+        data["requestBody"]["content"]["application/json"]["schema"] = {
+            "type": "object", "required": list(fields), "properties": {
+                field: {"type": "string"} for field in fields}, "additionalProperties": False}
+    else:
+        data.pop("requestBody", None)
     return data
 
 
@@ -75,6 +92,22 @@ def main():
             operation(method.lower(), path, summary.strip(), "", protected))
         document["paths"][path][method.lower()]["x-roles"] = role.strip()
 
+    # These routes exist in the backend even though they are not all among the
+    # original 43 core operations. Keep their auth boundary explicit here.
+    for path, summary, role, protected, fields, features in (
+        ("/api/auth/wx-login", "微信车主或技师登录", "车主/技师", False, ("code", "role"), "F01"),
+        ("/api/auth/refresh", "轮换刷新凭证", "车主/商家/技师", False, ("refresh_token",), "F01"),
+        ("/api/auth/technician/bind", "绑定技师员工码", "持有绑定凭证的技师", True, ("employee_code",), ""),
+        ("/api/auth/phone/bind", "绑定车主微信手机号", "车主", True, ("code",), "F01"),
+        ("/api/auth/logout", "撤销当前会话", "车主/商家/技师", True, (), ""),
+        ("/api/auth/merchant/code", "请求商家登录短信码", "商家", False, ("account", "password"), ""),
+        ("/api/auth/merchant/login", "商家密码与短信码登录", "商家", False, ("account", "password", "sms_code"), ""),
+    ):
+        document["paths"].setdefault(path, {})["post"] = implemented_auth_operation(
+            path, summary, role, protected, fields, features)
+    document["paths"]["/api/auth/merchant/code"]["post"]["x-external-dependency"] = (
+        "生产短信发送器尚未配置，当前返回 503")
+
     for method, path, summary in (
         ("post", "/api/dev/token", "仅 local profile 可用的演示令牌"),
         ("get", "/api/demo/vehicles/{id}", "仅 local profile 可用的车辆归属校验样例"),
@@ -83,6 +116,18 @@ def main():
             method, path, summary, "F01,F02", path != "/api/dev/token")
     document["paths"]["/api/dev/token"]["post"]["x-local-only"] = True
     document["paths"]["/api/demo/vehicles/{id}"]["get"]["x-local-only"] = True
+    mileage_path = "/api/demo/vehicles/{id}/mileage"
+    mileage = operation("post", mileage_path, "仅 local profile：幂等车辆里程写入及成功变更审计", "")
+    mileage["x-local-only"] = True
+    mileage["x-implementation-status"] = "local-example"
+    mileage["x-roles"] = "车主"
+    mileage["description"] = "24 小时内同键同请求重放原成功结果，同键不同请求返回 40001。每次重放仍校验车辆归属。需配置测试数据库，不属于正式车辆业务。"
+    mileage["requestBody"]["content"]["application/json"]["schema"] = {
+        "type": "object", "required": ["current_mileage"], "additionalProperties": False,
+        "properties": {"current_mileage": {"type": "integer", "minimum": 0, "maximum": 2147483647}}}
+    mileage["responses"]["404"] = {"description": "车辆不存在，code=40400"}
+    mileage["responses"]["503"] = {"description": "数据库未配置或事务失败，code=50300；使用原幂等键重试"}
+    document["paths"][mileage_path] = {"post": mileage}
 
     count = sum(len(item) for item in document["paths"].values())
     if count < 55:
