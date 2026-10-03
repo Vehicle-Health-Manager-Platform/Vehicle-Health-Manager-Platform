@@ -2,7 +2,6 @@ package com.autocare.platform.file;
 
 import io.minio.*;
 import io.minio.errors.ErrorResponseException;
-import io.minio.http.Method;
 import java.io.ByteArrayInputStream;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
@@ -67,7 +66,7 @@ public class MinioPrivateObjectStore implements SignedObjectStore {
         key(key); requirePrivate();
         if (signer == null || seconds < 1 || seconds > 300) throw unavailable();
         try {
-            return signer.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder().method(Method.GET)
+            return signer.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder().method(Http.Method.GET)
                 .bucket(bucket).object(key).expiry(seconds, TimeUnit.SECONDS).build());
         } catch (Exception exception) { throw unavailable(); }
     }
