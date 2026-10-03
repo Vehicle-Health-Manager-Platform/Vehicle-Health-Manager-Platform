@@ -25,3 +25,13 @@ PR #2 的身份代码、已合入其分支的 PR #3、PR #4 的五 Tab 与 PR #5
 `src/pages/index` 是测试入口，`src/pages/owner`、`merchant`、`technician` 为三个角色模块；车主另有首页、服务、AI、档案、我的五个原生 Tab。入口切换不代表登录或授权。车主和技师调用 `wx.login` 的边界在 `src/services/wechat-auth.js`；商家使用账号密码加短信码。五 Tab 的业务内容、商家和技师工作流仍待真实接口接入。
 
 正式采用三个独立 AppID 时，应先建立 `(app_id, openid)` 身份映射，再分别配置、构建与真机验证三个目标小程序。测试号构建不等于支付、提审或正式发布通过。
+
+## 页面状态与离线验证
+
+三角色身份入口统一展示加载、成功、断网、超时、401/403、429 和服务不可用状态。发送验证码实际成功后才提示已发送；失败退出保留会话以便重试，身份被拒绝时可主动重新登录。车主会话仅保存在内存，五 Tab 共享该会话；业务列表未接入时显示待接入，不能当作真实空数据。
+
+在仓库根目录执行 `npm test --workspace @autocare/miniapp` 运行认证请求与状态测试（使用离线运行时替身，不需要 AppSecret、数据库或短信服务商）。此测试已加入小程序 CI。
+
+H5 手工验证：设置仅用于本次本机开发服务的 `VITE_API_BASE_URL=http://127.0.0.1:4317`，运行 `npm run dev:h5 --workspace @autocare/miniapp -- --host 127.0.0.1 --port 4317`。用 gstack browse 新建 `http://127.0.0.1:4317/#/` 标签页后，在仓库根目录执行 `browse eval apps/miniapp/test/browser-flow.js`。脚本暂时替换该浏览器页面的 uni 登录和请求响应，结束时恢复；测试文件不被应用导入。页面测试不能代表真实微信或短信联调。
+
+微信模拟器路由验证：用已安装开发者工具的 `cli.bat auto --project <当前仓库的 apps/miniapp/dist/build/mp-weixin 绝对路径> --port 11927 --auto-port 9420 --trust-project` 打开编译产物，再从仓库根目录运行 `node apps/miniapp/test/simulator-smoke.cjs`。它检查测试入口、三角色和五 Tab 的实际页面路径，并将当前车主页截图保存至被 Git 忽略的 `test-results/wechat-owner.png`。此流程不调用真实登录或发短信。

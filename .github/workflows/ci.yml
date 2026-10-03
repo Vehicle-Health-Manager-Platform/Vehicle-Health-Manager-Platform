@@ -24,6 +24,7 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
+      - run: npm test --workspace @autocare/miniapp
       - run: npm run build:miniapp
       - run: test -f apps/miniapp/dist/build/mp-weixin/app.json
       - run: npm run build:h5 --workspace @autocare/miniapp
