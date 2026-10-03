@@ -13,9 +13,10 @@
 | 数据库 | V001–V003 在 CI 验证 | 基线 39 表，V002 增至 40 表，V003 增至 42 表；已有数据库是否应用 V002、V003 尚未确认。不能把新数据卷的自动初始化视作已有库迁移。 |
 | S0 基础设施与横向能力 | 部分 CI 验证，M0 未通过 | Compose 冒烟已覆盖既有基础服务；幂等事务与成功审计核心已验证，私有上传、正式业务接入、完整安全审计、健康监控及真实部署验收仍待完成。运营 PC 后台由协作团队负责。 |
 | 写入幂等与成功审计核心 | CI 与真实 MySQL 容器验证通过 | [PR #8](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/8) 实现 24 小时幂等、权限复核、并发去重与业务/响应/审计原子提交；首次接入仅为 local 里程写入示例。后端 45 项测试无失败、无跳过，其中本步 12 项 MySQL 测试实际执行；[CI 37100103549](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37100103549) 六项通过。[接口与接入范围](../api/WRITE_INTEGRITY.md)。 |
+| 私有上传核心 | CI 与 MySQL 容器验证通过，真实服务未接入 | [PR #9](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/9) 实现有界文件校验、扫描通过后存储、元数据归属检查与失败删除补偿。后端 62 项测试无失败、无跳过，本步 13 项离线与 4 项 MySQL 测试实际执行；[CI 37101550905](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37101550905) 六项通过。没有真实 MinIO/ClamAV 适配器、HTTP 上传或签名 URL，[边界说明](../api/PRIVATE_UPLOAD_CORE.md)。 |
 | 三角色身份页面状态（S0-7.1f-3） | 离线与模拟器验证通过 | 统一加载、失败与重试状态；修复车主会话引用；16 项 Node 测试和 H5 22 项页面交互检查通过。微信开发者工具在当前编译产物中验证测试入口、三角色和五 Tab 共 9 条路由；真实登录、短信和业务列表空状态不在此次验证结果内。 |
 
-截至本次更新，[PR #3](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/3) 已合入 PR #2 的分支；PR #2 仍对 `main` 开放，PR #4–#8 为堆叠 PR，PR #8 以 PR #7 为基线。**上述功能尚未全部进入 `main`。** 计划中的合并与基线调整见 [下一步规划](NEXT_STEPS.md)。
+截至本次更新，[PR #3](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/3) 已合入 PR #2 的分支；PR #2 仍对 `main` 开放，PR #4–#9 为堆叠 PR，PR #8 以 PR #7 为基线，PR #9 以 PR #8 为基线。**上述功能尚未全部进入 `main`。** 计划中的合并与基线调整见 [下一步规划](NEXT_STEPS.md)。
 
 ## 开发者工具与真实联调
 

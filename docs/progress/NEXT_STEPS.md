@@ -8,17 +8,19 @@ S0-7.1f-3 已完成现有身份接口的页面状态处理：16 项离线测试�
 
 S0 幂等与成功审计核心已在 [PR #8](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/8) 完成：后端 45 项测试无失败、无跳过，本步 12 项 MySQL 测试实际执行，六项 CI 通过。首次接入为 local 里程示例，正式业务写请求仍需逐项接入；完整安全审计尚未完成。
 
+私有上传核心已在 [PR #9](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/9) 实现并验证，后端增至 62 项测试无失败、无跳过。本步仅为内部服务与可离线验证的存储/扫描接口；真实 MinIO/ClamAV、HTTP 上传及签名访问仍未完成，见[接入说明](../api/PRIVATE_UPLOAD_CORE.md)。
+
 | 顺序 | 工作项 | 完成判定 | 依赖 |
 | --- | --- | --- | --- |
 | 1 | **S0-7.1f-4：真实身份联调** | 使用轮换后的私有 AppSecret 和已迁移数据库验证车主首次/重复登录、技师绑定、手机号授权、刷新及退出；记录 HTTP 结果与脱敏证据。商家短信通道就绪后验证验证码送达、一次性消费和失效。 | 私有凭据、V002/V003、HTTPS 后端、合法请求域名、具备手机号能力的测试账号；商家还需短信服务商。 |
-| 2 | **S0 私有上传，然后健康监控** | 下一步先核对上传需求与存储/扫描边界，形成可审阅方案；实现私有对象访问、文件类型与大小校验、扫描状态及失败路径验证，随后补健康监控。正式业务写请求逐项复用幂等与成功审计服务，完整安全审计随对应功能接入。 | 身份联调条件未具备时继续可离线验证的核心；真实上传验收需要私有存储与扫描资源，健康监控需要运行环境。 |
+| 2 | **S0 私有上传服务接入，然后健康监控** | 下一步设计并实现真实 MinIO/ClamAV 适配器与可丢弃 CI 服务验证：证明未签名读取被拒绝、病毒/扫描故障不放行、权限复核后短时签名访问。随后设计 HTTP 上传的幂等、并发/限流、总请求体限制与对象清理/状态核对，再接入业务附件；之后补健康监控。正式业务写请求逐项复用幂等与成功审计服务，完整安全审计随对应功能接入。 | 用户确认真实存储与扫描尚未配置；可先用可丢弃 CI 服务验证适配器，私有环境与外部签名域名到位后再验收真实部署。健康监控需要运行环境。 |
 | 3 | **M0 验收** | 记录 iOS/Android 真机、车主 H5、数据库迁移、后端及协作团队运营 PC 的验收结果。业务列表空状态随读接口验证，未满足项保持未通过。 | 前两项和[S0 依赖清单](S0_DEPENDENCIES.md)。 |
 
 ## 仓库合并顺序
 
 截至 2026-10-03：[PR #3](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/3) 已合入 [PR #2](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/2) 的分支，**尚未进入 `main`**。先复核并合入 PR #2；随后将以旧 PR #3 分支为基线的 [PR #4](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/4) 调整到已合入的基线并合入；最后处理以 PR #4 为基线的 [PR #5](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/5)。每次变更基线后重新确认差异和 CI。此处是合并计划，不表示 PR 已合并。
 
-后续按 PR #6（文档）→ PR #7（三角色页面状态）→ PR #8（幂等与审计）的顺序处理堆叠基线；PR #8 当前以 PR #7 分支为基线。各项合并前重新确认差异和 CI。
+后续按 PR #6（文档）→ PR #7（三角色页面状态）→ PR #8（幂等与审计）→ PR #9（私有上传核心）的顺序处理堆叠基线；PR #8 当前以 PR #7 分支为基线，PR #9 以 PR #8 为基线。各项合并前重新确认差异和 CI。
 
 ## 外部条件与范围
 

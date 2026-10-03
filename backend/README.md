@@ -2,7 +2,7 @@
 
 Java 17 + Spring Boot 3.x 模块化单体。`src/main/java/com/autocare/platform/` 下的子包对应交付文档 §6.5。设置至少 32 字节的 `JWT_SECRET` 后执行 `mvn test` 和 `mvn spring-boot:run`，默认监听 8080；`GET /actuator/health` 用于健康检查。
 
-本地权限样例需设置 `SPRING_PROFILES_ACTIVE=local`。`POST /api/dev/token` 的 JSON 请求为 `{ "user_id": "1001" }` 或 `2001`，返回 15 分钟 JWT；以 `Bearer` 令牌访问 `GET /api/demo/vehicles/1001` 时本人成功，用户 1001 访问车辆 2001 返回 HTTP 403、业务码 `40300`。`local` profile 仅供开发环境使用，不可用于生产部署。正式车辆业务与私有上传尚未实现。
+本地权限样例需设置 `SPRING_PROFILES_ACTIVE=local`。`POST /api/dev/token` 的 JSON 请求为 `{ "user_id": "1001" }` 或 `2001`，返回 15 分钟 JWT；以 `Bearer` 令牌访问 `GET /api/demo/vehicles/1001` 时本人成功，用户 1001 访问车辆 2001 返回 HTTP 403、业务码 `40300`。`local` profile 仅供开发环境使用，不可用于生产部署。正式车辆业务、私有上传 HTTP 入口与真实存储/扫描适配器尚未实现。
 
 S0 写入完整性提供可复用的 24 小时幂等事务服务：业务变更、成功响应缓存和成功审计一同提交，失败全部回滚；缓存重放前仍复核权限。仅 `local` profile 的 `POST /api/demo/vehicles/{id}/mileage` 首次接入，需车主 JWT、UUID `Idempotency-Key` 和已配置的测试数据库，不自动创建车辆。请求契约、复现与接入限制见[写入完整性说明](../docs/api/WRITE_INTEGRITY.md)。完整 `mvn test` 需要可运行的 Docker，以实际执行 MySQL Testcontainers 测试；未连接 Docker 的运行不能作为完整测试通过证据。
 

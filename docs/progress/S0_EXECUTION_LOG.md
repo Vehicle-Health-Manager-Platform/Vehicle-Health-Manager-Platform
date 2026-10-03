@@ -76,3 +76,11 @@
 - **验证**：代码提交 `595dc45` 的 [CI 37100103549](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37100103549) 六项作业全通过；后端 45 项测试无失败、无错误、无跳过，其中本步 12 项 MySQL Testcontainers 用例实际执行，覆盖并发同/异正文、过期、主体/路径隔离、权限复核、业务/审计/缓存/序列化失败回滚及重试。MockMvc 验证角色、UUID、正文、无数据库与生产入口边界。此前 CI 的两项故障注入测试因 MySQL binlog 限制无法创建触发器，已仅在可丢弃测试容器启用相应配置后复跑通过；部署配置未更改。本机没有 Java/Maven 且 Docker 引擎未运行，本机后端测试未执行，以 CI 为证据。
 - **仓库与边界**：[PR #8](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/8) 已推送，分支 `codex/s0-write-integrity` 以 PR #7 为基线，尚未合入 `main`。本步验证可复用事务核心和本地示例；正式车辆业务、全部业务接口幂等及全平台安全审计仍待实现。
 - **下一步**：先核对私有上传需求与存储/扫描方案，再实现可离线验证的上传核心和失败路径；随后补健康监控。外部条件齐备后继续 S0-7.1f-4 真实身份联调。
+
+## 2026-10-03 · S0 私有上传核心
+
+- **已完成**：用户确认私有 MinIO 与 ClamAV 尚未配置，并审阅设计后授权先实施可离线验证的核心。新增内部上传服务、有界文件校验、扫描与私有存储接口、JDBC 元数据仓储。文件上限明确为 10 MiB；允许 jpg/jpeg/png/webp，核对格式标识且不信任客户端类型。仅扫描结果明确为 `CLEAN` 且目标确认为私有时保存对象；服务缺失、病毒、未知结果与故障拒绝操作。
+- **权限与补偿**：主体来自可信调用方；随机对象键不保存原名称，内部读取检查主体类型/ID、删除与扫描状态。对象保存失败或元数据提交失败均尝试删除对象；删除失败记录只含生成键的安全清理事件，事件接收器异常时回退默认日志。外部副作用不进入 JDBC 原子写服务，上传拒绝在外层事务中运行；复用 V001 `file_object`，无新增迁移。
+- **验证**：代码提交 `c36ea4f` 的 [CI 37101550905](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37101550905) 六项全通过，后端 62 项测试失败/错误/跳过均为 0；其中本步 13 项离线测试及 4 项 MySQL Testcontainers 用例实际执行，覆盖精确大小边界与读取停止、格式/名称拒绝、字节快照隔离、扫描/存储/仓储/清理事件故障、实际元数据插入、归属/状态隔离、插入失败补偿与已知提交前失败回滚。本机缺少 Java/Maven 且 Docker 引擎未运行，本机后端测试未执行，以 CI 为证据。
+- **仓库与范围**：[PR #9](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/9) 分支 `codex/s0-private-upload-core` 以 PR #8 为基线，尚未合入 `main`。没有真实 MinIO/ClamAV 适配器、HTTP 上传或签名 URL，不新增 OpenAPI 操作。格式标识检查不等于完整解码；补偿不是跨系统原子事务，进程退出或数据库提交结果不明确时仍可能不一致。[接入说明](../api/PRIVATE_UPLOAD_CORE.md)列出这些边界，不能标记私有上传全部验收通过。
+- **下一步**：设计真实 MinIO/ClamAV 适配器、私有桶与短时签名访问，先在可丢弃 CI 服务中实际验证；随后处理 HTTP 上传幂等、限流/并发和清理/状态核对，再接入业务附件。完成上传后继续健康监控；真实身份联调仍依赖外部条件。
