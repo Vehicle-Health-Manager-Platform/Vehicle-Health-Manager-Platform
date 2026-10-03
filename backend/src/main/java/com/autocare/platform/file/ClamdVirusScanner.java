@@ -22,7 +22,7 @@ public class ClamdVirusScanner implements VirusScanner {
     private final int port, connectMillis, totalMillis;
     private final boolean requireFreshDefinitions;
     public ClamdVirusScanner(String host, int port, int connectMillis, int totalMillis) {
-        this(host, port, connectMillis, totalMillis, false);
+        this(host, port, connectMillis, totalMillis, true);
     }
     public ClamdVirusScanner(String host, int port, int connectMillis, int totalMillis, boolean requireFreshDefinitions) {
         if (host == null || host.isBlank() || port < 1 || port > 65535 || connectMillis < 1

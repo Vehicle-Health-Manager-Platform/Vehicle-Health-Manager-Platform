@@ -22,7 +22,7 @@ class ClamdProtocolTest {
                 catch (Exception exception) { throw new RuntimeException(exception); }
             });
             try {
-                var scanner = new ClamdVirusScanner("127.0.0.1", server.getLocalPort(), 100, timeout);
+                var scanner = new ClamdVirusScanner("127.0.0.1", server.getLocalPort(), 100, timeout, false);
                 var result = scanner.scan(bytes);
                 task.get(3, TimeUnit.SECONDS);
                 return result;
@@ -86,7 +86,7 @@ class ClamdProtocolTest {
                 } catch (Exception exception) { throw new RuntimeException(exception); }
             });
             try {
-                var result = new ClamdVirusScanner("127.0.0.1",server.getLocalPort(),100,1000,true).scan(new byte[]{1});
+                var result = new ClamdVirusScanner("127.0.0.1",server.getLocalPort(),100,1000).scan(new byte[]{1});
                 peer.get(3,TimeUnit.SECONDS); return result;
             } finally { executor.shutdownNow(); }
         }

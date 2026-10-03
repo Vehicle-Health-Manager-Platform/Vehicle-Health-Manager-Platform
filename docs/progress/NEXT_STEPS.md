@@ -8,11 +8,11 @@ S0-7.1f-3 已完成现有身份接口的页面状态处理：16 项离线测试�
 
 S0 幂等与成功审计核心已在 [PR #8](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/8) 完成：后端 45 项测试无失败、无跳过，本步 12 项 MySQL 测试实际执行，六项 CI 通过。首次接入为 local 里程示例，正式业务写请求仍需逐项接入；完整安全审计尚未完成。
 
-私有上传核心已在 [PR #9](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/9) 实现并验证，后端增至 62 项测试无失败、无跳过。本步仅为内部服务与可离线验证的存储/扫描接口；真实 MinIO/ClamAV、HTTP 上传及签名访问仍未完成，见[接入说明](../api/PRIVATE_UPLOAD_CORE.md)。
+私有上传核心已在 [PR #9](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/9) 实现；[PR #10](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/10) 接入真实 MinIO/ClamAV 和内部签名，后端增至 82 项测试无失败、无跳过，六项 CI 通过。ClamAV 使用测试专用签名验证引擎接入；私有部署、HTTP 上传/签名路由与小程序图片联调仍待完成，见[适配器说明](../api/UPLOAD_ADAPTERS.md)。
 
 | 顺序 | 工作项 | 完成判定 | 依赖 |
 | --- | --- | --- | --- |
-| 1 | **完成小程序所需上传基础能力** | 先设计并实现真实 MinIO/ClamAV 适配器，用可丢弃 CI 服务验证私有桶、病毒/扫描故障拒绝、权限复核后的短时签名访问；随后完成供档案图片使用的 HTTP 上传契约、幂等、请求体限制、限流及清理/状态核对。每步独立验证并推送。 | 用户确认真实环境尚未配置；先用可丢弃 CI 服务验证，私有部署及签名域名到位后验收真实环境。 |
+| 1 | **HTTP 上传与图片访问入口** | 真实适配器与内部签名已完成；下一步设计并实现供档案图片使用的 HTTP 上传/签名契约、身份复核、幂等、请求体限制、限流及清理/状态核对，验证重试/并发/失败与越权。接入小程序图片选择、上传及短时预览时记录实际结果，每步独立验证并推送。 | 复用现有上传核心、适配器与签名服务；私有部署、官方签名更新、HTTPS S3 域名及小程序合法域名到位后验收真实环境。 |
 | 2 | **S1 首个车辆档案流程，优先小程序可操作交付** | 按下节拆分，打通本人车辆列表与手动录入、档案手动录入与查询的小程序页面、受保护后端接口、数据库及联调。真实数据驱动加载/空/错误状态，跨车主访问被拒绝，写请求接入幂等与成功审计；此流程完成不等于全部 F01–F04 或 M1 通过。 | 身份核心与数据库、车型数据来源及字段契约；档案图片依赖上传能力，真实小程序联调依赖 HTTPS 与微信配置。 |
 | 并行 | **S0-7.1f-4：真实身份联调** | 条件齐备后验证车主首次/重复登录、技师绑定、手机号、刷新及退出；商家短信通道就绪后验证送达、一次性消费和失效，记录脱敏证据。 | 私有凭据、V002/V003、HTTPS、合法域名、手机号测试账号；商家还需短信服务商。未齐备时推进 S1 设计与自动化验证。 |
 | 持续收尾 | **S0 健康监控与 M0 验收** | 补齐约定的健康监控；记录真机、H5、迁移、后端及协作团队运营 PC 的验收结果。未满足项继续标为未通过，S1 的设计或实现进展不替代 M0 放行。 | 运行环境、测试设备及[S0 依赖清单](S0_DEPENDENCIES.md)。 |
@@ -30,7 +30,7 @@ S0 幂等与成功审计核心已在 [PR #8](https://github.com/Vehicle-Health-M
 
 截至 2026-10-03：[PR #3](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/3) 已合入 [PR #2](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/2) 的分支，**尚未进入 `main`**。先复核并合入 PR #2；随后将以旧 PR #3 分支为基线的 [PR #4](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/4) 调整到已合入的基线并合入；最后处理以 PR #4 为基线的 [PR #5](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/5)。每次变更基线后重新确认差异和 CI。此处是合并计划，不表示 PR 已合并。
 
-后续按 PR #6（文档）→ PR #7（三角色页面状态）→ PR #8（幂等与审计）→ PR #9（私有上传核心）的顺序处理堆叠基线；PR #8 当前以 PR #7 分支为基线，PR #9 以 PR #8 为基线。各项合并前重新确认差异和 CI。
+后续按 PR #6（文档）→ PR #7（三角色页面状态）→ PR #8（幂等与审计）→ PR #9（私有上传核心）→ PR #10（真实适配器与内部签名）的顺序处理堆叠基线；PR #8 当前以 PR #7 分支为基线，PR #9 以 PR #8 为基线，PR #10 以 PR #9 为基线。各项合并前重新确认差异和 CI。
 
 ## 外部条件与范围
 

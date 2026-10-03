@@ -14,7 +14,7 @@
 
 ## 接入与事务边界
 
-配置类总是提供应用服务；仅配置 `MYSQL_HOST` 时创建 JDBC 元数据仓储。没有 `VirusScanner`、`PrivateObjectStore` 或仓储时拒绝上传，不自动启用替身。仓库尚无真实 MinIO/ClamAV 适配器，因此当前生产配置不能成功上传。
+配置类总是提供应用服务；仅配置 `MYSQL_HOST` 时创建 JDBC 元数据仓储。没有 `VirusScanner`、`PrivateObjectStore` 或仓储时拒绝上传，不自动启用替身。后续新增的[真实 MinIO/ClamAV 适配器](UPLOAD_ADAPTERS.md)通过显式开关和完整私有配置启用；默认不启用，真实部署仍待验收。
 
 扫描器和存储适配器需限制网络等待时间、输出大小，验证私有桶策略，并提供幂等删除。外部操作不进入 JDBC 事务；上传拒绝在调用方已有事务中执行，避免跨系统调用持有外层数据库锁。元数据仓储独立短事务提交后才返回，复用 V001 `file_object`，不新增迁移。
 

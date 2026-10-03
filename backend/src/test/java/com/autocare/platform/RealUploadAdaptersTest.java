@@ -83,7 +83,7 @@ class RealUploadAdaptersTest {
         jdbc.update("DELETE FROM file_object"); bucket = "upload-" + UUID.randomUUID();
         admin.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
         store = storage(endpoint, "ci-upload-private-password", bucket);
-        scanner = new ClamdVirusScanner(clamd.getHost(), clamd.getMappedPort(3310), 1000, 5000);
+        scanner = new ClamdVirusScanner(clamd.getHost(), clamd.getMappedPort(3310), 1000, 5000, false);
         uploads = new PrivateUploadService(scanner, store, new JdbcFileMetadataRepository(jdbc, new DataSourceTransactionManager(jdbc.getDataSource())));
     }
     MinioPrivateObjectStore storage(String publicEndpoint, String secret, String targetBucket) {
