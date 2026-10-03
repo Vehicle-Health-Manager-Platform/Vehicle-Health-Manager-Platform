@@ -1,5 +1,8 @@
 # Opt-in overlay; use together with compose.yml and a private env file.
 services:
+  minio:
+    # Development only; real deployment uses a dedicated HTTPS S3 endpoint.
+    ports: ["127.0.0.1:9000:9000"]
   upload-init:
     profiles: [upload-init]
     build: ../upload-init
