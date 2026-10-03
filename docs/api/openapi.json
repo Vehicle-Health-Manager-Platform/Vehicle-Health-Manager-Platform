@@ -3848,6 +3848,99 @@
         ],
         "x-local-only": true
       }
+    },
+    "/api/demo/vehicles/{id}/mileage": {
+      "post": {
+        "summary": "仅 local profile：幂等车辆里程写入及成功变更审计",
+        "operationId": "post_api_demo_vehicles_id_mileage",
+        "tags": [
+          "demo"
+        ],
+        "x-feature-ids": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "车辆不存在，code=40400"
+          },
+          "503": {
+            "description": "数据库未配置或事务失败，code=50300；使用原幂等键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "current_mileage"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "current_mileage": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 2147483647
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-local-only": true,
+        "x-implementation-status": "local-example",
+        "x-roles": "车主",
+        "description": "24 小时内同键同请求重放原成功结果，同键不同请求返回 40001。每次重放仍校验车辆归属。需配置测试数据库，不属于正式车辆业务。"
+      }
     }
   },
   "components": {

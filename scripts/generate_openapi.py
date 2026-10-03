@@ -116,6 +116,18 @@ def main():
             method, path, summary, "F01,F02", path != "/api/dev/token")
     document["paths"]["/api/dev/token"]["post"]["x-local-only"] = True
     document["paths"]["/api/demo/vehicles/{id}"]["get"]["x-local-only"] = True
+    mileage_path = "/api/demo/vehicles/{id}/mileage"
+    mileage = operation("post", mileage_path, "仅 local profile：幂等车辆里程写入及成功变更审计", "")
+    mileage["x-local-only"] = True
+    mileage["x-implementation-status"] = "local-example"
+    mileage["x-roles"] = "车主"
+    mileage["description"] = "24 小时内同键同请求重放原成功结果，同键不同请求返回 40001。每次重放仍校验车辆归属。需配置测试数据库，不属于正式车辆业务。"
+    mileage["requestBody"]["content"]["application/json"]["schema"] = {
+        "type": "object", "required": ["current_mileage"], "additionalProperties": False,
+        "properties": {"current_mileage": {"type": "integer", "minimum": 0, "maximum": 2147483647}}}
+    mileage["responses"]["404"] = {"description": "车辆不存在，code=40400"}
+    mileage["responses"]["503"] = {"description": "数据库未配置或事务失败，code=50300；使用原幂等键重试"}
+    document["paths"][mileage_path] = {"post": mileage}
 
     count = sum(len(item) for item in document["paths"].values())
     if count < 55:

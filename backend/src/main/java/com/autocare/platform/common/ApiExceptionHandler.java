@@ -9,6 +9,10 @@ import com.autocare.platform.gateway.wechat.WechatExchangeException;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Void>> unreadableBody() {
+        return ResponseEntity.badRequest().body(ApiResponse.error(40001, "请求正文格式无效"));
+    }
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ApiResponse<Void>> status(ResponseStatusException exception) {
         HttpStatus status = HttpStatus.valueOf(exception.getStatusCode().value());
