@@ -1,0 +1,62 @@
+# Opt-in overlay; use together with compose.yml and a private env file.
+services:
+  upload-init:
+    profiles: [upload-init]
+    build: ../upload-init
+    environment:
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      UPLOAD_MINIO_BUCKET: ${UPLOAD_MINIO_BUCKET}
+      UPLOAD_MINIO_ACCESS_KEY: ${UPLOAD_MINIO_ACCESS_KEY}
+      UPLOAD_MINIO_SECRET_KEY: ${UPLOAD_MINIO_SECRET_KEY}
+    depends_on:
+      minio: { condition: service_healthy }
+    restart: "no"
+
+  clamav-updater:
+    profiles: [uploads]
+    image: clamav/clamav:1.4.3
+    entrypoint: [freshclam]
+    command: [--daemon, --foreground=true]
+    volumes: [clamav_data:/var/lib/clamav]
+    restart: unless-stopped
+
+  clamav:
+    profiles: [uploads]
+    image: clamav/clamav:1.4.3
+    entrypoint: [clamd]
+    command: [--config-file=/etc/clamav/upload-clamd.conf]
+    volumes:
+      - clamav_data:/var/lib/clamav:ro
+      - ../clamav/upload-clamd.conf:/etc/clamav/upload-clamd.conf:ro
+    depends_on:
+      clamav-updater: { condition: service_started }
+    healthcheck:
+      test: [CMD, clamdscan, --config-file=/etc/clamav/upload-clamd.conf, --ping=1]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  backend:
+    environment:
+      UPLOAD_STORAGE_ENABLED: "true"
+      UPLOAD_SCAN_ENABLED: "true"
+      UPLOAD_ALLOW_INSECURE: "true"
+      UPLOAD_MINIO_BUCKET: ${UPLOAD_MINIO_BUCKET}
+      UPLOAD_MINIO_ACCESS_KEY: ${UPLOAD_MINIO_ACCESS_KEY}
+      UPLOAD_MINIO_SECRET_KEY: ${UPLOAD_MINIO_SECRET_KEY}
+      UPLOAD_MINIO_REGION: ${UPLOAD_MINIO_REGION:-us-east-1}
+      MINIO_PUBLIC_ENDPOINT: ${MINIO_PUBLIC_ENDPOINT:-}
+      UPLOAD_STORAGE_TIMEOUT_MS: ${UPLOAD_STORAGE_TIMEOUT_MS:-10000}
+      UPLOAD_SIGNED_URL_SECONDS: ${UPLOAD_SIGNED_URL_SECONDS:-120}
+      CLAMAV_HOST: clamav
+      CLAMAV_PORT: "3310"
+      CLAMAV_CONNECT_TIMEOUT_MS: ${CLAMAV_CONNECT_TIMEOUT_MS:-3000}
+      CLAMAV_SCAN_TIMEOUT_MS: ${CLAMAV_SCAN_TIMEOUT_MS:-30000}
+    depends_on:
+      clamav: { condition: service_healthy }
+
+volumes:
+  clamav_data:

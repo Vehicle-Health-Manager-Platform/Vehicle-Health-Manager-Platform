@@ -46,7 +46,7 @@ public class MinioPrivateObjectStore implements SignedObjectStore {
         key(key); requirePrivate();
         try {
             internal.putObject(PutObjectArgs.builder().bucket(bucket).object(key).contentType(contentType)
-                .stream(new ByteArrayInputStream(bytes), bytes.length, -1).build());
+                .stream(new ByteArrayInputStream(bytes), (long) bytes.length, -1L).build());
         } catch (Exception exception) { throw unavailable(); }
     }
     @Override public void delete(String key) {

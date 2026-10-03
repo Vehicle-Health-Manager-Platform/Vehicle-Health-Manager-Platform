@@ -22,6 +22,8 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.Network;
+import org.testcontainers.containers.startupcheck.OneShotStartupCheckStrategy;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.images.builder.ImageFromDockerfile;
@@ -32,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
 class RealUploadAdaptersTest {
+    static final Network network = Network.newNetwork();
     // Deliberately synthetic signatures: real engine/protocol evidence, not production coverage.
     static final byte[] INFECTED = "\u0089PNG\r\n\u001a\nAutocareScannerTestMarker".getBytes(StandardCharsets.ISO_8859_1);
     static String signature() {
@@ -42,6 +45,7 @@ class RealUploadAdaptersTest {
     @Container static GenericContainer<?> minio = new GenericContainer<>(
         new ImageFromDockerfile("autocare-upload-minio-ci", false).withDockerfile(Path.of("..", "deploy", "minio", "Dockerfile")))
         .withEnv("MINIO_ROOT_USER", "ci-upload-root").withEnv("MINIO_ROOT_PASSWORD", "ci-upload-private-password")
+        .withNetwork(network).withNetworkAliases("upload-minio")
         .withCommand("server", "/data").withExposedPorts(9000)
         .waitingFor(Wait.forHttp("/minio/health/ready").forPort(9000).withStartupTimeout(Duration.ofMinutes(3)));
     @Container static GenericContainer<?> clamd = new GenericContainer<>("clamav/clamav:1.4.3_base")
@@ -124,5 +128,27 @@ class RealUploadAdaptersTest {
         assertThrows(UploadException.class, () -> new PrivateFileAccessService(uploads,storage(null,"ci-upload-private-password",bucket),120).sign(PrivateUploadTest.OWNER,file.id()));
         store.put(key,"image/png",new byte[]{1});
         assertThrows(UploadException.class, () -> new PrivateFileAccessService(uploads,store,120).sign(PrivateUploadTest.OWNER,file.id()));
+    }
+    GenericContainer<?> initializer(String account) {
+        return new GenericContainer<>(new ImageFromDockerfile("autocare-upload-init-ci", false)
+            .withDockerfile(Path.of("..", "deploy", "upload-init", "Dockerfile"))
+            .withFileFromPath("initialize.sh", Path.of("..", "deploy", "upload-init", "initialize.sh")))
+            .withNetwork(network).withEnv("MINIO_ENDPOINT", "http://upload-minio:9000")
+            .withEnv("MINIO_ROOT_USER", "ci-upload-root").withEnv("MINIO_ROOT_PASSWORD", "ci-upload-private-password")
+            .withEnv("UPLOAD_MINIO_BUCKET", bucket).withEnv("UPLOAD_MINIO_ACCESS_KEY", account)
+            .withEnv("UPLOAD_MINIO_SECRET_KEY", "ci-dedicated-upload-password")
+            .withStartupCheckStrategy(new OneShotStartupCheckStrategy().withTimeout(Duration.ofMinutes(2)));
+    }
+    @Test void initializationCreatesDedicatedLimitedAccountAndRefusesToOverwriteIt() {
+        String account = "upload-" + UUID.randomUUID();
+        try (var init = initializer(account)) { init.start(); assertTrue(init.getLogs().contains("initialized")); }
+        var dedicated = new MinioPrivateObjectStore(endpoint, endpoint, account, "ci-dedicated-upload-password", bucket,"us-east-1",true,3000);
+        assertTrue(dedicated.isPrivate());
+        String key = "uploads/" + UUID.randomUUID(); dedicated.put(key,"image/png",PrivateUploadTest.PNG);
+        assertEquals(PrivateUploadTest.PNG.length,dedicated.stat(key).sizeBytes()); dedicated.delete(key);
+        assertThrows(UploadException.class, () -> new MinioPrivateObjectStore(endpoint,endpoint,account,
+            "ci-dedicated-upload-password","other-bucket","us-east-1",true,3000).isPrivate());
+        try (var again = initializer(account)) { assertThrows(org.testcontainers.containers.ContainerLaunchException.class, again::start); }
+        assertTrue(dedicated.isPrivate());
     }
 }

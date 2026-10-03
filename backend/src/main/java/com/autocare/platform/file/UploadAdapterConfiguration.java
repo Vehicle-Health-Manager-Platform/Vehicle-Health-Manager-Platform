@@ -30,7 +30,8 @@ public class UploadAdapterConfiguration {
     }
     private String required(Environment env, String name) {
         String value = env.getProperty(name);
-        if (value == null || value.isBlank() || value.startsWith("change-me")) throw new IllegalArgumentException("Missing upload configuration: " + name);
+        if (value == null || value.isBlank() || value.startsWith("change-me") || "unconfigured".equals(value))
+            throw new IllegalArgumentException("Missing upload configuration: " + name);
         return value;
     }
 }
