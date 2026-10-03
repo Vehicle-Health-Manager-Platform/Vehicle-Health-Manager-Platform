@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "汽车健康管家平台全栈开发交付文档.md"
+SOURCE = ROOT / "docs" / "reference" / "DELIVERY_V1.md"
 EXTRA = ROOT / "docs/sql/extra_tables.sql"
 OUTPUT = ROOT / "docs/sql/init.sql"
 MIGRATION = ROOT / "docs/sql/migrations/V001__baseline.sql"

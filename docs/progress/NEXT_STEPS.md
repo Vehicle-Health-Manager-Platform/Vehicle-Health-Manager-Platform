@@ -26,14 +26,14 @@ S0 幂等与成功审计核心已在 [PR #8](https://github.com/Vehicle-Health-M
 
 每一步以“页面可操作、接口真实响应、数据正确落库、权限与失败路径通过”为交付依据，同时保留 CI、模拟器、真实环境和真机验收的区别。工作范围仍为微信小程序及配套后端；运营 PC 后台由协作团队负责。
 
-## 仓库合并顺序
+## 仓库协作方式
 
-截至 2026-10-03：[PR #3](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/3) 已合入 [PR #2](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/2) 的分支，**尚未进入 `main`**。先复核并合入 PR #2；随后将以旧 PR #3 分支为基线的 [PR #4](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/4) 调整到已合入的基线并合入；最后处理以 PR #4 为基线的 [PR #5](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/5)。每次变更基线后重新确认差异和 CI。此处是合并计划，不表示 PR 已合并。
+既有堆叠分支已统一整合到 `main`，后续以更新后的 `main` 为基线创建独立功能分支和 PR。每步完成页面/接口/数据及失败路径验证后推送 GitHub，并更新当前状态、执行记录和本页；CI 通过后再合并。编译产物和私有配置不提交到仓库。
 
-后续按 PR #6（文档）→ PR #7（三角色页面状态）→ PR #8（幂等与审计）→ PR #9（私有上传核心）→ PR #10（真实适配器与内部签名）的顺序处理堆叠基线；PR #8 当前以 PR #7 分支为基线，PR #9 以 PR #8 为基线，PR #10 以 PR #9 为基线。各项合并前重新确认差异和 CI。
+下一步仍为 **HTTP 上传与图片访问入口**，随后优先完成 S1 车辆档案流程；本次仓库整合不表示这些业务或 M0/M1 已通过。
 
 ## 外部条件与范围
 
 - **用户/环境提供**：确认轮换后的 AppSecret 只在私有环境中配置；提供已应用 V002/V003 的测试数据库、可从小程序访问的 HTTPS 后端和测试设备。不要把密钥、手机号或验证码写进文档、聊天、Git 或构建产物。
 - **待决策**：商家短信服务商、签名与模板尚未确定；当前 [商家身份核心](../api/MERCHANT_AUTH.md)没有生产发送器，请求验证码会返回 503。正式小程序主体、各角色 AppID 与支付资质仍待确认。
-- **范围边界**：`apps/miniapp` 当前是可编译的导航和身份骨架，不能计入车辆、交易、AI 或完整商家/技师业务交付；旧网页目录仍是过渡原型，运营 PC 后台由协作团队负责。需求与验收仍以[原始交付文档](../../汽车健康管家平台全栈开发交付文档.md)和[Spec](../SPEC.md)为准。
+- **范围边界**：`apps/miniapp` 当前是可编译的导航和身份骨架，不能计入车辆、交易、AI 或完整商家/技师业务交付；旧网页目录仍是过渡原型，运营 PC 后台由协作团队负责。需求与验收仍以[原始交付文档](../reference/DELIVERY_V1.md)和[Spec](../SPEC.md)为准。

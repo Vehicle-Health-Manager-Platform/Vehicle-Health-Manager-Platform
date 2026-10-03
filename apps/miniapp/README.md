@@ -18,7 +18,7 @@ Test-Path .\apps\miniapp\dist\build\mp-weixin\app.json
 
 需要热更新时，在仓库根目录持续运行 `npm run dev:miniapp`，改为导入 `apps/miniapp/dist/dev/mp-weixin`；终端停止后，先重新运行开发命令。测试号 AppID 已写入 `src/manifest.json`，编译后也会出现在产物的 `project.config.json`。它是公开项目标识，**AppSecret 不应放入此工程、前端环境变量、构建产物或 Git**。
 
-PR #2 的身份代码、已合入其分支的 PR #3、PR #4 的五 Tab 与 PR #5 的商家身份尚未全部进入 `main`。若在另一份仓库只构建 `main`，不会得到这些尚未合入的页面和接口；先取得相应分支代码，或待 PR 按[合并计划](../../docs/progress/NEXT_STEPS.md)落地后更新 `main` 再构建。
+身份核心、车主五 Tab、商家身份、页面状态及上传基础能力已整合至 `main`。在另一份仓库更新 `main` 后重新执行上述构建命令，即可生成对应小程序产物；编译产物不会提交到 Git。
 
 如果需要联调后端，将 `.env.example` 复制为本目录 `.env.local` 并设置 `VITE_API_BASE_URL` 为可从小程序访问的 HTTPS 服务地址。没有服务端地址时，登录按钮会明确提示不可用；后端已实现 `/api/auth/wx-login`、技师绑定、车主手机号绑定、刷新与退出。技师首次登录返回待绑定状态时，页面可输入商家发放的员工码；车主登录成功后可通过微信手机号按钮授权并绑定。商家入口已有账号密码与短信码表单，但服务商未定，验证码请求当前返回 503。真实登录仍需轮换后的私有 AppSecret、V002/V003 迁移和可访问的后端；手机号能力需要微信账号主体资质及额度。真机请求域名和 HTTPS 需按微信要求配置；开发者工具的域名校验设置只用于开发预览。
 

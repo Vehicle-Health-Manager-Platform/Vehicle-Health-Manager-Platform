@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "汽车健康管家平台全栈开发交付文档.md"
+SOURCE = ROOT / "docs" / "reference" / "DELIVERY_V1.md"
 OUTPUT = ROOT / "docs" / "progress" / "S0_TRACEABILITY.csv"
 
 # Each feature maps to its planned stage, UI, API, and primary data entities.
