@@ -1,0 +1,111 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import { createImageApi, ImageError, MAX_IMAGE_BYTES } from '../src/services/private-images.js'
+import { useImageFlow } from '../src/services/image-flow.js'
+import { ownerSession, clearOwnerSession } from '../src/services/owner-session.js'
+const result = { file_id: 9, content_type: 'image/png', size_bytes: 100 }
+const image = { path: 'offline-image.png', size: 100 }
+const key = '11111111-1111-4111-8111-111111111111'
+const signed = () => ({ url: 'https://offline.invalid/private?signature=test', expires_at: new Date(Date.now() + 120000).toISOString() })
+function harness(baseUrl = 'https://offline.invalid') {
+  const calls = [], previews = []
+  let response = { statusCode: 200, data: JSON.stringify({ code: 0, data: result }) }
+  let selection = { tempFiles: [image] }
+  const runtime = {
+    chooseImage(options) { selection.errMsg ? options.fail(selection) : options.success(selection) },
+    uploadFile(options) { calls.push(options); response.errMsg ? options.fail(response) : options.success(response); return { abort() {} } },
+    request(options) { calls.push(options); response.errMsg ? options.fail(response) : options.success(response); return { abort() {} } },
+    previewImage(options) { previews.push(options); options.success() },
+  }
+  return { api: createImageApi({ baseUrl, runtime: () => runtime }), calls, previews,
+    reply(value) { response = value }, select(value) { selection = value } }
+}
+test('missing service or token prevents native selection and upload', async () => {
+  const h = harness('')
+  assert.throws(() => h.api.choose('token'), { kind: 'unconfigured' })
+  assert.throws(() => h.api.upload('', image, key), { kind: 'unauthorized' })
+  assert.equal(h.calls.length, 0)
+})
+test('selection cancellation is harmless and sizes are bounded', async () => {
+  const h = harness(); h.select({ errMsg: 'chooseImage:fail cancel' }); assert.equal(await h.api.choose('token'), null)
+  h.select({ tempFiles: [{ ...image, size: MAX_IMAGE_BYTES + 1 }] }); await assert.rejects(h.api.choose('token'), { kind: 'too-large' })
+  h.select({ tempFiles: [{ ...image, size: MAX_IMAGE_BYTES }] }); assert.equal((await h.api.choose('token')).size, MAX_IMAGE_BYTES)
+  h.select({ tempFilePaths: ['unknown.png'] }); await assert.rejects(h.api.choose('token'), { kind: 'invalid' })
+})
+test('upload uses one file field and fixed key and strictly parses string envelope', async () => {
+  const h = harness(); assert.deepEqual(await h.api.upload('token', image, key), result)
+  assert.equal(h.calls[0].name, 'file'); assert.equal(h.calls[0].header['Idempotency-Key'], key)
+  assert.equal(h.calls[0].header.Authorization, 'Bearer token'); assert.equal(h.calls[0].formData, undefined)
+  for (const data of ['bad-json', JSON.stringify({ code: 0, data: { ...result, file_id: '9' } }), JSON.stringify({ code: 1, data: result })]) {
+    h.reply({ statusCode: 200, data }); await assert.rejects(h.api.upload('token', image, key), { kind: 'protocol' })
+  }
+  h.reply({ data: { code: 0, data: result } }); await assert.rejects(h.api.upload('token', image, key), { kind: 'protocol' })
+})
+test('HTTP and transport failures expose fixed safe guidance', async () => {
+  const h = harness()
+  for (const [status, kind] of [[401, 'unauthorized'], [403, 'forbidden'], [409, 'conflict'], [413, 'too-large'], [422, 'rejected'], [429, 'rate-limited'], [503, 'unavailable']]) {
+    h.reply({ statusCode: status, data: { message: 'private response secret' } })
+    await assert.rejects(h.api.upload('token', image, key), error => error.kind === kind && !error.message.includes('secret'))
+  }
+  h.reply({ errMsg: 'uploadFile:fail timeout private' }); await assert.rejects(h.api.upload('token', image, key), { kind: 'timeout' })
+  h.reply({ errMsg: 'private network error' }); await assert.rejects(h.api.upload('token', image, key), { kind: 'network' })
+})
+test('access rejects insecure or expired URLs and never sends upload key', async () => {
+  const h = harness(); h.reply({ statusCode: 200, data: { code: 0, data: signed() } }); await h.api.access('token', 9)
+  assert.equal(h.calls[0].method, 'GET'); assert.equal(h.calls[0].header['Idempotency-Key'], undefined)
+  for (const value of [{ ...signed(), url: 'http://offline.invalid/file' }, { ...signed(), url: 'data:secret' }, { ...signed(), expires_at: new Date(0).toISOString() }]) {
+    h.reply({ statusCode: 200, data: { code: 0, data: value } }); await assert.rejects(h.api.access('token', 9), { kind: 'protocol' })
+  }
+})
+function flowHarness() {
+  ownerSession.accessToken = 'owner-one'
+  const calls = [], previews = []; let fail = null; let selection = image; let sequence = 0
+  const api = { async choose() { return selection }, async upload(token, file, key) { calls.push({ token, file, key }); if (fail) throw fail; return result },
+    async access(token, id) { calls.push({ token, id }); return signed() }, async preview(url) { previews.push(url) } }
+  const flow = useImageFlow(api, () => `key-${++sequence}`)
+  return { flow, api, calls, previews, failure(value) { fail = value }, selection(value) { selection = value }, close() { flow.dispose(); clearOwnerSession() } }
+}
+test('retry preserves selected bytes and key; choosing a replacement creates a new key', async () => {
+  const h = flowHarness()
+  try {
+    await h.flow.choose(); h.failure(new ImageError('unavailable', '暂不可用')); await h.flow.upload()
+    assert.equal(h.flow.retryable.value, true); h.failure(null); await h.flow.retry()
+    assert.equal(h.calls[0].key, h.calls[1].key); assert.equal(h.calls[0].file.path, h.calls[1].file.path)
+    assert.match(h.flow.message.value, /档案尚未创建/)
+    await h.flow.choose(); await h.flow.upload(); assert.notEqual(h.calls[1].key, h.calls[2].key)
+  } finally { h.close() }
+})
+test('cancelling selection retains previous image and upload result', async () => {
+  const h = flowHarness(); try { await h.flow.choose(); await h.flow.upload(); h.selection(null); await h.flow.choose()
+    assert.equal(h.flow.uploaded.value.file_id, 9); assert.equal(h.flow.file.value.path, image.path) } finally { h.close() }
+})
+test('duplicate submit is suppressed and each preview obtains a new signature', async () => {
+  const h = flowHarness(); try {
+    await h.flow.choose(); const first = h.flow.upload(); const second = h.flow.upload(); await Promise.all([first, second])
+    assert.equal(h.calls.filter(call => call.key).length, 1)
+    await h.flow.preview(); await h.flow.preview(); assert.equal(h.calls.filter(call => call.id).length, 2); assert.equal(h.previews.length, 2)
+  } finally { h.close() }
+})
+test('session switch clears sensitive state and discards late upload response', async () => {
+  const h = flowHarness(); let finish
+  try {
+    h.api.upload = () => new Promise(resolve => { finish = resolve }); await h.flow.choose(); const work = h.flow.upload()
+    ownerSession.accessToken = 'owner-two'; assert.equal(h.flow.file.value, null); finish(result); await work
+    assert.equal(h.flow.uploaded.value, null); assert.equal(h.flow.message.value, '')
+  } finally { h.close() }
+})
+test('hidden page preserves retry key and never previews a late signature', async () => {
+  const h = flowHarness(); let finish
+  try {
+    await h.flow.choose(); await h.flow.upload(); h.api.access = () => new Promise(resolve => { finish = resolve })
+    const work = h.flow.preview(); h.flow.suspend(); finish(signed()); await work; assert.equal(h.previews.length, 0)
+    assert.equal(h.flow.uploaded.value.file_id, 9)
+  } finally { h.close() }
+})
+test('request cancellation aborts task and ignores late callbacks', async () => {
+  let options, aborts = 0, cancel
+  const signal = { subscribe(fn) { cancel = fn }, unsubscribe() {} }
+  const api = createImageApi({ baseUrl: 'https://offline.invalid', runtime: () => ({ uploadFile(value) { options = value; return { abort() { aborts++ } } } }) })
+  const work = api.upload('token', image, key, signal); cancel(); await assert.rejects(work, { kind: 'cancelled' }); assert.equal(aborts, 1)
+  options.success({ statusCode: 200, data: { code: 0, data: result } })
+})
