@@ -12,8 +12,8 @@
 | 车主与技师身份 | 微信身份持久化、角色授权、技师绑定、员工码发放/回收、手机号绑定、限流、刷新凭证轮换与退出撤销 | 自动化验证通过，真实微信与手机号授权未联调。 |
 | 商家身份 | 密码加一次性短信码、账号/商家状态复核、可刷新与撤销的会话 | 服务商未定，没有生产短信发送器，验证码请求当前返回 503。 |
 | 写入完整性 | 24 小时幂等、权限复核、业务/成功响应/成功审计同事务提交 | MySQL 容器验证通过；首次接入仅为 local 里程示例，正式业务需逐项接入。 |
-| 私有上传基础 | 10 MiB 文件校验、扫描后存储、JDBC 元数据与失败补偿；真实 MinIO/ClamAV 适配器、内部短时签名及独立账号初始化 | 真实容器与 TCP 测试通过；尚无 HTTP 上传/签名路由、业务图片流程或私有部署验收。测试合成病毒签名不代表生产官方病毒库验收。 |
-| 数据库与 CI | V001–V003、42 张表；网页、小程序、后端、生成文件/OCR、MySQL 和 Compose 共六项 CI | 整合前最新验证为后端 82 项测试无失败/错误/跳过；本次整合结果查看 [GitHub Actions](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/workflows/ci.yml)。 |
+| 私有上传基础 | 10 MiB 文件校验、扫描后存储、JDBC 元数据与失败补偿；真实 MinIO/ClamAV 适配器、内部短时签名及独立账号初始化 | 真实容器与 TCP 测试通过；PR #12 的车主 HTTP 上传/访问与失败核对已通过 CI，尚未合入 main；小程序图片操作、业务图片流程和私有部署仍待交付。测试合成病毒签名不代表生产官方病毒库验收。 |
+| 数据库与 CI | main 为 V001–V003、42 张表，PR #12 追加 V004 至 44 表；网页、小程序、后端、生成文件/OCR、MySQL 和 Compose 共六项 CI | PR #12 后端 107 项测试无失败/错误/跳过；各提交验证结果查看 [GitHub Actions](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/workflows/ci.yml)。 |
 
 ## 从源码构建微信小程序
 
@@ -38,7 +38,7 @@ cd backend
 mvn spring-boot:run
 ```
 
-默认端口为 8080，健康检查为 `GET /actuator/health`。数据库须按顺序应用 V001、V002、V003：新建 Compose 数据卷自动初始化，**已有数据卷须人工补迁移**。上传适配器默认关闭；启用、私有桶初始化及 ClamAV 配置见[上传适配器说明](docs/api/UPLOAD_ADAPTERS.md)。
+默认端口为 8080，健康检查为 `GET /actuator/health`。本分支数据库须按顺序应用 V001、V002、V003、V004：新建 Compose 数据卷自动初始化，**已有数据卷须人工补迁移**。上传适配器默认关闭；启用、私有桶初始化及 ClamAV 配置见[上传适配器说明](docs/api/UPLOAD_ADAPTERS.md)。
 
 在仓库根目录验证：
 
@@ -63,7 +63,7 @@ npm run build:h5 --workspace @autocare/miniapp
 
 ## 下一步
 
-1. 实现 HTTP 上传与图片短时访问入口，接入身份复核、幂等、请求限制、限流和清理/状态核对，再验证小程序图片选择、上传和预览。
+1. [车主 HTTP 图片接口](docs/api/UPLOAD_HTTP.md)已通过自动化验证；下一步独立接入小程序图片选择、上传、同键重试和短时预览。
 2. 优先打通 S1 本人车辆列表/手动录入、档案录入/查询的小程序页面、受保护接口和持久化。
 3. 外部条件齐备后并行完成真实微信、手机号、短信及私有上传环境联调；继续补齐健康监控和 S0/M0 验收。
 
