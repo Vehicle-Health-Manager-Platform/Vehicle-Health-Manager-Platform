@@ -35,6 +35,7 @@ function openLogin() {
       <text class="panel-note">当前仅完成导航与身份入口；尚无可展示的业务数据。</text>
       <slot />
     </view>
+    <slot name="content" v-if="signedIn" />
   </view>
 </template>
 
