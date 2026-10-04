@@ -33,6 +33,10 @@ async function main() {
       assert.equal(page.path, url.slice(1))
       console.log(`PASS simulator route: ${page.path}`)
     }
+    await rpc('App.callWxMethod', { method: 'reLaunch', args: [{ url: '/pages/vehicle/manual' }] })
+    const manual = await rpc('App.getCurrentPage')
+    assert.equal(manual.path, 'pages/vehicle/manual')
+    console.log(`PASS simulator route: ${manual.path}`)
     await rpc('App.callWxMethod', { method: 'reLaunch', args: [{ url: '/pages/owner/index' }] })
     const screenshot = await rpc('App.captureScreenshot')
     const output = path.resolve('test-results/wechat-owner.png')
