@@ -15,7 +15,7 @@
 | 私有上传基础 | 10 MiB 文件校验、扫描后存储、JDBC 元数据与失败补偿；真实 MinIO/ClamAV 适配器、内部短时签名及独立账号初始化 | 真实容器与 TCP 测试通过；PR #12 的车主 HTTP 上传/访问与失败核对已通过 CI，尚未合入 main；PR #13 已接入小程序图片操作；业务档案关联、真实图片联调和私有部署仍待交付。测试合成病毒签名不代表生产官方病毒库验收。 |
 | 数据库与 CI | main 为 V001–V003、42 张表，PR #12 追加 V004 至 44 表；网页、小程序、后端、生成文件/OCR、MySQL 和 Compose 共六项 CI | PR #12 后端 107 项测试无失败/错误/跳过；各提交验证结果查看 [GitHub Actions](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/workflows/ci.yml)。 |
 | S1 本人车辆与手动录入 | 档案Tab车辆列表、品牌→车系→年款→配置选择、幂等添加、归属隔离、脱敏与成功审计 | [PR #14](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/14) 已实现；39项离线测试、H5 11项替身交互和模拟器10条路由通过。车型库只读取现有有效数据，生产来源未确定；完整F02/M1未验收。[接口契约](docs/api/VEHICLE_MANUAL.md)。 |
-| S1 本人车辆档案手动录入 | 本分支新增七类通用记录、按车分页、至多五张私有图片关联及本人/CLEAN校验 | 小程序 43 项 Node 测试与微信小程序构建在本机通过；后端 MySQL 集成测试已编写，因本机无 Java/Maven 和 Docker 引擎尚未执行，CI 与真实环境未验证。[接口契约](docs/api/ARCHIVE_MANUAL.md)。 |
+| S1 本人车辆档案手动录入 | [PR #15](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/15) 新增七类通用记录、按车分页、至多五张私有图片关联及本人/CLEAN校验 | [CI 37203770229](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37203770229) 六项全绿，后端132项无失败/跳过；小程序43项Node测试、微信/H5构建通过。真实微信、私有图片和真机仍未联调。[接口契约](docs/api/ARCHIVE_MANUAL.md)。 |
 
 ## 从源码构建微信小程序
 
@@ -66,7 +66,7 @@ npm run build:h5 --workspace @autocare/miniapp
 ## 下一步
 
 1. 图片后端 PR #12 与小程序图片操作 PR #13 按依赖顺序合并；真实私有环境和微信图片联调条件到位后记录验收。
-2. 车辆列表与手动录入已在PR #14实现（依赖#13）；本分支已编码本人车辆的档案手动录入/查询及图片归档校验，待后端 CI 与独立 PR 验证。车型库来源待落实。
+2. 车辆列表与手动录入已在PR #14实现（依赖#13）；本人车辆档案手动录入/查询及图片归档校验已在PR #15完成自动化验证，仍待按顺序合并及真实环境联调。车型库来源待落实。
 3. 外部条件齐备后并行完成真实微信、手机号、短信及私有上传环境联调；继续补齐健康监控和 S0/M0 验收。
 
 ## 项目文档
@@ -76,4 +76,4 @@ npm run build:h5 --workspace @autocare/miniapp
 - [当前进度](docs/progress/CURRENT_STATUS.md)、[执行记录](docs/progress/S0_EXECUTION_LOG.md)、[外部依赖](docs/progress/S0_DEPENDENCIES.md)
 - [API 文档](docs/api/README.md)、[写入完整性](docs/api/WRITE_INTEGRITY.md)、[上传核心](docs/api/PRIVATE_UPLOAD_CORE.md)、[真实上传适配器](docs/api/UPLOAD_ADAPTERS.md)
 
-后续每步创建可审阅PR，明确未合并的依赖；当前合并顺序 #12 → #13 → #14，后两项合并前需调整基线并复核差异和CI。验证后推送GitHub并更新进度。真实微信联调仍需私有凭据、已迁移数据库、HTTPS 与合法域名；正式主体、支付和提审条件待确认。
+后续每步创建可审阅PR，明确未合并的依赖；当前合并顺序 #12 → #13 → #14 → #15，合并前需调整基线并复核差异和CI。真实微信联调仍需私有凭据、已迁移数据库、HTTPS 与合法域名；正式主体、支付和提审条件待确认。
