@@ -141,3 +141,4 @@
 - 微信开发者工具载入当前构建产物，10条路由实际加载通过（新增手动页），不代表登录、真实录车或微信图片联调。
 - 首版 [CI 37182892331](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37182892331) 六项通过：后端124项无失败/错误/跳过，新增11项MySQL、5项HTTP及1项无库边界测试实际执行；包含并发去重、用户隔离、撤销后重放及审计失败回滚。本机无可用Java/Docker测试环境，后端结果来自CI；最终补充1项读库异常测试及列表重试修复，最终CI另行记录。
 - 真实授权车型库来源、微信凭据、HTTPS、数据库及私有上传环境尚未落实；此步只完成F02手动流程，不宣称完整F02/F03/F04或M0/M1通过。下一步设计并实现本人车辆的档案手动创建/查询，校验本人CLEAN图片引用并存稳定file_id，不保存签名URL；具体字段与附件关系在下一步细化。
+- 最终代码 fd9494f 的 [CI 37183855984](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37183855984) 后端125项测试无失败/错误/跳过；新增HTTP测试增至6项（读库异常安全503），11项MySQL及1项无库边界均执行。最终文档补充此证据并修正旧状态描述；完整CI状态以对应提交链接为准。
