@@ -129,6 +129,27 @@ def main():
     mileage["responses"]["503"] = {"description": "数据库未配置或事务失败，code=50300；使用原幂等键重试"}
     document["paths"][mileage_path] = {"post": mileage}
 
+    upload = operation("post", "/api/file/upload", "正式车主：幂等私有图片上传", "F03")
+    upload["x-roles"] = "车主正式会话"
+    upload["x-implementation-status"] = "implemented"
+    upload["parameters"].append({"in": "header", "name": "Idempotency-Key", "required": True,
+        "schema": {"type": "string", "format": "uuid"}})
+    upload["requestBody"] = {"required": True, "content": {"multipart/form-data": {"schema": {
+        "type": "object", "required": ["file"], "additionalProperties": False,
+        "properties": {"file": {"type": "string", "format": "binary"}}}}}}
+    upload["description"] = "10 MiB 单图片、11 MiB 总请求；同键同内容重放，异内容或正在处理返回 409。外部对象副作用不属于数据库原子事务。详见 UPLOAD_HTTP.md。"
+    for status, description in {"409": "同键异内容或处理中", "413": "文件或请求过大", "422": "病毒检查拒绝", "429": "入口限流或繁忙", "503": "依赖不可用或等待核对"}.items():
+        upload["responses"][status] = {"description": description}
+    document["paths"]["/api/file/upload"] = {"post": upload}
+    access = operation("get", "/api/file/{id}/access", "正式车主：本人图片短时 GET 签名", "F03")
+    access.pop("requestBody", None)
+    access["x-roles"] = "车主正式会话"
+    access["x-implementation-status"] = "implemented"
+    access["description"] = "每次复核本人/未删除/CLEAN 状态和对象大小/MIME；响应 Cache-Control: no-store，默认签名 120 秒。已经签发的 URL 在 TTL 内仍可能有效。"
+    for status, description in {"404": "文件不存在或非本人", "409": "文件尚不可读", "429": "入口限流", "503": "依赖或对象状态异常"}.items():
+        access["responses"][status] = {"description": description}
+    document["paths"]["/api/file/{id}/access"] = {"get": access}
+
     count = sum(len(item) for item in document["paths"].values())
     if count < 55:
         raise ValueError(f"Expected at least 55 operations; got {count}")

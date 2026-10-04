@@ -3941,6 +3941,179 @@
         "x-roles": "车主",
         "description": "24 小时内同键同请求重放原成功结果，同键不同请求返回 40001。每次重放仍校验车辆归属。需配置测试数据库，不属于正式车辆业务。"
       }
+    },
+    "/api/file/upload": {
+      "post": {
+        "summary": "正式车主：幂等私有图片上传",
+        "operationId": "post_api_file_upload",
+        "tags": [
+          "file"
+        ],
+        "x-feature-ids": [
+          "F03"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "409": {
+            "description": "同键异内容或处理中"
+          },
+          "413": {
+            "description": "文件或请求过大"
+          },
+          "422": {
+            "description": "病毒检查拒绝"
+          },
+          "429": {
+            "description": "入口限流或繁忙"
+          },
+          "503": {
+            "description": "依赖不可用或等待核对"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-roles": "车主正式会话",
+        "x-implementation-status": "implemented",
+        "description": "10 MiB 单图片、11 MiB 总请求；同键同内容重放，异内容或正在处理返回 409。外部对象副作用不属于数据库原子事务。详见 UPLOAD_HTTP.md。"
+      }
+    },
+    "/api/file/{id}/access": {
+      "get": {
+        "summary": "正式车主：本人图片短时 GET 签名",
+        "operationId": "get_api_file_id_access",
+        "tags": [
+          "file"
+        ],
+        "x-feature-ids": [
+          "F03"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "文件不存在或非本人"
+          },
+          "409": {
+            "description": "文件尚不可读"
+          },
+          "429": {
+            "description": "入口限流"
+          },
+          "503": {
+            "description": "依赖或对象状态异常"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "车主正式会话",
+        "x-implementation-status": "implemented",
+        "description": "每次复核本人/未删除/CLEAN 状态和对象大小/MIME；响应 Cache-Control: no-store，默认签名 120 秒。已经签发的 URL 在 TTL 内仍可能有效。"
+      }
     }
   },
   "components": {

@@ -118,14 +118,14 @@ class JdbcUploadHttpTest {
         var second=upload(key);assertNotEquals(first.path("data").path("file_id"),second.path("data").path("file_id"));
         assertEquals(2,count("file_object"));assertEquals(2,objects.size());assertEquals(2,count("audit_log"));
     }
-    @Test void sharedRateCountersIncludeRejectedRequestsAndAccessHasSeparateBudget() {
-        // Keep the test within one fixed UTC minute; a boundary would reset the budget by design.
+    @Test void sharedRateCountersIncludeRejectedRequestsAndAccessHasSeparateBudget() throws Exception {
         long remaining=60-Instant.now().getEpochSecond()%60;
-        if(remaining<3) {jdbc.update("INSERT INTO auth_rate_limit(scope,key_hash,window_start,attempts) VALUES ('file_upload',?,FROM_UNIXTIME(?),10)",
-            com.autocare.platform.gateway.identity.AuthTokens.sha256("1001"),Math.floorDiv(Instant.now().getEpochSecond(),60)*60);}
-        else for(int i=0;i<10;i++) requests.admission(owner,true);
+        if(remaining<5) Thread.sleep((remaining+1)*1000);
+        for(int i=0;i<10;i++) requests.admission(owner,true);
+        assertEquals(429,assertThrows(UploadHttpException.class,()->requests.admission(owner,true)).status());
         assertEquals(429,assertThrows(UploadHttpException.class,()->requests.admission(owner,true)).status());
         requests.admission(owner,false);
+        assertEquals(12,jdbc.queryForObject("SELECT attempts FROM auth_rate_limit WHERE scope='file_upload'",Integer.class));
     }
     @Test void resolvedSuccessfulCommitIsNeverTurnedIntoCleanup() {
         String key=UUID.randomUUID().toString();var response=upload(key);
@@ -133,4 +133,25 @@ class JdbcUploadHttpTest {
         var reservation=new JdbcUploadRequests.Reservation(((Number)row.get("id")).longValue(),(String)row.get("attempt_id"),(String)row.get("object_key"),null);
         assertEquals(response,requests.failed(reservation,503,true));assertEquals(0,count("upload_cleanup_task"));assertEquals(1,objects.size());
     }
+    @Test void actualCommitAcknowledgementFailureRecoversWithoutDeletingObject() {
+        var once=new java.util.concurrent.atomic.AtomicBoolean(true);
+        var manager=new DataSourceTransactionManager(jdbc.getDataSource()) {
+            @Override protected void doCommit(org.springframework.transaction.support.DefaultTransactionStatus status) {
+                super.doCommit(status);
+                if(count("file_object")>0 && once.compareAndSet(true,false))
+                    throw new org.springframework.transaction.TransactionSystemException("injected lost acknowledgement after commit");
+            }
+        };
+        requests=new JdbcUploadRequests(jdbc,manager,new ObjectMapper());
+        String key=UUID.randomUUID().toString();var response=upload(key);
+        assertEquals(response,upload(key));assertEquals(1,objects.size());assertEquals(1,count("audit_log"));assertEquals(0,count("upload_cleanup_task"));
+    }
+    @Test void unknownScanAndStoreFailureBeforeOrAfterPutAreFailClosed() {
+        var unknown=new UploadHttpService(requests,bytes->VirusScanner.Result.UNAVAILABLE,store);
+        assertEquals(503,assertThrows(UploadHttpException.class,()->unknown.upload(owner,UUID.randomUUID().toString(),"a.png",new ByteArrayInputStream(PrivateUploadTest.PNG))).status());
+        assertEquals(0,puts);assertEquals(0,count("file_object"));
+        failPut=true;assertThrows(UploadHttpException.class,()->upload(UUID.randomUUID().toString()));
+        assertEquals(1,count("upload_cleanup_task"));service().reconcile();assertTrue(objects.isEmpty());
+    }
+
 }

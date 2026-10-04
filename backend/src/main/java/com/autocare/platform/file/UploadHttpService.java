@@ -42,7 +42,7 @@ public class UploadHttpService {
         } catch(RuntimeException e) {
             int status=e instanceof UploadHttpException error ? error.status() : 503;
             JsonNode recovered=requests.failed(reservation,status,mayHaveObject);
-            if(recovered!=null) {requests.checkOwner(owner);return recovered;}
+            if(recovered!=null) return requests.recovered(owner,reservation);
             if(e instanceof UploadHttpException error) throw error;
             throw UploadHttpException.unavailable();
         }

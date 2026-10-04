@@ -24,3 +24,5 @@ java -jar app.jar --spring.profiles.active=staff-admin --spring.main.web-applica
 发码命令只打印一次高熵员工码；安全交付给对应员工，不写入仓库、日志或工单。重新发码和回收都会解除该员工现有微信绑定；员工须重新绑定。命令必须在无 HTTP 服务的模式运行。数据库先应用 V001、V002、V003；新建 Compose 数据卷会依次自动执行三个脚本，**已有数据卷须人工按顺序补迁移 V002、V003**。Compose 从私有环境读取 MySQL 与微信变量；其他运行方式设置 `MYSQL_HOST`、`MYSQL_DATABASE`、`MYSQL_USER`、`MYSQL_PASSWORD` 后才启用身份仓储。缺少仓储或微信凭据时相关请求返回 503。此前在聊天中披露过的 AppSecret 须先轮换，再通过私有环境配置真实联调。微信手机号能力还要求符合[官方主体资质与额度条件](https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/getPhoneNumber.html)。真机微信联调和完整业务 API 仍未完成。
 
 S0-7.1f-2 新增[商家账号身份核心](../docs/api/MERCHANT_AUTH.md)：已预置且审核通过的 `MERCHANT` 员工账号可在密码校验后请求短信验证码，再用一次性短信码登录，获得可刷新、可撤销的商家会话；员工或商家禁用后旧令牌失效。短信服务商尚未确定，`MerchantSmsSender` 暂无生产实现，因此请求短信码会返回 503；不应将测试验证码发送器部署到生产环境。
+
+HTTP 上传和本人短时图片访问见 [HTTP 接入说明](../docs/api/UPLOAD_HTTP.md)：仅正式车主会话，需 V004 及真实适配器；小程序图片操作尚待后续一步接入。

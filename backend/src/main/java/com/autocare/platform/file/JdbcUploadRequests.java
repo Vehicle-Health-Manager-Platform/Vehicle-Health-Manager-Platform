@@ -111,12 +111,19 @@ public class JdbcUploadRequests {
             },holder);
             Number id=holder.getKey(); if(id==null) throw new IllegalStateException();
             var data=Map.of("file_id",id.longValue(),"content_type",file.contentType(),"size_bytes",file.bytes().length);
-            JsonNode response=mapper.valueToTree(ApiResponse.success(data));
+            JsonNode response=parse(json(ApiResponse.success(data)));
             jdbc.update("INSERT INTO audit_log(actor_type,actor_id,action,resource_type,resource_id,before_state,after_state,request_id) "
                 + "VALUES ('user',?,'FILE_UPLOAD','file_object',?,NULL,?,?)",owner.id(),id.longValue(),json(data),response.path("request_id").asText());
             jdbc.update("UPDATE upload_request SET state='SUCCEEDED',response_body=?,expires_at=DATE_ADD(UTC_TIMESTAMP(),INTERVAL 24 HOUR) WHERE id=?",
                 json(response),row.id());
             return response;
+        });
+    }
+    public JsonNode recovered(UploadOwner owner, Reservation reservation) {
+        return transaction(() -> {
+            authorize(owner);Stored row=read(reservation.id());
+            if(!row.attempt().equals(reservation.attempt()) || !row.state().equals("SUCCEEDED")) throw UploadHttpException.unavailable();
+            return readableReplay(owner,row);
         });
     }
     /** Resolves uncertain commit first. Never deletes an object in this method. */
