@@ -7,7 +7,7 @@
 | 范围 | 当前状态 | 证据与边界 |
 | --- | --- | --- |
 | 需求、页面、API 与数据追踪 | 基线已建立 | [Spec](../SPEC.md) 和 [追踪表](S0_TRACEABILITY.md)覆盖 F01–F20、63 个具名页面、43 个核心 API、15 项验收；追踪项不等于功能已交付。 |
-| 微信小程序与车主 H5 构建 | CI 已验证，真机未验收 | 单测试号三角色工程可编译；车主五个原生 Tab 已在 [PR #4](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/4) 实现。PR #14已连接档案Tab本人车辆列表与手动添加；订单、AI及完整档案仍待实现。[PR #4 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37042304336) 六项通过。 |
+| 微信小程序与车主 H5 构建 | CI 已验证，真机未验收 | 单测试号三角色工程可编译；车主五个原生 Tab 已在 [PR #4](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/4) 实现。PR #14/#15 已接入本人车辆与档案手动流程，当前分支接入首页真实摘要；订单、AI及完整 F02–F04 仍待实现。 |
 | 车主与技师微信身份 | 自动化验证通过，真实微信未联调 | [PR #2](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/2) 实现身份持久化、角色授权与绑定；[PR #3](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/3) 实现手机号授权、员工码、限流及会话轮换/撤销。测试使用伪微信响应。 |
 | 商家账号身份 | 核心与 CI 已验证，短信未接通 | [PR #5](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/5) 实现密码加一次性短信码、商家状态复核及小程序入口。[PR #5 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37044187253) 六项通过，后端 28 项测试无失败、无跳过。服务商未定，生产环境没有短信发送实现，验证码请求返回 503。 |
 | 数据库 | main 的 V001–V003 在 CI 验证 | 基线 39 表，V002 增至 40 表，V003 增至 42 表；已有数据库是否应用 V002、V003 尚未确认。不能把新数据卷的自动初始化视作已有库迁移。 |
@@ -19,13 +19,14 @@
 | 小程序档案图片操作（B） | 页面与 CI 已验证，尚未合入 main | [PR #13](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/13) 接入选图、上传、同键重试和每次新签名预览；27 项 Node 测试无失败/跳过，小程序/H5 构建通过，实际 H5 使用 uni 替身通过 13 项交互断言。微信模拟器九条路由加载通过，未计为微信真实图片联调。[CI 37181271501](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37181271501) 六项通过；依赖尚未合并的 PR #12。 |
 | S1 本人车辆列表与手动录入 | PR #14 已实现，尚未合入 main | 正式车主本人列表、有效目录分页、四级车型选择、幂等/审计创建、脱敏与同车主重复阻断；39项Node测试、H5 11项替身交互、模拟器10条路由通过。首版 [CI 37182892331](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37182892331) 六项通过、后端124项全执行；最终代码fd9494f的 [CI 37183855984](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37183855984) 后端125项无失败/错误/跳过，含6项HTTP、11项MySQL与1项无库边界新增测试；完整六项结果以链接为准。[契约](../api/VEHICLE_MANUAL.md)。生产车型来源未确定，档案及完整F02/M1未验收，依赖PR #13。 |
 | S1 本人车辆档案手动录入与查询 | PR #15 自动化验证通过，尚未合入 main | 七类通用记录、本人车辆分页、图片 ID 归档、CLEAN 与归属复核、幂等和审计已实现。[CI 37203770229](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37203770229) 六项全绿，后端132项无失败/错误/跳过；小程序43项Node测试及微信/H5构建通过。真实微信、私有图片与真机尚未联调。[契约](../api/ARCHIVE_MANUAL.md)。 |
+| S1 首页车辆与档案摘要 | PR #16 已创建，待 CI | 复用本人车辆与档案接口，首页可切换车辆并显示真实记录总数和最近记录；与档案 Tab 共用内存选择。48项离线测试与微信/H5构建通过，H5实际交互、微信模拟器、真实微信及私有环境未复核。完整 F04 的评分、提醒、券与同款经验仍未实现。 |
 | 三角色身份页面状态（S0-7.1f-3） | 离线与模拟器验证通过 | 统一加载、失败与重试状态；修复车主会话引用；16 项 Node 测试和 H5 22 项页面交互检查通过。微信开发者工具在当前编译产物中验证测试入口、三角色和五 Tab 共 9 条路由；真实登录、短信和业务列表空状态不在此次验证结果内。 |
 
 本次整合已将 PR #2–#10 的分支提交及原有 `main` 历史全部纳入主分支，保留 Git 提交历史；原始交付文档归档至 [需求基线](../reference/DELIVERY_V1.md)，生成脚本与链接同步调整。后续从 `main` 创建独立 PR。完整 CI 结果以 [GitHub Actions](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/workflows/ci.yml) 对应整合/主分支提交为准，具体合并记录见 [S0 执行记录](S0_EXECUTION_LOG.md)。
 
 ## 开发者工具与真实联调
 
-2026-10-03 用户确认调整推进重点：先完成小程序所需上传基础能力，随后优先打通 S1 车辆档案的页面、后端、数据持久化与联调。健康监控及其他 S0/M0 未满足项继续保留；车辆列表与手动录入已在PR #14实现，档案业务仍待实现，尚不能标记M0/M1通过。具体拆分见[下一步规划](NEXT_STEPS.md)。
+2026-10-03 用户确认调整推进重点：先完成小程序所需上传基础能力，随后优先打通 S1 车辆档案的页面、后端、数据持久化与联调。健康监控及其他 S0/M0 未满足项继续保留；车辆与手动档案分别在 PR #14/#15 完成自动化验证，真实联调和完整 F02–F04 仍待完成，尚不能标记 M0/M1 通过。具体拆分见[下一步规划](NEXT_STEPS.md)。
 
 微信开发者工具已重新导入当前仓库的 `apps/miniapp/dist/build/mp-weixin`，模拟器启动和 9 条路由复核通过，车主身份页截图已检查。用户此前的“项目根目录未找到 `app.json`”来自导入源码仓库根目录；其他仓库仍需按[构建与导入说明](../../apps/miniapp/README.md)自行构建并导入其产物。本步使用未配置真实后端的产物做导航验证，没有真实微信登录或手机号联调。
 

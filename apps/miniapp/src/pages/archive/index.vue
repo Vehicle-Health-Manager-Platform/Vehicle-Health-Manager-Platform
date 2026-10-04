@@ -6,14 +6,16 @@ import VehicleList from '../../components/VehicleList.vue'
 import { ownerSession, clearOwnerSession } from '../../services/owner-session.js'
 import { archiveApi, archiveFailure } from '../../services/archives.js'
 import { imageApi } from '../../services/private-images.js'
+import { selectedOwnerVehicle, selectOwnerVehicle } from '../../services/owner-vehicle-selection.js'
 
-const vehicle = ref(null), rows = ref([]), total = ref(0), page = ref(0)
+const vehicle = selectedOwnerVehicle, rows = ref([]), total = ref(0), page = ref(0)
 const busy = ref(false), loaded = ref(false), message = ref(''), kind = ref(''), retryMore = ref(false)
 const labels = ['保养', '维修', '保险', '事故', '改装', '违章', '年检']
 let generation = 0
+let visible = false
 function suspend() { generation++; busy.value = false }
-function clear() { suspend(); vehicle.value = null; rows.value = []; total.value = 0; page.value = 0; loaded.value = false; message.value = ''; kind.value = '' }
-function select(item) { if (vehicle.value?.vehicle_id === item.vehicle_id) return; suspend(); vehicle.value = item; load() }
+function clear() { suspend(); rows.value = []; total.value = 0; page.value = 0; loaded.value = false; message.value = ''; kind.value = '' }
+function select(item) { selectOwnerVehicle(item) }
 async function load(more = false) {
   if (busy.value || !vehicle.value || !ownerSession.accessToken) return
   const current = ++generation, token = ownerSession.accessToken, vehicleId = vehicle.value.vehicle_id, next = more ? page.value + 1 : 1
@@ -38,9 +40,10 @@ async function preview(id) {
   } catch { if (current === generation) { message.value = '图片预览未打开，请重试'; kind.value = 'preview' } }
 }
 watch(() => ownerSession.accessToken, clear, { flush: 'sync' })
-onShow(() => { if (vehicle.value) load() })
-onHide(suspend)
-onUnload(clear)
+watch(() => vehicle.value?.vehicle_id, (next, previous) => { if (next && next !== previous) { suspend(); if (visible) load() } }, { flush: 'sync' })
+onShow(() => { visible = true; if (vehicle.value) load() })
+onHide(() => { visible = false; suspend() })
+onUnload(() => { visible = false; clear() })
 function login() { clearOwnerSession(); uni.navigateTo({ url: '/pages/owner/index' }) }
 function add() { if (vehicle.value) uni.navigateTo({ url: `/pages/archive/record-add?vehicle_id=${vehicle.value.vehicle_id}` }) }
 </script>

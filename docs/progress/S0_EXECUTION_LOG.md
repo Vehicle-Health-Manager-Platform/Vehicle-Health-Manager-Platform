@@ -149,3 +149,9 @@
 - **尚待验证**：本机未找到 Java/Maven，Docker 引擎未运行，后端 MySQL 容器测试需由 CI 实际执行。微信模拟器、H5 页面交互、真实微信登录、私有图片服务和真机联调尚未验证；不能以构建结果代替。
 - **发布边界**：需在已有数据库按顺序补 V005；当前 `gh` 凭据无效，推送动作还被自动审批拒绝：审批认为未获可信授权将完整分支内容发送到该 GitHub 远端。未绕过拒绝，分支仅在本地；PR/CI 尚未完成。依赖合并顺序仍为 #12 → #13 → #14 → 本步。
 - **授权后进展**：用户明确授权，分支已推送并创建 [PR #15](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/15)，基线为 PR #14 分支。首次 [CI 37203770229](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37203770229) 六项全绿；后端132项测试无失败/错误/跳过，小程序测试、微信/H5构建、MySQL迁移、Compose冒烟均通过。真实微信、私有图片与真机仍未联调；文档证据提交后需复核对应 CI。
+
+## 2026-10-04 · S1 首页车辆与档案摘要（当前分支）
+
+- **范围**：在 PR #15 上复用本人车辆和档案接口，首页显示所选车辆的脱敏信息、服务端档案总数及最近记录；首页与档案 Tab 共用内存选择，身份变化清空，隐藏页与跨车迟到响应不覆盖当前状态。
+- **本机验证**：新增 5 项离线测试覆盖后续页车辆选择、多车切换、空记录、失败重试、隐藏页和旧请求隔离；小程序全套 48 项测试通过，微信小程序/H5 构建成功。默认 Node 测试隔离在本机沙箱触发 `spawn EPERM`，无隔离模式实际执行全部测试。
+- **未验收**：H5实际交互与微信模拟器尚未运行；`/browse` 在本机缺少已构建二进制，按技能指引需先确认一次性构建。真实微信、私有环境、健康评分与提醒也未验收。[PR #16](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/16) 已创建，CI 待复核。

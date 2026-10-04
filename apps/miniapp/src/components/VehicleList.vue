@@ -3,6 +3,7 @@ import { ref, watch, onMounted } from 'vue'
 import { onShow, onHide, onUnload } from '@dcloudio/uni-app'
 import { ownerSession, clearOwnerSession } from '../services/owner-session.js'
 import { vehicleApi, vehicleFailure } from '../services/vehicles.js'
+import { selectionFromPage } from '../services/owner-vehicle-selection.js'
 const props = defineProps({ selectedId: { type: Number, default: 0 } })
 const emit = defineEmits(['select'])
 const rows = ref([]), total = ref(0), page = ref(0), busy = ref(false), loaded = ref(false), message = ref(''), kind = ref('')
@@ -20,7 +21,8 @@ async function load(more = false) {
     if (current !== generation || token !== ownerSession.accessToken) return
     rows.value = more ? [...rows.value, ...data.list] : data.list
     total.value = data.total; page.value = next; loaded.value = true
-    if (rows.value.length && !rows.value.some(row => row.vehicle_id === props.selectedId)) emit('select', rows.value[0])
+    const selected = selectionFromPage(rows.value, props.selectedId)
+    if (selected) emit('select', selected)
   } catch (error) {
     if (current !== generation || token !== ownerSession.accessToken) return
     const safe = vehicleFailure(error); message.value = safe.message; kind.value = safe.kind
