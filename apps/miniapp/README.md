@@ -35,3 +35,11 @@ Test-Path .\apps\miniapp\dist\build\mp-weixin\app.json
 H5 手工验证：设置仅用于本次本机开发服务的 `VITE_API_BASE_URL=http://127.0.0.1:4317`，运行 `npm run dev:h5 --workspace @autocare/miniapp -- --host 127.0.0.1 --port 4317`。用 gstack browse 新建 `http://127.0.0.1:4317/#/` 标签页后，在仓库根目录执行 `browse eval apps/miniapp/test/browser-flow.js`。脚本暂时替换该浏览器页面的 uni 登录和请求响应，结束时恢复；测试文件不被应用导入。页面测试不能代表真实微信或短信联调。
 
 微信模拟器路由验证：用已安装开发者工具的 `cli.bat auto --project <当前仓库的 apps/miniapp/dist/build/mp-weixin 绝对路径> --port 11927 --auto-port 9420 --trust-project` 打开编译产物，再从仓库根目录运行 `node apps/miniapp/test/simulator-smoke.cjs`。它检查测试入口、三角色和五 Tab 的实际页面路径，并将当前车主页截图保存至被 Git 忽略的 `test-results/wechat-owner.png`。此流程不调用真实登录或发短信。
+
+## 档案图片操作
+
+PR #13 接入档案 Tab 的选图、上传、原图同键重试及本人短时预览，依赖 PR #12 的 [HTTP 图片接口](../../docs/api/UPLOAD_HTTP.md)，需正式车主会话、V004 和真实上传适配器。一次一张 JPG/PNG/WebP，最大 10 MiB；服务器再次校验。上传成功不等于档案创建；关闭小程序或重新登录清除页面信息，不表示删除服务器已上传对象。
+
+同次选图固定 UUID，503/断网/超时后使用原图片重试，换图换键。每次预览重新获取 HTTPS 签名，不持久化链接；签名过期可重试。401/403 引导重新登录；切换账号清空图片，页面隐藏中止操作并忽略迟到结果。内存状态不提供跨重启恢复。
+
+新增图片离线测试与身份测试合计 27 项。H5 页面复现：在上述仅本机开发服务配置下，用 gstack browse 同一会话打开本机首页并执行 `browse eval apps/miniapp/test/image-browser-flow.js`，13 项交互检查使用 uni 响应替身，结束恢复原方法。脚本仅存在测试目录，不被生产页面导入。微信模拟器目前验证九条路由加载，未完成真实选图、微信授权或私有图片上传；真机验收须另行记录。

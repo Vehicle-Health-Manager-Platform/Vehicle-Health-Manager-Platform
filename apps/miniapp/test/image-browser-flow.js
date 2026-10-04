@@ -54,6 +54,10 @@ return await (async () => {
     click('重新登录车主账号'); await wait(() => button('微信登录'))
     uni.switchTab({ url: '/pages/archive/index' }); await wait(() => text().includes('请先验证车主身份'))
     assert(!button('预览已上传图片'), 'explicit re-login clears old owner image UI')
+    // Leave a test-only authenticated screenshot scene; native/API methods are restored below.
+    uni.navigateTo({ url: '/pages/owner/index' }); await wait(() => button('微信登录')); click('微信登录'); await wait(() => button('进入车主首页'))
+    uni.switchTab({ url: '/pages/archive/index' }); await wait(() => button('选择图片')); selection = image; accessStatus = 200
+    click('选择图片'); await wait(() => button('上传图片')); click('上传图片'); await wait(() => button('预览已上传图片'))
     return { passed: checks.length, checks, evidence: 'Actual H5 UI with test-only uni responses; no private backend or WeChat authorization' }
   } finally { for (const [name, method] of Object.entries(original)) uni[name] = method }
 })()
