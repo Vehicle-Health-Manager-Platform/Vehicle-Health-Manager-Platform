@@ -4,7 +4,7 @@
 
 ## 近期执行顺序
 
-HTTP 上传设计已由用户批准，后端实现进入 [PR #12](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/12)，代码提交 `8574e4b` 的 [CI 37173318127](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37173318127) 六项通过，后端 107 项测试无失败/错误/跳过，尚未合入 main。包括车主受保护上传/短时访问、V004、持久化幂等/审计、失败核对、请求上限和入口限流；说明见 [HTTP 接口](../api/UPLOAD_HTTP.md)。A 已完成后端自动化验证；B 已在 PR #13 实现小程序图片选择、上传、同键重试及短时预览，27 项离线测试、H5 13 项替身交互及模拟器九条路由加载通过，完整 CI 验证中。下一步进入 S1 车辆档案业务契约。尚未完成真实私有环境或微信图片联调。
+HTTP 上传设计已由用户批准，后端实现进入 [PR #12](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/12)，代码提交 `8574e4b` 的 [CI 37173318127](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37173318127) 六项通过，后端 107 项测试无失败/错误/跳过，尚未合入 main。包括车主受保护上传/短时访问、V004、持久化幂等/审计、失败核对、请求上限和入口限流；说明见 [HTTP 接口](../api/UPLOAD_HTTP.md)。A 已完成后端自动化验证；B 已在 PR #13 实现小程序图片选择、上传、同键重试及短时预览，27 项离线测试、H5 13 项替身交互及模拟器九条路由加载通过，提交 `95b9365` 的 [CI 37181271501](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37181271501) 六项通过。下一步进入 S1 车辆档案业务契约。尚未完成真实私有环境或微信图片联调。
 
 S0-7.1f-3 已完成现有身份接口的页面状态处理：16 项离线测试、H5 22 项交互断言、小程序/H5 构建和微信模拟器 9 条路由验证通过。业务读接口尚未接入，列表加载与空状态随对应接口逐项完成，不以待接入页充当空列表验收。
 
