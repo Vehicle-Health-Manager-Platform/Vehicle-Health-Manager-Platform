@@ -46,6 +46,7 @@ run_sql_file docs/sql/migrations/V002__staff_wechat_identity.sql
 run_sql_file docs/sql/migrations/V003__auth_lifecycle.sql
 run_sql_file docs/sql/migrations/V003__auth_lifecycle.sql
 run_sql_file docs/sql/migrations/V004__upload_http.sql
+run_sql_file docs/sql/migrations/V004__upload_http.sql
 run_sql_file docs/sql/seed_test.sql
 run_sql_file docs/sql/seed_test.sql
 
