@@ -142,3 +142,10 @@
 - 首版 [CI 37182892331](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37182892331) 六项通过：后端124项无失败/错误/跳过，新增11项MySQL、5项HTTP及1项无库边界测试实际执行；包含并发去重、用户隔离、撤销后重放及审计失败回滚。本机无可用Java/Docker测试环境，后端结果来自CI；最终补充1项读库异常测试及列表重试修复，最终CI另行记录。
 - 真实授权车型库来源、微信凭据、HTTPS、数据库及私有上传环境尚未落实；此步只完成F02手动流程，不宣称完整F02/F03/F04或M0/M1通过。下一步设计并实现本人车辆的档案手动创建/查询，校验本人CLEAN图片引用并存稳定file_id，不保存签名URL；具体字段与附件关系在下一步细化。
 - 最终代码 fd9494f 的 [CI 37183855984](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37183855984) 后端125项测试无失败/错误/跳过；新增HTTP测试增至6项（读库异常安全503），11项MySQL及1项无库边界均执行。最终文档补充此证据并修正旧状态描述；完整CI状态以对应提交链接为准。
+## 2026-10-04 · S1 本人车辆档案手动录入（当前分支，待 CI）
+
+- **范围**：在 PR #14 基线上增加七类通用手动档案、本人车辆分页查询和最多五张私有图片的有序引用；V005 新增 `vehicle_archive_file`，小程序录入页与档案 Tab 接入实际 API。服务端在写入事务中复核车辆/图片归属与 `CLEAN` 状态，并复用 24 小时幂等及成功审计。
+- **本机已执行**：`node --test --test-isolation=none test/*.test.js` 于 `apps/miniapp` 通过 43 项；`npm --prefix apps/miniapp run build:mp-weixin` 与 `build:h5` 成功；`python scripts/generate_openapi.py` 生成 69 个操作；`git diff --check` 通过。默认 `npm test` 在本机沙箱触发 Node 子进程 `spawn EPERM`，无隔离模式实际执行所有测试。
+- **尚待验证**：本机未找到 Java/Maven，Docker 引擎未运行，后端 MySQL 容器测试需由 CI 实际执行。微信模拟器、H5 页面交互、真实微信登录、私有图片服务和真机联调尚未验证；不能以构建结果代替。
+- **发布边界**：需在已有数据库按顺序补 V005；当前 `gh` 凭据无效，推送动作还被自动审批拒绝：审批认为未获可信授权将完整分支内容发送到该 GitHub 远端。未绕过拒绝，分支仅在本地；PR/CI 尚未完成。依赖合并顺序仍为 #12 → #13 → #14 → 本步。
+- **授权后进展**：用户明确授权，分支已推送并创建 [PR #15](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/15)，基线为 PR #14 分支。首次 [CI 37203770229](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37203770229) 六项全绿；后端132项测试无失败/错误/跳过，小程序测试、微信/H5构建、MySQL迁移、Compose冒烟均通过。真实微信、私有图片与真机仍未联调；文档证据提交后需复核对应 CI。

@@ -9,7 +9,7 @@
 | 领域 | 表 | 关键字段及作用 |
 | --- | --- | --- |
 | 账号和车型 | `user`, `brand`, `series`, `model`, `maintenance_rule` | `openid` 唯一、手机号可空且唯一；品牌车系车型关系、保养规则 |
-| 车辆档案 | `vehicle`, `vehicle_archive` | `user_id` 归属、VIN/车牌、档案类型与录入来源 |
+| 车辆档案 | `vehicle`, `vehicle_archive`, `vehicle_archive_file`（V005） | `user_id` 归属、VIN/车牌、档案类型与录入来源；档案图片以有序私有文件 ID 引用 |
 | 商家与项目 | `merchant`, `standard_project`, `merchant_project`, `package` | 商家状态、标准项目、商家报价及套餐 |
 | 订单履约 | `order`, `pickup_check`, `repair_protection`, `technician_report`, `delivery_compare` | 订单快照、接车确认、防护、报工、取车 |
 | 券与增长 | `coupon`, `user_coupon`, `assessment`, `invite_record`, `point_flow`, `point_exchange` | 发行/预占/核销、月考核、邀请与积分账本 |
@@ -19,6 +19,8 @@
 | 安全与通知 | `notification`, `audit_log`, `idempotency_record`, `file_object`, `staff_account`, `sms_code` | 站内消息、审计、24 小时幂等、私有文件、员工与验证码 |
 
 V001 基线共 39 张表：来源给出 16 张 DDL、另行点名 10 张、S0 业务契约新增 13 张；应用 V002 后共 40 张。来源正文写“25 张”与实际列名不符，不作为建表数量约束。所有表使用 InnoDB、`utf8mb4`、无物理外键；应用层在同一事务校验归属和存在性。
+
+V005 在 V004 之后新增 `vehicle_archive_file`，以 `(archive_id,position)` 保留图片顺序，唯一 `(archive_id,file_id)` 阻止同一档案重复关联。文件归属、未删除及 `CLEAN` 状态由写入事务验证；旧 `attach_urls` 列不用于新手动录入流程。新建 Compose 数据卷自动应用 V001–V005；已有库须按版本顺序补迁移。
 
 ## 公共字段和数据规则
 

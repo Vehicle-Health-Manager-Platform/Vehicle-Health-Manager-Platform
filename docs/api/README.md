@@ -1,6 +1,6 @@
 # API 文档
 
-交付文档 §8 给出统一响应、错误码和 43 个核心接口。[openapi.json](openapi.json) 是 S0 草案，现含 69 个操作（原始核心接口、规划中的支撑接口、当前认证接口与本地写入示例）；用 `python scripts/generate_openapi.py` 从追踪表、[业务契约](S0_BUSINESS_CONTRACT.md)及已实现接口定义重新生成。草案中的大多数路径尚未实现，不能将文档操作数当作已交付接口数；已实现认证接口标有 `x-implementation-status: core-implemented`。
+交付文档 §8 给出统一响应、错误码和 43 个核心接口。[openapi.json](openapi.json) 是 S0 草案，现含 69 个操作（原始核心接口、规划中的支撑接口、当前认证接口与本地写入示例）；用 `python scripts/generate_openapi.py` 从追踪表、[业务契约](S0_BUSINESS_CONTRACT.md)及已实现接口定义重新生成。草案中的大多数路径尚未实现，不能将文档操作数当作已交付接口数；已实现认证接口标有 `x-implementation-status: core-implemented`。S1 本人档案手动录入/查询契约见[档案接口说明](ARCHIVE_MANUAL.md)。
 
 `POST /api/demo/vehicles/{id}/mileage` 为 local-only 的幂等与成功变更审计验证入口，标有 `x-implementation-status: local-example`，契约与事务边界见[写入说明](WRITE_INTEGRITY.md)。不代表正式车辆业务完成。
 
