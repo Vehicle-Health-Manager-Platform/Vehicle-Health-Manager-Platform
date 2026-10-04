@@ -154,4 +154,28 @@ class JdbcUploadHttpTest {
         assertEquals(1,count("upload_cleanup_task"));service().reconcile();assertTrue(objects.isEmpty());
     }
 
+    @Test void sameKeyRetriesOnlyAfterFailureIsConfirmedAndCleanupCannotDeleteRetry() {
+        String key=UUID.randomUUID().toString();failPut=true;assertThrows(UploadHttpException.class,()->upload(key));
+        failPut=false;assertThrows(UploadHttpException.class,()->upload(key));assertEquals(1,puts);
+        service().reconcile();var result=upload(key);assertEquals(2,puts);assertEquals(1,count("file_object"));
+        jdbc.update("UPDATE upload_cleanup_task SET next_run=UTC_TIMESTAMP()");service().reconcile();
+        assertEquals(1,objects.size());assertEquals(result,upload(key));assertEquals(1,count("audit_log"));
+    }
+    @Test void cleanupTasksAreClaimedOnlyOnceAcrossConcurrentWorkers() throws Exception {
+        failPut=true;assertThrows(UploadHttpException.class,()->upload(UUID.randomUUID().toString()));
+        var pool=Executors.newFixedThreadPool(2);var start=new CountDownLatch(1);
+        try {
+            var first=pool.submit(()->{start.await();return requests.claimCleanup();});
+            var second=pool.submit(()->{start.await();return requests.claimCleanup();});start.countDown();
+            var a=first.get(10,TimeUnit.SECONDS);var b=second.get(10,TimeUnit.SECONDS);
+            assertTrue((a==null)!=(b==null));assertEquals(1,count("upload_cleanup_task"));
+        } finally {pool.shutdownNow();}
+    }
+
+    @Test void outerTransactionIsRejectedBeforeExternalEffectsOrReservation() {
+        var transaction=new org.springframework.transaction.support.TransactionTemplate(new DataSourceTransactionManager(jdbc.getDataSource()));
+        transaction.execute(status->{assertThrows(UploadHttpException.class,()->upload(UUID.randomUUID().toString()));return null;});
+        assertEquals(0,puts);assertEquals(0,count("upload_request"));
+    }
+
 }

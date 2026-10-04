@@ -21,6 +21,7 @@ public class UploadHttpService {
         requests.admission(owner,upload);
     }
     public JsonNode upload(UploadOwner owner,String key,String filename,InputStream input) {
+        if(org.springframework.transaction.support.TransactionSynchronizationManager.isActualTransactionActive()) throw UploadHttpException.unavailable();
         key=WriteIntegrityService.normalizeKey(key);
         var file=new FileValidator().validate(filename,input);
         String hash;

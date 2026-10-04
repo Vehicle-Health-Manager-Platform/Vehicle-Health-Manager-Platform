@@ -75,7 +75,8 @@ public class JdbcUploadRequests {
                 Long.class,owner.id(),key);
             Stored row = read(id);
             if (attempt.equals(row.attempt())) return new Reservation(id, attempt, object, null);
-            if (!row.live() && (row.state().equals("SUCCEEDED") || row.state().equals("REJECTED"))) {
+            boolean retryConfirmedFailure=row.state().equals("REJECTED") && Integer.valueOf(503).equals(row.error()) && row.hash().equals(hash);
+            if (retryConfirmedFailure || (!row.live() && (row.state().equals("SUCCEEDED") || row.state().equals("REJECTED")))) {
                 jdbc.update("UPDATE upload_request SET request_hash=?,attempt_id=?,object_key=?,state='PROCESSING',response_body=NULL,error_status=NULL,"
                     + "deadline=DATE_ADD(UTC_TIMESTAMP(),INTERVAL 5 MINUTE),expires_at=DATE_ADD(UTC_TIMESTAMP(),INTERVAL 24 HOUR) WHERE id=?",
                     hash,attempt,object,id);
