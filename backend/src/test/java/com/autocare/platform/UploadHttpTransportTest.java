@@ -86,6 +86,9 @@ class UploadHttpTransportTest {
         assertEquals(400,post(multipart(11,field),"owner",false,key()).statusCode());
         String file="--"+boundary+"\r\nContent-Disposition: form-data; name=\"file\"; filename=\"second.png\"\r\n\r\n123\r\n";
         assertEquals(400,post(multipart(11,file),"owner",false,key()).statusCode());verify(service,never()).upload(any(),any(),any(),any());
+        var invalid=HttpRequest.newBuilder(URI.create("http://127.0.0.1:"+port+"/api/file/upload")).header("Authorization","Bearer owner")
+            .header("Idempotency-Key",key()).header("Content-Type","application/json").POST(HttpRequest.BodyPublishers.ofString("{}")).build();
+        var response=client.send(invalid,HttpResponse.BodyHandlers.ofString());assertEquals(400,response.statusCode());assertEquals(40001,mapper.readTree(response.body()).path("code").asInt());
     }
     @Test void dependencyAndRateErrorsAreSafeAndDoNotParseBody() throws Exception {
         doThrow(UploadHttpException.unavailable()).when(service).admission(any(),anyBoolean());

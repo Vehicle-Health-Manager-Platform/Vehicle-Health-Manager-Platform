@@ -9,6 +9,11 @@ import com.autocare.platform.gateway.wechat.WechatExchangeException;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
+    @ExceptionHandler({org.springframework.web.HttpMediaTypeNotSupportedException.class,
+                       org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class})
+    public ResponseEntity<ApiResponse<Void>> invalidHttpInput() {
+        return ResponseEntity.badRequest().body(ApiResponse.error(40001,"请求格式无效"));
+    }
     @ExceptionHandler(com.autocare.platform.file.UploadHttpException.class)
     public ResponseEntity<ApiResponse<Void>> uploadHttp(com.autocare.platform.file.UploadHttpException error) {
         var result=ResponseEntity.status(error.status()).header("Cache-Control","no-store");
