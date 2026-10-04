@@ -15,6 +15,7 @@
 | 私有上传基础 | 10 MiB 文件校验、扫描后存储、JDBC 元数据与失败补偿；真实 MinIO/ClamAV 适配器、内部短时签名及独立账号初始化 | 真实容器与 TCP 测试通过；PR #12 的车主 HTTP 上传/访问与失败核对已通过 CI，尚未合入 main；PR #13 已接入小程序图片操作；业务档案关联、真实图片联调和私有部署仍待交付。测试合成病毒签名不代表生产官方病毒库验收。 |
 | 数据库与 CI | main 为 V001–V003、42 张表，PR #12 追加 V004 至 44 表；网页、小程序、后端、生成文件/OCR、MySQL 和 Compose 共六项 CI | PR #12 后端 107 项测试无失败/错误/跳过；各提交验证结果查看 [GitHub Actions](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/workflows/ci.yml)。 |
 | S1 本人车辆与手动录入 | 档案Tab车辆列表、品牌→车系→年款→配置选择、幂等添加、归属隔离、脱敏与成功审计 | [PR #14](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/14) 已实现；39项离线测试、H5 11项替身交互和模拟器10条路由通过。车型库只读取现有有效数据，生产来源未确定；完整F02/M1未验收。[接口契约](docs/api/VEHICLE_MANUAL.md)。 |
+| S1 本人车辆档案手动录入 | 本分支新增七类通用记录、按车分页、至多五张私有图片关联及本人/CLEAN校验 | 小程序 43 项 Node 测试与微信小程序构建在本机通过；后端 MySQL 集成测试已编写，因本机无 Java/Maven 和 Docker 引擎尚未执行，CI 与真实环境未验证。[接口契约](docs/api/ARCHIVE_MANUAL.md)。 |
 
 ## 从源码构建微信小程序
 
@@ -39,7 +40,7 @@ cd backend
 mvn spring-boot:run
 ```
 
-默认端口为 8080，健康检查为 `GET /actuator/health`。本分支数据库须按顺序应用 V001、V002、V003、V004：新建 Compose 数据卷自动初始化，**已有数据卷须人工补迁移**。上传适配器默认关闭；启用、私有桶初始化及 ClamAV 配置见[上传适配器说明](docs/api/UPLOAD_ADAPTERS.md)。
+默认端口为 8080，健康检查为 `GET /actuator/health`。本分支数据库须按顺序应用 V001–V005：新建 Compose 数据卷自动初始化，**已有数据卷须人工补迁移**。上传适配器默认关闭；启用、私有桶初始化及 ClamAV 配置见[上传适配器说明](docs/api/UPLOAD_ADAPTERS.md)。
 
 在仓库根目录验证：
 
@@ -65,7 +66,7 @@ npm run build:h5 --workspace @autocare/miniapp
 ## 下一步
 
 1. 图片后端 PR #12 与小程序图片操作 PR #13 按依赖顺序合并；真实私有环境和微信图片联调条件到位后记录验收。
-2. 车辆列表与手动录入已在PR #14实现（依赖#13）；下一步实现本人车辆的档案手动录入/查询及图片归档校验。车型库来源待落实。
+2. 车辆列表与手动录入已在PR #14实现（依赖#13）；本分支已编码本人车辆的档案手动录入/查询及图片归档校验，待后端 CI 与独立 PR 验证。车型库来源待落实。
 3. 外部条件齐备后并行完成真实微信、手机号、短信及私有上传环境联调；继续补齐健康监控和 S0/M0 验收。
 
 ## 项目文档

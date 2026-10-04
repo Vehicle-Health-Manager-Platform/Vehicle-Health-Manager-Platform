@@ -1,67 +1,85 @@
 <script setup>
-import { computed } from 'vue'
-import { onHide, onUnload } from '@dcloudio/uni-app'
+import { ref, watch } from 'vue'
+import { onShow, onHide, onUnload } from '@dcloudio/uni-app'
 import OwnerTabShell from '../../components/OwnerTabShell.vue'
 import VehicleList from '../../components/VehicleList.vue'
-import { useImageFlow } from '../../services/image-flow.js'
-import { clearOwnerSession } from '../../services/owner-session.js'
+import { ownerSession, clearOwnerSession } from '../../services/owner-session.js'
+import { archiveApi, archiveFailure } from '../../services/archives.js'
+import { imageApi } from '../../services/private-images.js'
 
-const { file, uploaded, busy, operation, message, failureKind, retryable, choose, upload, preview, retry, suspend, dispose } = useImageFlow()
+const vehicle = ref(null), rows = ref([]), total = ref(0), page = ref(0)
+const busy = ref(false), loaded = ref(false), message = ref(''), kind = ref(''), retryMore = ref(false)
+const labels = ['保养', '维修', '保险', '事故', '改装', '违章', '年检']
+let generation = 0
+function suspend() { generation++; busy.value = false }
+function clear() { suspend(); vehicle.value = null; rows.value = []; total.value = 0; page.value = 0; loaded.value = false; message.value = ''; kind.value = '' }
+function select(item) { if (vehicle.value?.vehicle_id === item.vehicle_id) return; suspend(); vehicle.value = item; load() }
+async function load(more = false) {
+  if (busy.value || !vehicle.value || !ownerSession.accessToken) return
+  const current = ++generation, token = ownerSession.accessToken, vehicleId = vehicle.value.vehicle_id, next = more ? page.value + 1 : 1
+  busy.value = true; message.value = ''; kind.value = ''; retryMore.value = more
+  if (!more) { rows.value = []; total.value = 0; loaded.value = false }
+  try {
+    const result = await archiveApi.list(token, vehicleId, next)
+    if (current !== generation || token !== ownerSession.accessToken || vehicle.value?.vehicle_id !== vehicleId) return
+    rows.value = more ? [...rows.value, ...result.list] : result.list
+    total.value = result.total; page.value = next; loaded.value = true
+  } catch (error) {
+    if (current !== generation || token !== ownerSession.accessToken) return
+    const safe = archiveFailure(error); message.value = safe.message; kind.value = safe.kind
+  } finally { if (current === generation) busy.value = false }
+}
+async function preview(id) {
+  const token = ownerSession.accessToken, current = generation
+  try {
+    const result = await imageApi.access(token, id)
+    if (current !== generation || token !== ownerSession.accessToken) return
+    await imageApi.preview(result.url)
+  } catch { if (current === generation) { message.value = '图片预览未打开，请重试'; kind.value = 'preview' } }
+}
+watch(() => ownerSession.accessToken, clear, { flush: 'sync' })
+onShow(() => { if (vehicle.value) load() })
 onHide(suspend)
-onUnload(dispose)
-const requiresLogin = computed(() => ['unauthorized', 'forbidden'].includes(failureKind.value))
-const size = computed(() => file.value ? `${(file.value.size / 1024 / 1024).toFixed(2)} MiB` : '')
+onUnload(clear)
 function login() { clearOwnerSession(); uni.navigateTo({ url: '/pages/owner/index' }) }
+function add() { if (vehicle.value) uni.navigateTo({ url: `/pages/archive/record-add?vehicle_id=${vehicle.value.vehicle_id}` }) }
 </script>
 
 <template>
-  <OwnerTabShell label="档案" title="留下每次养护记录" description="管理本人车辆，为养护记录准备图片。" next-action="档案录入将在随后开放。" business-ready>
+  <OwnerTabShell label="档案" title="车辆健康档案" description="按车辆查看保养、维修等记录。" business-ready>
     <template #content>
-      <VehicleList />
-      <view class="images" data-testid="archive-images">
-        <text class="heading">先准备养护图片</text>
-        <text class="copy">上传保养或维修图片，可查看本人图片。车辆档案录入尚未开放。</text>
-        <view v-if="file" class="selected">
-          <image class="thumbnail" :src="file.path" mode="aspectFill" />
-          <view class="details">
-            <text class="file-title">{{ uploaded ? '图片已上传' : '待上传图片' }}</text>
-            <text class="size">{{ size }} · {{ uploaded ? '可打开短时预览' : '仅保留在本次页面中' }}</text>
-          </view>
+      <VehicleList :selected-id="vehicle?.vehicle_id || 0" @select="select" />
+      <view v-if="vehicle" class="records" data-testid="archive-records">
+        <view class="top"><text class="heading">{{ vehicle.model_name || '当前车辆' }}的记录</text><button class="add" :disabled="busy" @tap="add">录入记录</button></view>
+        <text v-if="busy" class="copy" role="status">正在加载档案…</text>
+        <text v-else-if="loaded && !rows.length" class="copy">这辆车还没有档案记录，可手动录入第一条。</text>
+        <view v-for="item in rows" :key="item.archive_id" class="record">
+          <view class="record-top"><text class="name">{{ item.title }}</text><text class="type">{{ labels[item.archive_type - 1] }}</text></view>
+          <text class="copy">{{ item.recorded_date }}<text v-if="item.mileage !== null"> · {{ item.mileage }} km</text></text>
+          <text v-if="item.notes" class="copy">{{ item.notes }}</text>
+          <view v-if="item.file_ids.length" class="images"><button v-for="(id, index) in item.file_ids" :key="id" class="secondary" @tap="preview(id)">查看图片 {{ index + 1 }}</button></view>
         </view>
-        <text v-else class="empty">还没有选择图片</text>
-        <view class="buttons">
-          <button class="secondary" :disabled="busy || requiresLogin" @tap="choose">{{ file ? '重新选择图片' : '选择图片' }}</button>
-          <button v-if="file && !uploaded" class="primary" :disabled="busy || requiresLogin || ['rejected', 'invalid', 'too-large'].includes(failureKind)" :loading="operation === 'upload'" @tap="upload">上传图片</button>
-          <button v-if="uploaded" class="primary" :disabled="busy || requiresLogin" :loading="operation === 'preview'" @tap="preview">预览已上传图片</button>
-        </view>
-        <text v-if="busy" class="status" role="status">{{ operation === 'upload' ? '正在上传并检查图片，请稍候…' : operation === 'preview' ? '正在获取图片预览…' : '正在选择图片…' }}</text>
-        <text v-else-if="message" class="status" :class="{ error: failureKind }" role="status">{{ message }}</text>
-        <button v-if="retryable" class="retry" :disabled="busy" @tap="retry">{{ uploaded ? '重试图片预览' : '使用原图片重试' }}</button>
-        <button v-if="requiresLogin" class="retry" @tap="login">重新登录车主账号</button>
-        <text class="note">JPG、PNG 或 WebP，每次一张，最大 10 MiB。上传成功后仍需等待档案录入开放；重新登录或关闭小程序会清除本次页面的图片信息。</text>
+        <text v-if="message" class="error" role="status">{{ message }}</text>
+        <button v-if="['unauthorized','forbidden'].includes(kind)" class="secondary" @tap="login">重新登录</button>
+        <button v-else-if="message && kind !== 'preview'" class="secondary" :disabled="busy" @tap="load(retryMore)">重试加载</button>
+        <button v-else-if="loaded && rows.length < total" class="secondary" :disabled="busy" @tap="load(true)">加载更多记录</button>
       </view>
     </template>
   </OwnerTabShell>
 </template>
 
 <style scoped>
-.images { margin-top: 28rpx; padding: 32rpx; background: #fff; border-radius: 24rpx; display: flex; flex-direction: column; }
-.heading { color: #1d2129; font-size: 32rpx; font-weight: 650; }
-.copy { margin-top: 14rpx; color: #4e5969; font-size: 26rpx; line-height: 40rpx; }
-.selected { display: flex; align-items: center; gap: 22rpx; padding: 24rpx 0; margin-top: 16rpx; border-top: 1rpx solid #e5e6eb; }
-.thumbnail { width: 120rpx; height: 120rpx; flex-shrink: 0; border-radius: 12rpx; background: #f2f3f5; }
-.details { display: flex; flex-direction: column; gap: 12rpx; }
-.file-title { color: #1d2129; font-size: 28rpx; }
-.size, .empty { color: #86909c; font-size: 24rpx; }
-.empty { padding: 30rpx 0 12rpx; }
-.buttons { display: flex; flex-wrap: wrap; gap: 16rpx; margin-top: 20rpx; }
-button { margin: 0; padding: 0 24rpx; min-height: 80rpx; font-size: 26rpx; border-radius: 14rpx; }
+.records { margin-top: 28rpx; padding: 32rpx; border-radius: 24rpx; background: white; display: flex; flex-direction: column; }
+.top,.record-top { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
+.heading { font-size: 30rpx; font-weight: 650; color: #1d2129; }
+.name { font-size: 28rpx; color: #1d2129; font-weight: 600; }
+.type { color: #008f24; font-size: 24rpx; }
+.copy { margin-top: 14rpx; font-size: 25rpx; color: #4e5969; line-height: 38rpx; }
+.record { display: flex; flex-direction: column; padding: 24rpx 0; border-top: 1rpx solid #e5e6eb; margin-top: 18rpx; }
+.images { display: flex; flex-wrap: wrap; gap: 12rpx; margin-top: 14rpx; }
+button { margin: 0; padding: 0 22rpx; min-height: 70rpx; border-radius: 14rpx; font-size: 24rpx; }
 button::after { border: 0; }
-.primary { background: #00b42a; color: #fff; }
-.secondary { background: #eef8f0; color: #008f24; }
-button[disabled] { background: #f2f3f5; color: #86909c; }
-.status { margin-top: 24rpx; color: #008f24; font-size: 25rpx; line-height: 38rpx; }
-.error { color: #b42318; }
-.retry { margin-top: 16rpx; align-self: flex-start; color: #008f24; background: #eef8f0; }
-.note { margin-top: 24rpx; color: #86909c; font-size: 23rpx; line-height: 36rpx; }
+.add { background: #00b42a; color: white; }
+.secondary { align-self: flex-start; margin-top: 16rpx; background: #eef8f0; color: #008f24; }
+.error { margin-top: 20rpx; color: #b42318; font-size: 25rpx; }
 </style>

@@ -182,6 +182,37 @@ def main():
         }}
     for status, message in (("404", "车型不存在或停用"), ("409", "本人已登记该车牌或VIN"), ("503", "数据库或事务暂不可用，同键重试")):
         item["responses"][status] = {"description": message}
+    archive = document["paths"]["/api/archive/add"]["post"]
+    archive["x-roles"] = "正式车主"
+    archive["x-implementation-status"] = "manual-core-implemented"
+    archive["description"] = "仅本人车辆手动记录；图片先上传，提交时复核本人且CLEAN。24小时幂等与成功审计。详见 ARCHIVE_MANUAL.md。"
+    archive["requestBody"]["content"]["application/json"]["schema"] = {
+        "type": "object", "additionalProperties": False,
+        "required": ["vehicle_id", "archive_type", "recorded_date", "title"],
+        "properties": {
+            "vehicle_id": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+            "archive_type": {"type": "integer", "minimum": 1, "maximum": 7},
+            "recorded_date": {"type": "string", "format": "date"},
+            "mileage": {"type": ["integer", "null"], "minimum": 0, "maximum": 2147483647},
+            "title": {"type": "string", "minLength": 1, "maxLength": 80},
+            "notes": {"type": "string", "maxLength": 1000},
+            "file_ids": {"type": "array", "maxItems": 5, "uniqueItems": True,
+                         "items": {"type": "integer", "minimum": 1, "maximum": 9007199254740991}},
+        }}
+    for status, message in (("404", "本人车辆或图片不可用"), ("503", "数据库或事务暂不可用，同键重试")):
+        archive["responses"][status] = {"description": message}
+    archive_list = document["paths"]["/api/archive/list"]["get"]
+    archive_list["x-roles"] = "正式车主"
+    archive_list["x-implementation-status"] = "manual-core-implemented"
+    archive_list["description"] = "只列所选本人车辆的手动记录，按发生日期与ID倒序；附件返回稳定file_ids，不返回签名URL。详见 ARCHIVE_MANUAL.md。"
+    archive_list["parameters"] += [
+        {"name": "vehicle_id", "in": "query", "required": True,
+         "schema": {"type": "integer", "minimum": 1, "maximum": 9007199254740991}},
+        {"name": "page", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 1000000, "default": 1}},
+        {"name": "page_size", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 100, "default": 20}},
+    ]
+    archive_list["responses"]["404"] = {"description": "本人车辆不可用"}
+    archive_list["responses"]["503"] = {"description": "数据库暂不可用"}
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")
 
