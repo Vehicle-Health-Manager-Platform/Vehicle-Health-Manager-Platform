@@ -32,7 +32,7 @@ public class SecurityConfig {
     private static final String ISSUER = "vehicle-health-manager";
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http, ObjectMapper mapper) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, ObjectMapper mapper, com.autocare.platform.file.UploadAdmissionFilter uploads) throws Exception {
         return http
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -45,6 +45,7 @@ public class SecurityConfig {
                     return new org.springframework.security.authorization.AuthorizationDecision(allowed);
                 }))
             .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+            .addFilterAfter(uploads, org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter.class)
             .exceptionHandling(errors -> errors
                 .authenticationEntryPoint((request, response, exception) -> {
                     response.setStatus(401);

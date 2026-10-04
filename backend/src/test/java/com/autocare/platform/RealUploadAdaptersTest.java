@@ -77,6 +77,8 @@ class RealUploadAdaptersTest {
         var source = new DriverManagerDataSource(mysql.getJdbcUrl(), mysql.getUsername(), mysql.getPassword()); jdbc = new JdbcTemplate(source);
         try (var connection = source.getConnection()) {
             ScriptUtils.executeSqlScript(connection, new FileSystemResource(Path.of("..","docs","sql","migrations","V001__baseline.sql")));
+            for(String file:java.util.List.of("V003__auth_lifecycle.sql","V004__upload_http.sql"))
+                ScriptUtils.executeSqlScript(connection,new FileSystemResource(Path.of("..","docs","sql","migrations",file)));
         }
     }
     @BeforeEach void prepare() throws Exception {
@@ -156,4 +158,21 @@ class RealUploadAdaptersTest {
         try (var again = initializer(account)) { assertThrows(org.testcontainers.containers.ContainerLaunchException.class, again::start); }
         assertTrue(dedicated.isPrivate());
     }
+    @Test void durableHttpUploadProtocolUsesRealAdaptersAndReplaysOnlyOneFile() throws Exception {
+        for(String table:java.util.List.of("upload_cleanup_task","upload_request","audit_log","auth_session","user")) jdbc.update("DELETE FROM "+table);
+        String session=UUID.randomUUID().toString();jdbc.update("INSERT INTO user(id,status) VALUES (1001,1)");
+        jdbc.update("INSERT INTO auth_session(id,subject_type,subject_id,role,app_id,refresh_hash,expires_at) VALUES (?,'user',1001,'OWNER','test',?,DATE_ADD(UTC_TIMESTAMP(),INTERVAL 1 DAY))",session,UUID.randomUUID().toString());
+        var owner=new UploadOwner(1001,session,java.time.Instant.now().plusSeconds(600));
+        var requests=new JdbcUploadRequests(jdbc,new DataSourceTransactionManager(jdbc.getDataSource()),new com.fasterxml.jackson.databind.ObjectMapper());
+        var http=new UploadHttpService(requests,scanner,store);String token=UUID.randomUUID().toString();
+        var result=http.upload(owner,token,"test.png",new ByteArrayInputStream(PrivateUploadTest.PNG));
+        assertEquals(result,http.upload(owner,token,"different-name.png",new ByteArrayInputStream(PrivateUploadTest.PNG)));
+        assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM file_object",Integer.class));
+        var signed=new PrivateFileAccessService(uploads,store,120).sign(owner.actor(),result.path("data").path("file_id").asLong());
+        assertArrayEquals(PrivateUploadTest.PNG,get(signed.url()).body());
+        assertEquals(422,assertThrows(UploadHttpException.class,()->http.upload(owner,UUID.randomUUID().toString(),"test.png",new ByteArrayInputStream(INFECTED))).status());
+        assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM file_object",Integer.class));
+        http.reconcile();assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM file_object",Integer.class));
+    }
+
 }

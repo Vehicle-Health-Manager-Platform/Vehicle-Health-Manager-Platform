@@ -9,6 +9,32 @@ import com.autocare.platform.gateway.wechat.WechatExchangeException;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
+    @ExceptionHandler(com.autocare.platform.file.UploadHttpException.class)
+    public ResponseEntity<ApiResponse<Void>> uploadHttp(com.autocare.platform.file.UploadHttpException error) {
+        var result=ResponseEntity.status(error.status()).header("Cache-Control","no-store");
+        if(error.retry()>0) result.header("Retry-After",Integer.toString(error.retry()));
+        return result.body(ApiResponse.error(error.status()*100+(error.status()==400?1:0),error.getMessage()));
+    }
+    @ExceptionHandler(com.autocare.platform.file.UploadException.class)
+    public ResponseEntity<ApiResponse<Void>> uploadCore(com.autocare.platform.file.UploadException error) {
+        int status=switch(error.reason()) {
+            case INVALID_FILE -> 400;
+            case INFECTED -> 422;
+            case NOT_FOUND -> 404;
+            case NOT_READABLE -> 409;
+            case UNAVAILABLE -> 503;
+        };
+        return ResponseEntity.status(status).header("Cache-Control","no-store")
+            .body(ApiResponse.error(status*100+(status==400?1:0),error.getMessage()));
+    }
+    @ExceptionHandler(org.springframework.web.multipart.MaxUploadSizeExceededException.class)
+    public ResponseEntity<ApiResponse<Void>> uploadSize() {
+        return ResponseEntity.status(413).body(ApiResponse.error(41300,"上传请求过大"));
+    }
+    @ExceptionHandler(org.springframework.web.multipart.MultipartException.class)
+    public ResponseEntity<ApiResponse<Void>> malformedMultipart() {
+        return ResponseEntity.badRequest().body(ApiResponse.error(40001,"上传请求格式无效"));
+    }
     @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse<Void>> unreadableBody() {
         return ResponseEntity.badRequest().body(ApiResponse.error(40001, "请求正文格式无效"));
