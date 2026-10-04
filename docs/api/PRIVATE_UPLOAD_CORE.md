@@ -1,5 +1,6 @@
 # S0 私有上传核心
 
+本文件说明内部核心边界；后续车主 HTTP 上传与短时访问已在 PR #12 实现，见 [HTTP 接入说明](UPLOAD_HTTP.md)，小程序图片操作与真实环境验收仍待完成。
 `PrivateUploadService` 是内部应用服务，没有 HTTP 路由、签名 URL 或小程序入口。调用方传入服务端 `FileMetadataRepository.Actor`，主体允许 `user`/`staff_account` 与正数 ID；业务附件授权随后续接口接入，不能由上传主体归属替代车辆/商家关系检查。
 
 ## 上传与读取

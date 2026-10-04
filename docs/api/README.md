@@ -1,10 +1,10 @@
 # API 文档
 
-交付文档 §8 给出统一响应、错误码和 43 个核心接口。[openapi.json](openapi.json) 是 S0 草案，现含 67 个操作（原始核心接口、规划中的支撑接口、当前认证接口与本地写入示例）；用 `python scripts/generate_openapi.py` 从追踪表、[业务契约](S0_BUSINESS_CONTRACT.md)及已实现接口定义重新生成。草案中的大多数路径尚未实现，不能将文档操作数当作已交付接口数；已实现认证接口标有 `x-implementation-status: core-implemented`。
+交付文档 §8 给出统一响应、错误码和 43 个核心接口。[openapi.json](openapi.json) 是 S0 草案，现含 69 个操作（原始核心接口、规划中的支撑接口、当前认证接口与本地写入示例）；用 `python scripts/generate_openapi.py` 从追踪表、[业务契约](S0_BUSINESS_CONTRACT.md)及已实现接口定义重新生成。草案中的大多数路径尚未实现，不能将文档操作数当作已交付接口数；已实现认证接口标有 `x-implementation-status: core-implemented`。
 
 `POST /api/demo/vehicles/{id}/mileage` 为 local-only 的幂等与成功变更审计验证入口，标有 `x-implementation-status: local-example`，契约与事务边界见[写入说明](WRITE_INTEGRITY.md)。不代表正式车辆业务完成。
 
-[私有上传核心](PRIVATE_UPLOAD_CORE.md)是内部应用服务，目前没有 HTTP 上传或签名 URL 接口，不新增 OpenAPI 操作；真实适配器已提供，业务附件关系及真实小程序联调尚未接入。
+[私有上传核心](PRIVATE_UPLOAD_CORE.md)是内部应用服务，核心自身不暴露 HTTP；PR #12 的独立适配层增加上传/访问入口及两个 OpenAPI 操作；真实适配器已提供，业务附件关系及真实小程序联调尚未接入。
 
 真实 MinIO/ClamAV 与内部签名服务的配置和部署见[上传适配器说明](UPLOAD_ADAPTERS.md)。内部服务不等于 HTTP 上传或小程序联调完成；验收结果以[S0 执行记录](../progress/S0_EXECUTION_LOG.md)为准。
 
