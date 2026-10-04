@@ -147,4 +147,4 @@
 - **范围**：在 PR #14 基线上增加七类通用手动档案、本人车辆分页查询和最多五张私有图片的有序引用；V005 新增 `vehicle_archive_file`，小程序录入页与档案 Tab 接入实际 API。服务端在写入事务中复核车辆/图片归属与 `CLEAN` 状态，并复用 24 小时幂等及成功审计。
 - **本机已执行**：`node --test --test-isolation=none test/*.test.js` 于 `apps/miniapp` 通过 43 项；`npm --prefix apps/miniapp run build:mp-weixin` 与 `build:h5` 成功；`python scripts/generate_openapi.py` 生成 69 个操作；`git diff --check` 通过。默认 `npm test` 在本机沙箱触发 Node 子进程 `spawn EPERM`，无隔离模式实际执行所有测试。
 - **尚待验证**：本机未找到 Java/Maven，Docker 引擎未运行，后端 MySQL 容器测试需由 CI 实际执行。微信模拟器、H5 页面交互、真实微信登录、私有图片服务和真机联调尚未验证；不能以构建结果代替。
-- **发布边界**：需在已有数据库按顺序补 V005；当前 `gh` 凭据无效，推送/PR/CI 尚未完成。依赖合并顺序仍为 #12 → #13 → #14 → 本步。
+- **发布边界**：需在已有数据库按顺序补 V005；当前 `gh` 凭据无效，推送动作还被自动审批拒绝：审批认为未获可信授权将完整分支内容发送到该 GitHub 远端。未绕过拒绝，分支仅在本地；PR/CI 尚未完成。依赖合并顺序仍为 #12 → #13 → #14 → 本步。
