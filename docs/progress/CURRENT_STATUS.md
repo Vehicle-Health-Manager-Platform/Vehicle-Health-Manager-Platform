@@ -17,13 +17,14 @@
 | 真实上传适配器与内部签名 | CI 真实容器验证通过，私有部署/小程序未联调 | [PR #10](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/10) 提供 MinIO、ClamAV INSTREAM、权限与对象复核后的短时签名，以及独立账号初始化和可选部署。后端 82 项测试无失败/错误/跳过，本步 6 项真实容器、7 项 TCP 协议、4 项签名权限、3 项配置测试执行通过；[CI 37121739136](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37121739136) 六项通过。ClamAV 容器使用测试专用合成签名，不能计为生产官方病毒库验收；该阶段没有 HTTP 上传/签名路由，PR #12 接入见下一行；[接入说明](../api/UPLOAD_ADAPTERS.md)。 |
 | 车主 HTTP 上传与图片访问 | 后端 CI 已验证，尚未合入 main | [PR #12](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/12) 提供正式车主单图片上传、本人短时访问、持久化幂等/成功审计与失败核对；新增 V004，两张表，迁移后共 44 表。[CI 37173318127](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37173318127) 六项通过，后端 107 项测试无失败/错误/跳过；本步新增 15 项 MySQL、9 项真实 HTTP、1 项真实适配器测试全部执行。小程序图片入口及真实私有部署未联调，[接口说明](../api/UPLOAD_HTTP.md)。 |
 | 小程序档案图片操作（B） | 页面与 CI 已验证，尚未合入 main | [PR #13](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/13) 接入选图、上传、同键重试和每次新签名预览；27 项 Node 测试无失败/跳过，小程序/H5 构建通过，实际 H5 使用 uni 替身通过 13 项交互断言。微信模拟器九条路由加载通过，未计为微信真实图片联调。[CI 37181271501](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37181271501) 六项通过；依赖尚未合并的 PR #12。 |
+| S1 本人车辆列表与手动录入 | PR #14 已实现，尚未合入 main | 正式车主本人列表、有效目录分页、四级车型选择、幂等/审计创建、脱敏与同车主重复阻断；39项Node测试、H5 11项替身交互、模拟器10条路由通过。首版 [CI 37182892331](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37182892331) 六项通过、后端124项全执行；最终补充读库错误测试与列表重试修复，以最终CI为准。[契约](../api/VEHICLE_MANUAL.md)。生产车型来源未确定，档案及完整F02/M1未验收，依赖PR #13。 |
 | 三角色身份页面状态（S0-7.1f-3） | 离线与模拟器验证通过 | 统一加载、失败与重试状态；修复车主会话引用；16 项 Node 测试和 H5 22 项页面交互检查通过。微信开发者工具在当前编译产物中验证测试入口、三角色和五 Tab 共 9 条路由；真实登录、短信和业务列表空状态不在此次验证结果内。 |
 
 本次整合已将 PR #2–#10 的分支提交及原有 `main` 历史全部纳入主分支，保留 Git 提交历史；原始交付文档归档至 [需求基线](../reference/DELIVERY_V1.md)，生成脚本与链接同步调整。后续从 `main` 创建独立 PR。完整 CI 结果以 [GitHub Actions](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/workflows/ci.yml) 对应整合/主分支提交为准，具体合并记录见 [S0 执行记录](S0_EXECUTION_LOG.md)。
 
 ## 开发者工具与真实联调
 
-2026-10-03 用户确认调整推进重点：先完成小程序所需上传基础能力，随后优先打通 S1 车辆档案的页面、后端、数据持久化与联调。健康监控及其他 S0/M0 未满足项继续保留；当前车辆与档案业务仍未实现，尚不能标记 M0/M1 通过。具体拆分见[下一步规划](NEXT_STEPS.md)。
+2026-10-03 用户确认调整推进重点：先完成小程序所需上传基础能力，随后优先打通 S1 车辆档案的页面、后端、数据持久化与联调。健康监控及其他 S0/M0 未满足项继续保留；车辆列表与手动录入已在PR #14实现，档案业务仍待实现，尚不能标记M0/M1通过。具体拆分见[下一步规划](NEXT_STEPS.md)。
 
 微信开发者工具已重新导入当前仓库的 `apps/miniapp/dist/build/mp-weixin`，模拟器启动和 9 条路由复核通过，车主身份页截图已检查。用户此前的“项目根目录未找到 `app.json`”来自导入源码仓库根目录；其他仓库仍需按[构建与导入说明](../../apps/miniapp/README.md)自行构建并导入其产物。本步使用未配置真实后端的产物做导航验证，没有真实微信登录或手机号联调。
 

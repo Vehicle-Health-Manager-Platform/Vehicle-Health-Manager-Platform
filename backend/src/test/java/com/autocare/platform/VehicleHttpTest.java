@@ -70,4 +70,10 @@ class VehicleHttpTest {
             .andExpect(status().isOk()).andExpect(jsonPath("$.data.page").value(2));
         mvc.perform(get("/api/model/list").header("Authorization","Bearer owner")).andExpect(status().isBadRequest());
     }
+    @Test void databaseReadFailureIsSafeUnavailableResponse() throws Exception {
+        when(service.list(any(),anyInt(),anyInt())).thenThrow(new org.springframework.dao.DataAccessResourceFailureException("private connection string"));
+        mvc.perform(get("/api/vehicle/list").header("Authorization","Bearer owner"))
+            .andExpect(status().isServiceUnavailable()).andExpect(header().string("Cache-Control","no-store"))
+            .andExpect(jsonPath("$.code").value(50300)).andExpect(jsonPath("$.message").value("车辆数据库暂不可用，请稍后重试"));
+    }
 }

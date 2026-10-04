@@ -24,6 +24,11 @@ public class VehicleController {
     private ResponseEntity<?> response(Object data) {
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(ApiResponse.success(data));
     }
+    @ExceptionHandler(org.springframework.dao.DataAccessException.class)
+    public ResponseEntity<?> databaseUnavailable() {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).cacheControl(CacheControl.noStore())
+            .body(ApiResponse.error(50300,"车辆数据库暂不可用，请稍后重试"));
+    }
     @GetMapping("/api/vehicle/list")
     public ResponseEntity<?> list(@AuthenticationPrincipal Jwt jwt, @RequestParam(defaultValue="1") int page,
         @RequestParam(name="page_size",defaultValue="20") int size) {

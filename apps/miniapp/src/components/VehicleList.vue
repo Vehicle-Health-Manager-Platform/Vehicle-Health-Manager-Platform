@@ -4,12 +4,14 @@ import { onShow, onHide, onUnload } from '@dcloudio/uni-app'
 import { ownerSession, clearOwnerSession } from '../services/owner-session.js'
 import { vehicleApi, vehicleFailure } from '../services/vehicles.js'
 const rows = ref([]), total = ref(0), page = ref(0), busy = ref(false), loaded = ref(false), message = ref(''), kind = ref('')
+const retryMore = ref(false)
 let generation = 0
 function suspend() { generation++; busy.value = false }
 async function load(more = false) {
   if (busy.value || !ownerSession.accessToken) return
   const current = ++generation, token = ownerSession.accessToken, next = more ? page.value + 1 : 1
   busy.value = true; message.value = ''; kind.value = ''
+  retryMore.value = more
   if (!more) { rows.value = []; total.value = 0; loaded.value = false }
   try {
     const data = await vehicleApi.list(token, next)
@@ -43,7 +45,7 @@ function add() { uni.navigateTo({ url: '/pages/vehicle/manual' }) }
     </view>
     <text v-if="message" class="error" role="status">{{ message }}</text>
     <button v-if="['unauthorized','forbidden'].includes(kind)" class="retry" @tap="login">重新登录</button>
-    <button v-else-if="message" class="retry" :disabled="busy" @tap="load(page > 0)">重试加载</button>
+    <button v-else-if="message" class="retry" :disabled="busy" @tap="load(retryMore)">重试加载</button>
     <button v-else-if="loaded && rows.length < total" class="retry" :disabled="busy" @tap="load(true)">加载更多车辆</button>
     <text class="note">档案录入将随后开放；图片上传成功不会自动创建养护记录。</text>
   </view>

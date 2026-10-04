@@ -31,7 +31,7 @@ function retryCatalog() { if (state.catalogRetry) flow.load(state.catalogRetry.k
 <template>
   <view class="page" data-testid="vehicle-manual">
     <text class="eyebrow">车主端 · 手动录入</text><text class="title">添加我的车辆</text>
-    <text class="intro">选择车型并记录当前里程，车牌与VIN可稍后补充。</text>
+    <text class="intro">选择车型并记录当前里程，车牌与VIN可不填。</text>
     <view v-if="!ownerSession.accessToken" class="panel"><text>请先登录车主账号</text><button @tap="login">前往登录</button></view>
     <view v-else class="panel">
       <text class="label">品牌</text>
