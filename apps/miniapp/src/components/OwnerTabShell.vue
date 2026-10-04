@@ -7,6 +7,7 @@ const props = defineProps({
   title: { type: String, required: true },
   description: { type: String, required: true },
   nextAction: { type: String, required: true },
+  businessReady: { type: Boolean, default: false },
 })
 
 const signedIn = computed(() => Boolean(ownerSession.accessToken))
@@ -29,7 +30,7 @@ function openLogin() {
       <text class="panel-copy">登录后才能查看与本人关联的车辆和服务信息。</text>
       <button class="action" @tap="openLogin">前往微信登录</button>
     </view>
-    <view v-else class="panel" role="status">
+    <view v-else-if="!businessReady" class="panel" role="status">
       <text class="panel-title">业务内容即将接入</text>
       <text class="panel-copy">{{ nextAction }}</text>
       <text class="panel-note">当前仅完成导航与身份入口；尚无可展示的业务数据。</text>

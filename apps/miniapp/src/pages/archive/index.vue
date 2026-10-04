@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { onHide, onUnload } from '@dcloudio/uni-app'
 import OwnerTabShell from '../../components/OwnerTabShell.vue'
+import VehicleList from '../../components/VehicleList.vue'
 import { useImageFlow } from '../../services/image-flow.js'
 import { clearOwnerSession } from '../../services/owner-session.js'
 
@@ -14,8 +15,9 @@ function login() { clearOwnerSession(); uni.navigateTo({ url: '/pages/owner/inde
 </script>
 
 <template>
-  <OwnerTabShell label="档案" title="留下每次养护记录" description="集中查看保养、维修、保险与年检等记录。" next-action="车辆录入与档案列表将在车主数据接口接入后开放。">
+  <OwnerTabShell label="档案" title="留下每次养护记录" description="管理本人车辆，为养护记录准备图片。" next-action="档案录入将在随后开放。" business-ready>
     <template #content>
+      <VehicleList />
       <view class="images" data-testid="archive-images">
         <text class="heading">先准备养护图片</text>
         <text class="copy">上传保养或维修图片，可查看本人图片。车辆档案录入尚未开放。</text>

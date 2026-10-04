@@ -163,7 +163,28 @@
         "x-feature-ids": [
           "F02"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "统一成功响应",
@@ -190,13 +211,19 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "503": {
+            "description": "数据库尚未配置，code=50300"
           }
         },
         "security": [
           {
             "bearerAuth": []
           }
-        ]
+        ],
+        "x-roles": "正式车主",
+        "x-implementation-status": "core-implemented",
+        "description": "有效 user/OWNER 会话；分页响应 list/page/page_size/total；车型仅查询现有有效数据库记录。详见 VEHICLE_MANUAL.md。"
       }
     },
     "/api/vehicle/add": {
@@ -246,6 +273,15 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "车型不存在或停用"
+          },
+          "409": {
+            "description": "本人已登记该车牌或VIN"
+          },
+          "503": {
+            "description": "数据库或事务暂不可用，同键重试"
           }
         },
         "security": [
@@ -259,11 +295,45 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "additionalProperties": true
+                "additionalProperties": false,
+                "required": [
+                  "add_type",
+                  "model_id"
+                ],
+                "properties": {
+                  "add_type": {
+                    "type": "integer",
+                    "const": 4
+                  },
+                  "model_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "current_mileage": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 2147483647,
+                    "default": 0
+                  },
+                  "plate_no": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "description": "可选普通/新能源大陆号牌；去首尾空格并转大写"
+                  },
+                  "vin": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "description": "可选17位VIN，不含I/O/Q；空串为缺省"
+                  }
+                }
               }
             }
           }
-        }
+        },
+        "x-roles": "正式车主",
+        "x-implementation-status": "manual-core-implemented",
+        "description": "本步仅 add_type=4 手动录入；同车主非空车牌/VIN重复返回409；24小时幂等与成功审计。详见 VEHICLE_MANUAL.md。"
       }
     },
     "/api/vehicle/vin-decode": {
@@ -368,7 +438,28 @@
         "x-feature-ids": [
           "F02"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "统一成功响应",
@@ -395,13 +486,19 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "503": {
+            "description": "数据库尚未配置，code=50300"
           }
         },
         "security": [
           {
             "bearerAuth": []
           }
-        ]
+        ],
+        "x-roles": "正式车主",
+        "x-implementation-status": "core-implemented",
+        "description": "有效 user/OWNER 会话；分页响应 list/page/page_size/total；车型仅查询现有有效数据库记录。详见 VEHICLE_MANUAL.md。"
       }
     },
     "/api/series/list": {
@@ -414,7 +511,38 @@
         "x-feature-ids": [
           "F02"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "brand_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "统一成功响应",
@@ -441,13 +569,19 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "503": {
+            "description": "数据库尚未配置，code=50300"
           }
         },
         "security": [
           {
             "bearerAuth": []
           }
-        ]
+        ],
+        "x-roles": "正式车主",
+        "x-implementation-status": "core-implemented",
+        "description": "有效 user/OWNER 会话；分页响应 list/page/page_size/total；车型仅查询现有有效数据库记录。详见 VEHICLE_MANUAL.md。"
       }
     },
     "/api/model/list": {
@@ -460,7 +594,38 @@
         "x-feature-ids": [
           "F02"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "series_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "统一成功响应",
@@ -487,13 +652,19 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "503": {
+            "description": "数据库尚未配置，code=50300"
           }
         },
         "security": [
           {
             "bearerAuth": []
           }
-        ]
+        ],
+        "x-roles": "正式车主",
+        "x-implementation-status": "core-implemented",
+        "description": "有效 user/OWNER 会话；分页响应 list/page/page_size/total；车型仅查询现有有效数据库记录。详见 VEHICLE_MANUAL.md。"
       }
     },
     "/api/archive/add": {

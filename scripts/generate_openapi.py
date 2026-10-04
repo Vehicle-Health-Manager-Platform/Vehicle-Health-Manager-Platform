@@ -153,6 +153,35 @@ def main():
     count = sum(len(item) for item in document["paths"].values())
     if count < 55:
         raise ValueError(f"Expected at least 55 operations; got {count}")
+    # S1 owner vehicles: implemented subset of F02. OCR/VIN matching stay planned.
+    for path in ("/api/vehicle/list", "/api/brand/list", "/api/series/list", "/api/model/list"):
+        item = document["paths"][path]["get"]
+        item["x-roles"] = "正式车主"
+        item["x-implementation-status"] = "core-implemented"
+        item["description"] = "有效 user/OWNER 会话；分页响应 list/page/page_size/total；车型仅查询现有有效数据库记录。详见 VEHICLE_MANUAL.md。"
+        item["parameters"] += [
+            {"name": "page", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 1000000, "default": 1}},
+            {"name": "page_size", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 100, "default": 20}},
+        ]
+        parent = "brand_id" if path == "/api/series/list" else "series_id" if path == "/api/model/list" else None
+        if parent:
+            item["parameters"].append({"name": parent, "in": "query", "required": True,
+                "schema": {"type": "integer", "minimum": 1, "maximum": 9007199254740991}})
+        item["responses"]["503"] = {"description": "数据库尚未配置，code=50300"}
+    item = document["paths"]["/api/vehicle/add"]["post"]
+    item["x-roles"] = "正式车主"
+    item["x-implementation-status"] = "manual-core-implemented"
+    item["description"] = "本步仅 add_type=4 手动录入；同车主非空车牌/VIN重复返回409；24小时幂等与成功审计。详见 VEHICLE_MANUAL.md。"
+    item["requestBody"]["content"]["application/json"]["schema"] = {
+        "type": "object", "additionalProperties": False, "required": ["add_type", "model_id"], "properties": {
+            "add_type": {"type": "integer", "const": 4},
+            "model_id": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+            "current_mileage": {"type": "integer", "minimum": 0, "maximum": 2147483647, "default": 0},
+            "plate_no": {"type": "string", "maxLength": 32, "description": "可选普通/新能源大陆号牌；去首尾空格并转大写"},
+            "vin": {"type": "string", "maxLength": 32, "description": "可选17位VIN，不含I/O/Q；空串为缺省"},
+        }}
+    for status, message in (("404", "车型不存在或停用"), ("409", "本人已登记该车牌或VIN"), ("503", "数据库或事务暂不可用，同键重试")):
+        item["responses"][status] = {"description": message}
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")
 
