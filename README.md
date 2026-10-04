@@ -16,7 +16,7 @@
 | 数据库与 CI | main 为 V001–V003、42 张表，PR #12 追加 V004 至 44 表；网页、小程序、后端、生成文件/OCR、MySQL 和 Compose 共六项 CI | PR #12 后端 107 项测试无失败/错误/跳过；各提交验证结果查看 [GitHub Actions](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/workflows/ci.yml)。 |
 | S1 本人车辆与手动录入 | 档案Tab车辆列表、品牌→车系→年款→配置选择、幂等添加、归属隔离、脱敏与成功审计 | [PR #14](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/14) 已实现；39项离线测试、H5 11项替身交互和模拟器10条路由通过。车型库只读取现有有效数据，生产来源未确定；完整F02/M1未验收。[接口契约](docs/api/VEHICLE_MANUAL.md)。 |
 | S1 本人车辆档案手动录入 | [PR #15](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/15) 新增七类通用记录、按车分页、至多五张私有图片关联及本人/CLEAN校验 | [CI 37203770229](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37203770229) 六项全绿，后端132项无失败/跳过；小程序43项Node测试、微信/H5构建通过。真实微信、私有图片和真机仍未联调。[接口契约](docs/api/ARCHIVE_MANUAL.md)。 |
-| S1 首页车辆与档案摘要 | 当前堆叠分支复用本人接口，显示当前车辆、真实档案总数及最近记录，并在首页与档案 Tab 共用车辆选择 | 48项离线测试与小程序/H5构建已通过；H5实际交互、微信模拟器及真实环境仍待复核。健康评分和提醒没有数据规则，本步不展示推测值。 |
+| S1 首页车辆与档案摘要 | [PR #16](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/16) 复用本人接口，显示当前车辆、真实档案总数及最近记录，并在首页与档案 Tab 共用车辆选择 | 48项离线测试与小程序/H5构建已通过；H5实际交互、微信模拟器及真实环境仍待复核。健康评分和提醒没有数据规则，本步不展示推测值。 |
 
 ## 从源码构建微信小程序
 
@@ -67,7 +67,7 @@ npm run build:h5 --workspace @autocare/miniapp
 ## 下一步
 
 1. 图片后端 PR #12 与小程序图片操作 PR #13 按依赖顺序合并；真实私有环境和微信图片联调条件到位后记录验收。
-2. 车辆列表与手动录入已在PR #14实现（依赖#13）；本人车辆档案手动录入/查询及图片归档校验已在PR #15完成自动化验证。当前堆叠分支继续接入首页车辆与档案摘要，仍待 CI 和实际页面复核。车型库来源待落实。
+2. 车辆列表与手动录入已在PR #14实现（依赖#13）；本人车辆档案手动录入/查询及图片归档校验已在PR #15完成自动化验证。首页车辆与档案摘要已提交PR #16，仍待 CI 和实际页面复核。车型库来源待落实。
 3. 外部条件齐备后并行完成真实微信、手机号、短信及私有上传环境联调；继续补齐健康监控和 S0/M0 验收。
 
 ## 项目文档
