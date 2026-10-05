@@ -1,6 +1,6 @@
 # 当前进度
 
-> 更新日期：2026-10-04。需求基线为原始 v1.0 交付文档；此页区分“代码与 CI 已验证”“真实环境已联调”“已合入 main”。
+> 更新日期：2026-10-05。需求基线为原始 v1.0 交付文档；此页区分“代码与 CI 已验证”“真实环境已联调”“已合入 main”。
 
 ## 仓库与交付状态
 
@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | 需求、页面、API 与数据追踪 | 基线已建立 | [Spec](../SPEC.md) 和 [追踪表](S0_TRACEABILITY.md)覆盖 F01–F20、63 个具名页面、43 个核心 API、15 项验收；追踪项不等于功能已交付。 |
 | 微信小程序与车主 H5 构建 | CI 已验证，真机未验收 | 单测试号三角色工程可编译；车主五个原生 Tab 已在 [PR #4](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/4) 实现。PR #14/#15 已接入本人车辆与档案手动流程，当前分支接入首页真实摘要；订单、AI及完整 F02–F04 仍待实现。 |
-| 车主与技师微信身份 | 自动化验证通过，真实微信未联调 | [PR #2](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/2) 实现身份持久化、角色授权与绑定；[PR #3](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/3) 实现手机号授权、员工码、限流及会话轮换/撤销。测试使用伪微信响应。 |
+| 车主与技师微信身份 | 开发者工具真实 code 与本机后端联调通过，真机待验收 | [PR #2](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/2) 与 [PR #3](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/3) 实现身份、绑定和会话生命周期；2026-10-05 已用真实 `wx.login` code 验证车主登录、技师绑定、刷新与退出，且车主按钮登录后进入首页，见[执行记录](S0_EXECUTION_LOG.md)。手机号及真机 HTTPS 仍待验收。 |
 | 商家账号身份 | 核心与 CI 已验证，短信未接通 | [PR #5](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/5) 实现密码加一次性短信码、商家状态复核及小程序入口。[PR #5 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37044187253) 六项通过，后端 28 项测试无失败、无跳过。服务商未定，生产环境没有短信发送实现，验证码请求返回 503。 |
 | 数据库 | main 的 V001–V003 在 CI 验证 | 基线 39 表，V002 增至 40 表，V003 增至 42 表；已有数据库是否应用 V002、V003 尚未确认。不能把新数据卷的自动初始化视作已有库迁移。 |
 | S0 基础设施与横向能力 | 部分 CI 验证，M0 未通过 | Compose 冒烟已覆盖既有基础服务；幂等事务与成功审计核心已验证，私有上传、正式业务接入、完整安全审计、健康监控及真实部署验收仍待完成。运营 PC 后台由协作团队负责。 |
@@ -28,6 +28,6 @@
 
 2026-10-03 用户确认调整推进重点：先完成小程序所需上传基础能力，随后优先打通 S1 车辆档案的页面、后端、数据持久化与联调。健康监控及其他 S0/M0 未满足项继续保留；车辆与手动档案分别在 PR #14/#15 完成自动化验证，真实联调和完整 F02–F04 仍待完成，尚不能标记 M0/M1 通过。具体拆分见[下一步规划](NEXT_STEPS.md)。
 
-微信开发者工具已重新导入当前仓库的 `apps/miniapp/dist/build/mp-weixin`，模拟器启动和 9 条路由复核通过，车主身份页截图已检查。用户此前的“项目根目录未找到 `app.json`”来自导入源码仓库根目录；其他仓库仍需按[构建与导入说明](../../apps/miniapp/README.md)自行构建并导入其产物。本步使用未配置真实后端的产物做导航验证，没有真实微信登录或手机号联调。
+微信开发者工具已重新导入当前仓库的 `apps/miniapp/dist/build/mp-weixin`，模拟器启动和 9 条路由复核通过，车主身份页截图已检查。用户此前的“项目根目录未找到 `app.json`”来自导入源码仓库根目录；其他仓库仍需按[构建与导入说明](../../apps/miniapp/README.md)自行构建并导入其产物。此前的导航验证使用未配置真实后端的产物；后续已在本机开发者工具完成真实微信登录联调，详见下文。
 
-真实微信登录和手机号授权尚需轮换后的私有 AppSecret、已应用 V003 的数据库、可访问的 HTTPS 后端，以及具备手机号能力的测试账号。商家短信联调还需选定服务商并配置私有发送实现。外部条件状态见 [S0 依赖清单](S0_DEPENDENCIES.md)，逐步完成证据见 [S0 执行记录](S0_EXECUTION_LOG.md)。
+2026-10-05 已用开发者工具取得真实微信 code，在本机私有配置和新建测试数据库上完成车主登录、技师绑定、刷新与退出；车主按钮登录后已进入首页。这不代替真机验收。真机微信登录与手机号授权仍需可访问的 HTTPS 后端、合法请求域名及具备手机号能力的测试账号；商家短信联调还需选定服务商并配置私有发送实现。外部条件状态见 [S0 依赖清单](S0_DEPENDENCIES.md)，逐步完成证据见 [S0 执行记录](S0_EXECUTION_LOG.md)。
