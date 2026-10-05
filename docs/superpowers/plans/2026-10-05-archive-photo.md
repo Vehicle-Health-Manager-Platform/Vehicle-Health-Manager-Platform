@@ -22,11 +22,11 @@
 
 **Files:** Modify `backend/src/main/java/com/autocare/platform/vehicle/ArchiveInput.java`, `ArchiveService.java`; test `backend/src/test/java/com/autocare/platform/JdbcArchiveTest.java`.
 
-**Interfaces:** `ArchiveInput` gains `int inputType` and parses optional `input_type`; `canonical()` includes it. `ArchiveService.list()` returns `input_type` for types 1 and 3.
+**Interfaces:** `ArchiveInput` gains `int inputType` and parses optional `input_type`; `canonical()` includes it only for photo so old manual retry bodies stay stable. `ArchiveService.list()` returns `input_type` for types 1 and 3.
 
 - [ ] Add failing parser and MySQL tests: omitted type is 3; type 1 without files and type 2 fail 400; type 1 with one CLEAN owned file saves `input_type=1`, returns it in list and audit, and changes under the same idempotency key fail 400. Assert mixed type pagination and total, foreign/unclean image refusal and rollback.
 - [ ] Run `mvn -B -Dtest=JdbcArchiveTest test` from `backend` where Java/Docker are available; expect the new tests to fail before code change.
-- [ ] Implement strict field parsing with `int inputType = body.has("input_type") ? ... : 3`; require `(inputType == 1 || inputType == 3)`, and `inputType == 1 && files.isEmpty()` is invalid. Include `input_type` in canonical map, SQL insert parameter and safe audit map. Query `a.input_type IN (1,3)` in both rows and count, select and return `input_type` in each row.
+- [ ] Implement strict field parsing with `int inputType = body.has("input_type") ? ... : 3`; require `(inputType == 1 || inputType == 3)`, and `inputType == 1 && files.isEmpty()` is invalid. Include `input_type` in canonical map only for photo, but in SQL insert and safe audit for both modes. Query `a.input_type IN (1,3)` in both rows and count, select and return `input_type` in each row.
 - [ ] Run the backend test again and commit the backend/API change after pass; if local Java/Docker are unavailable, record this and use CI for execution.
 
 ### Task 2: Miniapp contract and camera selection

@@ -75,7 +75,8 @@ public record ArchiveInput(long vehicleId, int archiveType, LocalDate recordedDa
         fields.put("title", title);
         fields.put("notes", notes);
         fields.put("file_ids", fileIds);
-        fields.put("input_type", inputType);
+        // Keep the legacy manual canonical body stable for in-flight retries from older clients.
+        if (inputType == 1) fields.put("input_type", inputType);
         return fields;
     }
 

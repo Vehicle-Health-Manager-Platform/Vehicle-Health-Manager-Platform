@@ -133,10 +133,12 @@ class JdbcArchiveTest {
     @Test void photoEntryRequiresCleanPictureAndAppearsWithManualRecords() {
         var manual = ArchiveInput.parse(read("{\"vehicle_id\":101,\"archive_type\":1,\"recorded_date\":\"2026-10-04\",\"title\":\"手动记录\"}"));
         assertEquals(3, manual.inputType());
+        assertFalse(manual.canonical().containsKey("input_type"));
         assertEquals(400, status(() -> ArchiveInput.parse(read("{\"vehicle_id\":101,\"archive_type\":1,\"recorded_date\":\"2026-10-04\",\"title\":\"无图\",\"input_type\":1}"))));
         assertEquals(400, status(() -> ArchiveInput.parse(read("{\"vehicle_id\":101,\"archive_type\":1,\"recorded_date\":\"2026-10-04\",\"title\":\"语音\",\"input_type\":2}"))));
         service.add(owner, key(), manual);
         var photo = new ArchiveInput(101, 1, LocalDate.of(2026, 10, 5), null, "拍照记录", "", List.of(11L), 1);
+        assertEquals(1, photo.canonical().get("input_type"));
         String requestKey = key();
         service.add(owner, requestKey, photo);
         assertEquals(400, status(() -> service.add(owner, requestKey, input(101, List.of(11L)))));

@@ -15,7 +15,7 @@
 }
 ```
 
-`input_type=1` 为拍照录入，必须有 1–5 个图片 ID；省略或设为 `3` 为手动录入，可无图片。方式 `2`（语音）尚未开放。该方式参与规范正文与幂等比较。`archive_type` 为 1 保养、2 维修、3 保险、4 事故、5 改装、6 违章、7 年检。里程、备注可省略；标题必填，最多 80 字符，备注最多 1000 字符；图片最多五张且不能重复。图片先经 `POST /api/file/upload` 获得 `file_id`，保存时服务端在同一数据库事务中验证文件属于当前车主、未删除且 `CLEAN`，再创建档案与有序关联。仅上传图片不会创建档案。成功 `data` 为 `archive_id,vehicle_id`。
+`input_type=1` 为拍照录入，必须有 1–5 个图片 ID；省略或设为 `3` 为手动录入，可无图片。方式 `2`（语音）尚未开放。拍照方式在规范正文中包含来源，手动方式沿用旧规范正文，保证旧请求键在部署后可同键重试；拍照与手动使用同一键会被判为不同正文。`archive_type` 为 1 保养、2 维修、3 保险、4 事故、5 改装、6 违章、7 年检。里程、备注可省略；标题必填，最多 80 字符，备注最多 1000 字符；图片最多五张且不能重复。图片先经 `POST /api/file/upload` 获得 `file_id`，保存时服务端在同一数据库事务中验证文件属于当前车主、未删除且 `CLEAN`，再创建档案与有序关联。仅上传图片不会创建档案。成功 `data` 为 `archive_id,vehicle_id`。
 
 `GET /api/archive/list?vehicle_id=123&page=1&page_size=20` 先验证车辆属于当前车主，再分页返回拍照与手动记录，按发生日期和档案 ID 倒序返回 `{list,total,page,page_size}`；`total` 使用相同的方式过滤条件。每条含 `archive_id,vehicle_id,archive_type,input_type,recorded_date,mileage,title,notes,file_ids,created_at`。图片仅返回稳定文件 ID；预览时调用 `GET /api/file/{id}/access` 获取短时 URL，不把 URL 存入档案。首页摘要使用第一页的 `total` 与首条记录。
 
