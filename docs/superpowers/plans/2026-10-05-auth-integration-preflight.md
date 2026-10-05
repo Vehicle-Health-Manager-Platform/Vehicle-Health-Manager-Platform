@@ -54,4 +54,4 @@
 **文件：** 上述全部文件。
 
 - [x] 复查规格与计划的检查项已落实；运行 `python -m unittest scripts/test_check_auth_readiness.py -v` 和 CLI 负例。
-- [ ] 运行 `git status --short`、`git diff --check`；创建独立 PR，记录 CI 与未执行的真实联调项。
+- [x] 运行 `git status --short`、`git diff --check`；创建独立 PR，记录 CI 与未执行的真实联调项。
