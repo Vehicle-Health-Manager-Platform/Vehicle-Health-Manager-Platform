@@ -2,20 +2,20 @@
 
 面向车主、商家和技师的微信小程序及配套后端，车主另有 H5 兜底目标，运营使用 PC 网页。本团队负责小程序和共用接口；运营 PC 后台由协作团队负责。
 
-**当前处于 S0 基础建设阶段。** 既有开发分支已整合至 `main`，身份、导航和上传基础能力已实现；车辆档案、交易、AI 等完整业务仍待交付，M0/M1 尚未验收通过。详见[当前进度](docs/progress/CURRENT_STATUS.md)及[下一步规划](docs/progress/NEXT_STEPS.md)。
+**当前推进 S1 车辆档案交付，并继续补齐 S0 验收。** 本人车辆、通用档案、首页摘要和拍照录入已实现；开发者工具中的真实微信登录已联调。真机、图片私有部署、交易、AI 及完整业务仍待验收，M0/M1 尚未通过。详见[当前进度](docs/progress/CURRENT_STATUS.md)及[下一步规划](docs/progress/NEXT_STEPS.md)。
 
 ## 已实现的能力
 
 | 范围 | 当前能力 | 验证与边界 |
 | --- | --- | --- |
-| 微信小程序 | uni-app 3 / Vue3 单测试号三角色入口，车主五个原生 Tab，身份页加载、错误与重试状态 | 拍照录入分支小程序与 H5 构建、52 项离线测试通过；历史模拟器验证过 10 条路由，新拍照入口尚未做模拟器复核。 |
-| 车主与技师身份 | 微信身份持久化、角色授权、技师绑定、员工码发放/回收、手机号绑定、限流、刷新凭证轮换与退出撤销 | 自动化验证通过，真实微信与手机号授权未联调。 |
+| 微信小程序 | uni-app 3 / Vue3 单测试号三角色入口，车主五个原生 Tab，身份页加载、错误与重试状态 | 小程序与 H5 构建、52 项离线测试通过；车主真实登录按钮已进入首页。真实相机与有数据业务流程仍待验收。 |
+| 车主与技师身份 | 微信身份持久化、角色授权、技师绑定、员工码发放/回收、手机号绑定、限流、刷新凭证轮换与退出撤销 | 开发者工具真实 code、车主按钮、技师绑定、刷新和退出已通过；真机网络与手机号授权未验收。 |
 | 商家身份 | 密码加一次性短信码、账号/商家状态复核、可刷新与撤销的会话 | 服务商未定，没有生产短信发送器，验证码请求当前返回 503。 |
-| 写入完整性 | 24 小时幂等、权限复核、业务/成功响应/成功审计同事务提交 | MySQL 容器验证通过；最初接入local里程示例，PR #14接入正式车辆创建，其余业务逐项接入。 |
+| 写入完整性 | 24 小时幂等、权限复核、业务/成功响应/成功审计同事务提交 | MySQL 容器验证通过；已接入车辆、档案与图片上传写操作；其他业务继续逐项接入。 |
 | 私有上传基础 | 10 MiB 文件校验、扫描后存储、JDBC 元数据与失败补偿；真实 MinIO/ClamAV 适配器、内部短时签名及独立账号初始化 | PR #12/#13 的上传与小程序图片操作、PR #15 的业务档案关联已合入 main；真实私有图片联调和部署仍待完成。测试合成病毒签名不代表生产官方病毒库验收。 |
-| 数据库与 CI | main 已包含 V001–V005 与车辆档案图片关联表；网页、小程序、后端、生成文件/OCR、MySQL 和 Compose 共六项 CI | [#12–#16 合并后的 main CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37206403212) 六项全绿；本分支新后端用例待 CI 验证。 |
+| 数据库与 CI | main 已包含 V001–V005 与车辆档案图片关联表；网页、小程序、后端、生成文件/OCR、MySQL 和 Compose 共六项 CI | 本机新测试卷已完成 V001–V005；[拍照 PR 最终 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37257482023)和[登录修复首次 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37317893587)均六项全绿。整合后的结果以对应提交 CI 为准。 |
 | S1 本人车辆与手动录入 | 档案Tab车辆列表、品牌→车系→年款→配置选择、幂等添加、归属隔离、脱敏与成功审计 | [PR #14](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/14) 已实现；39项离线测试、H5 11项替身交互和模拟器10条路由通过。车型库只读取现有有效数据，生产来源未确定；完整F02/M1未验收。[接口契约](docs/api/VEHICLE_MANUAL.md)。 |
-| S1 本人车辆档案手动录入 | [PR #15](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/15) 新增七类通用记录、按车分页、至多五张私有图片关联及本人/CLEAN校验 | [CI 37203770229](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37203770229) 六项全绿，后端132项无失败/跳过；小程序43项Node测试、微信/H5构建通过。真实微信、私有图片和真机仍未联调。[接口契约](docs/api/ARCHIVE_MANUAL.md)。 |
+| S1 本人车辆档案手动录入 | [PR #15](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/15) 新增七类通用记录、按车分页、至多五张私有图片关联及本人/CLEAN校验 | [CI 37203770229](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37203770229) 六项全绿，后端132项无失败/跳过；小程序43项Node测试、微信/H5构建通过。档案真实有数据业务、私有图片和真机仍未验收。[接口契约](docs/api/ARCHIVE_MANUAL.md)。 |
 | S1 首页车辆与档案摘要 | [PR #16](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/16) 复用本人接口，显示当前车辆、真实档案总数及最近记录，并在首页与档案 Tab 共用车辆选择 | 48项离线测试与小程序/H5构建已通过；H5实际交互、微信模拟器及真实环境仍待复核。健康评分和提醒没有数据规则，本步不展示推测值。 |
 | S1 本人档案拍照录入 | [PR #17](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/17) 在档案 Tab 增加拍照入口，保存来源为 `input_type=1`，至少一张本人 CLEAN 图片；列表和首页摘要包含拍照记录 | [CI 37256441618](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37256441618) 六项全绿，后端 133 项、小程序 52 项通过；H5/微信实际相机和私有环境仍待验证。[接口契约](docs/api/ARCHIVE_MANUAL.md)。 |
 
@@ -42,7 +42,7 @@ cd backend
 mvn spring-boot:run
 ```
 
-默认端口为 8080，健康检查为 `GET /actuator/health`。本分支数据库须按顺序应用 V001–V005：新建 Compose 数据卷自动初始化，**已有数据卷须人工补迁移**。上传适配器默认关闭；启用、私有桶初始化及 ClamAV 配置见[上传适配器说明](docs/api/UPLOAD_ADAPTERS.md)。
+默认端口为 8080，健康检查为 `GET /actuator/health`。数据库须按顺序应用 V001–V005：新建 Compose 数据卷自动初始化，**已有数据卷须人工补迁移**。上传适配器默认关闭；启用、私有桶初始化及 ClamAV 配置见[上传适配器说明](docs/api/UPLOAD_ADAPTERS.md)。
 
 在仓库根目录验证：
 
@@ -67,9 +67,11 @@ npm run build:h5 --workspace @autocare/miniapp
 
 ## 下一步
 
-1. PR #12–#16 已按依赖顺序合入 main；真实私有环境和微信图片联调条件到位后记录验收。
-2. 档案拍照录入已提交 PR #17；随后继续语音、车牌/VIN/OCR 与首页评分提醒。车型库和识别服务来源待落实。
-3. 外部条件齐备后并行完成真实微信、手机号、短信及私有上传环境联调；继续补齐健康监控和 S0/M0 验收。
+1. 本地真实车主会话走通车辆录入、无图档案、两车切换、列表与首页摘要，核对落库、幂等及审计。
+2. 接通私有 MinIO/ClamAV，验证图片归档、签名预览、失败重试和真实拍照。
+3. 配置手机可达的测试入口，完成常规真机、手机号和商家短信验收；生产车型、识别服务及评分规则确认后再交付后续 S1 功能。
+
+现在可用本机模拟器继续开发，无需先购买公网服务器或域名。正式发布连接自建后端时需备案 HTTPS 通讯域名；微信云托管提供指定免配域名调用方式，当前尚未适配。详见[网络环境说明](docs/operations/MINIAPP_NETWORK_ENVIRONMENTS.md)与[中文下一步计划](docs/progress/NEXT_STEPS.md)。
 
 ## 项目文档
 
@@ -78,4 +80,6 @@ npm run build:h5 --workspace @autocare/miniapp
 - [当前进度](docs/progress/CURRENT_STATUS.md)、[执行记录](docs/progress/S0_EXECUTION_LOG.md)、[外部依赖](docs/progress/S0_DEPENDENCIES.md)
 - [API 文档](docs/api/README.md)、[写入完整性](docs/api/WRITE_INTEGRITY.md)、[上传核心](docs/api/PRIVATE_UPLOAD_CORE.md)、[真实上传适配器](docs/api/UPLOAD_ADAPTERS.md)
 
-后续每步创建可审阅PR，明确未合并的依赖；当前合并顺序 #12 → #13 → #14 → #15，合并前需调整基线并复核差异和CI。真实微信联调仍需私有凭据、已迁移数据库、HTTPS 与合法域名；正式主体、支付和提审条件待确认。
+PR #12–#17 已合并；#18 的预检内容整合至 #19，保留提交历史。后续从最新 `main` 创建独立 PR，完整 CI 通过后合并。真机、公网和手机号仍待验收；正式主体、支付和提审条件待确认。
+
+登录联调与环境验收：[运维清单](docs/operations/AUTH_INTEGRATION_RUNBOOK.md)、[开发与上线网络说明](docs/operations/MINIAPP_NETWORK_ENVIRONMENTS.md)。
