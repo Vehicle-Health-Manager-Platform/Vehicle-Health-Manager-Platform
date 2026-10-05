@@ -7,6 +7,7 @@ import { ownerSession, clearOwnerSession } from '../../services/owner-session.js
 import { selectedOwnerVehicle, selectOwnerVehicle } from '../../services/owner-vehicle-selection.js'
 import { archiveApi } from '../../services/archives.js'
 import { createHomeSummaryFlow, initialHomeSummaryState } from '../../services/home-summary-flow.js'
+import { archiveInputTypeName } from '../../services/archive-entry-mode.js'
 
 const state = reactive(initialHomeSummaryState())
 const flow = createHomeSummaryFlow({ state, api: archiveApi, token: () => ownerSession.accessToken })
@@ -37,7 +38,7 @@ function archive() { uni.switchTab({ url: '/pages/archive/index' }) }
           <view v-if="state.latest" class="recent">
             <text class="section">最近记录</text>
             <text class="recent-title">{{ state.latest.title }}</text>
-            <text class="detail">{{ typeNames[state.latest.archive_type - 1] }} · {{ state.latest.recorded_date }}</text>
+            <text class="detail">{{ typeNames[state.latest.archive_type - 1] }} · {{ archiveInputTypeName(state.latest.input_type) }} · {{ state.latest.recorded_date }}</text>
           </view>
           <text v-else class="detail">这辆车还没有档案记录。</text>
           <button class="primary" @tap="archive">{{ state.latest ? '查看完整档案' : '去录入第一条记录' }}</button>
