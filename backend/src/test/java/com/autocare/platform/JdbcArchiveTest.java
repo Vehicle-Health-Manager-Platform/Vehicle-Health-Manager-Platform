@@ -63,7 +63,7 @@ class JdbcArchiveTest {
     }
 
     ArchiveInput input(long vehicle, List<Long> files) {
-        return new ArchiveInput(vehicle, 1, LocalDate.of(2026, 10, 4), 12345, "保养", "更换机油", files);
+        return new ArchiveInput(vehicle, 1, LocalDate.of(2026, 10, 4), 12345, "保养", "更换机油", files, 3);
     }
     String key() { return UUID.randomUUID().toString(); }
     int count(String table) { return jdbc.queryForObject("SELECT COUNT(*) FROM " + table, Integer.class); }
@@ -120,7 +120,7 @@ class JdbcArchiveTest {
             "{\"vehicle_id\":101,\"archive_type\":1,\"recorded_date\":\"2026-10-04\",\"title\":\"x\",\"user_id\":1}"))
             assertEquals(400, status(() -> ArchiveInput.parse(read(bad))));
         service.add(owner, key(), input(101, List.of()));
-        service.add(owner, key(), new ArchiveInput(101, 2, LocalDate.of(2026, 10, 5), null, "维修", "", List.of()));
+        service.add(owner, key(), new ArchiveInput(101, 2, LocalDate.of(2026, 10, 5), null, "维修", "", List.of(), 3));
         var page = mapper.valueToTree(service.list(owner, 101, 1, 1));
         assertEquals(2, page.path("total").asInt());
         assertEquals(2, page.path("list").get(0).path("archive_type").asInt());
@@ -128,5 +128,26 @@ class JdbcArchiveTest {
     }
     com.fasterxml.jackson.databind.JsonNode read(String value) {
         try { return mapper.readTree(value); } catch (Exception exception) { throw new AssertionError(exception); }
+    }
+
+    @Test void photoEntryRequiresCleanPictureAndAppearsWithManualRecords() {
+        var manual = ArchiveInput.parse(read("{\"vehicle_id\":101,\"archive_type\":1,\"recorded_date\":\"2026-10-04\",\"title\":\"手动记录\"}"));
+        assertEquals(3, manual.inputType());
+        assertEquals(400, status(() -> ArchiveInput.parse(read("{\"vehicle_id\":101,\"archive_type\":1,\"recorded_date\":\"2026-10-04\",\"title\":\"无图\",\"input_type\":1}"))));
+        assertEquals(400, status(() -> ArchiveInput.parse(read("{\"vehicle_id\":101,\"archive_type\":1,\"recorded_date\":\"2026-10-04\",\"title\":\"语音\",\"input_type\":2}"))));
+        service.add(owner, key(), manual);
+        var photo = new ArchiveInput(101, 1, LocalDate.of(2026, 10, 5), null, "拍照记录", "", List.of(11L), 1);
+        String requestKey = key();
+        service.add(owner, requestKey, photo);
+        assertEquals(400, status(() -> service.add(owner, requestKey, input(101, List.of(11L)))));
+        assertEquals(404, status(() -> service.add(owner, key(), new ArchiveInput(101, 1, LocalDate.of(2026, 10, 5), null, "外部图片", "", List.of(21L), 1))));
+        assertEquals(404, status(() -> service.add(owner, key(), new ArchiveInput(101, 1, LocalDate.of(2026, 10, 5), null, "未扫描图片", "", List.of(31L), 1))));
+        var list = mapper.valueToTree(service.list(owner, 101, 1, 1));
+        assertEquals(2, list.path("total").asInt());
+        assertEquals(1, list.path("list").get(0).path("input_type").asInt());
+        assertEquals(3, mapper.valueToTree(service.list(owner, 101, 2, 1)).path("list").get(0).path("input_type").asInt());
+        assertEquals(2, count("vehicle_archive"));
+        assertEquals(2, count("audit_log"));
+        assertTrue(jdbc.queryForObject("SELECT after_state FROM audit_log ORDER BY id DESC LIMIT 1", String.class).contains("input_type"));
     }
 }

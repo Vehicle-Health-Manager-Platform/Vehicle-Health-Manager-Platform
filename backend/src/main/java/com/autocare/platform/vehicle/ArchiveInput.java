@@ -11,16 +11,19 @@ import java.util.Map;
 import java.util.Set;
 
 public record ArchiveInput(long vehicleId, int archiveType, LocalDate recordedDate,
-                           Integer mileage, String title, String notes, List<Long> fileIds) {
+                           Integer mileage, String title, String notes, List<Long> fileIds, int inputType) {
     private static final long MAX_SAFE_ID = 9007199254740991L;
 
     public static ArchiveInput parse(JsonNode body) {
         if (body == null || !body.isObject()) throw invalid();
-        Set<String> allowed = Set.of("vehicle_id", "archive_type", "recorded_date", "mileage", "title", "notes", "file_ids");
+        Set<String> allowed = Set.of("vehicle_id", "archive_type", "recorded_date", "mileage", "title", "notes", "file_ids", "input_type");
         body.fieldNames().forEachRemaining(field -> { if (!allowed.contains(field)) throw invalid(); });
         long vehicleId = id(body.path("vehicle_id"));
         JsonNode type = body.path("archive_type");
         if (!type.isIntegralNumber() || !type.canConvertToInt() || type.intValue() < 1 || type.intValue() > 7) throw invalid();
+        JsonNode source = body.path("input_type");
+        int inputType = source.isMissingNode() ? 3 : source.isIntegralNumber() && source.canConvertToInt() ? source.intValue() : 0;
+        if (inputType != 1 && inputType != 3) throw invalid();
         JsonNode date = body.path("recorded_date");
         if (!date.isTextual() || !date.textValue().matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) throw invalid();
         LocalDate recorded;
@@ -45,7 +48,8 @@ public record ArchiveInput(long vehicleId, int archiveType, LocalDate recordedDa
                 files.add(fileId);
             }
         }
-        return new ArchiveInput(vehicleId, type.intValue(), recorded, mileage, title, notes, List.copyOf(files));
+        if (inputType == 1 && files.isEmpty()) throw invalid();
+        return new ArchiveInput(vehicleId, type.intValue(), recorded, mileage, title, notes, List.copyOf(files), inputType);
     }
 
     private static long id(JsonNode value) {
@@ -71,6 +75,7 @@ public record ArchiveInput(long vehicleId, int archiveType, LocalDate recordedDa
         fields.put("title", title);
         fields.put("notes", notes);
         fields.put("file_ids", fileIds);
+        fields.put("input_type", inputType);
         return fields;
     }
 
