@@ -31,11 +31,11 @@
 
 **接口：** `validate_base_url(value: str) -> str` 返回去掉尾随斜杠的 HTTPS 原点；`run_checks(base_url: str, fetch: Callable[[str], tuple[int, bytes]]) -> list[tuple[str, bool, str]]` 返回两项检查结果；`main(argv: list[str] | None = None) -> int` 给 CLI 返回退出码。
 
-- [ ] 写离线失败测试：拒绝 HTTP、嵌入凭据、路径/查询/片段；接受 HTTPS 主机及可选端口。用注入的 `fetch` 返回健康 200 JSON 和匿名 401 JSON，断言两个通过结果和确切 URL。
-- [ ] 运行 `python -m unittest scripts/test_check_auth_readiness.py -v`，确认因脚本缺失失败。
-- [ ] 用 `urllib.parse.urlsplit` 校验 URL；用 `urllib.request` 和禁用重定向的 handler 执行 GET，捕获 `HTTPError` 的 401 状态。读取有限长度正文，解析 JSON 后只比较目标字段。对 TLS、网络、超时、重定向和格式错误输出分类原因，不输出异常原文或响应数据。
-- [ ] 扩展测试：健康非 UP、匿名非 40100、非 JSON、重定向、请求异常，均为失败；`main` 对无效地址返回非零。
-- [ ] 运行完整 `unittest` 与 `python scripts/check_auth_readiness.py --base-url http://example.invalid`，确认前者通过、后者安全失败；提交脚本和测试。
+- [x] 写离线失败测试：拒绝 HTTP、嵌入凭据、路径/查询/片段；接受 HTTPS 主机及可选端口。用注入的 `fetch` 返回健康 200 JSON 和匿名 401 JSON，断言两个通过结果和确切 URL。
+- [x] 运行 `python -m unittest scripts/test_check_auth_readiness.py -v`，确认因脚本缺失失败。
+- [x] 用 `urllib.parse.urlsplit` 校验 URL；用 `urllib.request` 和禁用重定向的 handler 执行 GET，捕获 `HTTPError` 的 401 状态。读取有限长度正文，解析 JSON 后只比较目标字段。对 TLS、网络、超时、重定向和格式错误输出分类原因，不输出异常原文或响应数据。
+- [x] 扩展测试：健康非 UP、匿名非 40100、非 JSON、重定向、请求异常，均为失败；`main` 对无效地址返回非零。
+- [x] 运行完整 `unittest` 与 `python scripts/check_auth_readiness.py --base-url http://example.invalid`，确认前者通过、后者安全失败；提交脚本和测试。
 
 ## 任务 2：人工验收与进度
 
@@ -43,15 +43,15 @@
 
 **接口：** 文档提供 `python scripts/check_auth_readiness.py --base-url https://<测试域名>` 命令、前置条件核对表、逐角色验收矩阵和脱敏结果模板。
 
-- [ ] 对照现有 `WechatAuthController`、`MerchantAuthController`、`SecurityConfig` 和 V002/V003，写出操作与期望响应，不假设未实现的商家短信通道可用。
-- [ ] 写前置条件：HTTPS/合法域名、迁移、私有微信和 JWT 配置、测试设备/账号、员工码；商家另需短信发送器。标明当前均待真实环境核实。
-- [ ] 写车主、技师、刷新/退出、权限隔离和商家短信验收表；结果只记录脱敏证据、日期、验证人及失败编号。
-- [ ] 从运维 README 链接新文档，在 S0 依赖和下一步规划中记录本预检与真实登录联调的区别。
-- [ ] 检查文档无真实密钥、手机号、验证码或令牌；运行 `git diff --check`，提交文档。
+- [x] 对照现有 `WechatAuthController`、`MerchantAuthController`、`SecurityConfig` 和 V002/V003，写出操作与期望响应，不假设未实现的商家短信通道可用。
+- [x] 写前置条件：HTTPS/合法域名、迁移、私有微信和 JWT 配置、测试设备/账号、员工码；商家另需短信发送器。标明当前均待真实环境核实。
+- [x] 写车主、技师、刷新/退出、权限隔离和商家短信验收表；结果只记录脱敏证据、日期、验证人及失败编号。
+- [x] 从运维 README 链接新文档，在 S0 依赖和下一步规划中记录本预检与真实登录联调的区别。
+- [x] 检查文档无真实密钥、手机号、验证码或令牌；运行 `git diff --check`，提交文档。
 
 ## 任务 3：交付核验
 
 **文件：** 上述全部文件。
 
-- [ ] 复查规格与计划的检查项已落实；运行 `python -m unittest scripts/test_check_auth_readiness.py -v` 和 CLI 负例。
+- [x] 复查规格与计划的检查项已落实；运行 `python -m unittest scripts/test_check_auth_readiness.py -v` 和 CLI 负例。
 - [ ] 运行 `git status --short`、`git diff --check`；创建独立 PR，记录 CI 与未执行的真实联调项。
