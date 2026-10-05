@@ -7,6 +7,7 @@ import { ownerSession, clearOwnerSession } from '../../services/owner-session.js
 import { archiveApi, archiveFailure } from '../../services/archives.js'
 import { imageApi } from '../../services/private-images.js'
 import { selectedOwnerVehicle, selectOwnerVehicle } from '../../services/owner-vehicle-selection.js'
+import { archiveEntryUrl, archiveInputTypeName } from '../../services/archive-entry-mode.js'
 
 const vehicle = selectedOwnerVehicle, rows = ref([]), total = ref(0), page = ref(0)
 const busy = ref(false), loaded = ref(false), message = ref(''), kind = ref(''), retryMore = ref(false)
@@ -45,7 +46,7 @@ onShow(() => { visible = true; if (vehicle.value) load() })
 onHide(() => { visible = false; suspend() })
 onUnload(() => { visible = false; clear() })
 function login() { clearOwnerSession(); uni.navigateTo({ url: '/pages/owner/index' }) }
-function add() { if (vehicle.value) uni.navigateTo({ url: `/pages/archive/record-add?vehicle_id=${vehicle.value.vehicle_id}` }) }
+function add(mode = 'manual') { if (vehicle.value) uni.navigateTo({ url: archiveEntryUrl(vehicle.value.vehicle_id, mode) }) }
 </script>
 
 <template>
@@ -53,11 +54,11 @@ function add() { if (vehicle.value) uni.navigateTo({ url: `/pages/archive/record
     <template #content>
       <VehicleList :selected-id="vehicle?.vehicle_id || 0" @select="select" />
       <view v-if="vehicle" class="records" data-testid="archive-records">
-        <view class="top"><text class="heading">{{ vehicle.model_name || '当前车辆' }}的记录</text><button class="add" :disabled="busy" @tap="add">录入记录</button></view>
+        <view class="top"><text class="heading">{{ vehicle.model_name || '当前车辆' }}的记录</text><view class="actions"><button class="add" :disabled="busy" @tap="add('manual')">手动录入</button><button class="add" :disabled="busy" @tap="add('photo')">拍照录入</button></view></view>
         <text v-if="busy" class="copy" role="status">正在加载档案…</text>
         <text v-else-if="loaded && !rows.length" class="copy">这辆车还没有档案记录，可手动录入第一条。</text>
         <view v-for="item in rows" :key="item.archive_id" class="record">
-          <view class="record-top"><text class="name">{{ item.title }}</text><text class="type">{{ labels[item.archive_type - 1] }}</text></view>
+          <view class="record-top"><text class="name">{{ item.title }}</text><text class="type">{{ labels[item.archive_type - 1] }} · {{ archiveInputTypeName(item.input_type) }}</text></view>
           <text class="copy">{{ item.recorded_date }}<text v-if="item.mileage !== null"> · {{ item.mileage }} km</text></text>
           <text v-if="item.notes" class="copy">{{ item.notes }}</text>
           <view v-if="item.file_ids.length" class="images"><button v-for="(id, index) in item.file_ids" :key="id" class="secondary" @tap="preview(id)">查看图片 {{ index + 1 }}</button></view>
@@ -74,6 +75,7 @@ function add() { if (vehicle.value) uni.navigateTo({ url: `/pages/archive/record
 <style scoped>
 .records { margin-top: 28rpx; padding: 32rpx; border-radius: 24rpx; background: white; display: flex; flex-direction: column; }
 .top,.record-top { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
+.actions { display: flex; flex-wrap: wrap; gap: 12rpx; justify-content: flex-end; }
 .heading { font-size: 30rpx; font-weight: 650; color: #1d2129; }
 .name { font-size: 28rpx; color: #1d2129; font-weight: 600; }
 .type { color: #008f24; font-size: 24rpx; }

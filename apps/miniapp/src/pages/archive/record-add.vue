@@ -5,15 +5,16 @@ import { ownerSession, clearOwnerSession } from '../../services/owner-session.js
 import { archiveApi } from '../../services/archives.js'
 import { createArchiveFlow, initialArchiveState } from '../../services/archive-flow.js'
 import { imageApi, imageRequestKey } from '../../services/private-images.js'
+import { archiveInputType } from '../../services/archive-entry-mode.js'
 
 const state = reactive(initialArchiveState())
 const flow = createArchiveFlow({ state, api: archiveApi, token: () => ownerSession.accessToken, newKey: imageRequestKey })
 const types = ['保养', '维修', '保险', '事故', '改装', '违章', '年检']
 const uploadBusy = ref(false), imageMessage = ref(''), candidate = ref(null)
-let generation = 0, imageKey = '', routeVehicleId = 0
+let generation = 0, imageKey = '', routeVehicleId = 0, routeInputType = 3
 const today = () => { const now = new Date(); return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}` }
-onLoad(query => { routeVehicleId = Number(query.vehicle_id); state.vehicleId = Number.isSafeInteger(routeVehicleId) && routeVehicleId > 0 ? routeVehicleId : 0; state.recordedDate = today() })
-function clear() { generation++; flow.reset(); uploadBusy.value = false; imageMessage.value = ''; candidate.value = null; imageKey = ''; state.vehicleId = routeVehicleId; state.recordedDate = today() }
+onLoad(query => { routeVehicleId = Number(query.vehicle_id); routeInputType = archiveInputType(query); state.vehicleId = Number.isSafeInteger(routeVehicleId) && routeVehicleId > 0 ? routeVehicleId : 0; state.inputType = routeInputType; state.recordedDate = today() })
+function clear() { generation++; flow.reset(); uploadBusy.value = false; imageMessage.value = ''; candidate.value = null; imageKey = ''; state.vehicleId = routeVehicleId; state.inputType = routeInputType; state.recordedDate = today() }
 watch(() => ownerSession.accessToken, clear, { flush: 'sync' })
 onHide(clear)
 onUnload(clear)
@@ -26,7 +27,7 @@ async function choose() {
   const current = ++generation, token = ownerSession.accessToken
   uploadBusy.value = true; imageMessage.value = ''
   try {
-    const file = await imageApi.choose(token)
+    const file = await imageApi.choose(token, state.inputType === 1 ? 'camera' : 'mixed')
     if (current !== generation || token !== ownerSession.accessToken || !file) return
     candidate.value = file; imageKey = imageRequestKey()
     await upload()
@@ -57,8 +58,8 @@ async function preview(id) {
 
 <template>
   <view class="page" data-testid="archive-record-add">
-    <text class="eyebrow">车主端 · 手动录入</text><text class="title">新增车辆档案</text>
-    <text class="intro">记录保养、维修及其他用车事项，可附最多五张图片。</text>
+    <text class="eyebrow">车主端 · {{ state.inputType === 1 ? '拍照录入' : '手动录入' }}</text><text class="title">新增车辆档案</text>
+    <text class="intro">{{ state.inputType === 1 ? '拍摄至少一张图片，再填写真实的档案内容。' : '记录保养、维修及其他用车事项，可附最多五张图片。' }}</text>
     <view v-if="!ownerSession.accessToken" class="panel"><text>请先登录车主账号</text><button @tap="login">前往登录</button></view>
     <view v-else-if="!state.vehicleId" class="panel"><text>车辆信息无效，请返回选择车辆</text><button @tap="back">返回档案</button></view>
     <view v-else class="panel">
@@ -71,13 +72,13 @@ async function preview(id) {
       <text class="label">备注（选填）</text><textarea v-model="state.notes" class="notes" maxlength="1000" :disabled="state.busy || uploadBusy || state.saved" placeholder="记录具体情况" />
       <text class="label">归档图片（{{ state.fileIds.length }}/5）</text>
       <view v-for="(id, index) in state.fileIds" :key="id" class="image-row"><text>图片 {{ index + 1 }} 已上传</text><button class="secondary" :disabled="state.busy || uploadBusy" @tap="preview(id)">预览</button><button class="secondary" :disabled="state.busy || uploadBusy" @tap="remove(id)">移除</button></view>
-      <button v-if="state.fileIds.length < 5 && !state.saved" class="secondary" :disabled="state.busy || uploadBusy" @tap="choose">选择并上传图片</button>
+      <button v-if="state.fileIds.length < 5 && !state.saved" class="secondary" :disabled="state.busy || uploadBusy" @tap="choose">{{ state.inputType === 1 ? '拍照并上传' : '选择并上传图片' }}</button>
       <button v-if="candidate" class="secondary" :disabled="state.busy || uploadBusy" @tap="upload">使用原图片重试上传</button>
       <text v-if="imageMessage" class="status">{{ imageMessage }}</text>
       <text v-if="state.message" class="status" :class="{ error: state.failureKind }" role="status">{{ state.message }}</text>
       <button v-if="['unauthorized','forbidden'].includes(state.failureKind)" @tap="login">重新登录</button>
       <button v-else-if="state.saved" @tap="back">返回查看档案</button>
-      <button v-else :disabled="state.busy || uploadBusy" :loading="state.busy" @tap="flow.save">保存档案</button>
+      <button v-else :disabled="state.busy || uploadBusy || (state.inputType === 1 && !state.fileIds.length)" :loading="state.busy" @tap="flow.save">保存档案</button>
       <text class="note">保存失败时可使用原内容重试。仅已上传成功的图片会随档案保存。</text>
     </view>
   </view>

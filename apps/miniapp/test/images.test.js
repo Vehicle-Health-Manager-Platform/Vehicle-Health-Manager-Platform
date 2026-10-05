@@ -8,16 +8,16 @@ const image = { path: 'offline-image.png', size: 100 }
 const key = '11111111-1111-4111-8111-111111111111'
 const signed = () => ({ url: 'https://offline.invalid/private?signature=test', expires_at: new Date(Date.now() + 120000).toISOString() })
 function harness(baseUrl = 'https://offline.invalid') {
-  const calls = [], previews = []
+  const calls = [], previews = [], selections = []
   let response = { statusCode: 200, data: JSON.stringify({ code: 0, data: result }) }
   let selection = { tempFiles: [image] }
   const runtime = {
-    chooseImage(options) { selection.errMsg ? options.fail(selection) : options.success(selection) },
+    chooseImage(options) { selections.push(options.sourceType); selection.errMsg ? options.fail(selection) : options.success(selection) },
     uploadFile(options) { calls.push(options); response.errMsg ? options.fail(response) : options.success(response); return { abort() {} } },
     request(options) { calls.push(options); response.errMsg ? options.fail(response) : options.success(response); return { abort() {} } },
     previewImage(options) { previews.push(options); options.success() },
   }
-  return { api: createImageApi({ baseUrl, runtime: () => runtime }), calls, previews,
+  return { api: createImageApi({ baseUrl, runtime: () => runtime }), calls, previews, selections,
     reply(value) { response = value }, select(value) { selection = value } }
 }
 test('missing service or token prevents native selection and upload', async () => {
@@ -31,6 +31,17 @@ test('selection cancellation is harmless and sizes are bounded', async () => {
   h.select({ tempFiles: [{ ...image, size: MAX_IMAGE_BYTES + 1 }] }); await assert.rejects(h.api.choose('token'), { kind: 'too-large' })
   h.select({ tempFiles: [{ ...image, size: MAX_IMAGE_BYTES }] }); assert.equal((await h.api.choose('token')).size, MAX_IMAGE_BYTES)
   h.select({ tempFilePaths: ['unknown.png'] }); await assert.rejects(h.api.choose('token'), { kind: 'invalid' })
+})
+test('camera selection only requests camera and preserves cancellation', async () => {
+  const h = harness()
+  await h.api.choose('token', 'camera')
+  assert.deepEqual(h.selections[0], ['camera'])
+  await h.api.choose('token')
+  assert.deepEqual(h.selections[1], ['album', 'camera'])
+  h.select({ errMsg: 'chooseImage:fail cancel' })
+  assert.equal(await h.api.choose('token', 'camera'), null)
+  h.select({ errMsg: 'chooseImage:fail auth deny' })
+  await assert.rejects(h.api.choose('token', 'camera'), { kind: 'selection' })
 })
 test('upload uses one file field and fixed key and strictly parses string envelope', async () => {
   const h = harness(); assert.deepEqual(await h.api.upload('token', image, key), result)

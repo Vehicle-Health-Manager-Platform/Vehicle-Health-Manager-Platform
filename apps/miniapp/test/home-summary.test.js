@@ -26,11 +26,12 @@ function harness() {
 }
 test('summary uses the server total and newest record; empty records are explicit', async () => {
   const h = harness()
-  h.api.list = async (...args) => { h.calls.push(args); return { total: 14, list: [{ archive_id: 9, title: '保养' }] } }
+  h.api.list = async (...args) => { h.calls.push(args); return { total: 14, list: [{ archive_id: 9, title: '保养', input_type: 1 }] } }
   await h.flow.select(a)
   assert.deepEqual(h.calls[0], ['owner-one', 1, 1])
   assert.equal(h.state.total, 14)
   assert.equal(h.state.latest.title, '保养')
+  assert.equal(h.state.latest.input_type, 1)
   await h.flow.select(b)
   assert.equal(h.calls[1][1], 2)
   h.api.list = async () => ({ total: 0, list: [] })
