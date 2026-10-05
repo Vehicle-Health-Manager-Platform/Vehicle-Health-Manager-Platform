@@ -184,14 +184,18 @@ def main():
         item["responses"][status] = {"description": message}
     archive = document["paths"]["/api/archive/add"]["post"]
     archive["x-roles"] = "正式车主"
-    archive["x-implementation-status"] = "manual-core-implemented"
-    archive["description"] = "仅本人车辆手动记录；图片先上传，提交时复核本人且CLEAN。24小时幂等与成功审计。详见 ARCHIVE_MANUAL.md。"
+    archive["x-implementation-status"] = "manual-and-photo-core-implemented"
+    archive["description"] = "本人车辆手动或拍照记录；拍照至少关联一张图片，提交时复核本人且CLEAN。24小时幂等与成功审计。详见 ARCHIVE_MANUAL.md。"
     archive["requestBody"]["content"]["application/json"]["schema"] = {
         "type": "object", "additionalProperties": False,
         "required": ["vehicle_id", "archive_type", "recorded_date", "title"],
+        "allOf": [{"if": {"properties": {"input_type": {"const": 1}}, "required": ["input_type"]},
+                   "then": {"required": ["file_ids"], "properties": {"file_ids": {"minItems": 1}}}}],
         "properties": {
             "vehicle_id": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
             "archive_type": {"type": "integer", "minimum": 1, "maximum": 7},
+            "input_type": {"type": "integer", "enum": [1, 3], "default": 3,
+                           "description": "1拍照，须有1–5张图片；3手动，可无图片；省略取3"},
             "recorded_date": {"type": "string", "format": "date"},
             "mileage": {"type": ["integer", "null"], "minimum": 0, "maximum": 2147483647},
             "title": {"type": "string", "minLength": 1, "maxLength": 80},
@@ -203,8 +207,8 @@ def main():
         archive["responses"][status] = {"description": message}
     archive_list = document["paths"]["/api/archive/list"]["get"]
     archive_list["x-roles"] = "正式车主"
-    archive_list["x-implementation-status"] = "manual-core-implemented"
-    archive_list["description"] = "只列所选本人车辆的手动记录，按发生日期与ID倒序；附件返回稳定file_ids，不返回签名URL。详见 ARCHIVE_MANUAL.md。"
+    archive_list["x-implementation-status"] = "manual-and-photo-core-implemented"
+    archive_list["description"] = "只列所选本人车辆的手动及拍照记录，每条带input_type，按发生日期与ID倒序；附件返回稳定file_ids，不返回签名URL。详见 ARCHIVE_MANUAL.md。"
     archive_list["parameters"] += [
         {"name": "vehicle_id", "in": "query", "required": True,
          "schema": {"type": "integer", "minimum": 1, "maximum": 9007199254740991}},
