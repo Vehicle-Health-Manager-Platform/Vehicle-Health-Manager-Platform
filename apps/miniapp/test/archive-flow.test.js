@@ -19,3 +19,15 @@ test('reset discards a late result after owner changes', async () => {
   assert.equal(state.saved, null)
   assert.equal(state.vehicleId, 0)
 })
+
+test('photo save requires an uploaded image and sends the source', async () => {
+  const state = { ...initialArchiveState(), vehicleId: 11, inputType: 1, recordedDate: '2026-10-04', title: '拍照记录' }
+  const calls = [], flow = createArchiveFlow({ state, api: { async add(...args) { calls.push(args); return { archive_id: 1, vehicle_id: 11 } } },
+    token: () => 'token', newKey: () => 'key' })
+  await flow.save()
+  assert.equal(calls.length, 0)
+  assert.equal(state.failureKind, 'invalid')
+  state.fileIds = [5]
+  await flow.save()
+  assert.equal(calls[0][1].input_type, 1)
+})

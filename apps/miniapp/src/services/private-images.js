@@ -62,10 +62,11 @@ export function createImageApi({ baseUrl, runtime }) {
     })
   }
   return {
-    choose(token) {
+    choose(token, source = 'mixed') {
       configured(token)
+      if (!['mixed', 'camera'].includes(source)) throw new ImageError('invalid', '图片来源无效，请重试')
       return new Promise((resolve, reject) => {
-        runtime().chooseImage({ count: 1, sizeType: ['original'], sourceType: ['album', 'camera'],
+        runtime().chooseImage({ count: 1, sizeType: ['original'], sourceType: source === 'camera' ? ['camera'] : ['album', 'camera'],
           success: result => {
             const file = result.tempFiles?.[0]
             const path = file?.path || result.tempFilePaths?.[0]

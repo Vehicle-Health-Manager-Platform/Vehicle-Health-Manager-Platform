@@ -1,7 +1,7 @@
 import { archiveBody, archiveFailure } from './archives.js'
 
 export function initialArchiveState() {
-  return { vehicleId: 0, archiveType: 1, recordedDate: '', mileage: '', title: '', notes: '', fileIds: [],
+  return { vehicleId: 0, archiveType: 1, inputType: 3, recordedDate: '', mileage: '', title: '', notes: '', fileIds: [],
     busy: false, message: '', failureKind: '', saved: null }
 }
 export function createArchiveFlow({ state, api, token, newKey }) {

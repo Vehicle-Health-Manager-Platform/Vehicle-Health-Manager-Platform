@@ -16,19 +16,20 @@ const validDate = value => {
   return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value && Number(value.slice(0, 4)) >= 1000
 }
 export function archiveBody(fields) {
+  const inputType = fields.inputType ?? 3
   const title = typeof fields.title === 'string' ? fields.title.trim() : ''
   const notes = typeof fields.notes === 'string' ? fields.notes.trim() : ''
   const fileIds = fields.fileIds || []
   const mileageText = fields.mileage === '' || fields.mileage == null ? '' : String(fields.mileage)
   const mileage = mileageText === '' ? null : Number(mileageText)
-  if (!id(fields.vehicleId) || !Number.isInteger(fields.archiveType) || fields.archiveType < 1 || fields.archiveType > 7
+  if (!id(fields.vehicleId) || ![1, 3].includes(inputType) || !Number.isInteger(fields.archiveType) || fields.archiveType < 1 || fields.archiveType > 7
     || !validDate(fields.recordedDate)
     || typeof title !== 'string' || !title.length || [...title].length > 80
     || [...notes].length > 1000 || (mileage !== null && (!/^\d+$/.test(mileageText) || !Number.isInteger(mileage) || mileage > 2147483647))
-    || !Array.isArray(fileIds) || fileIds.length > 5 || fileIds.some(value => !id(value))
+    || !Array.isArray(fileIds) || fileIds.length > 5 || (inputType === 1 && fileIds.length === 0) || fileIds.some(value => !id(value))
     || new Set(fileIds).size !== fileIds.length) throw new ArchiveError('invalid', '请检查类型、日期、标题、里程和图片')
   return { vehicle_id: fields.vehicleId, archive_type: fields.archiveType, recorded_date: fields.recordedDate,
-    mileage, title, notes, file_ids: [...fileIds] }
+    mileage, title, notes, file_ids: [...fileIds], ...(inputType === 1 ? { input_type: 1 } : {}) }
 }
 export function createArchiveApi({ baseUrl, runtime }) {
   const endpoint = (baseUrl || '').replace(/\/$/, '')
@@ -61,6 +62,7 @@ export function createArchiveApi({ baseUrl, runtime }) {
           && Number.isSafeInteger(data.total) && data.total >= data.list.length
           && data.list.every(row => id(row.archive_id) && row.vehicle_id === vehicleId
             && Number.isInteger(row.archive_type) && row.archive_type >= 1 && row.archive_type <= 7
+            && [1, 3].includes(row.input_type)
             && typeof row.recorded_date === 'string' && typeof row.title === 'string'
             && typeof row.notes === 'string' && Array.isArray(row.file_ids) && row.file_ids.every(id)))
     },

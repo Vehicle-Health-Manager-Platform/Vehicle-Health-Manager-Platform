@@ -65,10 +65,11 @@ public class ArchiveService {
                 var generated = new GeneratedKeyHolder();
                 jdbc.update(connection -> {
                     var statement = connection.prepareStatement("INSERT INTO vehicle_archive "
-                        + "(vehicle_id,archive_type,content,input_type,recorded_at) VALUES (?,?,?,3,?)",
+                        + "(vehicle_id,archive_type,content,input_type,recorded_at) VALUES (?,?,?,?,?)",
                         Statement.RETURN_GENERATED_KEYS);
                     statement.setLong(1, input.vehicleId()); statement.setInt(2, input.archiveType());
-                    statement.setString(3, content); statement.setDate(4, Date.valueOf(input.recordedDate()));
+                    statement.setString(3, content); statement.setInt(4, input.inputType());
+                    statement.setDate(5, Date.valueOf(input.recordedDate()));
                     return statement;
                 }, generated);
                 long archiveId = generated.getKey().longValue();
@@ -78,6 +79,7 @@ public class ArchiveService {
                 }
                 return new WriteIntegrityService.Change("ARCHIVE_CREATE", "vehicle_archive", archiveId, Map.of(),
                     Map.of("archive_id", archiveId, "vehicle_id", input.vehicleId(), "archive_type", input.archiveType(),
+                        "input_type", input.inputType(),
                         "file_count", input.fileIds().size()),
                     Map.of("archive_id", archiveId, "vehicle_id", input.vehicleId()));
             });
@@ -87,9 +89,9 @@ public class ArchiveService {
         VehicleService.page(page, size);
         authorize(owner, false);
         ownVehicle(owner, vehicleId, false);
-        List<Map<String, Object>> rows = jdbc.query("SELECT a.id,a.archive_type,a.content,"
+        List<Map<String, Object>> rows = jdbc.query("SELECT a.id,a.archive_type,a.input_type,a.content,"
             + "DATE_FORMAT(a.recorded_at,'%Y-%m-%d') AS recorded_date,a.created_at "
-            + "FROM vehicle_archive a WHERE a.vehicle_id=? AND a.is_deleted=0 AND a.input_type=3 "
+            + "FROM vehicle_archive a WHERE a.vehicle_id=? AND a.is_deleted=0 AND a.input_type IN (1,3) "
             + "ORDER BY a.recorded_at DESC,a.id DESC LIMIT ? OFFSET ?", (rs, n) -> {
                 JsonNode content;
                 try { content = mapper.readTree(rs.getString("content")); }
@@ -102,6 +104,7 @@ public class ArchiveService {
                 Map<String, Object> row = new LinkedHashMap<>();
                 row.put("archive_id", archiveId); row.put("vehicle_id", vehicleId);
                 row.put("archive_type", rs.getInt("archive_type"));
+                row.put("input_type", rs.getInt("input_type"));
                 row.put("recorded_date", rs.getString("recorded_date"));
                 row.put("title", content.path("title").asText(""));
                 row.put("notes", content.path("notes").asText(""));
@@ -109,7 +112,7 @@ public class ArchiveService {
                 row.put("file_ids", files); row.put("created_at", rs.getTimestamp("created_at").toInstant().toString());
                 return row;
             }, vehicleId, size, (page - 1) * size);
-        long total = jdbc.queryForObject("SELECT COUNT(*) FROM vehicle_archive WHERE vehicle_id=? AND is_deleted=0 AND input_type=3",
+        long total = jdbc.queryForObject("SELECT COUNT(*) FROM vehicle_archive WHERE vehicle_id=? AND is_deleted=0 AND input_type IN (1,3)",
             Long.class, vehicleId);
         return Map.of("list", rows, "total", total, "page", page, "page_size", size);
     }
