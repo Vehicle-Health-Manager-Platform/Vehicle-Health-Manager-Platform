@@ -162,3 +162,4 @@
 - **范围**：档案 Tab 新增拍照入口，复用记录表单；相机专用选择器、至少一张上传成功图片、最多五张私有图片、预览和同键重试。服务端保存 `input_type=1` 并要求本人 CLEAN 图片，列表与首页摘要计入拍照及手动来源；旧手动请求仍默认方式 3。无新迁移。
 - **本机验证**：小程序 Node 全套 52 项无失败/跳过，微信小程序和 H5 构建通过；新增 Java/MySQL 用例尚未在本机执行，因为本机无 Java/Maven 且 Docker 引擎未运行，待 PR CI 验证。
 - **边界**：H5 实际交互、微信模拟器、真实微信相机和私有图片环境未复核；`/browse` 仍缺少已构建二进制，按技能要求需先确认一次性构建。不含图片 OCR/语音转写；完整 F03/M1 未验收。
+- **PR 与 CI**：[PR #17](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/17) 基于 main；首次 [CI 37256441618](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37256441618) 六项全绿，后端 133 项测试无失败/错误/跳过，小程序、网页、生成文件、MySQL 迁移及 Compose 冒烟通过。文档证据提交后仍需核对最终 CI。

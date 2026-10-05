@@ -17,7 +17,7 @@
 | S1 本人车辆与手动录入 | 档案Tab车辆列表、品牌→车系→年款→配置选择、幂等添加、归属隔离、脱敏与成功审计 | [PR #14](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/14) 已实现；39项离线测试、H5 11项替身交互和模拟器10条路由通过。车型库只读取现有有效数据，生产来源未确定；完整F02/M1未验收。[接口契约](docs/api/VEHICLE_MANUAL.md)。 |
 | S1 本人车辆档案手动录入 | [PR #15](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/15) 新增七类通用记录、按车分页、至多五张私有图片关联及本人/CLEAN校验 | [CI 37203770229](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37203770229) 六项全绿，后端132项无失败/跳过；小程序43项Node测试、微信/H5构建通过。真实微信、私有图片和真机仍未联调。[接口契约](docs/api/ARCHIVE_MANUAL.md)。 |
 | S1 首页车辆与档案摘要 | [PR #16](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/16) 复用本人接口，显示当前车辆、真实档案总数及最近记录，并在首页与档案 Tab 共用车辆选择 | 48项离线测试与小程序/H5构建已通过；H5实际交互、微信模拟器及真实环境仍待复核。健康评分和提醒没有数据规则，本步不展示推测值。 |
-| S1 本人档案拍照录入 | 当前分支在档案 Tab 增加拍照入口，保存来源为 `input_type=1`，至少一张本人 CLEAN 图片；列表和首页摘要包含拍照记录 | 小程序 52 项测试及微信/H5 构建通过；新后端 MySQL 用例、H5/微信实际相机和私有环境仍待验证。[接口契约](docs/api/ARCHIVE_MANUAL.md)。 |
+| S1 本人档案拍照录入 | [PR #17](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/17) 在档案 Tab 增加拍照入口，保存来源为 `input_type=1`，至少一张本人 CLEAN 图片；列表和首页摘要包含拍照记录 | [CI 37256441618](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37256441618) 六项全绿，后端 133 项、小程序 52 项通过；H5/微信实际相机和私有环境仍待验证。[接口契约](docs/api/ARCHIVE_MANUAL.md)。 |
 
 ## 从源码构建微信小程序
 
@@ -68,7 +68,7 @@ npm run build:h5 --workspace @autocare/miniapp
 ## 下一步
 
 1. PR #12–#16 已按依赖顺序合入 main；真实私有环境和微信图片联调条件到位后记录验收。
-2. 当前分支交付档案拍照录入，随后继续语音、车牌/VIN/OCR 与首页评分提醒；车型库和识别服务来源待落实。
+2. 档案拍照录入已提交 PR #17；随后继续语音、车牌/VIN/OCR 与首页评分提醒。车型库和识别服务来源待落实。
 3. 外部条件齐备后并行完成真实微信、手机号、短信及私有上传环境联调；继续补齐健康监控和 S0/M0 验收。
 
 ## 项目文档
