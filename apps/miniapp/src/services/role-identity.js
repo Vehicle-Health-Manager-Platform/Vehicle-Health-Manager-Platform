@@ -1,6 +1,7 @@
 import { computed, ref } from 'vue'
 import { AuthError, authApi } from './wechat-auth.js'
 import { ownerSession, clearOwnerSession, setOwnerSession } from './owner-session.js'
+import { merchantSession } from './merchant-session.js'
 
 export function useRoleIdentity(role, api = authApi) {
   const operation = ref('')
@@ -9,12 +10,12 @@ export function useRoleIdentity(role, api = authApi) {
   const failureKind = ref('')
   const roleToken = ref('')
   const accessToken = computed({
-    get: () => role === 'owner' ? ownerSession.accessToken : roleToken.value,
-    set: (value) => { if (role === 'owner') ownerSession.accessToken = value; else roleToken.value = value },
+    get: () => role === 'owner' ? ownerSession.accessToken : role === 'merchant' ? merchantSession.accessToken : roleToken.value,
+    set: (value) => { if (role === 'owner') ownerSession.accessToken = value; else if (role === 'merchant') merchantSession.accessToken = value; else roleToken.value = value },
   })
   const phoneBound = computed(() => role === 'owner' && ownerSession.phoneBound)
   const requiresLogin = ref(false)
-  if (accessToken.value) message.value = phoneBound.value ? '车主已登录，手机号已绑定' : '车主已登录，可继续授权绑定手机号'
+  if (accessToken.value) message.value = role === 'merchant' ? '商家已登录' : phoneBound.value ? '车主已登录，手机号已绑定' : '车主已登录，可继续授权绑定手机号'
   const bindingToken = ref('')
   const employeeCode = ref('')
   const merchantAccount = ref('')

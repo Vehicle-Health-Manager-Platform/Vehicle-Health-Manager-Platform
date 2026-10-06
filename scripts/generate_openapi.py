@@ -254,6 +254,51 @@ def main():
             {"type": "object", "required": ["data"], "properties": {"data": {"$ref": f"#/components/schemas/{result_schema}"}}},
         ]}
         document["paths"][path] = {"get": item}
+    quote_fields = {
+        "merchant_project_id": project_fields["id"], "version_id": project_fields["id"],
+        "version": {"type": "integer", "minimum": 1},
+        "price": {"type": "string", "pattern": r"^(?:0|[1-9][0-9]{0,7})\.[0-9]{2}$"},
+    }
+    schemas["MerchantQuote"] = {"type": "object", "required": list(quote_fields) + ["merchant_id", "merchant_name", "address"], "properties": {
+        **quote_fields, "merchant_id": project_fields["id"], "merchant_name": {"type": "string"}, "address": {"type": "string"}}}
+    schemas["OwnMerchantQuote"] = {"type": "object", "required": list(quote_fields) + ["standard_project_id", "project_name", "status", "available"], "properties": {
+        **quote_fields, "standard_project_id": project_fields["id"], "project_name": {"type": "string"},
+        "status": {"type": "integer", "enum": [0, 1]}, "available": {"type": "boolean"}}}
+    schemas["SavedMerchantQuote"] = {"type": "object", "required": list(quote_fields) + ["status"], "properties": {
+        **quote_fields, "status": {"type": "integer", "enum": [0, 1]}}}
+    for name, row in (("MerchantQuotePage", "MerchantQuote"), ("OwnMerchantQuotePage", "OwnMerchantQuote")):
+        schemas[name] = {**schemas["ServiceProjectPage"], "properties": {**schemas["ServiceProjectPage"]["properties"],
+            "items": {"type": "array", "items": {"$ref": f"#/components/schemas/{row}"}}}}
+    for method, path, summary, result, role in (
+        ("get", "/api/service/project/{id}/merchants", "车主按价格查看商家报价", "MerchantQuotePage", "正式车主"),
+        ("get", "/api/merchant/standard-projects", "商家可选标准项目", "ServiceProjectPage", "MERCHANT"),
+        ("get", "/api/merchant/projects", "本店选品与当前报价", "OwnMerchantQuotePage", "MERCHANT"),
+        ("post", "/api/merchant/projects", "保存本店报价与不可变版本", "SavedMerchantQuote", "MERCHANT"),
+    ):
+        item = operation(method, path, summary, "F06,F17")
+        item["x-roles"] = role
+        item["x-implementation-status"] = "merchant-quotes-core-implemented"
+        item["description"] = "服务端校验有效会话与商家归属。金额为两位小数字符串，参考价仅供对照。详见 MERCHANT_QUOTES.md。"
+        item["responses"]["404"] = {"description": "标准项目或报价不可用，code=40400"}
+        item["responses"]["503"] = {"description": "数据库或事务暂不可用，code=50300"}
+        if method == "get":
+            item["parameters"] += document["paths"]["/api/service/projects"]["get"]["parameters"][-2:]
+            if "{id}" in path:
+                item["parameters"][0]["schema"] = project_fields["id"]
+                item["parameters"].append({"name": "sort", "in": "query", "schema": {"type": "string", "enum": ["price_asc", "price_desc"], "default": "price_asc"}})
+            if path.endswith("standard-projects"):
+                item["parameters"].append(document["paths"]["/api/service/projects"]["get"]["parameters"][0])
+        else:
+            item["description"] += " 24小时幂等；报价、版本、成功审计同一事务。停用项目仅允许已有报价按原价下架。"
+            item["requestBody"]["content"]["application/json"]["schema"] = {"type": "object", "additionalProperties": False,
+                "required": ["standard_project_id", "price", "status"], "properties": {
+                    "standard_project_id": project_fields["id"],
+                    "price": {**quote_fields["price"], "description": "0.01–99999999.99元，禁止0.00、数字类型、指数和多余小数"},
+                    "status": {"type": "integer", "enum": [0, 1]}}}
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [
+            {"$ref": "#/components/schemas/ApiResponse"},
+            {"type": "object", "required": ["data"], "properties": {"data": {"$ref": f"#/components/schemas/{result}"}}}]}
+        document["paths"].setdefault(path, {})[method] = item
     count = sum(len(value) for value in document["paths"].values())
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

@@ -53,6 +53,7 @@ async function wechatCode() {
   if (typeof code !== 'string' || !code) throw new Error('Missing WeChat code')
   return code
 }
+const merchants = require('./local_merchant_fixtures.cjs')(sql, root)
 const writes = [], checks = []
 let dropOnce = ''
 const json = (res, status, data) => { res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }); res.end(JSON.stringify(data)) }
@@ -66,6 +67,9 @@ async function handler(req, res) {
   if (req.headers.origin && req.headers.origin !== origin) return json(res, 403, { error: 'Local origin required' })
   if (url.pathname.startsWith('/__local/')) {
     if (req.headers.origin !== origin || req.headers['x-local-business'] !== '1') return json(res, 403, { error: 'Local acceptance header required' })
+    if (url.pathname === '/__local/merchant' && req.method === 'POST') return json(res,200,merchants.session(JSON.parse((await read(req)).toString()).store))
+    if (url.pathname === '/__local/merchant-database' && req.method === 'POST') return json(res,200,merchants.evidence())
+    if (url.pathname === '/__local/revoke-merchants' && req.method === 'POST') { merchants.revoke(); return json(res,200,{revoked:true}) }
     if (url.pathname === '/__local/code' && req.method === 'POST') return json(res, 200, { code: await wechatCode() })
     if (url.pathname === '/__local/image' && req.method === 'POST') {
       const body = JSON.parse((await read(req)).toString()), target = new URL(body.url)
@@ -83,7 +87,7 @@ async function handler(req, res) {
     }
     if (url.pathname === '/__local/drop-once' && req.method === 'POST') {
       const body = JSON.parse((await read(req)).toString())
-      if (!['/api/vehicle/add', '/api/archive/add', '/api/file/upload'].includes(body.path)) return json(res, 400, { error: 'Unsupported failure point' })
+      if (!['/api/vehicle/add', '/api/archive/add', '/api/file/upload', '/api/merchant/projects'].includes(body.path)) return json(res, 400, { error: 'Unsupported failure point' })
       dropOnce = body.path; return json(res, 200, { armed: true })
     }
     if (url.pathname === '/__local/evidence' && req.method === 'POST') {
@@ -101,7 +105,7 @@ async function handler(req, res) {
     const upstream = await fetch(backend + url.pathname + url.search, { method:req.method, headers, body:body.length ? body : undefined, redirect:'manual', signal:AbortSignal.timeout(20000) })
     const bytes = Buffer.from(await upstream.arrayBuffer())
     const dropping = url.pathname === dropOnce && upstream.ok
-    if (['/api/vehicle/add','/api/archive/add','/api/file/upload'].includes(url.pathname) && req.method === 'POST') writes.push({route:url.pathname,key:headers['idempotency-key'],hash:createHash('sha256').update(body).digest('hex'),status:upstream.status,dropped:dropping})
+    if (['/api/vehicle/add','/api/archive/add','/api/file/upload','/api/merchant/projects'].includes(url.pathname) && req.method === 'POST') writes.push({route:url.pathname,key:headers['idempotency-key'],hash:createHash('sha256').update(body).digest('hex'),status:upstream.status,dropped:dropping})
     if (dropping) {
       dropOnce=''
       // Send a partial response so Chromium cannot silently replay a connection
@@ -123,8 +127,9 @@ async function handler(req, res) {
 }
 try {
   prepare()
+  merchants.prepare()
   const server = http.createServer((req,res) => handler(req,res).catch(error => { if (!res.headersSent) json(res,error.localBodyLimit === true ? 413 : 503,{error:'Local acceptance operation failed'}); else res.destroy() }))
   server.listen(4317,'127.0.0.1',() => console.log('Local acceptance ready at '+origin+'; synthetic fixtures only; credentials withheld'))
-  const close=()=>{ socket?.close(); server.close(()=>process.exit(0)) }
+  const close=()=>{ merchants.revoke(); socket?.close(); server.close(()=>process.exit(0)) }
   process.on('SIGINT',close); process.on('SIGTERM',close)
 } catch { console.error('Local acceptance setup failed; check isolated container, fixtures and H5 build'); process.exitCode=1 }
