@@ -64,7 +64,7 @@ PR #12–#17 已合入 `main`：上传入口、小程序图片操作、本人车
 
 ## 当前本机交付：商家报价与选品
 
-用户已确认[书面规格](../superpowers/specs/2026-10-06-merchant-quotes-design.md)与价格规则，已实施车主价格排序、本店维护、不可变版本和事务幂等审计。本机 H5 15 项与小程序 65 项测试通过；完整容器 CI、PR 与合并状态在执行记录中核对。商家登录采用隔离合成会话桥接，未冒充真实短信。
+用户已确认[书面规格](../superpowers/specs/2026-10-06-merchant-quotes-design.md)与价格规则，已实施车主价格排序、本店维护、不可变版本和事务幂等审计。本机 H5 15 项与小程序 65 项测试通过；[PR #23](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/23) 首次完整 CI 六项成功，后端 154 项通过；最终提交与合并状态在执行记录中核对。商家登录采用隔离合成会话桥接，未冒充真实短信。
 
 ## 下一项建议：预约创建与本人订单查询
 

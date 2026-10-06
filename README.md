@@ -19,7 +19,7 @@
 | S1 首页车辆与档案摘要 | [PR #16](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/16) 复用本人接口，显示当前车辆、真实档案总数及最近记录，并在首页与档案 Tab 共用车辆选择 | 48项离线测试与小程序/H5构建已通过；H5 实际交互接真实本地后端的两车/摘要已通过，微信完整业务 UI 和真机仍待验收。健康评分和提醒没有数据规则，本步不展示推测值。 |
 | S1 本人档案拍照录入 | [PR #17](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/17) 在档案 Tab 增加拍照入口，保存来源为 `input_type=1`，至少一张本人 CLEAN 图片；列表和首页摘要包含拍照记录 | [CI 37256441618](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37256441618) 六项全绿，后端 133 项、小程序 52 项通过；本机真实私有接口及 H5 图片交互已通过；微信真实相机/真机仍待验证。[接口契约](docs/api/ARCHIVE_MANUAL.md)。 |
 
-商家报价与选品已接入：车主价格排序、本店维护、版本与幂等审计；本机 H5 15 项验收通过，商家登录使用明确的合成会话桥接。真实短信仍待接入。[接口](docs/api/MERCHANT_QUOTES.md) · [复现](docs/testing/LOCAL_MERCHANT_QUOTES_ACCEPTANCE.md)。
+[PR #23](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/23) 商家报价与选品已接入：车主价格排序、本店维护、版本与幂等审计；本机 H5 15 项、后端 154 项、小程序 65 项通过；首次完整 CI 六项全绿，商家登录使用明确的合成会话桥接。真实短信仍待接入。[接口](docs/api/MERCHANT_QUOTES.md) · [复现](docs/testing/LOCAL_MERCHANT_QUOTES_ACCEPTANCE.md)。
 
 ## 从源码构建微信小程序
 

@@ -233,3 +233,5 @@
 - gstack H5 15 项通过：登录后进店维护、提交后响应中断原键重试、版本/成功审计只新增一次、两店隔离、同键异文与商家归属字段拒绝、改价递增版本、上下架、真实微信车主查看价格升降序、车主写入和匿名访问拒绝。首次脚本误用 H5 选品确认按钮，修正为实际选项；随后修正车主令牌响应捕获路径，业务无额外替身。
 - 商家登录响应桥接签发隔离库 10 分钟合成会话，报价业务请求真实；不代表真实短信。测试结束撤销会话，不打印/提交令牌或私有配置。仅监听回环，保留原数据库卷及旧后端回滚镜像。
 - [接口契约](../api/MERCHANT_QUOTES.md)、[复现](../testing/LOCAL_MERCHANT_QUOTES_ACCEPTANCE.md)及下一步已更新。预约/订单下一步先明确时段/容量与状态，再实施；公网、云托管、真机按用户决定后置。
+
+- [PR #23](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/23) 代码头 `131d0ed` 的[首次完整 CI 37467206097](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37467206097) 六项全绿：后端 154 项、无失败/错误/跳过，小程序 65 项，MySQL 46 表与重复 V006、Compose 冒烟通过。本机最终镜像再次通过 H5 15 项；当前微信构建 12 条模拟器路由通过，新增商家维护页可加载。补齐证据后的最终提交仍须完整 CI 成功才合并，结果以 PR 当前头为准。

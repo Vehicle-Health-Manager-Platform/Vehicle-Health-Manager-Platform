@@ -34,8 +34,8 @@ return await (async()=>{
     const ownBefore=await api('/api/merchant/projects',merchant)
     assert(ownBefore.status===200,'有效测试商家会话访问真实本店接口')
     stage='save'
-    // Select by Vue picker event to exercise the existing picker handler; all
-    // buttons, text input and network retry use actual rendered controls.
+    // Select the real H5 picker option. Buttons, text input and network
+    // retry use rendered controls.
     const existing=document.querySelector('[data-testid="merchant-quote-9101101"]')
     if(existing)existing.querySelector('uni-button').click()
     else{
