@@ -3,6 +3,8 @@ import assert from 'node:assert/strict'
 import { AuthError, createAuthApi } from '../src/services/wechat-auth.js'
 import { useRoleIdentity } from '../src/services/role-identity.js'
 import { ownerSession, clearOwnerSession, setOwnerSession } from '../src/services/owner-session.js'
+import { clearMerchantSession } from '../src/services/merchant-session.js'
+test.beforeEach(clearMerchantSession)
 
 const session = (role) => ({ access_token: 'offline-access', user: { role, phone_bound: false } })
 const response = (data) => ({ statusCode: 200, data: { code: 0, data } })

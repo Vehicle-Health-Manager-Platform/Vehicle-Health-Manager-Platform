@@ -1236,13 +1236,14 @@
     },
     "/api/service/project/{id}/merchants": {
       "get": {
-        "summary": "项目商家列表",
+        "summary": "车主按价格查看商家报价",
         "operationId": "get_api_service_project_id_merchants",
         "tags": [
           "service"
         ],
         "x-feature-ids": [
-          "F06"
+          "F06",
+          "F17"
         ],
         "parameters": [
           {
@@ -1250,7 +1251,41 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "price_asc",
+                "price_desc"
+              ],
+              "default": "price_asc"
             }
           }
         ],
@@ -1260,7 +1295,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/MerchantQuotePage"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -1280,13 +1330,22 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "标准项目或报价不可用，code=40400"
+          },
+          "503": {
+            "description": "数据库或事务暂不可用，code=50300"
           }
         },
         "security": [
           {
             "bearerAuth": []
           }
-        ]
+        ],
+        "x-roles": "正式车主",
+        "x-implementation-status": "merchant-quotes-core-implemented",
+        "description": "服务端校验有效会话与商家归属。金额为两位小数字符串，参考价仅供对照。详见 MERCHANT_QUOTES.md。"
       }
     },
     "/api/merchant/{id}": {
@@ -3553,12 +3612,15 @@
     },
     "/api/merchant/projects": {
       "post": {
-        "summary": "`standard_project_id, price, status` → `merchant_project_id`",
+        "summary": "保存本店报价与不可变版本",
         "operationId": "post_api_merchant_projects",
         "tags": [
           "merchant"
         ],
-        "x-feature-ids": [],
+        "x-feature-ids": [
+          "F06",
+          "F17"
+        ],
         "parameters": [
           {
             "name": "Idempotency-Key",
@@ -3576,7 +3638,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/SavedMerchantQuote"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -3596,6 +3673,12 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "标准项目或报价不可用，code=40400"
+          },
+          "503": {
+            "description": "数据库或事务暂不可用，code=50300"
           }
         },
         "security": [
@@ -3609,12 +3692,128 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "additionalProperties": true
+                "additionalProperties": false,
+                "required": [
+                  "standard_project_id",
+                  "price",
+                  "status"
+                ],
+                "properties": {
+                  "standard_project_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "price": {
+                    "type": "string",
+                    "pattern": "^(?:0|[1-9][0-9]{0,7})\\.[0-9]{2}$",
+                    "description": "0.01–99999999.99元，禁止0.00、数字类型、指数和多余小数"
+                  },
+                  "status": {
+                    "type": "integer",
+                    "enum": [
+                      0,
+                      1
+                    ]
+                  }
+                }
               }
             }
           }
         },
-        "x-roles": "本店商家"
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "merchant-quotes-core-implemented",
+        "description": "服务端校验有效会话与商家归属。金额为两位小数字符串，参考价仅供对照。详见 MERCHANT_QUOTES.md。 24小时幂等；报价、版本、成功审计同一事务。停用项目仅允许已有报价按原价下架。"
+      },
+      "get": {
+        "summary": "本店选品与当前报价",
+        "operationId": "get_api_merchant_projects",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F06",
+          "F17"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/OwnMerchantQuotePage"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "标准项目或报价不可用，code=40400"
+          },
+          "503": {
+            "description": "数据库或事务暂不可用，code=50300"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "merchant-quotes-core-implemented",
+        "description": "服务端校验有效会话与商家归属。金额为两位小数字符串，参考价仅供对照。详见 MERCHANT_QUOTES.md。"
       }
     },
     "/api/merchant/orders/{id}/assign": {
@@ -4547,6 +4746,107 @@
         "x-implementation-status": "catalog-core-implemented",
         "description": "有效 user/OWNER 会话；只返回启用且未删除项目；价格为两位小数字符串。详见 SERVICE_CATALOG.md。"
       }
+    },
+    "/api/merchant/standard-projects": {
+      "get": {
+        "summary": "商家可选标准项目",
+        "operationId": "get_api_merchant_standard_projects",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F06",
+          "F17"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 6
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceProjectPage"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "标准项目或报价不可用，code=40400"
+          },
+          "503": {
+            "description": "数据库或事务暂不可用，code=50300"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "merchant-quotes-core-implemented",
+        "description": "服务端校验有效会话与商家归属。金额为两位小数字符串，参考价仅供对照。详见 MERCHANT_QUOTES.md。"
+      }
     }
   },
   "components": {
@@ -4669,6 +4969,197 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ServiceProject"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        }
+      },
+      "MerchantQuote": {
+        "type": "object",
+        "required": [
+          "merchant_project_id",
+          "version_id",
+          "version",
+          "price",
+          "merchant_id",
+          "merchant_name",
+          "address"
+        ],
+        "properties": {
+          "merchant_project_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "version_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "price": {
+            "type": "string",
+            "pattern": "^(?:0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+          },
+          "merchant_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "merchant_name": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          }
+        }
+      },
+      "OwnMerchantQuote": {
+        "type": "object",
+        "required": [
+          "merchant_project_id",
+          "version_id",
+          "version",
+          "price",
+          "standard_project_id",
+          "project_name",
+          "status",
+          "available"
+        ],
+        "properties": {
+          "merchant_project_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "version_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "price": {
+            "type": "string",
+            "pattern": "^(?:0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+          },
+          "standard_project_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "project_name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "available": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SavedMerchantQuote": {
+        "type": "object",
+        "required": [
+          "merchant_project_id",
+          "version_id",
+          "version",
+          "price",
+          "status"
+        ],
+        "properties": {
+          "merchant_project_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "version_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "price": {
+            "type": "string",
+            "pattern": "^(?:0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+          },
+          "status": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "MerchantQuotePage": {
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MerchantQuote"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        }
+      },
+      "OwnMerchantQuotePage": {
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OwnMerchantQuote"
             }
           },
           "total": {

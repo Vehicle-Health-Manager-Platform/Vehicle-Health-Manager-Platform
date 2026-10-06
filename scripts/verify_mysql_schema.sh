@@ -49,9 +49,14 @@ run_sql_file docs/sql/migrations/V004__upload_http.sql
 run_sql_file docs/sql/migrations/V004__upload_http.sql
 run_sql_file docs/sql/seed_test.sql
 run_sql_file docs/sql/seed_test.sql
+run_sql_file docs/sql/migrations/V005__vehicle_archive_files.sql
+run_sql_file docs/sql/migrations/V006__merchant_project_versions.sql
+run_sql_file docs/sql/migrations/V006__merchant_project_versions.sql
 
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
-[[ "$tables" == 44 ]] || { echo "Expected 44 tables after V004, got $tables" >&2; exit 1; }
+[[ "$tables" == 46 ]] || { echo "Expected 46 tables after V006, got $tables" >&2; exit 1; }
+versions=$(query "SELECT COUNT(*) FROM merchant_project_version WHERE merchant_project_id=900001 AND version=1")
+[[ "$versions" == 1 ]] || { echo "Repeated V006 did not preserve one initial quote version" >&2; exit 1; }
 
 for index in uk_active_app_openid uk_active_app_staff; do
   found=$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema = '$database' AND table_name = 'staff_wechat_identity' AND index_name = '$index' AND non_unique = 0")
@@ -78,4 +83,4 @@ for table in brand series model standard_project merchant merchant_project; do
   [[ "$rows" == 1 ]] || { echo "Expected one synthetic row in $table, got $rows" >&2; exit 1; }
 done
 
-echo "MySQL 8.0 schema: 40 tables after V002; repeat migration and synthetic seed passed"
+echo "MySQL 8.0 schema: 46 tables after V006; repeat migration and synthetic seed passed"

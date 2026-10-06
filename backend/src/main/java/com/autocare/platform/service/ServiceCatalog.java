@@ -32,7 +32,7 @@ public class ServiceCatalog {
         if (id <= 0 || id > 9007199254740991L)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "项目编号无效");
     }
-    private void authorize(VehicleOwner owner) {
+    void authorize(VehicleOwner owner) {
         if (!Instant.now().isBefore(owner.expires()) || jdbc.queryForObject(
             "SELECT COUNT(*) FROM auth_session s JOIN user u ON u.id=s.subject_id "
             + "WHERE s.id=? AND s.subject_id=? AND s.subject_type='user' AND s.role='OWNER' "
