@@ -220,3 +220,5 @@
 - 本步为 F06 只读项目子集；商家报价/预约和正式价格来源未交付。遵照用户最新决定，公网/云托管/真机安排在本机功能开发后。复现见[说明](../testing/LOCAL_SERVICE_CATALOG_ACCEPTANCE.md)。
 
 - 当前微信构建 11 条模拟器路由通过，含新增服务详情；路由通过仅证明可加载，不代替微信完整业务 UI/真机验收。
+
+- 已推送 [PR #22](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/22)，完整 CI 与合并状态以 PR 对应提交为准。仅在被忽略的本机模拟器产物中关闭域名校验，源码默认配置保留。
