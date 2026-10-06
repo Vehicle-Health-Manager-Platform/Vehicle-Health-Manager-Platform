@@ -23,6 +23,9 @@ services:
     image: clamav/clamav:1.4.3
     entrypoint: [freshclam]
     command: [--daemon, --foreground=true]
+    # The image's default probe expects clamd; this process only updates definitions.
+    healthcheck:
+      disable: true
     environment:
       TZ: UTC
     volumes: [clamav_data:/var/lib/clamav]

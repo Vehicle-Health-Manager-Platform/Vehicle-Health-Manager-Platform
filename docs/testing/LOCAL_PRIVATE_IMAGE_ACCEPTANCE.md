@@ -32,8 +32,8 @@ docker volume create --label com.docker.compose.project=vehicle-auth-local vehic
 docker volume create --label com.docker.compose.project=vehicle-auth-local vehicle-auth-local_clamav_data
 docker run -d --name vehicle-auth-local-minio --label com.docker.compose.project=vehicle-auth-local --env-file .env.minio.local --network vehicle-auth-local_default -p 127.0.0.1:9000:9000 -p 127.0.0.1:9001:9001 -v vehicle-auth-local_upload_minio_data:/data vehicle-health/minio:RELEASE.2025-07-23T15-54-02Z server /data --console-address :9001
 docker run --rm --network vehicle-auth-local_default --env-file .env.upload-admin.local vehicle-health/upload-init:local
-docker run -d --name vehicle-auth-local-clamav-updater --label com.docker.compose.project=vehicle-auth-local --network vehicle-auth-local_default -e TZ=UTC -v vehicle-auth-local_clamav_data:/var/lib/clamav --entrypoint freshclam registry-1.docker.io/clamav/clamav:1.4.3_base --daemon --foreground=true
-docker run -d --name vehicle-auth-local-clamav --label com.docker.compose.project=vehicle-auth-local --network vehicle-auth-local_default -e TZ=UTC -v vehicle-auth-local_clamav_data:/var/lib/clamav:ro -v "${PWD}/deploy/clamav/upload-clamd.conf:/etc/clamav/upload-clamd.conf:ro" --entrypoint clamd registry-1.docker.io/clamav/clamav:1.4.3_base --config-file=/etc/clamav/upload-clamd.conf
+docker run -d --name vehicle-auth-local-clamav-updater --label com.docker.compose.project=vehicle-auth-local --network vehicle-auth-local_default --no-healthcheck -e TZ=UTC -v vehicle-auth-local_clamav_data:/var/lib/clamav --entrypoint freshclam registry-1.docker.io/clamav/clamav:1.4.3_base --daemon --foreground=true
+docker run -d --name vehicle-auth-local-clamav --label com.docker.compose.project=vehicle-auth-local --network vehicle-auth-local_default --health-cmd "clamdscan --config-file=/etc/clamav/upload-clamd.conf --ping=1" --health-interval 15s --health-timeout 5s --health-retries 20 -e TZ=UTC -v vehicle-auth-local_clamav_data:/var/lib/clamav:ro -v "${PWD}/deploy/clamav/upload-clamd.conf:/etc/clamav/upload-clamd.conf:ro" --entrypoint clamd registry-1.docker.io/clamav/clamav:1.4.3_base --config-file=/etc/clamav/upload-clamd.conf
 ```
 
 这些创建命令仅在对应容器尚不存在时运行。固定网络与 MySQL 来自[本地业务联调](LOCAL_BUSINESS_ACCEPTANCE.md)。先确认更新与扫描就绪，再启动后端。
@@ -50,6 +50,8 @@ docker run -d --name vehicle-auth-local-clamav --label com.docker.compose.projec
 ```powershell
 docker run -d --name vehicle-auth-local-backend --env-file .env.auth-backend.local --env-file .env.upload-app.local --network vehicle-auth-local_default -e MYSQL_HOST=vehicle-auth-local-mysql-1 -p 127.0.0.1:18080:8080 vehicle-auth/backend:business-0237aba
 ```
+
+镜像默认的 `clamdcheck.sh` 健康检查要求扫描进程，不适用于仅运行 freshclam 的更新容器。本步在 Compose 禁用 updater 的继承检查，扫描容器使用配置对应的 PONG 检查；更新有效性仍由官方验签和应用新鲜度门禁判断。
 
 ## Docker 加速源问题与 Windows 换行
 
