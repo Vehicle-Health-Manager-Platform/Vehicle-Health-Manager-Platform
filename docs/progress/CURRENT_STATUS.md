@@ -27,4 +27,4 @@ PR #12–#17 已合入 `main`。PR #18 的预检脚本与验收文档整合至 P
 
 手机调试需要手机可达的后端地址，不能沿用 `127.0.0.1`。常规真机验收和正式发布的自建后端需有效 HTTPS、备案域名及小程序通讯域名配置；微信云托管的指定调用方式提供免配通讯域名的路径，迁移适配尚未实施。详见[开发与上线网络说明](../operations/MINIAPP_NETWORK_ENVIRONMENTS.md)。
 
-本地车辆与无图档案真实联调已完成，22 项检查与边界见[复现说明](../testing/LOCAL_BUSINESS_ACCEPTANCE.md)。本机私有图片 26 项接口及 11 项 H5 检查已通过，见[复现说明](../testing/LOCAL_PRIVATE_IMAGE_ACCEPTANCE.md)。下一步配置可信 HTTPS 测试入口，验收微信实际相机/预览、第二个真实车主、真机与手机号；短信仍须服务商。具体步骤、完成判定与外部依赖见[下一步规划](NEXT_STEPS.md)及[依赖清单](S0_DEPENDENCIES.md)。完整 F01–F04、M0/M1 仍未通过。
+本地车辆与无图档案真实联调已完成，22 项检查与边界见[复现说明](../testing/LOCAL_BUSINESS_ACCEPTANCE.md)。本机私有图片 26 项接口及 11 项 H5 检查已通过，见[复现说明](../testing/LOCAL_PRIVATE_IMAGE_ACCEPTANCE.md)。2026-10-06 用户决定先完成本机功能开发，再处理公网、域名、云托管与真机。当前推荐标准服务项目列表与详情，规格待确认。微信实际相机/预览、第二个真实车主、手机号与真机仍待验收；短信仍须服务商。具体步骤、完成判定与外部依赖见[下一步规划](NEXT_STEPS.md)及[依赖清单](S0_DEPENDENCIES.md)。完整 F01–F04、M0/M1 仍未通过。
