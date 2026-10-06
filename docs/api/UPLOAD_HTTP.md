@@ -1,6 +1,6 @@
 # 车主私有图片 HTTP 接口
 
-> 2026-10-04。配套设计见 [HTTP 上传设计](../superpowers/specs/2026-10-04-upload-http-design.md)。真实私有部署与小程序图片操作尚未联调。
+> 2026-10-04。配套设计见 [HTTP 上传设计](../superpowers/specs/2026-10-04-upload-http-design.md)。本机真实私有服务及 H5 图片操作已联调，见[复现说明](../testing/LOCAL_PRIVATE_IMAGE_ACCEPTANCE.md)；微信实际相机、真机和正式部署仍待验收。
 
 ## 前置条件
 

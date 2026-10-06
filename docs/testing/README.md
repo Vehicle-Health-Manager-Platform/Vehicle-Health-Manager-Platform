@@ -10,3 +10,5 @@
 小程序测试在仓库根目录运行 `npm test --workspace @autocare/miniapp`；登录预检离线测试运行 `python -m unittest scripts/test_check_auth_readiness.py -v`；后端在 `backend` 目录运行 `mvn test`，完整集成测试需 Docker。
 
 2026-10-05 已验证开发者工具真实微信登录、本机后端和数据库，以及车主按钮进入首页；真机手机号、真实私有图片/相机和商家短信仍未验收。未执行项不以 CI 或响应替身测试代替。
+
+2026-10-06：[本地车辆与无图档案](LOCAL_BUSINESS_ACCEPTANCE.md) 22 项真实检查通过；[私有图片联调](LOCAL_PRIVATE_IMAGE_ACCEPTANCE.md) 26 项后端与 11 项 H5 交互通过，使用真实服务/官方库及明确的合成 PNG。物理相机、手机可信 HTTPS、第二个真实身份、手机号与短信仍独立验收。

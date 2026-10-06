@@ -14,11 +14,11 @@ PR #12–#17 已合入 `main`。PR #18 的预检脚本与验收文档整合至 P
 | 商家身份 | 核心自动化验证通过，真实短信阻塞 | 密码加一次性短信码、限流、会话生命周期已实现；生产 `MerchantSmsSender` 未接入，验证码请求返回 503。 |
 | 数据库 | CI 与本机新建测试卷完成 V001–V005 | V005 增加 `vehicle_archive_file`。本机已核对身份表存在；已有外部数据库仍须逐项核对迁移，不能用新卷初始化代替。 |
 | 幂等与成功审计 | 已实现并接入车辆、档案、上传写操作 | 24 小时幂等、权限复核及业务/响应/审计同事务提交；完整安全审计、监控与 M0 验收尚未完成。[说明](../api/WRITE_INTEGRITY.md)。 |
-| 私有图片 | PR #9/#10/#12/#13 已合并，真实私有部署待验收 | 文件校验、MinIO、ClamAV、本人访问与短时签名、同键重试已实现；CI 的合成扫描签名不代表官方病毒库验收。[上传说明](../api/UPLOAD_HTTP.md)。 |
+| 私有图片 | PR #9/#10/#12/#13 已合并，本机真实私有接口与 H5 图片通过；正式部署待验收 | 文件校验、MinIO、ClamAV、本人访问与短时签名、同键重试已实现；本机官方 daily 28144 验签/新鲜度、真实 CLEAN 上传和签名到期已通过，H5 实际图片交互通过 11 项。正式 HTTPS/微信相机仍待验收。[复现](../testing/LOCAL_PRIVATE_IMAGE_ACCEPTANCE.md)。[上传说明](../api/UPLOAD_HTTP.md)。 |
 | 本人车辆与手动录入 | PR #14 已合并 | 四级车型选择、分页、脱敏、本人隔离和幂等创建已实现；生产车型来源待落实。[契约](../api/VEHICLE_MANUAL.md)。 |
-| 档案手动录入与查询 | PR #15 已合并 | 七类通用记录、可选里程、最多五张本人 CLEAN 图片、按车分页和审计；真实车主会话的本地无图有数据联调已通过，图片归档待验收。[契约](../api/ARCHIVE_MANUAL.md)。 |
+| 档案手动录入与查询 | PR #15 已合并 | 七类通用记录、可选里程、最多五张本人 CLEAN 图片、按车分页和审计；真实车主会话的本地无图有数据联调已通过，本机真实 CLEAN 图片归档及手动/拍照混合来源已通过。[契约](../api/ARCHIVE_MANUAL.md)。 |
 | 首页车辆与档案摘要 | PR #16 已合并 | 共用车辆选择、服务端总数与最近记录；H5 实际两车切换、跨 Tab 选择、真实总数和最近记录已通过本机后端联调；完整微信业务 UI 和真机待验收。评分、提醒、券与同款经验未交付。 |
-| 档案拍照录入 | PR #17 已合并，真实相机与图片待验收 | `input_type=1`、至少一张本人 CLEAN 图片，手动仍默认 3；列表/摘要同时覆盖两种来源。[最终 PR CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37257482023) 六项通过。 |
+| 档案拍照录入 | PR #17 已合并，本机图片通过，真实相机待验收 | `input_type=1`、至少一张本人 CLEAN 图片，手动仍默认 3；列表/摘要同时覆盖两种来源。[最终 PR CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37257482023) 六项通过。 |
 | 登录预检与验收清单 | PR #18 内容整合至 PR #19 | 只读 HTTPS 预检脚本和逐角色验收表已提供；6 项离线测试通过，尚未针对公网测试后端执行。[运维清单](../operations/AUTH_INTEGRATION_RUNBOOK.md)。 |
 
 ## 开发环境与发布边界
@@ -27,4 +27,4 @@ PR #12–#17 已合入 `main`。PR #18 的预检脚本与验收文档整合至 P
 
 手机调试需要手机可达的后端地址，不能沿用 `127.0.0.1`。常规真机验收和正式发布的自建后端需有效 HTTPS、备案域名及小程序通讯域名配置；微信云托管的指定调用方式提供免配通讯域名的路径，迁移适配尚未实施。详见[开发与上线网络说明](../operations/MINIAPP_NETWORK_ENVIRONMENTS.md)。
 
-本地车辆与无图档案真实联调已完成，22 项检查与边界见[复现说明](../testing/LOCAL_BUSINESS_ACCEPTANCE.md)。下一步验收私有上传和拍照，随后补第二个真实车主、真机网络、手机号与短信。具体步骤、完成判定与外部依赖见[下一步规划](NEXT_STEPS.md)及[依赖清单](S0_DEPENDENCIES.md)。完整 F01–F04、M0/M1 仍未通过。
+本地车辆与无图档案真实联调已完成，22 项检查与边界见[复现说明](../testing/LOCAL_BUSINESS_ACCEPTANCE.md)。本机私有图片 26 项接口及 11 项 H5 检查已通过，见[复现说明](../testing/LOCAL_PRIVATE_IMAGE_ACCEPTANCE.md)。下一步配置可信 HTTPS 测试入口，验收微信实际相机/预览、第二个真实车主、真机与手机号；短信仍须服务商。具体步骤、完成判定与外部依赖见[下一步规划](NEXT_STEPS.md)及[依赖清单](S0_DEPENDENCIES.md)。完整 F01–F04、M0/M1 仍未通过。

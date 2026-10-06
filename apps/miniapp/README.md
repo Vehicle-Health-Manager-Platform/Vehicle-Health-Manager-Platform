@@ -57,3 +57,5 @@ PR #14 在档案Tab接入本人车辆列表和 `/pages/vehicle/manual`。四级�
 2026-10-05 已在当前工作树构建产物中用真实微信 code 完成车主按钮登录、技师绑定、刷新与退出。本机后端只监听 `127.0.0.1:18080`；开发者工具临时跳过域名校验，可继续本地开发。手机需单独配置可达地址，常规真机与发布需符合微信 HTTPS/通讯域名要求，详见[网络说明](../../docs/operations/MINIAPP_NETWORK_ENVIRONMENTS.md)。
 
 当前包含手动档案、首页摘要和拍照入口：手动默认 `input_type=3`，拍照为 `1` 且至少一张上传成功图片，最多五张；服务端复核本人车辆及 CLEAN 图片。真实相机、私有上传和有数据多车业务尚未验收。[下一步计划](../../docs/progress/NEXT_STEPS.md)从本地业务联调开始，[登录验收表](../../docs/operations/AUTH_INTEGRATION_RUNBOOK.md)继续记录未覆盖项。
+
+2026-10-06：本机官方库扫描、MinIO 和真实后端的 H5 图片交互 11 项通过，详见[复现说明](../../docs/testing/LOCAL_PRIVATE_IMAGE_ACCEPTANCE.md)。使用合成 PNG 填充原生文件输入、真实上传与签名字节预览；不代表物理相机或微信真机已验收。

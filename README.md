@@ -2,7 +2,7 @@
 
 面向车主、商家和技师的微信小程序及配套后端，车主另有 H5 兜底目标，运营使用 PC 网页。本团队负责小程序和共用接口；运营 PC 后台由协作团队负责。
 
-**当前推进 S1 车辆档案交付，并继续补齐 S0 验收。** 本人车辆、通用档案、首页摘要和拍照录入已实现；开发者工具中的真实微信登录已联调，H5 实际车辆/无图档案链路已通过真实后端验收。真机、图片私有部署、交易、AI 及完整业务仍待验收，M0/M1 尚未通过。详见[当前进度](docs/progress/CURRENT_STATUS.md)及[下一步规划](docs/progress/NEXT_STEPS.md)。
+**当前推进 S1 车辆档案交付，并继续补齐 S0 验收。** 本人车辆、通用档案、首页摘要和拍照录入已实现；开发者工具中的真实微信登录已联调，H5 实际车辆/无图档案链路已通过真实后端验收。本机私有图片与 H5 归档/预览已联调；真机、正式部署、交易、AI 及完整业务仍待验收，M0/M1 尚未通过。详见[当前进度](docs/progress/CURRENT_STATUS.md)及[下一步规划](docs/progress/NEXT_STEPS.md)。
 
 ## 已实现的能力
 
@@ -12,12 +12,12 @@
 | 车主与技师身份 | 微信身份持久化、角色授权、技师绑定、员工码发放/回收、手机号绑定、限流、刷新凭证轮换与退出撤销 | 开发者工具真实 code、车主按钮、技师绑定、刷新和退出已通过；真机网络与手机号授权未验收。 |
 | 商家身份 | 密码加一次性短信码、账号/商家状态复核、可刷新与撤销的会话 | 服务商未定，没有生产短信发送器，验证码请求当前返回 503。 |
 | 写入完整性 | 24 小时幂等、权限复核、业务/成功响应/成功审计同事务提交 | MySQL 容器验证通过；已接入车辆、档案与图片上传写操作；其他业务继续逐项接入。 |
-| 私有上传基础 | 10 MiB 文件校验、扫描后存储、JDBC 元数据与失败补偿；真实 MinIO/ClamAV 适配器、内部短时签名及独立账号初始化 | PR #12/#13 的上传与小程序图片操作、PR #15 的业务档案关联已合入 main；真实私有图片联调和部署仍待完成。测试合成病毒签名不代表生产官方病毒库验收。 |
+| 私有上传基础 | 10 MiB 文件校验、扫描后存储、JDBC 元数据与失败补偿；真实 MinIO/ClamAV 适配器、内部短时签名及独立账号初始化 | PR #12/#13 的上传与小程序图片操作、PR #15 的业务档案关联已合入 main；官方病毒库的本机上传/签名/归档及 H5 交互已通过；正式部署和真实相机仍待验收。测试合成病毒签名不代表生产官方病毒库验收。 |
 | 数据库与 CI | main 已包含 V001–V005 与车辆档案图片关联表；网页、小程序、后端、生成文件/OCR、MySQL 和 Compose 共六项 CI | 本机新测试卷已完成 V001–V005；[拍照 PR 最终 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37257482023)和[登录修复首次 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37317893587)均六项全绿。整合后的结果以对应提交 CI 为准。 |
 | S1 本人车辆与手动录入 | 档案Tab车辆列表、品牌→车系→年款→配置选择、幂等添加、归属隔离、脱敏与成功审计 | [PR #14](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/14) 已实现；39项离线测试、H5 11项替身交互和模拟器10条路由通过。车型库只读取现有有效数据，生产来源未确定；完整F02/M1未验收。[接口契约](docs/api/VEHICLE_MANUAL.md)。 |
-| S1 本人车辆档案手动录入 | [PR #15](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/15) 新增七类通用记录、按车分页、至多五张私有图片关联及本人/CLEAN校验 | [CI 37203770229](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37203770229) 六项全绿，后端132项无失败/跳过；小程序43项Node测试、微信/H5构建通过。无图真实有数据业务已通过本地联调，私有图片和真机仍待验收。[接口契约](docs/api/ARCHIVE_MANUAL.md)。 |
+| S1 本人车辆档案手动录入 | [PR #15](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/15) 新增七类通用记录、按车分页、至多五张私有图片关联及本人/CLEAN校验 | [CI 37203770229](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37203770229) 六项全绿，后端132项无失败/跳过；小程序43项Node测试、微信/H5构建通过。无图真实有数据业务已通过本地联调，本机图片归档已通过，真机仍待验收。[接口契约](docs/api/ARCHIVE_MANUAL.md)。 |
 | S1 首页车辆与档案摘要 | [PR #16](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/16) 复用本人接口，显示当前车辆、真实档案总数及最近记录，并在首页与档案 Tab 共用车辆选择 | 48项离线测试与小程序/H5构建已通过；H5 实际交互接真实本地后端的两车/摘要已通过，微信完整业务 UI 和真机仍待验收。健康评分和提醒没有数据规则，本步不展示推测值。 |
-| S1 本人档案拍照录入 | [PR #17](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/17) 在档案 Tab 增加拍照入口，保存来源为 `input_type=1`，至少一张本人 CLEAN 图片；列表和首页摘要包含拍照记录 | [CI 37256441618](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37256441618) 六项全绿，后端 133 项、小程序 52 项通过；H5/微信实际相机和私有环境仍待验证。[接口契约](docs/api/ARCHIVE_MANUAL.md)。 |
+| S1 本人档案拍照录入 | [PR #17](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/17) 在档案 Tab 增加拍照入口，保存来源为 `input_type=1`，至少一张本人 CLEAN 图片；列表和首页摘要包含拍照记录 | [CI 37256441618](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37256441618) 六项全绿，后端 133 项、小程序 52 项通过；本机真实私有接口及 H5 图片交互已通过；微信真实相机/真机仍待验证。[接口契约](docs/api/ARCHIVE_MANUAL.md)。 |
 
 ## 从源码构建微信小程序
 
@@ -68,8 +68,8 @@ npm run build:h5 --workspace @autocare/miniapp
 ## 下一步
 
 1. 本地车辆与无图档案联调已完成，22 项真实检查见[复现说明](docs/testing/LOCAL_BUSINESS_ACCEPTANCE.md)；第二个真实微信身份仍待验收。
-2. 接通私有 MinIO/ClamAV，验证图片归档、签名预览、失败重试和真实拍照。
-3. 配置手机可达的测试入口，完成常规真机、手机号和商家短信验收；生产车型、识别服务及评分规则确认后再交付后续 S1 功能。
+2. 本机 MinIO/ClamAV、图片归档、签名与重试已通过 26 项后端及 11 项 H5 检查，见[复现说明](docs/testing/LOCAL_PRIVATE_IMAGE_ACCEPTANCE.md)。
+3. 下一项配置手机可达且证书可信的 HTTPS 测试入口，验证微信实际拍照/预览、真机登录和手机号；商家短信仍依赖服务商。生产车型、识别服务及评分规则确认后再交付后续 S1 功能。
 
 现在可用本机模拟器继续开发，无需先购买公网服务器或域名。正式发布连接自建后端时需备案 HTTPS 通讯域名；微信云托管提供指定免配域名调用方式，当前尚未适配。详见[网络环境说明](docs/operations/MINIAPP_NETWORK_ENVIRONMENTS.md)与[中文下一步计划](docs/progress/NEXT_STEPS.md)。
 

@@ -1,6 +1,6 @@
 # 私有上传真实适配器与内部签名
 
-本步接入官方 MinIO Java SDK 9.0.3（Maven 明确引入 OkHttp JVM 5.3.2、Kotlin 2.2.21）和 ClamAV INSTREAM。本适配器阶段不包含 HTTP 路由；后续 PR #12 的车主入口见 [HTTP 接入说明](UPLOAD_HTTP.md)。适配器自身不新增 OpenAPI 操作；公开入口、幂等、限流和对象清理在下一步完成。小程序图片预览和真实部署尚未验收。
+本步接入官方 MinIO Java SDK 9.0.3（Maven 明确引入 OkHttp JVM 5.3.2、Kotlin 2.2.21）和 ClamAV INSTREAM。本适配器阶段不包含 HTTP 路由；后续 PR #12 的车主入口见 [HTTP 接入说明](UPLOAD_HTTP.md)。适配器自身不新增 OpenAPI 操作；公开入口、幂等、限流和对象清理在下一步完成。本机官方库及 H5 图片预览链路已通过，见[复现说明](../testing/LOCAL_PRIVATE_IMAGE_ACCEPTANCE.md)；微信实际图片 UI 和正式部署尚未验收。
 
 ## 服务接口
 
