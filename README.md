@@ -69,7 +69,7 @@ npm run build:h5 --workspace @autocare/miniapp
 
 1. 本地车辆与无图档案联调已完成，22 项真实检查见[复现说明](docs/testing/LOCAL_BUSINESS_ACCEPTANCE.md)；第二个真实微信身份仍待验收。
 2. 本机 MinIO/ClamAV、图片归档、签名与重试已通过 26 项后端及 11 项 H5 检查，见[复现说明](docs/testing/LOCAL_PRIVATE_IMAGE_ACCEPTANCE.md)。
-3. 下一项配置手机可达且证书可信的 HTTPS 测试入口，验证微信实际拍照/预览、真机登录和手机号；商家短信仍依赖服务商。生产车型、识别服务及评分规则确认后再交付后续 S1 功能。
+3. 2026-10-06 用户决定先完成本机功能开发，再处理公网、域名、云托管与真机。当前接入标准服务项目列表与详情；后续逐项推进商家报价/选品、预约与订单，识别服务和评分规则另行明确。真实短信仍依赖服务商。
 
 现在可用本机模拟器继续开发，无需先购买公网服务器或域名。正式发布连接自建后端时需备案 HTTPS 通讯域名；微信云托管提供指定免配域名调用方式，当前尚未适配。详见[网络环境说明](docs/operations/MINIAPP_NETWORK_ENVIRONMENTS.md)与[中文下一步计划](docs/progress/NEXT_STEPS.md)。
 

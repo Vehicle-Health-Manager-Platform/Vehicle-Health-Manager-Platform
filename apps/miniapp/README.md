@@ -59,3 +59,5 @@ PR #14 在档案Tab接入本人车辆列表和 `/pages/vehicle/manual`。四级�
 当前包含手动档案、首页摘要和拍照入口：手动默认 `input_type=3`，拍照为 `1` 且至少一张上传成功图片，最多五张；服务端复核本人车辆及 CLEAN 图片。真实相机、私有上传和有数据多车业务尚未验收。[下一步计划](../../docs/progress/NEXT_STEPS.md)从本地业务联调开始，[登录验收表](../../docs/operations/AUTH_INTEGRATION_RUNBOOK.md)继续记录未覆盖项。
 
 2026-10-06：本机官方库扫描、MinIO 和真实后端的 H5 图片交互 11 项通过，详见[复现说明](../../docs/testing/LOCAL_PRIVATE_IMAGE_ACCEPTANCE.md)。使用合成 PNG 填充原生文件输入、真实上传与签名字节预览；不代表物理相机或微信真机已验收。
+
+标准服务 Tab 已接分类/分页列表、参考价与详情，具备失败重试和身份切换隔离；本机 H5/真实会话验证见[复现说明](../../docs/testing/LOCAL_SERVICE_CATALOG_ACCEPTANCE.md)。商家报价与预约另行接入。

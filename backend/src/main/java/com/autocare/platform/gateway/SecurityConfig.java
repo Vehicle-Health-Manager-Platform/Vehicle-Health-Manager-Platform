@@ -35,6 +35,18 @@ public class SecurityConfig {
     @Bean
     @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
     SecurityFilterChain securityFilterChain(HttpSecurity http, ObjectMapper mapper, com.autocare.platform.file.UploadAdmissionFilter uploads) throws Exception {
+        org.springframework.security.web.AuthenticationEntryPoint unauthorized = (request, response, exception) -> {
+            response.setStatus(401);
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setHeader("Cache-Control", "no-store");
+            mapper.writeValue(response.getWriter(), ApiResponse.error(40100, "未登录或登录已失效"));
+        };
+        org.springframework.security.web.access.AccessDeniedHandler forbidden = (request, response, exception) -> {
+            response.setStatus(403);
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setHeader("Cache-Control", "no-store");
+            mapper.writeValue(response.getWriter(), ApiResponse.error(40300, "无权访问"));
+        };
         return http
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -46,19 +58,10 @@ public class SecurityConfig {
                         && !"wechat_binding".equals(jwt.getClaimAsString("subject_type"));
                     return new org.springframework.security.authorization.AuthorizationDecision(allowed);
                 }))
-            .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+            .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())
+                .authenticationEntryPoint(unauthorized).accessDeniedHandler(forbidden))
             .addFilterAfter(uploads, org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter.class)
-            .exceptionHandling(errors -> errors
-                .authenticationEntryPoint((request, response, exception) -> {
-                    response.setStatus(401);
-                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                    mapper.writeValue(response.getWriter(), ApiResponse.error(40100, "未登录或登录已失效"));
-                })
-                .accessDeniedHandler((request, response, exception) -> {
-                    response.setStatus(403);
-                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                    mapper.writeValue(response.getWriter(), ApiResponse.error(40300, "无权访问"));
-                }))
+            .exceptionHandling(errors -> errors.authenticationEntryPoint(unauthorized).accessDeniedHandler(forbidden))
             .build();
     }
 

@@ -217,6 +217,44 @@ def main():
     ]
     archive_list["responses"]["404"] = {"description": "本人车辆不可用"}
     archive_list["responses"]["503"] = {"description": "数据库暂不可用"}
+    project_fields = {
+        "id": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "project_name": {"type": "string"}, "category": {"type": "integer", "minimum": 1, "maximum": 6},
+        "base_price_low": {"type": "string", "pattern": r"^\d{1,8}\.\d{2}$"},
+        "base_price_high": {"type": "string", "pattern": r"^\d{1,8}\.\d{2}$"},
+    }
+    schemas = document["components"]["schemas"]
+    schemas["ServiceProject"] = {"type": "object", "required": list(project_fields), "properties": project_fields}
+    detail_fields = {**project_fields, "service_content": {"type": "string"}, "quality_standard": {"type": ["string", "null"]}}
+    schemas["ServiceProjectDetail"] = {"type": "object", "required": list(detail_fields), "properties": detail_fields}
+    schemas["ServiceProjectPage"] = {"type": "object", "required": ["items", "total", "page", "page_size"], "properties": {
+        "items": {"type": "array", "items": {"$ref": "#/components/schemas/ServiceProject"}},
+        "total": {"type": "integer", "minimum": 0}, "page": {"type": "integer", "minimum": 1},
+        "page_size": {"type": "integer", "minimum": 1, "maximum": 100}}}
+    for path, summary, result_schema in (
+        ("/api/service/projects", "车主标准服务项目分类分页列表", "ServiceProjectPage"),
+        ("/api/service/project/{id}", "车主标准服务项目详情", "ServiceProjectDetail"),
+    ):
+        item = operation("get", path, summary, "F06")
+        item["x-roles"] = "正式车主"
+        item["x-implementation-status"] = "catalog-core-implemented"
+        item["description"] = "有效 user/OWNER 会话；只返回启用且未删除项目；价格为两位小数字符串。详见 SERVICE_CATALOG.md。"
+        if path.endswith("projects"):
+            item["parameters"] = [
+                {"name": "category", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 6}},
+                {"name": "page", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 1000000, "default": 1}},
+                {"name": "page_size", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 100, "default": 20}},
+            ]
+        else:
+            item["parameters"][0]["schema"] = project_fields["id"]
+            item["responses"]["404"] = {"description": "项目不存在、停用或软删除，code=40400"}
+        item["responses"]["503"] = {"description": "数据库未配置或暂不可用，code=50300"}
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [
+            {"$ref": "#/components/schemas/ApiResponse"},
+            {"type": "object", "required": ["data"], "properties": {"data": {"$ref": f"#/components/schemas/{result_schema}"}}},
+        ]}
+        document["paths"][path] = {"get": item}
+    count = sum(len(value) for value in document["paths"].values())
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")
 
