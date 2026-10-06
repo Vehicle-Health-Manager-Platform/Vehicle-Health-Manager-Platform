@@ -1139,23 +1139,67 @@
     },
     "/api/service/projects": {
       "get": {
-        "summary": "标准项目分类",
+        "summary": "车主标准服务项目分类分页列表",
         "operationId": "get_api_service_projects",
         "tags": [
           "service"
         ],
         "x-feature-ids": [
-          "F06",
-          "F17"
+          "F06"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 6
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "统一成功响应",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceProjectPage"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -1175,13 +1219,19 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "503": {
+            "description": "数据库未配置或暂不可用，code=50300"
           }
         },
         "security": [
           {
             "bearerAuth": []
           }
-        ]
+        ],
+        "x-roles": "正式车主",
+        "x-implementation-status": "catalog-core-implemented",
+        "description": "有效 user/OWNER 会话；只返回启用且未删除项目；价格为两位小数字符串。详见 SERVICE_CATALOG.md。"
       }
     },
     "/api/service/project/{id}/merchants": {
@@ -4416,6 +4466,87 @@
         "x-implementation-status": "implemented",
         "description": "每次复核本人/未删除/CLEAN 状态和对象大小/MIME；响应 Cache-Control: no-store，默认签名 120 秒。已经签发的 URL 在 TTL 内仍可能有效。"
       }
+    },
+    "/api/service/project/{id}": {
+      "get": {
+        "summary": "车主标准服务项目详情",
+        "operationId": "get_api_service_project_id",
+        "tags": [
+          "service"
+        ],
+        "x-feature-ids": [
+          "F06"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceProjectDetail"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "项目不存在、停用或软删除，code=40400"
+          },
+          "503": {
+            "description": "数据库未配置或暂不可用，code=50300"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "正式车主",
+        "x-implementation-status": "catalog-core-implemented",
+        "description": "有效 user/OWNER 会话；只返回启用且未删除项目；价格为两位小数字符串。详见 SERVICE_CATALOG.md。"
+      }
     }
   },
   "components": {
@@ -4445,6 +4576,113 @@
           "request_id": {
             "type": "string",
             "format": "uuid"
+          }
+        }
+      },
+      "ServiceProject": {
+        "type": "object",
+        "required": [
+          "id",
+          "project_name",
+          "category",
+          "base_price_low",
+          "base_price_high"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "project_name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 6
+          },
+          "base_price_low": {
+            "type": "string",
+            "pattern": "^\\d{1,8}\\.\\d{2}$"
+          },
+          "base_price_high": {
+            "type": "string",
+            "pattern": "^\\d{1,8}\\.\\d{2}$"
+          }
+        }
+      },
+      "ServiceProjectDetail": {
+        "type": "object",
+        "required": [
+          "id",
+          "project_name",
+          "category",
+          "base_price_low",
+          "base_price_high",
+          "service_content",
+          "quality_standard"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "project_name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 6
+          },
+          "base_price_low": {
+            "type": "string",
+            "pattern": "^\\d{1,8}\\.\\d{2}$"
+          },
+          "base_price_high": {
+            "type": "string",
+            "pattern": "^\\d{1,8}\\.\\d{2}$"
+          },
+          "service_content": {
+            "type": "string"
+          },
+          "quality_standard": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "ServiceProjectPage": {
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceProject"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
           }
         }
       }

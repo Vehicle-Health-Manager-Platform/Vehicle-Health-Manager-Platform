@@ -202,3 +202,23 @@
 - 提交前小程序 Node 52 项通过，验收脚本语法与差异检查通过；上一合并主分支 CI `37420341949` 六项全绿。本步完整 CI 以独立 PR 对应提交为准。
 
 - 后续环境核对修复 updater 继承 `clamdcheck.sh` 导致错误 unhealthy 状态：更新容器禁用不适用的探针，扫描容器使用当前配置的 PONG 探针。官方库卷保留，扫描状态重新核对；Compose 完整 CI 按最终提交重跑。
+
+## 2026-10-06 可信 HTTPS 与真机部署资源核对
+
+- PR #21 合并提交 `6d1ab39`；合并后[主分支 CI 37425483082](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37425483082)六项成功。
+- 本机隔离数据库、后端、存储、更新和扫描服务仍运行，数据库与扫描健康；API/存储宿主端口仅回环。私有地址类别核对发现现用图片签名仍为回环 HTTPS，原始外部 S3 配置为示例值，没有可用公网部署证据。未输出私有配置值。
+- 用户选择“没有或不确定，先检查并准备部署方案”。通过 gstack 核对微信官方网络与手机号文档，形成[中文部署方案](../superpowers/specs/2026-10-06-https-device-design.md)，比较自建 HTTPS、云托管和局域网，并推荐复用现有接口的自建方案。
+- 本步仅完成资源核对及方案准备；服务器/域名/证书、微信后台能力与设备仍待提供。未修改容器监听、未开通公网、未执行真实相机/手机号/真机验收。
+
+## 2026-10-06 标准服务项目本机开发
+
+- 用户确认书面规格，新增 OWNER 标准项目列表/详情，复用现有表；REPEATABLE READ 列表与计数、启用/删除过滤、精确价格、503 故障处理。小程序接分类/分页、详情、空态、重试与迟到响应隔离。
+- 固定隔离库准备 26 个明确标识的合成项目（24 启用、1 停用、1 删除）；冲突时拒绝覆盖。本机后端更新为 `vehicle-auth/backend:service-catalog`，继续只监听回环 18080；旧容器 `vehicle-auth-local-backend-before-service` 和所有数据卷保留。
+- 小程序 59 项回归通过，微信/H5 发布构建成功。后端 ServiceCatalogHttpTest/NoDatabase、WechatAuthTest、VehicleHttpTest 共 18 项通过；完整 MySQL 集成结果按独立 PR CI 记录，本机不挂 Docker socket。
+- gstack 实际 H5 + 真实 wx.login code/OWNER 会话 + 本机后端/MySQL 12 项检查通过：精确参考价、分页/分类、停用/删除、空态、受控前端断网与真实请求重试、详情与缺省质量标准、参数拒绝、匿名拒绝、退出撤销。没有输出凭据或令牌。
+- 实际撤销检查发现无效 Bearer 的资源服务器默认 401 空响应；统一设置认证失败处理，返回 40100 JSON/no-store，新增断言并回归既有身份/车辆接口。
+- 本步为 F06 只读项目子集；商家报价/预约和正式价格来源未交付。遵照用户最新决定，公网/云托管/真机安排在本机功能开发后。复现见[说明](../testing/LOCAL_SERVICE_CATALOG_ACCEPTANCE.md)。
+
+- 当前微信构建 11 条模拟器路由通过，含新增服务详情；路由通过仅证明可加载，不代替微信完整业务 UI/真机验收。
+
+- 已推送 [PR #22](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/22)，完整 CI 与合并状态以 PR 对应提交为准。仅在被忽略的本机模拟器产物中关闭域名校验，源码默认配置保留。
