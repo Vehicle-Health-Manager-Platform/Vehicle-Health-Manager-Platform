@@ -25,4 +25,4 @@ java -jar app.jar --spring.profiles.active=staff-admin --spring.main.web-applica
 
 S0-7.1f-2 新增[商家账号身份核心](../docs/api/MERCHANT_AUTH.md)：已预置且审核通过的 `MERCHANT` 员工账号可在密码校验后请求短信验证码，再用一次性短信码登录，获得可刷新、可撤销的商家会话；员工或商家禁用后旧令牌失效。短信服务商尚未确定，`MerchantSmsSender` 暂无生产实现，因此请求短信码会返回 503；不应将测试验证码发送器部署到生产环境。
 
-HTTP 上传和本人短时图片访问见 [HTTP 接入说明](../docs/api/UPLOAD_HTTP.md)：仅正式车主会话，需 V004 及真实适配器；小程序图片操作尚待后续一步接入。
+HTTP 上传和本人短时图片访问见 [HTTP 接入说明](../docs/api/UPLOAD_HTTP.md)：仅正式车主会话，需 V004 及真实适配器；小程序图片接口已接入，H5 实际交互接本机私有服务已通过，微信实际相机/真机仍待验收；见[复现说明](../docs/testing/LOCAL_PRIVATE_IMAGE_ACCEPTANCE.md)。

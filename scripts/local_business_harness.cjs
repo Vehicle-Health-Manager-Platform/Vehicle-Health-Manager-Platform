@@ -1,6 +1,7 @@
 // Opt-in local acceptance harness. Real WeChat code and backend responses;
 // no mocked business data, credentials printed, or production integration.
 const http = require('node:http')
+const https = require('node:https')
 const fs = require('node:fs')
 const path = require('node:path')
 const { spawnSync } = require('node:child_process')
@@ -55,9 +56,9 @@ async function wechatCode() {
 const writes = [], checks = []
 let dropOnce = ''
 const json = (res, status, data) => { res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }); res.end(JSON.stringify(data)) }
-async function read(req) {
+async function read(req, limit = 65536) {
   const chunks = []; let bytes = 0
-  for await (const chunk of req) { bytes += chunk.length; if (bytes > 65536) throw new Error('Request too large'); chunks.push(chunk) }
+  for await (const chunk of req) { bytes += chunk.length; if (bytes > limit) throw Object.assign(new Error('Request too large'), { localBodyLimit:true }); chunks.push(chunk) }
   return Buffer.concat(chunks)
 }
 async function handler(req, res) {
@@ -66,9 +67,23 @@ async function handler(req, res) {
   if (url.pathname.startsWith('/__local/')) {
     if (req.headers.origin !== origin || req.headers['x-local-business'] !== '1') return json(res, 403, { error: 'Local acceptance header required' })
     if (url.pathname === '/__local/code' && req.method === 'POST') return json(res, 200, { code: await wechatCode() })
+    if (url.pathname === '/__local/image' && req.method === 'POST') {
+      const body = JSON.parse((await read(req)).toString()), target = new URL(body.url)
+      if (target.origin !== 'https://127.0.0.1:9443' || !/^\/owner-archives-local\/uploads\/[a-f0-9-]+$/.test(target.pathname)) return json(res, 400, { error:'Local signed image required' })
+      // Trust only the generated certificate, never disable TLS verification.
+      return new Promise(resolve => {
+        const upstream = https.get(target, { ca:fs.readFileSync(path.join(root,'test-results/local-upload-cert.pem')) }, response => {
+          res.writeHead(response.statusCode, { 'Content-Type':response.headers['content-type'] || 'application/octet-stream', 'Cache-Control':'no-store' })
+          response.pipe(res); response.on('end',resolve)
+          response.on('error',()=>{res.destroy();resolve()})
+        })
+        upstream.setTimeout(10000,()=>upstream.destroy())
+        upstream.on('error',()=>{if(!res.headersSent)json(res,503,{error:'Local signed download unavailable'});else res.destroy();resolve()})
+      })
+    }
     if (url.pathname === '/__local/drop-once' && req.method === 'POST') {
       const body = JSON.parse((await read(req)).toString())
-      if (!['/api/vehicle/add', '/api/archive/add'].includes(body.path)) return json(res, 400, { error: 'Unsupported failure point' })
+      if (!['/api/vehicle/add', '/api/archive/add', '/api/file/upload'].includes(body.path)) return json(res, 400, { error: 'Unsupported failure point' })
       dropOnce = body.path; return json(res, 200, { armed: true })
     }
     if (url.pathname === '/__local/evidence' && req.method === 'POST') {
@@ -81,12 +96,12 @@ async function handler(req, res) {
     return json(res, 404, { error: 'Unknown local action' })
   }
   if (url.pathname.startsWith('/api/') || url.pathname === '/actuator/health') {
-    const body = await read(req), headers = {}
+    const body = await read(req, url.pathname === '/api/file/upload' ? 11 * 1024 * 1024 : 65536), headers = {}
     for (const name of ['authorization','content-type','idempotency-key']) if (req.headers[name]) headers[name] = req.headers[name]
     const upstream = await fetch(backend + url.pathname + url.search, { method:req.method, headers, body:body.length ? body : undefined, redirect:'manual', signal:AbortSignal.timeout(20000) })
     const bytes = Buffer.from(await upstream.arrayBuffer())
     const dropping = url.pathname === dropOnce && upstream.ok
-    if (['/api/vehicle/add','/api/archive/add'].includes(url.pathname) && req.method === 'POST') writes.push({route:url.pathname,key:headers['idempotency-key'],hash:createHash('sha256').update(body).digest('hex'),status:upstream.status,dropped:dropping})
+    if (['/api/vehicle/add','/api/archive/add','/api/file/upload'].includes(url.pathname) && req.method === 'POST') writes.push({route:url.pathname,key:headers['idempotency-key'],hash:createHash('sha256').update(body).digest('hex'),status:upstream.status,dropped:dropping})
     if (dropping) {
       dropOnce=''
       // Send a partial response so Chromium cannot silently replay a connection
@@ -108,7 +123,7 @@ async function handler(req, res) {
 }
 try {
   prepare()
-  const server = http.createServer((req,res) => handler(req,res).catch(() => { if (!res.headersSent) json(res,503,{error:'Local acceptance operation failed'}); else res.destroy() }))
+  const server = http.createServer((req,res) => handler(req,res).catch(error => { if (!res.headersSent) json(res,error.localBodyLimit === true ? 413 : 503,{error:'Local acceptance operation failed'}); else res.destroy() }))
   server.listen(4317,'127.0.0.1',() => console.log('Local acceptance ready at '+origin+'; synthetic fixtures only; credentials withheld'))
   const close=()=>{ socket?.close(); server.close(()=>process.exit(0)) }
   process.on('SIGINT',close); process.on('SIGTERM',close)
