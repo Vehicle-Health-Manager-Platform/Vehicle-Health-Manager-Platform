@@ -278,3 +278,6 @@
 - 小程序商家入口新增列表/详情、筛选、空态、分页重试及测试支付标识。当前78项Node测试通过；微信与H5本机构建在`--minify esbuild`参数下通过。默认terser构建在本机安装状态下提示找不到可选包，待干净CI核对。
 - 新增HTTP、无数据库与MySQL集成测试；完整执行待CI。当前本机Docker API不可用，无法声称本轮MySQL/H5真实后端联调或模拟器路由已经通过。复现与最终PR证据将在验证后补齐。
 - [PR #26 首次 CI 37579920098](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37579920098)小程序/Web、Schema/OCR、MySQL结构通过；后端201项中4项断言误将Long总数与Integer比较，实际查询值一致，已修正后重跑。该轮Compose因后端门禁跳过，不计为六项成功。
+- 修正提交 `6e2e2e8` 的[CI 37580419462](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37580419462)六项成功：后端201项无失败/错误/跳过，小程序78项，默认双端构建、Schema/MySQL和Compose通过。
+- 用户启动Docker后，本机镜像更新为 `vehicle-auth/backend:merchant-orders`，保留旧支付镜像/容器及数据库卷；Docker重启后恢复MinIO、ClamAV、更新容器，当前后端与扫描服务健康。本机gstack H5 17项真实后端/MySQL验收通过，包含日期、断网重试、两店隔离、付款异常与测试标识；商家登录仍是明确的隔离合成桥接，未发送真实短信。[复现](../testing/LOCAL_MERCHANT_ORDERS_ACCEPTANCE.md)。微信模拟器当前18条路由通过。
+- 文档和浏览器验收脚本补充后，最终提交仍须精确HEAD六项CI成功才合并；正式支付、接车/派工/退款、公网/真机仍后置。

@@ -25,7 +25,7 @@
 
 [PR #25](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/25) 新增支付基础与默认关闭的隔离测试渠道：本人支付记录、签名通知去重、PAID与容量联动、迟到付款异常。H5 24项通过；测试支付明确未真实扣款，正式微信、退款/券仍待接入。[契约](docs/api/PAYMENT_FOUNDATION.md) · [复现](docs/testing/LOCAL_PAYMENTS_ACCEPTANCE.md)。
 
-商家本店订单只读视图已开始实施：按有效商家会话查询本店订单分页/详情，筛选状态和北京时间预约日期，显示安全下单快照、支付摘要与整单付款异常。小程序78项离线测试、微信/H5本机构建通过；本机Docker引擎当前未运行，后端MySQL与实际页面联调以本次PR的CI及后续验收记录为准。[契约](docs/api/MERCHANT_ORDERS.md) · [实施计划](docs/superpowers/specs/2026-10-07-merchant-orders-plan.md)。
+商家本店订单只读视图已实现：按有效商家会话查询本店订单分页/详情，筛选状态和北京时间预约日期，显示安全下单快照、支付摘要与整单付款异常。[PR #26](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/26) 修正提交CI六项通过，后端201项、小程序78项；本机H5真实后端/MySQL 17项与微信模拟器18条路由通过。商家登录仍用隔离合成会话，未联通真实短信。[契约](docs/api/MERCHANT_ORDERS.md) · [复现](docs/testing/LOCAL_MERCHANT_ORDERS_ACCEPTANCE.md)。
 
 ## 从源码构建微信小程序
 
