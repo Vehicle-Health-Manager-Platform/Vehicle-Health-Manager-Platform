@@ -1,11 +1,12 @@
 import { ServiceError,serviceFailure } from './service-catalog.js'
+import {validPaymentSummary} from './payment-contract.js'
 const id=value=>Number.isSafeInteger(value)&&value>0
 const date=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value)
 const stamp=value=>typeof value==='string'&&!Number.isNaN(Date.parse(value))
 const money=value=>typeof value==='string'&&/^(0|[1-9]\d{0,7})\.\d{2}$/.test(value)&&Number(value)>0
 const page=(value,n,row)=>value?.page===n&&value.page_size===20&&Number.isSafeInteger(value.total)&&value.total>=value.items?.length&&Array.isArray(value.items)&&value.items.length<=20&&value.items.every(row)
 const slot=row=>id(row?.slot_id)&&id(row.standard_project_id)&&stamp(row.starts_at)&&stamp(row.ends_at)&&Number.isSafeInteger(row.capacity)&&row.capacity>0&&Number.isSafeInteger(row.capacity_left)&&row.capacity_left>=0&&row.capacity_left<=row.capacity&&typeof row.open==='boolean'
-const order=row=>id(row?.order_id)&&typeof row.order_no==='string'&&typeof row.status==='string'&&money(row.amount_due)
+const order=row=>id(row?.order_id)&&typeof row.order_no==='string'&&typeof row.status==='string'&&money(row.amount_due)&&(row.payment_summary===undefined||validPaymentSummary(row.payment_summary))
 export class ReservationError extends ServiceError{constructor(kind,message,code){super(kind,message);this.code=code}}
 export function createReservationsApi({baseUrl,runtime}){
   const endpoint=(baseUrl||'').replace(/\/$/,'')
@@ -26,7 +27,7 @@ export function createReservationsApi({baseUrl,runtime}){
     publish(token,body,key){return request(token,'/api/merchant/slots',slot,body,key)},
     close(token,n,key){if(!id(n))throw new ReservationError('invalid','时段无效');return request(token,`/api/merchant/slots/${n}/close`,slot,{},key)},
     create(token,body,key){return request(token,'/api/order/create',r=>order(r)&&r.status==='PENDING_PAYMENT'&&stamp(r.expires_at),body,key)},
-    list(token,n=1,status=''){validPage(n);if(!['','PENDING_PAYMENT','CLOSED'].includes(status))throw new ReservationError('invalid','订单状态无效');return request(token,`/api/order/list?page=${n}&page_size=20${status?'&status='+status:''}`,r=>page(r,n,order))},
+    list(token,n=1,status=''){validPage(n);if(!['','PENDING_PAYMENT','PAID','CLOSED'].includes(status))throw new ReservationError('invalid','订单状态无效');return request(token,`/api/order/list?page=${n}&page_size=20${status?'&status='+status:''}`,r=>page(r,n,order))},
     detail(token,n){if(!id(n))throw new ReservationError('invalid','订单无效');return request(token,`/api/order/${n}`,order)},
     cancel(token,n,key){if(!id(n))throw new ReservationError('invalid','订单无效');return request(token,'/api/order/cancel',order,{order_id:n},key)},
   }

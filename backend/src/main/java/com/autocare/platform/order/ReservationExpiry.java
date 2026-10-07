@@ -18,7 +18,7 @@ public class ReservationExpiry {
     }
     void closeOrder(long id,long slot,String reason,Instant now){
         int changed=db.jdbc.update("UPDATE `order` SET status='CLOSED',close_reason=?,closed_at=? WHERE id=? AND status='PENDING_PAYMENT'",reason,ReservationStore.time(now),id);
-        if(changed==1){long occupied=db.occupied(slot,now);db.jdbc.update("UPDATE appointment_slot SET reserved_count=? WHERE id=?",occupied,slot);}
+        if(changed==1){db.jdbc.update("UPDATE payment SET status='CLOSED',closed_at=? WHERE order_id=? AND status IN ('CREATED','PENDING')",ReservationStore.time(now),id);long occupied=db.occupied(slot,now);db.jdbc.update("UPDATE appointment_slot SET reserved_count=? WHERE id=?",occupied,slot);}
     }
     @Scheduled(fixedDelayString="${ORDER_EXPIRY_INTERVAL_MS:30000}")
     public void sweep(){

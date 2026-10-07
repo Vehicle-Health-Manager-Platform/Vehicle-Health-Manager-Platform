@@ -332,7 +332,7 @@ def main():
         item = operation(method, path, title, "F07,F08")
         item["x-roles"] = role
         item["x-implementation-status"] = "local-reservations-core-implemented"
-        item["description"] = "本机预约订单子集，支付/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
+        item["description"] = "本机预约订单子集，支付基础接入、正式扣款/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
         for parameter in item["parameters"]:
             if parameter["in"] == "path": parameter["schema"] = identifier
         item["responses"]["404"] = {"description": "本人/本店资源不可用，code=40400"}
@@ -344,9 +344,44 @@ def main():
         if path == "/api/merchant/slots" and method == "get": item["parameters"].append({"name": "date", "in": "query", "schema": {"type": "string", "format": "date"}})
         if path == "/api/order/slots":
             item["parameters"] += [{"name": k, "in": "query", "required": True, "schema": v} for k,v in {"merchant_id": identifier, "project_id": identifier, "date": {"type": "string", "format": "date"}}.items()]
-        if path == "/api/order/list": item["parameters"].append({"name": "status", "in": "query", "schema": {"type": "string", "enum": ["PENDING_PAYMENT", "CLOSED"]}})
+        if path == "/api/order/list": item["parameters"].append({"name": "status", "in": "query", "schema": {"type": "string", "enum": ["PENDING_PAYMENT", "PAID", "CLOSED"]}})
         item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "properties": {"data": {"$ref": f"#/components/schemas/{result}"}}}]}
         document["paths"].setdefault(path, {})[method] = item
+    payment_fields = {"payment_id": identifier, "order_id": identifier, "payment_no": {"type": ["string", "null"]},
+        "channel": {"type": "string", "enum": ["LOCAL_TEST", "WECHAT"]}, "test_mode": {"type": "boolean"},
+        "status": {"type": "string", "enum": ["CREATED", "PENDING", "SUCCEEDED", "FAILED", "CLOSED"]},
+        "amount": quote_fields["price"], "currency": {"type": "string", "const": "CNY"}, "requires_review": {"type": "boolean"},
+        "expires_at": {"type": ["string", "null"], "format": "date-time"}, "paid_at": {"type": ["string", "null"], "format": "date-time"}}
+    schemas["PaymentDetail"] = {"type": "object", "required": list(payment_fields), "properties": payment_fields}
+    schemas["CreatedPayment"] = {**schemas["PaymentDetail"], "properties": {**payment_fields, "channel_payload": {"type": "object"}}, "required": list(payment_fields)+["channel_payload"]}
+    summary_fields = {k:v for k,v in payment_fields.items() if k not in ("order_id", "payment_no")}
+    schemas["PaymentSummary"] = {"type": "object", "required": list(summary_fields), "properties": summary_fields}
+    for name in ("OwnerOrder", "OwnerOrderDetail"):
+        schemas[name]["properties"]["payment_summary"] = {"anyOf": [{"$ref": "#/components/schemas/PaymentSummary"}, {"type": "null"}]}
+        schemas[name]["required"].append("payment_summary")
+    for method,path,result in (("post","/api/payments/create","CreatedPayment"),("get","/api/payments/{id}","PaymentDetail")):
+        item = operation(method,path,"本人支付发起" if method=="post" else "本人支付状态查询","F07,F08")
+        item["x-roles"] = "OWNER"
+        item["x-implementation-status"] = "payment-foundation-local-test-implemented"
+        item["description"] = "正式微信未配置返回503；LOCAL_TEST默认关闭且仅用于隔离环境，不代表真实扣款。详见 PAYMENT_FOUNDATION.md。"
+        for parameter in item["parameters"]:
+            if parameter["in"] == "path": parameter["schema"] = identifier
+        if method=="post": item["requestBody"]["content"]["application/json"]["schema"] = {"type":"object","additionalProperties":False,"required":["order_id","channel"],"properties":{"order_id":identifier,"channel":payment_fields["channel"]}}
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf":[{"$ref":"#/components/schemas/ApiResponse"},{"type":"object","properties":{"data":{"$ref":f"#/components/schemas/{result}"}}}]}
+        item["responses"]["409"] = {"description":"订单/支付状态或事件冲突"}
+        item["responses"]["503"] = {"description":"渠道未配置或数据库/事务暂不可用"}
+        document["paths"][path] = {method:item}
+    notice_fields = {"event_id":{"type":"string","format":"uuid"},"payment_id":identifier,"channel_payment_no":{"type":"string","pattern":"^[a-zA-Z0-9_-]{1,128}$"},"status":{"type":"string","enum":["SUCCEEDED","FAILED"]},"amount":quote_fields["price"],"currency":{"type":"string","const":"CNY"},"order_no":{"type":"string"},"occurred_at":timestamp}
+    callback = operation("post","/api/payments/callback/LOCAL_TEST","隔离测试渠道签名通知","F07,F08")
+    callback["security"] = []
+    callback["x-roles"] = "LOCAL_TEST signed channel"
+    callback["x-implementation-status"] = "payment-foundation-local-test-implemented"
+    callback["description"] = "默认关闭时404；启用须隔离profile/开关/密钥。正文最多16KiB且拒绝重复键；签名及规范化事件摘要规则见 PAYMENT_FOUNDATION.md，不能作为微信验签协议。"
+    callback["parameters"] = [{"name":k,"in":"header","required":True,"schema":{"type":"string"}} for k in ("X-Test-Timestamp","X-Test-Nonce","X-Test-Signature")]
+    callback["requestBody"]["content"]["application/json"]["schema"] = {"type":"object","additionalProperties":False,"required":list(notice_fields),"properties":notice_fields}
+    callback["responses"] = {"200":{"description":"已提交或同事件已提交","content":{"application/json":{"schema":{"type":"object","required":["code"],"properties":{"code":{"const":"SUCCESS"}}}}}},"400":{"description":"通知参数/金额等不匹配"},"401":{"description":"无效/过期签名"},"404":{"description":"测试渠道关闭或支付不存在"},"409":{"description":"事件异文或流水号冲突"},"503":{"description":"事务失败，重试"}}
+    document["paths"]["/api/payments/callback/LOCAL_TEST"] = {"post":callback}
+    document["paths"]["/api/payments/callback/{channel}"]["post"]["description"] = "未实现的正式渠道草案，本步仅实现固定LOCAL_TEST路径，不开放其他通知入口。"
     count = sum(len(value) for value in document["paths"].values())
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

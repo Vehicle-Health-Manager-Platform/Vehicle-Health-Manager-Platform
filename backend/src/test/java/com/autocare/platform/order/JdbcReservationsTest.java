@@ -27,11 +27,11 @@ class JdbcReservationsTest {
     Time clock;ReservationStore db;ReservationSlots slots;ReservationOrders orders;ReservationExpiry expiry;MerchantActor shop;VehicleOwner a,b;
     @BeforeAll static void schema()throws Exception{
         var ds=new DriverManagerDataSource(mysql.getJdbcUrl(),mysql.getUsername(),mysql.getPassword());jdbc=new JdbcTemplate(ds);
-        try(var c=ds.getConnection()){for(String file:List.of("V001__baseline.sql","V003__auth_lifecycle.sql","V006__merchant_project_versions.sql","V007__reservation_orders.sql","V007__reservation_orders.sql"))ScriptUtils.executeSqlScript(c,new FileSystemResource(Path.of("..","docs","sql","migrations",file)));}
+        try(var c=ds.getConnection()){for(String file:List.of("V001__baseline.sql","V003__auth_lifecycle.sql","V006__merchant_project_versions.sql","V007__reservation_orders.sql","V007__reservation_orders.sql","V008__payment_foundation.sql","V008__payment_foundation.sql"))ScriptUtils.executeSqlScript(c,new FileSystemResource(Path.of("..","docs","sql","migrations",file)));}
     }
     @BeforeEach void setup(){
         jdbc.execute("DROP TRIGGER IF EXISTS reject_reservation_audit");
-        for(String t:List.of("audit_log","idempotency_record","order","appointment_slot","merchant_project_version","merchant_project","standard_project","auth_session","staff_account","merchant","vehicle","user"))jdbc.update("DELETE FROM `"+t+"`");
+        for(String t:List.of("payment_event","payment_exception","payment","audit_log","idempotency_record","order","appointment_slot","merchant_project_version","merchant_project","standard_project","auth_session","staff_account","merchant","vehicle","user"))jdbc.update("DELETE FROM `"+t+"`");
         clock=new Time();var mapper=new ObjectMapper();var manager=new DataSourceTransactionManager(jdbc.getDataSource());db=new ReservationStore(jdbc,mapper,new WriteIntegrityService(jdbc,mapper,manager),clock,manager);expiry=new ReservationExpiry(db);slots=new ReservationSlots(db);orders=new ReservationOrders(db,expiry);
         jdbc.update("INSERT INTO merchant(id,merchant_type,name,address,status) VALUES(1,2,'测试店','合成地址',1)");jdbc.update("INSERT INTO staff_account(id,merchant_id,role,account) VALUES(1,1,'MERCHANT','test')");
         shop=new MerchantActor(1,1,UUID.randomUUID().toString(),Instant.now().plusSeconds(3600));session(shop.session(),"staff_account",1,"MERCHANT","merchant-account",1);

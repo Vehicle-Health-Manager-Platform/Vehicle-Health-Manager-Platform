@@ -1575,7 +1575,7 @@
         },
         "x-roles": "OWNER",
         "x-implementation-status": "local-reservations-core-implemented",
-        "description": "本机预约订单子集，支付/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
+        "description": "本机预约订单子集，支付基础接入、正式扣款/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
       }
     },
     "/api/order/list": {
@@ -1617,6 +1617,7 @@
               "type": "string",
               "enum": [
                 "PENDING_PAYMENT",
+                "PAID",
                 "CLOSED"
               ]
             }
@@ -1678,7 +1679,7 @@
         ],
         "x-roles": "OWNER",
         "x-implementation-status": "local-reservations-core-implemented",
-        "description": "本机预约订单子集，支付/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
+        "description": "本机预约订单子集，支付基础接入、正式扣款/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
       }
     },
     "/api/order/{id}": {
@@ -1760,7 +1761,7 @@
         ],
         "x-roles": "OWNER",
         "x-implementation-status": "local-reservations-core-implemented",
-        "description": "本机预约订单子集，支付/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
+        "description": "本机预约订单子集，支付基础接入、正式扣款/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
       }
     },
     "/api/order/cancel": {
@@ -1862,7 +1863,7 @@
         },
         "x-roles": "OWNER",
         "x-implementation-status": "local-reservations-core-implemented",
-        "description": "本机预约订单子集，支付/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
+        "description": "本机预约订单子集，支付基础接入、正式扣款/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
       }
     },
     "/api/order/review": {
@@ -3217,17 +3218,20 @@
         ],
         "x-roles": "OWNER",
         "x-implementation-status": "local-reservations-core-implemented",
-        "description": "本机预约订单子集，支付/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
+        "description": "本机预约订单子集，支付基础接入、正式扣款/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
       }
     },
     "/api/payments/create": {
       "post": {
-        "summary": "`order_id, channel` → `payment_id, channel_payload, expires_at`",
+        "summary": "本人支付发起",
         "operationId": "post_api_payments_create",
         "tags": [
           "payments"
         ],
-        "x-feature-ids": [],
+        "x-feature-ids": [
+          "F07",
+          "F08"
+        ],
         "parameters": [
           {
             "name": "Idempotency-Key",
@@ -3245,7 +3249,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CreatedPayment"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -3265,6 +3281,12 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "409": {
+            "description": "订单/支付状态或事件冲突"
+          },
+          "503": {
+            "description": "渠道未配置或数据库/事务暂不可用"
           }
         },
         "security": [
@@ -3278,12 +3300,32 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "additionalProperties": true
+                "additionalProperties": false,
+                "required": [
+                  "order_id",
+                  "channel"
+                ],
+                "properties": {
+                  "order_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "channel": {
+                    "type": "string",
+                    "enum": [
+                      "LOCAL_TEST",
+                      "WECHAT"
+                    ]
+                  }
+                }
               }
             }
           }
         },
-        "x-roles": "车主"
+        "x-roles": "OWNER",
+        "x-implementation-status": "payment-foundation-local-test-implemented",
+        "description": "正式微信未配置返回503；LOCAL_TEST默认关闭且仅用于隔离环境，不代表真实扣款。详见 PAYMENT_FOUNDATION.md。"
       }
     },
     "/api/payments/callback/{channel}": {
@@ -3353,24 +3395,30 @@
             }
           }
         },
-        "x-roles": "支付渠道"
+        "x-roles": "支付渠道",
+        "description": "未实现的正式渠道草案，本步仅实现固定LOCAL_TEST路径，不开放其他通知入口。"
       }
     },
     "/api/payments/{id}": {
       "get": {
-        "summary": "状态、金额、渠道流水号",
+        "summary": "本人支付状态查询",
         "operationId": "get_api_payments_id",
         "tags": [
           "payments"
         ],
-        "x-feature-ids": [],
+        "x-feature-ids": [
+          "F07",
+          "F08"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
             }
           }
         ],
@@ -3380,7 +3428,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/PaymentDetail"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -3400,6 +3460,12 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "409": {
+            "description": "订单/支付状态或事件冲突"
+          },
+          "503": {
+            "description": "渠道未配置或数据库/事务暂不可用"
           }
         },
         "security": [
@@ -3407,7 +3473,9 @@
             "bearerAuth": []
           }
         ],
-        "x-roles": "车主本人/本店商家"
+        "x-roles": "OWNER",
+        "x-implementation-status": "payment-foundation-local-test-implemented",
+        "description": "正式微信未配置返回503；LOCAL_TEST默认关闭且仅用于隔离环境，不代表真实扣款。详见 PAYMENT_FOUNDATION.md。"
       }
     },
     "/api/refunds/create": {
@@ -5190,7 +5258,7 @@
         ],
         "x-roles": "MERCHANT",
         "x-implementation-status": "local-reservations-core-implemented",
-        "description": "本机预约订单子集，支付/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
+        "description": "本机预约订单子集，支付基础接入、正式扣款/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
       },
       "post": {
         "summary": "发布本店项目时段",
@@ -5306,7 +5374,7 @@
         },
         "x-roles": "MERCHANT",
         "x-implementation-status": "local-reservations-core-implemented",
-        "description": "本机预约订单子集，支付/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
+        "description": "本机预约订单子集，支付基础接入、正式扣款/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
       }
     },
     "/api/merchant/slots/{id}/close": {
@@ -5410,7 +5478,7 @@
         },
         "x-roles": "MERCHANT",
         "x-implementation-status": "local-reservations-core-implemented",
-        "description": "本机预约订单子集，支付/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
+        "description": "本机预约订单子集，支付基础接入、正式扣款/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
       }
     },
     "/api/order/quote/{id}": {
@@ -5492,7 +5560,143 @@
         ],
         "x-roles": "OWNER",
         "x-implementation-status": "local-reservations-core-implemented",
-        "description": "本机预约订单子集，支付/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
+        "description": "本机预约订单子集，支付基础接入、正式扣款/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
+      }
+    },
+    "/api/payments/callback/LOCAL_TEST": {
+      "post": {
+        "summary": "隔离测试渠道签名通知",
+        "operationId": "post_api_payments_callback_LOCAL_TEST",
+        "tags": [
+          "payments"
+        ],
+        "x-feature-ids": [
+          "F07",
+          "F08"
+        ],
+        "parameters": [
+          {
+            "name": "X-Test-Timestamp",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Test-Nonce",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Test-Signature",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "已提交或同事件已提交",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "code"
+                  ],
+                  "properties": {
+                    "code": {
+                      "const": "SUCCESS"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "通知参数/金额等不匹配"
+          },
+          "401": {
+            "description": "无效/过期签名"
+          },
+          "404": {
+            "description": "测试渠道关闭或支付不存在"
+          },
+          "409": {
+            "description": "事件异文或流水号冲突"
+          },
+          "503": {
+            "description": "事务失败，重试"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "event_id",
+                  "payment_id",
+                  "channel_payment_no",
+                  "status",
+                  "amount",
+                  "currency",
+                  "order_no",
+                  "occurred_at"
+                ],
+                "properties": {
+                  "event_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "payment_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "channel_payment_no": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9_-]{1,128}$"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "SUCCEEDED",
+                      "FAILED"
+                    ]
+                  },
+                  "amount": {
+                    "type": "string",
+                    "pattern": "^(?:0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "const": "CNY"
+                  },
+                  "order_no": {
+                    "type": "string"
+                  },
+                  "occurred_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-roles": "LOCAL_TEST signed channel",
+        "x-implementation-status": "payment-foundation-local-test-implemented",
+        "description": "默认关闭时404；启用须隔离profile/开关/密钥。正文最多16KiB且拒绝重复键；签名及规范化事件摘要规则见 PAYMENT_FOUNDATION.md，不能作为微信验签协议。"
       }
     }
   },
@@ -5945,7 +6149,8 @@
           "close_reason",
           "project_snapshot",
           "merchant_snapshot",
-          "appointment_snapshot"
+          "appointment_snapshot",
+          "payment_summary"
         ],
         "properties": {
           "order_id": {
@@ -6004,6 +6209,16 @@
               "object",
               "null"
             ]
+          },
+          "payment_summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PaymentSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         }
       },
@@ -6022,7 +6237,8 @@
           "merchant_snapshot",
           "appointment_snapshot",
           "vehicle_id",
-          "price_snapshot"
+          "price_snapshot",
+          "payment_summary"
         ],
         "properties": {
           "order_id": {
@@ -6091,6 +6307,16 @@
             "type": [
               "object",
               "null"
+            ]
+          },
+          "payment_summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PaymentSummary"
+              },
+              {
+                "type": "null"
+              }
             ]
           }
         }
@@ -6180,6 +6406,234 @@
           "price": {
             "type": "string",
             "pattern": "^(?:0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+          }
+        }
+      },
+      "PaymentDetail": {
+        "type": "object",
+        "required": [
+          "payment_id",
+          "order_id",
+          "payment_no",
+          "channel",
+          "test_mode",
+          "status",
+          "amount",
+          "currency",
+          "requires_review",
+          "expires_at",
+          "paid_at"
+        ],
+        "properties": {
+          "payment_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "payment_no": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "LOCAL_TEST",
+              "WECHAT"
+            ]
+          },
+          "test_mode": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "CREATED",
+              "PENDING",
+              "SUCCEEDED",
+              "FAILED",
+              "CLOSED"
+            ]
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^(?:0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+          },
+          "currency": {
+            "type": "string",
+            "const": "CNY"
+          },
+          "requires_review": {
+            "type": "boolean"
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "paid_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "CreatedPayment": {
+        "type": "object",
+        "required": [
+          "payment_id",
+          "order_id",
+          "payment_no",
+          "channel",
+          "test_mode",
+          "status",
+          "amount",
+          "currency",
+          "requires_review",
+          "expires_at",
+          "paid_at",
+          "channel_payload"
+        ],
+        "properties": {
+          "payment_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "payment_no": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "LOCAL_TEST",
+              "WECHAT"
+            ]
+          },
+          "test_mode": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "CREATED",
+              "PENDING",
+              "SUCCEEDED",
+              "FAILED",
+              "CLOSED"
+            ]
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^(?:0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+          },
+          "currency": {
+            "type": "string",
+            "const": "CNY"
+          },
+          "requires_review": {
+            "type": "boolean"
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "paid_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "channel_payload": {
+            "type": "object"
+          }
+        }
+      },
+      "PaymentSummary": {
+        "type": "object",
+        "required": [
+          "payment_id",
+          "channel",
+          "test_mode",
+          "status",
+          "amount",
+          "currency",
+          "requires_review",
+          "expires_at",
+          "paid_at"
+        ],
+        "properties": {
+          "payment_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "LOCAL_TEST",
+              "WECHAT"
+            ]
+          },
+          "test_mode": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "CREATED",
+              "PENDING",
+              "SUCCEEDED",
+              "FAILED",
+              "CLOSED"
+            ]
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^(?:0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+          },
+          "currency": {
+            "type": "string",
+            "const": "CNY"
+          },
+          "requires_review": {
+            "type": "boolean"
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "paid_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
           }
         }
       }
