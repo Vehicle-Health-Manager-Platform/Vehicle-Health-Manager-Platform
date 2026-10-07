@@ -1,3 +1,6 @@
+import { apiOrigin } from './api-config.js'
+import { apiRuntime } from './api-runtime.js'
+
 export class ImageError extends Error {
   constructor(kind, message) { super(message); this.name = 'ImageError'; this.kind = kind }
 }
@@ -105,4 +108,4 @@ export function createImageApi({ baseUrl, runtime }) {
     },
   }
 }
-export const imageApi = createImageApi({ baseUrl: import.meta.env?.VITE_API_BASE_URL, runtime: () => uni })
+export const imageApi = createImageApi({ baseUrl: apiOrigin, runtime: () => apiRuntime })

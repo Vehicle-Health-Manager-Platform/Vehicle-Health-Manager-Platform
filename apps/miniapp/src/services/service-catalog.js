@@ -1,3 +1,6 @@
+import { apiOrigin } from './api-config.js'
+import { apiRuntime } from './api-runtime.js'
+
 export class ServiceError extends Error {
   constructor(kind, message) { super(message); this.kind = kind }
 }
@@ -51,4 +54,4 @@ export function createServiceCatalogApi({ baseUrl, runtime }) {
     },
   }
 }
-export const serviceCatalogApi = createServiceCatalogApi({ baseUrl: import.meta.env?.VITE_API_BASE_URL, runtime: () => uni })
+export const serviceCatalogApi = createServiceCatalogApi({ baseUrl: apiOrigin, runtime: () => apiRuntime })

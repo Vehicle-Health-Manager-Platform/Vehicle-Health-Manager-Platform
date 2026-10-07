@@ -1,3 +1,5 @@
+import { apiOrigin } from './api-config.js'
+import { apiRuntime } from './api-runtime.js'
 import { ServiceError,serviceFailure } from './service-catalog.js'
 import {validPaymentSummary} from './payment-contract.js'
 const id=value=>Number.isSafeInteger(value)&&value>0
@@ -32,7 +34,7 @@ export function createReservationsApi({baseUrl,runtime}){
     cancel(token,n,key){if(!id(n))throw new ReservationError('invalid','订单无效');return request(token,'/api/order/cancel',order,{order_id:n},key)},
   }
 }
-export const reservationsApi=createReservationsApi({baseUrl:import.meta.env?.VITE_API_BASE_URL,runtime:()=>uni})
+export const reservationsApi=createReservationsApi({baseUrl:apiOrigin,runtime:()=>apiRuntime})
 export const initialReservationWriteState=()=>({busy:false,saved:null,message:'',failureKind:'',code:0})
 export function createReservationWriteFlow({state,token,body,request,newKey,onConflict=()=>{}}){
   let generation=0,pending=null

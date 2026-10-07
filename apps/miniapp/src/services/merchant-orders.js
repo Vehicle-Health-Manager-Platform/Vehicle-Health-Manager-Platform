@@ -1,3 +1,5 @@
+import { apiOrigin } from './api-config.js'
+import { apiRuntime } from './api-runtime.js'
 import { ServiceError, serviceFailure } from './service-catalog.js'
 import { validPaymentSummary } from './payment-contract.js'
 
@@ -46,4 +48,4 @@ export function createMerchantOrdersApi({ baseUrl, runtime }) {
     },
   }
 }
-export const merchantOrdersApi = createMerchantOrdersApi({ baseUrl: import.meta.env?.VITE_API_BASE_URL, runtime: () => uni })
+export const merchantOrdersApi = createMerchantOrdersApi({ baseUrl: apiOrigin, runtime: () => apiRuntime })

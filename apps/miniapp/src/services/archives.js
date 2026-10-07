@@ -1,3 +1,6 @@
+import { apiOrigin } from './api-config.js'
+import { apiRuntime } from './api-runtime.js'
+
 export class ArchiveError extends Error {
   constructor(kind, message) { super(message); this.kind = kind }
 }
@@ -74,4 +77,4 @@ export function createArchiveApi({ baseUrl, runtime }) {
     },
   }
 }
-export const archiveApi = createArchiveApi({ baseUrl: import.meta.env?.VITE_API_BASE_URL, runtime: () => uni })
+export const archiveApi = createArchiveApi({ baseUrl: apiOrigin, runtime: () => apiRuntime })
