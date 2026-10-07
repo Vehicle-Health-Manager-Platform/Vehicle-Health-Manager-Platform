@@ -443,6 +443,38 @@ def main():
         {"type": "object", "properties": {"data": {"$ref": "#/components/schemas/MerchantOrderAction"}}}]}
     document["paths"]["/api/merchant/orders/{id}/actions"] = {"post": action}
     count = sum(len(value) for value in document["paths"].values())
+    # A3 pickup: photos are private file IDs, never persistent URLs.
+    slots = ["FRONT", "REAR", "LEFT", "RIGHT", "ROOF", "DASHBOARD", "INTERIOR"]
+    photo_fields = {slot: identifier for slot in slots}
+    damage = {"type": "object", "additionalProperties": False, "required": ["photo_slot", "x", "y", "note"], "properties": {
+        "photo_slot": {"type": "string", "enum": slots}, "x": {"type": "number", "minimum": 0, "maximum": 1},
+        "y": {"type": "number", "minimum": 0, "maximum": 1}, "note": {"type": "string", "minLength": 1, "maxLength": 200}}}
+    pickup_fields = {"order_id": identifier, "appointment_code": {"type": "string", "pattern": "^[0-9]{6}$", "writeOnly": True},
+        "photos": {"type": "object", "additionalProperties": False, "required": slots, "properties": photo_fields},
+        "mileage": {"type": "integer", "minimum": 0, "maximum": 9999999}, "fuel_level": {"type": "string", "enum": ["EMPTY", "QUARTER", "HALF", "THREE_QUARTERS", "FULL"]},
+        "damage_status": {"type": "string", "enum": ["NONE", "PRESENT"]}, "damages": {"type": "array", "maxItems": 20, "items": damage},
+        "mileage_reason": {"type": "string", "minLength": 1, "maxLength": 200}, "arrival_reason": {"type": "string", "minLength": 1, "maxLength": 200}}
+    schemas["PickupSubmit"] = {"type": "object", "additionalProperties": False, "required": [k for k in pickup_fields if k not in ("mileage_reason", "arrival_reason")], "properties": pickup_fields}
+    for method, path, roles, title in [
+        ("get", "/api/check/pickup/context", "MERCHANT", "本店接车上下文与里程基线"),
+        ("post", "/api/check/pickup/submit", "MERCHANT", "验预约码并提交完整接车单"),
+        ("get", "/api/check/pickup/{order}", "OWNER,MERCHANT", "本人或本店接车单"),
+        ("get", "/api/check/pickup/{order}/files/{file}/access", "OWNER,MERCHANT", "接车单关联图片短时访问"),
+        ("post", "/api/merchant/files/upload", "MERCHANT", "商家本人私有图片上传"),
+        ("get", "/api/merchant/files/{id}/access", "MERCHANT", "商家上传者本人图片预览")]:
+        item = operation(method, path, title, "F14")
+        item["x-roles"] = roles
+        item["x-implementation-status"] = "pickup-inspection-implemented"
+        item["description"] = "手填里程、七图一次提交；本店/本人归属与CLEAN校验。详见 PICKUP_INSPECTION.md，车主确认与派工未开放。"
+        for parameter in item["parameters"]:
+            if parameter["in"] == "path": parameter["schema"] = identifier
+        if path.endswith("/context"): item["parameters"].append({"name": "order_id", "in": "query", "required": True, "schema": identifier})
+        if path.endswith("/submit"): item["requestBody"]["content"]["application/json"]["schema"] = {"$ref": "#/components/schemas/PickupSubmit"}
+        if path.endswith("/upload"): item["requestBody"] = {"required": True, "content": {"multipart/form-data": {"schema": {"type": "object", "additionalProperties": False, "required": ["file"], "properties": {"file": {"type": "string", "format": "binary"}}}}}}
+        for code in (404, 409, 422, 429, 503): item["responses"][str(code)] = {"description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"}
+        document["paths"][path] = {method: item}
+    schemas["OwnerOrder"]["properties"]["appointment_code"] = {"type": "string", "pattern": "^[0-9]{6}$", "description": "仅本人PAID详情返回；商家投影永不包含"}
+    schemas["MerchantOrder"]["properties"]["allowed_actions"]["description"] = "PAID使用接车检查，不再返回RECEIVE；其他动作仍由状态矩阵决定"
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")
 

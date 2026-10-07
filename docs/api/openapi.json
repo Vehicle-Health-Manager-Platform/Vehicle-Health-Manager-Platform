@@ -2350,7 +2350,7 @@
     },
     "/api/check/pickup/submit": {
       "post": {
-        "summary": "提交接车检查",
+        "summary": "验预约码并提交完整接车单",
         "operationId": "post_api_check_pickup_submit",
         "tags": [
           "check"
@@ -2395,6 +2395,21 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "409": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "422": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "429": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "503": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
           }
         },
         "security": [
@@ -2407,12 +2422,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "additionalProperties": true
+                "$ref": "#/components/schemas/PickupSubmit"
               }
             }
           }
-        }
+        },
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "pickup-inspection-implemented",
+        "description": "手填里程、七图一次提交；本店/本人归属与CLEAN校验。详见 PICKUP_INSPECTION.md，车主确认与派工未开放。"
       }
     },
     "/api/check/pickup/confirm": {
@@ -6021,6 +6038,410 @@
         "x-implementation-status": "order-fulfillment-state-machine-implemented",
         "description": "前端只能请求动作，不能提交目标状态；矩阵、前置、行锁与幂等审计均由服务端判定。接车证据(A3)、车主确认与派工(A4/A5)、报工(A6)、核销(A4)未接入时按 fail-closed 返回 43001/43003/43004/43005/43006。详见 ORDER_FULFILLMENT.md。"
       }
+    },
+    "/api/check/pickup/context": {
+      "get": {
+        "summary": "本店接车上下文与里程基线",
+        "operationId": "get_api_check_pickup_context",
+        "tags": [
+          "check"
+        ],
+        "x-feature-ids": [
+          "F14"
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "409": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "422": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "429": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "503": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "pickup-inspection-implemented",
+        "description": "手填里程、七图一次提交；本店/本人归属与CLEAN校验。详见 PICKUP_INSPECTION.md，车主确认与派工未开放。"
+      }
+    },
+    "/api/check/pickup/{order}": {
+      "get": {
+        "summary": "本人或本店接车单",
+        "operationId": "get_api_check_pickup_order",
+        "tags": [
+          "check"
+        ],
+        "x-feature-ids": [
+          "F14"
+        ],
+        "parameters": [
+          {
+            "name": "order",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "409": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "422": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "429": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "503": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER,MERCHANT",
+        "x-implementation-status": "pickup-inspection-implemented",
+        "description": "手填里程、七图一次提交；本店/本人归属与CLEAN校验。详见 PICKUP_INSPECTION.md，车主确认与派工未开放。"
+      }
+    },
+    "/api/check/pickup/{order}/files/{file}/access": {
+      "get": {
+        "summary": "接车单关联图片短时访问",
+        "operationId": "get_api_check_pickup_order_files_file_access",
+        "tags": [
+          "check"
+        ],
+        "x-feature-ids": [
+          "F14"
+        ],
+        "parameters": [
+          {
+            "name": "order",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "file",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "409": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "422": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "429": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "503": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER,MERCHANT",
+        "x-implementation-status": "pickup-inspection-implemented",
+        "description": "手填里程、七图一次提交；本店/本人归属与CLEAN校验。详见 PICKUP_INSPECTION.md，车主确认与派工未开放。"
+      }
+    },
+    "/api/merchant/files/upload": {
+      "post": {
+        "summary": "商家本人私有图片上传",
+        "operationId": "post_api_merchant_files_upload",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F14"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "409": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "422": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "429": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "503": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "pickup-inspection-implemented",
+        "description": "手填里程、七图一次提交；本店/本人归属与CLEAN校验。详见 PICKUP_INSPECTION.md，车主确认与派工未开放。"
+      }
+    },
+    "/api/merchant/files/{id}/access": {
+      "get": {
+        "summary": "商家上传者本人图片预览",
+        "operationId": "get_api_merchant_files_id_access",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F14"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "409": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "422": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "429": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "503": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "pickup-inspection-implemented",
+        "description": "手填里程、七图一次提交；本店/本人归属与CLEAN校验。详见 PICKUP_INSPECTION.md，车主确认与派工未开放。"
+      }
     }
   },
   "components": {
@@ -6542,6 +6963,11 @@
                 "type": "null"
               }
             ]
+          },
+          "appointment_code": {
+            "type": "string",
+            "pattern": "^[0-9]{6}$",
+            "description": "仅本人PAID详情返回；商家投影永不包含"
           }
         }
       },
@@ -7109,7 +7535,7 @@
           },
           "allowed_actions": {
             "type": "array",
-            "description": "当前状态下商家可请求的动作；仅由状态矩阵决定，不含前置条件判定",
+            "description": "PAID使用接车检查，不再返回RECEIVE；其他动作仍由状态矩阵决定",
             "items": {
               "type": "object",
               "additionalProperties": false,
@@ -7295,7 +7721,7 @@
           },
           "allowed_actions": {
             "type": "array",
-            "description": "当前状态下商家可请求的动作；仅由状态矩阵决定，不含前置条件判定",
+            "description": "PAID使用接车检查，不再返回RECEIVE；其他动作仍由状态矩阵决定",
             "items": {
               "type": "object",
               "additionalProperties": false,
@@ -7546,7 +7972,7 @@
           },
           "allowed_actions": {
             "type": "array",
-            "description": "当前状态下商家可请求的动作；仅由状态矩阵决定，不含前置条件判定",
+            "description": "PAID使用接车检查，不再返回RECEIVE；其他动作仍由状态矩阵决定",
             "items": {
               "type": "object",
               "additionalProperties": false,
@@ -7637,6 +8063,156 @@
           "changed": {
             "type": "boolean",
             "description": "false 表示该动作此前已生效，本次为幂等重放，不产生新的状态迁移审计"
+          }
+        }
+      },
+      "PickupSubmit": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order_id",
+          "appointment_code",
+          "photos",
+          "mileage",
+          "fuel_level",
+          "damage_status",
+          "damages"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "appointment_code": {
+            "type": "string",
+            "pattern": "^[0-9]{6}$",
+            "writeOnly": true
+          },
+          "photos": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "FRONT",
+              "REAR",
+              "LEFT",
+              "RIGHT",
+              "ROOF",
+              "DASHBOARD",
+              "INTERIOR"
+            ],
+            "properties": {
+              "FRONT": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "REAR": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "LEFT": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "RIGHT": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "ROOF": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "DASHBOARD": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "INTERIOR": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              }
+            }
+          },
+          "mileage": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9999999
+          },
+          "fuel_level": {
+            "type": "string",
+            "enum": [
+              "EMPTY",
+              "QUARTER",
+              "HALF",
+              "THREE_QUARTERS",
+              "FULL"
+            ]
+          },
+          "damage_status": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "PRESENT"
+            ]
+          },
+          "damages": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "photo_slot",
+                "x",
+                "y",
+                "note"
+              ],
+              "properties": {
+                "photo_slot": {
+                  "type": "string",
+                  "enum": [
+                    "FRONT",
+                    "REAR",
+                    "LEFT",
+                    "RIGHT",
+                    "ROOF",
+                    "DASHBOARD",
+                    "INTERIOR"
+                  ]
+                },
+                "x": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "y": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "note": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200
+                }
+              }
+            }
+          },
+          "mileage_reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "arrival_reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
           }
         }
       }

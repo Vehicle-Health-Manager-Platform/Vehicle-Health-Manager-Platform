@@ -18,8 +18,9 @@ public class ReservationOrders {
         return db.writes.execute(new Actor("user",owner.id()),"POST","/api/order/create",key,db.mapper.valueToTree(body),()->db.owner(owner,true),()->{
             // Availability is checked only for a new write; a cached creation
             // receipt remains replayable after a shop changes its offering.
-            db.one("SELECT id FROM vehicle WHERE id=? AND user_id=? AND is_deleted=0 FOR UPDATE",input.vehicle(),owner.id());
             var q=db.quote(input.quote(),true);
+            // Shop before vehicle agrees with pickup submission's lock order.
+            db.one("SELECT id FROM vehicle WHERE id=? AND user_id=? AND is_deleted=0 FOR UPDATE",input.vehicle(),owner.id());
             if(ReservationStore.number(q,"version_id")!=input.version())throw new ReservationConflict(40901,"报价已更新，请重新确认");
             var slot=db.one("SELECT * FROM appointment_slot WHERE id=? AND merchant_id=? AND project_id=? AND is_deleted=0 FOR UPDATE",input.slot(),ReservationStore.number(q,"merchant_id"),ReservationStore.number(q,"project_id"));
             Instant now=db.now();if(ReservationStore.number(slot,"is_open")!=1 || !ReservationStore.instant(slot.get("starts_at")).isAfter(now))throw new ReservationConflict(40902,"时段已关闭或开始，请重新选择");
@@ -32,6 +33,7 @@ public class ReservationOrders {
             var price=Map.of("merchant_project_id",input.quote(),"quote_version_id",input.version(),"version",q.get("version"),"price",q.get("price").toString());
             var appointment=Map.of("slot_id",input.slot(),"starts_at",start.toString(),"ends_at",ReservationStore.iso(slot.get("ends_at")));
             long id=db.insert("INSERT INTO `order`(order_no,user_id,vehicle_id,merchant_id,project_id,amount,pay_amount,status,appointment_at,project_snapshot,merchant_snapshot,price_snapshot,slot_id,expires_at,merchant_project_id,quote_version_id,appointment_snapshot,created_at) VALUES(?,?,?,?,?,?,?,'PENDING_PAYMENT',?,?,?,?,?,?,?,?,?,?)",orderNo,owner.id(),input.vehicle(),q.get("merchant_id"),q.get("project_id"),q.get("price"),q.get("price"),ReservationStore.time(start),db.json(project),db.json(merchant),db.json(price),input.slot(),ReservationStore.time(deadline),input.quote(),input.version(),db.json(appointment),ReservationStore.time(now));
+            db.jdbc.update("UPDATE `order` SET verify_code=? WHERE id=?",AppointmentCodes.create(),id);
             db.jdbc.update("UPDATE appointment_slot SET reserved_count=? WHERE id=?",occupied+1,input.slot());
             var result=Map.<String,Object>of("order_id",id,"order_no",orderNo,"amount_due",q.get("price").toString(),"status","PENDING_PAYMENT","expires_at",deadline.toString());return new Change("ORDER_CREATE","order",id,Map.of(),db.orderRow(db.one("SELECT * FROM `order` WHERE id=? FOR UPDATE",id),true),result);
         });
@@ -42,7 +44,15 @@ public class ReservationOrders {
             long count=db.jdbc.queryForObject("SELECT COUNT(*)"+filter,Long.class,args.toArray());args.add(size);args.add((page-1)*size);var rows=db.jdbc.queryForList("SELECT *"+filter+" ORDER BY created_at DESC,id DESC LIMIT ? OFFSET ?",args.toArray());return ReservationStore.page(rows.stream().map(row->db.orderRow(row,false)).toList(),count,page,size);
         });
     }
-    public Map<String,Object> detail(VehicleOwner owner,long id){ServiceCatalog.validateId(id);return db.reads.execute(tx->{db.owner(owner,false);return db.orderRow(db.one("SELECT * FROM `order` WHERE id=? AND user_id=? AND is_deleted=0",id,owner.id()),true);});}
+    public Map<String,Object> detail(VehicleOwner owner,long id){ServiceCatalog.validateId(id);return db.transactions.execute(tx->{
+        db.owner(owner,true);var row=db.one("SELECT * FROM `order` WHERE id=? AND user_id=? AND is_deleted=0 FOR UPDATE",id,owner.id());
+        var result=db.orderRow(row,true);
+        if(OrderStatus.PAID.equals(row.get("status"))){
+            String code=(String)row.get("verify_code");if(code==null||!code.matches("[0-9]{6}")){code=AppointmentCodes.create();db.jdbc.update("UPDATE `order` SET verify_code=? WHERE id=?",code,id);}
+            result.put("appointment_code",code);
+        }
+        return result;
+    });}
     public JsonNode cancel(VehicleOwner owner,String key,long id){
         var changed=new boolean[]{false};
         return db.writes.execute(new Actor("user",owner.id()),"POST","/api/order/cancel",key,db.mapper.valueToTree(Map.of("order_id",id)),()->{

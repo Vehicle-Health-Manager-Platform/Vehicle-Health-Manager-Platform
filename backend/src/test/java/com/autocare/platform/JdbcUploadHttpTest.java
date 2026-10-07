@@ -33,7 +33,7 @@ class JdbcUploadHttpTest {
     @BeforeAll static void schema() throws Exception {
         var source=new DriverManagerDataSource(mysql.getJdbcUrl(),mysql.getUsername(),mysql.getPassword());jdbc=new JdbcTemplate(source);
         try(var connection=source.getConnection()) {
-            for(String file:List.of("V001__baseline.sql","V003__auth_lifecycle.sql","V004__upload_http.sql","V004__upload_http.sql"))
+            for(String file:List.of("V001__baseline.sql","V003__auth_lifecycle.sql","V004__upload_http.sql","V004__upload_http.sql","V010__pickup_inspection.sql"))
                 ScriptUtils.executeSqlScript(connection,new FileSystemResource(Path.of("..","docs","sql","migrations",file)));
         }
     }
@@ -60,6 +60,15 @@ class JdbcUploadHttpTest {
         var error=assertThrows(UploadHttpException.class,()->service().upload(owner,key,"a.jpg",new ByteArrayInputStream(PrivateUploadTest.JPEG)));
         assertEquals(409,error.status());
         jdbc.update("UPDATE file_object SET is_deleted=1");assertEquals(404,assertThrows(UploadHttpException.class,()->upload(key)).status());
+    }
+    @Test void merchantAndOwnerSameIdAndKeyRemainIsolated() {
+        jdbc.update("INSERT INTO merchant(id,merchant_type,name,address,status) VALUES(1001,2,'测试店','合成地址',1) ON DUPLICATE KEY UPDATE status=1");
+        jdbc.update("INSERT INTO staff_account(id,merchant_id,role,account,status) VALUES(1001,1001,'MERCHANT','upload-merchant','ACTIVE') ON DUPLICATE KEY UPDATE status='ACTIVE'");
+        var staff=new UploadOwner(1001,UUID.randomUUID().toString(),Instant.now().plusSeconds(600),"staff_account",1001);
+        jdbc.update("INSERT INTO auth_session(id,subject_type,subject_id,role,app_id,merchant_id,refresh_hash,expires_at) VALUES(?,'staff_account',1001,'MERCHANT','merchant-account',1001,?,DATE_ADD(UTC_TIMESTAMP(),INTERVAL 1 HOUR))",staff.session(),UUID.randomUUID().toString());
+        String key=UUID.randomUUID().toString();var a=upload(key);var b=service().upload(staff,key,"merchant.png",new ByteArrayInputStream(PrivateUploadTest.PNG));
+        assertNotEquals(a.path("data").path("file_id"),b.path("data").path("file_id"));assertEquals(b,service().upload(staff,key,"merchant.png",new ByteArrayInputStream(PrivateUploadTest.PNG)));assertEquals(2,count("upload_request"));assertEquals(2,count("audit_log"));
+        jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id=?",staff.session());assertEquals(401,assertThrows(UploadHttpException.class,()->service().upload(staff,key,"merchant.png",new ByteArrayInputStream(PrivateUploadTest.PNG))).status());
     }
     @Test void concurrentReservationHasExactlyOneWinnerAndActorIsolation() throws Exception {
         String key=UUID.randomUUID().toString();var pool=Executors.newFixedThreadPool(6);var start=new CountDownLatch(1);

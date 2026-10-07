@@ -60,9 +60,11 @@ run_sql_file docs/sql/migrations/V008__payment_foundation.sql
 
 run_sql_file docs/sql/migrations/V009__order_fulfillment_states.sql
 run_sql_file docs/sql/migrations/V009__order_fulfillment_states.sql
+run_sql_file docs/sql/migrations/V010__pickup_inspection.sql
+run_sql_file docs/sql/migrations/V010__pickup_inspection.sql
 
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
-[[ "$tables" == 49 ]] || { echo "Expected 49 tables after V009, got $tables" >&2; exit 1; }
+[[ "$tables" == 50 ]] || { echo "Expected 50 tables after V010, got $tables" >&2; exit 1; }
 
 for column in check_in_completed_at owner_confirmed_at assigned_at service_report_ready_at; do
   found=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND table_name = 'order' AND column_name = '$column'")

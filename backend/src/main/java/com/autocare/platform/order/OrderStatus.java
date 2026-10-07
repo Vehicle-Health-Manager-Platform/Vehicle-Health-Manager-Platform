@@ -93,6 +93,6 @@ public final class OrderStatus {
     /** 当前状态下商家可请求的动作，按履约先后排序；不含前置条件判定。 */
     public static List<String> actions(String status){
         if(status==null)return List.of();
-        return ACTION_ORDER.stream().filter(action->MOVES.get(action).sources().contains(status)).toList();
+        return ACTION_ORDER.stream().filter(action->!RECEIVE.equals(action)&&MOVES.get(action).sources().contains(status)).toList();
     }
 }

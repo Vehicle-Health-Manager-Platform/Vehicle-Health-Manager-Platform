@@ -37,7 +37,7 @@ public class OrderFulfillment {
     public OrderFulfillment(ReservationStore db,MerchantOrders orders){this.db=db;this.orders=orders;}
 
     /** 执行一次动作。{@code note} 可选，去除首尾空白后不超过 200 字。 */
-    public JsonNode apply(MerchantActor actor,String key,long id,String action,String note){
+    JsonNode apply(MerchantActor actor,String key,long id,String action,String note){
         ServiceCatalog.validateId(id);
         if(!OrderStatus.action(action))throw ReservationInput.bad();
         String text=note==null?null:note.strip();

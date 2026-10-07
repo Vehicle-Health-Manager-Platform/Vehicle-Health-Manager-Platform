@@ -175,7 +175,7 @@ class JdbcOrderFulfillmentTest {
 
     @Test void projectedActionsTrackTheStoredStatus(){
         long id=paid(slot(1));
-        assertEquals(actions(OrderStatus.RECEIVE,OrderStatus.RECEIVED),merchantOrders.detail(shop,id).get("allowed_actions"));
+        assertEquals(List.of(),merchantOrders.detail(shop,id).get("allowed_actions"));
         evidence(id,"check_in_completed_at");fulfillment.apply(shop,key(),id,OrderStatus.RECEIVE,null);
         assertEquals(actions(OrderStatus.START_SERVICE,OrderStatus.IN_SERVICE),merchantOrders.detail(shop,id).get("allowed_actions"));
         var items=(List<?>)merchantOrders.list(shop,OrderStatus.RECEIVED,null,1,20).get("items");
