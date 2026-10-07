@@ -8,6 +8,11 @@
 > D8/D9 = 不自动关闭、由商家或车主显式取消/退款。其余项（D3/D5/D6/D7/D10/D11）采用下方建议默认，
 > 标注为**假设**，可随时按用户意见调整。D1/D2/D4/D8/D9 已不再待定，实现不得偏离。
 >
+> **A2 已实现（2026-10-07）**：§1 的 8 个状态、§2 的矩阵与"前端只能请求动作"、§6 的审计/幂等/
+> 行锁已落在代码里，契约见[订单履约状态机](../api/ORDER_FULFILLMENT.md)。各动作的前置按
+> fail-closed 拒绝（未接入校验的动作也拒绝），因此 §3–§5 的业务内容在 A3–A6 接入前，
+> 订单实际仍走不出 `PAID`——这是刻意的，不是缺陷。
+>
 > **为什么先写规格**：状态迁移、操作权属、超时与可逆性属于业务规则，未定就实现必然返工；
 > 且 Spec 明确要求"不允许前端直接设置状态"，服务端必须是唯一权威。本草案的默认取值均可改。
 
@@ -127,6 +132,9 @@ Spec 原文只给出 `0–7` 状态与阻断规则，未给出偏差/超时规�
 - 需新增迁移（建议 V009）：接车单、损伤标注、状态迁移审计、防护照片、技师报工相关表；
 - 现有 `appointment_slot` 名额计算使用 `status<>'CLOSED'`，新增状态后**必须复核**该条件
   （已接车/施工中的订单不应再占用名额，或应继续占用——**待定 D11**）。
+  **A2 处理**：按 §9 的建议默认实现，即**已接车及之后继续占用名额**，并把口径固化为
+  `status <> 'CLOSED' AND (status <> 'PENDING_PAYMENT' OR expires_at IS NULL OR expires_at > now)`
+  加真库断言。若日后要改为"接车后释放"，只需改这一处 SQL 与对应测试。
 
 ## 8. 实施顺序（对应缺口清点阶段 A）
 
@@ -156,11 +164,21 @@ Spec 原文只给出 `0–7` 状态与阻断规则，未给出偏差/超时规�
 D11 名额占用口径（建议：已接车及之后**继续占用**名额，因为该时段确实被这台车占用了，
 但这点必须在实现 `appointment_slot` 相关查询前二次确认）。
 
-**下一步（阶段 A2）**：状态机 + 商家状态操作接口 + 迁移审计，具体落点：
+**阶段 A2 交付记录（2026-10-07，已完成）**：
 
-1. 新增迁移（建议 V009）：`order_status_transition` 审计表；如需接车单则一并建表（可拆到 A3）。
-2. 后端：状态迁移服务（唯权威、行锁串行化、幂等、同事务审计）；`MerchantOrders.STATUSES`
-   与 `GET /api/order/list` 的 `status` 白名单从 3 个扩到 8 个。
-3. 商家端：本店订单详情加状态操作（接车、开始施工、完工送核销），仅放允许的迁移按钮。
-4. 测试：迁移合法/非法矩阵、越权、并发同键、审计与业务同事务。
-5. 施工前必须复核 `appointment_slot` 名额查询里的 `status<>'CLOSED'`（D11）。
+1. V009 迁移：`order_status_transition` 审计表 + `order.check_in_completed_at`、
+   `owner_confirmed_at`、`assigned_at`、`service_report_ready_at` 四个前置时间列（可重复执行，48→49 表）。
+2. 后端：`OrderStatus` 承载矩阵与动作映射；`OrderFulfillment` 是唯一的状态写入入口，
+   行锁顺序与到期清理一致（商家 → 时段 → 订单），幂等与双审计同事务。
+   `MerchantOrders.STATUSES`、`MerchantOrdersController` 的 `status` 白名单、
+   `ReservationOrders.list` 与 `ReservationController` 的 `/api/order/list` 全部改用同一常量。
+3. 接口：`POST /api/merchant/orders/{id}/actions`，只接受动作名（`RECEIVE`/`START_SERVICE`/
+   `FINISH_SERVICE`/`COMPLETE`），不接受目标状态；投影新增 `allowed_actions`。
+4. 商家端：本店订单详情按 `allowed_actions` 渲染操作按钮，失败原因按业务码给出中文提示。
+5. 测试：矩阵 8×8 穷举、真库合法/非法迁移、四个前置、重复动作、同键重放、越权、会话撤销、
+   并发行锁、同事务审计回滚（含两个触发器场景）、白名单 8 状态；小程序侧锁定取值与文案。
+6. D11 按建议默认固化：已接车及之后继续占用名额（见 §7）。
+
+**下一步（阶段 A3）**：接车检查 F14 —— 五向车身照片、仪表盘里程与档案比对、油量、内饰、
+损伤标注、生成接车单，并在完成时写 `check_in_completed_at`，使 `RECEIVE` 动作真正可用。
+届时接车入口应改为 Spec §8.3 的 `POST /api/check/pickup/submit`，`RECEIVE` 动作从本接口移除。

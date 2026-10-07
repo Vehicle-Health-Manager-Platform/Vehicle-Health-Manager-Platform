@@ -4,6 +4,10 @@
 
 ## 仓库与交付状态
 
+**2026-10-07 最新收口**：PR #26–#32 已合并。A2 订单履约状态机见 [PR #33](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/33)：提交 `c5feab6` 六项 CI 通过，后端 251 项、小程序 114 项全部通过；本机 V009 已补迁移，运行镜像为 `vehicle-auth/backend:order-fulfillment`，仍保留 `0.0.0.0:18080`。H5 点击接车已实际返回 43001，PAID 和成功审计均不变。最终提交检查与合并状态以 PR 为准。[执行记录](A2_FULFILLMENT_EXECUTION.md)。
+
+**下一步 A3**：用户已确认手填里程、7 张照片、一次提交的接车检查设计，书面规格复核后进入编码。车主确认、派工、报工与核销尚未实现；真机、正式支付、真实短信仍未验收。以下各阶段表格保留原始验收口径。
+
 PR #12–#17 已合入 `main`。PR #18 的预检脚本与验收文档整合至 PR #19，随真实微信登录修复和本次文档更新一起交付；合并状态及完整 CI 以 [GitHub PR](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/19) 为准。各阶段原始证据保留在[执行记录](S0_EXECUTION_LOG.md)。
 
 | 范围 | 当前状态 | 证据与边界 |
@@ -20,7 +24,8 @@ PR #12–#17 已合入 `main`。PR #18 的预检脚本与验收文档整合至 P
 | 车主端 AI 管家（DeepSeek） | 真实密钥已配置，本机端到端 19 项通过；真机未验收 | `POST /api/ai/chat` 仅车主可用；传 `vehicle_id` 时校验归属并注入车辆与最近 5 条档案上下文（车牌/VIN 不进入上下文，备注单条截断 200 字），未传则通用回答。上游直连 HTTP 200、返回 `deepseek-flash`；平台链路 19 项通过，其中选车后回答**实际复述了档案中的车型与里程**，追问车牌未泄露。未配置或上游失败返回 `503`+`50301`、限流 `429`+`42900`。后端 18 项、小程序 94 项通过。流式输出、方案/商家联动与真机待验收。[契约](../api/AI_CHAT.md)、[清单](../operations/AI_CHAT_RUNBOOK.md)。 |
 | 车主与技师微信身份 | 开发者工具真实微信 code 与本机后端联调通过 | 车主登录、技师员工码绑定/重复登录、刷新轮换和退出撤销已验证；[PR #19 首次 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37317893587) 六项通过。手机号授权、员工禁用/回收后的真实场景和真机网络仍待验收。 |
 | 商家身份 | 核心自动化验证通过，真实短信阻塞 | 密码加一次性短信码、限流、会话生命周期已实现；生产 `MerchantSmsSender` 未接入，验证码请求返回 503。 |
-| 数据库 | CI 与本机新建测试卷完成 V001–V008 | V005 增加 `vehicle_archive_file`，V006 增加不可变商家报价版本，V007 增加预约开放与订单快照/关闭字段及索引，V008补支付字段及事件/异常表（48表）。本机已核对身份表存在；已有外部数据库仍须逐项核对迁移，不能用新卷初始化代替。 |
+| 订单履约状态机（A2） | 后端与本机商家端已实现，离线测试通过；真机与真实业务证据未验收 | 8 个订单状态收敛为服务端唯一权威；`POST /api/merchant/orders/{id}/actions` 只接受动作名（`RECEIVE`/`START_SERVICE`/`FINISH_SERVICE`/`COMPLETE`），前端不能提交目标状态；矩阵判定、前置校验、行锁、24 小时幂等与**同事务双审计**（`order_status_transition` + `audit_log`）统一在 `OrderFulfillment`。前置按 **fail-closed**：接车单（A3）、车主确认与派工（A4/A5）、报工（A6）、核销（A4）未接入时返回 `43001`/`43003`/`43004`/`43005`/`43006`，**不放行也不伪造状态**，因此订单目前仍走不出 `PAID`。`/api/order/list` 与 `/api/merchant/orders` 的 `status` 白名单由 3 个扩到 8 个；商家端订单详情按投影里的 `allowed_actions` 渲染按钮并给出中文失败原因。D11 按建议默认固化：已接车及之后继续占用预约名额。[契约](../api/ORDER_FULFILLMENT.md)、[规格](../superpowers/specs/2026-10-07-fulfillment-state-design.md)。 |
+| 数据库 | CI 与本机新建测试卷完成 V001–V009 | V005 增加 `vehicle_archive_file`，V006 增加不可变商家报价版本，V007 增加预约开放与订单快照/关闭字段及索引，V008 补支付字段及事件/异常表（48 表），V009 增加履约时间列与 `order_status_transition` 审计表（49 表）。本机已核对身份表存在；已有外部数据库仍须逐项核对迁移，不能用新卷初始化代替。 |
 | 幂等与成功审计 | 已实现并接入车辆、档案、上传、报价、时段与订单写操作 | 24 小时幂等、权限复核及业务/响应/审计同事务提交；完整安全审计、监控与 M0 验收尚未完成。[说明](../api/WRITE_INTEGRITY.md)。 |
 | 私有图片 | PR #9/#10/#12/#13 已合并，本机真实私有接口与 H5 图片通过；正式部署待验收 | 文件校验、MinIO、ClamAV、本人访问与短时签名、同键重试已实现；本机官方 daily 28144 验签/新鲜度、真实 CLEAN 上传和签名到期已通过，H5 实际图片交互通过 11 项。正式 HTTPS/微信相机仍待验收。**2026-10-07 修复**：统一传输层改造时 `chooseImage`/`uploadFile`/`previewImage` 未随 `runtime` 一并透传，图片链路整体不可用，且上传失败被误报成「无法连接图片服务」；现已在传输层补齐透传、取图升级为 `chooseMedia`（旧基础库自动回退、开发者工具如实降级为相册），并新增真实装配的契约测试。[复现](../testing/LOCAL_PRIVATE_IMAGE_ACCEPTANCE.md)。[上传说明](../api/UPLOAD_HTTP.md)。 |
 | 本人车辆与手动录入 | PR #14 已合并 | 四级车型选择、分页、脱敏、本人隔离和幂等创建已实现；生产车型来源待落实。[契约](../api/VEHICLE_MANUAL.md)。 |

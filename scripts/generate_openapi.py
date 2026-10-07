@@ -301,6 +301,8 @@ def main():
         document["paths"].setdefault(path, {})[method] = item
     identifier = project_fields["id"]
     timestamp = {"type": "string", "format": "date-time"}
+    fulfillment_states = ["PENDING_PAYMENT", "PAID", "RECEIVED", "IN_SERVICE", "PENDING_VERIFY", "COMPLETED", "CLOSED", "DISPUTED"]
+    fulfillment_actions = ["RECEIVE", "START_SERVICE", "FINISH_SERVICE", "COMPLETE"]
     slot_fields = {"slot_id": identifier, "standard_project_id": identifier, "starts_at": timestamp, "ends_at": timestamp,
         "capacity": {"type": "integer", "minimum": 1, "maximum": 100}, "capacity_left": {"type": "integer", "minimum": 0},
         "open": {"type": "boolean"}, "project_name": {"type": "string"}}
@@ -344,7 +346,7 @@ def main():
         if path == "/api/merchant/slots" and method == "get": item["parameters"].append({"name": "date", "in": "query", "schema": {"type": "string", "format": "date"}})
         if path == "/api/order/slots":
             item["parameters"] += [{"name": k, "in": "query", "required": True, "schema": v} for k,v in {"merchant_id": identifier, "project_id": identifier, "date": {"type": "string", "format": "date"}}.items()]
-        if path == "/api/order/list": item["parameters"].append({"name": "status", "in": "query", "schema": {"type": "string", "enum": ["PENDING_PAYMENT", "PAID", "CLOSED"]}})
+        if path == "/api/order/list": item["parameters"].append({"name": "status", "in": "query", "schema": {"type": "string", "enum": fulfillment_states}})
         item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "properties": {"data": {"$ref": f"#/components/schemas/{result}"}}}]}
         document["paths"].setdefault(path, {})[method] = item
     payment_fields = {"payment_id": identifier, "order_id": identifier, "payment_no": {"type": ["string", "null"]},
@@ -391,6 +393,9 @@ def main():
         merchant_order_fields[key] = {"anyOf": [{"type": "object", "additionalProperties": False, "properties": allowed}, {"type": "null"}]}
     merchant_order_fields["payment_summary"] = schemas["OwnerOrder"]["properties"]["payment_summary"]
     merchant_order_fields["has_payment_exception"] = {"type": "boolean", "description": "任意支付尝试存在待核对异常；独立于选中的支付摘要"}
+    merchant_order_fields["allowed_actions"] = {"type": "array", "description": "当前状态下商家可请求的动作；仅由状态矩阵决定，不含前置条件判定",
+        "items": {"type": "object", "additionalProperties": False, "required": ["action", "to_status"],
+                  "properties": {"action": {"type": "string", "enum": fulfillment_actions}, "to_status": {"type": "string", "enum": fulfillment_states}}}}
     schemas["MerchantOrder"] = {"type": "object", "additionalProperties": False,
         "required": list(merchant_order_fields), "properties": merchant_order_fields}
     schemas["MerchantOrderDetail"] = {"type": "object", "additionalProperties": False,
@@ -411,12 +416,32 @@ def main():
             item["parameters"][0]["schema"] = identifier
         else:
             item["parameters"] += pagination + [
-                {"name": "status", "in": "query", "schema": {"type": "string", "enum": ["PENDING_PAYMENT", "PAID", "CLOSED"]}},
+                {"name": "status", "in": "query", "schema": {"type": "string", "enum": fulfillment_states}},
                 {"name": "date", "in": "query", "description": "按北京时间预约日期，包含全天，严格YYYY-MM-DD", "schema": {"type": "string", "format": "date"}}]
         item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [
             {"$ref": "#/components/schemas/ApiResponse"},
             {"type": "object", "properties": {"data": {"$ref": f"#/components/schemas/{result}"}}}]}
         document["paths"][path] = {"get": item}
+    schemas["MerchantOrderAction"] = {"type": "object", "additionalProperties": False,
+        "required": list(merchant_order_fields) + ["price_snapshot", "action", "from_status", "changed"],
+        "properties": {**merchant_order_fields, "price_snapshot": schemas["MerchantOrderDetail"]["properties"]["price_snapshot"],
+            "action": {"type": "string", "enum": fulfillment_actions}, "from_status": {"type": "string", "enum": fulfillment_states},
+            "changed": {"type": "boolean", "description": "false 表示该动作此前已生效，本次为幂等重放，不产生新的状态迁移审计"}}}
+    action = operation("post", "/api/merchant/orders/{id}/actions", "本店订单履约状态操作", "F08,F14,F16,F18")
+    action["x-roles"] = "MERCHANT"
+    action["x-implementation-status"] = "order-fulfillment-state-machine-implemented"
+    action["description"] = "前端只能请求动作，不能提交目标状态；矩阵、前置、行锁与幂等审计均由服务端判定。接车证据(A3)、车主确认与派工(A4/A5)、报工(A6)、核销(A4)未接入时按 fail-closed 返回 43001/43003/43004/43005/43006。详见 ORDER_FULFILLMENT.md。"
+    action["parameters"][0]["schema"] = identifier
+    action["requestBody"]["content"]["application/json"]["schema"] = {"type": "object", "additionalProperties": False,
+        "required": ["action"], "properties": {"action": {"type": "string", "enum": fulfillment_actions},
+            "note": {"type": "string", "minLength": 1, "maxLength": 200, "description": "可选，去除首尾空白后 1–200 字"}}}
+    action["responses"]["404"] = {"description": "订单不存在或不属于本店，code=40400"}
+    action["responses"]["409"] = {"description": "40905当前状态不允许该动作；43001接车检查未完成；43003车主未确认接车；43004尚未派工；43005报工未完成；43006该动作的校验尚未接入"}
+    action["responses"]["503"] = {"description": "数据库或事务暂不可用，code=50300"}
+    action["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [
+        {"$ref": "#/components/schemas/ApiResponse"},
+        {"type": "object", "properties": {"data": {"$ref": "#/components/schemas/MerchantOrderAction"}}}]}
+    document["paths"]["/api/merchant/orders/{id}/actions"] = {"post": action}
     count = sum(len(value) for value in document["paths"].values())
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

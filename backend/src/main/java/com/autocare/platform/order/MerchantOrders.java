@@ -10,7 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 /** Merchant-facing projection. Never serialize an owner order row directly. */
 public class MerchantOrders {
-    private static final Set<String> STATUSES=Set.of("PENDING_PAYMENT","PAID","CLOSED");
+    private static final Set<String> STATUSES=OrderStatus.ALL;
     private static final Instant MYSQL_FIRST=Instant.parse("1000-01-01T00:00:00Z");
     private static final Instant MYSQL_LAST=Instant.parse("9999-12-31T23:59:59Z");
     private static final Map<String,Set<String>> SNAPSHOT_FIELDS=Map.of(
@@ -64,6 +64,10 @@ public class MerchantOrders {
         String marks=String.join(",",Collections.nCopies(ids.size(),"?"));
         return new HashSet<>(db.jdbc.queryForList("SELECT DISTINCT order_id FROM payment_exception WHERE order_id IN ("+marks+") AND is_deleted=0",Long.class,ids.toArray()));
     }
+    /** Merchant projection of one order row; the only shape an order may leave this class in. */
+    Map<String,Object> projection(Map<String,Object> row,boolean detail){
+        return view(row,detail,!exceptions(List.of(ReservationStore.number(row,"id"))).isEmpty());
+    }
     private Map<String,Object> view(Map<String,Object> row,boolean detail,boolean hasException){
         var base=db.orderRow(row,false);
         var result=new LinkedHashMap<String,Object>();
@@ -71,6 +75,13 @@ public class MerchantOrders {
         for(String key:List.of("project_snapshot","merchant_snapshot","appointment_snapshot"))result.put(key,snapshot((JsonNode)base.get(key),key));
         if(detail)result.put("price_snapshot",snapshot(db.parse(row.get("price_snapshot")),"price_snapshot"));
         result.put("has_payment_exception",hasException);
+        result.put("allowed_actions",actions(String.valueOf(base.get("status"))));
+        return result;
+    }
+    /** Action names this shop may request next. Precondition readiness is not part of the matrix. */
+    private static List<Map<String,Object>> actions(String status){
+        var result=new ArrayList<Map<String,Object>>();
+        for(String action:OrderStatus.actions(status))result.add(Map.of("action",action,"to_status",OrderStatus.target(action)));
         return result;
     }
     private static Map<String,Object> snapshot(JsonNode source,String key){

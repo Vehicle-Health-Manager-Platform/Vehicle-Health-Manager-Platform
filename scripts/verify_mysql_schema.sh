@@ -58,8 +58,18 @@ run_sql_file docs/sql/migrations/V007__reservation_orders.sql
 run_sql_file docs/sql/migrations/V008__payment_foundation.sql
 run_sql_file docs/sql/migrations/V008__payment_foundation.sql
 
+run_sql_file docs/sql/migrations/V009__order_fulfillment_states.sql
+run_sql_file docs/sql/migrations/V009__order_fulfillment_states.sql
+
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
-[[ "$tables" == 48 ]] || { echo "Expected 48 tables after V008, got $tables" >&2; exit 1; }
+[[ "$tables" == 49 ]] || { echo "Expected 49 tables after V009, got $tables" >&2; exit 1; }
+
+for column in check_in_completed_at owner_confirmed_at assigned_at service_report_ready_at; do
+  found=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND table_name = 'order' AND column_name = '$column'")
+  [[ "$found" == 1 ]] || { echo "Repeated V009 left order.$column missing" >&2; exit 1; }
+done
+transitions=$(query "SELECT COUNT(DISTINCT column_name) FROM information_schema.columns WHERE table_schema = '$database' AND table_name = 'order_status_transition' AND column_name IN ('order_id','from_status','to_status','action','actor_type','actor_id','occurred_at')")
+[[ "$transitions" == 7 ]] || { echo "order_status_transition is missing audit columns, got $transitions" >&2; exit 1; }
 versions=$(query "SELECT COUNT(*) FROM merchant_project_version WHERE merchant_project_id=900001 AND version=1")
 [[ "$versions" == 1 ]] || { echo "Repeated V006 did not preserve one initial quote version" >&2; exit 1; }
 
@@ -88,4 +98,4 @@ for table in brand series model standard_project merchant merchant_project; do
   [[ "$rows" == 1 ]] || { echo "Expected one synthetic row in $table, got $rows" >&2; exit 1; }
 done
 
-echo "MySQL 8.0 schema: 48 tables after V008; repeat migration and synthetic seed passed"
+echo "MySQL 8.0 schema: 49 tables after V009; repeat migration and synthetic seed passed"

@@ -26,7 +26,13 @@ public class WriteIntegrityService {
         }
     }
     public record Change(String action, String resourceType, long resourceId,
-                         Map<String, Object> before, Map<String, Object> after, Map<String, Object> data) {}
+                         Map<String, Object> before, Map<String, Object> after, Map<String, Object> data,
+                         boolean auditRequired) {
+        public Change(String action, String resourceType, long resourceId,
+                      Map<String, Object> before, Map<String, Object> after, Map<String, Object> data) {
+            this(action, resourceType, resourceId, before, after, data, true);
+        }
+    }
     private record Stored(String hash, String response, boolean live) {}
     private final JdbcTemplate jdbc;
     private final ObjectMapper mapper;
@@ -75,7 +81,10 @@ public class WriteIntegrityService {
                     throw new IllegalStateException("Invalid write audit metadata");
                 }
                 JsonNode response = read(json(ApiResponse.success(change.data())));
-                jdbc.update("INSERT INTO audit_log (actor_type,actor_id,action,resource_type,resource_id,"
+                if (!change.auditRequired() && !java.util.Objects.equals(change.before(), change.after())) {
+                    throw new IllegalStateException("Unaudited change must preserve resource state");
+                }
+                if (change.auditRequired()) jdbc.update("INSERT INTO audit_log (actor_type,actor_id,action,resource_type,resource_id,"
                     + "before_state,after_state,request_id) VALUES (?,?,?,?,?,?,?,?)",
                     actor.type(), actor.id(), change.action(), change.resourceType(), change.resourceId(),
                     json(change.before()), json(change.after()), response.path("request_id").asText());

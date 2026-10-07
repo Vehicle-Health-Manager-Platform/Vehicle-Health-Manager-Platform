@@ -80,6 +80,33 @@ class JdbcWriteIntegrityTest {
         catch (Exception error) { throw new AssertionError(error); }
     }
 
+    @Test void explicitNoOpCachesResponseWithoutAnotherSuccessAudit() {
+        var current = Map.<String, Object>of("current_mileage", 10);
+        var actor = new WriteIntegrityService.Actor("user", 1001);
+        var body = mapper.valueToTree(current);
+        JsonNode response = integrity.execute(actor, "POST", "/api/test/no-op", key, body,
+            () -> {}, () -> new WriteIntegrityService.Change("TEST_REPLAY", "vehicle", 1001,
+                current, current, Map.of("changed", false), false));
+        assertEquals(response, integrity.execute(actor, "POST", "/api/test/no-op", key, body,
+            () -> {}, () -> { throw new AssertionError("Must replay cached response"); }));
+        assertEquals(10, mileage());
+        assertEquals(1, count("idempotency_record"));
+        assertEquals(0, count("audit_log"));
+    }
+
+    @Test void changedStateCannotSuppressAuditAndRollsBackWrite() {
+        assertEquals(503, assertThrows(ResponseStatusException.class, () -> integrity.execute(
+            new WriteIntegrityService.Actor("user", 1001), "POST", "/api/test/no-op", key,
+            mapper.valueToTree(Map.of("current_mileage", 20)), () -> {}, () -> {
+                jdbc.update("UPDATE vehicle SET current_mileage=20 WHERE id=1001");
+                return new WriteIntegrityService.Change("TEST_WRITE", "vehicle", 1001,
+                    Map.of("current_mileage", 10), Map.of("current_mileage", 20), Map.of(), false);
+            })).getStatusCode().value());
+        assertEquals(10, mileage());
+        assertEquals(0, count("idempotency_record"));
+        assertEquals(0, count("audit_log"));
+    }
+
     @Test void changedPayloadWithSameKeyCannotWrite() {
         vehicles.update(1001, 1001, key, 20);
         assertEquals(400, assertThrows(ResponseStatusException.class,
