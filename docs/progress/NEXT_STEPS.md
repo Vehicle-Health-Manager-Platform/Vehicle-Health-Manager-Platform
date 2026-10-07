@@ -4,16 +4,24 @@
 
 ## 下一步优先级（2026-10-07）
 
-### P0 — 已执行：当前工作已收口成 3 个堆叠 PR（2026-10-07 完成）
+### P0 — 已执行：当前工作已收口成 5 个堆叠 PR（2026-10-07 完成）
 
 原 `codex/s2-merchant-orders` 上累积的 49 个未提交文件（23 改 + 28 新增）横跨三个互不相关的功能，已按主题拆成
-3 支**堆叠**分支并建 PR。按 #27 → #28 → #29 顺序合并即可，无需解冲突：
+3 支**堆叠**分支并建 PR；随后真机准备过程中发现图片链路与真机网络两处缺陷，各补一支，共 5 支。
+按 #27 → #28 → #29 → #30 → #31 顺序合并即可，无需解冲突：
 
 | PR | 分支 → base | 范围 | 证据 |
 | --- | --- | --- | --- |
 | [#27](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/27) | `codex/s3-cloudrun-login` → `main` | 统一传输层 + 微信云托管真实登录（+ 仓库根目录配置清理） | 后端 14 项、小程序 86 项、CI 六项通过 |
-| [#28](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/28) | `codex/s3-lan-helper` → #27 | 测试号真机登录的局域网通道与构建助手 | 脚本 15 项、CI 六项通过 |
+| [#28](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/28) | `codex/s3-lan-helper` → #27 | 测试号真机登录的局域网通道与构建助手 | 脚本 21 项、CI 六项通过 |
 | [#29](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/29) | `codex/s3-ai-chat` → #28 | 车主端 AI 管家（DeepSeek）+ 汇总文档收口 | 小程序 94 项、AI 端到端 19 项、CI 六项通过 |
+| [#30](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/30) | `codex/s3-real-camera` → #29 | **修复图片链路**：传输层漏透传 `chooseImage`/`uploadFile`/`previewImage`，拍照整条链路不可用 | 小程序 105 项、双端构建通过、CI 六项通过 |
+| [#31](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/31) | `codex/s3-device-network-diagnostics` → #30 | **修复真机连不上**：产物被切回回环地址；并把域名校验与网络失败拆成可区分的错误分类 | 小程序 106 项、脚本 21 项、CI 六项通过 |
+
+**#30 与 #31 的性质与前 3 支不同**：它们不是新功能，而是准备真机验收时暴露出的既有缺陷。
+#30 的缺陷自"统一传输层改造"（#27）起就存在——拍照、上传、预览三条全断，且失败被误报成网络问题。#31
+则暴露出构建助手结尾那条"用完执行 `--restore`"的建议会主动切断真机路径，已删除该建议并修正文档。
+两支合起来意味着：**真机相机与真机登录此前都从未真正跑通过**，不是"待验收"而是"实际不可用"。
 
 **为什么必须堆叠**：`apps/miniapp/src/services/ai-chat.js` 依赖 #27 引入的 `api-config.js` / `api-runtime.js`，
 AI 分支不能直接从 `main` 起。索引文档按 PR 顺序分次追加链接、汇总文档整体放进最后一支，
@@ -24,18 +32,29 @@ AI 分支不能直接从 `main` 起。索引文档按 PR 顺序分次追加链�
 `docs/api/README.md` 补上 PR #26 遗漏的商家本店订单索引行。拆分前后内容逐字节一致，唯一差异是新增的
 `.gitignore` 条目。
 
-### P1 — 真机验收（电脑侧已就绪，只剩手机侧 L0–L8）
+### P1 — 真机验收（电脑侧已就绪，只剩手机侧；一次可验四条链路）
 
 2026-10-07 电脑侧准备完毕：容器 `vehicle-auth-local-backend`（镜像 `vehicle-auth/backend:ai-chat`）发布在
-`0.0.0.0:18080`；局域网地址 `http://10.66.1.251:18080` 健康检查 200/`UP`；`mp-weixin` 产物已按该地址重建；
-AI 链路在运行容器上重跑 19 项全部通过。**手机侧尚未执行，未执行前保持真机未验收。**
+`0.0.0.0:18080`；局域网地址 `http://10.66.1.251:18080` 健康检查 200/`UP`；`mp-weixin` 产物已按该地址重建，
+并确认含相机修复与新的错误分类；AI 链路在运行容器上重跑 19 项全部通过。
+**手机侧尚未执行，未执行前保持真机未验收。**
 
-测试号无需域名、证书、备案或云托管即可在真机完成真实登录。一次操作可同时验证登录、网络与 AI 三条链路：
+测试号无需域名、证书、备案或云托管即可在真机完成真实登录。四条链路共用同一个前置条件
+（手机能访问电脑的后端地址），因此**一次真机会话应当全部走完**，不必分多轮：
 
-1. 按[真机登录清单](../operations/LAN_DEVICE_LOGIN_RUNBOOK.md)执行 L0–L8（手机可先用电脑移动热点，校园网可能有客户端隔离）；
-2. 真机登录后进入 AI Tab，完成一次提问（对应 [AI 清单](../operations/AI_CHAT_RUNBOOK.md) 的 A7/A8）；
-3. 记录设备、版本、HTTP/业务码与脱敏截图；
-4. 收尾执行 `node scripts/miniapp_lan_helper.cjs --restore` 并把容器改回回环发布。
+1. **网络**：手机浏览器打开 `http://<电脑局域网IP>:18080/actuator/health` 返回 `UP`。
+   **不通过就别继续**，先解决网络（校园网常有客户端隔离，改用电脑移动热点）。
+2. **登录**：按[真机登录清单](../operations/LAN_DEVICE_LOGIN_RUNBOOK.md)执行 L0–L8。
+   若报「无法连接服务」，看 `error.detail` 区分域名校验拦截与真实不可达。
+3. **AI**：进入 AI Tab 完成一次提问，并追问一次车牌（对应 [AI 清单](../operations/AI_CHAT_RUNBOOK.md) A7/A8）。
+   车牌答不出来是**正确**结果，上下文已脱敏。
+4. **相机**：档案页 → 选车 → 「拍照录入」→「拍照并上传」，按
+   [真机相机拍照验收](../testing/REAL_CAMERA_ACCEPTANCE.md) R1–R10 执行。R4 看到后置相机即证明真实拍照可用。
+5. 记录设备、微信与基础库版本、HTTP/业务码与脱敏截图到各清单的记录栏。
+
+**收尾**：默认**不要**执行 `--restore`，也不要改回回环发布——局域网地址对开发者工具与真机同样有效，
+来回切换只会让另一边失效（2026-10-07 的真机连不上即源于此）。仅在当前网络已无可用局域网地址时，
+才用 `--restore` 作为应急出口。
 
 ### P2 — 业务闭环：接车验码与履约状态
 
