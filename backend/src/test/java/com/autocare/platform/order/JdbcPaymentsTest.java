@@ -72,13 +72,13 @@ class JdbcPaymentsTest {
         jdbc.update("UPDATE `order` SET project_snapshot=JSON_SET(project_snapshot,'$.user_id',999,'$.vin','SECRET'), merchant_snapshot=JSON_SET(merchant_snapshot,'$.phone','SECRET'), price_snapshot=JSON_SET(price_snapshot,'$.customer','SECRET') WHERE id=?",first);
         int audits=count("audit_log");
         var list=reader.list(shop,null,null,1,20);
-        assertEquals(2,list.get("total"));assertEquals(2,((List<?>)list.get("items")).size());
+        assertEquals(2L,list.get("total"));assertEquals(2,((List<?>)list.get("items")).size());
         var detail=reader.detail(shop,first);
         assertFalse(detail.toString().contains("SECRET"));assertFalse(detail.containsKey("vehicle_id"));assertFalse(detail.containsKey("user_id"));
         assertEquals(audits,count("audit_log"));
         jdbc.update("UPDATE merchant_project SET is_deleted=1 WHERE id=1");
         assertEquals(first,reader.detail(shop,first).get("order_id"));
-        assertEquals(2,reader.list(shop,null,null,1,20).get("total"));
+        assertEquals(2L,reader.list(shop,null,null,1,20).get("total"));
     }
     @Test void merchantOrderExceptionCoversOldPaymentsAndFilters(){
         long first=order(a,slot(1)),old=pay(first);send(old,"FAILED");long current=pay(first);send(old,"SUCCEEDED");send(current,"SUCCEEDED");
@@ -86,8 +86,8 @@ class JdbcPaymentsTest {
         var detail=reader.detail(shop,first);
         assertEquals(true,detail.get("has_payment_exception"));
         assertEquals(false,((Map<?,?>)detail.get("payment_summary")).get("requires_review"));
-        assertEquals(1,reader.list(shop,"PAID",null,1,20).get("total"));
-        assertEquals(0,reader.list(shop,"CLOSED",null,1,20).get("total"));
+        assertEquals(1L,reader.list(shop,"PAID",null,1,20).get("total"));
+        assertEquals(0L,reader.list(shop,"CLOSED",null,1,20).get("total"));
         assertEquals(400,assertThrows(ResponseStatusException.class,()->reader.list(shop,"INVALID",null,1,20)).getStatusCode().value());
         assertEquals(400,assertThrows(ResponseStatusException.class,()->reader.list(shop,null,"2026-02-30",1,20)).getStatusCode().value());
         jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id=?",shop.session());
@@ -100,19 +100,19 @@ class JdbcPaymentsTest {
         var other=new MerchantActor(2,2,UUID.randomUUID().toString(),Instant.now().plusSeconds(3600));
         session(other.session(),"staff_account",2,"MERCHANT","merchant-account",2);
         var reader=new MerchantOrders(db);
-        assertEquals(0,reader.list(other,null,null,1,20).get("total"));
+        assertEquals(0L,reader.list(other,null,null,1,20).get("total"));
         assertEquals(404,assertThrows(ResponseStatusException.class,()->reader.detail(other,first)).getStatusCode().value());
     }
     @Test void merchantOrderDateUsesBeijingDayAndPaginates(){
         long first=order(a,slot(2)),second=order(b,jdbc.queryForObject("SELECT id FROM appointment_slot",Long.class));
         String day=clock.value.atZone(ReservationInput.ZONE).toLocalDate().plusDays(1).toString();
         var reader=new MerchantOrders(db);
-        assertEquals(2,reader.list(shop,null,day,1,1).get("total"));
+        assertEquals(2L,reader.list(shop,null,day,1,1).get("total"));
         assertEquals(1,((List<?>)reader.list(shop,null,day,2,1).get("items")).size());
-        assertEquals(0,reader.list(shop,null,clock.value.atZone(ReservationInput.ZONE).toLocalDate().toString(),1,20).get("total"));
+        assertEquals(0L,reader.list(shop,null,clock.value.atZone(ReservationInput.ZONE).toLocalDate().toString(),1,20).get("total"));
         jdbc.update("UPDATE `order` SET appointment_at=? WHERE id=?",java.sql.Timestamp.from(Instant.parse("2026-10-07T15:59:59Z")),first);
         jdbc.update("UPDATE `order` SET appointment_at=? WHERE id=?",java.sql.Timestamp.from(Instant.parse("2026-10-07T16:00:00Z")),second);
-        assertEquals(1,reader.list(shop,null,"2026-10-07",1,20).get("total"));
-        assertEquals(1,reader.list(shop,null,"2026-10-08",1,20).get("total"));
+        assertEquals(1L,reader.list(shop,null,"2026-10-07",1,20).get("total"));
+        assertEquals(1L,reader.list(shop,null,"2026-10-08",1,20).get("total"));
     }
 }
