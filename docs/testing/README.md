@@ -14,3 +14,8 @@
 2026-10-06：[本地车辆与无图档案](LOCAL_BUSINESS_ACCEPTANCE.md) 22 项真实检查通过；[私有图片联调](LOCAL_PRIVATE_IMAGE_ACCEPTANCE.md) 26 项后端与 11 项 H5 交互通过，使用真实服务/官方库及明确的合成 PNG。物理相机、手机可信 HTTPS、第二个真实身份、手机号与短信仍独立验收。
 
 - [本机标准服务项目验收](LOCAL_SERVICE_CATALOG_ACCEPTANCE.md)：合成项目准备、真实微信会话/H5 页面和接口检查。
+
+2026-10-07：车主端 AI 管家在本机完成真实链路验证——上游直连 HTTP 200（`deepseek-flash`），
+平台端到端 **19 项全部通过**（[AI 管家接入清单](../operations/AI_CHAT_RUNBOOK.md) 第 6 节）。
+复现脚本 `scripts/verify_ai_chat_local.py`，只用在本机、用 `JWT_SECRET` 自签令牌，**不是可用的鉴权途径**。
+真机提问与上游限流场景仍未验收。

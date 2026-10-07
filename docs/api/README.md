@@ -19,4 +19,8 @@ PR #14 实现[本人车辆列表、有效车型查询与手动添加](VEHICLE_MA
 - [商家报价](MERCHANT_QUOTES.md)：本店维护与不可变版本。
 - [预约与本人订单](RESERVATION_ORDERS.md)：时段、容量、创建/取消/到期。
 - [支付基础](PAYMENT_FOUNDATION.md)：默认关闭的隔离测试渠道、通知验签/去重与付款异常；正式微信和退款未接入。
+- [车主端 AI 管家](AI_CHAT.md)：`POST /api/ai/chat` 对话、本人车辆与档案上下文、降级与隐私边界。
 - [商家本店订单](MERCHANT_ORDERS.md)：本店分页/详情、状态与预约日期筛选、下单快照与支付摘要。
+
+`POST /api/ai/chat` 已实现并接入小程序 AI Tab，但**真实 DeepSeek 上游调用与真机尚未验收**，
+降级路径与验收项见 [AI 管家接入清单](../operations/AI_CHAT_RUNBOOK.md)。该路径尚未写入 `openapi.json` 草案。
