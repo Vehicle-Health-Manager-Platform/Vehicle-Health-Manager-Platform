@@ -55,7 +55,13 @@ class JdbcOrderFulfillmentTest {
     long paid(long slot){long id=order(a,slot);jdbc.update("UPDATE `order` SET status='PAID' WHERE id=?",id);return id;}
     void evidence(long id,String column){jdbc.update("UPDATE `order` SET `"+column+"`=UTC_TIMESTAMP() WHERE id=?",id);}
     String status(long id){return jdbc.queryForObject("SELECT status FROM `order` WHERE id=?",String.class,id);}
-    int count(String table){return jdbc.queryForObject("SELECT COUNT(*) FROM `"+table+"`",Integer.class);}
+    int count(String table){
+        // Creation and slot publication have their own audit/idempotency rows.
+        // Assert only the fulfillment operation being exercised here.
+        String scope=table.equals("audit_log")?" WHERE action IN ('ORDER_CHECK_IN','ORDER_SERVICE_START','ORDER_SERVICE_FINISH','ORDER_COMPLETE','ORDER_ACTION_REPLAY')"
+            :table.equals("idempotency_record")?" WHERE request_path LIKE '/api/merchant/orders/%/actions'":"";
+        return jdbc.queryForObject("SELECT COUNT(*) FROM `"+table+"`"+scope,Integer.class);
+    }
     static String data(JsonNode response,String field){return response.path("data").path(field).asText();}
     static int codeOf(Executable action){return assertThrows(FulfillmentConflict.class,action).code;}
     static int httpStatus(Executable action){return assertThrows(ResponseStatusException.class,action).getStatusCode().value();}

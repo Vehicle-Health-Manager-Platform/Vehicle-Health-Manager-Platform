@@ -17,7 +17,7 @@ const flow = createReservationReadFlow({ state, token, request: actor => merchan
 const apply = createReservationWriteFlow({
   state: write, token, newKey: imageRequestKey,
   body: () => ({ order_id: acting.orderId, action: acting.action }),
-  request: (actor, body, key) => merchantOrdersApi.act(actor, body.order_id, body.action, '', key),
+  request: (actor, body, key) => merchantOrdersApi.act(actor, body.order_id, body.action, undefined, key),
   onConflict: () => flow.load(),
 })
 function login() { clearMerchantSession(); uni.navigateTo({ url: '/pages/merchant/index' }) }

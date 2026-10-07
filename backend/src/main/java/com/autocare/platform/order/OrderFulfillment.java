@@ -67,7 +67,7 @@ public class OrderFulfillment {
         // current projection with changed=false instead of a conflict.
         if(from.equals(target)){
             var current=orders.projection(row,true);
-            return new Change("ORDER_ACTION_REPLAY","order",id,current,current,result(current,action,from,false));
+            return new Change("ORDER_ACTION_REPLAY","order",id,current,current,result(current,action,from,false),false);
         }
         if(!OrderStatus.can(from,target))throw new FulfillmentConflict(ILLEGAL_TRANSITION,"当前订单状态不支持该操作");
         guard(row,action);
