@@ -12,8 +12,12 @@ const {
   rankLanCandidates,
   upsertEnvLine,
   isUsableCandidate,
+  inspectBackendPublish,
   DEFAULT_PORT,
 } = require('./miniapp_lan_helper.cjs')
+
+// 用假的 docker 输出来测端口发布判定，不依赖本机是否装了 Docker。
+const fakeDocker = (stdout, ok = true) => () => ({ ok, stdout })
 
 test('默认端口为 18080', () => {
   assert.equal(DEFAULT_PORT, '18080')
@@ -86,4 +90,35 @@ test('重复执行结果稳定（幂等）', () => {
   const once = upsertEnvLine('VITE_API_BASE_URL=http://127.0.0.1:18080\n', 'VITE_API_BASE_URL', 'http://10.66.1.251:18080')
   const twice = upsertEnvLine(once, 'VITE_API_BASE_URL', 'http://10.66.1.251:18080')
   assert.equal(twice, once)
+})
+
+test('发布到所有网卡时判定为 lan', () => {
+  const result = inspectBackendPublish('18080', fakeDocker('0.0.0.0:18080->8080/tcp\n'))
+  assert.equal(result.state, 'lan')
+})
+
+test('IPv6 全接口发布同样判定为 lan', () => {
+  const result = inspectBackendPublish('18080', fakeDocker('[::]:18080->8080/tcp\n'))
+  assert.equal(result.state, 'lan')
+})
+
+test('只发布在回环时判定为 loopback 并保留原始端口串', () => {
+  const result = inspectBackendPublish('18080', fakeDocker('127.0.0.1:18080->8080/tcp\n'))
+  assert.equal(result.state, 'loopback')
+  assert.match(result.detail, /127\.0\.0\.1:18080->8080/)
+})
+
+test('容器未运行时判定为 absent', () => {
+  const result = inspectBackendPublish('18080', fakeDocker('\n'))
+  assert.equal(result.state, 'absent')
+})
+
+test('docker 不可用时判定为 unknown 且不抛错', () => {
+  const result = inspectBackendPublish('18080', fakeDocker('', false))
+  assert.equal(result.state, 'unknown')
+})
+
+test('端口映射存在但端口不匹配时判定为 unknown', () => {
+  const result = inspectBackendPublish('18080', fakeDocker('0.0.0.0:9000->9000/tcp\n'))
+  assert.equal(result.state, 'unknown')
 })

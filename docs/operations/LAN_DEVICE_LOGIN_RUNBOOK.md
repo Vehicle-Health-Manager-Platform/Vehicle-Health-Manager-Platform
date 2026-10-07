@@ -22,21 +22,33 @@
 
 | 项 | 变化 |
 | --- | --- |
-| 本机后端容器 | `vehicle-auth-local-backend` 由 `127.0.0.1:18080→8080` 改为 `0.0.0.0:18080→8080`（同一隔离测试库与配置，未改镜像、未改数据卷） |
+| 本机后端容器 | `vehicle-auth-local-backend` 由 `127.0.0.1:18080→8080` 改为 `0.0.0.0:18080→8080`（同一隔离测试库与配置，未改数据卷）；镜像后随 AI 管家切换为 `vehicle-auth/backend:ai-chat` |
 | 小程序构建配置 | `apps/miniapp/.env.local` 的 `VITE_API_BASE_URL` 指向本机局域网地址，并已重新构建 `mp-weixin` 产物 |
-| 回滚容器 | 旧容器改名为 `vehicle-auth-local-backend-before-lan` 保留，未删除 |
+| 回滚容器 | 旧容器改名为 `vehicle-auth-local-backend-before-lan` 保留，未删除；切换 AI 镜像时另保留 `vehicle-auth-local-backend-before-ai-chat` |
 | 构建助手 | 新增 `scripts/miniapp_lan_helper.cjs`，负责探测地址、写配置、构建、还原与可达性检查 |
 
 实测结果：`http://127.0.0.1:18080/actuator/health` 与 `http://<局域网地址>:18080/actuator/health` 均返回 `{"status":"UP"}`。本机可达不等于手机可达，手机侧仍需按下文验收。
+
+2026-10-07 本轮电脑侧准备结果：容器 `vehicle-auth-local-backend`（镜像 `vehicle-auth/backend:ai-chat`）已发布在
+`0.0.0.0:18080`；局域网地址 `http://10.66.1.251:18080` 健康检查返回 200/`UP`；`mp-weixin` 产物已按该地址重建；
+AI 链路在运行容器上重跑 `scripts/verify_ai_chat_local.py` **19 项全部通过**。
+**手机侧 L0–L8 仍未执行，图片链路（MinIO 回环自签）另属独立问题。**
+
+> **镜像标签必须带 AI 管家**：真机验收要顺带验 AI 对话，重建容器时镜像应为 `vehicle-auth/backend:ai-chat`。
+> 若误用 `vehicle-auth/backend:merchant-orders` 等旧标签，`/api/ai/chat` 会直接 404（旧镜像里没有这段代码），
+> 而登录仍能成功，极易被误判成"AI 有问题"。用 `docker inspect <容器> --format '{{.Config.Image}}'` 核对。
 
 ## 一键操作
 
 ```bash
 node scripts/miniapp_lan_helper.cjs                 # 探测推荐地址（不改动任何文件）
 node scripts/miniapp_lan_helper.cjs --check         # 额外验证 http://<地址>:18080/actuator/health
-node scripts/miniapp_lan_helper.cjs --apply --build # 写入 .env.local 并重新构建 mp-weixin 产物
+node scripts/miniapp_lan_helper.cjs --apply --build # 写入 .env.local、重新构建、并验证后端可达性
 node scripts/miniapp_lan_helper.cjs --restore       # 还原为 http://127.0.0.1:18080 并重新构建
 ```
+
+`--apply` 结束时会用「本机能否经局域网地址访问后端」给出后端是否就绪的结论——这比读 Docker 端口映射更可靠
+（Windows 上 Node 直接 spawn `docker` 会 `EBUSY`，读不到端口信息）。它只报告状态，不会改动容器。
 
 脚本只改写 `.env.local` 里的 `VITE_API_BASE_URL`，其余行（例如云托管变量）原样保留；可用 `--ip`、`--port` 覆盖。多网卡时它优先选择物理网卡（WLAN/以太网），把 WSL、Hyper-V、VirtualBox 等虚拟网卡排在后面。
 
@@ -69,13 +81,18 @@ docker run -d --name vehicle-auth-local-backend \
   --network vehicle-auth-local_default \
   -e MYSQL_HOST=vehicle-auth-local-mysql-1 \
   -p 0.0.0.0:18080:8080 \
-  vehicle-auth/backend:merchant-orders
+  vehicle-auth/backend:ai-chat
 
 # 还原为只监听回环
 docker rm -f vehicle-auth-local-backend
 docker rename vehicle-auth-local-backend-before-lan vehicle-auth-local-backend
 docker start vehicle-auth-local-backend
 ```
+
+> 上面两段会占用 `-before-lan` 这个名字，重复执行会因重名失败。当前机器上该名字**已被占用**
+> （还有 `-before-ai-chat`），所以通常**不需要**再跑这两段：`docker ps` 若已显示
+> `0.0.0.0:18080->8080/tcp` 且镜像为 `:ai-chat`，直接做手机侧验收即可。
+> 确需重做时，先把旧容器改名成别的名字（如 `-before-lan-2`）。
 
 ## 怎么让手机和电脑"在同一张网"
 

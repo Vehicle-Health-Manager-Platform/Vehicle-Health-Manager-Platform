@@ -4,23 +4,31 @@
 
 ## 下一步优先级（2026-10-07）
 
-### P0 — 先把当前工作收口成 PR（风险控制，应最先做）
+### P0 — 已执行：当前工作已收口成 3 个堆叠 PR（2026-10-07 完成）
 
-当前分支 `codex/s2-merchant-orders` 上累积 **49 个未提交文件**（22 改 + 27 新增），横跨三个互不相关的功能与配套文档。
-风险有三：分支名与内容不符导致 review/回溯困难；任一功能出问题只能整体回退；与 `main` 的分叉持续扩大。
+原 `codex/s2-merchant-orders` 上累积的 49 个未提交文件（23 改 + 28 新增）横跨三个互不相关的功能，已按主题拆成
+3 支**堆叠**分支并建 PR。按 #27 → #28 → #29 顺序合并即可，无需解冲突：
 
-建议按主题拆成 3 个独立 PR：
-
-| PR | 范围 | 当前证据 | 合并前的注意点 |
+| PR | 分支 → base | 范围 | 证据 |
 | --- | --- | --- | --- |
-| 1 | 微信云托管登录（统一传输层 + `/api/auth/cloud-login`） | 后端 14 项、小程序 86 项、双模式构建通过 | 云托管环境未部署，`WECHAT_CLOUD_RUN_ENABLED` **必须保持默认关闭**，否则身份头可伪造 |
-| 2 | 测试号真机登录通道（`scripts/miniapp_lan_helper.cjs` + 清单） | 回环与局域网健康检查 `UP`，脚本 9 项离线测试通过 | 不包含 `0.0.0.0` 发布这类**环境状态**改动，容器端口绑定由使用者按清单操作 |
-| 3 | 车主端 AI 管家（后端 + 小程序 + 文档） | 上游直连 200、平台端到端 19 项通过 | 确认 `.env.example` 只含占位值，真实密钥不进入任何提交 |
+| [#27](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/27) | `codex/s3-cloudrun-login` → `main` | 统一传输层 + 微信云托管真实登录（+ 仓库根目录配置清理） | 后端 14 项、小程序 86 项、CI 六项通过 |
+| [#28](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/28) | `codex/s3-lan-helper` → #27 | 测试号真机登录的局域网通道与构建助手 | 脚本 15 项、CI 六项通过 |
+| [#29](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/29) | `codex/s3-ai-chat` → #28 | 车主端 AI 管家（DeepSeek）+ 汇总文档收口 | 小程序 94 项、AI 端到端 19 项、CI 六项通过 |
 
-另需一并处理：仓库根目录未跟踪的 `project.config.json` / `project.private.config.json` 会让开发者工具导入错目录
-（README 中"找不到 app.json"即源于此），应删除或在 `.gitignore` 中明确忽略。
+**为什么必须堆叠**：`apps/miniapp/src/services/ai-chat.js` 依赖 #27 引入的 `api-config.js` / `api-runtime.js`，
+AI 分支不能直接从 `main` 起。索引文档按 PR 顺序分次追加链接、汇总文档整体放进最后一支，
+以保证任何单一 PR 上都不会出现指向未合并文件的死链。
 
-### P1 — 真机验收（外部条件已具备，只差动手）
+另需一并处理的两项已完成：仓库根目录未跟踪的 `project.config.json` / `project.private.config.json`
+已加入 `.gitignore`（开发者工具导入错目录时会在仓库根写入它们，README 中"找不到 app.json"即源于此）；
+`docs/api/README.md` 补上 PR #26 遗漏的商家本店订单索引行。拆分前后内容逐字节一致，唯一差异是新增的
+`.gitignore` 条目。
+
+### P1 — 真机验收（电脑侧已就绪，只剩手机侧 L0–L8）
+
+2026-10-07 电脑侧准备完毕：容器 `vehicle-auth-local-backend`（镜像 `vehicle-auth/backend:ai-chat`）发布在
+`0.0.0.0:18080`；局域网地址 `http://10.66.1.251:18080` 健康检查 200/`UP`；`mp-weixin` 产物已按该地址重建；
+AI 链路在运行容器上重跑 19 项全部通过。**手机侧尚未执行，未执行前保持真机未验收。**
 
 测试号无需域名、证书、备案或云托管即可在真机完成真实登录。一次操作可同时验证登录、网络与 AI 三条链路：
 
