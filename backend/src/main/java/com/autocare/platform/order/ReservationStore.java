@@ -23,7 +23,8 @@ public class ReservationStore {
     }
     Instant now(){return clock.instant().truncatedTo(java.time.temporal.ChronoUnit.SECONDS);}
     static Timestamp time(Instant instant){return Timestamp.from(instant);}
-    static String iso(Timestamp stamp){return stamp==null?null:stamp.toInstant().toString();}
+    static Instant instant(Object value){if(value instanceof Timestamp stamp)return stamp.toInstant();if(value instanceof LocalDateTime local)return local.toInstant(ZoneOffset.UTC);throw new IllegalArgumentException("预约时间数据无效");}
+    static String iso(Object stamp){return stamp==null?null:instant(stamp).toString();}
     static ResponseStatusException missing(){return new ResponseStatusException(HttpStatus.NOT_FOUND,"预约资源不存在或不可用");}
     void owner(VehicleOwner owner,boolean lock){
         String tail=lock?" FOR UPDATE":"";
@@ -55,7 +56,7 @@ public class ReservationStore {
     }
     Map<String,Object> slotRow(Map<String,Object> row,Instant now){
         var result=new LinkedHashMap<String,Object>();long id=number(row,"id");
-        result.put("slot_id",id);result.put("standard_project_id",number(row,"project_id"));result.put("starts_at",iso((Timestamp)row.get("starts_at")));result.put("ends_at",iso((Timestamp)row.get("ends_at")));result.put("capacity",number(row,"capacity"));result.put("capacity_left",Math.max(0,number(row,"capacity")-occupied(id,now)));result.put("open",number(row,"is_open")==1);result.put("project_name",row.getOrDefault("project_name",""));return result;
+        result.put("slot_id",id);result.put("standard_project_id",number(row,"project_id"));result.put("starts_at",iso(row.get("starts_at")));result.put("ends_at",iso(row.get("ends_at")));result.put("capacity",number(row,"capacity"));result.put("capacity_left",Math.max(0,number(row,"capacity")-occupied(id,now)));result.put("open",number(row,"is_open")==1);result.put("project_name",row.getOrDefault("project_name",""));return result;
     }
     Map<String,Object> quote(long id,boolean lock){
         var q=one("SELECT merchant_id,project_id FROM merchant_project WHERE id=?",id);
@@ -68,7 +69,7 @@ public class ReservationStore {
     }
     Map<String,Object> quoteResult(Map<String,Object> q){return Map.of("merchant_project_id",number(q,"id"),"quote_version_id",number(q,"version_id"),"version",number(q,"version"),"merchant_id",number(q,"merchant_id"),"standard_project_id",number(q,"project_id"),"merchant_name",q.get("name"),"address",q.get("address"),"project_name",q.get("project_name"),"price",q.get("price").toString());}
     Map<String,Object> orderRow(Map<String,Object> row,boolean detail){
-        var result=new LinkedHashMap<String,Object>();result.put("order_id",number(row,"id"));result.put("order_no",row.get("order_no"));result.put("status",row.get("status"));result.put("amount_due",row.get("pay_amount").toString());result.put("created_at",iso((Timestamp)row.get("created_at")));result.put("expires_at",iso((Timestamp)row.get("expires_at")));result.put("closed_at",iso((Timestamp)row.get("closed_at")));result.put("close_reason",row.get("close_reason"));result.put("project_snapshot",parse(row.get("project_snapshot")));result.put("merchant_snapshot",parse(row.get("merchant_snapshot")));result.put("appointment_snapshot",parse(row.get("appointment_snapshot")));
+        var result=new LinkedHashMap<String,Object>();result.put("order_id",number(row,"id"));result.put("order_no",row.get("order_no"));result.put("status",row.get("status"));result.put("amount_due",row.get("pay_amount").toString());result.put("created_at",iso(row.get("created_at")));result.put("expires_at",iso(row.get("expires_at")));result.put("closed_at",iso(row.get("closed_at")));result.put("close_reason",row.get("close_reason"));result.put("project_snapshot",parse(row.get("project_snapshot")));result.put("merchant_snapshot",parse(row.get("merchant_snapshot")));result.put("appointment_snapshot",parse(row.get("appointment_snapshot")));
         if(detail){result.put("vehicle_id",number(row,"vehicle_id"));result.put("price_snapshot",parse(row.get("price_snapshot")));}return result;
     }
 }

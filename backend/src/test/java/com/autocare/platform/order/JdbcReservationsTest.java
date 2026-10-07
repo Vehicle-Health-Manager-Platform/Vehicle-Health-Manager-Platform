@@ -65,7 +65,7 @@ class JdbcReservationsTest {
     @Test void ownershipVersionAndClosedSlotBoundaries(){long slot=slot(1);assertEquals(404,assertThrows(ResponseStatusException.class,()->orders.create(a,key(),new ReservationInput.Booking(1,1,2,slot))).getStatusCode().value());
         assertEquals(40901,assertThrows(ReservationConflict.class,()->orders.create(a,key(),new ReservationInput.Booking(1,2,1,slot))).code);long id=order(a,slot);assertEquals(404,assertThrows(ResponseStatusException.class,()->orders.detail(b,id)).getStatusCode().value());assertEquals(404,assertThrows(ResponseStatusException.class,()->orders.cancel(b,key(),id)).getStatusCode().value());slots.close(shop,key(),slot);assertEquals(40902,assertThrows(ReservationConflict.class,()->orders.create(b,key(),booking(b,slot))).code);
     }
-    @Test void overlappingSlotRejectedAndAdjacentAllowed(){long id=slot(1);var row=jdbc.queryForMap("SELECT * FROM appointment_slot WHERE id=?",id);Instant start=((java.sql.Timestamp)row.get("starts_at")).toInstant();
+    @Test void overlappingSlotRejectedAndAdjacentAllowed(){long id=slot(1);var row=jdbc.queryForMap("SELECT * FROM appointment_slot WHERE id=?",id);Instant start=ReservationStore.instant(row.get("starts_at"));
         assertEquals(40904,assertThrows(ReservationConflict.class,()->slots.publish(shop,key(),new ReservationInput.Slot(1,start.plusSeconds(60),start.plusSeconds(3600),1))).code);
         slots.close(shop,key(),id);assertThrows(ReservationConflict.class,()->slots.publish(shop,key(),new ReservationInput.Slot(1,start,start.plusSeconds(3600),1)));slots.publish(shop,key(),new ReservationInput.Slot(1,start.plusSeconds(3600),start.plusSeconds(7200),1));
     }
