@@ -17,6 +17,7 @@ const codeValid = computed(() => /^\d{6}$/.test(smsCode.value.trim()))
 
 function openOwnerTabs() { uni.switchTab({ url: '/pages/home/index' }) }
 function openMerchantProjects() { uni.navigateTo({ url: '/pages/merchant/projects' }) }
+function openMerchantOrders() { uni.navigateTo({ url: '/pages/merchant/orders' }) }
 </script>
 
 <template>
@@ -52,6 +53,7 @@ function openMerchantProjects() { uni.navigateTo({ url: '/pages/merchant/project
       <text v-if="phoneBound" class="hint">手机号已绑定</text>
       <button v-if="role === 'owner' && accessToken" class="login-button" :disabled="busy" @tap="openOwnerTabs">进入车主首页</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantProjects">管理本店服务</button>
+      <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantOrders">查看本店订单</button>
       <view v-if="accessToken" class="signed-in">
         <text class="hint">已登录。车辆、订单等业务内容待接入。</text>
         <button class="logout-button" :loading="operation === 'logout'" :disabled="busy" @tap="tryLogout">退出登录</button>
