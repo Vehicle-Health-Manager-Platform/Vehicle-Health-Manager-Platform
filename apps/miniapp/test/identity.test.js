@@ -96,6 +96,26 @@ test('network failure and timeout have distinct retry guidance', async () => {
   await assert.rejects(h.api.requestMerchantCode('account', 'password'), { kind: 'network' })
 })
 
+// 真机调试最常见的两种失败原因此前共用一条「无法连接服务」文案，无法区分是地址写错
+// 还是请求被微信域名白名单拦下，排查方向被带偏。两者必须可区分。
+test('domain check rejection is distinguished from plain network failure', async () => {
+  const h = harness()
+  h.reply({ errMsg: 'request:fail url not in domain list' })
+  await assert.rejects(h.api.requestWechatLogin('owner'), (error) => {
+    assert.equal(error.kind, 'domain')
+    assert.match(error.message, /域名校验/)
+    assert.equal(error.detail, 'request:fail url not in domain list')
+    return true
+  })
+  h.reply({ errMsg: 'request:fail network' })
+  await assert.rejects(h.api.requestWechatLogin('owner'), (error) => {
+    assert.equal(error.kind, 'network')
+    assert.equal(error.message, '无法连接服务，请检查网络后重试')
+    assert.equal(error.detail, 'request:fail network')
+    return true
+  })
+})
+
 test('protected operations require appropriate token and validate results', async () => {
   const h = harness()
   await assert.rejects(h.api.logoutWechat(), { kind: 'unauthorized' })

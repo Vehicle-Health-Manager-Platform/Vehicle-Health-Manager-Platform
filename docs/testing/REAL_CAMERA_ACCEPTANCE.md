@@ -40,6 +40,9 @@
 
 4. 开发者工具导入 `apps/miniapp/dist/build/mp-weixin`，点「预览」，手机扫码。
 5. 手机预览后，右上角「…」→「打开调试」（跳过域名校验的官方做法，仅测试号阶段）。
+6. 若登录阶段就报「无法连接服务」，先看 `error.detail` 区分原因：`url not in domain list`
+   表示被域名校验拦下（未开调试或不同网），其它才是真的连不上。分类逻辑见
+   [网络环境说明](../operations/MINIAPP_NETWORK_ENVIRONMENTS.md)。
 
 ## 验收步骤
 
@@ -71,11 +74,19 @@ R4 通过即证明真实拍照可用；R5–R8 通过即证明拍摄→上传→
 
 ## 收尾
 
+**默认不要执行 `--restore`。** 局域网地址对开发者工具与真机同样有效（工具运行在电脑上，
+访问电脑的局域网 IP 与访问 `127.0.0.1` 等效），因此保持局域网地址即可两边通用，
+来回切换只会让另一边失效——2026-10-07 的真机连不上就是这么来的。
+
+只有在**当前网络已无可用局域网地址**（例如换了网络、地址失效）且只想用开发者工具时，
+才用 `--restore` 作为应急出口：
+
 ```bash
-node scripts/miniapp_lan_helper.cjs --restore     # 产物切回回环并重新构建
+node scripts/miniapp_lan_helper.cjs --restore     # 应急：切回回环，此后真机不可用
 ```
 
-容器端口发布按需改回回环（见[真机登录清单](../operations/LAN_DEVICE_LOGIN_RUNBOOK.md)）。
+容器端口发布同理保持 `0.0.0.0:18080`，无需改回回环；确需收敛时见
+[真机登录清单](../operations/LAN_DEVICE_LOGIN_RUNBOOK.md)。
 
 ## 边界
 
