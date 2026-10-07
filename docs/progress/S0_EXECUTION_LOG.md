@@ -235,3 +235,8 @@
 - [接口契约](../api/MERCHANT_QUOTES.md)、[复现](../testing/LOCAL_MERCHANT_QUOTES_ACCEPTANCE.md)及下一步已更新。预约/订单下一步先明确时段/容量与状态，再实施；公网、云托管、真机按用户决定后置。
 
 - [PR #23](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/23) 代码头 `131d0ed` 的[首次完整 CI 37467206097](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37467206097) 六项全绿：后端 154 项、无失败/错误/跳过，小程序 65 项，MySQL 46 表与重复 V006、Compose 冒烟通过。本机最终镜像再次通过 H5 15 项；当前微信构建 12 条模拟器路由通过，新增商家维护页可加载。补齐证据后的最终提交仍须完整 CI 成功才合并，结果以 PR 当前头为准。
+
+## 2026-10-07 预约与订单准备
+
+- 已核对 PR #23 最终提交 `73c888a` 的 CI `37468079647` 六项成功，并合并为 main `34e92f5`。合并后[主分支 CI 37470310896](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37470310896) 也六项成功。
+- 下一步基于该合并提交核对预约与本人订单契约。现有 `appointment_slot`、订单快照与过期字段已在基线；时段发布接口/页面和订单业务尚未实现。S0 的待支付 15 分钟释放规则为草案假设，本步书面规格需明确时段来源、容量与状态后实施。
