@@ -1,0 +1,263 @@
+#!/usr/bin/env node
+'use strict'
+
+/**
+ * 小程序真机（局域网）调试助手。
+ *
+ * 目标：把「手机真机能连上本机后端」这件事变成一条可复现的命令，
+ * 用于微信测试号 真机预览 + 「打开调试」跳过域名校验时的真实微信登录联调。
+ *
+ * 用法：
+ *   node scripts/miniapp_lan_helper.cjs                 # 只探测并打印候选局域网地址
+ *   node scripts/miniapp_lan_helper.cjs --check         # 额外验证该地址上的后端是否真的可达
+ *   node scripts/miniapp_lan_helper.cjs --apply         # 把地址写入 apps/miniapp/.env.local
+ *   node scripts/miniapp_lan_helper.cjs --apply --build # 写入并重新构建 mp-weixin 产物
+ *   node scripts/miniapp_lan_helper.cjs --restore       # 还原 .env.local 为回环地址并重新构建
+ *   node scripts/miniapp_lan_helper.cjs --ip 192.168.1.5 --port 18080 --apply --build
+ *
+ * 只改写 .env.local 中的 VITE_API_BASE_URL，其余行（例如云托管变量）原样保留。
+ * .env.local 与构建产物都受 Git 忽略，不会提交。
+ */
+
+const fs = require('node:fs')
+const path = require('node:path')
+const os = require('node:os')
+const { spawnSync } = require('node:child_process')
+
+const REPO_ROOT = path.resolve(__dirname, '..')
+const MINIAPP_DIR = path.join(REPO_ROOT, 'apps', 'miniapp')
+const ENV_LOCAL = path.join(MINIAPP_DIR, '.env.local')
+
+const DEFAULT_PORT = '18080'
+const LOOPBACK_ORIGIN = `http://127.0.0.1:${DEFAULT_PORT}`
+
+// 常见虚拟网卡：它们的私有网段通常不是手机能到达的那张网卡。
+const VIRTUAL_ADAPTER_HINTS = [
+  'virtualbox', 'vmware', 'hyper-v', 'vethernet', 'wsl', 'docker',
+  'loopback', 'bluetooth', 'tailscale', 'zerotier', 'radmin', 'tap-windows', 'npcap',
+]
+// 常见物理网卡名（中英文），命中时优先。
+const PHYSICAL_ADAPTER_HINTS = ['wlan', 'wi-fi', 'wifi', 'ethernet', '以太网', '无线', '本地连接']
+
+function isIPv4(value) {
+  if (typeof value !== 'string') return false
+  const parts = value.split('.')
+  if (parts.length !== 4) return false
+  return parts.every((part) => /^\d{1,3}$/.test(part) && Number(part) <= 255)
+}
+
+function isUsableCandidate(address) {
+  if (!isIPv4(address)) return false
+  if (address.startsWith('127.')) return false
+  if (address.startsWith('169.254.')) return false // APIPA 自分配，代表没拿到 DHCP
+  if (address === '0.0.0.0') return false
+  if (address.endsWith('.255') || address.endsWith('.0')) return false
+  return true
+}
+
+function segmentRank(address) {
+  if (address.startsWith('192.168.')) return 0
+  if (address.startsWith('10.')) return 1
+  if (/^172\.(1[6-9]|2\d|3[01])\./.test(address)) return 2
+  return 3
+}
+
+function adapterPenalty(name) {
+  const lower = String(name || '').toLowerCase()
+  if (PHYSICAL_ADAPTER_HINTS.some((hint) => lower.includes(hint.toLowerCase()))) return -5
+  if (VIRTUAL_ADAPTER_HINTS.some((hint) => lower.includes(hint))) return 100
+  return 0
+}
+
+/**
+ * 从 os.networkInterfaces() 形态的对象中挑出可用的局域网 IPv4 候选。
+ * 返回按推荐度升序排列的 [{address, name, rank}]。
+ */
+function rankLanCandidates(interfaces) {
+  const candidates = []
+  for (const [name, entries] of Object.entries(interfaces || {})) {
+    for (const entry of entries || []) {
+      if (!entry) continue
+      const family = typeof entry.family === 'string' ? entry.family : `IPv${entry.family}`
+      if (family !== 'IPv4') continue
+      if (entry.internal) continue
+      if (!isUsableCandidate(entry.address)) continue
+      candidates.push({
+        address: entry.address,
+        name,
+        rank: segmentRank(entry.address) * 10 + adapterPenalty(name),
+      })
+    }
+  }
+  return candidates.sort((a, b) => a.rank - b.rank || a.address.localeCompare(b.address))
+}
+
+/** 只替换/追加指定键，保留文件中的其它行与注释。 */
+function upsertEnvLine(text, key, value) {
+  const lines = String(text || '').split(/\r?\n/)
+  let replaced = false
+  const next = lines.map((line) => {
+    if (new RegExp(`^\\s*${key}\\s*=`).test(line)) {
+      replaced = true
+      return `${key}=${value}`
+    }
+    return line
+  })
+  if (!replaced) {
+    while (next.length && next[next.length - 1].trim() === '') next.pop()
+    next.push(`${key}=${value}`)
+    next.push('')
+  }
+  return next.join('\n')
+}
+
+function readEnvLocal() {
+  try {
+    return fs.readFileSync(ENV_LOCAL, 'utf8')
+  } catch {
+    return ''
+  }
+}
+
+function parseArgs(argv) {
+  const options = { apply: false, build: false, restore: false, check: false, ip: '', port: DEFAULT_PORT, help: false }
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i]
+    if (arg === '--apply') options.apply = true
+    else if (arg === '--build') options.build = true
+    else if (arg === '--restore') options.restore = true
+    else if (arg === '--check') options.check = true
+    else if (arg === '--help' || arg === '-h') options.help = true
+    else if (arg === '--ip') options.ip = argv[++i] || ''
+    else if (arg === '--port') options.port = argv[++i] || DEFAULT_PORT
+    else if (arg.startsWith('--ip=')) options.ip = arg.slice(5)
+    else if (arg.startsWith('--port=')) options.port = arg.slice(7)
+    else throw new Error(`未知参数：${arg}`)
+  }
+  return options
+}
+
+function usage() {
+  return [
+    '用法：node scripts/miniapp_lan_helper.cjs [--ip x.x.x.x] [--port 18080] [--apply] [--build] [--check] [--restore]',
+    '',
+    '  默认        探测并打印推荐的局域网地址，不修改任何文件',
+    '  --check     额外请求 http://<地址>:<端口>/actuator/health 验证手机侧能否连通',
+    '  --apply     把 VITE_API_BASE_URL 写入 apps/miniapp/.env.local（其余行保留）',
+    '  --build     写入后重新构建 mp-weixin 产物',
+    '  --restore   还原 VITE_API_BASE_URL 为 http://127.0.0.1:18080 并重新构建',
+  ].join('\n')
+}
+
+function runBuild() {
+  // 直接调用 uni CLI 入口，避免依赖 npm.cmd（Windows 上 shell:false 无法 spawn .cmd）。
+  const uniBin = path.join(MINIAPP_DIR, 'node_modules', '@dcloudio', 'vite-plugin-uni', 'bin', 'uni.js')
+  const nodeDir = path.dirname(process.execPath)
+  const pathKey = Object.keys(process.env).find((key) => key.toLowerCase() === 'path') || 'PATH'
+  const env = { ...process.env, [pathKey]: `${nodeDir}${path.delimiter}${process.env[pathKey] || ''}` }
+
+  const result = fs.existsSync(uniBin)
+    ? spawnSync(process.execPath, [uniBin, 'build', '-p', 'mp-weixin'], { cwd: MINIAPP_DIR, stdio: 'inherit', env })
+    : spawnSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['run', 'build:mp-weixin'], {
+        cwd: MINIAPP_DIR,
+        stdio: 'inherit',
+        shell: true,
+        env,
+      })
+
+  if (result.error) throw result.error
+  if (result.status !== 0) throw new Error(`构建失败，退出码 ${result.status}`)
+}
+
+async function checkReachable(origin) {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), 4000)
+  try {
+    const response = await fetch(`${origin}/actuator/health`, { signal: controller.signal })
+    const body = await response.text()
+    return { ok: response.ok, status: response.status, body: body.slice(0, 200) }
+  } catch (error) {
+    return { ok: false, status: 0, body: error && error.name === 'AbortError' ? '请求超时' : String(error && error.message) }
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
+async function main() {
+  const options = parseArgs(process.argv.slice(2))
+  if (options.help) {
+    console.log(usage())
+    return
+  }
+
+  if (options.restore) {
+    const next = upsertEnvLine(readEnvLocal(), 'VITE_API_BASE_URL', LOOPBACK_ORIGIN)
+    fs.writeFileSync(ENV_LOCAL, next, 'utf8')
+    console.log(`已还原 ${path.relative(REPO_ROOT, ENV_LOCAL)} → ${LOOPBACK_ORIGIN}`)
+    runBuild()
+    console.log('已按回环地址重新构建，开发者工具可继续本地调试。')
+    return
+  }
+
+  const candidates = rankLanCandidates(os.networkInterfaces())
+  if (candidates.length) {
+    console.log('候选局域网地址（越靠前越推荐）：')
+    candidates.slice(0, 8).forEach((item, index) => {
+      console.log(`  ${index === 0 ? '*' : ' '} ${item.address}  (网卡 ${item.name})`)
+    })
+  } else {
+    console.log('未找到可用的局域网 IPv4 地址，请确认已连接 WiFi 或网线。')
+  }
+
+  const address = options.ip || (candidates[0] && candidates[0].address) || ''
+  if (!address) {
+    console.log('无法确定地址，可用 --ip 手动指定。')
+    return
+  }
+  if (!isIPv4(address)) throw new Error(`地址不合法：${address}`)
+
+  const origin = `http://${address}:${options.port}`
+  console.log('')
+  console.log(`选用地址：${origin}`)
+
+  if (options.check) {
+    const result = await checkReachable(origin)
+    if (result.ok) {
+      console.log(`连通性检查：通过（HTTP ${result.status}）${result.body ? ` ${result.body}` : ''}`)
+      console.log('该地址从本机可达。若手机仍连不上，请检查手机与电脑是否同一网络、以及系统防火墙入站规则。')
+    } else {
+      console.log(`连通性检查：失败（HTTP ${result.status}）${result.body ? ` ${result.body}` : ''}`)
+      console.log('常见原因：后端端口只发布在回环地址（需用 -p 0.0.0.0:18080:8080 或 -p 18080:8080 重新运行），或防火墙未放行。')
+      console.log('本机可达不代表手机可达；本机不可达时手机一定不可达。')
+    }
+  }
+
+  if (!options.apply) {
+    console.log('')
+    console.log('如需写入并构建，请追加 --apply --build。')
+    return
+  }
+
+  const next = upsertEnvLine(readEnvLocal(), 'VITE_API_BASE_URL', origin)
+  fs.writeFileSync(ENV_LOCAL, next, 'utf8')
+  console.log(`已写入 ${path.relative(REPO_ROOT, ENV_LOCAL)}（VITE_API_BASE_URL=${origin}）`)
+
+  if (options.build) runBuild()
+
+  console.log('')
+  console.log('真机联调还需：')
+  console.log(`  1. 后端发布到局域网：docker run ... -p 0.0.0.0:${options.port}:8080（当前多为 127.0.0.1:${options.port}，手机连不上）`)
+  console.log(`  2. 放行入站端口 ${options.port}（Windows  Defender 防火墙 → 高级设置 → 入站规则）`)
+  console.log(`  3. 用手机浏览器打开 http://${address}:${options.port}/actuator/health 确认返回 UP`)
+  console.log('  4. 开发者工具导入 apps/miniapp/dist/build/mp-weixin，点“预览”，手机扫码后在右上角“…”里选择“打开调试”')
+  console.log('  5. 回到本机后执行 --restore，避免影响回环地址下的日常调试')
+}
+
+module.exports = { rankLanCandidates, upsertEnvLine, isUsableCandidate, segmentRank, adapterPenalty, DEFAULT_PORT }
+
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(`执行失败：${error && error.message}`)
+    process.exitCode = 1
+  })
+}
