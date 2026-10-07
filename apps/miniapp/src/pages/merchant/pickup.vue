@@ -35,9 +35,9 @@ async function preview(slot){const version=generation,actor=token();try{const re
 function mark(slot,event){
   if(disabled.value||form.damageStatus!=='PRESENT'||form.damages.length>=20)return
   const point=event.changedTouches?.[0]||event.touches?.[0]||event.detail
-  const x=point?.clientX??point?.x,y=point?.clientY??point?.y,version=generation
+  const x=point?.clientX??point?.x,y=point?.clientY??point?.y,version=generation,fileId=form.photos[slot].fileId
   uni.createSelectorQuery().select(`.pickup-photo-${slot}`).boundingClientRect(rect=>{
-    if(version!==generation||disabled.value||!rect||!Number.isFinite(x)||!Number.isFinite(y)||!rect.width||!rect.height)return
+    if(version!==generation||fileId!==form.photos[slot].fileId||form.damages.length>=20||disabled.value||!rect||!Number.isFinite(x)||!Number.isFinite(y)||!rect.width||!rect.height)return
     form.damages.push({photo_slot:slot,x:Math.max(0,Math.min(1,(x-rect.left)/rect.width)),y:Math.max(0,Math.min(1,(y-rect.top)/rect.height)),note:''})
   }).exec()
 }

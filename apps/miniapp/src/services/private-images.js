@@ -53,7 +53,7 @@ export function createImageApi({ baseUrl, runtime, environment, prefix = '/api/f
   const endpoint = (baseUrl || '').replace(/\/$/, '')
   const where = typeof environment === 'function' ? environment : () => 'device'
   function configured(token) {
-    if (!present(token)) throw new ImageError('unauthorized', '请先登录车主账号')
+    if (!present(token)) throw new ImageError('unauthorized', prefix === '/api/merchant/files' ? '请先登录商家账号' : '请先登录车主账号')
     if (!endpoint) throw new ImageError('unconfigured', '图片服务尚未配置，请联系管理员')
   }
   function transport(method, options, accepts, signal) {

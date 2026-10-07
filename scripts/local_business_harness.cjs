@@ -94,7 +94,7 @@ async function handler(req, res) {
     }
     if (url.pathname === '/__local/drop-once' && req.method === 'POST') {
       const body = JSON.parse((await read(req)).toString())
-      if (!['/api/vehicle/add', '/api/archive/add', '/api/file/upload', '/api/merchant/projects','/api/merchant/slots','/api/order/create','/api/order/cancel','/api/payments/create'].includes(body.path)) return json(res, 400, { error: 'Unsupported failure point' })
+      if (!['/api/vehicle/add', '/api/archive/add', '/api/file/upload', '/api/merchant/files/upload', '/api/check/pickup/submit', '/api/merchant/projects','/api/merchant/slots','/api/order/create','/api/order/cancel','/api/payments/create'].includes(body.path)) return json(res, 400, { error: 'Unsupported failure point' })
       dropOnce = body.path; return json(res, 200, { armed: true })
     }
     if (url.pathname === '/__local/evidence' && req.method === 'POST') {
@@ -107,12 +107,12 @@ async function handler(req, res) {
     return json(res, 404, { error: 'Unknown local action' })
   }
   if (url.pathname.startsWith('/api/') || url.pathname === '/actuator/health') {
-    const body = await read(req, url.pathname === '/api/file/upload' ? 11 * 1024 * 1024 : 65536), headers = {}
+    const body = await read(req, ['/api/file/upload','/api/merchant/files/upload'].includes(url.pathname) ? 11 * 1024 * 1024 : 65536), headers = {}
     for (const name of ['authorization','content-type','idempotency-key']) if (req.headers[name]) headers[name] = req.headers[name]
     const upstream = await fetch(backend + url.pathname + url.search, { method:req.method, headers, body:body.length ? body : undefined, redirect:'manual', signal:AbortSignal.timeout(20000) })
     const bytes = Buffer.from(await upstream.arrayBuffer())
     const dropping = url.pathname === dropOnce && upstream.ok
-    if (['/api/vehicle/add','/api/archive/add','/api/file/upload','/api/merchant/projects','/api/merchant/slots','/api/order/create','/api/order/cancel','/api/payments/create'].includes(url.pathname) && req.method === 'POST') writes.push({route:url.pathname,key:headers['idempotency-key'],hash:createHash('sha256').update(body).digest('hex'),status:upstream.status,dropped:dropping})
+    if (['/api/vehicle/add','/api/archive/add','/api/file/upload','/api/merchant/files/upload','/api/check/pickup/submit','/api/merchant/projects','/api/merchant/slots','/api/order/create','/api/order/cancel','/api/payments/create'].includes(url.pathname) && req.method === 'POST') writes.push({route:url.pathname,key:headers['idempotency-key'],hash:createHash('sha256').update(body).digest('hex'),status:upstream.status,dropped:dropping})
     if (dropping) {
       dropOnce=''
       // Send a partial response so Chromium cannot silently replay a connection

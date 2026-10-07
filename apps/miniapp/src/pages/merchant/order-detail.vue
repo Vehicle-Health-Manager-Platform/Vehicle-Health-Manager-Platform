@@ -70,7 +70,7 @@ onUnload(() => { visible = false; flow.reset(); apply.reset() })
         <text>操作会记录操作人与时间；车主确认、派工、报工、核销在各自步骤就绪前会给出具体原因。</text>
         <button v-for="entry in state.value.allowed_actions" :key="entry.action" :disabled="write.busy" :loading="write.busy" :data-testid="`order-action-${entry.action}`" @tap="run(entry)">{{ actionLabel(entry.action) }}</button>
       </view>
-      <text v-else>当前状态在本店侧没有可执行的履约操作。</text>
+      <text v-else>{{state.value.status==='PAID'?'请通过接车检查提交完整接车单。':'当前状态在本店侧没有可执行的履约操作。'}}</text>
       <text v-if="write.message" role="status">{{ write.message }}</text>
       <button :disabled="write.busy" @tap="flow.load">刷新订单状态</button>
     </view>

@@ -36,6 +36,7 @@ class UploadHttpTransportTest {
             String token=invocation.getArgument(0);var builder=Jwt.withTokenValue(token).header("alg","HS256").subject("1001")
                 .issuedAt(Instant.now()).expiresAt(Instant.now().plusSeconds(600));
             if(!token.equals("local"))builder.claim("subject_type",token.equals("binding")?"wechat_binding":token.equals("staff")?"staff_account":"user");
+            if(token.equals("merchant"))return builder.claim("subject_type","staff_account").claim("role","MERCHANT").claim("app_id","merchant-account").claim("merchant_id",1).claim("jti",UUID.randomUUID().toString()).build();
             return builder.claim("role",token.equals("staff")?"TECHNICIAN":"OWNER").claim("jti",UUID.randomUUID().toString()).build();
         });
         when(service.upload(any(),anyString(),anyString(),any())).thenReturn(mapper.valueToTree(ApiResponse.success(Map.of("file_id",1,"content_type","image/png","size_bytes",11))));
@@ -55,6 +56,15 @@ class UploadHttpTransportTest {
         return client.send(builder.POST(chunked?HttpRequest.BodyPublishers.ofInputStream(()->new ByteArrayInputStream(bytes)):HttpRequest.BodyPublishers.ofByteArray(bytes)).build(),HttpResponse.BodyHandlers.ofString());
     }
     String key(){return UUID.randomUUID().toString();}
+    @Test void merchantMultipartUsesStaffIdentityAndRejectsOtherRoles()throws Exception {
+        for(String token:List.of("owner","staff","merchant")){
+            var request=HttpRequest.newBuilder(URI.create("http://127.0.0.1:"+port+"/api/merchant/files/upload"))
+                .header("Authorization","Bearer "+token).header("Idempotency-Key",key()).header("Content-Type","multipart/form-data; boundary="+boundary)
+                .POST(HttpRequest.BodyPublishers.ofByteArray(multipart(11,""))).build();
+            assertEquals(token.equals("merchant")?200:403,client.send(request,HttpResponse.BodyHandlers.ofString()).statusCode());
+        }
+        verify(service).upload(argThat(actor->actor.type().equals("staff_account")&&actor.id()==1001&&actor.merchantId()==1),anyString(),anyString(),any());
+    }
     @Test void actualMultipartAcceptsSingleFileAndExactTenMiBBoundary() throws Exception {
         var response=post(multipart(FileValidator.MAX_BYTES,""),"owner",false,key());assertEquals(200,response.statusCode(),response.body());
         assertEquals("no-store",response.headers().firstValue("Cache-Control").orElseThrow());

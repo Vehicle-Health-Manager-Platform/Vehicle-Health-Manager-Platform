@@ -22,6 +22,7 @@ PR #14 实现[本人车辆列表、有效车型查询与手动添加](VEHICLE_MA
 - [车主端 AI 管家](AI_CHAT.md)：`POST /api/ai/chat` 对话、本人车辆与档案上下文、降级与隐私边界。
 - [商家本店订单](MERCHANT_ORDERS.md)：本店分页/详情、状态与预约日期筛选、下单快照与支付摘要。
 - [订单履约状态机](ORDER_FULFILLMENT.md)：8 个状态的唯一权威矩阵、动作式状态操作接口、前置 fail-closed、双审计与并发行锁。接车单/车主确认/派工/报工/核销的业务内容在阶段 A3–A6。
+- [接车检查](PICKUP_INSPECTION.md)：商家私有上传、七图检查单、手填里程、预约验码与 PAID→RECEIVED；车主确认和派工继续后续交付。
 
 `POST /api/ai/chat` 已实现并接入小程序 AI Tab，但**真实 DeepSeek 上游调用与真机尚未验收**，
 降级路径与验收项见 [AI 管家接入清单](../operations/AI_CHAT_RUNBOOK.md)。该路径尚未写入 `openapi.json` 草案。
