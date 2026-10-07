@@ -299,6 +299,54 @@ def main():
             {"$ref": "#/components/schemas/ApiResponse"},
             {"type": "object", "required": ["data"], "properties": {"data": {"$ref": f"#/components/schemas/{result}"}}}]}
         document["paths"].setdefault(path, {})[method] = item
+    identifier = project_fields["id"]
+    timestamp = {"type": "string", "format": "date-time"}
+    slot_fields = {"slot_id": identifier, "standard_project_id": identifier, "starts_at": timestamp, "ends_at": timestamp,
+        "capacity": {"type": "integer", "minimum": 1, "maximum": 100}, "capacity_left": {"type": "integer", "minimum": 0},
+        "open": {"type": "boolean"}, "project_name": {"type": "string"}}
+    schemas["ReservationSlot"] = {"type": "object", "required": list(slot_fields), "properties": slot_fields}
+    for name, row in (("ReservationSlotPage", "ReservationSlot"), ("OwnerOrderPage", "OwnerOrder")):
+        schemas[name] = {**schemas["ServiceProjectPage"], "properties": {**schemas["ServiceProjectPage"]["properties"], "items": {"type": "array", "items": {"$ref": f"#/components/schemas/{row}"}}}}
+    order_fields = {"order_id": identifier, "order_no": {"type": "string"}, "amount_due": quote_fields["price"], "status": {"type": "string"},
+        "expires_at": {"type": ["string", "null"], "format": "date-time"}, "created_at": timestamp,
+        "closed_at": {"type": ["string", "null"], "format": "date-time"}, "close_reason": {"type": ["string", "null"]},
+        "project_snapshot": {"type": ["object", "null"]}, "merchant_snapshot": {"type": ["object", "null"]}, "appointment_snapshot": {"type": ["object", "null"]}}
+    schemas["OwnerOrder"] = {"type": "object", "required": list(order_fields), "properties": order_fields}
+    schemas["OwnerOrderDetail"] = {"type": "object", "required": list(order_fields) + ["vehicle_id", "price_snapshot"], "properties": {**order_fields, "vehicle_id": identifier, "price_snapshot": {"type": ["object", "null"]}}}
+    schemas["CreatedReservation"] = {"type": "object", "required": ["order_id", "order_no", "amount_due", "status", "expires_at"], "properties": {k: order_fields[k] for k in ["order_id", "order_no", "amount_due", "status", "expires_at"]}}
+    context = {"merchant_project_id": identifier, "quote_version_id": identifier, "version": identifier, "merchant_id": identifier, "standard_project_id": identifier,
+        "project_name": {"type": "string"}, "merchant_name": {"type": "string"}, "address": {"type": "string"}, "price": quote_fields["price"]}
+    schemas["ReservationQuote"] = {"type": "object", "required": list(context), "properties": context}
+    pagination = document["paths"]["/api/service/projects"]["get"]["parameters"][-2:]
+    for method, path, title, role, result, fields in (
+        ("get", "/api/merchant/slots", "本店预约时段分页", "MERCHANT", "ReservationSlotPage", None),
+        ("post", "/api/merchant/slots", "发布本店项目时段", "MERCHANT", "ReservationSlot", {"standard_project_id": identifier, "starts_at": timestamp, "ends_at": timestamp, "capacity": slot_fields["capacity"]}),
+        ("post", "/api/merchant/slots/{id}/close", "关闭本店预约时段", "MERCHANT", "ReservationSlot", {}),
+        ("get", "/api/order/quote/{id}", "当前预约报价确认上下文", "OWNER", "ReservationQuote", None),
+        ("get", "/api/order/slots", "可预约项目时段分页", "OWNER", "ReservationSlotPage", None),
+        ("post", "/api/order/create", "创建本人待支付预约", "OWNER", "CreatedReservation", {"merchant_project_id": identifier, "quote_version_id": identifier, "vehicle_id": identifier, "slot_id": identifier}),
+        ("get", "/api/order/list", "本人订单分页", "OWNER", "OwnerOrderPage", None),
+        ("get", "/api/order/{id}", "本人订单及下单快照", "OWNER", "OwnerOrderDetail", None),
+        ("post", "/api/order/cancel", "取消本人待支付订单", "OWNER", "OwnerOrderDetail", {"order_id": identifier}),
+    ):
+        item = operation(method, path, title, "F07,F08")
+        item["x-roles"] = role
+        item["x-implementation-status"] = "local-reservations-core-implemented"
+        item["description"] = "本机预约订单子集，支付/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
+        for parameter in item["parameters"]:
+            if parameter["in"] == "path": parameter["schema"] = identifier
+        item["responses"]["404"] = {"description": "本人/本店资源不可用，code=40400"}
+        item["responses"]["409"] = {"description": "40901报价版本改变、40902时段关闭/开始、40903名额不足、40904时段重叠"}
+        item["responses"]["503"] = {"description": "数据库或事务暂不可用，code=50300"}
+        if fields is not None:
+            item["requestBody"]["content"]["application/json"]["schema"] = {"type": "object", "additionalProperties": False, "required": list(fields), "properties": fields}
+        if result.endswith("Page"): item["parameters"] += pagination
+        if path == "/api/merchant/slots" and method == "get": item["parameters"].append({"name": "date", "in": "query", "schema": {"type": "string", "format": "date"}})
+        if path == "/api/order/slots":
+            item["parameters"] += [{"name": k, "in": "query", "required": True, "schema": v} for k,v in {"merchant_id": identifier, "project_id": identifier, "date": {"type": "string", "format": "date"}}.items()]
+        if path == "/api/order/list": item["parameters"].append({"name": "status", "in": "query", "schema": {"type": "string", "enum": ["PENDING_PAYMENT", "CLOSED"]}})
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "properties": {"data": {"$ref": f"#/components/schemas/{result}"}}}]}
+        document["paths"].setdefault(path, {})[method] = item
     count = sum(len(value) for value in document["paths"].values())
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

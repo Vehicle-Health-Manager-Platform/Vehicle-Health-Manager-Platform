@@ -12,7 +12,7 @@ module.exports = function merchantFixtures(sql, root) {
       if(conflicts !== '0') throw new Error('Synthetic merchant fixture conflict')
       sql(`START TRANSACTION; INSERT INTO merchant(id,merchant_type,name,address,status) SELECT ${id},2,'${name}','合成地址${suffix}',1 WHERE NOT EXISTS(SELECT 1 FROM merchant WHERE id=${id}); INSERT INTO staff_account(id,merchant_id,role,account) SELECT ${id},${id},'MERCHANT','${account}' WHERE NOT EXISTS(SELECT 1 FROM staff_account WHERE id=${id}); COMMIT;`)
     }
-    sql(fs.readFileSync(path.join(root,'docs/sql/migrations/V006__merchant_project_versions.sql'),'utf8'))
+    for(const migration of ['V006__merchant_project_versions.sql','V007__reservation_orders.sql'])sql(fs.readFileSync(path.join(root,'docs/sql/migrations',migration),'utf8'))
   }
   function session(store) {
     if(!['A','B'].includes(store)) throw new Error('Fixed synthetic store required')

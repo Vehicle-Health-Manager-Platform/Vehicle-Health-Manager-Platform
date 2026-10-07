@@ -17,6 +17,7 @@ services:
       - ../../docs/sql/migrations/V004__upload_http.sql:/docker-entrypoint-initdb.d/004-upload-http.sql:ro
       - ../../docs/sql/migrations/V005__vehicle_archive_files.sql:/docker-entrypoint-initdb.d/005-vehicle-archive-files.sql:ro
       - ../../docs/sql/migrations/V006__merchant_project_versions.sql:/docker-entrypoint-initdb.d/006-merchant-project-versions.sql:ro
+      - ../../docs/sql/migrations/V007__reservation_orders.sql:/docker-entrypoint-initdb.d/007-reservation-orders.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent"]
       interval: 10s

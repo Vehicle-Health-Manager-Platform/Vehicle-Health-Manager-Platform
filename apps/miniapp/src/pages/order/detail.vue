@@ -1,0 +1,20 @@
+<script setup>
+import {reactive,watch} from 'vue'
+import {onLoad,onShow,onHide,onUnload} from '@dcloudio/uni-app'
+import {ownerSession,clearOwnerSession} from '../../services/owner-session.js'
+import {imageRequestKey} from '../../services/private-images.js'
+import {reservationsApi as api,initialReservationReadState,createReservationReadFlow,initialReservationWriteState,createReservationWriteFlow,displayTime} from '../../services/reservations.js'
+const state=reactive(initialReservationReadState()),write=reactive(initialReservationWriteState());let id=0,visible=false;const token=()=>ownerSession.accessToken
+const flow=createReservationReadFlow({state,token,request:t=>api.detail(t,id)}),cancel=createReservationWriteFlow({state:write,token,newKey:imageRequestKey,body:()=>({order_id:id}),request:(t,_b,k)=>api.cancel(t,id,k)})
+function login(){clearOwnerSession();uni.navigateTo({url:'/pages/owner/index'})}
+function confirmCancel(){uni.showModal({title:'取消待支付预约',content:'取消后将释放本次预约名额。',success:r=>{if(r.confirm)cancel.save()}})}
+watch(token,()=>{flow.reset();cancel.reset();if(visible&&token())flow.load()},{flush:'sync'});watch(()=>write.saved,r=>{if(r&&visible)flow.load()});onLoad(q=>{id=Number(q?.id)||0});onShow(()=>{visible=true;if(token())flow.load()});onHide(()=>{visible=false;flow.suspend();cancel.suspend()});onUnload(()=>{visible=false;flow.reset();cancel.reset()})
+</script>
+<template><view class="reservation-page"><text class="reservation-title">订单详情</text><button v-if="!ownerSession.accessToken" @tap="login">前往车主登录</button><text v-if="state.busy">正在加载订单…</text>
+  <view v-if="state.message" class="reservation-panel"><text>{{state.message}}</text><button v-if="['unauthorized','forbidden'].includes(state.failureKind)" @tap="login">重新登录</button><button v-else @tap="flow.load">重试订单详情</button></view>
+  <view v-if="state.value" class="reservation-panel" data-testid="order-detail"><text class="reservation-heading">{{state.value.project_snapshot?.project_name || '历史订单'}}</text><text>{{state.value.merchant_snapshot?.merchant_name || '历史商家信息未提供'}}</text><text>{{state.value.merchant_snapshot?.address || '地址未提供'}}</text><text class="reservation-price">应付 ¥{{state.value.amount_due}}</text><text>订单号 {{state.value.order_no}}</text><text>{{displayTime(state.value.appointment_snapshot?.starts_at)}} 至 {{displayTime(state.value.appointment_snapshot?.ends_at)}}</text>
+    <template v-if="state.value.status==='PENDING_PAYMENT'"><text>待支付 · 到期 {{displayTime(state.value.expires_at)}}</text><text>支付功能尚未接入，请勿前往店铺履约。可取消预约，未支付到期将自动关闭。</text><button @tap="flow.load">刷新订单状态</button><button :disabled="write.busy" :loading="write.busy" @tap="confirmCancel">取消待支付预约</button></template>
+    <template v-else-if="state.value.status==='CLOSED'"><text>已关闭 · {{state.value.close_reason==='OWNER_CANCELLED'?'本人取消':state.value.close_reason==='PAYMENT_EXPIRED'?'未支付到期':'历史关闭原因未提供'}}</text></template><text v-else>状态 {{state.value.status}}</text><text v-if="write.message" role="status">{{write.message}}</text>
+  </view><button @tap="uni.redirectTo({url:'/pages/order/list'})">返回我的订单</button>
+</view></template>
+<style src="../../styles/reservations.css"></style>
