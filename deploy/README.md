@@ -7,3 +7,7 @@ MySQL 首次创建卷时执行 `docs/sql/init.sql`；再次启动不会重跑初
 MinIO 社区版原 Docker Hub 镜像已无法拉取；Compose 现从官方 GitHub Release 的固定版本二进制构建本地 AMD64 镜像，并校验发布页 SHA-256。该上游仓库已归档，正式部署前需确定持续维护的对象存储方案。
 
 CI 的 `compose-smoke` 作业会启动 MySQL、Redis、RabbitMQ、MinIO、OCR、后端和 Nginx，验证过渡网页入口、匿名请求的 401 响应以及本地演示用户的本人/跨用户车辆权限。这些检查保留作为后端与容器回归，不代表微信小程序构建、授权登录或真机通过。`deploy/compose/ci.override.yml` 仅在 CI 中启用演示账号，正式部署不可加载。Milvus、Prometheus 尚未覆盖。
+
+## 支付测试开关
+
+正式Compose不启用测试支付。`LOCAL_TEST` 仅用于独立隔离环境，须同时配置 `SPRING_PROFILES_ACTIVE=local-payment-test`、`PAYMENT_LOCAL_TEST_ENABLED=true` 和独立私有密钥 `PAYMENT_LOCAL_TEST_SECRET`（至少32字节）；与prod/production组合或缺少必要参数会拒绝启动。不可把本机私有测试文件加载到生产。V008需在已有库备份后按序迁移，新增事件/异常表，总表数48。正式微信渠道本步返回503，未发生真实扣款/退款。

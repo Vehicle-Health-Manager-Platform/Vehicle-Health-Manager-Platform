@@ -255,3 +255,12 @@
 
 - 核对 PR #24 最终头 `b966f5e` 的 CI `37561720527` 六项成功，已合并为 main `1c54f61`；[主分支 CI 37562181961](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37562181961) 也六项成功。
 - 用户选择支付基础与隔离测试渠道，并确认通知去重、有效成功转PAID、关闭/旧失败付款异常、默认关闭测试渠道及本机验证范围。已在独立分支整理[中文书面规格](../superpowers/specs/2026-10-07-payment-foundation-design.md)，待书面复核后进入计划与编码；尚未声称支付已实现或真实扣款通过。
+
+## 2026-10-07 支付基础实施与本机验收
+
+- 用户确认书面规格，按中文计划实现V008、支付发起/查询、LOCAL_TEST签名通知、事件与异常表、PAID及支付摘要。生产模板默认关闭测试渠道，隔离profile/显式开关/独立私有密钥缺一拒绝启用，正式微信发起503。
+- [PR #25](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/25) 首次头 `532f6bd` 的[CI 37564009986](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37564009986) 六项成功：后端191项，无失败/错误/跳过，含12项支付MySQL；小程序75项与双端构建；V008重复迁移、MySQL48表及Compose通过。
+- 本机后端 `vehicle-auth/backend:payment-foundation` 仅回环18080，固定隔离库按V008迁移，独立私有测试环境不提交。gstack H5 24项通过：实际预约/详情控件、未配置正式渠道不建支付、原键测试支付复用、失败后新支付、签名/金额错误拒绝、成功与重复审计、PAID不可取消、列表测试标识、取消后成功异常且容量不恢复、身份边界。微信车主真实，商家合成登录，付款是明确的LOCAL_TEST通知，未真实扣款/退款。
+- 微信模拟器首次接口超时，重新连接当前产物后16条路由通过。路由只证明可加载，不代替微信完整业务UI与真机。
+- 自查补充到期任务/通知竞争、支付创建审计回滚与到期禁止发起；历史缺少编号/到期的进行中支付改为显式409，不伪造可用请求，新增回归。最终精确提交仍须完整CI成功才合并，最终结果以PR为准。
+- 本轮保留测试PAID和异常事实及不可真实收款标识；finally取消本轮剩余待支付订单并撤销会话，不删除历史/原卷。下一步建议本店订单只读视图，接车/退款/正式渠道分别确认规则后实施。
