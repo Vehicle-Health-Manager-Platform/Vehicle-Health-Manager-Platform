@@ -1,3 +1,5 @@
+import { apiOrigin } from './api-config.js'
+import { apiRuntime } from './api-runtime.js'
 import { ServiceError, serviceFailure } from './service-catalog.js'
 export { serviceFailure as quoteFailure }
 const id = value => Number.isSafeInteger(value) && value > 0
@@ -44,4 +46,4 @@ export function createQuotesApi({ baseUrl, runtime }) {
     },
   }
 }
-export const quotesApi = createQuotesApi({ baseUrl:import.meta.env?.VITE_API_BASE_URL,runtime:()=>uni })
+export const quotesApi = createQuotesApi({ baseUrl: apiOrigin, runtime: () => apiRuntime })

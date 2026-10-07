@@ -1,3 +1,6 @@
+import { apiOrigin, cloudRunEnabled } from './api-config.js'
+import { apiRuntime } from './api-runtime.js'
+
 export class AuthError extends Error {
   constructor(kind, message, status = 0) {
     super(message)
@@ -23,7 +26,8 @@ const validSession = (result, role) => tokenPresent(result?.access_token) && res
 const malformed = () => new AuthError('protocol', '身份服务响应异常，请稍后重试')
 
 // Injection is for offline tests. The application always uses the real uni runtime.
-export function createAuthApi({ baseUrl, runtime }) {
+// `cloud` 为真时走微信云托管通道：身份由网关注入，不再调用 wx.login。
+export function createAuthApi({ baseUrl, runtime, cloud = false }) {
   const endpoint = (baseUrl || '').replace(/\/$/, '')
 
   function configured() {
@@ -63,14 +67,19 @@ export function createAuthApi({ baseUrl, runtime }) {
       return new Promise((resolve, reject) => {
         if (!['owner', 'technician'].includes(role)) throw new AuthError('invalid', '当前角色不支持微信登录')
         configured()
+        const accepted = (result) => validSession(result, role) || (role === 'technician' &&
+          result?.status === 'BIND_REQUIRED' && tokenPresent(result.binding_token))
+        // 云托管下身份由微信网关注入请求头，无需 wx.login 取 code，也不存在 code 被重放的问题。
+        if (cloud) {
+          request('/api/auth/cloud-login', { role }, undefined, accepted).then(resolve, reject)
+          return
+        }
         runtime().login({
           provider: 'weixin',
           timeout: 15000,
           success: ({ code }) => {
             if (!tokenPresent(code)) { reject(new AuthError('wechat', '微信登录未完成，请重新授权')); return }
-            request('/api/auth/wx-login', { code, role }, undefined, (result) =>
-              validSession(result, role) || (role === 'technician' && result?.status === 'BIND_REQUIRED' &&
-                tokenPresent(result.binding_token))).then(resolve, reject)
+            request('/api/auth/wx-login', { code, role }, undefined, accepted).then(resolve, reject)
           },
           fail: () => reject(new AuthError('wechat', '微信登录未完成，请重新授权')),
         })
@@ -89,6 +98,13 @@ export function createAuthApi({ baseUrl, runtime }) {
     logoutWechat(accessToken) {
       return request('/api/auth/logout', undefined, accessToken || '', (result) => result?.revoked === true)
     },
+    refreshSession(refreshToken) {
+      if (!tokenPresent(refreshToken)) {
+        return Promise.reject(new AuthError('unauthorized', '登录状态已失效，请重新登录'))
+      }
+      return request('/api/auth/refresh', { refresh_token: refreshToken }, undefined,
+        (result) => tokenPresent(result?.access_token) && tokenPresent(result?.refresh_token))
+    },
     requestMerchantCode(account, password) {
       return request('/api/auth/merchant/code', { account, password }, undefined, (result) => result?.sent === true)
     },
@@ -100,6 +116,7 @@ export function createAuthApi({ baseUrl, runtime }) {
 }
 
 export const authApi = createAuthApi({
-  baseUrl: import.meta.env?.VITE_API_BASE_URL,
-  runtime: () => uni,
+  baseUrl: apiOrigin,
+  runtime: () => apiRuntime,
+  cloud: cloudRunEnabled,
 })

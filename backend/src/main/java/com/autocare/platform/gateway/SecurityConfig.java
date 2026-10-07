@@ -51,7 +51,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/actuator/health", "/actuator/prometheus", "/api/dev/token", "/api/auth/wx-login", "/api/auth/refresh", "/api/auth/merchant/code", "/api/auth/merchant/login").permitAll()
+                .requestMatchers("/actuator/health", "/actuator/prometheus", "/api/dev/token", "/api/auth/wx-login", "/api/auth/cloud-login", "/api/auth/refresh", "/api/auth/merchant/code", "/api/auth/merchant/login").permitAll()
                 .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/payments/callback/LOCAL_TEST").permitAll()
                 .requestMatchers("/api/auth/technician/bind").authenticated()
                 .anyRequest().access((authentication, context) -> {

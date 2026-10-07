@@ -19,3 +19,4 @@ PR #14 实现[本人车辆列表、有效车型查询与手动添加](VEHICLE_MA
 - [商家报价](MERCHANT_QUOTES.md)：本店维护与不可变版本。
 - [预约与本人订单](RESERVATION_ORDERS.md)：时段、容量、创建/取消/到期。
 - [支付基础](PAYMENT_FOUNDATION.md)：默认关闭的隔离测试渠道、通知验签/去重与付款异常；正式微信和退款未接入。
+- [商家本店订单](MERCHANT_ORDERS.md)：本店分页/详情、状态与预约日期筛选、下单快照与支付摘要。

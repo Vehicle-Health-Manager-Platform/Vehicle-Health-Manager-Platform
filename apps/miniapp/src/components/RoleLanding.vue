@@ -1,6 +1,7 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRoleIdentity } from '../services/role-identity.js'
+import { cloudRunEnabled } from '../services/api-config.js'
 
 const props = defineProps({
   role: { type: String, required: true },
@@ -18,6 +19,13 @@ const codeValid = computed(() => /^\d{6}$/.test(smsCode.value.trim()))
 function openOwnerTabs() { uni.switchTab({ url: '/pages/home/index' }) }
 function openMerchantProjects() { uni.navigateTo({ url: '/pages/merchant/projects' }) }
 function openMerchantOrders() { uni.navigateTo({ url: '/pages/merchant/orders' }) }
+
+// 云托管下 callContainer 不弹授权框，进入页面即静默完成真实微信登录；
+// 商家身份仍走账号+密码+短信验证码，不自动登录。
+onMounted(() => {
+  if (!cloudRunEnabled || props.role === 'merchant' || accessToken.value) return
+  tryLogin()
+})
 </script>
 
 <template>

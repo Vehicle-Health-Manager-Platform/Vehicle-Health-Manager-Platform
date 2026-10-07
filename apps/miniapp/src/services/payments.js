@@ -1,3 +1,5 @@
+import { apiOrigin } from './api-config.js'
+import { apiRuntime } from './api-runtime.js'
 import {ReservationError} from './reservations.js'
 import {serviceFailure} from './service-catalog.js'
 import {validPaymentSummary} from './payment-contract.js'
@@ -16,4 +18,4 @@ export function createPaymentsApi({baseUrl,runtime}){
   }
   return{create(token,orderId,key){if(!id(orderId))throw new ReservationError('invalid','订单无效');return request(token,'/api/payments/create',{order_id:orderId,channel:'WECHAT'},key)},detail(token,n){if(!id(n))throw new ReservationError('invalid','支付记录无效');return request(token,`/api/payments/${n}`)}}
 }
-export const paymentsApi=createPaymentsApi({baseUrl:import.meta.env?.VITE_API_BASE_URL,runtime:()=>uni})
+export const paymentsApi=createPaymentsApi({baseUrl:apiOrigin,runtime:()=>apiRuntime})
