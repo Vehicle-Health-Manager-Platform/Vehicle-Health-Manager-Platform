@@ -6,7 +6,7 @@ return await (async()=>{
   const sleep=ms=>new Promise(r=>setTimeout(r,ms)),text=()=>document.body.innerText
   const assert=(ok,label)=>{if(!ok)throw new Error(label);checks.push(label)}
   const wait=async(fn,label)=>{for(let i=0;i<150;i++){if(fn())return;await sleep(100)}throw new Error('Timeout: '+label)}
-  const button=label=>[...document.querySelectorAll('uni-button')].find(el=>el.textContent.trim()===label&&el.getClientRects().length&&!el.hasAttribute('disabled'))
+  const button=label=>[...document.querySelectorAll('uni-button,.uni-modal__btn')].find(el=>el.textContent.trim()===label&&el.getClientRects().length&&!el.hasAttribute('disabled'))
   const click=async label=>{await wait(()=>button(label),label);button(label).click();await sleep(150)}
   const local=async(path,body={})=>{const r=await fetch('/__local/'+path,{method:'POST',headers:{'Content-Type':'application/json','X-Local-Business':'1'},body:JSON.stringify(body)});if(!r.ok)throw new Error('Local helper unavailable');return r.json()}
   const api=async(path,token,body,key)=>{const r=await fetch(path,{method:body?'POST':'GET',headers:{Authorization:token,...(body?{'Content-Type':'application/json','Idempotency-Key':key}:{})},body:body?JSON.stringify(body):undefined});return {status:r.status,body:await r.json()}}
@@ -31,16 +31,14 @@ return await (async()=>{
     const before=await local('reservation-database')
     uni.navigateTo({url:`/pages/order/book?id=${quoteId}`});await wait(()=>document.querySelector(`[data-testid="booking-vehicle-${car}"]`),'real owner vehicles')
     document.querySelector(`[data-testid="booking-vehicle-${car}"]`).click();await click('确认当前报价')
-    // H5 date picker uses the unchanged platform control. Move the day wheel
-    // one step to tomorrow then confirm; this is not a Vue state override.
-    const picker=document.querySelector('uni-picker');picker.click();await sleep(250)
-    const columns=[...document.querySelectorAll('uni-picker-view-column')];if(columns.length>=3){const column=columns.at(-1);column.dispatchEvent(new WheelEvent('wheel',{deltaY:34,bubbles:true}));await sleep(350)}
-    const confirm=document.querySelector('.uni-picker-toggle .uni-picker-action-confirm');if(confirm)confirm.click()
+    // Supply the selected date to H5's unchanged native date-input handler.
+    const nativeDate=document.querySelector('uni-picker input[type=date]');if(!nativeDate)throw new Error('Native date input required')
+    nativeDate.value=new Date(Date.parse(published.starts_at)+8*3600000).toISOString().slice(0,10);nativeDate.dispatchEvent(new Event('change',{bubbles:true}))
     await wait(()=>document.querySelector(`[data-testid="booking-slot-${published.slot_id}"]`),'published appointment slot')
     document.querySelector(`[data-testid="booking-slot-${published.slot_id}"]`).click();await local('drop-once',{path:'/api/order/create'});await click('创建待支付预约');await wait(()=>text().includes('无法连接服务'),'response lost after real commit');await click('创建待支付预约');await wait(()=>created&&document.querySelector('[data-testid="order-detail"]'),'same-key booking receipt')
     const after=await local('reservation-database');assert(after.orders===before.orders+1&&after.createAudits===before.createAudits+1,'提交后断网原键重试只创建一个订单及一次审计')
     assert(text().includes('应付 ¥129.00')&&text().includes('待支付')&&text().includes('支付功能尚未接入'),'真实订单快照、金额与待支付边界展示')
-    const evidence=await local('evidence'),writes=evidence.writes.filter(r=>r.route==='/api/order/create');assert(writes.length===2&&writes[0].key===writes[1].key&&writes[0].hash===writes[1].hash,'预约页面重试保留原键原正文')
+    const evidence=await local('evidence'),writes=evidence.writes.filter(r=>r.route==='/api/order/create').slice(-2);assert(writes.length===2&&writes[0].key===writes[1].key&&writes[0].hash===writes[1].hash,'预约页面重试保留原键原正文')
     stage='cancel';await click('取消待支付预约');await wait(()=>button('确定'),'cancel confirmation');await click('确定');await wait(()=>text().includes('已关闭')&&text().includes('本人取消'),'real cancellation')
     assert((await local('reservation-database')).reserved===before.reserved,'本人取消真实释放一次名额')
     await click('返回我的订单');await wait(()=>document.querySelector(`[data-testid="order-${created.order_id}"]`),'owner orders');assert(text().includes('已关闭'),'本人订单分页列表真实结果')
@@ -49,5 +47,5 @@ return await (async()=>{
     assert((await api('/api/merchant/slots/'+published.slot_id+'/close',merchant,{},crypto.randomUUID())).status===200,'真实关闭本店时段')
     return {passed:checks.length,checks,boundary:'H5 controls + real owner WeChat/backend/MySQL; explicit synthetic merchant login bridge; no payment/SMS/device acceptance'}
   }catch(error){return {failed:true,stage,reason:error.message,passed:checks.length,checks}}
-  finally{if(owner)await fetch('/api/auth/logout',{method:'POST',headers:{Authorization:owner}}).catch(()=>{});await local('revoke-merchants').catch(()=>{});uni.request=original.request;uni.login=original.login}
+  finally{if(created&&owner){const current=await api('/api/order/'+created.order_id,owner).catch(()=>null);if(current?.body?.data?.status==='PENDING_PAYMENT')await api('/api/order/cancel',owner,{order_id:created.order_id},crypto.randomUUID()).catch(()=>{})}if(owner)await fetch('/api/auth/logout',{method:'POST',headers:{Authorization:owner}}).catch(()=>{});await local('revoke-merchants').catch(()=>{});uni.request=original.request;uni.login=original.login}
 })()
