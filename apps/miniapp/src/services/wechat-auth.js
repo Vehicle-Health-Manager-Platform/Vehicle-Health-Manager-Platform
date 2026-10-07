@@ -2,12 +2,32 @@ import { apiOrigin, cloudRunEnabled } from './api-config.js'
 import { apiRuntime } from './api-runtime.js'
 
 export class AuthError extends Error {
-  constructor(kind, message, status = 0) {
+  constructor(kind, message, status = 0, detail = '') {
     super(message)
     this.name = 'AuthError'
     this.kind = kind
     this.status = status
+    // 原始底层错误文本，仅供排查（vConsole / 日志），不面向用户展示。
+    this.detail = detail
   }
+}
+
+// 传输层失败有三种完全不同的原因，处置方式也完全不同，必须分开：
+//   域名白名单拦截 → 要在小程序后台配置通讯域名，或开发阶段在开发者工具/真机调试中临时关闭校验；
+//   网络不通       → 要核对后端地址，以及手机与电脑是否在同一局域网（校园网常见 AP 隔离）；
+//   超时           → 可直接重试。
+// 此前除超时外统一报「无法连接服务」，会把「域名未配置」误导成「网络问题」。
+// 实测踩过：真机调试时产物指向 127.0.0.1，页面只报「无法连接服务」，无法区分是地址错还是被拦。
+function transportFailure(error) {
+  const detail = String(error?.errMsg || '')
+  const lower = detail.toLowerCase()
+  if (lower.includes('timeout')) {
+    return new AuthError('timeout', '连接超时，请检查网络后重试', 0, detail)
+  }
+  if (lower.includes('not in domain list')) {
+    return new AuthError('domain', '后端地址未通过微信域名校验，请配置通讯域名后重试', 0, detail)
+  }
+  return new AuthError('network', '无法连接服务，请检查网络后重试', 0, detail)
 }
 
 function responseError(status, response) {
@@ -55,9 +75,7 @@ export function createAuthApi({ baseUrl, runtime, cloud = false }) {
             resolve(response.data)
           }
         },
-        fail: (error) => reject(new AuthError(
-          error?.errMsg?.includes('timeout') ? 'timeout' : 'network',
-          error?.errMsg?.includes('timeout') ? '连接超时，请检查网络后重试' : '无法连接服务，请检查网络后重试')),
+        fail: (error) => reject(transportFailure(error)),
       })
     })
   }

@@ -12,7 +12,10 @@
  *   node scripts/miniapp_lan_helper.cjs --check         # 额外验证该地址上的后端是否真的可达
  *   node scripts/miniapp_lan_helper.cjs --apply         # 写入 apps/miniapp/.env.local，并验证后端可达性
  *   node scripts/miniapp_lan_helper.cjs --apply --build # 写入并重新构建 mp-weixin 产物
- *   node scripts/miniapp_lan_helper.cjs --restore       # 还原 .env.local 为回环地址并重新构建
+ *   node scripts/miniapp_lan_helper.cjs --restore       # 仅当没有可用局域网地址时，退回回环地址
+ *
+ * 注意：局域网地址对开发者工具同样有效（工具运行在电脑上），因此**不需要**在真机与工具之间
+ * 来回切换地址。--restore 是应急出口（例如电脑未连 WiFi），不是常规收尾步骤。
  *   node scripts/miniapp_lan_helper.cjs --ip 192.168.1.5 --port 18080 --apply --build
  *
  * 只改写 .env.local 中的 VITE_API_BASE_URL，其余行（例如云托管变量）原样保留。
@@ -152,7 +155,7 @@ function usage() {
     '  --check     额外请求 http://<地址>:<端口>/actuator/health 验证手机侧能否连通',
     '  --apply     把 VITE_API_BASE_URL 写入 apps/miniapp/.env.local（其余行保留），并验证后端可达性',
     '  --build     写入后重新构建 mp-weixin 产物，并同步开发者工具的“不校验合法域名”设置',
-    '  --restore   还原 VITE_API_BASE_URL 为 http://127.0.0.1:18080 并重新构建',
+    '  --restore   退回 http://127.0.0.1:18080 并重新构建（应急用：无可用局域网地址时；真机会失效）',
   ].join('\n')
 }
 
@@ -372,10 +375,16 @@ async function main() {
     }
     console.log(`     按 docs/operations/LAN_DEVICE_LOGIN_RUNBOOK.md 用 -p 0.0.0.0:${options.port}:8080 重建容器，或检查防火墙`)
   }
-  console.log(`  2. 放行入站端口 ${options.port}（Windows  Defender 防火墙 → 高级设置 → 入站规则）`)
-  console.log(`  3. 用手机浏览器打开 http://${address}:${options.port}/actuator/health 确认返回 UP（手机可达才算数）`)
-  console.log('  4. 开发者工具导入 apps/miniapp/dist/build/mp-weixin，点“预览”，手机扫码后在右上角“…”里选择“打开调试”')
-  console.log('  5. 回到本机后执行 --restore，避免影响回环地址下的日常调试')
+  console.log(`  2. 确认入站端口 ${options.port} 未被防火墙拦截（Docker Desktop 的入站规则需覆盖当前网络配置文件）`)
+  console.log(`  3. 用手机浏览器打开 http://${address}:${options.port}/actuator/health 确认返回 UP`)
+  console.log('     这一步不通过就别继续：先解决网络。校园网/公共 WiFi 常见客户端隔离，可改用电脑移动热点')
+  console.log('  4. 开发者工具导入 apps/miniapp/dist/build/mp-weixin')
+  console.log('     · 模拟器：点「编译」即可（构建已自动关闭域名校验，无需手动勾选）')
+  console.log('     · 预览：手机扫码后，在右上角「…」里选择「打开调试」')
+  console.log('     · 真机调试：手机与电脑须在同一局域网，该模式不校验域名')
+  console.log(`  5. 此地址对开发者工具同样有效（工具在电脑上，访问 ${address} 正常），**无需切回回环**；`)
+  console.log('     仅当电脑未连 WiFi、局域网地址不可用时，才需要 --restore')
+  console.log('     （历史上这里是“用完执行 --restore”，会让人把地址切回 127.0.0.1，真机随即使失效）')
 }
 
 module.exports = {
