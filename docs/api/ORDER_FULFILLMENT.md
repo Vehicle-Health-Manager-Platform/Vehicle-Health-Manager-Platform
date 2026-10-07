@@ -49,7 +49,7 @@ A3–A6 实现；本步先把它们的判定挂点与审计通道建好。
 
 | 动作 | 目标状态 | 审计动作名 | 当前阶段 |
 | --- | --- | --- | --- |
-| `RECEIVE` | `RECEIVED` | `ORDER_CHECK_IN` | A2 建好判定，A3 补接车单 |
+| 接车检查提交 | `RECEIVED` | `ORDER_CHECK_IN` | A3 已接入专用接车接口，通用 RECEIVE 已停止对外开放 |
 | `START_SERVICE` | `IN_SERVICE` | `ORDER_SERVICE_START` | A2 建好判定，A4/A5 补车主确认与派工 |
 | `FINISH_SERVICE` | `PENDING_VERIFY` | `ORDER_SERVICE_FINISH` | A2 建好判定，A6 补报工 |
 | `COMPLETE` | `COMPLETED` | `ORDER_COMPLETE` | A4 补核销校验 |
@@ -68,7 +68,7 @@ A3–A6 实现；本步先把它们的判定挂点与审计通道建好。
 
 列表与详情的投影新增 `allowed_actions`：`[{action, to_status}]`，由矩阵与当前状态算出，
 **不含前置条件判定**。因此按钮出现不等于一定能执行——点击后由服务端给出具体原因。
-`PAID` 订单当前返回 `[{action:"RECEIVE",to_status:"RECEIVED"}]`。
+`PAID` 订单当前返回 `[]`，页面提供[接车检查](PICKUP_INSPECTION.md)专用入口。直接提交通用 `RECEIVE` 返回 43001。
 
 ## 前置条件（fail-closed）
 
@@ -124,8 +124,8 @@ Spec §8.3 已固定接车与施工的路径族（`POST /api/check/pickup/submit
 本接口是**状态机的统一驱动入口**，不是替代品：
 
 - 它只接受动作名，不接受目标状态，因此不构成"前端直接设置状态"；
-- A3 起，接车会自动改由 `POST /api/check/pickup/submit` 提交接车单并写 `check_in_completed_at`，
-  届时 `RECEIVE` 动作从本接口移除；A4–A6 同理；
+- A3 已改由 `POST /api/check/pickup/submit` 提交接车单并写 `check_in_completed_at`，
+  `RECEIVE` 已从本接口移除；A4–A6 将分别接入对应的业务接口；
 - 迁移服务（矩阵、前置、行锁、幂等、审计）保持不变，只换触发它的语义接口。
 
 这一取舍写在此处，避免后续实现者把它当成长期契约。

@@ -49,11 +49,11 @@ function selectionFailure(error) {
   return new ImageError('selection', '无法选择图片，请检查相册或相机权限')
 }
 
-export function createImageApi({ baseUrl, runtime, environment }) {
+export function createImageApi({ baseUrl, runtime, environment, prefix = '/api/file' }) {
   const endpoint = (baseUrl || '').replace(/\/$/, '')
   const where = typeof environment === 'function' ? environment : () => 'device'
   function configured(token) {
-    if (!present(token)) throw new ImageError('unauthorized', '请先登录车主账号')
+    if (!present(token)) throw new ImageError('unauthorized', prefix === '/api/merchant/files' ? '请先登录商家账号' : '请先登录车主账号')
     if (!endpoint) throw new ImageError('unconfigured', '图片服务尚未配置，请联系管理员')
   }
   function transport(method, options, accepts, signal) {
@@ -129,7 +129,7 @@ export function createImageApi({ baseUrl, runtime, environment }) {
       configured(token)
       if (!present(file?.path) || !Number.isFinite(file.size) || file.size <= 0 || file.size > MAX_IMAGE_BYTES
           || !/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(key)) throw new ImageError('invalid', '请重新选择图片')
-      return transport('uploadFile', { url: `${endpoint}/api/file/upload`, filePath: file.path, name: 'file', timeout: 80000,
+      return transport('uploadFile', { url: `${endpoint}${prefix}/upload`, filePath: file.path, name: 'file', timeout: 80000,
         header: { Authorization: `Bearer ${token}`, 'Idempotency-Key': key } },
       result => Number.isSafeInteger(result?.file_id) && result.file_id > 0
         && Number.isSafeInteger(result.size_bytes) && result.size_bytes > 0 && result.size_bytes <= MAX_IMAGE_BYTES
@@ -138,7 +138,7 @@ export function createImageApi({ baseUrl, runtime, environment }) {
     access(token, id, signal) {
       configured(token)
       if (!Number.isSafeInteger(id) || id <= 0) throw new ImageError('invalid', '图片信息无效，请重新上传')
-      return transport('request', { url: `${endpoint}/api/file/${id}/access`, method: 'GET', timeout: 15000,
+      return transport('request', { url: `${endpoint}${prefix}/${id}/access`, method: 'GET', timeout: 15000,
         header: { Authorization: `Bearer ${token}` } },
       result => present(result?.url) && /^https:\/\/[^/\s?#@]+(?:\/|$)/.test(result.url) && !/\s/.test(result.url)
         && Number.isFinite(Date.parse(result.expires_at)) && Date.parse(result.expires_at) > Date.now(), signal)
@@ -165,4 +165,7 @@ export const imageApi = createImageApi({
   baseUrl: apiOrigin,
   runtime: () => apiRuntime,
   environment: () => apiRuntime.environment(),
+})
+export const merchantImageApi = createImageApi({
+  baseUrl: apiOrigin, runtime: () => apiRuntime, environment: () => apiRuntime.environment(), prefix: '/api/merchant/files',
 })

@@ -77,7 +77,7 @@ class RealUploadAdaptersTest {
         var source = new DriverManagerDataSource(mysql.getJdbcUrl(), mysql.getUsername(), mysql.getPassword()); jdbc = new JdbcTemplate(source);
         try (var connection = source.getConnection()) {
             ScriptUtils.executeSqlScript(connection, new FileSystemResource(Path.of("..","docs","sql","migrations","V001__baseline.sql")));
-            for(String file:java.util.List.of("V003__auth_lifecycle.sql","V004__upload_http.sql"))
+            for(String file:java.util.List.of("V003__auth_lifecycle.sql","V004__upload_http.sql","V010__pickup_inspection.sql"))
                 ScriptUtils.executeSqlScript(connection,new FileSystemResource(Path.of("..","docs","sql","migrations",file)));
         }
     }

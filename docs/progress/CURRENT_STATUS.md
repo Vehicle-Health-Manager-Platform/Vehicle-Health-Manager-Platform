@@ -1,5 +1,8 @@
 # 当前进度
 
+**2026-10-08 最新推进**：A2 的 PR #33 已合并；A3 [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34) 已实现商家七图接车、手填里程与预约码校验，本机真实上传/扫描/存储/接车事务和两端单据展示通过。首次完整 CI 六项成功（后端259、小程序119）；最终提交与合并以 PR 为准。[契约](../api/PICKUP_INSPECTION.md)、[验收记录](../testing/LOCAL_PICKUP_ACCEPTANCE.md)。当前优先下一步 A4 车主确认与异议；OCR、短信通知、真实门店相机和浏览器直连测试证书预览未验收。以下保留各阶段原始进度记录。
+
+
 > 更新日期：2026-10-07。需求基线为原始 v1.0 交付文档。分别记录代码/CI、本机真实联调和真机/上线验收。
 
 ## 仓库与交付状态

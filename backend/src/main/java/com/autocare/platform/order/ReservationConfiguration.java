@@ -17,4 +17,5 @@ public class ReservationConfiguration {
     @Bean ReservationOrders reservationOrders(ReservationStore db,ReservationExpiry expiry){return new ReservationOrders(db,expiry);}
     @Bean MerchantOrders merchantOrders(ReservationStore db){return new MerchantOrders(db);}
     @Bean OrderFulfillment orderFulfillment(ReservationStore db,MerchantOrders orders){return new OrderFulfillment(db,orders);}
+    @Bean PickupInspection pickupInspection(ReservationStore db){return new PickupInspection(db);}
 }

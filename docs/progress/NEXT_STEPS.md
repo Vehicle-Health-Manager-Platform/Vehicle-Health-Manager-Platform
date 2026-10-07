@@ -1,5 +1,8 @@
 # 下一步规划
 
+**2026-10-08 最新推进**：A2 的 PR #33 已合并；A3 [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34) 已实现商家七图接车、手填里程与预约码校验，本机真实上传/扫描/存储/接车事务和两端单据展示通过。首次完整 CI 六项成功（后端259、小程序119）；最终提交与合并以 PR 为准。[契约](../api/PICKUP_INSPECTION.md)、[验收记录](../testing/LOCAL_PICKUP_ACCEPTANCE.md)。当前优先下一步 A4 车主确认与异议；OCR、短信通知、真实门店相机和浏览器直连测试证书预览未验收。以下保留各阶段原始进度记录。
+
+
 > 更新日期：2026-10-07。近期目标：把已完成的本机功能收口成 PR，再用测试号在真机完成一次真实登录与 AI 提问，随后进入接车与履约规则设计。每步保留可复现证据，再推进真机与上线环境。
 
 **最新推进（2026-10-07）**：规格 PR #32 已合并，A2 已进入 [PR #33](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/33)，`c5feab6` 六项检查通过（后端 251、小程序 114）。本机已运行 A2 后端并补 V009；H5 证实缺接车单仍返回 43001。[收口计划](../superpowers/plans/2026-10-07-order-state-machine.md)、[执行记录](A2_FULFILLMENT_EXECUTION.md)。

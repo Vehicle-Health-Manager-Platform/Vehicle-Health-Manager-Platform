@@ -4,6 +4,8 @@
 
 **当前推进 S2 服务预约与订单，并继续补齐 S0 验收。** 本人车辆、通用档案、首页摘要和拍照录入已实现；开发者工具中的真实微信登录已联调，H5 实际车辆/无图档案链路已通过真实后端验收。本机私有图片与 H5 归档/预览已联调；真机、正式部署、交易、AI 及完整业务仍待验收，M0/M1 尚未通过。详见[当前进度](docs/progress/CURRENT_STATUS.md)及[下一步规划](docs/progress/NEXT_STEPS.md)。
 
+A3 商家接车检查已实现，详见 [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34)：七图检查、手填里程、预约验码、私有图片及同事务接车；本机真实业务链路通过。车主确认、派工及真机预览随后验收。[契约](docs/api/PICKUP_INSPECTION.md) · [验收记录](docs/testing/LOCAL_PICKUP_ACCEPTANCE.md)。
+
 ## 已实现的能力
 
 | 范围 | 当前能力 | 验证与边界 |
@@ -13,7 +15,7 @@
 | 商家身份 | 密码加一次性短信码、账号/商家状态复核、可刷新与撤销的会话 | 服务商未定，没有生产短信发送器，验证码请求当前返回 503。 |
 | 写入完整性 | 24 小时幂等、权限复核、业务/成功响应/成功审计同事务提交 | MySQL 容器验证通过；已接入车辆、档案、图片上传、商家报价、时段与订单写操作；其他业务继续逐项接入。 |
 | 私有上传基础 | 10 MiB 文件校验、扫描后存储、JDBC 元数据与失败补偿；真实 MinIO/ClamAV 适配器、内部短时签名及独立账号初始化 | PR #12/#13 的上传与小程序图片操作、PR #15 的业务档案关联已合入 main；官方病毒库的本机上传/签名/归档及 H5 交互已通过；正式部署和真实相机仍待验收。测试合成病毒签名不代表生产官方病毒库验收。 |
-| 数据库与 CI | 当前分支包含 V001–V008 与车辆档案图片关联表；网页、小程序、后端、生成文件/OCR、MySQL 和 Compose 共六项 CI | 本机新测试卷已完成 V001–V008；[拍照 PR 最终 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37257482023)和[登录修复首次 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37317893587)均六项全绿。整合后的结果以对应提交 CI 为准。 |
+| 数据库与 CI | 当前分支包含 V001–V010 与车辆档案图片关联表；网页、小程序、后端、生成文件/OCR、MySQL 和 Compose 共六项 CI | 本机测试卷已完成 V001–V010；[拍照 PR 最终 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37257482023)和[登录修复首次 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37317893587)均六项全绿。整合后的结果以对应提交 CI 为准。 |
 | S1 本人车辆与手动录入 | 档案Tab车辆列表、品牌→车系→年款→配置选择、幂等添加、归属隔离、脱敏与成功审计 | [PR #14](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/14) 已实现；39项离线测试、H5 11项替身交互和模拟器10条路由通过。车型库只读取现有有效数据，生产来源未确定；完整F02/M1未验收。[接口契约](docs/api/VEHICLE_MANUAL.md)。 |
 | S1 本人车辆档案手动录入 | [PR #15](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/15) 新增七类通用记录、按车分页、至多五张私有图片关联及本人/CLEAN校验 | [CI 37203770229](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37203770229) 六项全绿，后端132项无失败/跳过；小程序43项Node测试、微信/H5构建通过。无图真实有数据业务已通过本地联调，本机图片归档已通过，真机仍待验收。[接口契约](docs/api/ARCHIVE_MANUAL.md)。 |
 | S1 首页车辆与档案摘要 | [PR #16](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/16) 复用本人接口，显示当前车辆、真实档案总数及最近记录，并在首页与档案 Tab 共用车辆选择 | 48项离线测试与小程序/H5构建已通过；H5 实际交互接真实本地后端的两车/摘要已通过，微信完整业务 UI 和真机仍待验收。健康评分和提醒没有数据规则，本步不展示推测值。 |
@@ -50,7 +52,7 @@ cd backend
 mvn spring-boot:run
 ```
 
-默认端口为 8080，健康检查为 `GET /actuator/health`。数据库须按顺序应用 V001–V009：新建 Compose 数据卷自动初始化，**已有数据卷须人工补迁移**。上传适配器默认关闭；启用、私有桶初始化及 ClamAV 配置见[上传适配器说明](docs/api/UPLOAD_ADAPTERS.md)。
+默认端口为 8080，健康检查为 `GET /actuator/health`。数据库须按顺序应用 V001–V010：新建 Compose 数据卷自动初始化，**已有数据卷须人工补迁移**。上传适配器默认关闭；启用、私有桶初始化及 ClamAV 配置见[上传适配器说明](docs/api/UPLOAD_ADAPTERS.md)。
 
 在仓库根目录验证：
 

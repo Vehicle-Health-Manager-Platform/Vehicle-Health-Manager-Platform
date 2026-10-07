@@ -48,6 +48,7 @@ public class MerchantOrdersController {
     @PostMapping("/api/merchant/orders/{id}/actions") public ResponseEntity<?> act(@AuthenticationPrincipal Jwt jwt,@RequestHeader(value="Idempotency-Key",required=false)String key,@PathVariable long id,@RequestBody JsonNode body){
         var actor=MerchantActor.from(jwt);WriteIntegrityService.normalizeKey(key);ServiceCatalog.validateId(id);
         if(!shaped(body))throw invalidAction();
+        if(OrderStatus.RECEIVE.equals(body.get("action").textValue()))throw new FulfillmentConflict(43001,"请通过接车检查提交完整接车单");
         return saved(transitions().apply(actor,key,id,body.get("action").textValue(),body.has("note")?body.get("note").textValue():null));
     }
     @ExceptionHandler(org.springframework.dao.DataAccessException.class)ResponseEntity<?> database(){return ResponseEntity.status(503).cacheControl(CacheControl.noStore()).body(ApiResponse.error(50300,"本店订单暂不可用，请稍后重试"));}

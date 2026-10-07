@@ -63,12 +63,14 @@ onUnload(() => { visible = false; flow.reset(); apply.reset() })
       <text v-if="state.value.close_reason">关闭原因 {{ closeReasonLabel(state.value.close_reason) }}</text>
       <view v-if="state.value.payment_summary"><text>支付状态 {{ state.value.payment_summary.status }}</text><text v-if="state.value.payment_summary.test_mode">测试支付，未真实扣款，不可作为收款凭据</text></view>
       <text v-if="state.value.has_payment_exception">本订单存在付款异常，待核对</text>
+      <button v-if="state.value.status==='PAID'" @tap="uni.navigateTo({url:`/pages/merchant/pickup?id=${state.value.order_id}`})">接车检查</button>
+      <button v-if="['RECEIVED','IN_SERVICE','PENDING_VERIFY','COMPLETED','DISPUTED'].includes(state.value.status)" @tap="uni.navigateTo({url:`/pages/check/pickup-detail?id=${state.value.order_id}&role=merchant`})">查看接车单</button>
       <view v-if="state.value.allowed_actions.length" data-testid="merchant-order-actions">
         <text class="reservation-heading">可执行操作</text>
         <text>操作会记录操作人与时间；车主确认、派工、报工、核销在各自步骤就绪前会给出具体原因。</text>
         <button v-for="entry in state.value.allowed_actions" :key="entry.action" :disabled="write.busy" :loading="write.busy" :data-testid="`order-action-${entry.action}`" @tap="run(entry)">{{ actionLabel(entry.action) }}</button>
       </view>
-      <text v-else>当前状态在本店侧没有可执行的履约操作。</text>
+      <text v-else>{{state.value.status==='PAID'?'请通过接车检查提交完整接车单。':'当前状态在本店侧没有可执行的履约操作。'}}</text>
       <text v-if="write.message" role="status">{{ write.message }}</text>
       <button :disabled="write.busy" @tap="flow.load">刷新订单状态</button>
     </view>

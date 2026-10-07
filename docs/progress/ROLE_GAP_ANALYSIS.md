@@ -1,5 +1,8 @@
 # 三端功能缺口清点
 
+**2026-10-08 最新推进**：A2 的 PR #33 已合并；A3 [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34) 已实现商家七图接车、手填里程与预约码校验，本机真实上传/扫描/存储/接车事务和两端单据展示通过。首次完整 CI 六项成功（后端259、小程序119）；最终提交与合并以 PR 为准。[契约](../api/PICKUP_INSPECTION.md)、[验收记录](../testing/LOCAL_PICKUP_ACCEPTANCE.md)。当前优先下一步 A4 车主确认与异议；OCR、短信通知、真实门店相机和浏览器直连测试证书预览未验收。以下保留各阶段原始进度记录。
+
+
 > 更新日期：2026-10-07。基线为 [Spec](../SPEC.md) v1.2 的 F01–F20 与四端页面清单。
 > 本页只回答"还差什么"，不替代各功能自己的契约文档。清点依据：`apps/miniapp/src/pages` 实际文件、
 > 后端 `*Controller.java` 清单、[当前进度](CURRENT_STATUS.md) 与[外部依赖清单](S0_DEPENDENCIES.md)。
