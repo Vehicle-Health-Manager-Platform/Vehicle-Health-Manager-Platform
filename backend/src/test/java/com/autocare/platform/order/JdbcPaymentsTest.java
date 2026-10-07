@@ -66,4 +66,53 @@ class JdbcPaymentsTest {
     @Test void expiryWorkerRacesWithSuccessAtDeadline()throws Exception{long o=order(a,slot(1)),p=pay(o);clock.value=clock.value.plusSeconds(900);var pool=Executors.newFixedThreadPool(2);try{var x=pool.submit(expiry::sweep);var y=pool.submit(()->send(p,"SUCCEEDED"));x.get(20,TimeUnit.SECONDS);y.get(20,TimeUnit.SECONDS);assertEquals("CLOSED",orders.detail(a,o).get("status"));assertEquals("SUCCEEDED",state(p));assertEquals(0,jdbc.queryForObject("SELECT reserved_count FROM appointment_slot",Integer.class));assertEquals(1,count("payment_exception"));assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM audit_log WHERE action='ORDER_EXPIRE'",Integer.class));}finally{pool.shutdownNow();}}
     @Test void creationAuditFailureAndExpiredOrderCannotOpenPayment(){long o=order(a,slot(1));jdbc.execute("CREATE TRIGGER reject_reservation_audit BEFORE INSERT ON audit_log FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='test failure'");assertEquals(503,assertThrows(ResponseStatusException.class,()->pay(o)).getStatusCode().value());assertEquals(0,count("payment"));jdbc.execute("DROP TRIGGER reject_reservation_audit");clock.value=clock.value.plusSeconds(900);assertEquals(409,assertThrows(ResponseStatusException.class,()->pay(o)).getStatusCode().value());assertEquals(0,count("payment"));}
     @Test void incompleteHistoricalPaymentCannotBeReprepared(){long o=order(a,slot(1));jdbc.update("INSERT INTO payment(order_id,channel,amount,status) VALUES(?,'LOCAL_TEST',12.34,'CREATED')",o);assertEquals(409,assertThrows(ResponseStatusException.class,()->pay(o)).getStatusCode().value());assertEquals(1,count("payment"));}
+    @Test void merchantOrdersAreScopedReadOnlyAndKeepHistoricalSnapshots(){
+        long first=order(a,slot(2)),second=order(b,jdbc.queryForObject("SELECT id FROM appointment_slot",Long.class));
+        var reader=new MerchantOrders(db);
+        jdbc.update("UPDATE `order` SET project_snapshot=JSON_SET(project_snapshot,'$.user_id',999,'$.vin','SECRET'), merchant_snapshot=JSON_SET(merchant_snapshot,'$.phone','SECRET'), price_snapshot=JSON_SET(price_snapshot,'$.customer','SECRET') WHERE id=?",first);
+        int audits=count("audit_log");
+        var list=reader.list(shop,null,null,1,20);
+        assertEquals(2L,list.get("total"));assertEquals(2,((List<?>)list.get("items")).size());
+        var detail=reader.detail(shop,first);
+        assertFalse(detail.toString().contains("SECRET"));assertFalse(detail.containsKey("vehicle_id"));assertFalse(detail.containsKey("user_id"));
+        assertEquals(audits,count("audit_log"));
+        jdbc.update("UPDATE merchant_project SET is_deleted=1 WHERE id=1");
+        assertEquals(first,reader.detail(shop,first).get("order_id"));
+        assertEquals(2L,reader.list(shop,null,null,1,20).get("total"));
+    }
+    @Test void merchantOrderExceptionCoversOldPaymentsAndFilters(){
+        long first=order(a,slot(1)),old=pay(first);send(old,"FAILED");long current=pay(first);send(old,"SUCCEEDED");send(current,"SUCCEEDED");
+        var reader=new MerchantOrders(db);
+        var detail=reader.detail(shop,first);
+        assertEquals(true,detail.get("has_payment_exception"));
+        assertEquals(false,((Map<?,?>)detail.get("payment_summary")).get("requires_review"));
+        assertEquals(1L,reader.list(shop,"PAID",null,1,20).get("total"));
+        assertEquals(0L,reader.list(shop,"CLOSED",null,1,20).get("total"));
+        assertEquals(400,assertThrows(ResponseStatusException.class,()->reader.list(shop,"INVALID",null,1,20)).getStatusCode().value());
+        assertEquals(400,assertThrows(ResponseStatusException.class,()->reader.list(shop,null,"2026-02-30",1,20)).getStatusCode().value());
+        jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id=?",shop.session());
+        assertEquals(401,assertThrows(ResponseStatusException.class,()->reader.list(shop,null,null,1,20)).getStatusCode().value());
+    }
+    @Test void merchantOrdersExcludeOtherShopEvenWithSharedProject(){
+        long first=order(a,slot(1));
+        jdbc.update("INSERT INTO merchant(id,merchant_type,name,address,status) VALUES(2,2,'另一店','合成地址二',1)");
+        jdbc.update("INSERT INTO staff_account(id,merchant_id,role,account) VALUES(2,2,'MERCHANT','test-two')");
+        var other=new MerchantActor(2,2,UUID.randomUUID().toString(),Instant.now().plusSeconds(3600));
+        session(other.session(),"staff_account",2,"MERCHANT","merchant-account",2);
+        var reader=new MerchantOrders(db);
+        assertEquals(0L,reader.list(other,null,null,1,20).get("total"));
+        assertEquals(404,assertThrows(ResponseStatusException.class,()->reader.detail(other,first)).getStatusCode().value());
+    }
+    @Test void merchantOrderDateUsesBeijingDayAndPaginates(){
+        long first=order(a,slot(2)),second=order(b,jdbc.queryForObject("SELECT id FROM appointment_slot",Long.class));
+        String day=clock.value.atZone(ReservationInput.ZONE).toLocalDate().plusDays(1).toString();
+        var reader=new MerchantOrders(db);
+        assertEquals(2L,reader.list(shop,null,day,1,1).get("total"));
+        assertEquals(1,((List<?>)reader.list(shop,null,day,2,1).get("items")).size());
+        assertEquals(0L,reader.list(shop,null,clock.value.atZone(ReservationInput.ZONE).toLocalDate().toString(),1,20).get("total"));
+        jdbc.update("UPDATE `order` SET appointment_at=? WHERE id=?",java.sql.Timestamp.from(Instant.parse("2026-10-07T15:59:59Z")),first);
+        jdbc.update("UPDATE `order` SET appointment_at=? WHERE id=?",java.sql.Timestamp.from(Instant.parse("2026-10-07T16:00:00Z")),second);
+        assertEquals(1L,reader.list(shop,null,"2026-10-07",1,20).get("total"));
+        assertEquals(1L,reader.list(shop,null,"2026-10-08",1,20).get("total"));
+    }
 }

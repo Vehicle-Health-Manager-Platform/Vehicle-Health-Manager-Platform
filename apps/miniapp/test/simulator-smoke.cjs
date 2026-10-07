@@ -45,7 +45,7 @@ async function main() {
     const quotes = await rpc('App.getCurrentPage')
     assert.equal(quotes.path, 'pages/merchant/projects')
     console.log(`PASS simulator route: ${quotes.path}`)
-    for (const url of ['/pages/merchant/slots', '/pages/order/book?id=9101201', '/pages/order/list', '/pages/order/detail?id=1']) {
+    for (const url of ['/pages/merchant/slots', '/pages/merchant/orders', '/pages/merchant/order-detail?id=1', '/pages/order/book?id=9101201', '/pages/order/list', '/pages/order/detail?id=1']) {
       await rpc('App.callWxMethod', { method: 'reLaunch', args: [{ url }] })
       const page = await rpc('App.getCurrentPage')
       assert.equal(page.path, url.split('?')[0].slice(1))

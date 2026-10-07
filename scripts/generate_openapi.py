@@ -382,6 +382,41 @@ def main():
     callback["responses"] = {"200":{"description":"已提交或同事件已提交","content":{"application/json":{"schema":{"type":"object","required":["code"],"properties":{"code":{"const":"SUCCESS"}}}}}},"400":{"description":"通知参数/金额等不匹配"},"401":{"description":"无效/过期签名"},"404":{"description":"测试渠道关闭或支付不存在"},"409":{"description":"事件异文或流水号冲突"},"503":{"description":"事务失败，重试"}}
     document["paths"]["/api/payments/callback/LOCAL_TEST"] = {"post":callback}
     document["paths"]["/api/payments/callback/{channel}"]["post"]["description"] = "未实现的正式渠道草案，本步仅实现固定LOCAL_TEST路径，不开放其他通知入口。"
+    merchant_order_fields = {k: v for k, v in schemas["OwnerOrder"]["properties"].items() if k != "payment_summary"}
+    for key, allowed in {
+        "project_snapshot": {"standard_project_id": identifier, "project_name": {"type": "string"}, "service_content": {"type": "string"}},
+        "merchant_snapshot": {"merchant_id": identifier, "merchant_name": {"type": "string"}, "address": {"type": "string"}},
+        "appointment_snapshot": {"slot_id": identifier, "starts_at": timestamp, "ends_at": timestamp},
+    }.items():
+        merchant_order_fields[key] = {"anyOf": [{"type": "object", "additionalProperties": False, "properties": allowed}, {"type": "null"}]}
+    merchant_order_fields["payment_summary"] = schemas["OwnerOrder"]["properties"]["payment_summary"]
+    merchant_order_fields["has_payment_exception"] = {"type": "boolean", "description": "任意支付尝试存在待核对异常；独立于选中的支付摘要"}
+    schemas["MerchantOrder"] = {"type": "object", "additionalProperties": False,
+        "required": list(merchant_order_fields), "properties": merchant_order_fields}
+    schemas["MerchantOrderDetail"] = {"type": "object", "additionalProperties": False,
+        "required": list(merchant_order_fields) + ["price_snapshot"],
+        "properties": {**merchant_order_fields, "price_snapshot": {"anyOf": [{"type": "object", "additionalProperties": False, "properties": {
+            "merchant_project_id": identifier, "quote_version_id": identifier, "version": identifier, "price": quote_fields["price"]}}, {"type": "null"}]}}}
+    schemas["MerchantOrderPage"] = {**schemas["ServiceProjectPage"], "properties": {
+        **schemas["ServiceProjectPage"]["properties"], "items": {"type": "array", "items": {"$ref": "#/components/schemas/MerchantOrder"}}}}
+    for path, result, title in (("/api/merchant/orders", "MerchantOrderPage", "本店订单分页及筛选"),
+                                ("/api/merchant/orders/{id}", "MerchantOrderDetail", "本店订单详情与下单快照")):
+        item = operation("get", path, title, "F07,F08")
+        item["x-roles"] = "MERCHANT"
+        item["x-implementation-status"] = "merchant-orders-read-implemented"
+        item["description"] = "校验有效商家会话和本店归属；只读投影仅包含白名单下单快照，绝不返回客户身份、车辆ID、完整车牌或VIN。详见 MERCHANT_ORDERS.md。"
+        item["responses"]["404"] = {"description": "订单不存在或不属于本店，code=40400"}
+        item["responses"]["503"] = {"description": "数据库暂不可用，code=50300"}
+        if path.endswith("/{id}"):
+            item["parameters"][0]["schema"] = identifier
+        else:
+            item["parameters"] += pagination + [
+                {"name": "status", "in": "query", "schema": {"type": "string", "enum": ["PENDING_PAYMENT", "PAID", "CLOSED"]}},
+                {"name": "date", "in": "query", "description": "按北京时间预约日期，包含全天，严格YYYY-MM-DD", "schema": {"type": "string", "format": "date"}}]
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [
+            {"$ref": "#/components/schemas/ApiResponse"},
+            {"type": "object", "properties": {"data": {"$ref": f"#/components/schemas/{result}"}}}]}
+        document["paths"][path] = {"get": item}
     count = sum(len(value) for value in document["paths"].values())
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

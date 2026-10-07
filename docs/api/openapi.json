@@ -5698,6 +5698,195 @@
         "x-implementation-status": "payment-foundation-local-test-implemented",
         "description": "默认关闭时404；启用须隔离profile/开关/密钥。正文最多16KiB且拒绝重复键；签名及规范化事件摘要规则见 PAYMENT_FOUNDATION.md，不能作为微信验签协议。"
       }
+    },
+    "/api/merchant/orders": {
+      "get": {
+        "summary": "本店订单分页及筛选",
+        "operationId": "get_api_merchant_orders",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F07",
+          "F08"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING_PAYMENT",
+                "PAID",
+                "CLOSED"
+              ]
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "按北京时间预约日期，包含全天，严格YYYY-MM-DD",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/MerchantOrderPage"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "订单不存在或不属于本店，code=40400"
+          },
+          "503": {
+            "description": "数据库暂不可用，code=50300"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "merchant-orders-read-implemented",
+        "description": "校验有效商家会话和本店归属；只读投影仅包含白名单下单快照，绝不返回客户身份、车辆ID、完整车牌或VIN。详见 MERCHANT_ORDERS.md。"
+      }
+    },
+    "/api/merchant/orders/{id}": {
+      "get": {
+        "summary": "本店订单详情与下单快照",
+        "operationId": "get_api_merchant_orders_id",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F07",
+          "F08"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/MerchantOrderDetail"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "订单不存在或不属于本店，code=40400"
+          },
+          "503": {
+            "description": "数据库暂不可用，code=50300"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "merchant-orders-read-implemented",
+        "description": "校验有效商家会话和本店归属；只读投影仅包含白名单下单快照，绝不返回客户身份、车辆ID、完整车牌或VIN。详见 MERCHANT_ORDERS.md。"
+      }
     }
   },
   "components": {
@@ -6634,6 +6823,365 @@
               "null"
             ],
             "format": "date-time"
+          }
+        }
+      },
+      "MerchantOrder": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order_id",
+          "order_no",
+          "amount_due",
+          "status",
+          "expires_at",
+          "created_at",
+          "closed_at",
+          "close_reason",
+          "project_snapshot",
+          "merchant_snapshot",
+          "appointment_snapshot",
+          "payment_summary",
+          "has_payment_exception"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "order_no": {
+            "type": "string"
+          },
+          "amount_due": {
+            "type": "string",
+            "pattern": "^(?:0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+          },
+          "status": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "closed_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "close_reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "project_snapshot": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "standard_project_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "project_name": {
+                    "type": "string"
+                  },
+                  "service_content": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "merchant_snapshot": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "merchant_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "merchant_name": {
+                    "type": "string"
+                  },
+                  "address": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "appointment_snapshot": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "slot_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "starts_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "ends_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "payment_summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PaymentSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "has_payment_exception": {
+            "type": "boolean",
+            "description": "任意支付尝试存在待核对异常；独立于选中的支付摘要"
+          }
+        }
+      },
+      "MerchantOrderDetail": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order_id",
+          "order_no",
+          "amount_due",
+          "status",
+          "expires_at",
+          "created_at",
+          "closed_at",
+          "close_reason",
+          "project_snapshot",
+          "merchant_snapshot",
+          "appointment_snapshot",
+          "payment_summary",
+          "has_payment_exception",
+          "price_snapshot"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "order_no": {
+            "type": "string"
+          },
+          "amount_due": {
+            "type": "string",
+            "pattern": "^(?:0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+          },
+          "status": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "closed_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "close_reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "project_snapshot": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "standard_project_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "project_name": {
+                    "type": "string"
+                  },
+                  "service_content": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "merchant_snapshot": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "merchant_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "merchant_name": {
+                    "type": "string"
+                  },
+                  "address": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "appointment_snapshot": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "slot_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "starts_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "ends_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "payment_summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PaymentSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "has_payment_exception": {
+            "type": "boolean",
+            "description": "任意支付尝试存在待核对异常；独立于选中的支付摘要"
+          },
+          "price_snapshot": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "merchant_project_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "quote_version_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "version": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "price": {
+                    "type": "string",
+                    "pattern": "^(?:0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "MerchantOrderPage": {
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MerchantOrder"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
           }
         }
       }
