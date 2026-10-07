@@ -4,6 +4,10 @@
 
 ## 仓库与交付状态
 
+**2026-10-07 最新收口**：PR #26–#32 已合并。A2 订单履约状态机见 [PR #33](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/33)：提交 `c5feab6` 六项 CI 通过，后端 251 项、小程序 114 项全部通过；本机 V009 已补迁移，运行镜像为 `vehicle-auth/backend:order-fulfillment`，仍保留 `0.0.0.0:18080`。H5 点击接车已实际返回 43001，PAID 和成功审计均不变。最终提交检查与合并状态以 PR 为准。[执行记录](A2_FULFILLMENT_EXECUTION.md)。
+
+**下一步 A3**：用户已确认手填里程、7 张照片、一次提交的接车检查设计，书面规格复核后进入编码。车主确认、派工、报工与核销尚未实现；真机、正式支付、真实短信仍未验收。以下各阶段表格保留原始验收口径。
+
 PR #12–#17 已合入 `main`。PR #18 的预检脚本与验收文档整合至 PR #19，随真实微信登录修复和本次文档更新一起交付；合并状态及完整 CI 以 [GitHub PR](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/19) 为准。各阶段原始证据保留在[执行记录](S0_EXECUTION_LOG.md)。
 
 | 范围 | 当前状态 | 证据与边界 |
