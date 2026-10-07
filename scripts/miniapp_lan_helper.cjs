@@ -10,13 +10,17 @@
  * 用法：
  *   node scripts/miniapp_lan_helper.cjs                 # 只探测并打印候选局域网地址
  *   node scripts/miniapp_lan_helper.cjs --check         # 额外验证该地址上的后端是否真的可达
- *   node scripts/miniapp_lan_helper.cjs --apply         # 把地址写入 apps/miniapp/.env.local
+ *   node scripts/miniapp_lan_helper.cjs --apply         # 写入 apps/miniapp/.env.local，并验证后端可达性
  *   node scripts/miniapp_lan_helper.cjs --apply --build # 写入并重新构建 mp-weixin 产物
  *   node scripts/miniapp_lan_helper.cjs --restore       # 还原 .env.local 为回环地址并重新构建
  *   node scripts/miniapp_lan_helper.cjs --ip 192.168.1.5 --port 18080 --apply --build
  *
  * 只改写 .env.local 中的 VITE_API_BASE_URL，其余行（例如云托管变量）原样保留。
  * .env.local 与构建产物都受 Git 忽略，不会提交。
+ *
+ * 构建后还会同步开发者工具的项目私有配置（dist/build/mp-weixin/project.private.config.json）
+ * 中的 urlCheck=false。后端地址是 http，工具默认会把它当作非法通讯域名拦掉，表现为所有请求
+ * 直接失败——很容易被误判成后端不可用。该文件同样受 Git 忽略，只影响本机调试，不改变线上行为。
  */
 
 const fs = require('node:fs')
@@ -27,6 +31,9 @@ const { spawnSync } = require('node:child_process')
 const REPO_ROOT = path.resolve(__dirname, '..')
 const MINIAPP_DIR = path.join(REPO_ROOT, 'apps', 'miniapp')
 const ENV_LOCAL = path.join(MINIAPP_DIR, '.env.local')
+const BUILD_DIR = path.join(MINIAPP_DIR, 'dist', 'build', 'mp-weixin')
+const DEVTOOLS_CONFIG = path.join(BUILD_DIR, 'project.config.json')
+const DEVTOOLS_PRIVATE_CONFIG = path.join(BUILD_DIR, 'project.private.config.json')
 
 const DEFAULT_PORT = '18080'
 const LOOPBACK_ORIGIN = `http://127.0.0.1:${DEFAULT_PORT}`
@@ -143,10 +150,78 @@ function usage() {
     '',
     '  默认        探测并打印推荐的局域网地址，不修改任何文件',
     '  --check     额外请求 http://<地址>:<端口>/actuator/health 验证手机侧能否连通',
-    '  --apply     把 VITE_API_BASE_URL 写入 apps/miniapp/.env.local（其余行保留）',
-    '  --build     写入后重新构建 mp-weixin 产物',
+    '  --apply     把 VITE_API_BASE_URL 写入 apps/miniapp/.env.local（其余行保留），并验证后端可达性',
+    '  --build     写入后重新构建 mp-weixin 产物，并同步开发者工具的“不校验合法域名”设置',
     '  --restore   还原 VITE_API_BASE_URL 为 http://127.0.0.1:18080 并重新构建',
   ].join('\n')
+}
+
+/**
+ * 把 urlCheck 写进开发者工具私有项目配置的文本。
+ * 解析失败（空文件、非法 JSON、非对象）时返回 null，由调用方决定跳过还是重建。
+ */
+function setUrlCheck(jsonText, urlCheck = false) {
+  let parsed
+  try {
+    parsed = JSON.parse(jsonText)
+  } catch {
+    return null
+  }
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return null
+  const setting =
+    parsed.setting && typeof parsed.setting === 'object' && !Array.isArray(parsed.setting) ? parsed.setting : {}
+  return `${JSON.stringify({ ...parsed, setting: { ...setting, urlCheck } }, null, 2)}\n`
+}
+
+/**
+ * 产物目录尚未被开发者工具打开过时，按工具自身的格式初始化私有配置。
+ * projectname 用 encodeURIComponent 编码，与工具写出的形式一致。
+ */
+function createPrivateConfig(projectName) {
+  return `${JSON.stringify(
+    {
+      description:
+        '项目私有配置文件。此文件中的内容将覆盖 project.config.json 中的相同字段。项目的改动优先同步到此文件中。',
+      projectname: encodeURIComponent(projectName || ''),
+      setting: { urlCheck: false },
+    },
+    null,
+    2,
+  )}\n`
+}
+
+function readProjectName() {
+  try {
+    return JSON.parse(fs.readFileSync(DEVTOOLS_CONFIG, 'utf8')).projectname || ''
+  } catch {
+    return ''
+  }
+}
+
+/**
+ * 构建后同步开发者工具设置，使导入产物目录即可直连 http 后端，免手动勾“不校验合法域名”。
+ * 只改 setting.urlCheck，其余本地设置原样保留；任何异常都不应让构建表现为失败。
+ */
+function syncDevtoolsUrlCheck() {
+  try {
+    let current = ''
+    try {
+      current = fs.readFileSync(DEVTOOLS_PRIVATE_CONFIG, 'utf8')
+    } catch {
+      current = ''
+    }
+    const next = current ? setUrlCheck(current, false) : createPrivateConfig(readProjectName())
+    if (!next) {
+      console.log(`警告：${path.relative(REPO_ROOT, DEVTOOLS_PRIVATE_CONFIG)} 无法解析，已跳过域名校验设置。`)
+      return false
+    }
+    if (next === current) return true
+    fs.writeFileSync(DEVTOOLS_PRIVATE_CONFIG, next, 'utf8')
+    return true
+  } catch (error) {
+    console.log(`警告：同步开发者工具设置失败（${error && error.message}），可手动勾选“不校验合法域名”。`)
+    return false
+  }
 }
 
 function runBuild() {
@@ -167,6 +242,7 @@ function runBuild() {
 
   if (result.error) throw result.error
   if (result.status !== 0) throw new Error(`构建失败，退出码 ${result.status}`)
+  if (syncDevtoolsUrlCheck()) console.log('已同步开发者工具设置：urlCheck=false，无需手动勾选“不校验合法域名”。')
 }
 
 async function checkReachable(origin) {
@@ -181,6 +257,33 @@ async function checkReachable(origin) {
   } finally {
     clearTimeout(timer)
   }
+}
+
+const BACKEND_CONTAINER = 'vehicle-auth-local-backend'
+
+function defaultDockerRun(args) {
+  const result = spawnSync('docker', args, { encoding: 'utf8' })
+  if (result.error || typeof result.stdout !== 'string') return { ok: false, stdout: '' }
+  if (result.status !== 0) return { ok: false, stdout: result.stdout }
+  return { ok: true, stdout: result.stdout }
+}
+
+/**
+ * 判断本机后端容器对外发布的是「所有网卡」还是「仅回环」。
+ * 只读docker，不改动任何容器；docker 不可用时返回 unknown，不影响主流程。
+ *
+ * 返回 { state, detail }，state ∈ lan | loopback | absent | unknown。
+ */
+function inspectBackendPublish(port, run = defaultDockerRun) {
+  const result = run(['ps', '--filter', `name=^/${BACKEND_CONTAINER}$`, '--format', '{{.Ports}}'])
+  if (!result.ok) return { state: 'unknown', detail: 'docker 命令不可用或执行失败' }
+  const line = String(result.stdout || '').trim()
+  if (!line) return { state: 'absent', detail: `未发现运行中的容器 ${BACKEND_CONTAINER}` }
+  const match = line.match(new RegExp(`(0\\.0\\.0\\.0|\\[::\\]|\\*|127\\.0\\.0\\.1):${port}->`))
+  if (!match) return { state: 'unknown', detail: `容器在运行，但未见 ${port} 端口映射（${line}）` }
+  return match[1] === '127.0.0.1'
+    ? { state: 'loopback', detail: line }
+    : { state: 'lan', detail: line }
 }
 
 async function main() {
@@ -227,7 +330,15 @@ async function main() {
       console.log('该地址从本机可达。若手机仍连不上，请检查手机与电脑是否同一网络、以及系统防火墙入站规则。')
     } else {
       console.log(`连通性检查：失败（HTTP ${result.status}）${result.body ? ` ${result.body}` : ''}`)
-      console.log('常见原因：后端端口只发布在回环地址（需用 -p 0.0.0.0:18080:8080 或 -p 18080:8080 重新运行），或防火墙未放行。')
+      const publish = inspectBackendPublish(options.port)
+      if (publish.state === 'loopback') {
+        console.log(`后端容器当前只发布在回环地址（${publish.detail}），手机一定连不上；`)
+        console.log(`需按 docs/operations/LAN_DEVICE_LOGIN_RUNBOOK.md 用 -p 0.0.0.0:${options.port}:8080 重建容器。`)
+      } else if (publish.state === 'absent') {
+        console.log(`${publish.detail}，请先启动后端。`)
+      } else {
+        console.log('常见原因：后端端口只发布在回环地址（需用 -p 0.0.0.0:18080:8080 重新运行），或防火墙未放行。')
+      }
       console.log('本机可达不代表手机可达；本机不可达时手机一定不可达。')
     }
   }
@@ -246,14 +357,39 @@ async function main() {
 
   console.log('')
   console.log('真机联调还需：')
-  console.log(`  1. 后端发布到局域网：docker run ... -p 0.0.0.0:${options.port}:8080（当前多为 127.0.0.1:${options.port}，手机连不上）`)
+  // 用「本机能否经局域网地址访问到后端」作为判据，比读 docker 端口映射更直接
+  // （Windows 上 Node 直接 spawn docker 会 EBUSY，读不到端口信息）。
+  const probe = await checkReachable(origin)
+  const publish = probe.ok ? null : inspectBackendPublish(options.port)
+  if (probe.ok) {
+    console.log(`  1. 后端已就绪：${origin}/actuator/health 返回 HTTP ${probe.status}（本机可达）`)
+  } else {
+    console.log(`  1. 本机经该地址访问不到后端（HTTP ${probe.status}）${probe.body ? ` ${probe.body}` : ''}`)
+    if (publish && publish.state === 'loopback') {
+      console.log(`     容器只发布在回环地址（${publish.detail}），手机一定连不上`)
+    } else if (publish && publish.state === 'absent') {
+      console.log(`     ${publish.detail}`)
+    }
+    console.log(`     按 docs/operations/LAN_DEVICE_LOGIN_RUNBOOK.md 用 -p 0.0.0.0:${options.port}:8080 重建容器，或检查防火墙`)
+  }
   console.log(`  2. 放行入站端口 ${options.port}（Windows  Defender 防火墙 → 高级设置 → 入站规则）`)
-  console.log(`  3. 用手机浏览器打开 http://${address}:${options.port}/actuator/health 确认返回 UP`)
+  console.log(`  3. 用手机浏览器打开 http://${address}:${options.port}/actuator/health 确认返回 UP（手机可达才算数）`)
   console.log('  4. 开发者工具导入 apps/miniapp/dist/build/mp-weixin，点“预览”，手机扫码后在右上角“…”里选择“打开调试”')
   console.log('  5. 回到本机后执行 --restore，避免影响回环地址下的日常调试')
 }
 
-module.exports = { rankLanCandidates, upsertEnvLine, isUsableCandidate, segmentRank, adapterPenalty, DEFAULT_PORT }
+module.exports = {
+  rankLanCandidates,
+  upsertEnvLine,
+  isUsableCandidate,
+  segmentRank,
+  adapterPenalty,
+  inspectBackendPublish,
+  setUrlCheck,
+  createPrivateConfig,
+  BACKEND_CONTAINER,
+  DEFAULT_PORT,
+}
 
 if (require.main === module) {
   main().catch((error) => {

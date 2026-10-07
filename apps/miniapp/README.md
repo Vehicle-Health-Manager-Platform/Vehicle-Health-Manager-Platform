@@ -20,9 +20,11 @@ Test-Path .\apps\miniapp\dist\build\mp-weixin\app.json
 
 身份核心、车主五 Tab、商家身份、页面状态及上传基础能力已整合至 `main`。在另一份仓库更新 `main` 后重新执行上述构建命令，即可生成对应小程序产物；编译产物不会提交到 Git。
 
-联调后端时，将 `.env.example` 复制为本目录 `.env.local` 并设置 `VITE_API_BASE_URL`。常规真机使用合法 HTTPS 地址，本机开发者工具可使用回环 HTTP 和临时域名校验例外。没有服务端地址时，登录按钮会提示不可用；后端已实现 `/api/auth/wx-login`、技师绑定、车主手机号绑定、刷新与退出。技师待绑定状态可输入商家发放的员工码；车主可通过微信手机号按钮绑定，但主体能力与额度须另行核对。商家已有账号密码与短信码表单，生产发送器未接入，验证码请求当前返回 503。本机私有配置及真实微信 code 联调已通过，真机、手机号与短信继续按[验收清单](../../docs/operations/AUTH_INTEGRATION_RUNBOOK.md)记录。
+联调后端时，将 `.env.example` 复制为本目录 `.env.local` 并设置 `VITE_API_BASE_URL`。常规真机使用合法 HTTPS 地址，本机开发者工具可使用回环 HTTP 和临时域名校验例外。**真机（测试号）联调**用仓库根目录的 `node scripts/miniapp_lan_helper.cjs --apply --build` 把地址写成电脑的局域网地址并重建产物；用完执行 `--restore` 回到回环地址。细节见[真机真实微信登录清单](../../docs/operations/LAN_DEVICE_LOGIN_RUNBOOK.md)。没有服务端地址时，登录按钮会提示不可用；后端已实现 `/api/auth/wx-login`、技师绑定、车主手机号绑定、刷新与退出。技师待绑定状态可输入商家发放的员工码；车主可通过微信手机号按钮绑定，但主体能力与额度须另行核对。商家已有账号密码与短信码表单，生产发送器未接入，验证码请求当前返回 503。本机私有配置及真实微信 code 联调已通过，真机、手机号与短信继续按[验收清单](../../docs/operations/AUTH_INTEGRATION_RUNBOOK.md)记录。
 
-`src/pages/index` 是测试入口，`src/pages/owner`、`merchant`、`technician` 为三个角色模块；车主另有首页、服务、AI、档案、我的五个原生 Tab。入口切换不代表登录或授权。车主和技师调用 `wx.login` 的边界在 `src/services/wechat-auth.js`；商家使用账号密码加短信码。五 Tab 的业务内容、商家和技师工作流仍待真实接口接入。
+微信云托管（免配通讯域名）模式：改为配置 `VITE_WECHAT_CLOUD_ENV_ID` 与 `VITE_WECHAT_CLOUD_SERVICE`，所有后端请求改走 `wx.cloud.callContainer`，登录由网关注入的 `X-WX-OPENID` 完成，不再调用 `wx.login`，也无需在小程序后台配置服务器域名。两个变量同时非空才生效，否则完全沿用上一段的 `uni.request` 通道。要求基础库 ≥2.23.0。部署见 [`deploy/cloudrun`](../../deploy/cloudrun/README.md)，验收见[云托管登录清单](../../docs/operations/CLOUDRUN_LOGIN_RUNBOOK.md)。
+
+`src/pages/index` 是测试入口，`src/pages/owner`、`merchant`、`technician` 为三个角色模块；车主另有首页、服务、AI、档案、我的五个原生 Tab。入口切换不代表登录或授权。微信登录的调用边界在 `src/services/wechat-auth.js`，请求通道在 `src/services/api-runtime.js`（云托管走 `callContainer`，否则走 `uni.request`）；商家使用账号密码加短信码。首页、服务、档案与 AI Tab 已接真实接口，商家和技师工作流仍待真实接口接入。
 
 正式采用三个独立 AppID 时，应先建立 `(app_id, openid)` 身份映射，再分别配置、构建与真机验证三个目标小程序。测试号构建不等于支付、提审或正式发布通过。
 
@@ -54,10 +56,12 @@ PR #14 在档案Tab接入本人车辆列表和 `/pages/vehicle/manual`。四级�
 
 ## 当前真实登录与后续验收
 
-2026-10-05 已在当前工作树构建产物中用真实微信 code 完成车主按钮登录、技师绑定、刷新与退出。本机后端只监听 `127.0.0.1:18080`；开发者工具临时跳过域名校验，可继续本地开发。手机需单独配置可达地址，常规真机与发布需符合微信 HTTPS/通讯域名要求，详见[网络说明](../../docs/operations/MINIAPP_NETWORK_ENVIRONMENTS.md)。
+2026-10-05 已在当前工作树构建产物中用真实微信 code 完成车主按钮登录、技师绑定、刷新与退出。2026-10-07 起，本机后端改为 `0.0.0.0:18080` 发布、产物指向电脑局域网地址，使**测试号真机预览**也能走真实微信登录；开发者工具临时跳过域名校验仍可继续本地开发。手机侧仍需按网络条件验收（校园网可能有客户端隔离，建议用电脑移动热点）；常规真机与发布需符合微信 HTTPS/通讯域名要求，详见[网络说明](../../docs/operations/MINIAPP_NETWORK_ENVIRONMENTS.md)与[真机登录清单](../../docs/operations/LAN_DEVICE_LOGIN_RUNBOOK.md)。
 
 当前包含手动档案、首页摘要和拍照入口：手动默认 `input_type=3`，拍照为 `1` 且至少一张上传成功图片，最多五张；服务端复核本人车辆及 CLEAN 图片。真实相机、私有上传和有数据多车业务尚未验收。[下一步计划](../../docs/progress/NEXT_STEPS.md)从本地业务联调开始，[登录验收表](../../docs/operations/AUTH_INTEGRATION_RUNBOOK.md)继续记录未覆盖项。
 
 2026-10-06：本机官方库扫描、MinIO 和真实后端的 H5 图片交互 11 项通过，详见[复现说明](../../docs/testing/LOCAL_PRIVATE_IMAGE_ACCEPTANCE.md)。使用合成 PNG 填充原生文件输入、真实上传与签名字节预览；不代表物理相机或微信真机已验收。
 
 标准服务 Tab 已接分类/分页列表、参考价与详情，具备失败重试和身份切换隔离；本机 H5/真实会话验证见[复现说明](../../docs/testing/LOCAL_SERVICE_CATALOG_ACCEPTANCE.md)。商家报价与预约另行接入。
+
+2026-10-07：车主端 AI 管家已接入 DeepSeek，代码在 `src/services/ai-chat.js`、`src/services/ai-chat-flow.js` 与 `src/pages/ai/index.vue`，复用同一传输层，请求超时 60s。选择爱车后后端注入本人车辆与最近 5 条档案上下文（车牌/VIN 不进入上下文），未选车按通用知识回答；未配置 `DEEPSEEK_API_KEY` 时接口返回 `50301`，页面显示降级提示并支持原样重试，换车后自动开新对话。真实密钥已配置并通过本机端到端 19 项验证（选车后回答实际复述了档案内容，追问车牌未泄露）；真机提问待验收。启用步骤、安全边界与 A0–A8 状态见 [AI 管家接入清单](../../docs/operations/AI_CHAT_RUNBOOK.md)，接口契约见 [AI 管家接口](../../docs/api/AI_CHAT.md)，离线测试见 `test/ai-chat.test.js`。

@@ -70,6 +70,14 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(status).body(ApiResponse.error(code, exception.getMessage()));
     }
 
+    @ExceptionHandler(com.autocare.platform.ai.AiUpstreamException.class)
+    public ResponseEntity<ApiResponse<Void>> ai(com.autocare.platform.ai.AiUpstreamException exception) {
+        boolean limited = exception.reason() == com.autocare.platform.ai.AiUpstreamException.Reason.RATE_LIMITED;
+        HttpStatus status = limited ? HttpStatus.TOO_MANY_REQUESTS : HttpStatus.SERVICE_UNAVAILABLE;
+        return ResponseEntity.status(status).header("Cache-Control","no-store")
+            .body(ApiResponse.error(limited ? 42900 : 50301, exception.getMessage()));
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse<Void>> badRequest(IllegalArgumentException exception) {
         return ResponseEntity.badRequest().body(ApiResponse.error(40001, exception.getMessage()));
