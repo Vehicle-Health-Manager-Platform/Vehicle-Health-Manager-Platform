@@ -4,17 +4,18 @@ import { onLoad, onHide, onUnload } from '@dcloudio/uni-app'
 import { ownerSession, clearOwnerSession } from '../../services/owner-session.js'
 import { archiveApi } from '../../services/archives.js'
 import { createArchiveFlow, initialArchiveState } from '../../services/archive-flow.js'
-import { imageApi, imageRequestKey } from '../../services/private-images.js'
+import { imageApi, imageRequestKey, DEVTOOLS_NOTICE } from '../../services/private-images.js'
 import { archiveInputType } from '../../services/archive-entry-mode.js'
 
 const state = reactive(initialArchiveState())
 const flow = createArchiveFlow({ state, api: archiveApi, token: () => ownerSession.accessToken, newKey: imageRequestKey })
 const types = ['保养', '维修', '保险', '事故', '改装', '违章', '年检']
 const uploadBusy = ref(false), imageMessage = ref(''), candidate = ref(null)
+const notice = ref(''), permissionDenied = ref(false)
 let generation = 0, imageKey = '', routeVehicleId = 0, routeInputType = 3
 const today = () => { const now = new Date(); return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}` }
 onLoad(query => { routeVehicleId = Number(query.vehicle_id); routeInputType = archiveInputType(query); state.vehicleId = Number.isSafeInteger(routeVehicleId) && routeVehicleId > 0 ? routeVehicleId : 0; state.inputType = routeInputType; state.recordedDate = today() })
-function clear() { generation++; flow.reset(); uploadBusy.value = false; imageMessage.value = ''; candidate.value = null; imageKey = ''; state.vehicleId = routeVehicleId; state.inputType = routeInputType; state.recordedDate = today() }
+function clear() { generation++; flow.reset(); uploadBusy.value = false; imageMessage.value = ''; candidate.value = null; imageKey = ''; notice.value = ''; permissionDenied.value = false; state.vehicleId = routeVehicleId; state.inputType = routeInputType; state.recordedDate = today() }
 watch(() => ownerSession.accessToken, clear, { flush: 'sync' })
 onHide(clear)
 onUnload(clear)
@@ -25,14 +26,22 @@ function pickDate(event) { state.recordedDate = event.detail.value }
 async function choose() {
   if (uploadBusy.value || state.busy || state.fileIds.length >= 5) return
   const current = ++generation, token = ownerSession.accessToken
-  uploadBusy.value = true; imageMessage.value = ''
+  uploadBusy.value = true; imageMessage.value = ''; permissionDenied.value = false
   try {
     const file = await imageApi.choose(token, state.inputType === 1 ? 'camera' : 'mixed')
-    if (current !== generation || token !== ownerSession.accessToken || !file) return
+    if (current !== generation || token !== ownerSession.accessToken || !file) { notice.value = ''; return }
+    notice.value = file.degraded ? DEVTOOLS_NOTICE : ''
     candidate.value = file; imageKey = imageRequestKey()
     await upload()
-  } catch (error) { if (current === generation) imageMessage.value = error?.message || '图片选择失败，请重试' }
+  } catch (error) {
+    if (current !== generation) return
+    permissionDenied.value = error?.kind === 'permission'
+    imageMessage.value = error?.message || '图片选择失败，请重试'
+  }
   finally { if (current === generation) uploadBusy.value = false }
+}
+async function authorize() {
+  if (await imageApi.authorize()) { permissionDenied.value = false; imageMessage.value = '已打开设置，请允许使用摄像头后重新拍照' }
 }
 async function upload() {
   if (!candidate.value || !ownerSession.accessToken) return
@@ -74,7 +83,9 @@ async function preview(id) {
       <view v-for="(id, index) in state.fileIds" :key="id" class="image-row"><text>图片 {{ index + 1 }} 已上传</text><button class="secondary" :disabled="state.busy || uploadBusy" @tap="preview(id)">预览</button><button class="secondary" :disabled="state.busy || uploadBusy" @tap="remove(id)">移除</button></view>
       <button v-if="state.fileIds.length < 5 && !state.saved" class="secondary" :disabled="state.busy || uploadBusy" @tap="choose">{{ state.inputType === 1 ? '拍照并上传' : '选择并上传图片' }}</button>
       <button v-if="candidate" class="secondary" :disabled="state.busy || uploadBusy" @tap="upload">使用原图片重试上传</button>
+      <text v-if="notice" class="status" role="status">{{ notice }}</text>
       <text v-if="imageMessage" class="status">{{ imageMessage }}</text>
+      <button v-if="permissionDenied" class="secondary" @tap="authorize">去开启相机权限</button>
       <text v-if="state.message" class="status" :class="{ error: state.failureKind }" role="status">{{ state.message }}</text>
       <button v-if="['unauthorized','forbidden'].includes(state.failureKind)" @tap="login">重新登录</button>
       <button v-else-if="state.saved" @tap="back">返回查看档案</button>
