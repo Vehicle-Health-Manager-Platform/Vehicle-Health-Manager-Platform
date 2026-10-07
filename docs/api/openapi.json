@@ -1618,7 +1618,12 @@
               "enum": [
                 "PENDING_PAYMENT",
                 "PAID",
-                "CLOSED"
+                "RECEIVED",
+                "IN_SERVICE",
+                "PENDING_VERIFY",
+                "COMPLETED",
+                "CLOSED",
+                "DISPUTED"
               ]
             }
           }
@@ -5739,7 +5744,12 @@
               "enum": [
                 "PENDING_PAYMENT",
                 "PAID",
-                "CLOSED"
+                "RECEIVED",
+                "IN_SERVICE",
+                "PENDING_VERIFY",
+                "COMPLETED",
+                "CLOSED",
+                "DISPUTED"
               ]
             }
           },
@@ -5886,6 +5896,130 @@
         "x-roles": "MERCHANT",
         "x-implementation-status": "merchant-orders-read-implemented",
         "description": "校验有效商家会话和本店归属；只读投影仅包含白名单下单快照，绝不返回客户身份、车辆ID、完整车牌或VIN。详见 MERCHANT_ORDERS.md。"
+      }
+    },
+    "/api/merchant/orders/{id}/actions": {
+      "post": {
+        "summary": "本店订单履约状态操作",
+        "operationId": "post_api_merchant_orders_id_actions",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F14",
+          "F16",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/MerchantOrderAction"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "订单不存在或不属于本店，code=40400"
+          },
+          "409": {
+            "description": "40905当前状态不允许该动作；43001接车检查未完成；43003车主未确认接车；43004尚未派工；43005报工未完成；43006该动作的校验尚未接入"
+          },
+          "503": {
+            "description": "数据库或事务暂不可用，code=50300"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "action"
+                ],
+                "properties": {
+                  "action": {
+                    "type": "string",
+                    "enum": [
+                      "RECEIVE",
+                      "START_SERVICE",
+                      "FINISH_SERVICE",
+                      "COMPLETE"
+                    ]
+                  },
+                  "note": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "description": "可选，去除首尾空白后 1–200 字"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "order-fulfillment-state-machine-implemented",
+        "description": "前端只能请求动作，不能提交目标状态；矩阵、前置、行锁与幂等审计均由服务端判定。接车证据(A3)、车主确认与派工(A4/A5)、报工(A6)、核销(A4)未接入时按 fail-closed 返回 43001/43003/43004/43005/43006。详见 ORDER_FULFILLMENT.md。"
       }
     }
   },
@@ -6842,7 +6976,8 @@
           "merchant_snapshot",
           "appointment_snapshot",
           "payment_summary",
-          "has_payment_exception"
+          "has_payment_exception",
+          "allowed_actions"
         ],
         "properties": {
           "order_id": {
@@ -6971,6 +7106,42 @@
           "has_payment_exception": {
             "type": "boolean",
             "description": "任意支付尝试存在待核对异常；独立于选中的支付摘要"
+          },
+          "allowed_actions": {
+            "type": "array",
+            "description": "当前状态下商家可请求的动作；仅由状态矩阵决定，不含前置条件判定",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "action",
+                "to_status"
+              ],
+              "properties": {
+                "action": {
+                  "type": "string",
+                  "enum": [
+                    "RECEIVE",
+                    "START_SERVICE",
+                    "FINISH_SERVICE",
+                    "COMPLETE"
+                  ]
+                },
+                "to_status": {
+                  "type": "string",
+                  "enum": [
+                    "PENDING_PAYMENT",
+                    "PAID",
+                    "RECEIVED",
+                    "IN_SERVICE",
+                    "PENDING_VERIFY",
+                    "COMPLETED",
+                    "CLOSED",
+                    "DISPUTED"
+                  ]
+                }
+              }
+            }
           }
         }
       },
@@ -6991,6 +7162,7 @@
           "appointment_snapshot",
           "payment_summary",
           "has_payment_exception",
+          "allowed_actions",
           "price_snapshot"
         ],
         "properties": {
@@ -7121,6 +7293,42 @@
             "type": "boolean",
             "description": "任意支付尝试存在待核对异常；独立于选中的支付摘要"
           },
+          "allowed_actions": {
+            "type": "array",
+            "description": "当前状态下商家可请求的动作；仅由状态矩阵决定，不含前置条件判定",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "action",
+                "to_status"
+              ],
+              "properties": {
+                "action": {
+                  "type": "string",
+                  "enum": [
+                    "RECEIVE",
+                    "START_SERVICE",
+                    "FINISH_SERVICE",
+                    "COMPLETE"
+                  ]
+                },
+                "to_status": {
+                  "type": "string",
+                  "enum": [
+                    "PENDING_PAYMENT",
+                    "PAID",
+                    "RECEIVED",
+                    "IN_SERVICE",
+                    "PENDING_VERIFY",
+                    "COMPLETED",
+                    "CLOSED",
+                    "DISPUTED"
+                  ]
+                }
+              }
+            }
+          },
           "price_snapshot": {
             "anyOf": [
               {
@@ -7182,6 +7390,253 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 100
+          }
+        }
+      },
+      "MerchantOrderAction": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order_id",
+          "order_no",
+          "amount_due",
+          "status",
+          "expires_at",
+          "created_at",
+          "closed_at",
+          "close_reason",
+          "project_snapshot",
+          "merchant_snapshot",
+          "appointment_snapshot",
+          "payment_summary",
+          "has_payment_exception",
+          "allowed_actions",
+          "price_snapshot",
+          "action",
+          "from_status",
+          "changed"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "order_no": {
+            "type": "string"
+          },
+          "amount_due": {
+            "type": "string",
+            "pattern": "^(?:0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+          },
+          "status": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "closed_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "close_reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "project_snapshot": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "standard_project_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "project_name": {
+                    "type": "string"
+                  },
+                  "service_content": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "merchant_snapshot": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "merchant_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "merchant_name": {
+                    "type": "string"
+                  },
+                  "address": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "appointment_snapshot": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "slot_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "starts_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "ends_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "payment_summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PaymentSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "has_payment_exception": {
+            "type": "boolean",
+            "description": "任意支付尝试存在待核对异常；独立于选中的支付摘要"
+          },
+          "allowed_actions": {
+            "type": "array",
+            "description": "当前状态下商家可请求的动作；仅由状态矩阵决定，不含前置条件判定",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "action",
+                "to_status"
+              ],
+              "properties": {
+                "action": {
+                  "type": "string",
+                  "enum": [
+                    "RECEIVE",
+                    "START_SERVICE",
+                    "FINISH_SERVICE",
+                    "COMPLETE"
+                  ]
+                },
+                "to_status": {
+                  "type": "string",
+                  "enum": [
+                    "PENDING_PAYMENT",
+                    "PAID",
+                    "RECEIVED",
+                    "IN_SERVICE",
+                    "PENDING_VERIFY",
+                    "COMPLETED",
+                    "CLOSED",
+                    "DISPUTED"
+                  ]
+                }
+              }
+            }
+          },
+          "price_snapshot": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "merchant_project_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "quote_version_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "version": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "price": {
+                    "type": "string",
+                    "pattern": "^(?:0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "RECEIVE",
+              "START_SERVICE",
+              "FINISH_SERVICE",
+              "COMPLETE"
+            ]
+          },
+          "from_status": {
+            "type": "string",
+            "enum": [
+              "PENDING_PAYMENT",
+              "PAID",
+              "RECEIVED",
+              "IN_SERVICE",
+              "PENDING_VERIFY",
+              "COMPLETED",
+              "CLOSED",
+              "DISPUTED"
+            ]
+          },
+          "changed": {
+            "type": "boolean",
+            "description": "false 表示该动作此前已生效，本次为幂等重放，不产生新的状态迁移审计"
           }
         }
       }

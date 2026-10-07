@@ -12,7 +12,7 @@
 | GET `/api/order/quote/{id}` | OWNER | 在售报价 ID，返回当前价格/版本/商家/项目 |
 | GET `/api/order/slots` | OWNER | merchant_id, project_id, date，分页 |
 | POST `/api/order/create` | OWNER | merchant_project_id, quote_version_id, vehicle_id, slot_id |
-| GET `/api/order/list` | OWNER | 分页，可选 status=PENDING_PAYMENT/PAID/CLOSED |
+| GET `/api/order/list` | OWNER | 分页，可选 status=8 个履约状态之一，见[状态机契约](ORDER_FULFILLMENT.md) |
 | GET `/api/order/{id}` | OWNER | 本人订单，含下单快照 |
 | POST `/api/order/cancel` | OWNER | order_id |
 
@@ -36,6 +36,8 @@
 
 400无效参数/幂等冲突；401失效会话；403角色无权；404本人/本店资源不可用；40901报价改变、40902时段关闭/开始、40903容量不足、40904时段重叠；503数据库/事务不可用。不泄露SQL或他人订单。
 
-V007 可重复补充时段开放/关闭字段、订单报价版本/预约快照/关闭字段和索引；表数仍46，不改历史迁移或旧订单金额。已有库需备份并按序补迁移，新Compose卷自动初始化。历史缺失快照/原因显示未提供，不生成假历史。
+V007 可重复补充时段开放/关闭字段、订单报价版本/预约快照/关闭字段和索引；表数仍46，不改历史迁移或旧订单金额。V008 后 48 表，V009 增加履约时间列与状态迁移审计后 49 表，同样可重复执行。已有库需备份并按序补迁移，新Compose卷自动初始化。历史缺失快照/原因显示未提供，不生成假历史。
+
+订单在 `PAID` 之后的状态迁移由[订单履约状态机契约](ORDER_FULFILLMENT.md)负责；本人订单详情与列表读取即可反映新状态，车主侧的确认与核销入口在阶段 A4 落地。
 
 本机实际步骤与证据见[验收说明](../testing/LOCAL_RESERVATIONS_ACCEPTANCE.md)。商家合成登录桥接、真实微信车主、支付与真机边界分别记录。

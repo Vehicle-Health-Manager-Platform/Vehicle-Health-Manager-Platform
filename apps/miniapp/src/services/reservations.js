@@ -2,6 +2,7 @@ import { apiOrigin } from './api-config.js'
 import { apiRuntime } from './api-runtime.js'
 import { ServiceError,serviceFailure } from './service-catalog.js'
 import {validPaymentSummary} from './payment-contract.js'
+import {ORDER_STATES} from './order-status.js'
 const id=value=>Number.isSafeInteger(value)&&value>0
 const date=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value)
 const stamp=value=>typeof value==='string'&&!Number.isNaN(Date.parse(value))
@@ -29,7 +30,7 @@ export function createReservationsApi({baseUrl,runtime}){
     publish(token,body,key){return request(token,'/api/merchant/slots',slot,body,key)},
     close(token,n,key){if(!id(n))throw new ReservationError('invalid','时段无效');return request(token,`/api/merchant/slots/${n}/close`,slot,{},key)},
     create(token,body,key){return request(token,'/api/order/create',r=>order(r)&&r.status==='PENDING_PAYMENT'&&stamp(r.expires_at),body,key)},
-    list(token,n=1,status=''){validPage(n);if(!['','PENDING_PAYMENT','PAID','CLOSED'].includes(status))throw new ReservationError('invalid','订单状态无效');return request(token,`/api/order/list?page=${n}&page_size=20${status?'&status='+status:''}`,r=>page(r,n,order))},
+    list(token,n=1,status=''){validPage(n);if(status && !ORDER_STATES.includes(status))throw new ReservationError('invalid','订单状态无效');return request(token,`/api/order/list?page=${n}&page_size=20${status?'&status='+status:''}`,r=>page(r,n,order))},
     detail(token,n){if(!id(n))throw new ReservationError('invalid','订单无效');return request(token,`/api/order/${n}`,order)},
     cancel(token,n,key){if(!id(n))throw new ReservationError('invalid','订单无效');return request(token,'/api/order/cancel',order,{order_id:n},key)},
   }
