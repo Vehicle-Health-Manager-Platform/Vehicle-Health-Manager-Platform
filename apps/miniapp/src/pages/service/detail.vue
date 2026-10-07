@@ -37,7 +37,7 @@ function back() { uni.switchTab({ url: '/pages/service/index' }) }
         <text v-if="quotes.loaded && !quotes.items.length && !quotes.busy" class="copy">暂无在售商家报价。</text>
         <view v-if="quotes.message"><text class="error">{{ quotes.message }}</text><button v-if="['unauthorized','forbidden'].includes(quotes.failureKind)" class="action" @tap="login">重新登录</button><button v-else class="action" :disabled="quotes.busy" @tap="quoteFlow.retry">重试商家报价</button></view>
         <view v-for="row in quotes.items" :key="row.merchant_project_id" class="quote" :data-testid="`owner-quote-${row.merchant_id}`">
-          <text class="name">{{ row.merchant_name }}</text><text class="copy">{{ row.address }}</text><text class="price">商家报价 ¥{{ row.price }}</text>
+          <text class="name">{{ row.merchant_name }}</text><text class="copy">{{ row.address }}</text><text class="price">商家报价 ¥{{ row.price }}</text><button class="action" @tap="uni.navigateTo({url:`/pages/order/book?id=${row.merchant_project_id}`})">预约此服务</button>
         </view>
         <button v-if="quotes.items.length<quotes.total" class="action" :disabled="quotes.busy" @tap="quoteFlow.load(true)">加载更多商家报价</button>
       </view>

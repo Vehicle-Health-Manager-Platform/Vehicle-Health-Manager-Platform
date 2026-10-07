@@ -1460,13 +1460,14 @@
     },
     "/api/order/create": {
       "post": {
-        "summary": "创建预约",
+        "summary": "创建本人待支付预约",
         "operationId": "post_api_order_create",
         "tags": [
           "order"
         ],
         "x-feature-ids": [
-          "F07"
+          "F07",
+          "F08"
         ],
         "parameters": [
           {
@@ -1485,7 +1486,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CreatedReservation"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -1505,6 +1518,15 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人/本店资源不可用，code=40400"
+          },
+          "409": {
+            "description": "40901报价版本改变、40902时段关闭/开始、40903名额不足、40904时段重叠"
+          },
+          "503": {
+            "description": "数据库或事务暂不可用，code=50300"
           }
         },
         "security": [
@@ -1518,32 +1540,107 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "additionalProperties": true
+                "additionalProperties": false,
+                "required": [
+                  "merchant_project_id",
+                  "quote_version_id",
+                  "vehicle_id",
+                  "slot_id"
+                ],
+                "properties": {
+                  "merchant_project_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "quote_version_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "vehicle_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "slot_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  }
+                }
               }
             }
           }
         },
-        "x-roles": "车主"
+        "x-roles": "OWNER",
+        "x-implementation-status": "local-reservations-core-implemented",
+        "description": "本机预约订单子集，支付/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
       }
     },
     "/api/order/list": {
       "get": {
-        "summary": "我的订单",
+        "summary": "本人订单分页",
         "operationId": "get_api_order_list",
         "tags": [
           "order"
         ],
         "x-feature-ids": [
+          "F07",
           "F08"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING_PAYMENT",
+                "CLOSED"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "统一成功响应",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/OwnerOrderPage"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -1563,25 +1660,37 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人/本店资源不可用，code=40400"
+          },
+          "409": {
+            "description": "40901报价版本改变、40902时段关闭/开始、40903名额不足、40904时段重叠"
+          },
+          "503": {
+            "description": "数据库或事务暂不可用，code=50300"
           }
         },
         "security": [
           {
             "bearerAuth": []
           }
-        ]
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "local-reservations-core-implemented",
+        "description": "本机预约订单子集，支付/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
       }
     },
     "/api/order/{id}": {
       "get": {
-        "summary": "订单详情(含核销码)",
+        "summary": "本人订单及下单快照",
         "operationId": "get_api_order_id",
         "tags": [
           "order"
         ],
         "x-feature-ids": [
-          "F08",
-          "F16"
+          "F07",
+          "F08"
         ],
         "parameters": [
           {
@@ -1589,7 +1698,9 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
             }
           }
         ],
@@ -1599,7 +1710,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/OwnerOrderDetail"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -1619,25 +1742,37 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人/本店资源不可用，code=40400"
+          },
+          "409": {
+            "description": "40901报价版本改变、40902时段关闭/开始、40903名额不足、40904时段重叠"
+          },
+          "503": {
+            "description": "数据库或事务暂不可用，code=50300"
           }
         },
         "security": [
           {
             "bearerAuth": []
           }
-        ]
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "local-reservations-core-implemented",
+        "description": "本机预约订单子集，支付/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
       }
     },
     "/api/order/cancel": {
       "post": {
-        "summary": "取消订单",
+        "summary": "取消本人待支付订单",
         "operationId": "post_api_order_cancel",
         "tags": [
           "order"
         ],
         "x-feature-ids": [
-          "F08",
-          "F16"
+          "F07",
+          "F08"
         ],
         "parameters": [
           {
@@ -1656,7 +1791,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/OwnerOrderDetail"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -1676,6 +1823,15 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人/本店资源不可用，code=40400"
+          },
+          "409": {
+            "description": "40901报价版本改变、40902时段关闭/开始、40903名额不足、40904时段重叠"
+          },
+          "503": {
+            "description": "数据库或事务暂不可用，code=50300"
           }
         },
         "security": [
@@ -1689,11 +1845,24 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "additionalProperties": true
+                "additionalProperties": false,
+                "required": [
+                  "order_id"
+                ],
+                "properties": {
+                  "order_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  }
+                }
               }
             }
           }
-        }
+        },
+        "x-roles": "OWNER",
+        "x-implementation-status": "local-reservations-core-implemented",
+        "description": "本机预约订单子集，支付/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
       }
     },
     "/api/order/review": {
@@ -2932,20 +3101,85 @@
     },
     "/api/order/slots": {
       "get": {
-        "summary": "`merchant_id, project_id, date` → `slot_id, starts_at, ends_at, capacity_left`",
+        "summary": "可预约项目时段分页",
         "operationId": "get_api_order_slots",
         "tags": [
           "order"
         ],
-        "x-feature-ids": [],
-        "parameters": [],
+        "x-feature-ids": [
+          "F07",
+          "F08"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "merchant_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "project_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "统一成功响应",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ReservationSlotPage"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -2965,6 +3199,15 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人/本店资源不可用，code=40400"
+          },
+          "409": {
+            "description": "40901报价版本改变、40902时段关闭/开始、40903名额不足、40904时段重叠"
+          },
+          "503": {
+            "description": "数据库或事务暂不可用，code=50300"
           }
         },
         "security": [
@@ -2972,7 +3215,9 @@
             "bearerAuth": []
           }
         ],
-        "x-roles": "车主"
+        "x-roles": "OWNER",
+        "x-implementation-status": "local-reservations-core-implemented",
+        "description": "本机预约订单子集，支付/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
       }
     },
     "/api/payments/create": {
@@ -4847,6 +5092,408 @@
         "x-implementation-status": "merchant-quotes-core-implemented",
         "description": "服务端校验有效会话与商家归属。金额为两位小数字符串，参考价仅供对照。详见 MERCHANT_QUOTES.md。"
       }
+    },
+    "/api/merchant/slots": {
+      "get": {
+        "summary": "本店预约时段分页",
+        "operationId": "get_api_merchant_slots",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F07",
+          "F08"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ReservationSlotPage"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人/本店资源不可用，code=40400"
+          },
+          "409": {
+            "description": "40901报价版本改变、40902时段关闭/开始、40903名额不足、40904时段重叠"
+          },
+          "503": {
+            "description": "数据库或事务暂不可用，code=50300"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "local-reservations-core-implemented",
+        "description": "本机预约订单子集，支付/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
+      },
+      "post": {
+        "summary": "发布本店项目时段",
+        "operationId": "post_api_merchant_slots",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F07",
+          "F08"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ReservationSlot"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人/本店资源不可用，code=40400"
+          },
+          "409": {
+            "description": "40901报价版本改变、40902时段关闭/开始、40903名额不足、40904时段重叠"
+          },
+          "503": {
+            "description": "数据库或事务暂不可用，code=50300"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "standard_project_id",
+                  "starts_at",
+                  "ends_at",
+                  "capacity"
+                ],
+                "properties": {
+                  "standard_project_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "starts_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "ends_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "capacity": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "local-reservations-core-implemented",
+        "description": "本机预约订单子集，支付/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
+      }
+    },
+    "/api/merchant/slots/{id}/close": {
+      "post": {
+        "summary": "关闭本店预约时段",
+        "operationId": "post_api_merchant_slots_id_close",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F07",
+          "F08"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ReservationSlot"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人/本店资源不可用，code=40400"
+          },
+          "409": {
+            "description": "40901报价版本改变、40902时段关闭/开始、40903名额不足、40904时段重叠"
+          },
+          "503": {
+            "description": "数据库或事务暂不可用，code=50300"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {}
+              }
+            }
+          }
+        },
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "local-reservations-core-implemented",
+        "description": "本机预约订单子集，支付/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
+      }
+    },
+    "/api/order/quote/{id}": {
+      "get": {
+        "summary": "当前预约报价确认上下文",
+        "operationId": "get_api_order_quote_id",
+        "tags": [
+          "order"
+        ],
+        "x-feature-ids": [
+          "F07",
+          "F08"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ReservationQuote"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人/本店资源不可用，code=40400"
+          },
+          "409": {
+            "description": "40901报价版本改变、40902时段关闭/开始、40903名额不足、40904时段重叠"
+          },
+          "503": {
+            "description": "数据库或事务暂不可用，code=50300"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "local-reservations-core-implemented",
+        "description": "本机预约订单子集，支付/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
+      }
     }
   },
   "components": {
@@ -5174,6 +5821,365 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 100
+          }
+        }
+      },
+      "ReservationSlot": {
+        "type": "object",
+        "required": [
+          "slot_id",
+          "standard_project_id",
+          "starts_at",
+          "ends_at",
+          "capacity",
+          "capacity_left",
+          "open",
+          "project_name"
+        ],
+        "properties": {
+          "slot_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "standard_project_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "starts_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ends_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "capacity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "capacity_left": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "open": {
+            "type": "boolean"
+          },
+          "project_name": {
+            "type": "string"
+          }
+        }
+      },
+      "ReservationSlotPage": {
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReservationSlot"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        }
+      },
+      "OwnerOrderPage": {
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OwnerOrder"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        }
+      },
+      "OwnerOrder": {
+        "type": "object",
+        "required": [
+          "order_id",
+          "order_no",
+          "amount_due",
+          "status",
+          "expires_at",
+          "created_at",
+          "closed_at",
+          "close_reason",
+          "project_snapshot",
+          "merchant_snapshot",
+          "appointment_snapshot"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "order_no": {
+            "type": "string"
+          },
+          "amount_due": {
+            "type": "string",
+            "pattern": "^(?:0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+          },
+          "status": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "closed_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "close_reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "project_snapshot": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "merchant_snapshot": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "appointment_snapshot": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        }
+      },
+      "OwnerOrderDetail": {
+        "type": "object",
+        "required": [
+          "order_id",
+          "order_no",
+          "amount_due",
+          "status",
+          "expires_at",
+          "created_at",
+          "closed_at",
+          "close_reason",
+          "project_snapshot",
+          "merchant_snapshot",
+          "appointment_snapshot",
+          "vehicle_id",
+          "price_snapshot"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "order_no": {
+            "type": "string"
+          },
+          "amount_due": {
+            "type": "string",
+            "pattern": "^(?:0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+          },
+          "status": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "closed_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "close_reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "project_snapshot": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "merchant_snapshot": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "appointment_snapshot": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "vehicle_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "price_snapshot": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        }
+      },
+      "CreatedReservation": {
+        "type": "object",
+        "required": [
+          "order_id",
+          "order_no",
+          "amount_due",
+          "status",
+          "expires_at"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "order_no": {
+            "type": "string"
+          },
+          "amount_due": {
+            "type": "string",
+            "pattern": "^(?:0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+          },
+          "status": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "ReservationQuote": {
+        "type": "object",
+        "required": [
+          "merchant_project_id",
+          "quote_version_id",
+          "version",
+          "merchant_id",
+          "standard_project_id",
+          "project_name",
+          "merchant_name",
+          "address",
+          "price"
+        ],
+        "properties": {
+          "merchant_project_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "quote_version_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "merchant_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "standard_project_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "project_name": {
+            "type": "string"
+          },
+          "merchant_name": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "price": {
+            "type": "string",
+            "pattern": "^(?:0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
           }
         }
       }

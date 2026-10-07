@@ -235,3 +235,18 @@
 - [接口契约](../api/MERCHANT_QUOTES.md)、[复现](../testing/LOCAL_MERCHANT_QUOTES_ACCEPTANCE.md)及下一步已更新。预约/订单下一步先明确时段/容量与状态，再实施；公网、云托管、真机按用户决定后置。
 
 - [PR #23](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/23) 代码头 `131d0ed` 的[首次完整 CI 37467206097](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37467206097) 六项全绿：后端 154 项、无失败/错误/跳过，小程序 65 项，MySQL 46 表与重复 V006、Compose 冒烟通过。本机最终镜像再次通过 H5 15 项；当前微信构建 12 条模拟器路由通过，新增商家维护页可加载。补齐证据后的最终提交仍须完整 CI 成功才合并，结果以 PR 当前头为准。
+
+## 2026-10-07 预约与订单准备
+
+- 已核对 PR #23 最终提交 `73c888a` 的 CI `37468079647` 六项成功，并合并为 main `34e92f5`。合并后[主分支 CI 37470310896](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37470310896) 也六项成功。
+- 下一步基于该合并提交核对预约与本人订单契约。现有 `appointment_slot`、订单快照与过期字段已在基线；时段发布接口/页面和订单业务尚未实现。S0 的待支付 15 分钟释放规则为草案假设，本步书面规格需明确时段来源、容量与状态后实施。
+
+- 用户确认商家发布时段方案和完整书面规格，中文实施计划已落地（writing-plans 技能未安装，沿用仓库计划格式）。新增V007、时段/订单/到期模块与四个小程序页面；支付/券/退款后置，不生成已支付状态。
+- 本机4项HTTP/无数据库测试通过，小程序71项、微信/H5构建通过；新增真实MySQL并发抢最后名额、超时/取消一次释放、历史快照、幂等和审计失败回滚测试。完整容器测试与H5实际验收仍在执行。
+
+## 2026-10-07 预约与订单验收结果
+
+- 首次 CI 37560512113 的后端失败暴露 MySQL DATETIME 返回 LocalDateTime，强制 Timestamp 转换导致发布503；修复兼容两种类型并统一UTC，增加时间回归。[修复 CI 37560816000](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37560816000) 对应 `7cdbb07` 六项成功，后端170项无失败/错误/跳过（预约MySQL11项），小程序71项与双端构建、重复V007/46表、Compose通过。
+- 本机真实后端镜像 `vehicle-auth/backend:reservations` 已更新，保留原卷/旧回滚容器，只监听回环18080。gstack H5 12项通过：发布、重叠、真实微信车主选择、断网原键重试、订单/审计各一次、快照/金额、取消释放、本人列表、旧版本与角色边界、关闭时段。
+- 验收脚本修正实际原生日期输入、确认框按钮选择器与累计证据取最新两次；开发者工具和验收桥重启后真实 code 恢复。失败轮次的新订单由真实取消或正常自动到期关闭，不删除业务记录。finally 撤销会话并取消本轮残留待支付订单。商家合成会话不代表短信，支付未模拟成功。
+- 当前微信产物16条模拟器路由通过；只代表加载，不代替微信业务UI/真机。已补契约、中文计划、复现与下一步支付建议。[PR #24](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/24) 最终精确提交CI及合并以GitHub为准，六项成功才合并。

@@ -27,6 +27,7 @@ function done(){edit.reset();editing.value=false}
     <text class="eyebrow">商家端</text><text class="title">本店服务与报价</text>
     <view v-if="!merchantSession.accessToken" class="panel"><text>请先登录商家账号。</text><button @tap="login">前往商家登录</button></view>
     <template v-else>
+      <button @tap="uni.navigateTo({url:'/pages/merchant/slots'})">管理预约时段</button>
       <button class="primary" :disabled="form.busy" @tap="start()">新增选品</button>
       <view v-if="editing" class="panel" data-testid="quote-form">
         <text class="heading">{{ form.name || '选择标准项目' }}</text>
