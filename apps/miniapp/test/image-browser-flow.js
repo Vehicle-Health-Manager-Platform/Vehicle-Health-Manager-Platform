@@ -1,6 +1,6 @@
 // gstack browse eval on the configured local H5 dev server only. Never imported by app.
 return await (async () => {
-  const checks = [], original = Object.fromEntries(['login', 'request', 'chooseImage', 'uploadFile', 'previewImage'].map(name => [name, uni[name]]))
+  const checks = [], original = Object.fromEntries(['login', 'request', 'chooseImage', 'chooseMedia', 'uploadFile', 'previewImage'].map(name => [name, uni[name]]))
   const assert = (condition, label) => { if (!condition) throw new Error(label); checks.push(label) }
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
   const button = label => [...document.querySelectorAll('uni-button')].find(el => el.textContent.trim() === label)
@@ -11,6 +11,9 @@ return await (async () => {
   const calls = [], previews = []; let selection = null, uploadStatus = 503, accessStatus = 200, expired = false
   uni.login = options => options.success({ code: 'offline-ui-code' })
   uni.chooseImage = options => selection ? options.success({ tempFiles: [selection] }) : options.fail({ errMsg: 'chooseImage:fail cancel' })
+  // 页面优先使用官方推荐的 chooseMedia，仅在不支持时回退 chooseImage；两条都覆盖，
+  // 否则联调脚本会假设失效（H5 下 uni.chooseMedia 一旦存在，chooseImage 覆盖就不再生效）。
+  uni.chooseMedia = uni.chooseImage
   uni.uploadFile = options => {
     calls.push({ key: options.header['Idempotency-Key'], path: options.filePath })
     const timer = setTimeout(() => options.success({ statusCode: uploadStatus, data: JSON.stringify({ code: uploadStatus === 200 ? 0 : uploadStatus * 100,

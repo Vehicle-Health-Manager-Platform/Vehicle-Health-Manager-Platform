@@ -19,3 +19,10 @@
 平台端到端 **19 项全部通过**（[AI 管家接入清单](../operations/AI_CHAT_RUNBOOK.md) 第 6 节）。
 复现脚本 `scripts/verify_ai_chat_local.py`，只用在本机、用 `JWT_SECRET` 自签令牌，**不是可用的鉴权途径**。
 真机提问与上游限流场景仍未验收。
+
+2026-10-07：修复图片链路在统一传输层改造中丢失原生方法的问题——`chooseImage` / `uploadFile` /
+`previewImage` 未随 `runtime` 一起透传，导致拍照、上传、预览全部不可用，且 `uploadFile` 的失败被
+误报成「无法连接图片服务，请检查网络后重试」，排查方向被带偏。取图升级为官方推荐的 `chooseMedia`
+（旧基础库自动回退 `chooseImage`），区分用户取消与权限被拒，并在开发者工具中如实降级为相册。
+`apps/miniapp/test/api-runtime.test.js` 用**真实装配**做契约测试，防止同类漏方法再次发生。
+真机验收见[真机相机拍照验收](REAL_CAMERA_ACCEPTANCE.md)，**尚未在真机执行**。

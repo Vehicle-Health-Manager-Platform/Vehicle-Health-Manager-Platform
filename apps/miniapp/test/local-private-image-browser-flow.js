@@ -3,7 +3,7 @@
 // The signed-byte bridge trusts only the local certificate and avoids system trust changes.
 return await (async()=>{
   if(location.origin!=='http://127.0.0.1:4317')throw new Error('Local acceptance origin required')
-  const original={login:uni.login,request:uni.request,uploadFile:uni.uploadFile,chooseImage:uni.chooseImage,previewImage:uni.previewImage}
+  const original={login:uni.login,request:uni.request,uploadFile:uni.uploadFile,chooseImage:uni.chooseImage,chooseMedia:uni.chooseMedia,previewImage:uni.previewImage}
   const checks=[],uploads=[],sources=[],previews=[],blobs=[],choices=[]
   let stage='login',token='',lastFile=null,lastArchive=null
   const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms))
@@ -16,6 +16,8 @@ return await (async()=>{
   uni.login=o=>local('code').then(r=>o.success({code:r.code})).catch(()=>o.fail({errMsg:'Local code bridge failed'}))
   uni.request=o=>original.request({...o,url:o.url.replace('http://127.0.0.1:18080',location.origin),success:r=>{if(o.header?.Authorization)token=o.header.Authorization;if(o.url.endsWith('/api/archive/add')&&r.statusCode===200&&r.data?.code===0)lastArchive=r.data.data;o.success?.(r)}})
   uni.chooseImage=o=>{sources.push(o.sourceType);return original.chooseImage({...o,success:r=>{choices.push({result:'success',count:r.tempFiles?.length,size:r.tempFiles?.[0]?.size});o.success?.(r)},fail:e=>{choices.push({result:'fail',cancel:String(e.errMsg).includes('cancel')});o.fail?.(e)}})}
+  // 页面优先 chooseMedia；两条都覆盖，真实拍摄仍由真机验收，这里只是 H5 合成 PNG。
+  uni.chooseMedia=uni.chooseImage
   uni.uploadFile=o=>{
     uploads.push({key:o.header['Idempotency-Key'],path:o.filePath})
     return original.uploadFile({...o,url:o.url.replace('http://127.0.0.1:18080',location.origin),success:r=>{try{const b=JSON.parse(r.data);if(r.statusCode===200&&b.code===0)lastFile=b.data.file_id}catch{}o.success?.(r)}})
