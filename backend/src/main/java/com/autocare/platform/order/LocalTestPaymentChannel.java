@@ -15,7 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 /** This protocol is exclusively a local fixture, never a WeChat verifier. */
 public class LocalTestPaymentChannel implements PaymentChannel {
     private final byte[] secret;private final Clock clock;
-    private final ObjectMapper mapper=new ObjectMapper().enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION);
+    private final ObjectMapper mapper=new ObjectMapper().enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION).enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
     public LocalTestPaymentChannel(String key,Clock clock){secret=key.getBytes(StandardCharsets.UTF_8);if(secret.length<32)throw new IllegalArgumentException("测试支付密钥至少32字节");this.clock=clock;}
     public String name(){return "LOCAL_TEST";}
     public Map<String,Object> prepare(String no,Instant expires){return Map.of("payment_no",no,"test_mode",true,"expires_at",expires.toString());}

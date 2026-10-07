@@ -12,7 +12,7 @@
 
 仅POST `/api/payments/callback/LOCAL_TEST` 不需要Bearer，仍必须测试签名。需 `local-payment-test` profile、`PAYMENT_LOCAL_TEST_ENABLED=true` 和至少32字节的私有 `PAYMENT_LOCAL_TEST_SECRET` 同时有效；不能组合prod/production。默认关闭，不替代微信验签。
 
-正文最多16KiB，禁止重复JSON键；严格字段 `event_id,payment_id,channel_payment_no,status,amount,currency,order_no,occurred_at`。签名头 `X-Test-Timestamp` 为Unix秒，`X-Test-Nonce` 为UUID，`X-Test-Signature` 为64位十六进制HMAC-SHA256；输入 `timestamp + 换行 + nonce + 换行 + 原始UTF-8正文 + 换行`，时间窗正负300秒。
+正文最多16KiB，禁止重复JSON键及正文后的额外JSON；严格字段 `event_id,payment_id,channel_payment_no,status,amount,currency,order_no,occurred_at`。签名头 `X-Test-Timestamp` 为Unix秒，`X-Test-Nonce` 为UUID，`X-Test-Signature` 为64位十六进制HMAC-SHA256；输入 `timestamp + 换行 + nonce + 换行 + 原始UTF-8正文 + 换行`，时间窗正负300秒。
 
 通知先验签再校验支付归属渠道、订单号、金额/币种。有效通知、事件、订单/支付更新、异常与系统审计同事务提交。提交后返回200 `{ "code": "SUCCESS" }`；失败不返回确认。相同事件规范化摘要相同可重签重放，异文409；其他格式/金额4xx，事务故障503。私有签名及原文不输出/入库。
 
