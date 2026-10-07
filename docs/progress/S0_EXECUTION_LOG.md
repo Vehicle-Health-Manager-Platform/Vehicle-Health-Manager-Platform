@@ -266,3 +266,8 @@
 - 本轮保留测试PAID和异常事实及不可真实收款标识；finally取消本轮剩余待支付订单并撤销会话，不删除历史/原卷。下一步建议本店订单只读视图，接车/退款/正式渠道分别确认规则后实施。
 
 - 追加回归提交 `976732f` 的[CI 37564636451](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37564636451) 六项成功，后端194项无失败/错误/跳过，含15项支付MySQL集成。最终镜像本机H5再次24项通过。通知解析自查再补拒绝正文尾随第二个JSON，4项签名/格式针对性回归通过；该最终修正提交仍以精确HEAD六项CI为合并门禁。
+
+## 2026-10-07 商家本店订单查询设计准备
+
+- 核对支付 PR #25 最终提交 `e38eeda` 的 CI `37575818003` 六项成功，已合并main `00036fe`；[主分支 CI 37576365688](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37576365688) 也六项成功。
+- 用户确认本店订单只读列表/详情、状态与预约日期筛选、支付及全订单异常标识；独立分支形成[中文规格](../superpowers/specs/2026-10-07-merchant-orders-design.md)，待书面复核后进入实施。接车/派工/退款、客户敏感字段与正式扣款不在本步。
