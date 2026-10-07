@@ -13,6 +13,8 @@ const {
   upsertEnvLine,
   isUsableCandidate,
   inspectBackendPublish,
+  setUrlCheck,
+  createPrivateConfig,
   DEFAULT_PORT,
 } = require('./miniapp_lan_helper.cjs')
 
@@ -121,4 +123,54 @@ test('docker 不可用时判定为 unknown 且不抛错', () => {
 test('端口映射存在但端口不匹配时判定为 unknown', () => {
   const result = inspectBackendPublish('18080', fakeDocker('0.0.0.0:9000->9000/tcp\n'))
   assert.equal(result.state, 'unknown')
+})
+
+// 开发者工具默认 urlCheck=true，会把 http 后端当作非法通讯域名拦掉。
+const toolsPrivateConfig = JSON.stringify(
+  {
+    libVersion: '3.17.2',
+    projectname: '%E6%B1%BD%E8%BD%A6',
+    condition: {},
+    setting: { urlCheck: true, compileHotReLoad: true },
+  },
+  null,
+  2,
+)
+
+test('关闭域名校验时保留工具写入的其它设置', () => {
+  const next = JSON.parse(setUrlCheck(toolsPrivateConfig, false))
+  assert.equal(next.setting.urlCheck, false)
+  assert.equal(next.setting.compileHotReLoad, true)
+  assert.equal(next.libVersion, '3.17.2')
+  assert.equal(next.projectname, '%E6%B1%BD%E8%BD%A6')
+})
+
+test('已关闭时重复处理结果不变（幂等）', () => {
+  const once = setUrlCheck(toolsPrivateConfig, false)
+  assert.equal(setUrlCheck(once, false), once)
+})
+
+test('缺少 setting 字段时补上', () => {
+  const next = JSON.parse(setUrlCheck('{"projectname":"demo"}', false))
+  assert.equal(next.setting.urlCheck, false)
+  assert.equal(next.projectname, 'demo')
+})
+
+test('内容非法时返回 null 而不是抛错', () => {
+  assert.equal(setUrlCheck('', false), null)
+  assert.equal(setUrlCheck('{ not json', false), null)
+  assert.equal(setUrlCheck('[]', false), null)
+})
+
+test('新建私有配置时 projectname 按工具格式编码', () => {
+  const created = createPrivateConfig('汽车健康管家测试版')
+  const next = JSON.parse(created)
+  assert.equal(next.projectname, '%E6%B1%BD%E8%BD%A6%E5%81%A5%E5%BA%B7%E7%AE%A1%E5%AE%B6%E6%B5%8B%E8%AF%95%E7%89%88')
+  assert.equal(decodeURIComponent(next.projectname), '汽车健康管家测试版')
+  assert.equal(next.setting.urlCheck, false)
+})
+
+test('新建的配置再次处理仍然稳定（幂等）', () => {
+  const created = createPrivateConfig('汽车健康管家测试版')
+  assert.equal(setUrlCheck(created, false), created)
 })

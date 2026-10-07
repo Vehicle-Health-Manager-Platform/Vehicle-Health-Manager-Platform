@@ -17,6 +17,10 @@
  *
  * 只改写 .env.local 中的 VITE_API_BASE_URL，其余行（例如云托管变量）原样保留。
  * .env.local 与构建产物都受 Git 忽略，不会提交。
+ *
+ * 构建后还会同步开发者工具的项目私有配置（dist/build/mp-weixin/project.private.config.json）
+ * 中的 urlCheck=false。后端地址是 http，工具默认会把它当作非法通讯域名拦掉，表现为所有请求
+ * 直接失败——很容易被误判成后端不可用。该文件同样受 Git 忽略，只影响本机调试，不改变线上行为。
  */
 
 const fs = require('node:fs')
@@ -27,6 +31,9 @@ const { spawnSync } = require('node:child_process')
 const REPO_ROOT = path.resolve(__dirname, '..')
 const MINIAPP_DIR = path.join(REPO_ROOT, 'apps', 'miniapp')
 const ENV_LOCAL = path.join(MINIAPP_DIR, '.env.local')
+const BUILD_DIR = path.join(MINIAPP_DIR, 'dist', 'build', 'mp-weixin')
+const DEVTOOLS_CONFIG = path.join(BUILD_DIR, 'project.config.json')
+const DEVTOOLS_PRIVATE_CONFIG = path.join(BUILD_DIR, 'project.private.config.json')
 
 const DEFAULT_PORT = '18080'
 const LOOPBACK_ORIGIN = `http://127.0.0.1:${DEFAULT_PORT}`
@@ -144,9 +151,77 @@ function usage() {
     '  默认        探测并打印推荐的局域网地址，不修改任何文件',
     '  --check     额外请求 http://<地址>:<端口>/actuator/health 验证手机侧能否连通',
     '  --apply     把 VITE_API_BASE_URL 写入 apps/miniapp/.env.local（其余行保留），并验证后端可达性',
-    '  --build     写入后重新构建 mp-weixin 产物',
+    '  --build     写入后重新构建 mp-weixin 产物，并同步开发者工具的“不校验合法域名”设置',
     '  --restore   还原 VITE_API_BASE_URL 为 http://127.0.0.1:18080 并重新构建',
   ].join('\n')
+}
+
+/**
+ * 把 urlCheck 写进开发者工具私有项目配置的文本。
+ * 解析失败（空文件、非法 JSON、非对象）时返回 null，由调用方决定跳过还是重建。
+ */
+function setUrlCheck(jsonText, urlCheck = false) {
+  let parsed
+  try {
+    parsed = JSON.parse(jsonText)
+  } catch {
+    return null
+  }
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return null
+  const setting =
+    parsed.setting && typeof parsed.setting === 'object' && !Array.isArray(parsed.setting) ? parsed.setting : {}
+  return `${JSON.stringify({ ...parsed, setting: { ...setting, urlCheck } }, null, 2)}\n`
+}
+
+/**
+ * 产物目录尚未被开发者工具打开过时，按工具自身的格式初始化私有配置。
+ * projectname 用 encodeURIComponent 编码，与工具写出的形式一致。
+ */
+function createPrivateConfig(projectName) {
+  return `${JSON.stringify(
+    {
+      description:
+        '项目私有配置文件。此文件中的内容将覆盖 project.config.json 中的相同字段。项目的改动优先同步到此文件中。',
+      projectname: encodeURIComponent(projectName || ''),
+      setting: { urlCheck: false },
+    },
+    null,
+    2,
+  )}\n`
+}
+
+function readProjectName() {
+  try {
+    return JSON.parse(fs.readFileSync(DEVTOOLS_CONFIG, 'utf8')).projectname || ''
+  } catch {
+    return ''
+  }
+}
+
+/**
+ * 构建后同步开发者工具设置，使导入产物目录即可直连 http 后端，免手动勾“不校验合法域名”。
+ * 只改 setting.urlCheck，其余本地设置原样保留；任何异常都不应让构建表现为失败。
+ */
+function syncDevtoolsUrlCheck() {
+  try {
+    let current = ''
+    try {
+      current = fs.readFileSync(DEVTOOLS_PRIVATE_CONFIG, 'utf8')
+    } catch {
+      current = ''
+    }
+    const next = current ? setUrlCheck(current, false) : createPrivateConfig(readProjectName())
+    if (!next) {
+      console.log(`警告：${path.relative(REPO_ROOT, DEVTOOLS_PRIVATE_CONFIG)} 无法解析，已跳过域名校验设置。`)
+      return false
+    }
+    if (next === current) return true
+    fs.writeFileSync(DEVTOOLS_PRIVATE_CONFIG, next, 'utf8')
+    return true
+  } catch (error) {
+    console.log(`警告：同步开发者工具设置失败（${error && error.message}），可手动勾选“不校验合法域名”。`)
+    return false
+  }
 }
 
 function runBuild() {
@@ -167,6 +242,7 @@ function runBuild() {
 
   if (result.error) throw result.error
   if (result.status !== 0) throw new Error(`构建失败，退出码 ${result.status}`)
+  if (syncDevtoolsUrlCheck()) console.log('已同步开发者工具设置：urlCheck=false，无需手动勾选“不校验合法域名”。')
 }
 
 async function checkReachable(origin) {
@@ -309,6 +385,8 @@ module.exports = {
   segmentRank,
   adapterPenalty,
   inspectBackendPublish,
+  setUrlCheck,
+  createPrivateConfig,
   BACKEND_CONTAINER,
   DEFAULT_PORT,
 }

@@ -10,20 +10,40 @@
 
 | 环境 | 后端地址与要求 | 当前证据 |
 | --- | --- | --- |
-| 本机开发者工具 | 本机 HTTP，例如 `http://127.0.0.1:18080`；仅在开发工具中临时跳过域名校验 | 真实车主登录、技师绑定、刷新与退出已通过；只监听本机回环地址 |
+| 本机开发者工具 | 本机 HTTP，例如 `http://127.0.0.1:18080`；需在工具中关闭合法域名校验（构建流程会自动写入该设置） | 真实车主登录、技师绑定、刷新与退出已通过；只监听本机回环地址，见下文[开发者工具（模拟器）路径](#开发者工具模拟器路径) |
 | 手机局域网/调试模式 | 手机与电脑网络互通，使用电脑的可达地址；手机调试模式可临时跳过域名校验 | 已打通：后端改为 `0.0.0.0:18080` 发布，产物指向局域网地址，两个地址健康检查均通过；手机侧按[真机登录清单](LAN_DEVICE_LOGIN_RUNBOOK.md)验收 |
 | 常规真机与正式发布，自建后端 | 可访问的 HTTPS 服务、有效证书、经过 ICP 备案的域名，并在小程序后台配置通讯域名 | 尚未配置与验收 |
 | 微信云托管 | 使用 `callContainer` / `connectContainer` 指定调用方式，可无需另配通讯域名 | 通道与登录已适配并通过离线验证；云托管环境部署与真机验收待执行，见[云托管登录清单](CLOUDRUN_LOGIN_RUNBOOK.md) |
 
-手机中的 `127.0.0.1` 指向手机自身。原先后端只发布在回环地址、产物也指向回环，手机构建因此连不上电脑上的 Docker 后端；现已同时调整后端发布范围、产物地址，并把步骤固化为 `scripts/miniapp_lan_helper.cjs`。注意校园网/公共 WiFi 常见客户端隔离，可能仍需改用电脑移动热点。局域网调试只用于受控测试，常规真机验收应开启域名与证书校验。
+手机中的 `127.0.0.1` 指向手机自身，因此真机联调需要产物指向电脑的局域网地址、后端也发布到局域网网卡；开发者工具不受此限制，其请求由电脑发出，回环地址即可。原先后端只发布在回环地址、产物也指向回环，手机构建因此连不上电脑上的 Docker 后端；现已把两件事固化为 `scripts/miniapp_lan_helper.cjs`（`--apply --build` 切到局域网、`--restore` 切回回环）。注意校园网/公共 WiFi 常见客户端隔离，可能仍需改用电脑移动热点。局域网调试只用于受控测试，常规真机验收应开启域名与证书校验。
+
+## 开发者工具（模拟器）路径
+
+只想在微信开发者工具里验收，不需要真机，也不需要改后端端口发布或准备局域网地址：
+
+1. 后端在本机可达（`http://127.0.0.1:18080/actuator/health` 返回 `UP`）。
+2. `apps/miniapp/.env.local` 的 `VITE_API_BASE_URL` 为回环地址（`node scripts/miniapp_lan_helper.cjs --restore` 可还原并重新构建）。
+3. 开发者工具导入 `apps/miniapp/dist/build/mp-weixin`，点“预览/编译”。
+
+**必须关闭合法域名校验**：后端是 `http://`，属于非法通讯域名，工具会直接拦掉所有请求，页面表现为“请求失败”，很容易被误判成后端不可用。`--build` 会把这个设置写入工具的项目私有配置 `dist/build/mp-weixin/project.private.config.json`（`setting.urlCheck=false`，该文件受 Git 忽略）。若工具当时正开着，它会用内存中的设置覆盖该文件，重新打开项目或手动勾选一次即可（详情 → 本地设置 → 不校验合法域名、web-view、TLS 版本以及 HTTPS 证书）。
+
+| 能力 | 开发者工具 | 说明 |
+| --- | --- | --- |
+| `wx.login` 换真实 code、`/api/auth/wx-login` 换 openid 并签发 JWT | 可验收 | code 由微信服务器真实签发，后端用 AppID/AppSecret 兑换；需工具已登录微信且该微信号对此 AppID 有开发权限 |
+| 业务接口、AI 对话、图片上传下载 | 可验收 | 请求由电脑发出，与后端在同一台机器上 |
+| 域名校验、弱网、真机网络环境 | 不可验收 | 工具默认跳过校验，与真机“打开调试”的行为不同 |
+| `wx.cloud.callContainer`（云托管通道） | 不可验收 | 云托管调用要求真机环境；当前配置未启用云托管，请求走普通 `uni.request` |
+| 需要真实设备能力的接口 | 不可验收 | 工具模拟器能力有限 |
+
+因此模拟器适合先把登录、会话与业务链路验通，真机只用于确认网络条件与设备能力，见[真机登录清单](LAN_DEVICE_LOGIN_RUNBOOK.md)。
 
 ## 当前本机配置
 
 - 后端私有 `.env.auth.local` 保存微信、JWT 与数据库变量，并受 Git 忽略；AppSecret 只进入后端环境。
 - 本机后端容器 `vehicle-auth-local-backend` 当前以 `0.0.0.0:18080→8080` 发布，供真机经局域网访问；旧的回环容器保留为 `vehicle-auth-local-backend-before-lan` 以便回滚。恢复回环发布的命令见[真机登录清单](LAN_DEVICE_LOGIN_RUNBOOK.md)。
-- 小程序私有 `apps/miniapp/.env.local` 当前配置为局域网地址（如 `http://10.66.1.251:18080`）。改地址、构建与还原统一走 `node scripts/miniapp_lan_helper.cjs`，改后须重新构建并导入本工作树的 `apps/miniapp/dist/build/mp-weixin`。
+- 小程序私有 `apps/miniapp/.env.local` 当前配置为回环地址（`http://127.0.0.1:18080`），供开发者工具使用；需要真机联调时执行 `node scripts/miniapp_lan_helper.cjs --apply --build` 切到局域网地址，用 `--restore --build` 切回。改地址、构建与还原统一走该脚本，改后须重新导入本工作树的 `apps/miniapp/dist/build/mp-weixin`。
 - 切到云托管时改为配置 `VITE_WECHAT_CLOUD_ENV_ID` 与 `VITE_WECHAT_CLOUD_SERVICE`，此时 `VITE_API_BASE_URL` 被忽略；两者同时非空才启用云托管通道。
-- 临时跳过域名校验仅用于开发者工具的项目设置/忽略的构建产物；源码默认校验保留。
+- 临时跳过域名校验仅写入开发者工具的项目私有配置（`dist/build/mp-weixin/project.private.config.json`，受 Git 忽略），由 `--build` 自动同步 `urlCheck=false`；源码与 `project.config.json` 中的校验默认保留。
 - 本机数据库为隔离的新建测试卷，不能据此认定其他已有数据库已迁移。
 
 微信开发者工具可能同时打开旧分支窗口。若页面提示“登录服务尚未配置”，先检查该窗口导入路径、构建时间与后端地址。[构建说明](../../apps/miniapp/README.md)及[真实登录记录](../progress/S0_EXECUTION_LOG.md)提供复核依据。
