@@ -250,3 +250,8 @@
 - 本机真实后端镜像 `vehicle-auth/backend:reservations` 已更新，保留原卷/旧回滚容器，只监听回环18080。gstack H5 12项通过：发布、重叠、真实微信车主选择、断网原键重试、订单/审计各一次、快照/金额、取消释放、本人列表、旧版本与角色边界、关闭时段。
 - 验收脚本修正实际原生日期输入、确认框按钮选择器与累计证据取最新两次；开发者工具和验收桥重启后真实 code 恢复。失败轮次的新订单由真实取消或正常自动到期关闭，不删除业务记录。finally 撤销会话并取消本轮残留待支付订单。商家合成会话不代表短信，支付未模拟成功。
 - 当前微信产物16条模拟器路由通过；只代表加载，不代替微信业务UI/真机。已补契约、中文计划、复现与下一步支付建议。[PR #24](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/24) 最终精确提交CI及合并以GitHub为准，六项成功才合并。
+
+## 2026-10-07 支付基础设计准备
+
+- 核对 PR #24 最终头 `b966f5e` 的 CI `37561720527` 六项成功，已合并为 main `1c54f61`；[主分支 CI 37562181961](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37562181961) 也六项成功。
+- 用户选择支付基础与隔离测试渠道，并确认通知去重、有效成功转PAID、关闭/旧失败付款异常、默认关闭测试渠道及本机验证范围。已在独立分支整理[中文书面规格](../superpowers/specs/2026-10-07-payment-foundation-design.md)，待书面复核后进入计划与编码；尚未声称支付已实现或真实扣款通过。
