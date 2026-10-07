@@ -37,7 +37,7 @@ public class ReservationOrders {
         });
     }
     public Map<String,Object> list(VehicleOwner owner,String status,int page,int size){
-        ServiceCatalog.validate(null,page,size);if(status!=null && !Set.of("PENDING_PAYMENT","CLOSED").contains(status))throw ReservationInput.bad();
+        ServiceCatalog.validate(null,page,size);if(status!=null && !Set.of("PENDING_PAYMENT","PAID","CLOSED").contains(status))throw ReservationInput.bad();
         return db.reads.execute(tx->{db.owner(owner,false);String filter=" FROM `order` WHERE user_id=? AND is_deleted=0"+(status==null?"":" AND status=?");var args=new ArrayList<Object>();args.add(owner.id());if(status!=null)args.add(status);
             long count=db.jdbc.queryForObject("SELECT COUNT(*)"+filter,Long.class,args.toArray());args.add(size);args.add((page-1)*size);var rows=db.jdbc.queryForList("SELECT *"+filter+" ORDER BY created_at DESC,id DESC LIMIT ? OFFSET ?",args.toArray());return ReservationStore.page(rows.stream().map(row->db.orderRow(row,false)).toList(),count,page,size);
         });

@@ -14,7 +14,7 @@
 | 订单履约 | `order`, `pickup_check`, `repair_protection`, `technician_report`, `delivery_compare` | 订单快照、接车确认、防护、报工、取车 |
 | 券与增长 | `coupon`, `user_coupon`, `assessment`, `invite_record`, `point_flow`, `point_exchange` | 发行/预占/核销、月考核、邀请与积分账本 |
 | 社区与 AI | `community_content`, `community_interaction`, `circle_follow`, `ai_plan_rule` | 内容审核、互动、车型关注、推荐规则 |
-| 支付与预约 | `appointment_slot`, `payment`, `refund`, `reconciliation` | 时段容量、支付/退款状态、每日对账 |
+| 支付与预约 | `appointment_slot`, `payment`, `payment_event`, `payment_exception`, `refund`, `reconciliation` | 时段容量、支付事件去重与异常、支付/退款状态；对账任务尚未交付 |
 | 商家履约支撑 | `merchant_application`, `technician_assignment`, `merchant_commission_policy` | 入驻审核、派工归属、带生效期的佣金政策 |
 | 安全与通知 | `notification`, `audit_log`, `idempotency_record`, `file_object`, `staff_account`, `sms_code` | 站内消息、审计、24 小时幂等、私有文件、员工与验证码 |
 

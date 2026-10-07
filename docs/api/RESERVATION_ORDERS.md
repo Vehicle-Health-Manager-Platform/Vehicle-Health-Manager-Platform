@@ -1,6 +1,6 @@
 # 本机预约与本人订单契约
 
-2026-10-07。书面规则见[已确认规格](../superpowers/specs/2026-10-07-reservation-orders-design.md)，机器契约见[OpenAPI](openapi.json)。本步为 F07/F08 子集，支付、券与退款尚未接入。
+2026-10-07。书面规则见[已确认规格](../superpowers/specs/2026-10-07-reservation-orders-design.md)，机器契约见[OpenAPI](openapi.json)。本步为 F07/F08 子集，支付基础现见[支付契约](PAYMENT_FOUNDATION.md)；正式扣款、券与退款尚未接入。
 
 ## 接口与角色
 
@@ -12,7 +12,7 @@
 | GET `/api/order/quote/{id}` | OWNER | 在售报价 ID，返回当前价格/版本/商家/项目 |
 | GET `/api/order/slots` | OWNER | merchant_id, project_id, date，分页 |
 | POST `/api/order/create` | OWNER | merchant_project_id, quote_version_id, vehicle_id, slot_id |
-| GET `/api/order/list` | OWNER | 分页，可选 status=PENDING_PAYMENT/CLOSED |
+| GET `/api/order/list` | OWNER | 分页，可选 status=PENDING_PAYMENT/PAID/CLOSED |
 | GET `/api/order/{id}` | OWNER | 本人订单，含下单快照 |
 | POST `/api/order/cancel` | OWNER | order_id |
 

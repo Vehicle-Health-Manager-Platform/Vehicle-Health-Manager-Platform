@@ -250,3 +250,19 @@
 - 本机真实后端镜像 `vehicle-auth/backend:reservations` 已更新，保留原卷/旧回滚容器，只监听回环18080。gstack H5 12项通过：发布、重叠、真实微信车主选择、断网原键重试、订单/审计各一次、快照/金额、取消释放、本人列表、旧版本与角色边界、关闭时段。
 - 验收脚本修正实际原生日期输入、确认框按钮选择器与累计证据取最新两次；开发者工具和验收桥重启后真实 code 恢复。失败轮次的新订单由真实取消或正常自动到期关闭，不删除业务记录。finally 撤销会话并取消本轮残留待支付订单。商家合成会话不代表短信，支付未模拟成功。
 - 当前微信产物16条模拟器路由通过；只代表加载，不代替微信业务UI/真机。已补契约、中文计划、复现与下一步支付建议。[PR #24](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/24) 最终精确提交CI及合并以GitHub为准，六项成功才合并。
+
+## 2026-10-07 支付基础设计准备
+
+- 核对 PR #24 最终头 `b966f5e` 的 CI `37561720527` 六项成功，已合并为 main `1c54f61`；[主分支 CI 37562181961](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37562181961) 也六项成功。
+- 用户选择支付基础与隔离测试渠道，并确认通知去重、有效成功转PAID、关闭/旧失败付款异常、默认关闭测试渠道及本机验证范围。已在独立分支整理[中文书面规格](../superpowers/specs/2026-10-07-payment-foundation-design.md)，待书面复核后进入计划与编码；尚未声称支付已实现或真实扣款通过。
+
+## 2026-10-07 支付基础实施与本机验收
+
+- 用户确认书面规格，按中文计划实现V008、支付发起/查询、LOCAL_TEST签名通知、事件与异常表、PAID及支付摘要。生产模板默认关闭测试渠道，隔离profile/显式开关/独立私有密钥缺一拒绝启用，正式微信发起503。
+- [PR #25](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/25) 首次头 `532f6bd` 的[CI 37564009986](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37564009986) 六项成功：后端191项，无失败/错误/跳过，含12项支付MySQL；小程序75项与双端构建；V008重复迁移、MySQL48表及Compose通过。
+- 本机后端 `vehicle-auth/backend:payment-foundation` 仅回环18080，固定隔离库按V008迁移，独立私有测试环境不提交。gstack H5 24项通过：实际预约/详情控件、未配置正式渠道不建支付、原键测试支付复用、失败后新支付、签名/金额错误拒绝、成功与重复审计、PAID不可取消、列表测试标识、取消后成功异常且容量不恢复、身份边界。微信车主真实，商家合成登录，付款是明确的LOCAL_TEST通知，未真实扣款/退款。
+- 微信模拟器首次接口超时，重新连接当前产物后16条路由通过。路由只证明可加载，不代替微信完整业务UI与真机。
+- 自查补充到期任务/通知竞争、支付创建审计回滚与到期禁止发起；历史缺少编号/到期的进行中支付改为显式409，不伪造可用请求，新增回归。最终精确提交仍须完整CI成功才合并，最终结果以PR为准。
+- 本轮保留测试PAID和异常事实及不可真实收款标识；finally取消本轮剩余待支付订单并撤销会话，不删除历史/原卷。下一步建议本店订单只读视图，接车/退款/正式渠道分别确认规则后实施。
+
+- 追加回归提交 `976732f` 的[CI 37564636451](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37564636451) 六项成功，后端194项无失败/错误/跳过，含15项支付MySQL集成。最终镜像本机H5再次24项通过。通知解析自查再补拒绝正文尾随第二个JSON，4项签名/格式针对性回归通过；该最终修正提交仍以精确HEAD六项CI为合并门禁。
