@@ -36,6 +36,6 @@ H5 请求使用只监听回环的传输桥接解决跨域；桥接只转发真�
 
 ## GitHub 与后续
 
-本阶段提交、推送并创建以 `codex/a6-service-backend` 为 base 的 PR；GitHub CI 待核实，最终结果写入 A6 收口记录。随后 A6.3 提交可复现真实 HTTP 脚本，扩展权限、争议、重复操作与数据库留痕验收。
+本阶段提交、推送并创建以 `codex/a6-service-backend` 为 base 的 PR；已上传 [PR #43](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/43)，`9254e86` 的 [CI 37797778774](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37797778774) **六项全绿**，后端 **348/348**、小程序 **169/169**，微信/H5 构建通过；已标为可评审，未合并。随后 A6.3 提交可复现真实 HTTP 脚本，扩展权限、争议、重复操作与数据库留痕验收。
 
 沿用堆叠规则：依赖合入 main 后才逐支把当前 PR base 改回 main，复核差异和 CI。未合并。真实相机/真机、正式微信身份及自签证书直连预览待独立验收；A7 退款/取消、二次异议与超时不在范围。

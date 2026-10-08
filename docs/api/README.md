@@ -23,7 +23,7 @@ PR #14 实现[本人车辆列表、有效车型查询与手动添加](VEHICLE_MA
 - [支付基础](PAYMENT_FOUNDATION.md)：默认关闭的隔离测试渠道、通知验签/去重与付款异常；正式微信和退款未接入。
 - [车主端 AI 管家](AI_CHAT.md)：`POST /api/ai/chat` 对话、本人车辆与档案上下文、降级与隐私边界。
 - [商家本店订单](MERCHANT_ORDERS.md)：本店分页/详情、状态与预约日期筛选、下单快照与支付摘要。
-- [订单履约状态机](ORDER_FULFILLMENT.md)：8 个状态的唯一权威矩阵、动作式状态操作接口、前置 fail-closed、双审计与并发行锁。接车单、车主决策、派工与争议恢复已接入；报工与核销仍待后续阶段。
+- [订单履约状态机](ORDER_FULFILLMENT.md)：8 个状态的唯一权威矩阵、动作式状态操作接口、前置 fail-closed、双审计与并发行锁。接车单、车主决策、派工与争议恢复已接入；A6 报工/质检已接入，核销待 A7。
 - [车主确认接车单与异议](PICKUP_OWNER_DECISION.md)：A4 本人确认或提出异议、争议阻断、同事务审计与幂等。
 - [争议处理与恢复](DISPUTE_RESOLUTION.md)：A5.6 商家追加处理记录、车主复核后才恢复订单，`43007`/`43008` 阻断与恢复条件 R1–R5。
 - [接车检查](PICKUP_INSPECTION.md)：商家私有上传、七图检查单、手填里程、预约验码与 PAID→RECEIVED；派工继续后续交付。
@@ -33,4 +33,4 @@ PR #14 实现[本人车辆列表、有效车型查询与手动添加](VEHICLE_MA
 
 ## A6 防护与报工
 
-[A6.1 施工接口](SERVICE_WORK.md)：商家防护、本人完整报工与质检签字、施工记录及关联私有图片。页面与端到端验收见后续 A6.2/A6.3。
+[A6 施工接口](SERVICE_WORK.md)：商家防护、本人完整报工与质检签字、施工记录及关联私有图片。[页面](../progress/A6_2_SERVICE_UI_EXECUTION.md)与[真实 HTTP 验收](../testing/LOCAL_SERVICE_WORK_ACCEPTANCE.md)已补齐；[阶段总记录](../progress/A6_SERVICE_WORK_EXECUTION.md)。
