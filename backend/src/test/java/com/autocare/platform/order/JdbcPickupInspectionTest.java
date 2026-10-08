@@ -25,11 +25,11 @@ class JdbcPickupInspectionTest {
     static JdbcTemplate jdbc;final ObjectMapper mapper=new ObjectMapper();ReservationStore db;PickupInspection service;MerchantActor shop,other;VehicleOwner owner,foreign;
     @BeforeAll static void schema()throws Exception{
         var source=new DriverManagerDataSource(mysql.getJdbcUrl(),mysql.getUsername(),mysql.getPassword());jdbc=new JdbcTemplate(source);
-        try(var c=source.getConnection()){for(String file:List.of("V001__baseline.sql","V003__auth_lifecycle.sql","V004__upload_http.sql","V007__reservation_orders.sql","V008__payment_foundation.sql","V009__order_fulfillment_states.sql","V010__pickup_inspection.sql","V010__pickup_inspection.sql","V011__pickup_owner_decision.sql","V011__pickup_owner_decision.sql"))ScriptUtils.executeSqlScript(c,new FileSystemResource(Path.of("..","docs","sql","migrations",file)));}
+        try(var c=source.getConnection()){for(String file:List.of("V001__baseline.sql","V003__auth_lifecycle.sql","V004__upload_http.sql","V007__reservation_orders.sql","V008__payment_foundation.sql","V009__order_fulfillment_states.sql","V010__pickup_inspection.sql","V010__pickup_inspection.sql","V011__pickup_owner_decision.sql","V011__pickup_owner_decision.sql","V013__dispute_resolution.sql","V013__dispute_resolution.sql"))ScriptUtils.executeSqlScript(c,new FileSystemResource(Path.of("..","docs","sql","migrations",file)));}
     }
     @BeforeEach void setup(){
         for(String trigger:List.of("reject_pickup_audit","reject_pickup_cache"))jdbc.execute("DROP TRIGGER IF EXISTS "+trigger);
-        for(String table:List.of("pickup_check_file","pickup_check","order_status_transition","audit_log","idempotency_record","auth_rate_limit","auth_session","file_object","vehicle_archive","order","appointment_slot","staff_account","merchant","vehicle","user"))jdbc.update("DELETE FROM `"+table+"`");
+        for(String table:List.of("order_dispute_record","order_dispute","pickup_check_file","pickup_check","order_status_transition","audit_log","idempotency_record","auth_rate_limit","auth_session","file_object","vehicle_archive","order","appointment_slot","staff_account","merchant","vehicle","user"))jdbc.update("DELETE FROM `"+table+"`");
         var manager=new DataSourceTransactionManager(jdbc.getDataSource());db=new ReservationStore(jdbc,mapper,new WriteIntegrityService(jdbc,mapper,manager),Clock.systemUTC(),manager);service=new PickupInspection(db);
         jdbc.update("INSERT INTO merchant(id,merchant_type,name,address,status) VALUES(1,2,'测试店A','合成地址',1),(2,2,'测试店B','合成地址',1)");
         jdbc.update("INSERT INTO staff_account(id,merchant_id,role,account,status) VALUES(1,1,'MERCHANT','A','ACTIVE'),(2,2,'MERCHANT','B','ACTIVE')");
@@ -77,6 +77,11 @@ class JdbcPickupInspectionTest {
         assertEquals(reason,service.detail(shop,1).get("dispute_reason"));
         assertEquals(reason,jdbc.queryForObject("SELECT note FROM order_status_transition WHERE action='ORDER_PICKUP_DISPUTE'",String.class));
         assertEquals(2,count("order_status_transition"));assertEquals(2,count("audit_log"));
+        // A5.6：异议同时建立争议单，恢复入口才有据可依；争议单只记状态与原因，不含隐私。
+        assertEquals(1,count("order_dispute"));var view=(Map<String,Object>)service.detail(shop,1).get("dispute");
+        assertEquals(OrderDisputes.OPEN,view.get("status"));assertEquals("RECEIVED",view.get("from_status"));
+        assertEquals(reason,view.get("reason"));assertEquals(false,view.get("can_review"));assertNull(view.get("resolved_at"));
+        assertEquals(List.of(),view.get("records"));
         assertEquals(40905,assertThrows(FulfillmentConflict.class,()->new OrderFulfillment(db,new MerchantOrders(db)).apply(shop,key(),1,OrderStatus.START_SERVICE,null)).code);
         assertEquals(40905,assertThrows(FulfillmentConflict.class,()->service.decide(owner,key(),1,"CONFIRM",null)).code);
     }

@@ -7,7 +7,7 @@
 并提供商家侧的履约操作入口。接车单、车主确认、派工、报工与核销的**业务内容**分别在
 A3–A6 实现；本步先把它们的判定挂点与审计通道建好。
 
-阶段进展：A3 已通过接车检查接口写入接车证据并迁至 `RECEIVED`；A4 已通过[车主接车单决策](PICKUP_OWNER_DECISION.md)写入 `owner_confirmed_at` 或迁至 `DISPUTED`。A5.2 已接入[商家派工与技师本人接单](TECHNICIAN_DISPATCH.md)，报工和核销仍按后续阶段处理。
+阶段进展：A3 已通过接车检查接口写入接车证据并迁至 `RECEIVED`；A4 已通过[车主接车单决策](PICKUP_OWNER_DECISION.md)写入 `owner_confirmed_at` 或迁至 `DISPUTED`。A5.2 已接入[商家派工与技师本人接单](TECHNICIAN_DISPATCH.md)，A5.6 已接入[争议处理与恢复](DISPUTE_RESOLUTION.md)，报工和核销仍按后续阶段处理。
 
 ## 状态
 
@@ -42,8 +42,10 @@ A3–A6 实现；本步先把它们的判定挂点与审计通道建好。
 | `PENDING_PAYMENT` | 无（不允许回到待支付） |
 
 不允许任何跨状态跳跃（如 `PAID → COMPLETED`），也不允许从 `COMPLETED`/`CLOSED` 再出发。
-`DISPUTED → 原状态`由争议解决流程写入，实现时从[迁移审计](#审计)读出上一状态；
-本步不提供该入口，因此矩阵把它视为非法。
+`DISPUTED → 原状态`由 A5.6 的[争议处理与恢复](DISPUTE_RESOLUTION.md)专用接口写入：只有车主本人接受复核后，
+订单才回到争议单记录的 `from_status`（仅允许 `PAID`/`RECEIVED`/`IN_SERVICE`/`PENDING_VERIFY`，审计动作名
+`ORDER_DISPUTE_RESOLVE`）。动作式接口的 `can()`/`MOVES` 矩阵**不含**该迁移，`actions(DISPUTED)` 仍为空——
+商家与技师都无法通过通用动作接口恢复，争议也不出现在商家通用动作清单里。
 
 ## 动作
 
@@ -80,12 +82,19 @@ A3–A6 实现；本步先把它们的判定挂点与审计通道建好。
 | --- | --- | --- |
 | `RECEIVE` | `order.check_in_completed_at` 非空 | `43001` 接车检查未完成，请先完成接车检查 |
 | 技师接单（专用接口） | 接车证据与确认/派工记录一致，本人有效身份，状态 RECEIVED/ASSIGNED | `43001`/`43003`/`40905`；完整规则见派工契约 |
+| 商家派工（专用接口） | 接车证据、车主确认或争议已恢复、订单非 `DISPUTED` | `43001`/`43003`/`43007`；完整规则见派工契约 |
 | 商家通用 `START_SERVICE` | 已停用 | `43004` 请由被派工技师本人接单并开始施工 |
+| 商家处理争议（专用接口） | 本店 `ORDER` 存在 `OPEN` 争议且订单 `DISPUTED` | `40905`；见[争议处理与恢复](DISPUTE_RESOLUTION.md) |
+| 车主复核争议（专用接口） | 争议 `OPEN`、接车单 `owner_confirm=2`、接受前已有处理记录、`from_status` 可恢复 | `40905`/`43008`；见[争议处理与恢复](DISPUTE_RESOLUTION.md) |
 | `FINISH_SERVICE` | `order.service_report_ready_at` 非空 | `43005` 施工报工未完成，不能送核销 |
 | `COMPLETE` | 核销校验（A7 接入） | `43006` 核销校验尚未接入，暂不能完成订单 |
 
 `43001` 与 `43002` 是 Spec 已定义的码（接车未完成、防护照片未上传）；`43003`/`43004`/`43005`
-按同一段位新增。`43006` 是分阶段实现期间的显式拒绝，A7 核销接入后不再出现。
+按同一段位新增。`43006` 是分阶段实现期间的显式拒绝，A7 核销接入后不再出现。`43007`
+（订单存在未解决的争议，不能派工或接单）与 `43008`（商家尚未提交处理记录，暂不能复核）由 A5.6 新增。
+
+派工、技师接单与争议处理使用各自专用接口（见[派工契约](TECHNICIAN_DISPATCH.md)与[争议处理契约](DISPUTE_RESOLUTION.md)），
+不走本节的通用动作接口；通用矩阵 `actions(DISPUTED)` 始终为空，商家与技师都无法用它恢复争议订单。
 
 时间列由各自阶段写入，本步只负责读取：接车检查（A3）写 `check_in_completed_at`，
 车主确认（A4）写 `owner_confirmed_at`，派工（A5）写 `assigned_at`，报工（A6）写

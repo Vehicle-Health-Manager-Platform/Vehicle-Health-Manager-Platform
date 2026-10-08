@@ -15,6 +15,7 @@
 | A5.3 商家派工页与技师工作台 | 阶段验证通过，已上传，PR 待合并 | [PR #38](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/38)，`be63751` 六项 CI 通过，小程序 140 项、微信与 H5 构建通过；商家派工页、技师独立会话、本人工单/详情/接单；[执行记录](A5_3_DISPATCH_UI_EXECUTION.md) |
 | A5.4 派工安全与竞争验证 | 阶段验证通过，已上传，PR 待合并 | [PR #39](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/39)，`1f9bcb7` 六项 CI 通过；新增真实 MySQL 并发/无死锁/载荷/历史异常 11 项，相关回归 76 项；[执行记录](A5_4_DISPATCH_VERIFICATION_EXECUTION.md) |
 | A5.5 本机联调与收口 | 阶段验证通过，已上传，PR 待合并 | [PR #40](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/40) 六项 CI 通过；合成身份接真实后端容器与隔离 MySQL，端到端 37 项通过（车主确认→候选→派工→本人查询→接单 + 拒绝矩阵）；[执行记录](A5_5_DISPATCH_E2E_EXECUTION.md)、[本机验收](../testing/LOCAL_TECHNICIAN_DISPATCH_ACCEPTANCE.md)、[A5 阶段总记录](A5_DISPATCH_EXECUTION.md) |
+| A5.6 争议处理与恢复 | 阶段验证通过，已上传，PR 待合并 | 商家处理记录 + 车主复核恢复，新增两接口与 V013（52 表）；后端争议与回归 52/52、小程序 147 项、两端构建、本机端到端 **69/69**；[规格](../superpowers/specs/2026-10-08-dispute-resolution-design.md)、[契约](../api/DISPUTE_RESOLUTION.md)、[执行记录](A5_6_DISPUTE_RESOLUTION_EXECUTION.md)、[本机验收](../testing/LOCAL_DISPUTE_ACCEPTANCE.md) |
 | A6/A7 施工至履约闭环 | 尚未实现 | 防护与报工、核销、评价、档案回写、经验卡片按[下一步规划](NEXT_STEPS.md)逐项交付 |
 
 ## 已具备的业务基础
@@ -25,8 +26,8 @@
 
 ## 当前明确的限制
 
-- 车主确认前不能派工；提出异议后订单置为 `DISPUTED`，后续施工动作由状态矩阵拒绝。A4 只提供第一次决定，争议处理与恢复尚需独立设计。
-- 派工与本人接单的后端、小程序界面、安全竞争验证与本机端到端联调均已上传待合并（A5.1–A5.5）；A5.5 用合成会话接真实后端容器与隔离 MySQL 完成派工→本人查询→接单，合成会话是测试桥接，真实技师微信登录、真机页面联调仍是独立验收项。完整报工与核销仍未实现，缺前置时服务端明确拒绝。
+- 车主确认前不能派工；提出异议后订单置为 `DISPUTED`，A5.6 已补上商家处理记录与车主复核：只有车主本人接受复核后订单才回到争议前的状态（`PAID`/`RECEIVED`/`IN_SERVICE`/`PENDING_VERIFY`），恢复前派工与施工一律 `43007` 阻断。A4 之前的历史异议没有争议单，恢复一律拒绝（fail-closed），由人工处理。
+- 派工、本人接单与争议处理的**后端、小程序界面、安全竞争验证与本机端到端联调**均已上传待合并（A5.1–A5.6）；A5.6 用合成会话接真实后端容器与隔离 MySQL 完成异议→处理→复核→恢复→派工→接单闭环，合成会话是测试桥接，真实技师/车主微信登录、真机页面联调仍是独立验收项。完整报工与核销仍未实现，缺前置时服务端明确拒绝。
 - 真实相机、手机真机、本机测试证书下的直连图片预览继续待验收。
 - 正式短信、微信收款/退款、OCR、正式公网环境和上线运维有独立依赖，见[依赖清单](S0_DEPENDENCIES.md)。
 

@@ -40,6 +40,11 @@ public final class OrderStatus {
     public static final String FINISH_SERVICE="FINISH_SERVICE";
     /** 商家侧动作：核销成立，订单完成。 */
     public static final String COMPLETE="COMPLETE";
+    /**
+     * 争议解决后的恢复审计动作名；由争议流程（车主复核接受）写入，不是商家动作。
+     * 见 {@link #canResume}。
+     */
+    public static final String DISPUTE_RESOLVE="ORDER_DISPUTE_RESOLVE";
 
     /**
      * 完整迁移矩阵：目标状态 → 允许的来源状态集合。
@@ -88,6 +93,19 @@ public final class OrderStatus {
         if(from==null||to==null)return false;
         Set<String> sources=TRANSITIONS.get(to);
         return sources!=null && !from.equals(to) && sources.contains(from);
+    }
+
+    /**
+     * 争议解决后的恢复判定：{@code DISPUTED → 争议发生前的状态}。
+     *
+     * <p>恢复目标取自争议流程记录的原状态，只允许回到"本来能变成 DISPUTED 的那些状态"
+     * （{@code PAID}/{@code RECEIVED}/{@code IN_SERVICE}/{@code PENDING_VERIFY}），
+     * 因此结构上到不了 {@code CLOSED}/{@code COMPLETED}/{@code PENDING_PAYMENT}。
+     * 这不是商家动作：{@link #can} 与 {@link #actions} 都不含它，只有争议流程可以写入。
+     */
+    public static boolean canResume(String from,String to){
+        if(from==null||to==null)return false;
+        return DISPUTED.equals(from) && TRANSITIONS.get(DISPUTED).contains(to);
     }
 
     /** 当前状态下商家可请求的动作，按履约先后排序；不含前置条件判定。 */

@@ -6,7 +6,7 @@
 
 ## 当前迁移版本（2026-10-08）
 
-当前结构为 V001–V012，共 50 张表；生成的 V001 仍是 39 表基线，后续结构通过独立迁移叠加。新 Compose 数据卷按版本顺序初始化，已有数据库先备份再逐项补迁移。
+当前结构为 V001–V013，共 52 张表；生成的 V001 仍是 39 表基线，后续结构通过独立迁移叠加。新 Compose 数据卷按版本顺序初始化，已有数据库先备份再逐项补迁移。
 
 | 版本 | 当前业务结构 |
 | --- | --- |
@@ -17,10 +17,13 @@
 | V010 | 商家上传主体类型、七图接车单、`pickup_check_file` |
 | V011 | `pickup_check.dispute_reason` 为 500 字；`order_status_transition.note` 扩为 500 字，保存完整车主异议原因 |
 | V012 | 既有派工表补可空 `assigned_by` 与 `accepted_at`，不填历史假凭证，保留订单唯一键 |
+| V013 | 新增 `order_dispute`（一单一争议）与 `order_dispute_record`（只追加时间线）；`pickup_check.owner_confirm` 注释补 `3争议已解决` |
 
 V011 复用既有 `pickup_check.owner_confirm`（0 待决定、1 确认、2 异议）、`confirm_at` 和 `order.owner_confirmed_at`。单据决定、订单变化、审计与幂等响应同事务提交，契约见[车主接车单决定](../api/PICKUP_OWNER_DECISION.md)。CI 同时检查 V011 重复执行与两处原因容量。
 
 V012 已有数据补迁移前先备份并盘点异常派工；新派工写派工人，新接单写接单时间。历史空字段、未知状态、逻辑删除占唯一键、归属或时间不一致返回 40905，人工核对后处置，不自动覆盖/改派。回滚应用保留新增列与成功审计。见[派工契约](../api/TECHNICIAN_DISPATCH.md)。
+
+V013 明确 `owner_confirm` 第三态：**0 未决定 / 1 已确认 / 2 已异议 / 3 争议经复核接受**，`1` 与 `3` 同等地满足派工的车主确认前置。`order_dispute` 用 `uk_order` 保证一单只有一条争议单，`from_status` 记录争议前状态（恢复目标只能是 `PAID`/`RECEIVED`/`IN_SERVICE`/`PENDING_VERIFY`），`status` 只有 `OPEN`/`RESOLVED`。`order_dispute_record` 只追加，`idx_dispute` 支撑时间线读取。**不回填历史异议**：A4 之前没有争议单的订单恢复一律拒绝（fail-closed），由人工处理。CI 同时检查 V013 重复执行后唯一键、时间线索引与列注释。见[争议处理契约](../api/DISPUTE_RESOLUTION.md)。
 
 ## 表清单
 
@@ -29,7 +32,7 @@ V012 已有数据补迁移前先备份并盘点异常派工；新派工写派工
 | 账号和车型 | `user`, `brand`, `series`, `model`, `maintenance_rule` | `openid` 唯一、手机号可空且唯一；品牌车系车型关系、保养规则 |
 | 车辆档案 | `vehicle`, `vehicle_archive`, `vehicle_archive_file`（V005） | `user_id` 归属、VIN/车牌、档案类型与录入来源；档案图片以有序私有文件 ID 引用 |
 | 商家与项目 | `merchant`, `standard_project`, `merchant_project`, `package` | 商家状态、标准项目、商家报价及套餐 |
-| 订单履约 | `order`, `pickup_check`, `repair_protection`, `technician_report`, `delivery_compare` | 订单快照、接车确认、防护、报工、取车 |
+| 订单履约 | `order`, `pickup_check`, `order_dispute`（V013）, `order_dispute_record`（V013）, `repair_protection`, `technician_report`, `delivery_compare` | 订单快照、接车确认、争议单与处理/复核时间线、防护、报工、取车 |
 | 券与增长 | `coupon`, `user_coupon`, `assessment`, `invite_record`, `point_flow`, `point_exchange` | 发行/预占/核销、月考核、邀请与积分账本 |
 | 社区与 AI | `community_content`, `community_interaction`, `circle_follow`, `ai_plan_rule` | 内容审核、互动、车型关注、推荐规则 |
 | 支付与预约 | `appointment_slot`, `payment`, `payment_event`, `payment_exception`, `refund`, `reconciliation` | 时段容量、支付事件去重与异常、支付/退款状态；对账任务尚未交付 |

@@ -86,4 +86,20 @@ class OrderStatusTest {
             assertNotEquals(OrderStatus.PAID,OrderStatus.target(action));
         }
     }
+
+    @Test void onlyADisputeCanBeResumedAndOnlyToItsPreviousState(){
+        for(String to:OrderStatus.ALL)for(String from:OrderStatus.ALL)
+            assertEquals(OrderStatus.DISPUTED.equals(from)&&EXPECTED.get(OrderStatus.DISPUTED).contains(to),OrderStatus.canResume(from,to),"from="+from+" to="+to);
+        // 恢复到不了终态、待支付和关闭，也不能原地不动。
+        for(String target:List.of(OrderStatus.COMPLETED,OrderStatus.CLOSED,OrderStatus.PENDING_PAYMENT,OrderStatus.DISPUTED))
+            assertFalse(OrderStatus.canResume(OrderStatus.DISPUTED,target),target);
+        assertFalse(OrderStatus.canResume(null,OrderStatus.RECEIVED));
+        assertFalse(OrderStatus.canResume(OrderStatus.DISPUTED,null));
+        // 恢复不是商家动作：矩阵与动作列表都不因此放宽。
+        assertEquals(List.of(),OrderStatus.actions(OrderStatus.DISPUTED));
+        assertFalse(OrderStatus.can(OrderStatus.DISPUTED,OrderStatus.RECEIVED));
+        assertTrue(OrderStatus.canResume(OrderStatus.DISPUTED,OrderStatus.RECEIVED));
+        assertEquals("ORDER_DISPUTE_RESOLVE",OrderStatus.DISPUTE_RESOLVE);
+        assertFalse(OrderStatus.action(OrderStatus.DISPUTE_RESOLVE));
+    }
 }

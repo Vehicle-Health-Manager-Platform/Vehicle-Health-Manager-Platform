@@ -72,12 +72,13 @@
 | 409 / 43001 | 接车检查/有效接车单缺失 |
 | 409 / 43003 | 车主确认或确认记录缺失/不一致 |
 | 409 / 43004 | 施工开始必须通过本人接单；A5.2 上线后通用商家 START_SERVICE 始终返回此码 |
+| 409 / 43007 | 订单存在未解决的争议，先在接车单处理争议并经车主复核恢复；A5.6 起接车单 `owner_confirm=3`（争议经复核接受）与 `1` 同等地满足车主确认前置 |
 | 503 / 50300 | 数据库未配置或读写事务失败，使用原键重试写操作 |
 
 角色/参数校验在缺数据库环境下仍执行；资源身份和归属优先校验后才返回业务前置码。商家 `allowed_actions` 在 A5.2 同时移除 START_SERVICE；该动作对应的状态矩阵保留供技师服务端接单使用。
 
 ## 8. OpenAPI 与版本范围
 
-六个操作已纳入 OpenAPI 生成器，标记 `technician-dispatch-backend-implemented`，同步严格 schema、分页、角色、幂等键与错误码。运行本版本需 V001–V012、有效数据库、JWT 配置与当前 WECHAT_APP_ID；新 Compose 卷自动迁移，已有库备份后补 V012。
+六个操作已纳入 OpenAPI 生成器，标记 `technician-dispatch-backend-implemented`，同步严格 schema、分页、角色、幂等键与错误码。运行本版本需 V001–V013、有效数据库、JWT 配置与当前 WECHAT_APP_ID；新 Compose 卷自动迁移，已有库备份后补 V012 与 V013（V013 供争议恢复使用）。
 
 A5.3 已接入小程序界面：商家在 `pages/merchant/dispatch` 选本店候选技师并二次确认派工，技师在 `pages/technician/orders`、`order-detail` 查看本人工单并接单。客户端在 `apps/miniapp/src/services/technician-dispatch.js`，逐字校验上述投影并显式拒绝越界字段。后端证据见[A5.2 执行记录](../progress/A5_2_DISPATCH_BACKEND_EXECUTION.md)，界面证据见[A5.3 执行记录](../progress/A5_3_DISPATCH_UI_EXECUTION.md)。
