@@ -56,10 +56,12 @@ stateDiagram-v2
 | `POST /api/order/verify` | 本店商家 | `order_id, verify_code` → 订单状态 | 验码后一次性消费；过期/错误/跨店返回错误且留审计 |
 | `POST /api/merchant/apply` | 商家申请人 | 资质文件引用、店名、品类、区域 → `application_id` | 文件必须是私有对象引用；重复申请按主体去重 |
 | `POST /api/merchant/projects` | 本店商家 | `standard_project_id, price, status` → `merchant_project_id` | 已审核商家可选品；保留历史报价版本，不修改已下单快照 |
-| `POST /api/merchant/orders/{id}/assign` | 本店商家 | `technician_id` → `assignment_id` | 接车确认且无争议、防护齐全；技师须属于本店 |
+| `POST /api/merchant/orders/{id}/assign` | 本店商家 | `technician_id` → `assignment_id` | 待实现：接车证据齐全、车主确认且无争议；仅本店有效且当前 AppID 已绑定微信的技师；防护在 A6 报工校验 |
 | `GET /api/notifications` | 已登录用户 | 分页通知列表 | 只返回本人/本店可见通知，失败时不阻断主流程 |
 
 ## 预约时段、券、佣金与通知
+
+A5 已形成[派工与技师接口契约](TECHNICIAN_DISPATCH.md)及[规格](../superpowers/specs/2026-10-08-a5-dispatch-design.md)：使用员工 ID 归属，技师本人接单才开始施工。接口待实现；按 Spec F15 修正了旧草案的防护阻断时点。
 
 - 【假设】时段容量以 `merchant_id + slot_id` 为键，在创建订单事务内锁定；待支付订单 15 分钟未支付则关闭并释放时段和券。支付回调到达时再次检查订单状态，过期成功付款进入人工退款核对。
 - 【假设】券状态为 `AVAILABLE/RESERVED/USED/EXPIRED`；支付前只预占，不核销。订单支付成功并在服务完成时核销；订单取消或支付失败释放。领券数量和有效期由券模板决定，不能用前端缓存判断库存。

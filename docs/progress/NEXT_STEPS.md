@@ -2,9 +2,11 @@
 
 更新日期：2026-10-08。当前业务链路已到接车检查与车主决定；已付款订单不会自动关闭，车主未确认或订单有异议时不能派工。用户要求每完成一个阶段整理文档并上传 GitHub，执行规则见[阶段交付规则](STAGE_DELIVERY.md)。
 
-## 当前优先：A5 派工与技师接单规格
+## 当前优先：A5.2 后端派工与技师接单
 
-A3 已合并至 [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34)。A4 已上传至 [PR #35](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/35)，实现提交 `e0d4077` 六项 CI 通过（后端 271 项、小程序 120 项）。下一步细化 A5 派工与接单规格，统一防护阻断时点和接单/施工开始语义，再按[A5 计划](../superpowers/plans/2026-10-08-a5-dispatch.md)逐项实施。实际状态见[当前进度](CURRENT_STATUS.md)，A4 范围见[接口契约](../api/PICKUP_OWNER_DECISION.md)。
+A5.1 已上传至 [PR #36](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/36)，规格提交六项 CI 通过；依赖尚未合并的 A4 PR #35。详细证据与最新检查入口见[A5.1 执行记录](A5_1_DISPATCH_SPEC_EXECUTION.md)。
+
+A3 已合并至 [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34)。A4 已上传至 [PR #35](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/35)，实现提交 `e0d4077` 六项 CI 通过（后端 271 项、小程序 120 项）。A5.1 已形成[规格](../superpowers/specs/2026-10-08-a5-dispatch-design.md)、[六个接口契约](../api/TECHNICIAN_DISPATCH.md)和[中文计划](../superpowers/plans/2026-10-08-a5-dispatch.md)：一单一位技师、本人接单开始施工、防护在 A6 报工校验。下一步 A5.2 实现迁移与后端，并同步停用通用商家 START_SERVICE。交付及 CI 见[当前进度](CURRENT_STATUS.md)与[A5.1 执行记录](A5_1_DISPATCH_SPEC_EXECUTION.md)。
 
 ## 业务开发顺序
 
@@ -21,7 +23,7 @@ A5 详细顺序、验收和需要统一的业务规则见[A5 下一阶段计划]
 
 ## 每阶段文档与仓库交付
 
-完成代码后同步规格/计划、中文接口、OpenAPI、迁移、验收记录、当前进度及下一步。提交到 `codex/` 阶段分支，推送本项目 GitHub 仓库，创建指向 `main` 的 PR，修复 CI 失败并记录最终提交。未完成验证时保持草稿并明确原因；不能把“已上传”写成“已验收”。具体规则见[阶段交付规则](STAGE_DELIVERY.md)。
+每个子阶段同步对应规格/计划、接口、OpenAPI、迁移、验收记录与进度。提交到 `codex/` 阶段分支并推送 GitHub；前序已合并时 PR 指向 `main`，否则指向直接依赖分支，依赖合并后调整基线并复核 CI。未完成验证保持草稿；不能把“已上传”写成“已验收”。见[交付规则](STAGE_DELIVERY.md)。
 
 ## 独立验收与外部依赖
 
