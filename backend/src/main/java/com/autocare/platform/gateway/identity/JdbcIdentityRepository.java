@@ -72,10 +72,14 @@ public class JdbcIdentityRepository implements IdentityRepository {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "员工码无效");
         }
         String hash = sha256(employeeCode);
+        var located=jdbc.queryForList("SELECT id FROM staff_account WHERE employee_code_hash=?",hash);
+        if(located.isEmpty())throw new ResponseStatusException(HttpStatus.FORBIDDEN,"员工码无效或账号不可用");
+        long locatedId=((Number)located.get(0).get("id")).longValue();
+        TechnicianIdentityLocks.staff(jdbc,locatedId);
         var staff = jdbc.query("SELECT s.id, s.role, s.status, s.is_deleted, s.merchant_id, m.status, m.is_deleted "
-            + "FROM staff_account s JOIN merchant m ON m.id=s.merchant_id WHERE s.employee_code_hash=? FOR UPDATE",
+            + "FROM staff_account s JOIN merchant m ON m.id=s.merchant_id WHERE s.id=? AND s.employee_code_hash=? FOR UPDATE",
             (rs, row) -> new Object[] {rs.getLong(1), rs.getString(2), rs.getString(3), rs.getBoolean(4),
-                rs.getLong(5), rs.getInt(6), rs.getBoolean(7)}, hash).stream().findFirst()
+                rs.getLong(5), rs.getInt(6), rs.getBoolean(7)}, locatedId,hash).stream().findFirst()
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "员工码无效或账号不可用"));
         if (!"TECHNICIAN".equals(staff[1]) || !"ACTIVE".equals(staff[2]) || (boolean) staff[3]
             || (int) staff[5] != 1 || (boolean) staff[6]) {

@@ -39,6 +39,15 @@ public class ReservationStore {
         if(session.isEmpty() || staff.isEmpty() || shop.isEmpty() || !Instant.now().isBefore(actor.expires()))throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"商家登录已失效");
     }
     void lockShop(long id){if(jdbc.query("SELECT id FROM merchant WHERE id=? FOR UPDATE",(r,n)->r.getLong(1),id).isEmpty())throw missing();}
+    void technician(TechnicianActor actor,String appId,boolean lock){
+        String tail=lock?" FOR UPDATE":"";
+        var session=jdbc.queryForList("SELECT id FROM auth_session WHERE id=? AND subject_type='staff_account' AND subject_id=? AND role='TECHNICIAN' AND app_id=? AND merchant_id=? AND binding_id=? AND revoked_at IS NULL AND expires_at>UTC_TIMESTAMP()"+tail,actor.session(),actor.staffId(),appId,actor.merchantId(),actor.bindingId());
+        // Serialize identity mutations and assignments on the merchant first.
+        var shop=jdbc.queryForList("SELECT id FROM merchant WHERE id=? AND status=1 AND is_deleted=0"+tail,actor.merchantId());
+        var staff=jdbc.queryForList("SELECT id FROM staff_account WHERE id=? AND merchant_id=? AND role='TECHNICIAN' AND status='ACTIVE' AND is_deleted=0"+tail,actor.staffId(),actor.merchantId());
+        var binding=jdbc.queryForList("SELECT id FROM staff_wechat_identity WHERE id=? AND staff_account_id=? AND app_id=? AND status='ACTIVE' AND is_deleted=0 AND unbound_at IS NULL"+tail,actor.bindingId(),actor.staffId(),appId);
+        if(!appId.equals(actor.appId()) || session.isEmpty() || shop.isEmpty() || staff.isEmpty() || binding.isEmpty() || !Instant.now().isBefore(actor.expires()))throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"技师登录已失效，请重新登录");
+    }
     Map<String,Object> one(String query,Object... args){var rows=jdbc.queryForList(query,args);if(rows.isEmpty())throw missing();return rows.get(0);}
     static long number(Map<String,Object> row,String name){return ((Number)row.get(name)).longValue();}
     long insert(String sql,Object... args){

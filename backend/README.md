@@ -28,3 +28,7 @@ S0-7.1f-2 新增[商家账号身份核心](../docs/api/MERCHANT_AUTH.md)：已�
 HTTP 上传和本人短时图片访问见 [HTTP 接入说明](../docs/api/UPLOAD_HTTP.md)：仅正式车主会话，需 V004 及真实适配器；小程序图片接口已接入，H5 实际交互接本机私有服务已通过，微信实际相机/真机仍待验收；见[复现说明](../docs/testing/LOCAL_PRIVATE_IMAGE_ACCEPTANCE.md)。
 
 车主标准服务项目查询已接入现有表，分类/分页/详情与金额精度见[契约](../docs/api/SERVICE_CATALOG.md)。有效 OWNER 会话读取时复核身份，无数据库返回 503。无效 Bearer 的认证失败也返回统一 JSON。
+
+## A5.2 商家派工与技师本人接单
+
+六个接口与权限、幂等和状态规则见[派工契约](../docs/api/TECHNICIAN_DISPATCH.md)，验证见[执行记录](../docs/progress/A5_2_DISPATCH_BACKEND_EXECUTION.md)。需 V001–V012、有效 MySQL、JWT_SECRET 与 WECHAT_APP_ID；已有库备份后补 V012，再上线应用。派工不改变 RECEIVED，本人接单才进入 IN_SERVICE；通用商家 START_SERVICE 已停用。技师只读写本人派工，不返回客户身份或核销码。界面在 A5.3 接入。

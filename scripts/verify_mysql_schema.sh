@@ -64,9 +64,11 @@ run_sql_file docs/sql/migrations/V010__pickup_inspection.sql
 run_sql_file docs/sql/migrations/V010__pickup_inspection.sql
 run_sql_file docs/sql/migrations/V011__pickup_owner_decision.sql
 run_sql_file docs/sql/migrations/V011__pickup_owner_decision.sql
+run_sql_file docs/sql/migrations/V012__technician_dispatch.sql
+run_sql_file docs/sql/migrations/V012__technician_dispatch.sql
 
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
-[[ "$tables" == 50 ]] || { echo "Expected 50 tables after V010, got $tables" >&2; exit 1; }
+[[ "$tables" == 50 ]] || { echo "Expected 50 tables after V012, got $tables" >&2; exit 1; }
 
 for column in check_in_completed_at owner_confirmed_at assigned_at service_report_ready_at; do
   found=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND table_name = 'order' AND column_name = '$column'")
@@ -74,6 +76,12 @@ for column in check_in_completed_at owner_confirmed_at assigned_at service_repor
 done
 transitions=$(query "SELECT COUNT(DISTINCT column_name) FROM information_schema.columns WHERE table_schema = '$database' AND table_name = 'order_status_transition' AND column_name IN ('order_id','from_status','to_status','action','actor_type','actor_id','occurred_at')")
 [[ "$transitions" == 7 ]] || { echo "order_status_transition is missing audit columns, got $transitions" >&2; exit 1; }
+for column in assigned_by accepted_at; do
+  found=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND table_name = 'technician_assignment' AND column_name = '$column' AND is_nullable = 'YES'")
+  [[ "$found" == 1 ]] || { echo "Repeated V012 left technician_assignment.$column missing or non-nullable" >&2; exit 1; }
+done
+assignment_unique=$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema = '$database' AND table_name = 'technician_assignment' AND index_name = 'uk_order' AND column_name = 'order_id' AND non_unique = 0")
+[[ "$assignment_unique" == 1 ]] || { echo "V012 did not preserve the unique assignment per order" >&2; exit 1; }
 for entry in pickup_check:dispute_reason order_status_transition:note; do
   table="${entry%%:*}"
   column="${entry##*:}"
@@ -108,4 +116,4 @@ for table in brand series model standard_project merchant merchant_project; do
   [[ "$rows" == 1 ]] || { echo "Expected one synthetic row in $table, got $rows" >&2; exit 1; }
 done
 
-echo "MySQL 8.0 schema: 50 tables after V011; repeat migration and synthetic seed passed"
+echo "MySQL 8.0 schema: 50 tables after V012; repeat migration and synthetic seed passed"

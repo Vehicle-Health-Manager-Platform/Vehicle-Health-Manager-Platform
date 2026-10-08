@@ -11,7 +11,8 @@
 | A3 接车检查 | 已合并 | [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34)，合并提交 `30ae704`；最终 CI 六项通过，后端 263 项、小程序 119 项；[接车验收记录](../testing/LOCAL_PICKUP_ACCEPTANCE.md) |
 | A4 车主确认与异议 | 阶段验证通过，已上传，PR 待合并 | [PR #35](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/35)；实现提交 `e0d4077` 六项 CI 通过，后端 271 项、小程序 120 项；[接口](../api/PICKUP_OWNER_DECISION.md)、[执行记录](A4_OWNER_DECISION_EXECUTION.md) |
 | A5.1 派工与接单规格 | 文档交付并上传，规格提交六项 CI 通过，PR 待合并 | [PR #36](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/36)，`c9187b9` 六项 CI 通过；[规格](../superpowers/specs/2026-10-08-a5-dispatch-design.md)、[契约](../api/TECHNICIAN_DISPATCH.md)、[计划](../superpowers/plans/2026-10-08-a5-dispatch.md)、[执行记录](A5_1_DISPATCH_SPEC_EXECUTION.md)；后端 271/小程序 120 项为已有实现回归，非派工验收 |
-| A5.2–A5.5 派工与技师接单实现 | 待执行 | 下一步 A5.2 后端与迁移，随后界面、权限竞争验证与本机联调；每子阶段分别上传 PR |
+| A5.2 派工与技师本人接单后端 | 已编码，测试与 GitHub 收口中 | 六个接口、V012、本人接单进入施工；[契约](../api/TECHNICIAN_DISPATCH.md)、[执行记录](A5_2_DISPATCH_BACKEND_EXECUTION.md) |
+| A5.3–A5.5 界面与全阶段验收 | 待执行 | 下一步 A5.3 商家派工与技师工作台，随后安全竞争验收与本机联调 |
 | A6/A7 施工至履约闭环 | 尚未实现 | 防护与报工、核销、评价、档案回写、经验卡片按[下一步规划](NEXT_STEPS.md)逐项交付 |
 
 ## 已具备的业务基础
@@ -23,7 +24,7 @@
 ## 当前明确的限制
 
 - 车主确认前不能派工；提出异议后订单置为 `DISPUTED`，后续施工动作由状态矩阵拒绝。A4 只提供第一次决定，争议处理与恢复尚需独立设计。
-- 派工、完整报工与核销仍未实现；缺前置时服务端明确拒绝。
+- 派工与本人接单后端已编码，界面待 A5.3；完整报工与核销仍未实现，缺前置时服务端明确拒绝。
 - 真实相机、手机真机、本机测试证书下的直连图片预览继续待验收。
 - 正式短信、微信收款/退款、OCR、正式公网环境和上线运维有独立依赖，见[依赖清单](S0_DEPENDENCIES.md)。
 

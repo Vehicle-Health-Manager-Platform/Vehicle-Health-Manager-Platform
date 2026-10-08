@@ -477,6 +477,55 @@ def main():
         document["paths"][path] = {method: item}
     schemas["OwnerOrder"]["properties"]["appointment_code"] = {"type": "string", "pattern": "^[0-9]{6}$", "description": "仅本人PAID详情返回；商家投影永不包含"}
     schemas["MerchantOrder"]["properties"]["allowed_actions"]["description"] = "PAID使用接车检查，不再返回RECEIVE；其他动作仍由状态矩阵决定"
+    # A5.2: staff-account assignments and the technician's own acceptance.
+    assignment_status = {"type": "string", "enum": ["ASSIGNED", "ACCEPTED"]}
+    nullable_time = {"type": ["string", "null"], "format": "date-time"}
+    def strict(properties):
+        return {"type": "object", "additionalProperties": False, "required": list(properties), "properties": properties}
+    def paged(item):
+        return strict({"items": {"type": "array", "items": {"$ref": "#/components/schemas/" + item}},
+            "total": {"type": "integer", "minimum": 0}, "page": {"type": "integer", "minimum": 1}, "page_size": {"type": "integer", "minimum": 1, "maximum": 100}})
+    dispatch_fields = {"assignment_id": identifier, "order_id": identifier, "technician_id": identifier,
+        "assignment_status": assignment_status, "order_status": {"type": "string", "enum": fulfillment_states},
+        "assigned_at": timestamp, "accepted_at": nullable_time, "changed": {"type": "boolean"}}
+    schemas["DispatchResult"] = strict(dispatch_fields)
+    schemas["TechnicianCandidate"] = strict({"technician_id": identifier, "label": {"type": "string"}})
+    schemas["TechnicianCandidates"] = paged("TechnicianCandidate")
+    schemas["MerchantAssignment"] = strict({"assignment": {"anyOf": [{"type": "null"}, strict({
+        "assignment_id": identifier, "order_id": identifier, "technician_id": identifier, "technician_label": {"type": "string"},
+        "status": assignment_status, "assigned_at": timestamp, "accepted_at": nullable_time})]}})
+    tech_fields = {k: v for k, v in dispatch_fields.items() if k not in ("technician_id", "changed")}
+    tech_fields.update({"order_no": {"type": "string"}, "can_accept": {"type": "boolean"},
+        "project_snapshot": schemas["MerchantOrder"]["properties"]["project_snapshot"], "appointment_snapshot": schemas["MerchantOrder"]["properties"]["appointment_snapshot"]})
+    schemas["TechnicianOrder"] = strict(tech_fields)
+    schemas["TechnicianOrders"] = paged("TechnicianOrder")
+    for method, path, roles, title, response in [
+        ("get", "/api/merchant/technicians", "MERCHANT", "本店有效且已绑定的技师候选", "TechnicianCandidates"),
+        ("get", "/api/merchant/orders/{id}/assignment", "MERCHANT", "本店订单派工详情", "MerchantAssignment"),
+        ("post", "/api/merchant/orders/{id}/assign", "MERCHANT", "本店订单首次派工", "DispatchResult"),
+        ("get", "/api/tech/orders", "TECHNICIAN", "技师本人派工列表", "TechnicianOrders"),
+        ("get", "/api/tech/orders/{id}", "TECHNICIAN", "技师本人工单详情", "TechnicianOrder"),
+        ("post", "/api/tech/orders/{id}/accept", "TECHNICIAN", "技师本人接单并开始施工", "DispatchResult")]:
+        item = operation(method, path, title, "F14,F16,F18")
+        item["x-roles"] = roles
+        item["x-implementation-status"] = "technician-dispatch-backend-implemented"
+        item["description"] = "严格校验会话/本店或本人归属。technician_id为员工ID。接车证据与车主确认齐全且无争议才可派工/接单；防护在A6报工校验。24小时幂等、行锁与审计同事务；详见 TECHNICIAN_DISPATCH.md。"
+        for parameter in item["parameters"]:
+            if parameter["in"] == "path": parameter["schema"] = identifier
+        if path in ("/api/merchant/technicians", "/api/tech/orders"):
+            item["parameters"] += pagination
+        if path == "/api/tech/orders":
+            item["parameters"].append({"name": "assignment_status", "in": "query", "schema": assignment_status})
+        if method == "post":
+            item["requestBody"]["content"]["application/json"]["schema"] = strict({"technician_id": identifier} if path.endswith("/assign") else {})
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [
+            {"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "properties": {"data": {"$ref": "#/components/schemas/" + response}}}]}
+        item["responses"]["404"] = {"description": "资源不存在/非本店或本人/不可选技师，code=40400"}
+        item["responses"]["409"] = {"description": "40905状态冲突/历史数据不一致；43001缺接车证据；43003缺车主确认"}
+        item["responses"]["503"] = {"description": "数据库未配置/事务失败，code=50300；原键重试"}
+        document["paths"][path] = {method: item}
+    schemas["MerchantOrder"]["properties"]["allowed_actions"]["description"] = "RECEIVE走接车检查，START_SERVICE走技师本人接单，两者不再投影为商家动作"
+    action["description"] = "前端只能请求动作，不能提交目标状态；行锁、前置、幂等和审计同事务。A3接车、A4确认、A5.2派工与本人接单已接入；商家通用RECEIVE/START_SERVICE分别返回43001/43004，专用技师接单才开始施工。报工/核销待A6/A7，缺前置返回43005/43006。"
     count = sum(len(value) for value in document["paths"].values())
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

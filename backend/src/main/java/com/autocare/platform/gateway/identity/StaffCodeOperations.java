@@ -16,6 +16,7 @@ public class StaffCodeOperations {
 
     @Transactional
     public String issue(long staffId) {
+        TechnicianIdentityLocks.staff(jdbc,staffId);
         var rows = jdbc.query("SELECT s.role,s.status,s.is_deleted,m.status,m.is_deleted FROM staff_account s "
                 + "JOIN merchant m ON m.id=s.merchant_id WHERE s.id=? FOR UPDATE",
             (rs, row) -> new Object[] {rs.getString(1), rs.getString(2), rs.getBoolean(3),
@@ -34,6 +35,7 @@ public class StaffCodeOperations {
 
     @Transactional
     public void revoke(long staffId) {
+        TechnicianIdentityLocks.staff(jdbc,staffId);
         jdbc.update("UPDATE staff_account SET employee_code_hash=NULL WHERE id=?", staffId);
         revokeBindings(staffId);
     }

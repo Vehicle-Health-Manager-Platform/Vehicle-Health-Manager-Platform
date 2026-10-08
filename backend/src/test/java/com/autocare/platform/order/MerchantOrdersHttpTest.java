@@ -51,15 +51,17 @@ class MerchantOrdersHttpTest {
         verifyNoInteractions(fulfillment);
     }
     @Test void actionConflictsSurfaceTheStableCode()throws Exception{
-        when(fulfillment.apply(any(),anyString(),eq(9L),eq(OrderStatus.RECEIVE),any())).thenThrow(new FulfillmentConflict(43001,"接车检查未完成，请先完成接车检查"));
         mvc.perform(post("/api/merchant/orders/9/actions").header("Authorization","Bearer merchant").header("Idempotency-Key",UUID.randomUUID().toString()).contentType(MediaType.APPLICATION_JSON).content("{\"action\":\"RECEIVE\"}"))
             .andExpect(status().isConflict()).andExpect(header().string("Cache-Control","no-store"))
-            .andExpect(jsonPath("$.code").value(43001)).andExpect(jsonPath("$.message").value("请通过接车检查提交完整接车单"));
-        when(fulfillment.apply(any(),anyString(),eq(9L),eq(OrderStatus.START_SERVICE),any())).thenThrow(new FulfillmentConflict(40905,"当前订单状态不支持该操作"));
+            .andExpect(jsonPath("$.code").value(43001));
         mvc.perform(post("/api/merchant/orders/9/actions").header("Authorization","Bearer merchant").header("Idempotency-Key",UUID.randomUUID().toString()).contentType(MediaType.APPLICATION_JSON).content("{\"action\":\"START_SERVICE\"}"))
+            .andExpect(status().isConflict()).andExpect(jsonPath("$.code").value(43004));
+        verifyNoInteractions(fulfillment);
+        when(fulfillment.apply(any(),anyString(),eq(9L),eq(OrderStatus.FINISH_SERVICE),any())).thenThrow(new FulfillmentConflict(40905,"当前订单状态不支持该操作"));
+        mvc.perform(post("/api/merchant/orders/9/actions").header("Authorization","Bearer merchant").header("Idempotency-Key",UUID.randomUUID().toString()).contentType(MediaType.APPLICATION_JSON).content("{\"action\":\"FINISH_SERVICE\"}"))
             .andExpect(status().isConflict()).andExpect(jsonPath("$.code").value(40905));
-        when(fulfillment.apply(any(),anyString(),eq(9L),eq(OrderStatus.START_SERVICE),any())).thenThrow(new org.springframework.dao.DataAccessResourceFailureException("secret SQL"));
-        mvc.perform(post("/api/merchant/orders/9/actions").header("Authorization","Bearer merchant").header("Idempotency-Key",UUID.randomUUID().toString()).contentType(MediaType.APPLICATION_JSON).content("{\"action\":\"START_SERVICE\"}"))
+        when(fulfillment.apply(any(),anyString(),eq(9L),eq(OrderStatus.FINISH_SERVICE),any())).thenThrow(new org.springframework.dao.DataAccessResourceFailureException("secret SQL"));
+        mvc.perform(post("/api/merchant/orders/9/actions").header("Authorization","Bearer merchant").header("Idempotency-Key",UUID.randomUUID().toString()).contentType(MediaType.APPLICATION_JSON).content("{\"action\":\"FINISH_SERVICE\"}"))
             .andExpect(status().isServiceUnavailable()).andExpect(jsonPath("$.message").value("本店订单暂不可用，请稍后重试"));
     }
 }

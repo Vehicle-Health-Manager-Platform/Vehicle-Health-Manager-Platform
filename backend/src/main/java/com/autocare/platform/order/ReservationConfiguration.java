@@ -18,4 +18,5 @@ public class ReservationConfiguration {
     @Bean MerchantOrders merchantOrders(ReservationStore db){return new MerchantOrders(db);}
     @Bean OrderFulfillment orderFulfillment(ReservationStore db,MerchantOrders orders){return new OrderFulfillment(db,orders);}
     @Bean PickupInspection pickupInspection(ReservationStore db){return new PickupInspection(db);}
+    @Bean TechnicianAssignments technicianAssignments(ReservationStore db,@org.springframework.beans.factory.annotation.Value("${WECHAT_APP_ID:}")String appId){return new TechnicianAssignments(db,appId);}
 }
