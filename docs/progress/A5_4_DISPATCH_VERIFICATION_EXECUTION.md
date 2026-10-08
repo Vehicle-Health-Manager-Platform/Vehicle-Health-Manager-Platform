@@ -75,6 +75,10 @@ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
 1. **`SHOW ENGINE INNODB STATUS` 需要 `PROCESS` 权限**：Testcontainers 的业务连接是 `test` 用户，读取死锁报告直接被拒。改为用 `root` 连接（`mysql.getPassword()`）单独建一个只用于读该报告的 `JdbcTemplate`，业务断言仍走原有连接。
 2. **跨店历史派工的两种拒绝路径不同**：派工侧（商家读、再次派工）走归属复核返回 `40905`；技师侧在按本人、本店过滤的查询里**根本看不到该资源**，返回 `404`，而不是「看到但归属不符」。测试按两条路径分别断言，避免把 404 写成 409。
 
+## GitHub 验证
+
+阶段分支 `codex/a5-dispatch-verify` 已推送，[PR #39](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/39) 以 `codex/a5-dispatch-ui` 为基线（A5.3 未合并），只展示本子阶段差异，改动 7 个文件。提交 `1f9bcb7` 的六项 CI 全部通过：web、miniapp、backend、schema-and-ocr、schema-mysql、compose-smoke（run 37738541392）。backend job 执行全量后端测试（含本阶段新增 11 项真实 MySQL 用例），miniapp job 执行 140 项离线测试并完成两端构建；本阶段未改前端与后端业务代码，生成文件与契约操作数保持 89 个不变。
+
 ## 未验收项
 
 真实技师微信登录、真机页面联调、与真实后端/MySQL 的端到端「派工 → 本人查询 → 接单」属 **A5.5**；本阶段证据来自合成身份与 Testcontainers 数据库，不代表真实登录或页面联调通过。正式短信、真实相机、公网环境继续独立验收。
