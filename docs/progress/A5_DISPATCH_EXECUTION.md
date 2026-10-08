@@ -10,7 +10,7 @@
 | A5.2 | 六个后端接口、V012、本人接单进入施工、停用商家通用 `START_SERVICE` | [执行记录](A5_2_DISPATCH_BACKEND_EXECUTION.md)，[PR #37](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/37) |
 | A5.3 | 商家派工页、技师独立会话、本人工单/详情/接单界面 | [执行记录](A5_3_DISPATCH_UI_EXECUTION.md)，[PR #38](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/38) |
 | A5.4 | 身份变更、竞争、持久化载荷与历史异常验证 | [执行记录](A5_4_DISPATCH_VERIFICATION_EXECUTION.md)，[PR #39](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/39) |
-| A5.5 | 本机端到端联调与阶段收口 | [执行记录](A5_5_DISPATCH_E2E_EXECUTION.md)、[本机验收](../testing/LOCAL_TECHNICIAN_DISPATCH_ACCEPTANCE.md)，PR 待合并 |
+| A5.5 | 本机端到端联调与阶段收口 | [执行记录](A5_5_DISPATCH_E2E_EXECUTION.md)、[本机验收](../testing/LOCAL_TECHNICIAN_DISPATCH_ACCEPTANCE.md)，[PR #40](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/40) |
 
 ## 已实现的能力
 

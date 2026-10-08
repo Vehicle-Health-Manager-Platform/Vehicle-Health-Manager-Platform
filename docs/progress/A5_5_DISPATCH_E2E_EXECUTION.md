@@ -37,4 +37,4 @@ A5.2–A5.4 证明的是协议、权限、幂等、竞争与回滚，但都在**
 
 ## GitHub 验证
 
-待提交与推送后补充（阶段 PR、六项 CI 与最终提交）。
+阶段分支 `codex/a5-dispatch-e2e` 已推送，[PR #40](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/40) 以 `codex/a5-dispatch-verify` 为基线（A5.4 未合并），只展示本子阶段差异。提交 `8929375`（联调脚本）与 `18e6259`（文档）的六项 CI 全部通过：web、miniapp、backend、schema-and-ocr、schema-mysql、compose-smoke。本阶段不改业务代码，生成文件与契约操作数保持 89 个不变；端到端脚本需要本机容器与隔离库，属 opt-in 本机验收，不进 CI。
