@@ -18,7 +18,7 @@ A5.5 已用合成身份接真实后端容器与隔离 MySQL 完成端到端：�
 
 A5.6 已补齐 A4 留下的死路——异议之后订单停在 `DISPUTED`、没有任何恢复入口。本阶段新增商家处理记录与车主复核恢复：新增 `order_dispute`/`order_dispute_record`（V013，表总数 52）与两个写接口，`DISPUTED` 期间派工/接单返回 `43007`，只有车主本人在商家提交处理记录后接受复核（`43008` 约束）才把订单恢复到争议前状态；商家与技师均不能宣布争议解决。后端争议与回归 **52/52**、小程序 **147** 项、两端构建、本机端到端 **69/69** 通过；六项 CI 结果见 [PR #41](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/41)。证据见[A5.6 执行记录](A5_6_DISPUTE_RESOLUTION_EXECUTION.md)、[本机争议验收](../testing/LOCAL_DISPUTE_ACCEPTANCE.md)、[争议处理契约](../api/DISPUTE_RESOLUTION.md)与[争议处理规格](../superpowers/specs/2026-10-08-dispute-resolution-design.md)。
 
-A6 已开始：[规格](../superpowers/specs/2026-10-08-service-work-design.md)、[中文计划](../superpowers/plans/2026-10-08-service-work.md)。A6.1 后端相关 75/75 验证通过，上传与 CI 核对中，下一阶段 **A6.2 防护与报工页面**，随后 A6.3 本地端到端验收。防护缺失不能报工、必要证据及本人质检签字齐全才送核销、只能操作本人派工。退款/取消争议订单归 A7；第二次异议与超时自动处理不在本阶段。争议处理的历史遗留（A4 之前没有争议单的异议）仍由人工处理，不自动回填。交付及 CI 见[当前进度](CURRENT_STATUS.md)。
+A6 已开始：[规格](../superpowers/specs/2026-10-08-service-work-design.md)、[中文计划](../superpowers/plans/2026-10-08-service-work.md)。A6.1 后端 76 个独立用例通过，已上传 [PR #42](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/42)，最终 CI 核对中，下一阶段 **A6.2 防护与报工页面**，随后 A6.3 本地端到端验收。防护缺失不能报工、必要证据及本人质检签字齐全才送核销、只能操作本人派工。退款/取消争议订单归 A7；第二次异议与超时自动处理不在本阶段。争议处理的历史遗留（A4 之前没有争议单的异议）仍由人工处理，不自动回填。交付及 CI 见[当前进度](CURRENT_STATUS.md)。
 
 ## 业务开发顺序
 

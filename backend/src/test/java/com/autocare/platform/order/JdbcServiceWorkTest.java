@@ -102,6 +102,15 @@ class JdbcServiceWorkTest {
         assertEquals(503,status(()->work.protect(shop,key(),protection())));assertEquals(0,count("repair_protection"));assertEquals(0,count("service_evidence_file"));assertEquals(2,count("idempotency_record"));jdbc.execute("DROP TRIGGER reject_work_audit");protectedOrder();
         jdbc.execute("CREATE TRIGGER reject_work_audit BEFORE INSERT ON audit_log FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='synthetic rollback'");assertEquals(503,status(()->work.submit(tech,key(),report())));assertEquals(0,count("technician_report"));assertEquals(0,count("service_report_submission"));assertEquals(1,count("service_evidence_file"));assertEquals(3,count("idempotency_record"));jdbc.execute("DROP TRIGGER reject_work_audit");work.submit(tech,key(),report());assertEquals(1,count("technician_report"));
     }
+    @Test void signatureDoesNotLockUnrelatedMerchantEmployee()throws Exception{
+        submitted();var held=new CountDownLatch(1);var release=new CountDownLatch(1);var pool=Executors.newFixedThreadPool(2);
+        var merchantTx=new org.springframework.transaction.support.TransactionTemplate(new DataSourceTransactionManager(jdbc.getDataSource()));
+        try{
+            var staffLock=pool.submit(()->merchantTx.execute(tx->{jdbc.queryForList("SELECT id FROM staff_account WHERE id=1 FOR UPDATE");held.countDown();try{if(!release.await(20,TimeUnit.SECONDS))throw new AssertionError("staff lock release timeout");}catch(InterruptedException e){Thread.currentThread().interrupt();throw new RuntimeException(e);}return true;}));
+            assertTrue(held.await(10,TimeUnit.SECONDS));var signature=pool.submit(()->work.sign(tech,key(),signature()));
+            assertEquals("PENDING_VERIFY",signature.get(10,TimeUnit.SECONDS).path("data").path("order_status").asText());release.countDown();assertTrue(staffLock.get(10,TimeUnit.SECONDS));
+        }finally{release.countDown();pool.shutdownNow();}
+    }
     @Test void concurrentSignaturesCommitOnlyOnce()throws Exception{
         submitted();var start=new CountDownLatch(1);var pool=Executors.newFixedThreadPool(2);try{
             var jobs=new ArrayList<Future<Integer>>();for(int i=0;i<2;i++)jobs.add(pool.submit(()->{start.await();try{work.sign(tech,key(),signature());return 200;}catch(ResponseStatusException e){return e.getStatusCode().value();}}));start.countDown();var codes=new ArrayList<Integer>();for(var job:jobs)codes.add(job.get(30,TimeUnit.SECONDS));Collections.sort(codes);assertEquals(List.of(200,409),codes);assertEquals(2,count("order_status_transition"));assertEquals(5,count("audit_log"));assertEquals(5,count("service_evidence_file"));

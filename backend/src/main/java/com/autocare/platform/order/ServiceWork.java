@@ -41,7 +41,9 @@ public class ServiceWork {
     private void protectionGuard(long order,boolean lock){
         var p=protection(order,lock);if(p==null)throw new FulfillmentConflict(43002,"请先完成施工防护拍照");
         if(ReservationStore.number(p,"is_deleted")!=0 || p.get("uploaded_at")==null)throw new FulfillmentConflict(43002,"防护记录不可用");
-        var ids=db.jdbc.queryForList("SELECT f.id FROM service_evidence_file e JOIN file_object f ON f.id=e.file_id JOIN staff_account s ON s.id=f.owner_id JOIN `order` o ON o.id=e.order_id WHERE e.order_id=? AND e.record_id=? AND e.kind='PROTECTION' AND f.owner_type='staff_account' AND s.role='MERCHANT' AND s.merchant_id=o.merchant_id AND f.scan_status='CLEAN' AND f.is_deleted=0 AND f.content_type IN ('image/jpeg','image/png') AND f.size_bytes BETWEEN 1 AND 10485760 ORDER BY f.id"+(lock?" FOR UPDATE":""),order,p.get("id"));
+        // Only relation/file rows need write locks. A nested nonlocking ownership lookup avoids
+        // locking the merchant employee after the technician already holds the shop lock.
+        var ids=db.jdbc.queryForList("SELECT f.id FROM service_evidence_file e JOIN file_object f ON f.id=e.file_id WHERE e.order_id=? AND e.record_id=? AND e.kind='PROTECTION' AND f.owner_type='staff_account' AND f.owner_id IN (SELECT id FROM staff_account WHERE role='MERCHANT' AND merchant_id=?) AND f.scan_status='CLEAN' AND f.is_deleted=0 AND f.content_type IN ('image/jpeg','image/png') AND f.size_bytes BETWEEN 1 AND 10485760 ORDER BY f.id"+(lock?" FOR UPDATE":""),order,p.get("id"),db.one("SELECT merchant_id FROM `order` WHERE id=?",order).get("merchant_id"));
         var items=db.parse(p.get("items"));var values=new HashSet<String>();if(items.isArray())items.forEach(v->values.add(v.asText()));
         if(ids.size()!=1 || !values.containsAll(Set.of("SEAT_COVER","STEERING_COVER")))throw new FulfillmentConflict(43002,"防护证据不完整或图片不可用");
     }
