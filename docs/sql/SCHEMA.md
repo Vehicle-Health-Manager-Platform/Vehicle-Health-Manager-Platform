@@ -4,6 +4,21 @@
 
 `migrations/V002__staff_wechat_identity.sql` 是独立版本化迁移，不改变上述生成的 V001 基线。它为技师添加按 AppID 区分的微信绑定历史；同一 AppID 下一个微信身份和一个员工账号各只能有一条有效绑定。解除绑定保留历史记录。应用层仍需校验员工角色、账号状态和商家状态；唯一索引不能代替授权。
 
+## 当前迁移版本（2026-10-08）
+
+当前结构为 V001–V011，共 50 张表；生成的 V001 仍是 39 表基线，后续结构通过独立迁移叠加。新 Compose 数据卷按版本顺序初始化，已有数据库先备份再逐项补迁移。
+
+| 版本 | 当前业务结构 |
+| --- | --- |
+| V003–V004 | 会话生命周期、上传请求及私有文件接入 |
+| V005–V006 | 档案私有附件关系、不可变商家报价版本 |
+| V007–V008 | 预约与订单快照、支付事件去重和异常记录 |
+| V009 | 履约前置时间列与 `order_status_transition` |
+| V010 | 商家上传主体类型、七图接车单、`pickup_check_file` |
+| V011 | `pickup_check.dispute_reason` 为 500 字；`order_status_transition.note` 扩为 500 字，保存完整车主异议原因 |
+
+V011 复用既有 `pickup_check.owner_confirm`（0 待决定、1 确认、2 异议）、`confirm_at` 和 `order.owner_confirmed_at`。单据决定、订单变化、审计与幂等响应同事务提交，契约见[车主接车单决定](../api/PICKUP_OWNER_DECISION.md)。CI 同时检查 V011 重复执行与两处原因容量。
+
 ## 表清单
 
 | 领域 | 表 | 关键字段及作用 |
@@ -20,7 +35,7 @@
 
 V001 基线共 39 张表：来源给出 16 张 DDL、另行点名 10 张、S0 业务契约新增 13 张；应用 V002 后共 40 张。来源正文写“25 张”与实际列名不符，不作为建表数量约束。所有表使用 InnoDB、`utf8mb4`、无物理外键；应用层在同一事务校验归属和存在性。
 
-V005 在 V004 之后新增 `vehicle_archive_file`，以 `(archive_id,position)` 保留图片顺序，唯一 `(archive_id,file_id)` 阻止同一档案重复关联。文件归属、未删除及 `CLEAN` 状态由写入事务验证；旧 `attach_urls` 列不用于新手动录入流程。新建 Compose 数据卷自动应用 V001–V005；已有库须按版本顺序补迁移。
+V005 在 V004 之后新增 `vehicle_archive_file`，以 `(archive_id,position)` 保留图片顺序，唯一 `(archive_id,file_id)` 阻止同一档案重复关联。文件归属、未删除及 `CLEAN` 状态由写入事务验证；旧 `attach_urls` 列不用于新手动录入流程。当前新建 Compose 数据卷自动应用 V001–V011；已有库须按版本顺序补迁移。
 
 ## 公共字段和数据规则
 

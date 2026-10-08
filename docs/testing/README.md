@@ -6,6 +6,7 @@
 - [真实登录验收清单](../operations/AUTH_INTEGRATION_RUNBOOK.md)：前置条件、只读 HTTPS 预检和逐角色验收矩阵。
 - [开发与上线网络说明](../operations/MINIAPP_NETWORK_ENVIRONMENTS.md)：模拟器、手机调试和常规真机的网络边界。
 - [CI 定义](../../.github/workflows/ci.yml)：后端、Web、小程序、生成文件/OCR、MySQL 结构和 Compose 六项检查。
+- [A4 车主决定执行记录](../progress/A4_OWNER_DECISION_EXECUTION.md)：确认/异议的 HTTP、真实 MySQL、并发、回滚及阶段 GitHub 验证结果。
 
 小程序测试在仓库根目录运行 `npm test --workspace @autocare/miniapp`；登录预检离线测试运行 `python -m unittest scripts/test_check_auth_readiness.py -v`；后端在 `backend` 目录运行 `mvn test`，完整集成测试需 Docker。
 

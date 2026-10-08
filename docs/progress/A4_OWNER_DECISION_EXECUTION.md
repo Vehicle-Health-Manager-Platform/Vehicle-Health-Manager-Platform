@@ -1,6 +1,6 @@
 # A4 车主接车单决定：执行与交付记录
 
-日期：2026-10-08。分支：`codex/s4-owner-pickup-confirm`。依赖：A3 已合并的 PR #34。当前状态：阶段收口中，GitHub PR 与 CI 结果待本次上传后补齐。
+日期：2026-10-08。分支：`codex/s4-owner-pickup-confirm`。依赖：A3 已合并的 PR #34。当前状态：阶段验证通过，已上传 [PR #35](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/35)，等待合并。
 
 ## 已实现范围
 
@@ -22,7 +22,7 @@
 | MySQL 接车/决定集成测试 | 12 项通过；决定、审计、回滚、越权、撤销会话重放及并发均通过；最终 500 字原因与审计完整保存另行补验通过，V011 重复应用通过 |
 | 小程序与 H5 构建 | 两项通过；沙箱内曾将本机已安装的 terser 解析为缺失，沙箱外构建通过 |
 | OpenAPI 与差异检查 | 生成 JSON 可解析，`git diff --check` 通过；PR CI 继续检查生成物一致性 |
-| GitHub 六项 CI | 上传 PR 后记录实际结果 |
+| GitHub 六项 CI | 实现提交 `e0d4077` 全部通过；后端 271 项、小程序 120 项，无失败/跳过。运行：[37710468297](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37710468297) |
 
 本机 Docker Desktop 29 的 API 版本要求与 docker-java 默认版本不匹配，设置 `-Dapi.version=1.44` 后已连接真实 Docker/MySQL。验证容器使用测试生命周期清理数据库容器；本机环境诊断不改变生产配置。
 
@@ -34,4 +34,4 @@
 
 ## GitHub 收口与下一步
 
-代码、测试、V011、中文接口、生成 OpenAPI、进度文档、下一步计划及阶段交付规则一起提交并推送，建立指向 `main` 的 PR；CI 失败就在本阶段修复。执行[阶段交付规则](STAGE_DELIVERY.md)。下一业务阶段见[A5 派工与技师接单计划](../superpowers/plans/2026-10-08-a5-dispatch.md)。
+代码、测试、V011、中文接口、生成 OpenAPI、进度文档、下一步计划及阶段交付规则已一起提交、推送并建立指向 `main` 的 PR #35。实现提交六项 CI 通过后补齐文档记录；文档提交仍由同一 PR 自动验证。执行[阶段交付规则](STAGE_DELIVERY.md)。下一业务阶段见[A5 派工与技师接单计划](../superpowers/plans/2026-10-08-a5-dispatch.md)。

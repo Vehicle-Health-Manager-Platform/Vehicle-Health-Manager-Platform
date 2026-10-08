@@ -2,9 +2,9 @@
 
 更新日期：2026-10-08。当前业务链路已到接车检查与车主决定；已付款订单不会自动关闭，车主未确认或订单有异议时不能派工。用户要求每完成一个阶段整理文档并上传 GitHub，执行规则见[阶段交付规则](STAGE_DELIVERY.md)。
 
-## 当前优先：A4 验证与 GitHub 收口
+## 当前优先：A5 派工与技师接单规格
 
-A3 已合并至 [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34)。A4 已编码本人确认与异议、争议阻断、审计和幂等，当前补齐完整测试及交付记录。完成条件是相关验证通过、文档齐全、阶段分支推送到 GitHub、建立 PR 并记录 CI 结果。实际状态见[当前进度](CURRENT_STATUS.md)，接口见[A4 契约](../api/PICKUP_OWNER_DECISION.md)。
+A3 已合并至 [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34)。A4 已上传至 [PR #35](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/35)，实现提交 `e0d4077` 六项 CI 通过（后端 271 项、小程序 120 项）。下一步细化 A5 派工与接单规格，统一防护阻断时点和接单/施工开始语义，再按[A5 计划](../superpowers/plans/2026-10-08-a5-dispatch.md)逐项实施。实际状态见[当前进度](CURRENT_STATUS.md)，A4 范围见[接口契约](../api/PICKUP_OWNER_DECISION.md)。
 
 ## 业务开发顺序
 

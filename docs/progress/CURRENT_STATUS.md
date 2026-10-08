@@ -9,7 +9,7 @@
 | A1 履约规格 | 关键规则已确认并交付 | PR #32 已合并；预约码、仅商家接车、车主二次确认与不自动关闭已固化 |
 | A2 履约状态机 | 已合并 | PR #33；服务端矩阵、行锁、幂等、同事务审计及前置阻断 |
 | A3 接车检查 | 已合并 | [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34)，合并提交 `30ae704`；最终 CI 六项通过，后端 263 项、小程序 119 项；[接车验收记录](../testing/LOCAL_PICKUP_ACCEPTANCE.md) |
-| A4 车主确认与异议 | 已编码，正在验证与上传收口 | 分支 `codex/s4-owner-pickup-confirm`；本人确认、原因与争议状态、幂等及审计；[接口](../api/PICKUP_OWNER_DECISION.md)、[执行记录](A4_OWNER_DECISION_EXECUTION.md) |
+| A4 车主确认与异议 | 阶段验证通过，已上传，PR 待合并 | [PR #35](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/35)；实现提交 `e0d4077` 六项 CI 通过，后端 271 项、小程序 120 项；[接口](../api/PICKUP_OWNER_DECISION.md)、[执行记录](A4_OWNER_DECISION_EXECUTION.md) |
 | A5 商家派工与技师接单 | 下一阶段规划 | [详细计划](../superpowers/plans/2026-10-08-a5-dispatch.md)；实施前统一防护阻断时点与接单/施工开始语义 |
 | A6/A7 施工至履约闭环 | 尚未实现 | 防护与报工、核销、评价、档案回写、经验卡片按[下一步规划](NEXT_STEPS.md)逐项交付 |
 
