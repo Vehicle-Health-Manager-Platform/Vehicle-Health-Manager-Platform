@@ -26,7 +26,11 @@
 - 顺序执行 `generate_traceability.py`、`build_init_sql.py`、`generate_openapi.py`，保持 141 追踪项、39 表基线、85 操作，生成文件无内容差异。
 - `git diff --check` 通过，本次仅变更文档；未新增代码、执行迁移或进行派工业务测试。
 
-GitHub PR 与 CI 待上传后记录。PR 以 `codex/s4-owner-pickup-confirm` 为基线，仅展示 A5.1 文档差异；A4 合并后调整到 `main` 并复核 CI。最终测试数量为已有实现回归证据，不代表派工功能已交付。
+已上传 [PR #36](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/36)，规格提交 `c9187b9e85eae36139920836bb0b5e397fe94491` 的 [CI 37713027623](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37713027623) 六项通过：web、miniapp、backend、schema-and-ocr、schema-mysql、compose-smoke。
+
+后端 **271 项**，失败/错误/跳过均 0；小程序 **120 项**，失败/跳过均 0，微信与 H5 构建成功。此为已有实现回归证据，不代表派工功能已交付。最终文档收口提交的检查结果以 PR 最新检查为准。
+
+PR 以 `codex/s4-owner-pickup-confirm` 为基线，仅展示 A5.1 文档差异；A4 合并后调整到 `main` 并复核 CI。A5.1 为文档交付，A4 与本 PR 尚未合并。
 
 ## 下一步及未验收
 
