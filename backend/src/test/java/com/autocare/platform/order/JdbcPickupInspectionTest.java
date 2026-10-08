@@ -25,7 +25,7 @@ class JdbcPickupInspectionTest {
     static JdbcTemplate jdbc;final ObjectMapper mapper=new ObjectMapper();ReservationStore db;PickupInspection service;MerchantActor shop,other;VehicleOwner owner,foreign;
     @BeforeAll static void schema()throws Exception{
         var source=new DriverManagerDataSource(mysql.getJdbcUrl(),mysql.getUsername(),mysql.getPassword());jdbc=new JdbcTemplate(source);
-        try(var c=source.getConnection()){for(String file:List.of("V001__baseline.sql","V003__auth_lifecycle.sql","V004__upload_http.sql","V007__reservation_orders.sql","V008__payment_foundation.sql","V009__order_fulfillment_states.sql","V010__pickup_inspection.sql","V010__pickup_inspection.sql"))ScriptUtils.executeSqlScript(c,new FileSystemResource(Path.of("..","docs","sql","migrations",file)));}
+        try(var c=source.getConnection()){for(String file:List.of("V001__baseline.sql","V003__auth_lifecycle.sql","V004__upload_http.sql","V007__reservation_orders.sql","V008__payment_foundation.sql","V009__order_fulfillment_states.sql","V010__pickup_inspection.sql","V010__pickup_inspection.sql","V011__pickup_owner_decision.sql","V011__pickup_owner_decision.sql"))ScriptUtils.executeSqlScript(c,new FileSystemResource(Path.of("..","docs","sql","migrations",file)));}
     }
     @BeforeEach void setup(){
         for(String trigger:List.of("reject_pickup_audit","reject_pickup_cache"))jdbc.execute("DROP TRIGGER IF EXISTS "+trigger);
@@ -57,6 +57,50 @@ class JdbcPickupInspectionTest {
         assertEquals(43003,assertThrows(FulfillmentConflict.class,()->new OrderFulfillment(db,new MerchantOrders(db)).apply(shop,key(),1,OrderStatus.START_SERVICE,null)).code);
         assertEquals(409,assertThrows(ResponseStatusException.class,()->submit(key(),body())).getStatusCode().value());
         var changed=body().put("mileage",111);assertEquals(400,assertThrows(ResponseStatusException.class,()->submit(key,changed)).getStatusCode().value());
+    }
+    @Test void ownerConfirmIsPrivateIdempotentAndEnablesAssignmentGuard(){
+        submit(key(),body());String decisionKey=key();
+        assertEquals(404,assertThrows(ResponseStatusException.class,()->service.decide(foreign,key(),1,"CONFIRM",null)).getStatusCode().value());
+        var accepted=service.decide(owner,decisionKey,1,"CONFIRM",null);
+        assertEquals(accepted,service.decide(owner,decisionKey,1,"CONFIRM",null));
+        assertEquals("RECEIVED",state());assertEquals(1,jdbc.queryForObject("SELECT owner_confirm FROM pickup_check WHERE order_id=1",Integer.class));
+        assertNotNull(jdbc.queryForObject("SELECT owner_confirmed_at FROM `order` WHERE id=1",java.sql.Timestamp.class));
+        assertEquals(1,count("order_status_transition"));assertEquals(2,count("audit_log"));
+        assertEquals(43004,assertThrows(FulfillmentConflict.class,()->new OrderFulfillment(db,new MerchantOrders(db)).apply(shop,key(),1,OrderStatus.START_SERVICE,null)).code);
+        assertEquals(40905,assertThrows(FulfillmentConflict.class,()->service.decide(owner,key(),1,"DISPUTE","不同意")).code);
+    }
+    @Test void ownerDisputeBlocksWorkAndWritesBothAudits(){
+        String prefix="车门已有划痕记录不准确";String reason=prefix+"异".repeat(500-prefix.length());
+        submit(key(),body());service.decide(owner,key(),1,"DISPUTE",reason);
+        assertEquals("DISPUTED",state());assertEquals(2,jdbc.queryForObject("SELECT owner_confirm FROM pickup_check WHERE order_id=1",Integer.class));
+        assertNull(jdbc.queryForObject("SELECT owner_confirmed_at FROM `order` WHERE id=1",java.sql.Timestamp.class));
+        assertEquals(reason,service.detail(shop,1).get("dispute_reason"));
+        assertEquals(reason,jdbc.queryForObject("SELECT note FROM order_status_transition WHERE action='ORDER_PICKUP_DISPUTE'",String.class));
+        assertEquals(2,count("order_status_transition"));assertEquals(2,count("audit_log"));
+        assertEquals(40905,assertThrows(FulfillmentConflict.class,()->new OrderFulfillment(db,new MerchantOrders(db)).apply(shop,key(),1,OrderStatus.START_SERVICE,null)).code);
+        assertEquals(40905,assertThrows(FulfillmentConflict.class,()->service.decide(owner,key(),1,"CONFIRM",null)).code);
+    }
+    @Test void decisionAuditFailureRollsBackDecisionAndStatus(){
+        submit(key(),body());jdbc.execute("CREATE TRIGGER reject_pickup_audit BEFORE INSERT ON audit_log FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='private failure'");
+        assertEquals(503,assertThrows(ResponseStatusException.class,()->service.decide(owner,key(),1,"DISPUTE","照片不符")).getStatusCode().value());
+        assertEquals("RECEIVED",state());assertEquals(0,jdbc.queryForObject("SELECT owner_confirm FROM pickup_check WHERE order_id=1",Integer.class));
+        assertEquals(1,count("order_status_transition"));jdbc.execute("DROP TRIGGER reject_pickup_audit");
+    }
+    @Test void rejectsInvalidReasonsAndRevokedReplay(){
+        submit(key(),body());
+        for(String note:Arrays.asList(null," ","x".repeat(501)))assertEquals(400,assertThrows(ResponseStatusException.class,()->service.decide(owner,key(),1,"DISPUTE",note)).getStatusCode().value());
+        assertEquals(400,assertThrows(ResponseStatusException.class,()->service.decide(owner,key(),1,"CONFIRM","理由")).getStatusCode().value());
+        String decisionKey=key();service.decide(owner,decisionKey,1,"CONFIRM",null);
+        assertEquals(400,assertThrows(ResponseStatusException.class,()->service.decide(owner,decisionKey,1,"DISPUTE","同键换正文")).getStatusCode().value());
+        jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id=?",owner.session());
+        assertEquals(401,assertThrows(ResponseStatusException.class,()->service.decide(owner,decisionKey,1,"CONFIRM",null)).getStatusCode().value());
+    }
+    @Test void concurrentConfirmAndDisputeCommitOnlyOneDecision()throws Exception{
+        submit(key(),body());var pool=Executors.newFixedThreadPool(2);var gate=new CountDownLatch(1);
+        try{var jobs=new ArrayList<Future<Integer>>();for(String decision:List.of("CONFIRM","DISPUTE"))jobs.add(pool.submit(()->{gate.await();try{service.decide(owner,key(),1,decision,decision.equals("DISPUTE")?"照片不符":null);return 200;}catch(ResponseStatusException e){return e.getStatusCode().value();}}));
+            gate.countDown();var outcomes=new HashSet<Integer>();for(var job:jobs)outcomes.add(job.get(20,TimeUnit.SECONDS));assertEquals(Set.of(200,409),outcomes);assertEquals(2,count("audit_log"));
+            int decision=jdbc.queryForObject("SELECT owner_confirm FROM pickup_check WHERE order_id=1",Integer.class);assertEquals(decision==1?"RECEIVED":"DISPUTED",state());assertEquals(decision==1?1:2,count("order_status_transition"));
+        }finally{pool.shutdownNow();}
     }
     @Test void isolatesShopOwnerAndRevokedSession(){
         assertEquals(404,assertThrows(ResponseStatusException.class,()->service.submit(other,key(),PickupInput.parse(body()))).getStatusCode().value());

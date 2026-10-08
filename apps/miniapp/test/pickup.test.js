@@ -29,3 +29,9 @@ test('提交重试保持原内容和键，隐藏与身份切换丢弃迟到接�
   await flow.save();const work=flow.save();assert.equal(calls.length,2);assert.deepEqual(calls[0],calls[1]);flow.suspend();resolve(sheet);await work;assert.equal(state.saved,null)
   const switched=flow.save();actor='other';flow.reset();resolve(sheet);await switched;assert.equal(state.saved,null)
 })
+test('车主决策只提交动作与本人订单，异议必须说明',async()=>{
+  let sent;const api=createPickupApi({baseUrl:'http://local',runtime:()=>({request:o=>{sent=o;o.success({statusCode:200,data:{code:0,data:{...sheet,owner_confirm:o.data.decision==='DISPUTE'?2:1}}})}})})
+  await api.decide('owner',2,'CONFIRM','',key);assert.equal(sent.url,'http://local/api/check/pickup/confirm');assert.equal(sent.header['Idempotency-Key'],key);assert.deepEqual(sent.data,{order_id:2,decision:'CONFIRM'})
+  await api.decide('owner',2,'DISPUTE',' 照片不符 ',key);assert.deepEqual(sent.data,{order_id:2,decision:'DISPUTE',reason:'照片不符'})
+  assert.throws(()=>api.decide('owner',2,'DISPUTE','  ',key));assert.throws(()=>api.decide('owner',2,'DISPUTE','x'.repeat(501),key))
+})

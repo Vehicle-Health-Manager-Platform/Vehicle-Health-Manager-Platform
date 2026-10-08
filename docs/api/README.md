@@ -1,6 +1,6 @@
 # API 文档
 
-交付文档 §8 给出统一响应、错误码和 43 个核心接口。[openapi.json](openapi.json) 是 S0 草案，现含 80 个操作（原始核心接口、规划中的支撑接口、当前认证接口与本地写入示例）；用 `python scripts/generate_openapi.py` 从追踪表、[业务契约](S0_BUSINESS_CONTRACT.md)及已实现接口定义重新生成。草案中的大多数路径尚未实现，不能将文档操作数当作已交付接口数；已实现认证接口标有 `x-implementation-status: core-implemented`。S1 本人档案手动录入/查询契约见[档案接口说明](ARCHIVE_MANUAL.md)。
+交付文档 §8 给出统一响应、错误码和 43 个核心接口。[openapi.json](openapi.json) 是 S0 草案，现含 85 个操作（原始核心接口、规划中的支撑接口、当前认证接口与本地写入示例）；用 `python scripts/generate_openapi.py` 从追踪表、[业务契约](S0_BUSINESS_CONTRACT.md)及已实现接口定义重新生成。草案中的大多数路径尚未实现，不能将文档操作数当作已交付接口数；已实现认证接口标有 `x-implementation-status: core-implemented`。S1 本人档案手动录入/查询契约见[档案接口说明](ARCHIVE_MANUAL.md)。
 
 `POST /api/demo/vehicles/{id}/mileage` 为 local-only 的幂等与成功变更审计验证入口，标有 `x-implementation-status: local-example`，契约与事务边界见[写入说明](WRITE_INTEGRITY.md)。不代表正式车辆业务完成。
 
@@ -21,8 +21,9 @@ PR #14 实现[本人车辆列表、有效车型查询与手动添加](VEHICLE_MA
 - [支付基础](PAYMENT_FOUNDATION.md)：默认关闭的隔离测试渠道、通知验签/去重与付款异常；正式微信和退款未接入。
 - [车主端 AI 管家](AI_CHAT.md)：`POST /api/ai/chat` 对话、本人车辆与档案上下文、降级与隐私边界。
 - [商家本店订单](MERCHANT_ORDERS.md)：本店分页/详情、状态与预约日期筛选、下单快照与支付摘要。
-- [订单履约状态机](ORDER_FULFILLMENT.md)：8 个状态的唯一权威矩阵、动作式状态操作接口、前置 fail-closed、双审计与并发行锁。接车单/车主确认/派工/报工/核销的业务内容在阶段 A3–A6。
-- [接车检查](PICKUP_INSPECTION.md)：商家私有上传、七图检查单、手填里程、预约验码与 PAID→RECEIVED；车主确认和派工继续后续交付。
+- [订单履约状态机](ORDER_FULFILLMENT.md)：8 个状态的唯一权威矩阵、动作式状态操作接口、前置 fail-closed、双审计与并发行锁。接车单和车主决策已接入；派工、报工、核销仍待后续阶段。
+- [车主确认接车单与异议](PICKUP_OWNER_DECISION.md)：A4 本人确认或提出异议、争议阻断、同事务审计与幂等。
+- [接车检查](PICKUP_INSPECTION.md)：商家私有上传、七图检查单、手填里程、预约验码与 PAID→RECEIVED；派工继续后续交付。
 
 `POST /api/ai/chat` 已实现并接入小程序 AI Tab，但**真实 DeepSeek 上游调用与真机尚未验收**，
 降级路径与验收项见 [AI 管家接入清单](../operations/AI_CHAT_RUNBOOK.md)。该路径尚未写入 `openapi.json` 草案。

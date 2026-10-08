@@ -22,7 +22,7 @@ export function pickupBody(order,state) {
   }
   return body
 }
-const validSheet = s => id(s?.pickup_check_id) && id(s.order_id) && PICKUP_SLOTS.every(slot=>id(s.photos?.[slot])) && Array.isArray(s.damages) && Number.isSafeInteger(s.mileage) && Number.isInteger(s.owner_confirm)
+const validSheet = s => id(s?.pickup_check_id) && id(s.order_id) && PICKUP_SLOTS.every(slot=>id(s.photos?.[slot])) && Array.isArray(s.damages) && Number.isSafeInteger(s.mileage) && [0,1,2].includes(s.owner_confirm)
 export function createPickupApi({baseUrl,runtime}) {
   const endpoint=(baseUrl||'').replace(/\/$/,'')
   function request(token,path,accepts,body,key) {
@@ -30,7 +30,7 @@ export function createPickupApi({baseUrl,runtime}) {
     if(!endpoint)throw new ServiceError('unconfigured','接车服务尚未配置')
     if(key&&!/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(key))throw invalid('提交键无效')
     return new Promise((resolve,reject)=>runtime().request({url:endpoint+path,method:body?'POST':'GET',data:body,timeout:15000,header:{Authorization:`Bearer ${token}`,...(key?{'Idempotency-Key':key}:{})},success:({statusCode,data})=>{
-      if(statusCode<200||statusCode>=300){const kinds={400:'invalid',401:'unauthorized',403:'forbidden',404:'missing',409:'conflict',422:'rejected',429:'rate-limited',503:'unavailable'};const messages={400:'检查信息无效，请检查必填项和原因',401:'登录已失效，请重新登录',403:'当前身份无权查看或提交接车单',404:'接车资源不存在或不可访问',409:'当前订单不可接车或已提交，请刷新查看',422:'预约码无效或图片不可用于接车单',429:'操作过于频繁，请稍后重试',503:'接车服务暂不可用，请使用原内容重试'};reject(new ServiceError(kinds[statusCode]||'server',messages[statusCode]||'接车请求未成功，请重试'));return}
+      if(statusCode<200||statusCode>=300){const kinds={400:'invalid',401:'unauthorized',403:'forbidden',404:'missing',409:'conflict',422:'rejected',429:'rate-limited',503:'unavailable'};const messages={400:'检查信息无效，请检查必填项和原因',401:'登录已失效，请重新登录',403:'当前身份无权查看或提交接车单',404:'接车资源不存在或不可访问',409:'接车单状态已变化，请刷新查看',422:'预约码无效或图片不可用于接车单',429:'操作过于频繁，请稍后重试',503:'接车服务暂不可用，请使用原内容重试'};reject(new ServiceError(kinds[statusCode]||'server',messages[statusCode]||'接车请求未成功，请重试'));return}
       if(data?.code!==0||!accepts(data.data)){reject(new ServiceError('protocol','接车响应异常，请重试'));return}resolve(data.data)
     },fail:()=>reject(serviceFailure())}))
   }
@@ -39,6 +39,7 @@ export function createPickupApi({baseUrl,runtime}) {
     context(token,n){checked(n);return request(token,`/api/check/pickup/context?order_id=${n}`,v=>v?.order_id===n&&Number.isSafeInteger(v.mileage_baseline?.mileage))},
     submit(token,body,key){checked(body.order_id);return request(token,'/api/check/pickup/submit',validSheet,body,key)},
     detail(token,n){checked(n);return request(token,`/api/check/pickup/${n}`,v=>validSheet(v)&&v.order_id===n)},
+    decide(token,n,decision,reason,key){checked(n);if(!['CONFIRM','DISPUTE'].includes(decision))throw invalid('接车单操作无效');const note=reason?.trim();if(decision==='DISPUTE'&&(!note||note.length>500))throw invalid('请填写 1–500 字异议原因');const body={order_id:n,decision,...(decision==='DISPUTE'?{reason:note}:{})};return request(token,'/api/check/pickup/confirm',v=>validSheet(v)&&v.order_id===n,body,key)},
     access(token,n,file){checked(n);checked(file);return request(token,`/api/check/pickup/${n}/files/${file}/access`,v=>typeof v?.url==='string'&&/^https:\/\//.test(v.url)&&Date.parse(v.expires_at)>Date.now())},
   }
 }
