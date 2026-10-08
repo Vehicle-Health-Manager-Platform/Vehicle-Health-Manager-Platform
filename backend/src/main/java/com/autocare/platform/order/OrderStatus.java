@@ -34,7 +34,7 @@ public final class OrderStatus {
 
     /** 商家侧动作：接车。 */
     public static final String RECEIVE="RECEIVE";
-    /** 商家侧动作：开始施工（须车主已确认且已派工）。 */
+    /** 开始施工的内部映射；HTTP 入口为技师本人接单，商家通用动作已停用。 */
     public static final String START_SERVICE="START_SERVICE";
     /** 商家侧动作：施工完成，送核销。 */
     public static final String FINISH_SERVICE="FINISH_SERVICE";
@@ -93,6 +93,6 @@ public final class OrderStatus {
     /** 当前状态下商家可请求的动作，按履约先后排序；不含前置条件判定。 */
     public static List<String> actions(String status){
         if(status==null)return List.of();
-        return ACTION_ORDER.stream().filter(action->!RECEIVE.equals(action)&&MOVES.get(action).sources().contains(status)).toList();
+        return ACTION_ORDER.stream().filter(action->!RECEIVE.equals(action)&&!START_SERVICE.equals(action)&&MOVES.get(action).sources().contains(status)).toList();
     }
 }

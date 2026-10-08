@@ -9,7 +9,7 @@ const base = { order_id: 1, order_no: 'TEST-1', status: 'PAID', amount_due: '12.
 const harness = response => { let call; return { api: createMerchantOrdersApi({ baseUrl: 'http://local', runtime: () => ({ request: options => { call = options; options.success({ statusCode: 200, data: { code: 0, data: response } }) } }) }), request: () => call } }
 const failing = (statusCode, code, message) => createMerchantOrdersApi({ baseUrl: 'http://local', runtime: () => ({ request: options => options.success({ statusCode, data: { code, message } }) }) })
 const offline = () => createMerchantOrdersApi({ baseUrl: 'http://local', runtime: () => ({ request: () => {} }) })
-const CONFLICTS = { 40905: '当前订单状态不支持该操作，请刷新后重试', 43001: '接车检查未完成，请先完成接车检查', 43003: '车主尚未确认接车，不能开始施工', 43004: '尚未派工，不能开始施工', 43005: '施工报工未完成，不能送核销', 43006: '该操作的前置校验尚未接入，暂不能执行' }
+const CONFLICTS = { 40905: '当前订单状态不支持该操作，请刷新后重试', 43001: '接车检查未完成，请先完成接车检查', 43003: '车主尚未确认接车，不能开始施工', 43004: '请由被派工技师本人接单并开始施工', 43005: '施工报工未完成，不能送核销', 43006: '该操作的前置校验尚未接入，暂不能执行' }
 
 test('本店列表发送状态与北京时间日期筛选，并保留整单异常标记', async () => {
   const h = harness({ items: [base], total: 1, page: 1, page_size: 20 })

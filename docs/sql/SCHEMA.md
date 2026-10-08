@@ -6,7 +6,7 @@
 
 ## 当前迁移版本（2026-10-08）
 
-当前结构为 V001–V011，共 50 张表；生成的 V001 仍是 39 表基线，后续结构通过独立迁移叠加。新 Compose 数据卷按版本顺序初始化，已有数据库先备份再逐项补迁移。
+当前结构为 V001–V012，共 50 张表；生成的 V001 仍是 39 表基线，后续结构通过独立迁移叠加。新 Compose 数据卷按版本顺序初始化，已有数据库先备份再逐项补迁移。
 
 | 版本 | 当前业务结构 |
 | --- | --- |
@@ -16,8 +16,11 @@
 | V009 | 履约前置时间列与 `order_status_transition` |
 | V010 | 商家上传主体类型、七图接车单、`pickup_check_file` |
 | V011 | `pickup_check.dispute_reason` 为 500 字；`order_status_transition.note` 扩为 500 字，保存完整车主异议原因 |
+| V012 | 既有派工表补可空 `assigned_by` 与 `accepted_at`，不填历史假凭证，保留订单唯一键 |
 
 V011 复用既有 `pickup_check.owner_confirm`（0 待决定、1 确认、2 异议）、`confirm_at` 和 `order.owner_confirmed_at`。单据决定、订单变化、审计与幂等响应同事务提交，契约见[车主接车单决定](../api/PICKUP_OWNER_DECISION.md)。CI 同时检查 V011 重复执行与两处原因容量。
+
+V012 已有数据补迁移前先备份并盘点异常派工；新派工写派工人，新接单写接单时间。历史空字段、未知状态、逻辑删除占唯一键、归属或时间不一致返回 40905，人工核对后处置，不自动覆盖/改派。回滚应用保留新增列与成功审计。见[派工契约](../api/TECHNICIAN_DISPATCH.md)。
 
 ## 表清单
 
@@ -35,7 +38,7 @@ V011 复用既有 `pickup_check.owner_confirm`（0 待决定、1 确认、2 异�
 
 V001 基线共 39 张表：来源给出 16 张 DDL、另行点名 10 张、S0 业务契约新增 13 张；应用 V002 后共 40 张。来源正文写“25 张”与实际列名不符，不作为建表数量约束。所有表使用 InnoDB、`utf8mb4`、无物理外键；应用层在同一事务校验归属和存在性。
 
-V005 在 V004 之后新增 `vehicle_archive_file`，以 `(archive_id,position)` 保留图片顺序，唯一 `(archive_id,file_id)` 阻止同一档案重复关联。文件归属、未删除及 `CLEAN` 状态由写入事务验证；旧 `attach_urls` 列不用于新手动录入流程。当前新建 Compose 数据卷自动应用 V001–V011；已有库须按版本顺序补迁移。
+V005 在 V004 之后新增 `vehicle_archive_file`，以 `(archive_id,position)` 保留图片顺序，唯一 `(archive_id,file_id)` 阻止同一档案重复关联。文件归属、未删除及 `CLEAN` 状态由写入事务验证；旧 `attach_urls` 列不用于新手动录入流程。当前新建 Compose 数据卷自动应用 V001–V012；已有库须按版本顺序补迁移。
 
 ## 公共字段和数据规则
 

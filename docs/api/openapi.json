@@ -2677,22 +2677,68 @@
     },
     "/api/tech/orders": {
       "get": {
-        "summary": "技师待办",
+        "summary": "技师本人派工列表",
         "operationId": "get_api_tech_orders",
         "tags": [
           "tech"
         ],
         "x-feature-ids": [
+          "F14",
+          "F16",
           "F18"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "assignment_status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ASSIGNED",
+                "ACCEPTED"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "统一成功响应",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/TechnicianOrders"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -2712,13 +2758,25 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "资源不存在/非本店或本人/不可选技师，code=40400"
+          },
+          "409": {
+            "description": "40905状态冲突/历史数据不一致；43001缺接车证据；43003缺车主确认"
+          },
+          "503": {
+            "description": "数据库未配置/事务失败，code=50300；原键重试"
           }
         },
         "security": [
           {
             "bearerAuth": []
           }
-        ]
+        ],
+        "x-roles": "TECHNICIAN",
+        "x-implementation-status": "technician-dispatch-backend-implemented",
+        "description": "严格校验会话/本店或本人归属。technician_id为员工ID。接车证据与车主确认齐全且无争议才可派工/接单；防护在A6报工校验。24小时幂等、行锁与审计同事务；详见 TECHNICIAN_DISPATCH.md。"
       }
     },
     "/api/tech/report/submit": {
@@ -4195,19 +4253,25 @@
     },
     "/api/merchant/orders/{id}/assign": {
       "post": {
-        "summary": "`technician_id` → `assignment_id`",
+        "summary": "本店订单首次派工",
         "operationId": "post_api_merchant_orders_id_assign",
         "tags": [
           "merchant"
         ],
-        "x-feature-ids": [],
+        "x-feature-ids": [
+          "F14",
+          "F16",
+          "F18"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
             }
           },
           {
@@ -4226,7 +4290,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/DispatchResult"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -4246,6 +4322,15 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "资源不存在/非本店或本人/不可选技师，code=40400"
+          },
+          "409": {
+            "description": "40905状态冲突/历史数据不一致；43001缺接车证据；43003缺车主确认"
+          },
+          "503": {
+            "description": "数据库未配置/事务失败，code=50300；原键重试"
           }
         },
         "security": [
@@ -4259,12 +4344,24 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "additionalProperties": true
+                "additionalProperties": false,
+                "required": [
+                  "technician_id"
+                ],
+                "properties": {
+                  "technician_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  }
+                }
               }
             }
           }
         },
-        "x-roles": "本店商家"
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "technician-dispatch-backend-implemented",
+        "description": "严格校验会话/本店或本人归属。technician_id为员工ID。接车证据与车主确认齐全且无争议才可派工/接单；防护在A6报工校验。24小时幂等、行锁与审计同事务；详见 TECHNICIAN_DISPATCH.md。"
       }
     },
     "/api/notifications": {
@@ -6078,7 +6175,7 @@
         },
         "x-roles": "MERCHANT",
         "x-implementation-status": "order-fulfillment-state-machine-implemented",
-        "description": "前端只能请求动作，不能提交目标状态；矩阵、前置、行锁与幂等审计均由服务端判定。接车证据(A3)与车主决定(A4)已接入；缺证据或缺确认仍拒绝。派工(A5)、报工(A6)、核销(A7)按阶段接入，缺前置按 fail-closed 返回 43001/43003/43004/43005/43006。详见 ORDER_FULFILLMENT.md。"
+        "description": "前端只能请求动作，不能提交目标状态；行锁、前置、幂等和审计同事务。A3接车、A4确认、A5.2派工与本人接单已接入；商家通用RECEIVE/START_SERVICE分别返回43001/43004，专用技师接单才开始施工。报工/核销待A6/A7，缺前置返回43005/43006。"
       }
     },
     "/api/check/pickup/context": {
@@ -6483,6 +6580,370 @@
         "x-roles": "MERCHANT",
         "x-implementation-status": "pickup-inspection-implemented",
         "description": "七图接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
+      }
+    },
+    "/api/merchant/technicians": {
+      "get": {
+        "summary": "本店有效且已绑定的技师候选",
+        "operationId": "get_api_merchant_technicians",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F14",
+          "F16",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/TechnicianCandidates"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "资源不存在/非本店或本人/不可选技师，code=40400"
+          },
+          "409": {
+            "description": "40905状态冲突/历史数据不一致；43001缺接车证据；43003缺车主确认"
+          },
+          "503": {
+            "description": "数据库未配置/事务失败，code=50300；原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "technician-dispatch-backend-implemented",
+        "description": "严格校验会话/本店或本人归属。technician_id为员工ID。接车证据与车主确认齐全且无争议才可派工/接单；防护在A6报工校验。24小时幂等、行锁与审计同事务；详见 TECHNICIAN_DISPATCH.md。"
+      }
+    },
+    "/api/merchant/orders/{id}/assignment": {
+      "get": {
+        "summary": "本店订单派工详情",
+        "operationId": "get_api_merchant_orders_id_assignment",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F14",
+          "F16",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/MerchantAssignment"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "资源不存在/非本店或本人/不可选技师，code=40400"
+          },
+          "409": {
+            "description": "40905状态冲突/历史数据不一致；43001缺接车证据；43003缺车主确认"
+          },
+          "503": {
+            "description": "数据库未配置/事务失败，code=50300；原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "technician-dispatch-backend-implemented",
+        "description": "严格校验会话/本店或本人归属。technician_id为员工ID。接车证据与车主确认齐全且无争议才可派工/接单；防护在A6报工校验。24小时幂等、行锁与审计同事务；详见 TECHNICIAN_DISPATCH.md。"
+      }
+    },
+    "/api/tech/orders/{id}": {
+      "get": {
+        "summary": "技师本人工单详情",
+        "operationId": "get_api_tech_orders_id",
+        "tags": [
+          "tech"
+        ],
+        "x-feature-ids": [
+          "F14",
+          "F16",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/TechnicianOrder"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "资源不存在/非本店或本人/不可选技师，code=40400"
+          },
+          "409": {
+            "description": "40905状态冲突/历史数据不一致；43001缺接车证据；43003缺车主确认"
+          },
+          "503": {
+            "description": "数据库未配置/事务失败，code=50300；原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "TECHNICIAN",
+        "x-implementation-status": "technician-dispatch-backend-implemented",
+        "description": "严格校验会话/本店或本人归属。technician_id为员工ID。接车证据与车主确认齐全且无争议才可派工/接单；防护在A6报工校验。24小时幂等、行锁与审计同事务；详见 TECHNICIAN_DISPATCH.md。"
+      }
+    },
+    "/api/tech/orders/{id}/accept": {
+      "post": {
+        "summary": "技师本人接单并开始施工",
+        "operationId": "post_api_tech_orders_id_accept",
+        "tags": [
+          "tech"
+        ],
+        "x-feature-ids": [
+          "F14",
+          "F16",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/DispatchResult"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "资源不存在/非本店或本人/不可选技师，code=40400"
+          },
+          "409": {
+            "description": "40905状态冲突/历史数据不一致；43001缺接车证据；43003缺车主确认"
+          },
+          "503": {
+            "description": "数据库未配置/事务失败，code=50300；原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {}
+              }
+            }
+          }
+        },
+        "x-roles": "TECHNICIAN",
+        "x-implementation-status": "technician-dispatch-backend-implemented",
+        "description": "严格校验会话/本店或本人归属。technician_id为员工ID。接车证据与车主确认齐全且无争议才可派工/接单；防护在A6报工校验。24小时幂等、行锁与审计同事务；详见 TECHNICIAN_DISPATCH.md。"
       }
     }
   },
@@ -7577,7 +8038,7 @@
           },
           "allowed_actions": {
             "type": "array",
-            "description": "PAID使用接车检查，不再返回RECEIVE；其他动作仍由状态矩阵决定",
+            "description": "RECEIVE走接车检查，START_SERVICE走技师本人接单，两者不再投影为商家动作",
             "items": {
               "type": "object",
               "additionalProperties": false,
@@ -7763,7 +8224,7 @@
           },
           "allowed_actions": {
             "type": "array",
-            "description": "PAID使用接车检查，不再返回RECEIVE；其他动作仍由状态矩阵决定",
+            "description": "RECEIVE走接车检查，START_SERVICE走技师本人接单，两者不再投影为商家动作",
             "items": {
               "type": "object",
               "additionalProperties": false,
@@ -8014,7 +8475,7 @@
           },
           "allowed_actions": {
             "type": "array",
-            "description": "PAID使用接车检查，不再返回RECEIVE；其他动作仍由状态矩阵决定",
+            "description": "RECEIVE走接车检查，START_SERVICE走技师本人接单，两者不再投影为商家动作",
             "items": {
               "type": "object",
               "additionalProperties": false,
@@ -8255,6 +8716,333 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 200
+          }
+        }
+      },
+      "DispatchResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "assignment_id",
+          "order_id",
+          "technician_id",
+          "assignment_status",
+          "order_status",
+          "assigned_at",
+          "accepted_at",
+          "changed"
+        ],
+        "properties": {
+          "assignment_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "technician_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "assignment_status": {
+            "type": "string",
+            "enum": [
+              "ASSIGNED",
+              "ACCEPTED"
+            ]
+          },
+          "order_status": {
+            "type": "string",
+            "enum": [
+              "PENDING_PAYMENT",
+              "PAID",
+              "RECEIVED",
+              "IN_SERVICE",
+              "PENDING_VERIFY",
+              "COMPLETED",
+              "CLOSED",
+              "DISPUTED"
+            ]
+          },
+          "assigned_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "accepted_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "changed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TechnicianCandidate": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "technician_id",
+          "label"
+        ],
+        "properties": {
+          "technician_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      },
+      "TechnicianCandidates": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TechnicianCandidate"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        }
+      },
+      "MerchantAssignment": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "assignment"
+        ],
+        "properties": {
+          "assignment": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "assignment_id",
+                  "order_id",
+                  "technician_id",
+                  "technician_label",
+                  "status",
+                  "assigned_at",
+                  "accepted_at"
+                ],
+                "properties": {
+                  "assignment_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "order_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "technician_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "technician_label": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "ASSIGNED",
+                      "ACCEPTED"
+                    ]
+                  },
+                  "assigned_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "accepted_at": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "date-time"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "TechnicianOrder": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "assignment_id",
+          "order_id",
+          "assignment_status",
+          "order_status",
+          "assigned_at",
+          "accepted_at",
+          "order_no",
+          "can_accept",
+          "project_snapshot",
+          "appointment_snapshot"
+        ],
+        "properties": {
+          "assignment_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "assignment_status": {
+            "type": "string",
+            "enum": [
+              "ASSIGNED",
+              "ACCEPTED"
+            ]
+          },
+          "order_status": {
+            "type": "string",
+            "enum": [
+              "PENDING_PAYMENT",
+              "PAID",
+              "RECEIVED",
+              "IN_SERVICE",
+              "PENDING_VERIFY",
+              "COMPLETED",
+              "CLOSED",
+              "DISPUTED"
+            ]
+          },
+          "assigned_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "accepted_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "order_no": {
+            "type": "string"
+          },
+          "can_accept": {
+            "type": "boolean"
+          },
+          "project_snapshot": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "standard_project_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "project_name": {
+                    "type": "string"
+                  },
+                  "service_content": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "appointment_snapshot": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "slot_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "starts_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "ends_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "TechnicianOrders": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TechnicianOrder"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
           }
         }
       }

@@ -1,6 +1,6 @@
-# 商家派工与技师接单接口契约（待实现）
+# 商家派工与技师接单接口契约
 
-更新：2026-10-08，A5.1。本文件是 A5.2/A5.3 的编码契约，下面新增接口尚不可调用；业务与权限依据见[A5 规格](../superpowers/specs/2026-10-08-a5-dispatch-design.md)。当前运行时与通用动作仍以已实现的[履约接口](ORDER_FULFILLMENT.md)为准，商家 `START_SERVICE` 在 A5.2 接单接口上线时同时停用。
+更新：2026-10-08，A5.2。六个后端接口已实现并通过阶段验证，权限/幂等/竞争/回滚测试与六项 CI 通过；商家派工和技师工作台页面归 A5.3。业务与权限依据见[A5 规格](../superpowers/specs/2026-10-08-a5-dispatch-design.md)。商家通用 `START_SERVICE` 已停止对外开放（43004），`allowed_actions` 不再投影它；本人接单是新增施工开始入口。
 
 ## 通用规则
 
@@ -78,4 +78,4 @@
 
 ## 8. OpenAPI 与版本范围
 
-当前 S0 OpenAPI 已包含派工和技师列表草案，不能视为已实现。A5.2 将本文件六个操作纳入生成器，严格请求和响应、分页、权限、幂等键、错误码及 `x-implementation-status` 同步更新。A5.1 只交付中文契约，不把运行时接口或数据库版本提前标为完成。
+六个操作已纳入 OpenAPI 生成器，标记 `technician-dispatch-backend-implemented`，同步严格 schema、分页、角色、幂等键与错误码。运行本版本需 V001–V012、有效数据库、JWT 配置与当前 WECHAT_APP_ID；新 Compose 卷自动迁移，已有库备份后补 V012。前端工作台尚待 A5.3；CI 与本机证据见[A5.2 执行记录](../progress/A5_2_DISPATCH_BACKEND_EXECUTION.md)。

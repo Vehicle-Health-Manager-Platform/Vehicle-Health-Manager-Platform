@@ -84,7 +84,7 @@ public class MerchantOrders {
         for(String action:OrderStatus.actions(status))result.add(Map.of("action",action,"to_status",OrderStatus.target(action)));
         return result;
     }
-    private static Map<String,Object> snapshot(JsonNode source,String key){
+    static Map<String,Object> snapshot(JsonNode source,String key){
         if(source==null||source.isNull()||!source.isObject())return null;
         var safe=new LinkedHashMap<String,Object>();
         for(String field:SNAPSHOT_FIELDS.get(key)){

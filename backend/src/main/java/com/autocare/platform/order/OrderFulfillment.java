@@ -9,10 +9,10 @@ import java.time.Instant;
 import java.util.*;
 
 /**
- * 商家侧履约状态迁移的唯一入口。
+ * 商家通用履约动作服务；接车、车主决定与技师接单由各自业务服务处理。
  *
  * <p>一次迁移同时完成：矩阵判定、前置校验、行锁串行化、幂等去重，以及与业务同事务的
- * {@code order_status_transition} 审计。其他代码一律不得直接 {@code UPDATE `order`.status}。
+ * {@code order_status_transition} 审计。各业务服务共享 {@code OrderStatus} 矩阵与商家→时段→订单锁顺序。
  *
  * <p>前置条件用 {@code order} 表的履约时间列表达，由各自阶段写入：
  * 接车检查（A3）写 {@code check_in_completed_at}，车主确认（A4）写 {@code owner_confirmed_at}，
