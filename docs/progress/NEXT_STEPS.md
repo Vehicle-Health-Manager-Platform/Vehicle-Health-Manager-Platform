@@ -2,7 +2,7 @@
 
 更新日期：2026-10-08。当前业务链路已到接车检查与车主决定；已付款订单不会自动关闭，车主未确认或订单有异议时不能派工。用户要求每完成一个阶段整理文档并上传 GitHub，执行规则见[阶段交付规则](STAGE_DELIVERY.md)。
 
-## 当前优先：A5.4 安全与竞争验证、A5.5 本机联调收口
+## 当前优先：A5 已收口，转入争议处理设计与 A6
 
 A3 已合并至 [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34)。A4 已上传至 [PR #35](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/35)，实现提交 `e0d4077` 六项 CI 通过（后端 271 项、小程序 120 项）。
 
@@ -12,7 +12,11 @@ A5.2 已通过六项 CI 并上传 [PR #37](https://github.com/Vehicle-Health-Man
 
 A5.3 已接入商家派工页、技师独立会话与「我的工单」/工单详情/接单，小程序 140 项测试、微信与 H5 构建通过，六项 CI 全绿并上传 [PR #38](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/38) 待合并；证据见[A5.3 执行记录](A5_3_DISPATCH_UI_EXECUTION.md)。
 
-A5.4 已完成本机验证：按规格验收矩阵补齐 A5.2 未覆盖的 T04/T06/T07/T09/T11 证据——员工码重发与回收、账号停用、会话撤销与派工/接单的真实 MySQL 并发、多轮无死锁、幂等载荷与审计不落隐私、历史异常冻结；新增验证 11 项通过，相关回归 76 项通过，证据见[A5.4 执行记录](A5_4_DISPATCH_VERIFICATION_EXECUTION.md)。随后 A5.5 用合成身份接真实后端与 MySQL 完成端到端联调并收口文档。交付及 CI 见[当前进度](CURRENT_STATUS.md)。
+A5.4 已补齐 A5.2 未覆盖的 T04/T06/T07/T09/T11 证据——员工码重发与回收、账号停用、会话撤销与派工/接单的真实 MySQL 并发、多轮无死锁、幂等载荷与审计不落隐私、历史异常冻结；新增验证 11 项、相关回归 76 项通过，六项 CI 全绿并上传 [PR #39](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/39) 待合并；证据见[A5.4 执行记录](A5_4_DISPATCH_VERIFICATION_EXECUTION.md)。
+
+A5.5 已用合成身份接真实后端容器与隔离 MySQL 完成端到端：车主确认→候选→派工→本人查询→接单共 **37 项通过**，并验证另一技师/他店/跨角色拒绝、幂等重放、`no-store`、最小投影、双审计与 A5 边界；六项 CI 通过并上传 [PR #40](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/40) 待合并。证据见[A5.5 执行记录](A5_5_DISPATCH_E2E_EXECUTION.md)、[本机验收](../testing/LOCAL_TECHNICIAN_DISPATCH_ACCEPTANCE.md)与[A5 阶段总记录](A5_DISPATCH_EXECUTION.md)。**A5 功能链路已闭环**；真实技师微信登录与真机页面联调仍是独立验收项。
+
+下一步：先设计**争议处理记录、车主复核与恢复条件**（当前只有第一次决定，异议后订单置 `DISPUTED` 且无恢复入口），再推进 **A6 防护与报工**。交付及 CI 见[当前进度](CURRENT_STATUS.md)。
 
 ## 业务开发顺序
 

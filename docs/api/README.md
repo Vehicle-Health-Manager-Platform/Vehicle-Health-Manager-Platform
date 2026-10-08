@@ -1,6 +1,6 @@
 # API 文档
 
-A5.2 已实现六个后端接口，见[商家派工与技师接单契约](TECHNICIAN_DISPATCH.md)，明确六个操作、员工归属、接单迁移、权限、幂等和错误码；界面已在 A5.3 接入小程序（商家派工页、技师工作台/详情/接单），后端证据见[A5.2 执行记录](../progress/A5_2_DISPATCH_BACKEND_EXECUTION.md)，界面证据见[A5.3 执行记录](../progress/A5_3_DISPATCH_UI_EXECUTION.md)。[规格](../superpowers/specs/2026-10-08-a5-dispatch-design.md)与[计划](../superpowers/plans/2026-10-08-a5-dispatch.md)提供编码和验收基线。
+A5.2 已实现六个后端接口，见[商家派工与技师接单契约](TECHNICIAN_DISPATCH.md)，明确六个操作、员工归属、接单迁移、权限、幂等和错误码；界面已在 A5.3 接入小程序（商家派工页、技师工作台/详情/接单）。后端证据见[A5.2 执行记录](../progress/A5_2_DISPATCH_BACKEND_EXECUTION.md)，界面证据见[A5.3 执行记录](../progress/A5_3_DISPATCH_UI_EXECUTION.md)，安全与竞争证据见[A5.4 执行记录](../progress/A5_4_DISPATCH_VERIFICATION_EXECUTION.md)，本机端到端证据见[A5.5 执行记录](../progress/A5_5_DISPATCH_E2E_EXECUTION.md)与[本机验收](../testing/LOCAL_TECHNICIAN_DISPATCH_ACCEPTANCE.md)。[规格](../superpowers/specs/2026-10-08-a5-dispatch-design.md)与[计划](../superpowers/plans/2026-10-08-a5-dispatch.md)提供编码和验收基线。
 
 交付文档 §8 给出统一响应、错误码和 43 个核心接口。[openapi.json](openapi.json) 是 S0 草案，现含 89 个操作（原始核心接口、规划中的支撑接口、当前认证接口与本地写入示例）；用 `python scripts/generate_openapi.py` 从追踪表、[业务契约](S0_BUSINESS_CONTRACT.md)及已实现接口定义重新生成。草案中的大多数路径尚未实现，不能将文档操作数当作已交付接口数；已实现认证接口标有 `x-implementation-status: core-implemented`。S1 本人档案手动录入/查询契约见[档案接口说明](ARCHIVE_MANUAL.md)。
 

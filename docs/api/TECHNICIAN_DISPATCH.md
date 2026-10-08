@@ -1,6 +1,6 @@
 # 商家派工与技师接单接口契约
 
-更新：2026-10-08，A5.3。六个后端接口已实现并通过阶段验证，权限/幂等/竞争/回滚测试与六项 CI 通过；商家派工页与技师工作台/接单已接入小程序，A5.4/A5.5 补安全竞争验收与本机联调。业务与权限依据见[A5 规格](../superpowers/specs/2026-10-08-a5-dispatch-design.md)。商家通用 `START_SERVICE` 已停止对外开放（43004），`allowed_actions` 不再投影它；本人接单是新增施工开始入口。
+更新：2026-10-08，A5.5。六个后端接口已实现并通过阶段验证，权限/幂等/竞争/回滚测试与六项 CI 通过；商家派工页与技师工作台/接单已接入小程序；A5.4 补安全与竞争证据，A5.5 用合成身份接真实后端容器与隔离 MySQL 完成端到端（[执行记录](../progress/A5_5_DISPATCH_E2E_EXECUTION.md)、[本机验收](../testing/LOCAL_TECHNICIAN_DISPATCH_ACCEPTANCE.md)）。业务与权限依据见[A5 规格](../superpowers/specs/2026-10-08-a5-dispatch-design.md)。商家通用 `START_SERVICE` 已停止对外开放（43004），`allowed_actions` 不再投影它；本人接单是新增施工开始入口。
 
 ## 通用规则
 
