@@ -2,20 +2,36 @@ import { computed, ref } from 'vue'
 import { AuthError, authApi } from './wechat-auth.js'
 import { ownerSession, clearOwnerSession, setOwnerSession } from './owner-session.js'
 import { merchantSession } from './merchant-session.js'
+import { clearTechnicianSession, setTechnicianSession, technicianSession } from './technician-session.js'
+
+// 技师会话必须跨页面存活：绑定成功后要能直接打开「我的工单」和「工单详情」，
+// 用组件局部 ref 会在换页时丢失，看工单还得重新登录一次。
+const readToken = role => role === 'owner' ? ownerSession.accessToken
+  : role === 'merchant' ? merchantSession.accessToken : technicianSession.accessToken
+const writeToken = (role, value) => {
+  if (role === 'owner') ownerSession.accessToken = value
+  else if (role === 'merchant') merchantSession.accessToken = value
+  else technicianSession.accessToken = value
+}
+const clearRoleSession = role => {
+  if (role === 'owner') clearOwnerSession()
+  else if (role === 'technician') clearTechnicianSession()
+}
 
 export function useRoleIdentity(role, api = authApi) {
   const operation = ref('')
   const phase = ref('idle')
   const message = ref(role === 'merchant' ? '使用商家账号、密码和短信验证码登录' : '请使用微信验证身份')
   const failureKind = ref('')
-  const roleToken = ref('')
   const accessToken = computed({
-    get: () => role === 'owner' ? ownerSession.accessToken : role === 'merchant' ? merchantSession.accessToken : roleToken.value,
-    set: (value) => { if (role === 'owner') ownerSession.accessToken = value; else if (role === 'merchant') merchantSession.accessToken = value; else roleToken.value = value },
+    get: () => readToken(role),
+    set: value => writeToken(role, value),
   })
   const phoneBound = computed(() => role === 'owner' && ownerSession.phoneBound)
   const requiresLogin = ref(false)
-  if (accessToken.value) message.value = role === 'merchant' ? '商家已登录' : phoneBound.value ? '车主已登录，手机号已绑定' : '车主已登录，可继续授权绑定手机号'
+  if (accessToken.value) message.value = role === 'merchant' ? '商家已登录'
+    : role === 'technician' ? '技师已登录，可查看本人待接工单'
+      : phoneBound.value ? '车主已登录，手机号已绑定' : '车主已登录，可继续授权绑定手机号'
   const bindingToken = ref('')
   const employeeCode = ref('')
   const merchantAccount = ref('')
@@ -29,6 +45,7 @@ export function useRoleIdentity(role, api = authApi) {
     requiresLogin.value = false
     accessToken.value = result.access_token
     if (role === 'owner') setOwnerSession(result)
+    else if (role === 'technician') setTechnicianSession(result)
   }
 
   function invalid(text) {
@@ -107,7 +124,7 @@ export function useRoleIdentity(role, api = authApi) {
     return run('logout', '正在退出登录…', async () => {
       await api.logoutWechat(accessToken.value)
       accessToken.value = ''
-      if (role === 'owner') clearOwnerSession()
+      clearRoleSession(role)
       requiresLogin.value = false
       bindingToken.value = ''
       employeeCode.value = ''
@@ -152,7 +169,7 @@ export function useRoleIdentity(role, api = authApi) {
     if (busy.value) return
     // Explicit recovery after rejection. This clears local state, not a remote session.
     accessToken.value = ''
-    if (role === 'owner') clearOwnerSession()
+    clearRoleSession(role)
     requiresLogin.value = false
     phase.value = 'idle'
     failureKind.value = ''
