@@ -7,6 +7,8 @@
 - [开发与上线网络说明](../operations/MINIAPP_NETWORK_ENVIRONMENTS.md)：模拟器、手机调试和常规真机的网络边界。
 - [CI 定义](../../.github/workflows/ci.yml)：后端、Web、小程序、生成文件/OCR、MySQL 结构和 Compose 六项检查。
 - [A4 车主决定执行记录](../progress/A4_OWNER_DECISION_EXECUTION.md)：确认/异议的 HTTP、真实 MySQL、并发、回滚及阶段 GitHub 验证结果。
+- [A5.2 派工后端执行记录](../progress/A5_2_DISPATCH_BACKEND_EXECUTION.md)：六个接口的 HTTP、真实 MySQL 权限/幂等/竞争/回滚验证结果。
+- [A5.3 派工界面执行记录](../progress/A5_3_DISPATCH_UI_EXECUTION.md)：商家派工与技师工单的小程序协议测试、构建与未验收项；真机与真实技师登录属 A5.5。
 
 小程序测试在仓库根目录运行 `npm test --workspace @autocare/miniapp`；登录预检离线测试运行 `python -m unittest scripts/test_check_auth_readiness.py -v`；后端在 `backend` 目录运行 `mvn test`，完整集成测试需 Docker。
 

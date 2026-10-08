@@ -2,11 +2,15 @@
 
 更新日期：2026-10-08。当前业务链路已到接车检查与车主决定；已付款订单不会自动关闭，车主未确认或订单有异议时不能派工。用户要求每完成一个阶段整理文档并上传 GitHub，执行规则见[阶段交付规则](STAGE_DELIVERY.md)。
 
-## 当前优先：A5.3 商家派工与技师工作台
+## 当前优先：A5.4 安全与竞争验证、A5.5 本机联调收口
 
-A5.1 已上传至 [PR #36](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/36)，规格提交六项 CI 通过；依赖尚未合并的 A4 PR #35。详细证据与最新检查入口见[A5.1 执行记录](A5_1_DISPATCH_SPEC_EXECUTION.md)。
+A3 已合并至 [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34)。A4 已上传至 [PR #35](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/35)，实现提交 `e0d4077` 六项 CI 通过（后端 271 项、小程序 120 项）。
 
-A3 已合并至 [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34)。A4 已上传至 [PR #35](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/35)，实现提交 `e0d4077` 六项 CI 通过（后端 271 项、小程序 120 项）。A5.1 已形成[规格](../superpowers/specs/2026-10-08-a5-dispatch-design.md)、[六个接口契约](../api/TECHNICIAN_DISPATCH.md)和[中文计划](../superpowers/plans/2026-10-08-a5-dispatch.md)：一单一位技师、本人接单开始施工、防护在 A6 报工校验。A5.2 已通过六项 CI 并上传 [PR #37](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/37)，实现六个后端接口与 V012，商家通用 START_SERVICE 已停用；下一步 A5.3 接入商家派工界面与技师独立会话/本人工单。A5.2 证据见[执行记录](A5_2_DISPATCH_BACKEND_EXECUTION.md)。交付及 CI 见[当前进度](CURRENT_STATUS.md)与[A5.1 执行记录](A5_1_DISPATCH_SPEC_EXECUTION.md)。
+A5.1 已形成[规格](../superpowers/specs/2026-10-08-a5-dispatch-design.md)、[六个接口契约](../api/TECHNICIAN_DISPATCH.md)和[中文计划](../superpowers/plans/2026-10-08-a5-dispatch.md)：一单一位技师、本人接单开始施工、防护在 A6 报工校验；规格已上传 [PR #36](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/36)，证据见[A5.1 执行记录](A5_1_DISPATCH_SPEC_EXECUTION.md)。
+
+A5.2 已通过六项 CI 并上传 [PR #37](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/37)，实现六个后端接口与 V012，商家通用 `START_SERVICE` 已停用；证据见[A5.2 执行记录](A5_2_DISPATCH_BACKEND_EXECUTION.md)。
+
+A5.3 已接入商家派工页、技师独立会话与「我的工单」/工单详情/接单，小程序 140 项测试与微信、H5 构建通过，已上传阶段分支待合并；证据见[A5.3 执行记录](A5_3_DISPATCH_UI_EXECUTION.md)。下一步 A5.4 按规格 T01–T11 补竞争与安全证据，随后 A5.5 用合成身份接真实后端与 MySQL 完成端到端联调并收口文档。交付及 CI 见[当前进度](CURRENT_STATUS.md)。
 
 ## 业务开发顺序
 

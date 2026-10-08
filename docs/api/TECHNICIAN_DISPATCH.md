@@ -1,6 +1,6 @@
 # 商家派工与技师接单接口契约
 
-更新：2026-10-08，A5.2。六个后端接口已实现并通过阶段验证，权限/幂等/竞争/回滚测试与六项 CI 通过；商家派工和技师工作台页面归 A5.3。业务与权限依据见[A5 规格](../superpowers/specs/2026-10-08-a5-dispatch-design.md)。商家通用 `START_SERVICE` 已停止对外开放（43004），`allowed_actions` 不再投影它；本人接单是新增施工开始入口。
+更新：2026-10-08，A5.3。六个后端接口已实现并通过阶段验证，权限/幂等/竞争/回滚测试与六项 CI 通过；商家派工页与技师工作台/接单已接入小程序，A5.4/A5.5 补安全竞争验收与本机联调。业务与权限依据见[A5 规格](../superpowers/specs/2026-10-08-a5-dispatch-design.md)。商家通用 `START_SERVICE` 已停止对外开放（43004），`allowed_actions` 不再投影它；本人接单是新增施工开始入口。
 
 ## 通用规则
 
@@ -78,4 +78,6 @@
 
 ## 8. OpenAPI 与版本范围
 
-六个操作已纳入 OpenAPI 生成器，标记 `technician-dispatch-backend-implemented`，同步严格 schema、分页、角色、幂等键与错误码。运行本版本需 V001–V012、有效数据库、JWT 配置与当前 WECHAT_APP_ID；新 Compose 卷自动迁移，已有库备份后补 V012。前端工作台尚待 A5.3；CI 与本机证据见[A5.2 执行记录](../progress/A5_2_DISPATCH_BACKEND_EXECUTION.md)。
+六个操作已纳入 OpenAPI 生成器，标记 `technician-dispatch-backend-implemented`，同步严格 schema、分页、角色、幂等键与错误码。运行本版本需 V001–V012、有效数据库、JWT 配置与当前 WECHAT_APP_ID；新 Compose 卷自动迁移，已有库备份后补 V012。
+
+A5.3 已接入小程序界面：商家在 `pages/merchant/dispatch` 选本店候选技师并二次确认派工，技师在 `pages/technician/orders`、`order-detail` 查看本人工单并接单。客户端在 `apps/miniapp/src/services/technician-dispatch.js`，逐字校验上述投影并显式拒绝越界字段。后端证据见[A5.2 执行记录](../progress/A5_2_DISPATCH_BACKEND_EXECUTION.md)，界面证据见[A5.3 执行记录](../progress/A5_3_DISPATCH_UI_EXECUTION.md)。
