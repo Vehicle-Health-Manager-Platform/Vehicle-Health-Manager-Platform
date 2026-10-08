@@ -21,13 +21,30 @@
 
 生成追踪表 141 行、基线 SQL 39 表、OpenAPI 97 操作及 OCR Python 编译已通过；基线迁移不被重写成升级后结构。Git diff 空白检查通过。
 
+## 验证命令
+
+本地使用缓存 `maven:3.9-eclipse-temurin-17` Docker 镜像挂载仓库及 `.cache/maven`，真实 Testcontainers MySQL 使用 Docker socket 与 `TESTCONTAINERS_HOST_OVERRIDE=host.docker.internal`、`DOCKER_API_VERSION=1.44`、`TESTCONTAINERS_RYUK_DISABLED=true`（仅本地）。
+
+```sh
+mvn -q -Dapi.version=1.44 -Dtest=ServiceWorkHttpTest,ServiceWorkNoDatabaseTest,JdbcServiceWorkTest,JdbcUploadHttpTest,UploadHttpTransportTest,OrderStatusTest,MerchantOrdersHttpTest,JdbcOrderFulfillmentTest test
+# 锁范围修复后，仅重跑发生变更的施工套件
+mvn -q -Dapi.version=1.44 -Dtest=JdbcServiceWorkTest test
+python scripts/generate_traceability.py
+python scripts/build_init_sql.py
+python scripts/generate_openapi.py
+python -m py_compile services/ocr/src/server.py
+git diff --check
+```
+
+Maven 命令工作目录为 backend；Python/Git 命令工作目录为仓库根目录。CI 使用 Ubuntu Java 17，自动运行全量后端、147 项小程序、微信/H5 构建、新库 V001–V014 双次迁移和 Compose 冒烟。Ryuk 关闭不进入 CI 配置，不清理其他人的容器。
+
 ## 锁范围复核
 
 防护关联查询最初使用联表 FOR UPDATE，可能在技师持有商家锁后额外锁商家员工，与商家上传的鉴权锁顺序相反。改为仅锁关联和文件行，员工归属采用嵌套非锁定查询；真实 MySQL 新增“另一事务持有商家员工锁时，本人签字仍成功”验证。修复后施工套件 **13/13 通过**。此前完整相关套件 **75/75 通过**；合计本地验证 **76 个独立用例**，不是把两次运行重复相加。
 
 ## GitHub 与合并顺序
 
-阶段分支已上传 [PR #42](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/42)，base=codex/a5-dispute。实现 `9f4f15a` 的 Web/小程序/Schema/MySQL/后端 CI 已通过，Compose 尚在核对；锁范围修复单独提交并重跑最终 CI。未合并。
+阶段分支已上传 [PR #42](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/42)，base=codex/a5-dispute。实现 `9f4f15a` [首轮 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37789062362) 六项全绿，后端 **347/347**、小程序 **147/147**。锁范围修复 `6ee0b86` [最终代码 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37790072150) **六项全绿**：web、miniapp、backend、schema-and-ocr、schema-mysql、compose-smoke；后端 **348/348**、小程序 **147/147**，0 失败/错误/跳过，微信/H5 构建通过。文档收口提交的最新检查仍以 PR Checks 为准。未合并。
 
 #41 当前 base 为 codex/a5-dispatch-e2e。先完成 #35/#36 依赖，再按 #37→#38→#39→#40→#41 顺序，在前一分支合入 main 后，将当前 PR base 改回 main、核对差异和 CI，再合并。A6.1 堆叠在 #41，待 #41 合并后同样处理；不提前批量改 base，不把 #41 合进 #40 分支。本次没有执行合并。
 

@@ -16,7 +16,7 @@
 | A5.4 派工安全与竞争验证 | 阶段验证通过，已上传，PR 待合并 | [PR #39](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/39)，`1f9bcb7` 六项 CI 通过；新增真实 MySQL 并发/无死锁/载荷/历史异常 11 项，相关回归 76 项；[执行记录](A5_4_DISPATCH_VERIFICATION_EXECUTION.md) |
 | A5.5 本机联调与收口 | 阶段验证通过，已上传，PR 待合并 | [PR #40](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/40) 六项 CI 通过；合成身份接真实后端容器与隔离 MySQL，端到端 37 项通过（车主确认→候选→派工→本人查询→接单 + 拒绝矩阵）；[执行记录](A5_5_DISPATCH_E2E_EXECUTION.md)、[本机验收](../testing/LOCAL_TECHNICIAN_DISPATCH_ACCEPTANCE.md)、[A5 阶段总记录](A5_DISPATCH_EXECUTION.md) |
 | A5.6 争议处理与恢复 | 阶段验证通过，已上传，PR 待合并 | [PR #41](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/41) 六项 CI 全绿；商家处理记录 + 车主复核恢复，新增两接口与 V013（52 表）；后端争议与回归 52/52、小程序 147 项、两端构建、本机端到端 **69/69**；[规格](../superpowers/specs/2026-10-08-dispute-resolution-design.md)、[契约](../api/DISPUTE_RESOLUTION.md)、[执行记录](A5_6_DISPUTE_RESOLUTION_EXECUTION.md)、[本机验收](../testing/LOCAL_DISPUTE_ACCEPTANCE.md) |
-| A6.1 防护与报工后端 | 已上传，最终 CI 核对中 | [PR #42](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/42)；相关 75/75 + 锁修复后施工 13/13（76 独立用例）；V014（54 表）、商家防护、本人完整报工/质检签字、私有证据访问；[规格](../superpowers/specs/2026-10-08-service-work-design.md)、[接口](../api/SERVICE_WORK.md)、[执行记录](A6_1_SERVICE_BACKEND_EXECUTION.md) |
+| A6.1 防护与报工后端 | 阶段验证通过，已上传，PR 待合并 | [PR #42](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/42)；`6ee0b86` 六项 CI 全绿，后端 348/小程序 147；相关 75/75 + 锁修复后施工 13/13（76 独立用例）；V014（54 表）、商家防护、本人完整报工/质检签字、私有证据访问；[规格](../superpowers/specs/2026-10-08-service-work-design.md)、[接口](../api/SERVICE_WORK.md)、[执行记录](A6_1_SERVICE_BACKEND_EXECUTION.md) |
 | A6.2/A6.3 页面与联调 | 待实施 | 商家防护页、技师报工/签名板、端到端及真机验收 |
 | A7 履约闭环 | 尚未实现 | 核销、退款/取消争议订单、评价、档案回写、经验卡片按[下一步规划](NEXT_STEPS.md)逐项交付 |
 
@@ -29,7 +29,7 @@
 ## 当前明确的限制
 
 - 车主确认前不能派工；提出异议后订单置为 `DISPUTED`，A5.6 已补上商家处理记录与车主复核：只有车主本人接受复核后订单才回到争议前的状态（`PAID`/`RECEIVED`/`IN_SERVICE`/`PENDING_VERIFY`），恢复前派工与施工一律 `43007` 阻断。A4 之前的历史异议没有争议单，恢复一律拒绝（fail-closed），由人工处理。
-- 派工、本人接单与争议处理的**后端、小程序界面、安全竞争验证与本机端到端联调**均已上传待合并（A5.1–A5.6）；A5.6 用合成会话接真实后端容器与隔离 MySQL 完成异议→处理→复核→恢复→派工→接单闭环，合成会话是测试桥接，真实技师/车主微信登录、真机页面联调仍是独立验收项。A6.1 防护、完整报工与质检签字后端 76 个独立用例通过，已上传 PR #42，最终 CI 核对进行中；A6 页面及端到端尚未验收，核销仍未实现。
+- 派工、本人接单与争议处理的**后端、小程序界面、安全竞争验证与本机端到端联调**均已上传待合并（A5.1–A5.6）；A5.6 用合成会话接真实后端容器与隔离 MySQL 完成异议→处理→复核→恢复→派工→接单闭环，合成会话是测试桥接，真实技师/车主微信登录、真机页面联调仍是独立验收项。A6.1 防护、完整报工与质检签字后端 76 个独立用例通过，已上传 PR #42，代码六项 CI 全绿，后端 348/小程序 147；A6 页面及端到端尚未验收，核销仍未实现。
 - 真实相机、手机真机、本机测试证书下的直连图片预览继续待验收。
 - 正式短信、微信收款/退款、OCR、正式公网环境和上线运维有独立依赖，见[依赖清单](S0_DEPENDENCIES.md)。
 

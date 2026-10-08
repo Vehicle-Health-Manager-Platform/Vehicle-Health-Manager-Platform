@@ -4,6 +4,8 @@
 
 ## A6.1 数据与后端接口
 
+已交付 [PR #42](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/42)，代码 `6ee0b86` 六项 CI 全绿，详见[执行记录](../../progress/A6_1_SERVICE_BACKEND_EXECUTION.md)。
+
 1. V014 增加 service_evidence_file 和 service_report_submission，重复执行不改历史；保留既有防护、报工表。
 2. 抽用 A5 本人派工校验，统一锁顺序：会话→商家/员工/绑定→时段→订单→派工/接车→争议→文件（升序）→幂等记录。签字并发仅一次状态迁移。
 3. 实现商家防护提交、技师报工提交、技师质检签字、商家/技师施工详情及关联图片访问；增加技师私有图片上传。
