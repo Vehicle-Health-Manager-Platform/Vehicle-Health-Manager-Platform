@@ -2543,13 +2543,14 @@
     },
     "/api/check/protection/upload": {
       "post": {
-        "summary": "上传防护照",
+        "summary": "提交本店施工防护证据",
         "operationId": "post_api_check_protection_upload",
         "tags": [
           "check"
         ],
         "x-feature-ids": [
-          "F15"
+          "F15",
+          "F18"
         ],
         "parameters": [
           {
@@ -2568,7 +2569,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceWork"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -2588,6 +2601,18 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "不存在/非本店或非本人工单/非关联文件，40400"
+          },
+          "409": {
+            "description": "40905已提交不可改或状态/历史异常；43001缺接车；43002缺有效防护；43003缺车主确认；43004未本人接单；43005缺完整报工；43007未解决争议"
+          },
+          "422": {
+            "description": "42200图片非本人CLEAN文件、签名非PNG或已用于其他证据"
+          },
+          "503": {
+            "description": "数据库/对象存储未配置或事务失败，50300；使用原键重试"
           }
         },
         "security": [
@@ -2600,12 +2625,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "additionalProperties": true
+                "$ref": "#/components/schemas/ServiceProtectionRequest"
               }
             }
           }
-        }
+        },
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "service-work-backend-implemented",
+        "description": "严格身份与订单归属；写入前检查确认1/3、争议、防护和私有安全图片。完整报工不可改，PNG质检签名后原子进入PENDING_VERIFY；不完成核销。每次幂等重放仍复核权限和证据。无查询参数，响应no-store；见 SERVICE_WORK.md。三类图片之间不得重复。"
       }
     },
     "/api/check/delivery/compare": {
@@ -2781,12 +2808,13 @@
     },
     "/api/tech/report/submit": {
       "post": {
-        "summary": "技师报工",
+        "summary": "本人提交完整施工报工",
         "operationId": "post_api_tech_report_submit",
         "tags": [
           "tech"
         ],
         "x-feature-ids": [
+          "F15",
           "F18"
         ],
         "parameters": [
@@ -2806,7 +2834,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceWork"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -2826,6 +2866,18 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "不存在/非本店或非本人工单/非关联文件，40400"
+          },
+          "409": {
+            "description": "40905已提交不可改或状态/历史异常；43001缺接车；43002缺有效防护；43003缺车主确认；43004未本人接单；43005缺完整报工；43007未解决争议"
+          },
+          "422": {
+            "description": "42200图片非本人CLEAN文件、签名非PNG或已用于其他证据"
+          },
+          "503": {
+            "description": "数据库/对象存储未配置或事务失败，50300；使用原键重试"
           }
         },
         "security": [
@@ -2838,22 +2890,25 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "additionalProperties": true
+                "$ref": "#/components/schemas/ServiceReportRequest"
               }
             }
           }
-        }
+        },
+        "x-roles": "TECHNICIAN",
+        "x-implementation-status": "service-work-backend-implemented",
+        "description": "严格身份与订单归属；写入前检查确认1/3、争议、防护和私有安全图片。完整报工不可改，PNG质检签名后原子进入PENDING_VERIFY；不完成核销。每次幂等重放仍复核权限和证据。无查询参数，响应no-store；见 SERVICE_WORK.md。三类图片之间不得重复。"
       }
     },
     "/api/tech/sign": {
       "post": {
-        "summary": "质检签字",
+        "summary": "本人质检签字并送核销",
         "operationId": "post_api_tech_sign",
         "tags": [
           "tech"
         ],
         "x-feature-ids": [
+          "F15",
           "F18"
         ],
         "parameters": [
@@ -2873,7 +2928,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceWork"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -2893,6 +2960,18 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "不存在/非本店或非本人工单/非关联文件，40400"
+          },
+          "409": {
+            "description": "40905已提交不可改或状态/历史异常；43001缺接车；43002缺有效防护；43003缺车主确认；43004未本人接单；43005缺完整报工；43007未解决争议"
+          },
+          "422": {
+            "description": "42200图片非本人CLEAN文件、签名非PNG或已用于其他证据"
+          },
+          "503": {
+            "description": "数据库/对象存储未配置或事务失败，50300；使用原键重试"
           }
         },
         "security": [
@@ -2906,11 +2985,30 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "additionalProperties": true
+                "additionalProperties": false,
+                "required": [
+                  "order_id",
+                  "signature_file_id"
+                ],
+                "properties": {
+                  "order_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "signature_file_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  }
+                }
               }
             }
           }
-        }
+        },
+        "x-roles": "TECHNICIAN",
+        "x-implementation-status": "service-work-backend-implemented",
+        "description": "严格身份与订单归属；写入前检查确认1/3、争议、防护和私有安全图片。完整报工不可改，PNG质检签名后原子进入PENDING_VERIFY；不完成核销。每次幂等重放仍复核权限和证据。无查询参数，响应no-store；见 SERVICE_WORK.md。三类图片之间不得重复。"
       }
     },
     "/api/admin/merchant/audit": {
@@ -6131,7 +6229,7 @@
             "description": "订单不存在或不属于本店，code=40400"
           },
           "409": {
-            "description": "40905当前状态不允许该动作；43001接车检查未完成；43003车主未确认接车；43004尚未派工；43005报工未完成；43006该动作的校验尚未接入"
+            "description": "40905非法状态；43001改用接车检查；43004改用本人接单；43005改用本人报工并质检签字；43006核销未接入"
           },
           "503": {
             "description": "数据库或事务暂不可用，code=50300"
@@ -6175,7 +6273,7 @@
         },
         "x-roles": "MERCHANT",
         "x-implementation-status": "order-fulfillment-state-machine-implemented",
-        "description": "前端只能请求动作，不能提交目标状态；行锁、前置、幂等和审计同事务。A3接车、A4确认、A5.2派工与本人接单已接入；商家通用RECEIVE/START_SERVICE分别返回43001/43004，专用技师接单才开始施工。报工/核销待A6/A7，缺前置返回43005/43006。"
+        "description": "商家通用RECEIVE/START_SERVICE/FINISH_SERVICE分别拒绝43001/43004/43005。专用接车、本人接单、本人完整报工+质检签字是唯一对应入口；核销仍待A7。"
       }
     },
     "/api/check/pickup/context": {
@@ -7173,6 +7271,565 @@
         "x-roles": "OWNER",
         "x-implementation-status": "dispute-resolution-implemented",
         "description": "商家只能追加处理记录，不能自行解除争议；只有车主本人复核接受后，订单才回到争议前状态并恢复派工与施工。恢复条件R1–R5、锁顺序、双审计与幂等见 DISPUTE_RESOLUTION.md。"
+      }
+    },
+    "/api/merchant/orders/{id}/work": {
+      "get": {
+        "summary": "本店施工记录",
+        "operationId": "get_api_merchant_orders_id_work",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceWork"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "不存在/非本店或非本人工单/非关联文件，40400"
+          },
+          "409": {
+            "description": "40905已提交不可改或状态/历史异常；43001缺接车；43002缺有效防护；43003缺车主确认；43004未本人接单；43005缺完整报工；43007未解决争议"
+          },
+          "422": {
+            "description": "42200图片非本人CLEAN文件、签名非PNG或已用于其他证据"
+          },
+          "503": {
+            "description": "数据库/对象存储未配置或事务失败，50300；使用原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "service-work-backend-implemented",
+        "description": "严格身份与订单归属；写入前检查确认1/3、争议、防护和私有安全图片。完整报工不可改，PNG质检签名后原子进入PENDING_VERIFY；不完成核销。每次幂等重放仍复核权限和证据。无查询参数，响应no-store；见 SERVICE_WORK.md。三类图片之间不得重复。"
+      }
+    },
+    "/api/tech/orders/{id}/work": {
+      "get": {
+        "summary": "本人工单施工记录",
+        "operationId": "get_api_tech_orders_id_work",
+        "tags": [
+          "tech"
+        ],
+        "x-feature-ids": [
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceWork"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "不存在/非本店或非本人工单/非关联文件，40400"
+          },
+          "409": {
+            "description": "40905已提交不可改或状态/历史异常；43001缺接车；43002缺有效防护；43003缺车主确认；43004未本人接单；43005缺完整报工；43007未解决争议"
+          },
+          "422": {
+            "description": "42200图片非本人CLEAN文件、签名非PNG或已用于其他证据"
+          },
+          "503": {
+            "description": "数据库/对象存储未配置或事务失败，50300；使用原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "TECHNICIAN",
+        "x-implementation-status": "service-work-backend-implemented",
+        "description": "严格身份与订单归属；写入前检查确认1/3、争议、防护和私有安全图片。完整报工不可改，PNG质检签名后原子进入PENDING_VERIFY；不完成核销。每次幂等重放仍复核权限和证据。无查询参数，响应no-store；见 SERVICE_WORK.md。三类图片之间不得重复。"
+      }
+    },
+    "/api/merchant/orders/{id}/work/files/{file}/access": {
+      "get": {
+        "summary": "本店施工证据图片临时访问",
+        "operationId": "get_api_merchant_orders_id_work_files_file_access",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "file",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "url",
+                            "expires_at"
+                          ],
+                          "properties": {
+                            "url": {
+                              "type": "string",
+                              "format": "uri"
+                            },
+                            "expires_at": {
+                              "type": "string",
+                              "format": "date-time"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "不存在/非本店或非本人工单/非关联文件，40400"
+          },
+          "409": {
+            "description": "40905已提交不可改或状态/历史异常；43001缺接车；43002缺有效防护；43003缺车主确认；43004未本人接单；43005缺完整报工；43007未解决争议"
+          },
+          "422": {
+            "description": "42200图片非本人CLEAN文件、签名非PNG或已用于其他证据"
+          },
+          "503": {
+            "description": "数据库/对象存储未配置或事务失败，50300；使用原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "service-work-backend-implemented",
+        "description": "严格身份与订单归属；写入前检查确认1/3、争议、防护和私有安全图片。完整报工不可改，PNG质检签名后原子进入PENDING_VERIFY；不完成核销。每次幂等重放仍复核权限和证据。无查询参数，响应no-store；见 SERVICE_WORK.md。三类图片之间不得重复。"
+      }
+    },
+    "/api/tech/orders/{id}/work/files/{file}/access": {
+      "get": {
+        "summary": "本人施工证据图片临时访问",
+        "operationId": "get_api_tech_orders_id_work_files_file_access",
+        "tags": [
+          "tech"
+        ],
+        "x-feature-ids": [
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "file",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "url",
+                            "expires_at"
+                          ],
+                          "properties": {
+                            "url": {
+                              "type": "string",
+                              "format": "uri"
+                            },
+                            "expires_at": {
+                              "type": "string",
+                              "format": "date-time"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "不存在/非本店或非本人工单/非关联文件，40400"
+          },
+          "409": {
+            "description": "40905已提交不可改或状态/历史异常；43001缺接车；43002缺有效防护；43003缺车主确认；43004未本人接单；43005缺完整报工；43007未解决争议"
+          },
+          "422": {
+            "description": "42200图片非本人CLEAN文件、签名非PNG或已用于其他证据"
+          },
+          "503": {
+            "description": "数据库/对象存储未配置或事务失败，50300；使用原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "TECHNICIAN",
+        "x-implementation-status": "service-work-backend-implemented",
+        "description": "严格身份与订单归属；写入前检查确认1/3、争议、防护和私有安全图片。完整报工不可改，PNG质检签名后原子进入PENDING_VERIFY；不完成核销。每次幂等重放仍复核权限和证据。无查询参数，响应no-store；见 SERVICE_WORK.md。三类图片之间不得重复。"
+      }
+    },
+    "/api/tech/files/upload": {
+      "post": {
+        "summary": "技师本人私有图片上传",
+        "operationId": "post_api_tech_files_upload",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "409": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "422": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "429": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "503": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-roles": "TECHNICIAN",
+        "x-implementation-status": "service-work-backend-implemented",
+        "description": "仅当前AppID下正式有效技师会话与绑定；扫描、类型、大小、限流、幂等沿用私有图片基础设施。仅本人原始上传可访问；跨上传者的工单关联图片须走work/files接口。"
+      }
+    },
+    "/api/tech/files/{id}/access": {
+      "get": {
+        "summary": "技师本人私有图片临时访问",
+        "operationId": "get_api_tech_files_id_access",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "409": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "422": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "429": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "503": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "TECHNICIAN",
+        "x-implementation-status": "service-work-backend-implemented",
+        "description": "仅当前AppID下正式有效技师会话与绑定；扫描、类型、大小、限流、幂等沿用私有图片基础设施。仅本人原始上传可访问；跨上传者的工单关联图片须走work/files接口。"
       }
     }
   },
@@ -8267,7 +8924,7 @@
           },
           "allowed_actions": {
             "type": "array",
-            "description": "RECEIVE走接车检查，START_SERVICE走技师本人接单，两者不再投影为商家动作",
+            "description": "RECEIVE/START_SERVICE/FINISH_SERVICE均不再投影为商家动作；完工送核销走本人质检签字",
             "items": {
               "type": "object",
               "additionalProperties": false,
@@ -8453,7 +9110,7 @@
           },
           "allowed_actions": {
             "type": "array",
-            "description": "RECEIVE走接车检查，START_SERVICE走技师本人接单，两者不再投影为商家动作",
+            "description": "RECEIVE/START_SERVICE/FINISH_SERVICE均不再投影为商家动作；完工送核销走本人质检签字",
             "items": {
               "type": "object",
               "additionalProperties": false,
@@ -8704,7 +9361,7 @@
           },
           "allowed_actions": {
             "type": "array",
-            "description": "RECEIVE走接车检查，START_SERVICE走技师本人接单，两者不再投影为商家动作",
+            "description": "RECEIVE/START_SERVICE/FINISH_SERVICE均不再投影为商家动作；完工送核销走本人质检签字",
             "items": {
               "type": "object",
               "additionalProperties": false,
@@ -9354,6 +10011,473 @@
           },
           "changed": {
             "type": "boolean"
+          }
+        }
+      },
+      "ServiceProtectionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order_id",
+          "items",
+          "photo_file_id"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "SEAT_COVER",
+                "STEERING_COVER",
+                "FLOOR_MAT",
+                "FENDER_COVER"
+              ]
+            },
+            "minItems": 2,
+            "maxItems": 4,
+            "uniqueItems": true,
+            "allOf": [
+              {
+                "contains": {
+                  "const": "SEAT_COVER"
+                }
+              },
+              {
+                "contains": {
+                  "const": "STEERING_COVER"
+                }
+              }
+            ]
+          },
+          "photo_file_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        }
+      },
+      "ServiceReportRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order_id",
+          "process_photos",
+          "fault_part_photos",
+          "finish_photos",
+          "no_fault_parts",
+          "repair_plan",
+          "fault_analysis",
+          "parts_used",
+          "no_parts",
+          "work_hours"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "process_photos": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "minItems": 1,
+            "maxItems": 9,
+            "uniqueItems": true
+          },
+          "fault_part_photos": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "minItems": 0,
+            "maxItems": 9,
+            "uniqueItems": true
+          },
+          "finish_photos": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "minItems": 1,
+            "maxItems": 9,
+            "uniqueItems": true
+          },
+          "no_fault_parts": {
+            "type": "boolean"
+          },
+          "repair_plan": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "fault_analysis": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "parts_used": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "model",
+                "brand",
+                "quantity"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "model": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "brand": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "quantity": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 999
+                }
+              }
+            },
+            "maxItems": 20
+          },
+          "no_parts": {
+            "type": "boolean"
+          },
+          "work_hours": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1440,
+            "description": "实际填报工时，单位分钟"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "no_fault_parts": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "fault_part_photos": {
+                  "maxItems": 0
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "fault_part_photos": {
+                  "minItems": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "no_parts": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "parts_used": {
+                  "maxItems": 0
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "parts_used": {
+                  "minItems": 1
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ServiceWork": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order_id",
+          "order_status",
+          "protection",
+          "report"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "order_status": {
+            "type": "string",
+            "enum": [
+              "PENDING_PAYMENT",
+              "PAID",
+              "RECEIVED",
+              "IN_SERVICE",
+              "PENDING_VERIFY",
+              "COMPLETED",
+              "CLOSED",
+              "DISPUTED"
+            ]
+          },
+          "protection": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "items",
+                  "uploaded_at",
+                  "photo_file_id"
+                ],
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "SEAT_COVER",
+                        "STEERING_COVER",
+                        "FLOOR_MAT",
+                        "FENDER_COVER"
+                      ]
+                    },
+                    "minItems": 2,
+                    "maxItems": 4,
+                    "uniqueItems": true,
+                    "allOf": [
+                      {
+                        "contains": {
+                          "const": "SEAT_COVER"
+                        }
+                      },
+                      {
+                        "contains": {
+                          "const": "STEERING_COVER"
+                        }
+                      }
+                    ]
+                  },
+                  "uploaded_at": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "photo_file_id": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "report": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "process_photos",
+                  "fault_part_photos",
+                  "finish_photos",
+                  "no_fault_parts",
+                  "repair_plan",
+                  "fault_analysis",
+                  "parts_used",
+                  "no_parts",
+                  "work_hours",
+                  "report_id",
+                  "submitted_at",
+                  "signed_at",
+                  "signature_file_id",
+                  "status"
+                ],
+                "properties": {
+                  "process_photos": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "minItems": 1,
+                    "maxItems": 9,
+                    "uniqueItems": true
+                  },
+                  "fault_part_photos": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "minItems": 0,
+                    "maxItems": 9,
+                    "uniqueItems": true
+                  },
+                  "finish_photos": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "minItems": 1,
+                    "maxItems": 9,
+                    "uniqueItems": true
+                  },
+                  "no_fault_parts": {
+                    "type": "boolean"
+                  },
+                  "repair_plan": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2000
+                  },
+                  "fault_analysis": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2000
+                  },
+                  "parts_used": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "name",
+                        "model",
+                        "brand",
+                        "quantity"
+                      ],
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 100
+                        },
+                        "model": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 100
+                        },
+                        "brand": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 100
+                        },
+                        "quantity": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 999
+                        }
+                      }
+                    },
+                    "maxItems": 20
+                  },
+                  "no_parts": {
+                    "type": "boolean"
+                  },
+                  "work_hours": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1440,
+                    "description": "实际填报工时，单位分钟"
+                  },
+                  "report_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "submitted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "signed_at": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "signature_file_id": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "SUBMITTED",
+                      "SIGNED"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         }
       }

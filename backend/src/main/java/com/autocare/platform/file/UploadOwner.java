@@ -3,7 +3,8 @@ package com.autocare.platform.file;
 import java.time.Instant;
 import org.springframework.security.oauth2.jwt.Jwt;
 
-public record UploadOwner(long id, String session, Instant tokenExpires, String type, long merchantId) {
+public record UploadOwner(long id, String session, Instant tokenExpires, String type, long merchantId, com.autocare.platform.order.TechnicianActor technician) {
+    public UploadOwner(long id,String session,Instant tokenExpires,String type,long merchantId){this(id,session,tokenExpires,type,merchantId,null);}
     public UploadOwner(long id, String session, Instant tokenExpires) {
         this(id, session, tokenExpires, "user", 0);
     }
@@ -11,7 +12,11 @@ public record UploadOwner(long id, String session, Instant tokenExpires, String 
         var actor = com.autocare.platform.service.MerchantActor.from(jwt);
         return new UploadOwner(actor.staffId(), actor.session(), actor.expires(), "staff_account", actor.merchantId());
     }
-    public String path() { return "staff_account".equals(type) ? "/api/merchant/files/upload" : "/api/file/upload"; }
+    public static UploadOwner technician(Jwt jwt,String appId) {
+        var actor=com.autocare.platform.order.TechnicianActor.from(jwt,appId);
+        return new UploadOwner(actor.staffId(),actor.session(),actor.expires(),"staff_account",actor.merchantId(),actor);
+    }
+    public String path() { return technician!=null ? "/api/tech/files/upload" : "staff_account".equals(type) ? "/api/merchant/files/upload" : "/api/file/upload"; }
     public static UploadOwner from(Jwt jwt) {
         try {
             if (jwt == null || !"user".equals(jwt.getClaimAsString("subject_type"))

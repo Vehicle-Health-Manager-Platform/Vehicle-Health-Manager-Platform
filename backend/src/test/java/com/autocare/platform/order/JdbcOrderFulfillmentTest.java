@@ -93,9 +93,9 @@ class JdbcOrderFulfillmentTest {
         assertEquals("IN_SERVICE",data(fulfillment.apply(shop,key(),id,OrderStatus.START_SERVICE,null),"status"));
         assertEquals(40905,codeOf(()->fulfillment.apply(shop,key(),id,OrderStatus.COMPLETE,null)));
         evidence(id,"service_report_ready_at");
-        assertEquals("PENDING_VERIFY",data(fulfillment.apply(shop,key(),id,OrderStatus.FINISH_SERVICE,null),"status"));
+        assertEquals(43005,codeOf(()->fulfillment.apply(shop,key(),id,OrderStatus.FINISH_SERVICE,null)));
         assertEquals(40905,codeOf(()->fulfillment.apply(shop,key(),id,OrderStatus.RECEIVE,null)));
-        assertEquals("PENDING_VERIFY",status(id));assertEquals(3,count("order_status_transition"));
+        assertEquals("IN_SERVICE",status(id));assertEquals(2,count("order_status_transition"));
     }
 
     @Test void startServiceWaitsForOwnerConfirmationAndAssignment(){
@@ -113,10 +113,12 @@ class JdbcOrderFulfillmentTest {
         evidence(id,"owner_confirmed_at");evidence(id,"assigned_at");fulfillment.apply(shop,key(),id,OrderStatus.START_SERVICE,null);
         assertEquals(43005,codeOf(()->fulfillment.apply(shop,key(),id,OrderStatus.FINISH_SERVICE,null)));
         evidence(id,"service_report_ready_at");
-        assertEquals("PENDING_VERIFY",data(fulfillment.apply(shop,key(),id,OrderStatus.FINISH_SERVICE,null),"status"));
+        assertEquals(43005,codeOf(()->fulfillment.apply(shop,key(),id,OrderStatus.FINISH_SERVICE,null)));
+        assertEquals("IN_SERVICE",status(id));assertEquals(2,count("order_status_transition"));
+        jdbc.update("UPDATE `order` SET status='PENDING_VERIFY' WHERE id=?",id); // A7 guard fixture; A6 sign transition tested separately.
         // D3 的核销校验尚未接入，因此 COMPLETE 必须 fail-closed 而不是放行。
         assertEquals(43006,codeOf(()->fulfillment.apply(shop,key(),id,OrderStatus.COMPLETE,null)));
-        assertEquals("PENDING_VERIFY",status(id));assertEquals(3,count("order_status_transition"));
+        assertEquals("PENDING_VERIFY",status(id));assertEquals(2,count("order_status_transition"));
     }
 
     @Test void repeatedActionReportsNoChangeWithoutSecondAudit(){

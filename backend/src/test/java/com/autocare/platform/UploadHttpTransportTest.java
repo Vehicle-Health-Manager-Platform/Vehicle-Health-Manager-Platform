@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 
 /** Actual embedded Tomcat, not MockMultipartFile: exercises parser and chunked limits. */
 @SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties={"JWT_SECRET=test-only-secret-with-at-least-32-characters","UPLOAD_HTTP_CONCURRENCY=1"})
+    properties={"JWT_SECRET=test-only-secret-with-at-least-32-characters","UPLOAD_HTTP_CONCURRENCY=1","WECHAT_APP_ID=test-app"})
 class UploadHttpTransportTest {
     @LocalServerPort int port;
     @Autowired ObjectMapper mapper;
@@ -36,6 +36,7 @@ class UploadHttpTransportTest {
             String token=invocation.getArgument(0);var builder=Jwt.withTokenValue(token).header("alg","HS256").subject("1001")
                 .issuedAt(Instant.now()).expiresAt(Instant.now().plusSeconds(600));
             if(!token.equals("local"))builder.claim("subject_type",token.equals("binding")?"wechat_binding":token.equals("staff")?"staff_account":"user");
+            if(token.equals("tech"))return builder.claim("subject_type","staff_account").claim("role","TECHNICIAN").claim("app_id","test-app").claim("merchant_id",1).claim("binding_id",2).claim("jti",UUID.randomUUID().toString()).build();
             if(token.equals("merchant"))return builder.claim("subject_type","staff_account").claim("role","MERCHANT").claim("app_id","merchant-account").claim("merchant_id",1).claim("jti",UUID.randomUUID().toString()).build();
             return builder.claim("role",token.equals("staff")?"TECHNICIAN":"OWNER").claim("jti",UUID.randomUUID().toString()).build();
         });
@@ -64,6 +65,13 @@ class UploadHttpTransportTest {
             assertEquals(token.equals("merchant")?200:403,client.send(request,HttpResponse.BodyHandlers.ofString()).statusCode());
         }
         verify(service).upload(argThat(actor->actor.type().equals("staff_account")&&actor.id()==1001&&actor.merchantId()==1),anyString(),anyString(),any());
+    }
+    @Test void technicianUploadUsesBoundIdentityAndRejectsMerchantOwnerAndUnbound()throws Exception {
+        for(String token:List.of("owner","staff","merchant","tech")){
+            var request=HttpRequest.newBuilder(URI.create("http://127.0.0.1:"+port+"/api/tech/files/upload")).header("Authorization","Bearer "+token).header("Idempotency-Key",key()).header("Content-Type","multipart/form-data; boundary="+boundary).POST(HttpRequest.BodyPublishers.ofByteArray(multipart(11,""))).build();
+            assertEquals(token.equals("tech")?200:403,client.send(request,HttpResponse.BodyHandlers.ofString()).statusCode());
+        }
+        verify(service).upload(argThat(actor->actor.technician()!=null&&actor.technician().bindingId()==2&&actor.path().equals("/api/tech/files/upload")),anyString(),anyString(),any());
     }
     @Test void actualMultipartAcceptsSingleFileAndExactTenMiBBoundary() throws Exception {
         var response=post(multipart(FileValidator.MAX_BYTES,""),"owner",false,key());assertEquals(200,response.statusCode(),response.body());

@@ -559,6 +559,63 @@ def main():
     # A5.6 把「未解决的争议」从泛化的 40905 收敛为明确的 43007，派工与接单的拒绝说明要同步。
     for path in ("/api/merchant/orders/{id}/assign", "/api/tech/orders/{id}/accept"):
         document["paths"][path]["post"]["responses"]["409"]["description"] = "40905状态冲突/历史数据不一致；43001缺接车证据；43003缺车主确认；43007订单存在未解决的争议"
+    # A6.1: immutable private evidence, full report and technician quality signature.
+    import copy
+    file_ids = {"type": "array", "items": identifier, "minItems": 1, "maxItems": 9, "uniqueItems": True}
+    text2000 = {"type": "string", "minLength": 1, "maxLength": 2000}
+    part = strict({"name": {"type": "string", "minLength": 1, "maxLength": 100}, "model": {"type": "string", "minLength": 1, "maxLength": 100},
+        "brand": {"type": "string", "minLength": 1, "maxLength": 100}, "quantity": {"type": "integer", "minimum": 1, "maximum": 999}})
+    report_properties = {"order_id": identifier, "process_photos": file_ids, "fault_part_photos": {**file_ids, "minItems": 0}, "finish_photos": file_ids,
+        "no_fault_parts": {"type": "boolean"}, "repair_plan": text2000, "fault_analysis": text2000,
+        "parts_used": {"type": "array", "items": part, "maxItems": 20}, "no_parts": {"type": "boolean"}, "work_hours": {"type": "integer", "minimum": 1, "maximum": 1440, "description": "实际填报工时，单位分钟"}}
+    schemas["ServiceProtectionRequest"] = strict({"order_id": identifier,
+        "items": {"type": "array", "items": {"type": "string", "enum": ["SEAT_COVER", "STEERING_COVER", "FLOOR_MAT", "FENDER_COVER"]}, "minItems": 2, "maxItems": 4, "uniqueItems": True}, "photo_file_id": identifier})
+    schemas["ServiceProtectionRequest"]["properties"]["items"]["allOf"] = [{"contains": {"const": "SEAT_COVER"}}, {"contains": {"const": "STEERING_COVER"}}]
+    schemas["ServiceReportRequest"] = strict(report_properties)
+    schemas["ServiceReportRequest"]["allOf"] = [
+        {"if": {"properties": {"no_fault_parts": {"const": True}}}, "then": {"properties": {"fault_part_photos": {"maxItems": 0}}}, "else": {"properties": {"fault_part_photos": {"minItems": 1}}}},
+        {"if": {"properties": {"no_parts": {"const": True}}}, "then": {"properties": {"parts_used": {"maxItems": 0}}}, "else": {"properties": {"parts_used": {"minItems": 1}}}}]
+    nullable_id = {"anyOf": [identifier, {"type": "null"}]}
+    protection_view = strict({"items": schemas["ServiceProtectionRequest"]["properties"]["items"], "uploaded_at": {"anyOf": [timestamp, {"type": "null"}]}, "photo_file_id": nullable_id})
+    report_view = strict({**{k: v for k, v in report_properties.items() if k != "order_id"}, "report_id": identifier,
+        "submitted_at": timestamp, "signed_at": {"anyOf": [timestamp, {"type": "null"}]}, "signature_file_id": nullable_id, "status": {"type": "string", "enum": ["SUBMITTED", "SIGNED"]}})
+    schemas["ServiceWork"] = strict({"order_id": identifier, "order_status": {"type": "string", "enum": fulfillment_states},
+        "protection": {"anyOf": [protection_view, {"type": "null"}]}, "report": {"anyOf": [report_view, {"type": "null"}]}})
+    for method, path, role, title, request in [
+        ("post", "/api/check/protection/upload", "MERCHANT", "提交本店施工防护证据", "ServiceProtectionRequest"),
+        ("post", "/api/tech/report/submit", "TECHNICIAN", "本人提交完整施工报工", "ServiceReportRequest"),
+        ("post", "/api/tech/sign", "TECHNICIAN", "本人质检签字并送核销", None),
+        ("get", "/api/merchant/orders/{id}/work", "MERCHANT", "本店施工记录", None),
+        ("get", "/api/tech/orders/{id}/work", "TECHNICIAN", "本人工单施工记录", None),
+        ("get", "/api/merchant/orders/{id}/work/files/{file}/access", "MERCHANT", "本店施工证据图片临时访问", None),
+        ("get", "/api/tech/orders/{id}/work/files/{file}/access", "TECHNICIAN", "本人施工证据图片临时访问", None)]:
+        item = operation(method, path, title, "F15,F18")
+        item["x-roles"] = role
+        item["x-implementation-status"] = "service-work-backend-implemented"
+        item["description"] = "严格身份与订单归属；写入前检查确认1/3、争议、防护和私有安全图片。完整报工不可改，PNG质检签名后原子进入PENDING_VERIFY；不完成核销。每次幂等重放仍复核权限和证据。无查询参数，响应no-store；见 SERVICE_WORK.md。三类图片之间不得重复。"
+        for parameter in item["parameters"]:
+            if parameter["in"] == "path": parameter["schema"] = identifier
+        if method == "post":
+            item["requestBody"]["content"]["application/json"]["schema"] = ({"$ref": "#/components/schemas/"+request} if request else strict({"order_id": identifier, "signature_file_id": identifier}))
+        data_schema = strict({"url": {"type": "string", "format": "uri"}, "expires_at": timestamp}) if path.endswith("/access") else {"$ref": "#/components/schemas/ServiceWork"}
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "properties": {"data": data_schema}}]}
+        item["responses"]["404"] = {"description": "不存在/非本店或非本人工单/非关联文件，40400"}
+        item["responses"]["409"] = {"description": "40905已提交不可改或状态/历史异常；43001缺接车；43002缺有效防护；43003缺车主确认；43004未本人接单；43005缺完整报工；43007未解决争议"}
+        item["responses"]["422"] = {"description": "42200图片非本人CLEAN文件、签名非PNG或已用于其他证据"}
+        item["responses"]["503"] = {"description": "数据库/对象存储未配置或事务失败，50300；使用原键重试"}
+        document["paths"][path] = {method: item}
+    for method, old, new in [("post", "/api/merchant/files/upload", "/api/tech/files/upload"), ("get", "/api/merchant/files/{id}/access", "/api/tech/files/{id}/access")]:
+        item = copy.deepcopy(document["paths"][old][method])
+        item["operationId"] = re.sub(r"[^A-Za-z0-9]+", "_", f"{method}_{new}").strip("_")
+        item["summary"] = "技师本人私有图片" + ("上传" if method == "post" else "临时访问")
+        item["x-implementation-status"] = "service-work-backend-implemented"
+        item["x-feature-ids"] = ["F18"]
+        item["x-roles"] = "TECHNICIAN"
+        item["description"] = "仅当前AppID下正式有效技师会话与绑定；扫描、类型、大小、限流、幂等沿用私有图片基础设施。仅本人原始上传可访问；跨上传者的工单关联图片须走work/files接口。"
+        document["paths"][new] = {method: item}
+    action["description"] = "商家通用RECEIVE/START_SERVICE/FINISH_SERVICE分别拒绝43001/43004/43005。专用接车、本人接单、本人完整报工+质检签字是唯一对应入口；核销仍待A7。"
+    action["responses"]["409"]["description"] = "40905非法状态；43001改用接车检查；43004改用本人接单；43005改用本人报工并质检签字；43006核销未接入"
+    schemas["MerchantOrder"]["properties"]["allowed_actions"]["description"] = "RECEIVE/START_SERVICE/FINISH_SERVICE均不再投影为商家动作；完工送核销走本人质检签字"
     count = sum(len(value) for value in document["paths"].values())
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")
