@@ -77,7 +77,7 @@ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
 
 ## GitHub 验证
 
-阶段分支 `codex/a5-dispatch-verify` 已推送，[PR #39](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/39) 以 `codex/a5-dispatch-ui` 为基线（A5.3 未合并），只展示本子阶段差异，改动 7 个文件。提交 `1f9bcb7` 的六项 CI 全部通过：web、miniapp、backend、schema-and-ocr、schema-mysql、compose-smoke（run 37738541392）。backend job 执行全量后端测试（含本阶段新增 11 项真实 MySQL 用例），miniapp job 执行 140 项离线测试并完成两端构建；本阶段未改前端与后端业务代码，生成文件与契约操作数保持 89 个不变。
+阶段分支 `codex/a5-dispatch-verify` 已推送，[PR #39](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/39) 以 `codex/a5-dispatch-ui` 为基线（A5.3 未合并），只展示本子阶段差异，改动 7 个文件。六项 CI 全部通过：web、miniapp、backend、schema-and-ocr、schema-mysql、compose-smoke（首次全绿于提交 `1f9bcb7`，run 37738541392；文档收口提交 `6860efc` 复核仍为六项全绿，后续文档提交以 PR 最新检查为准）。backend job 执行全量后端测试（含本阶段新增 11 项真实 MySQL 用例），miniapp job 执行 140 项离线测试并完成两端构建；本阶段未改前端与后端业务代码，生成文件与契约操作数保持 89 个不变。
 
 ## 未验收项
 
