@@ -71,4 +71,4 @@ A4 只交付了「第一次决定」：车主提出异议后订单置 `DISPUTED`
 
 ## GitHub 验证
 
-阶段分支 `codex/a5-dispute` 已推送，[PR #41](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/41) 以 `codex/a5-dispatch-e2e` 为基线（A5.5 未合并），只展示本子阶段差异。六项 CI（web、miniapp、backend、schema-and-ocr、schema-mysql、compose-smoke）结果见 PR 页；端到端脚本需要本机容器与隔离库，属 opt-in 本机验收，不进 CI。
+阶段分支 `codex/a5-dispute` 已推送，[PR #41](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/41) 以 `codex/a5-dispatch-e2e` 为基线（A5.5 未合并），只展示本子阶段差异。提交 `9ce6bf2`（实现）与 `f6e8235`（文档）的六项 CI **全部通过**：web、miniapp、backend、schema-and-ocr、schema-mysql、compose-smoke。`mergeable=true`，44 文件、`+2021/-58`。端到端脚本需要本机容器与隔离库，属 opt-in 本机验收，不进 CI。
