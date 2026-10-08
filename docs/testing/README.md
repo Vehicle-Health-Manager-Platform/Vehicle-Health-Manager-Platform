@@ -10,6 +10,7 @@
 - [A5.2 派工后端执行记录](../progress/A5_2_DISPATCH_BACKEND_EXECUTION.md)：六个接口的 HTTP、真实 MySQL 权限/幂等/竞争/回滚验证结果。
 - [A5.3 派工界面执行记录](../progress/A5_3_DISPATCH_UI_EXECUTION.md)：商家派工与技师工单的小程序协议测试、构建与未验收项；真机与真实技师登录属 A5.5。
 - [A5.4 派工安全与竞争执行记录](../progress/A5_4_DISPATCH_VERIFICATION_EXECUTION.md)：员工码/停用/会话撤销与派工接单的真实 MySQL 并发、无死锁、载荷与历史异常证据。
+- [A5 本机派工与本人接单端到端验收](LOCAL_TECHNICIAN_DISPATCH_ACCEPTANCE.md)：合成身份接真实后端容器与隔离 MySQL 的 37 项检查、复现步骤与未验收项。
 
 小程序测试在仓库根目录运行 `npm test --workspace @autocare/miniapp`；登录预检离线测试运行 `python -m unittest scripts/test_check_auth_readiness.py -v`；后端在 `backend` 目录运行 `mvn test`，完整集成测试需 Docker。
 
