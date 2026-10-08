@@ -10,7 +10,9 @@ A5.1 已形成[规格](../superpowers/specs/2026-10-08-a5-dispatch-design.md)、
 
 A5.2 已通过六项 CI 并上传 [PR #37](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/37)，实现六个后端接口与 V012，商家通用 `START_SERVICE` 已停用；证据见[A5.2 执行记录](A5_2_DISPATCH_BACKEND_EXECUTION.md)。
 
-A5.3 已接入商家派工页、技师独立会话与「我的工单」/工单详情/接单，小程序 140 项测试、微信与 H5 构建通过，六项 CI 全绿并上传 [PR #38](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/38) 待合并；证据见[A5.3 执行记录](A5_3_DISPATCH_UI_EXECUTION.md)。下一步 A5.4 按规格 T01–T11 补竞争与安全证据，随后 A5.5 用合成身份接真实后端与 MySQL 完成端到端联调并收口文档。交付及 CI 见[当前进度](CURRENT_STATUS.md)。
+A5.3 已接入商家派工页、技师独立会话与「我的工单」/工单详情/接单，小程序 140 项测试、微信与 H5 构建通过，六项 CI 全绿并上传 [PR #38](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/38) 待合并；证据见[A5.3 执行记录](A5_3_DISPATCH_UI_EXECUTION.md)。
+
+A5.4 已完成本机验证：按规格验收矩阵补齐 A5.2 未覆盖的 T04/T06/T07/T09/T11 证据——员工码重发与回收、账号停用、会话撤销与派工/接单的真实 MySQL 并发、多轮无死锁、幂等载荷与审计不落隐私、历史异常冻结；新增验证 11 项通过，相关回归 76 项通过，证据见[A5.4 执行记录](A5_4_DISPATCH_VERIFICATION_EXECUTION.md)。随后 A5.5 用合成身份接真实后端与 MySQL 完成端到端联调并收口文档。交付及 CI 见[当前进度](CURRENT_STATUS.md)。
 
 ## 业务开发顺序
 

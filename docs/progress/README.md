@@ -8,6 +8,7 @@
 - [A4 执行记录](A4_OWNER_DECISION_EXECUTION.md)：车主接车单决定的实现、验证与交付状态。
 - [A5.2 执行记录](A5_2_DISPATCH_BACKEND_EXECUTION.md)：派工与本人接单后端、V012 迁移的验证与交付状态。
 - [A5.3 执行记录](A5_3_DISPATCH_UI_EXECUTION.md)：商家派工页、技师独立会话与「我的工单」/接单界面的验证与交付状态。
+- [A5.4 执行记录](A5_4_DISPATCH_VERIFICATION_EXECUTION.md)：身份变更、竞争、持久化载荷与历史异常的安全验证计划与结果。
 - [A5 下一阶段计划](../superpowers/plans/2026-10-08-a5-dispatch.md)：派工、本人工作台与技师接单的顺序及验收条件。
 - [三端功能缺口清点](ROLE_GAP_ANALYSIS.md)：车主端、商家端、技师端与运营端还差什么，以及阶段 A–E 的实施顺序。
 - [S0 逐步执行记录](S0_EXECUTION_LOG.md)：每步的完成证据、未完成范围与紧接着的工作。
