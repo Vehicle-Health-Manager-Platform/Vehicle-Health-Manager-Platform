@@ -68,6 +68,7 @@ onUnload(() => { visible = false; flow.reset(); apply.reset() })
       <button v-if="state.value.status==='PAID'" @tap="uni.navigateTo({url:`/pages/merchant/pickup?id=${state.value.order_id}`})">接车检查</button>
       <button v-if="['RECEIVED','IN_SERVICE','PENDING_VERIFY','COMPLETED','DISPUTED'].includes(state.value.status)" @tap="uni.navigateTo({url:`/pages/check/pickup-detail?id=${state.value.order_id}&role=merchant`})">查看接车单</button>
       <button v-if="['RECEIVED','IN_SERVICE','PENDING_VERIFY','COMPLETED'].includes(state.value.status)" data-testid="merchant-order-dispatch" @tap="uni.navigateTo({url:`/pages/merchant/dispatch?id=${state.value.order_id}`})">{{ state.value.status==='RECEIVED' ? '派工给本店技师' : '查看派工结果' }}</button>
+      <button v-if="['RECEIVED','IN_SERVICE','PENDING_VERIFY','COMPLETED','DISPUTED'].includes(state.value.status)" @tap="uni.navigateTo({url:`/pages/merchant/protection?id=${state.value.order_id}`})">施工防护与记录</button>
       <view v-if="state.value.allowed_actions.length" data-testid="merchant-order-actions">
         <text class="reservation-heading">可执行操作</text>
         <text>操作会记录操作人与时间；派工、报工、核销在各自步骤就绪前会给出具体原因。</text>
