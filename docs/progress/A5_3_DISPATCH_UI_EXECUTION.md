@@ -34,7 +34,7 @@
 - `python scripts/generate_traceability.py`、`build_init_sql.py`、`generate_openapi.py`：重新生成后无额外差异（89 个操作不变，本阶段不动后端契约）。
 - `git diff --check` 通过；`docs/` 下 355 条相对链接全部有效（顺手修正履约规格里一处指向 `../api/ORDER_FULFILLMENT.md` 的死链）。
 
-GitHub 六项 CI（`be63751`）全部通过：web、miniapp、backend、schema-and-ocr、schema-mysql、compose-smoke。miniapp job 执行 140 项离线测试并以 0 失败通过，随后完成 mp-weixin 与 H5 构建；backend 沿用 A5.2 基线（本阶段未改后端）。
+GitHub 六项 CI（web、miniapp、backend、schema-and-ocr、schema-mysql、compose-smoke）在实现提交 `587359b`、文档提交 `be63751` 与本次收口提交上均为全绿，最终结果见 [PR #38](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/38) 最新检查。miniapp job 执行 **140 项**离线测试并以 0 失败通过，随后完成 mp-weixin 与 H5 构建；backend 沿用 A5.2 基线（本阶段未改后端）。
 
 新增测试覆盖：候选与工单分页/筛选协议、越界字段与最小投影、`can_accept` 与状态组合的一致性、派工与接单的成功响应断言、非法输入不发出请求、服务端错误码（`40001`/`40100`/`40300`/`40400`/`40905`/`43001`/`43003`/`43004`/`50300`）翻译、未登录不请求、传输失败分类与未配置服务、同键重试与换键、重复点击抑制、切账号与离开页面丢弃迟到响应、确认回调守卫、技师会话跨页共享与退出清理。测试数据均合成，未使用真实微信身份。
 
