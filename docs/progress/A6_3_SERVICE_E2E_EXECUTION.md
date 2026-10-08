@@ -12,6 +12,6 @@
 
 ## GitHub
 
-A6.2 [PR #43](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/43) `9254e86` 的 [CI 37797778774](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37797778774) 六项全绿，后端 348、小程序 169，微信/H5 构建通过。A6.3 本阶段提交后推送并创建以 codex/a6-service-ui 为 base 的 PR；最新 CI 结果随后写入阶段总记录。
+A6.2 [PR #43](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/43) `9254e86` 的 [CI 37797778774](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37797778774) 六项全绿，后端 348、小程序 169，微信/H5 构建通过。A6.3 代码/验收提交 `504e99a` 已上传 [PR #44](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/44)，base=codex/a6-service-ui。CI 六项检查由 [PR #44 Checks](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/44/checks) 维护，最终提交与检查以该页为准；本阶段没有更改后端或客户端实现。
 
 未执行合并或修改已有 base。按 #37→#38→#39→#40→#41→#42→#43→本 PR，在前序合入 main 后逐支把当前 base 改回 main、复核差异/CI。退款/取消归 A7；第二次异议与超时不在范围；真机/真实登录/自签证书直连预览仍单列。

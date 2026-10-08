@@ -5,6 +5,7 @@
 ## 结果及证据口径
 
 - 后端全量 CI **348/348**，小程序 **169/169**，微信/H5 构建通过；[A6.2 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37797778774) 六项全绿。
+- A6.3 可复现脚本与文档已上传 [PR #44](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/44)，最新六项检查见 [PR #44 Checks](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/44/checks)。
 - `scripts/local_service_work_e2e.cjs --allow-local-test-writes` 真实 HTTP 验收 **65/65 通过**，0 失败，最终进程退出码 0。不是 65 项新增 JUnit 测试，也不与 348 相加。
 - 商家防护→本人完整报工→本人质检签字→PENDING_VERIFY，包括文件真实 multipart、MinIO 私有对象、官方 ClamAV 扫描和 MySQL 留痕；没有业务响应替身。
 - gstack `/browse` 验证 H5 实际输入/上传/确认与 canvas 笔画→PNG 导出→上传→签字，[页面证据](../progress/A6_2_SERVICE_UI_EXECUTION.md)。H5 使用无界面合成图片，不是物理相机。

@@ -21,6 +21,6 @@
 
 ## A6.3 联调验收
 
-真实 HTTP 65/65 通过，可复现脚本与[验收文档](../../testing/LOCAL_SERVICE_WORK_ACCEPTANCE.md)已整理；本阶段上传与 CI 核实中，结果见[A6 总记录](../../progress/A6_SERVICE_WORK_EXECUTION.md)。
+真实 HTTP 65/65 通过，可复现脚本与[验收文档](../../testing/LOCAL_SERVICE_WORK_ACCEPTANCE.md)已整理；已上传 PR #44，最终六项检查见该 PR Checks，结果见[A6 总记录](../../progress/A6_SERVICE_WORK_EXECUTION.md)。
 
 在隔离测试数据库和匹配当前提交的后端镜像上执行防护→本人报工→签字→待核销，验证缺证据/他人/跨店/争议/重复操作，整理演示及遗留真机项。通过后上传记录；不执行退款、二次异议、超时或核销。
