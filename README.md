@@ -2,9 +2,9 @@
 
 面向车主、商家和技师的微信小程序及配套后端，车主另有 H5 兜底目标，运营使用 PC 网页。本团队负责小程序和共用接口；运营 PC 后台由协作团队负责。
 
-**A4 车主确认接车单与异议已完成验证并上传至 PR #35，下一阶段 A5 商家派工与技师接单。** A3 七图接车检查已合并；本人车辆、档案、预约订单、商家报价、测试支付及 AI 对话已有实现和本机验证。真机、真实相机、正式收款/退款及上线环境仍分别待验收。每阶段同步文档并上传 GitHub，见[阶段交付规则](docs/progress/STAGE_DELIVERY.md)、[当前进度](docs/progress/CURRENT_STATUS.md)及[下一步规划](docs/progress/NEXT_STEPS.md)。
+**A4 已验证并上传 PR #35；A5.1 派工与接单规格已整理，下一步 A5.2 后端。** A3 七图接车检查已合并；本人车辆、档案、预约订单、商家报价、测试支付及 AI 对话已有实现和本机验证。真机、真实相机、正式收款/退款及上线环境仍分别待验收。每阶段同步文档并上传 GitHub，见[阶段交付规则](docs/progress/STAGE_DELIVERY.md)、[当前进度](docs/progress/CURRENT_STATUS.md)及[下一步规划](docs/progress/NEXT_STEPS.md)。
 
-A3 商家接车检查已实现，详见 [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34)：七图检查、手填里程、预约验码、私有图片及同事务接车；本机真实业务链路通过。车主确认、派工及真机预览随后验收。[契约](docs/api/PICKUP_INSPECTION.md) · [验收记录](docs/testing/LOCAL_PICKUP_ACCEPTANCE.md)。
+A3 商家接车检查已实现，详见 [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34)：七图检查、手填里程、预约验码、私有图片及同事务接车；本机真实业务链路通过。A4 车主确认已验证；A5 派工实现和真机预览待后续验收。[契约](docs/api/PICKUP_INSPECTION.md) · [验收记录](docs/testing/LOCAL_PICKUP_ACCEPTANCE.md)。
 
 ## 已实现的能力
 
