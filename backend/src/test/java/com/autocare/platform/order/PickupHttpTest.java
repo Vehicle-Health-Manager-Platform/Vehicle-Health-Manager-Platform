@@ -31,4 +31,22 @@ class PickupHttpTest {
   when(pickup.detail(any(),eq(1L))).thenThrow(new org.springframework.dao.DataAccessResourceFailureException("private SQL"));
   mvc.perform(get("/api/check/pickup/1").header("Authorization","Bearer owner")).andExpect(status().isServiceUnavailable()).andExpect(jsonPath("$.message").value("接车服务暂不可用，请使用原幂等键重试"));
  }
+ @Test void onlyOwnerCanDecideAndRequiresValidKey()throws Exception{
+  String body="{\"order_id\":1,\"decision\":\"CONFIRM\"}";
+  mvc.perform(post("/api/check/pickup/confirm").contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isUnauthorized());
+  for(String role:List.of("merchant","technician"))mvc.perform(post("/api/check/pickup/confirm").header("Authorization","Bearer "+role).header("Idempotency-Key",UUID.randomUUID().toString()).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isForbidden());
+  mvc.perform(post("/api/check/pickup/confirm").header("Authorization","Bearer owner").contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value(40001));
+  verifyNoInteractions(pickup);
+ }
+ @Test void ownerDecisionRejectsUnknownAndMalformedFields()throws Exception{
+  for(String body:List.of("{}","{\"order_id\":1,\"decision\":false}","{\"order_id\":1,\"decision\":\"CONFIRM\",\"status\":\"RECEIVED\"}","{\"order_id\":1,\"decision\":\"DISPUTE\",\"reason\":null}"))mvc.perform(post("/api/check/pickup/confirm").header("Authorization","Bearer owner").header("Idempotency-Key",UUID.randomUUID().toString()).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isBadRequest());
+  verifyNoInteractions(pickup);
+ }
+ @Test void ownerDecisionReturnsReceiptAndPreservesConflictCode()throws Exception{
+  String key=UUID.randomUUID().toString(),body="{\"order_id\":1,\"decision\":\"CONFIRM\"}";
+  when(pickup.decide(any(),eq(key),eq(1L),eq("CONFIRM"),isNull())).thenReturn(mapper.valueToTree(Map.of("code",0,"data",Map.of("owner_confirm",1))));
+  mvc.perform(post("/api/check/pickup/confirm").header("Authorization","Bearer owner").header("Idempotency-Key",key).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isOk()).andExpect(header().string("Cache-Control","no-store")).andExpect(jsonPath("$.data.owner_confirm").value(1));
+  when(pickup.decide(any(),eq(key),eq(1L),eq("CONFIRM"),isNull())).thenThrow(new FulfillmentConflict(40905,"接车单状态已变化"));
+  mvc.perform(post("/api/check/pickup/confirm").header("Authorization","Bearer owner").header("Idempotency-Key",key).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isConflict()).andExpect(jsonPath("$.code").value(40905));
+ }
 }

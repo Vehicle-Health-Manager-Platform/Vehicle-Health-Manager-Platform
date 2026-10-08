@@ -7,6 +7,8 @@
 并提供商家侧的履约操作入口。接车单、车主确认、派工、报工与核销的**业务内容**分别在
 A3–A6 实现；本步先把它们的判定挂点与审计通道建好。
 
+阶段进展：A3 已通过接车检查接口写入接车证据并迁至 `RECEIVED`；A4 已通过[车主接车单决策](PICKUP_OWNER_DECISION.md)写入 `owner_confirmed_at` 或迁至 `DISPUTED`。派工、报工和核销前置仍按后续阶段处理。
+
 ## 状态
 
 沿用现有字符串枚举，不改成数值（`PENDING_PAYMENT` 等已落库并有对外契约）。
@@ -52,7 +54,7 @@ A3–A6 实现；本步先把它们的判定挂点与审计通道建好。
 | 接车检查提交 | `RECEIVED` | `ORDER_CHECK_IN` | A3 已接入专用接车接口，通用 RECEIVE 已停止对外开放 |
 | `START_SERVICE` | `IN_SERVICE` | `ORDER_SERVICE_START` | A2 建好判定，A4/A5 补车主确认与派工 |
 | `FINISH_SERVICE` | `PENDING_VERIFY` | `ORDER_SERVICE_FINISH` | A2 建好判定，A6 补报工 |
-| `COMPLETE` | `COMPLETED` | `ORDER_COMPLETE` | A4 补核销校验 |
+| `COMPLETE` | `COMPLETED` | `ORDER_COMPLETE` | A7 补核销校验 |
 
 ## 接口
 
@@ -80,10 +82,10 @@ A3–A6 实现；本步先把它们的判定挂点与审计通道建好。
 | `START_SERVICE` | `order.owner_confirmed_at` 非空 | `43003` 车主尚未确认接车，不能开始施工 |
 | `START_SERVICE` | `order.assigned_at` 非空 | `43004` 尚未派工，不能开始施工 |
 | `FINISH_SERVICE` | `order.service_report_ready_at` 非空 | `43005` 施工报工未完成，不能送核销 |
-| `COMPLETE` | 核销校验（A4 接入） | `43006` 核销校验尚未接入，暂不能完成订单 |
+| `COMPLETE` | 核销校验（A7 接入） | `43006` 核销校验尚未接入，暂不能完成订单 |
 
 `43001` 与 `43002` 是 Spec 已定义的码（接车未完成、防护照片未上传）；`43003`/`43004`/`43005`
-按同一段位新增。`43006` 是分阶段实现期间的显式拒绝，A4/A6 接入后不再出现。
+按同一段位新增。`43006` 是分阶段实现期间的显式拒绝，A7 核销接入后不再出现。
 
 时间列由各自阶段写入，本步只负责读取：接车检查（A3）写 `check_in_completed_at`，
 车主确认（A4）写 `owner_confirmed_at`，派工（A5）写 `assigned_at`，报工（A6）写

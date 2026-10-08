@@ -2429,12 +2429,12 @@
         },
         "x-roles": "MERCHANT",
         "x-implementation-status": "pickup-inspection-implemented",
-        "description": "手填里程、七图一次提交；本店/本人归属与CLEAN校验。详见 PICKUP_INSPECTION.md，车主确认与派工未开放。"
+        "description": "七图接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
       }
     },
     "/api/check/pickup/confirm": {
       "post": {
-        "summary": "车主确认接车单",
+        "summary": "车主确认接车单或提出异议",
         "operationId": "post_api_check_pickup_confirm",
         "tags": [
           "check"
@@ -2479,6 +2479,21 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "409": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "422": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "429": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
+          },
+          "503": {
+            "description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"
           }
         },
         "security": [
@@ -2492,11 +2507,38 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "additionalProperties": true
+                "additionalProperties": false,
+                "required": [
+                  "order_id",
+                  "decision"
+                ],
+                "properties": {
+                  "order_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "decision": {
+                    "type": "string",
+                    "enum": [
+                      "CONFIRM",
+                      "DISPUTE"
+                    ]
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500,
+                    "description": "DISPUTE 必填，CONFIRM 禁止"
+                  }
+                }
               }
             }
           }
-        }
+        },
+        "x-roles": "OWNER",
+        "x-implementation-status": "pickup-inspection-implemented",
+        "description": "七图接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
       }
     },
     "/api/check/protection/upload": {
@@ -6036,7 +6078,7 @@
         },
         "x-roles": "MERCHANT",
         "x-implementation-status": "order-fulfillment-state-machine-implemented",
-        "description": "前端只能请求动作，不能提交目标状态；矩阵、前置、行锁与幂等审计均由服务端判定。接车证据(A3)、车主确认与派工(A4/A5)、报工(A6)、核销(A4)未接入时按 fail-closed 返回 43001/43003/43004/43005/43006。详见 ORDER_FULFILLMENT.md。"
+        "description": "前端只能请求动作，不能提交目标状态；矩阵、前置、行锁与幂等审计均由服务端判定。接车证据(A3)与车主决定(A4)已接入；缺证据或缺确认仍拒绝。派工(A5)、报工(A6)、核销(A7)按阶段接入，缺前置按 fail-closed 返回 43001/43003/43004/43005/43006。详见 ORDER_FULFILLMENT.md。"
       }
     },
     "/api/check/pickup/context": {
@@ -6111,7 +6153,7 @@
         ],
         "x-roles": "MERCHANT",
         "x-implementation-status": "pickup-inspection-implemented",
-        "description": "手填里程、七图一次提交；本店/本人归属与CLEAN校验。详见 PICKUP_INSPECTION.md，车主确认与派工未开放。"
+        "description": "七图接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
       }
     },
     "/api/check/pickup/{order}": {
@@ -6186,7 +6228,7 @@
         ],
         "x-roles": "OWNER,MERCHANT",
         "x-implementation-status": "pickup-inspection-implemented",
-        "description": "手填里程、七图一次提交；本店/本人归属与CLEAN校验。详见 PICKUP_INSPECTION.md，车主确认与派工未开放。"
+        "description": "七图接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
       }
     },
     "/api/check/pickup/{order}/files/{file}/access": {
@@ -6271,7 +6313,7 @@
         ],
         "x-roles": "OWNER,MERCHANT",
         "x-implementation-status": "pickup-inspection-implemented",
-        "description": "手填里程、七图一次提交；本店/本人归属与CLEAN校验。详见 PICKUP_INSPECTION.md，车主确认与派工未开放。"
+        "description": "七图接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
       }
     },
     "/api/merchant/files/upload": {
@@ -6365,7 +6407,7 @@
         },
         "x-roles": "MERCHANT",
         "x-implementation-status": "pickup-inspection-implemented",
-        "description": "手填里程、七图一次提交；本店/本人归属与CLEAN校验。详见 PICKUP_INSPECTION.md，车主确认与派工未开放。"
+        "description": "七图接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
       }
     },
     "/api/merchant/files/{id}/access": {
@@ -6440,7 +6482,7 @@
         ],
         "x-roles": "MERCHANT",
         "x-implementation-status": "pickup-inspection-implemented",
-        "description": "手填里程、七图一次提交；本店/本人归属与CLEAN校验。详见 PICKUP_INSPECTION.md，车主确认与派工未开放。"
+        "description": "七图接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
       }
     }
   },

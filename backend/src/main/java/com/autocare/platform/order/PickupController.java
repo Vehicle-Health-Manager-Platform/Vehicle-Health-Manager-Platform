@@ -23,9 +23,17 @@ public class PickupController {
     private static ResponseEntity<?> ok(Object data){return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(ApiResponse.success(data));}
     @GetMapping("/context")public ResponseEntity<?> context(@AuthenticationPrincipal Jwt jwt,@RequestParam("order_id")long order){ServiceCatalog.validateId(order);return ok(service().context(MerchantActor.from(jwt),order));}
     @PostMapping("/submit")public ResponseEntity<?> submit(@AuthenticationPrincipal Jwt jwt,@RequestHeader(value="Idempotency-Key",required=false)String key,@RequestBody JsonNode body){return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(service().submit(MerchantActor.from(jwt),key,PickupInput.parse(body)));}
+    @PostMapping("/confirm")public ResponseEntity<?> confirm(@AuthenticationPrincipal Jwt jwt,@RequestHeader(value="Idempotency-Key",required=false)String key,@RequestBody JsonNode body){
+        var owner=VehicleOwner.from(jwt);
+        com.autocare.platform.common.write.WriteIntegrityService.normalizeKey(key);
+        if(body==null||!body.isObject()||body.size()<2||body.size()>3||!body.has("order_id")||!body.has("decision")||!body.get("decision").isTextual()||(body.has("reason")&&!body.get("reason").isTextual()))throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"接车单操作无效");
+        body.fieldNames().forEachRemaining(field->{if(!java.util.Set.of("order_id","decision","reason").contains(field))throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"接车单操作无效");});
+        long id=ReservationInput.id(body.get("order_id"));
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(service().decide(owner,key,id,body.get("decision").asText(),body.has("reason")?body.get("reason").asText():null));
+    }
     @GetMapping("/{order}")public ResponseEntity<?> detail(@AuthenticationPrincipal Jwt jwt,@PathVariable long order){ServiceCatalog.validateId(order);return ok(service().detail(actor(jwt),order));}
     @GetMapping("/{order}/files/{file}/access")public ResponseEntity<?> file(@AuthenticationPrincipal Jwt jwt,@PathVariable long order,@PathVariable long file){ServiceCatalog.validateId(order);ServiceCatalog.validateId(file);var signed=access.sign(service().fileOwner(actor(jwt),order,file),file);return ok(Map.of("url",signed.url(),"expires_at",signed.expiresAt()));}
-    @ExceptionHandler(ResponseStatusException.class)ResponseEntity<?> failure(ResponseStatusException e){int status=e.getStatusCode().value();return ResponseEntity.status(status).cacheControl(CacheControl.noStore()).body(ApiResponse.error(status==400?40001:status*100,e.getReason()));}
+    @ExceptionHandler(ResponseStatusException.class)ResponseEntity<?> failure(ResponseStatusException e){int status=e.getStatusCode().value();int code=e instanceof FulfillmentConflict conflict?conflict.code:status==400?40001:status*100;return ResponseEntity.status(status).cacheControl(CacheControl.noStore()).body(ApiResponse.error(code,e.getReason()));}
     @ExceptionHandler(UploadHttpException.class)ResponseEntity<?> upload(UploadHttpException e){var response=ResponseEntity.status(e.status()).cacheControl(CacheControl.noStore());if(e.retry()>0)response.header("Retry-After",String.valueOf(e.retry()));return response.body(ApiResponse.error(e.status()*100,e.getMessage()));}
     @ExceptionHandler({org.springframework.dao.DataAccessException.class,UploadException.class})ResponseEntity<?> unavailable(){return ResponseEntity.status(503).cacheControl(CacheControl.noStore()).body(ApiResponse.error(50300,"接车服务暂不可用，请使用原幂等键重试"));}
 }

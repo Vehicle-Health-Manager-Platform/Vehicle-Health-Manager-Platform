@@ -79,9 +79,40 @@ public class PickupInspection {
         throw error(HttpStatus.FORBIDDEN,"无权查看接车单");
     }
     public Map<String,Object> detail(Object actor,long id){return db.reads.execute(tx->{authorize(actor,id);return projection(db.one("SELECT * FROM pickup_check WHERE order_id=? AND is_deleted=0",id));});}
+    public JsonNode decide(VehicleOwner owner,String key,long id,String decision,String reason){
+        if(decision==null||!Set.of("CONFIRM","DISPUTE").contains(decision))throw error(HttpStatus.BAD_REQUEST,"接车单操作无效");
+        String note=reason==null?null:reason.strip();
+        if(("DISPUTE".equals(decision)&&(note==null||note.isEmpty())) || (note!=null&&(note.isEmpty()||note.length()>500)) || ("CONFIRM".equals(decision)&&note!=null))
+            throw error(HttpStatus.BAD_REQUEST,"异议原因须为 1–500 字；确认时不填写原因");
+        var body=note==null?Map.of("order_id",id,"decision",decision):Map.of("order_id",id,"decision",decision,"reason",note);
+        return db.writes.execute(new Actor("user",owner.id()),"POST","/api/check/pickup/confirm",key,db.mapper.valueToTree(body),()->{
+            db.owner(owner,true);
+            var row=db.one("SELECT merchant_id,slot_id FROM `order` WHERE id=? AND user_id=? AND is_deleted=0",id,owner.id());
+            db.lockShop(ReservationStore.number(row,"merchant_id"));
+            if(row.get("slot_id")!=null)db.one("SELECT id FROM appointment_slot WHERE id=? FOR UPDATE",row.get("slot_id"));
+            db.one("SELECT id FROM `order` WHERE id=? AND user_id=? AND is_deleted=0 FOR UPDATE",id,owner.id());
+        },()->{
+            var order=db.one("SELECT * FROM `order` WHERE id=? FOR UPDATE",id);
+            var sheet=db.one("SELECT * FROM pickup_check WHERE order_id=? AND is_deleted=0 FOR UPDATE",id);
+            if(!OrderStatus.RECEIVED.equals(order.get("status")) || ((Number)sheet.get("owner_confirm")).intValue()!=0 || order.get("check_in_completed_at")==null)
+                throw new FulfillmentConflict(40905,"当前接车单不可确认或提出异议，请刷新后查看");
+            Instant now=db.now();boolean disputed="DISPUTE".equals(decision);
+            String target=disputed?OrderStatus.DISPUTED:OrderStatus.RECEIVED;
+            String action=disputed?"ORDER_PICKUP_DISPUTE":"ORDER_PICKUP_CONFIRM";
+            var before=projection(sheet);
+            db.jdbc.update("UPDATE pickup_check SET owner_confirm=?,confirm_at=?,dispute_reason=? WHERE id=?",disputed?2:1,ReservationStore.time(now),note,sheet.get("id"));
+            if(disputed){
+                if(!OrderStatus.can(OrderStatus.RECEIVED,target))throw new FulfillmentConflict(40905,"当前订单不可提出异议");
+                db.jdbc.update("UPDATE `order` SET status='DISPUTED' WHERE id=? AND status='RECEIVED'",id);
+                db.jdbc.update("INSERT INTO order_status_transition(order_id,merchant_id,from_status,to_status,action,actor_type,actor_id,note,occurred_at) VALUES(?,?,'RECEIVED','DISPUTED',?,'user',?,?,?)",id,order.get("merchant_id"),action,owner.id(),note,ReservationStore.time(now));
+            }else db.jdbc.update("UPDATE `order` SET owner_confirmed_at=? WHERE id=? AND status='RECEIVED'",ReservationStore.time(now),id);
+            var after=projection(db.one("SELECT * FROM pickup_check WHERE id=?",sheet.get("id")));
+            return new Change(action,"pickup_check",ReservationStore.number(sheet,"id"),before,after,after);
+        });
+    }
     private Map<String,Object> projection(Map<String,Object> row){
         var result=new LinkedHashMap<String,Object>();long check=ReservationStore.number(row,"id");
-        result.put("pickup_check_id",check);result.put("order_id",row.get("order_id"));result.put("status",db.one("SELECT status FROM `order` WHERE id=?",row.get("order_id")).get("status"));result.put("owner_confirm",row.get("owner_confirm"));result.put("arrived_at",ReservationStore.iso(row.get("arrived_at")));
+        result.put("pickup_check_id",check);result.put("order_id",row.get("order_id"));result.put("status",db.one("SELECT status FROM `order` WHERE id=?",row.get("order_id")).get("status"));result.put("owner_confirm",row.get("owner_confirm"));result.put("confirm_at",ReservationStore.iso(row.get("confirm_at")));result.put("dispute_reason",row.get("dispute_reason"));result.put("arrived_at",ReservationStore.iso(row.get("arrived_at")));
         result.put("mileage",row.get("mileage"));result.put("mileage_source",row.get("mileage_source"));var base=db.parse(row.get("mileage_baseline"));result.put("mileage_baseline",base);result.put("mileage_delta",((Number)row.get("mileage")).longValue()-base.path("mileage").asLong());
         result.put("mileage_reason",row.get("mileage_reason"));result.put("arrival_reason",row.get("arrival_reason"));result.put("fuel_level",row.get("fuel_level"));result.put("damage_status",row.get("damage_status"));result.put("damages",db.parse(row.get("damage_marks")));
         var photos=new LinkedHashMap<String,Object>();for(var file:db.jdbc.queryForList("SELECT photo_slot,file_id FROM pickup_check_file WHERE pickup_check_id=?",check))photos.put(file.get("photo_slot").toString(),file.get("file_id"));result.put("photos",photos);return result;

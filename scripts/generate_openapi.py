@@ -430,7 +430,7 @@ def main():
     action = operation("post", "/api/merchant/orders/{id}/actions", "本店订单履约状态操作", "F08,F14,F16,F18")
     action["x-roles"] = "MERCHANT"
     action["x-implementation-status"] = "order-fulfillment-state-machine-implemented"
-    action["description"] = "前端只能请求动作，不能提交目标状态；矩阵、前置、行锁与幂等审计均由服务端判定。接车证据(A3)、车主确认与派工(A4/A5)、报工(A6)、核销(A4)未接入时按 fail-closed 返回 43001/43003/43004/43005/43006。详见 ORDER_FULFILLMENT.md。"
+    action["description"] = "前端只能请求动作，不能提交目标状态；矩阵、前置、行锁与幂等审计均由服务端判定。接车证据(A3)与车主决定(A4)已接入；缺证据或缺确认仍拒绝。派工(A5)、报工(A6)、核销(A7)按阶段接入，缺前置按 fail-closed 返回 43001/43003/43004/43005/43006。详见 ORDER_FULFILLMENT.md。"
     action["parameters"][0]["schema"] = identifier
     action["requestBody"]["content"]["application/json"]["schema"] = {"type": "object", "additionalProperties": False,
         "required": ["action"], "properties": {"action": {"type": "string", "enum": fulfillment_actions},
@@ -458,6 +458,7 @@ def main():
     for method, path, roles, title in [
         ("get", "/api/check/pickup/context", "MERCHANT", "本店接车上下文与里程基线"),
         ("post", "/api/check/pickup/submit", "MERCHANT", "验预约码并提交完整接车单"),
+        ("post", "/api/check/pickup/confirm", "OWNER", "车主确认接车单或提出异议"),
         ("get", "/api/check/pickup/{order}", "OWNER,MERCHANT", "本人或本店接车单"),
         ("get", "/api/check/pickup/{order}/files/{file}/access", "OWNER,MERCHANT", "接车单关联图片短时访问"),
         ("post", "/api/merchant/files/upload", "MERCHANT", "商家本人私有图片上传"),
@@ -465,16 +466,18 @@ def main():
         item = operation(method, path, title, "F14")
         item["x-roles"] = roles
         item["x-implementation-status"] = "pickup-inspection-implemented"
-        item["description"] = "手填里程、七图一次提交；本店/本人归属与CLEAN校验。详见 PICKUP_INSPECTION.md，车主确认与派工未开放。"
+        item["description"] = "七图接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
         for parameter in item["parameters"]:
             if parameter["in"] == "path": parameter["schema"] = identifier
         if path.endswith("/context"): item["parameters"].append({"name": "order_id", "in": "query", "required": True, "schema": identifier})
         if path.endswith("/submit"): item["requestBody"]["content"]["application/json"]["schema"] = {"$ref": "#/components/schemas/PickupSubmit"}
+        if path.endswith("/confirm"): item["requestBody"]["content"]["application/json"]["schema"] = {"type": "object", "additionalProperties": False, "required": ["order_id", "decision"], "properties": {"order_id": identifier, "decision": {"type": "string", "enum": ["CONFIRM", "DISPUTE"]}, "reason": {"type": "string", "minLength": 1, "maxLength": 500, "description": "DISPUTE 必填，CONFIRM 禁止"}}}
         if path.endswith("/upload"): item["requestBody"] = {"required": True, "content": {"multipart/form-data": {"schema": {"type": "object", "additionalProperties": False, "required": ["file"], "properties": {"file": {"type": "string", "format": "binary"}}}}}}
         for code in (404, 409, 422, 429, 503): item["responses"][str(code)] = {"description": "资源不可用/状态冲突/验码或图片无效/限流/暂不可用，见契约"}
         document["paths"][path] = {method: item}
     schemas["OwnerOrder"]["properties"]["appointment_code"] = {"type": "string", "pattern": "^[0-9]{6}$", "description": "仅本人PAID详情返回；商家投影永不包含"}
     schemas["MerchantOrder"]["properties"]["allowed_actions"]["description"] = "PAID使用接车检查，不再返回RECEIVE；其他动作仍由状态矩阵决定"
+    count = sum(len(value) for value in document["paths"].values())
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")
 

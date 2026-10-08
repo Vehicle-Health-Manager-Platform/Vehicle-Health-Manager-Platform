@@ -2,7 +2,7 @@
 
 2026-10-08。依据：[已确认规格](../superpowers/specs/2026-10-07-pickup-inspection-design.md)。
 
-商家完成七图检查单后，真实提交 PAID→RECEIVED。车主确认、派工、施工、核销仍由后续步骤提供；不能把接车成功视为施工完成或真实收款。
+商家完成七图检查单后，真实提交 PAID→RECEIVED。车主确认和异议见[A4 契约](PICKUP_OWNER_DECISION.md)；派工、施工、核销仍由后续步骤提供；不能把接车成功视为施工完成或真实收款。
 
 ## 入口与身份
 
