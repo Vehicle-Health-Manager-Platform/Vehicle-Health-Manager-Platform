@@ -1,10 +1,10 @@
 # A5.3 商家派工与技师工作台界面执行记录
 
-日期：2026-10-08。状态：A5.3 界面阶段本机验证通过并上传阶段分支，尚未合并；A5.2 后端（PR #37）同样未合并。A5.4 安全与竞争验证、A5.5 本机联调与收口后续交付。
+日期：2026-10-08。状态：A5.3 界面阶段验证通过，已上传 [PR #38](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/38)，尚未合并；A5.2 后端（PR #37）同样未合并。A5.4 安全与竞争验证、A5.5 本机联调与收口后续交付。
 
 ## 基线与变更
 
-基于 A5.2 最终提交 `9176aa2` 建立 `codex/a5-dispatch-ui`。A5.2 已上传 [PR #37](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/37)，前序 [PR #36](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/36)（A5.1）、[PR #35](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/35)（A4）同样未合并，阶段 PR 以直接前序分支为基线，不自动合并或部署。
+基于 A5.2 最终提交 `9176aa2` 建立 `codex/a5-dispatch-ui`，实现提交 `587359b`，文档收口提交 `be63751`。阶段 PR 为 [PR #38](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/38)，以直接前序分支 `codex/a5-dispatch-backend` 为基线。前序 [PR #37](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/37)（A5.2）、[PR #36](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/36)（A5.1）、[PR #35](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/35)（A4）同样未合并，本阶段不自动合并或部署。
 
 本阶段只改小程序前端，无数据库迁移、无后端改动。
 
@@ -32,7 +32,9 @@
 - `npm test --workspace @autocare/miniapp`：**140 项通过**（A5.2 基线 120 项 + 新增 20 项），失败/跳过均 0。
 - `npm run build:mp-weixin --workspace @autocare/miniapp`、`npm run build:h5 --workspace @autocare/miniapp`：两端构建通过；产物 `app.json` 已包含 `pages/technician/orders`、`pages/technician/order-detail`、`pages/merchant/dispatch`。
 - `python scripts/generate_traceability.py`、`build_init_sql.py`、`generate_openapi.py`：重新生成后无额外差异（89 个操作不变，本阶段不动后端契约）。
-- `git diff --check` 通过。
+- `git diff --check` 通过；`docs/` 下 355 条相对链接全部有效（顺手修正履约规格里一处指向 `../api/ORDER_FULFILLMENT.md` 的死链）。
+
+GitHub 六项 CI（`be63751`）全部通过：web、miniapp、backend、schema-and-ocr、schema-mysql、compose-smoke。miniapp job 执行 140 项离线测试并以 0 失败通过，随后完成 mp-weixin 与 H5 构建；backend 沿用 A5.2 基线（本阶段未改后端）。
 
 新增测试覆盖：候选与工单分页/筛选协议、越界字段与最小投影、`can_accept` 与状态组合的一致性、派工与接单的成功响应断言、非法输入不发出请求、服务端错误码（`40001`/`40100`/`40300`/`40400`/`40905`/`43001`/`43003`/`43004`/`50300`）翻译、未登录不请求、传输失败分类与未配置服务、同键重试与换键、重复点击抑制、切账号与离开页面丢弃迟到响应、确认回调守卫、技师会话跨页共享与退出清理。测试数据均合成，未使用真实微信身份。
 
