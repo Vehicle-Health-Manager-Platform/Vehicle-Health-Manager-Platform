@@ -35,6 +35,15 @@ public class JdbcUploadRequests {
     }
     private void authorize(UploadOwner owner) {
         if (!Instant.now().isBefore(owner.tokenExpires())) throw new UploadHttpException(401, "登录已失效");
+        if(owner.technician()!=null){
+            var actor=owner.technician();
+            var session=jdbc.queryForList("SELECT id FROM auth_session WHERE id=? AND subject_type='staff_account' AND subject_id=? AND role='TECHNICIAN' AND app_id=? AND merchant_id=? AND binding_id=? AND revoked_at IS NULL AND expires_at>UTC_TIMESTAMP() FOR UPDATE",actor.session(),actor.staffId(),actor.appId(),actor.merchantId(),actor.bindingId());
+            var shop=jdbc.queryForList("SELECT id FROM merchant WHERE id=? AND status=1 AND is_deleted=0 FOR UPDATE",actor.merchantId());
+            var staff=jdbc.queryForList("SELECT id FROM staff_account WHERE id=? AND merchant_id=? AND role='TECHNICIAN' AND status='ACTIVE' AND is_deleted=0 FOR UPDATE",actor.staffId(),actor.merchantId());
+            var binding=jdbc.queryForList("SELECT id FROM staff_wechat_identity WHERE id=? AND staff_account_id=? AND app_id=? AND status='ACTIVE' AND is_deleted=0 AND unbound_at IS NULL FOR UPDATE",actor.bindingId(),actor.staffId(),actor.appId());
+            if(!"staff_account".equals(owner.type()) || owner.id()!=actor.staffId() || owner.merchantId()!=actor.merchantId() || !owner.session().equals(actor.session()) || session.isEmpty() || shop.isEmpty() || staff.isEmpty() || binding.isEmpty())throw new UploadHttpException(401,"技师登录已失效");
+            return;
+        }
         if ("staff_account".equals(owner.type())) {
             var sessions = jdbc.query("SELECT s.id FROM auth_session s JOIN staff_account a ON a.id=s.subject_id JOIN merchant m ON m.id=a.merchant_id "
                 + "WHERE s.id=? AND s.subject_type='staff_account' AND s.subject_id=? AND s.role='MERCHANT' AND s.app_id='merchant-account' "

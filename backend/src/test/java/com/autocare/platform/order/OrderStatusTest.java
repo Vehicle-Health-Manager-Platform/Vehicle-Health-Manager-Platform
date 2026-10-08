@@ -68,7 +68,7 @@ class OrderStatusTest {
     @Test void actionsFollowTheFulfillmentSequenceAndAgreeWithTheMatrix(){
         assertEquals(List.of(),OrderStatus.actions(OrderStatus.PAID));
         assertEquals(List.of(),OrderStatus.actions(OrderStatus.RECEIVED));
-        assertEquals(List.of(OrderStatus.FINISH_SERVICE),OrderStatus.actions(OrderStatus.IN_SERVICE));
+        assertEquals(List.of(),OrderStatus.actions(OrderStatus.IN_SERVICE));
         assertEquals(List.of(OrderStatus.COMPLETE),OrderStatus.actions(OrderStatus.PENDING_VERIFY));
         assertEquals(List.of(),OrderStatus.actions(OrderStatus.PENDING_PAYMENT));
         assertEquals(List.of(),OrderStatus.actions(OrderStatus.COMPLETED));

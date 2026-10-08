@@ -1,0 +1,55 @@
+# A6.1 防护与报工后端执行记录
+
+日期：2026-10-08。阶段分支 `codex/a6-service-backend`，基线为 A5.6 `9ec6ada`，堆叠 base `codex/a5-dispute`。
+
+## 已实现
+
+- V014：复用 repair_protection、technician_report；新增私有证据关联、报工提交元数据两表，总计 54 表。新增文件关联唯一、单订单提交唯一；重复迁移不改变历史。
+- 原核心路径兼容：商家 `/api/check/protection/upload`、技师 `/api/tech/report/submit`、技师 `/api/tech/sign`。新增两种角色的施工详情与证据图片访问、技师本人图片上传/访问，共 9 个施工相关操作（含 3 个原核心路径实现），OpenAPI 总计 97 操作。
+- 复用 A5 本人派工检查：TECH 会话/AppID/绑定、员工与商家有效；只允许已接单本人工单报工/签字。车主确认 1/3 均有效，未解决争议统一阻断 43007。
+- 防护必含座椅套与方向盘套；无有效防护照返回 43002。完整施工/故障件/完工照、方案、分析、配件声明与整数分钟齐全后才允许提交；无故障件/无配件需显式声明。
+- 防护与完整报工不可修改；签字 PNG 是单独私有证据。签字时再次核对记录与全部图片，在同事务写报工已质检、就绪时间、PENDING_VERIFY、双审计与缓存；并发只有一次迁移。通用商家 FINISH_SERVICE 在 HTTP 及内部服务均返回 43005。
+- 读取本店或本人订单，无车主/车辆/付款/预约码/工号身份字段；关联安全文件按订单授权获得短期签名，所有业务响应 no-store。
+
+规格、计划、契约分别见[设计](../superpowers/specs/2026-10-08-service-work-design.md)、[中文计划](../superpowers/plans/2026-10-08-service-work.md)、[接口说明](../api/SERVICE_WORK.md)。Compose 初始化与 MySQL 重复迁移验证同步。
+
+## 本地验证
+
+首轮相关 72 项：71 通过，技师上传新增测试因夹具没有加载 V002 工号绑定表而失败；已修复夹具，不放宽鉴权。补充未配置测试、防护/报工回滚测试后，最终相关 **75/75 通过**，0 失败/错误/跳过。Docker Maven 进程退出码 0；测试报告与本次代码匹配。
+
+本阶段新增真实 MySQL 13 项、HTTP 7 项、未配置 2 项，以及原上传套件新增 2 项（共 24 项）。覆盖：完整链路与签字状态、重放与异体、缺防护/报工、本人/本店隔离、确认 3、OPEN 争议、解绑与撤销、私有文件归属/扫描/删除/类型/复用、无配件与无故障件、历史记录拒绝、防护/报工/签字失败回滚、并发签字只一次。上传测试验证绑定/员工/商家/会话变化及真实 multipart 角色边界。
+
+生成追踪表 141 行、基线 SQL 39 表、OpenAPI 97 操作及 OCR Python 编译已通过；基线迁移不被重写成升级后结构。Git diff 空白检查通过。
+
+## 验证命令
+
+本地使用缓存 `maven:3.9-eclipse-temurin-17` Docker 镜像挂载仓库及 `.cache/maven`，真实 Testcontainers MySQL 使用 Docker socket 与 `TESTCONTAINERS_HOST_OVERRIDE=host.docker.internal`、`DOCKER_API_VERSION=1.44`、`TESTCONTAINERS_RYUK_DISABLED=true`（仅本地）。
+
+```sh
+mvn -q -Dapi.version=1.44 -Dtest=ServiceWorkHttpTest,ServiceWorkNoDatabaseTest,JdbcServiceWorkTest,JdbcUploadHttpTest,UploadHttpTransportTest,OrderStatusTest,MerchantOrdersHttpTest,JdbcOrderFulfillmentTest test
+# 锁范围修复后，仅重跑发生变更的施工套件
+mvn -q -Dapi.version=1.44 -Dtest=JdbcServiceWorkTest test
+python scripts/generate_traceability.py
+python scripts/build_init_sql.py
+python scripts/generate_openapi.py
+python -m py_compile services/ocr/src/server.py
+git diff --check
+```
+
+Maven 命令工作目录为 backend；Python/Git 命令工作目录为仓库根目录。CI 使用 Ubuntu Java 17，自动运行全量后端、147 项小程序、微信/H5 构建、新库 V001–V014 双次迁移和 Compose 冒烟。Ryuk 关闭不进入 CI 配置，不清理其他人的容器。
+
+## 锁范围复核
+
+防护关联查询最初使用联表 FOR UPDATE，可能在技师持有商家锁后额外锁商家员工，与商家上传的鉴权锁顺序相反。改为仅锁关联和文件行，员工归属采用嵌套非锁定查询；真实 MySQL 新增“另一事务持有商家员工锁时，本人签字仍成功”验证。修复后施工套件 **13/13 通过**。此前完整相关套件 **75/75 通过**；合计本地验证 **76 个独立用例**，不是把两次运行重复相加。
+
+## GitHub 与合并顺序
+
+阶段分支已上传 [PR #42](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/42)，base=codex/a5-dispute。实现 `9f4f15a` [首轮 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37789062362) 六项全绿，后端 **347/347**、小程序 **147/147**。锁范围修复 `6ee0b86` [最终代码 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37790072150) **六项全绿**：web、miniapp、backend、schema-and-ocr、schema-mysql、compose-smoke；后端 **348/348**、小程序 **147/147**，0 失败/错误/跳过，微信/H5 构建通过。文档收口提交的最新检查仍以 PR Checks 为准。未合并。
+
+#41 当前 base 为 codex/a5-dispatch-e2e。先完成 #35/#36 依赖，再按 #37→#38→#39→#40→#41 顺序，在前一分支合入 main 后，将当前 PR base 改回 main、核对差异和 CI，再合并。A6.1 堆叠在 #41，待 #41 合并后同样处理；不提前批量改 base，不把 #41 合进 #40 分支。本次没有执行合并。
+
+## 下一阶段与边界
+
+A6.2 接入商家防护页、技师三类图片/方案/配件/工时/签名板和客户端验证；A6.3 真实本地 HTTP 端到端验收。当前不宣称页面、真实相机、真机、本机测试证书下直连预览或真实微信登录已验收。
+
+退款/取消争议订单归 A7；第二次异议、超时自动处理不在本阶段。签字只送待核销，不自动 COMPLETED，不执行评价/档案回写/经验卡片。

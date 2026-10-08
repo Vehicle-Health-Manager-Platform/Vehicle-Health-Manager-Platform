@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 @RestController
-@RequestMapping({"/api/file", "/api/merchant/files"})
+@RequestMapping({"/api/file", "/api/merchant/files", "/api/tech/files"})
 public class UploadHttpController {
     private final ObjectProvider<UploadHttpService> services;
     private final PrivateFileAccessService access;

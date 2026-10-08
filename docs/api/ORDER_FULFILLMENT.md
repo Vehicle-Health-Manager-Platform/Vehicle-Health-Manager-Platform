@@ -7,7 +7,7 @@
 并提供商家侧的履约操作入口。接车单、车主确认、派工、报工与核销的**业务内容**分别在
 A3–A6 实现；本步先把它们的判定挂点与审计通道建好。
 
-阶段进展：A3 已通过接车检查接口写入接车证据并迁至 `RECEIVED`；A4 已通过[车主接车单决策](PICKUP_OWNER_DECISION.md)写入 `owner_confirmed_at` 或迁至 `DISPUTED`。A5.2 已接入[商家派工与技师本人接单](TECHNICIAN_DISPATCH.md)，A5.6 已接入[争议处理与恢复](DISPUTE_RESOLUTION.md)，报工和核销仍按后续阶段处理。
+阶段进展：A3 已通过接车检查接口写入接车证据并迁至 `RECEIVED`；A4 已通过[车主接车单决策](PICKUP_OWNER_DECISION.md)写入 `owner_confirmed_at` 或迁至 `DISPUTED`。A5.2 已接入[商家派工与技师本人接单](TECHNICIAN_DISPATCH.md)，A5.6 已接入[争议处理与恢复](DISPUTE_RESOLUTION.md)，A6.1 已接入[防护、完整报工与本人质检签字](SERVICE_WORK.md)，签字才进入待核销；核销仍待 A7。
 
 ## 状态
 
@@ -55,7 +55,7 @@ A3–A6 实现；本步先把它们的判定挂点与审计通道建好。
 | --- | --- | --- | --- |
 | 接车检查提交 | `RECEIVED` | `ORDER_CHECK_IN` | A3 已接入专用接车接口，通用 RECEIVE 已停止对外开放 |
 | 技师本人接单 | `IN_SERVICE` | `ORDER_TECH_ACCEPT` | A5.2 已接入专用接单接口；商家通用 START_SERVICE 始终返回 43004 |
-| `FINISH_SERVICE` | `PENDING_VERIFY` | `ORDER_SERVICE_FINISH` | A2 建好判定，A6 补报工 |
+| `FINISH_SERVICE` | `PENDING_VERIFY` | `ORDER_SERVICE_FINISH` | 通用入口停用 43005；A6 本人质检签字迁移 |
 | `COMPLETE` | `COMPLETED` | `ORDER_COMPLETE` | A7 补核销校验 |
 
 ## 接口
@@ -86,7 +86,7 @@ A3–A6 实现；本步先把它们的判定挂点与审计通道建好。
 | 商家通用 `START_SERVICE` | 已停用 | `43004` 请由被派工技师本人接单并开始施工 |
 | 商家处理争议（专用接口） | 本店 `ORDER` 存在 `OPEN` 争议且订单 `DISPUTED` | `40905`；见[争议处理与恢复](DISPUTE_RESOLUTION.md) |
 | 车主复核争议（专用接口） | 争议 `OPEN`、接车单 `owner_confirm=2`、接受前已有处理记录、`from_status` 可恢复 | `40905`/`43008`；见[争议处理与恢复](DISPUTE_RESOLUTION.md) |
-| `FINISH_SERVICE` | `order.service_report_ready_at` 非空 | `43005` 施工报工未完成，不能送核销 |
+| `FINISH_SERVICE` | 通用动作停用，完整报工与本人质检签字走 `/api/tech/sign` | `43005` 请由本人报工并质检签字 |
 | `COMPLETE` | 核销校验（A7 接入） | `43006` 核销校验尚未接入，暂不能完成订单 |
 
 `43001` 与 `43002` 是 Spec 已定义的码（接车未完成、防护照片未上传）；`43003`/`43004`/`43005`
@@ -97,7 +97,7 @@ A3–A6 实现；本步先把它们的判定挂点与审计通道建好。
 不走本节的通用动作接口；通用矩阵 `actions(DISPUTED)` 始终为空，商家与技师都无法用它恢复争议订单。
 
 时间列由各自阶段写入，本步只负责读取：接车检查（A3）写 `check_in_completed_at`，
-车主确认（A4）写 `owner_confirmed_at`，派工（A5）写 `assigned_at`，报工（A6）写
+车主确认（A4）写 `owner_confirmed_at`，派工（A5）写 `assigned_at`，完整报工后质检签字（A6）写
 `service_report_ready_at`。
 
 ## 审计
@@ -136,7 +136,7 @@ Spec §8.3 已固定接车与施工的路径族（`POST /api/check/pickup/submit
 
 - 它只接受动作名，不接受目标状态，因此不构成"前端直接设置状态"；
 - A3 已改由 `POST /api/check/pickup/submit` 提交接车单并写 `check_in_completed_at`，
-  `RECEIVE` 已从本接口移除；A4–A6 将分别接入对应的业务接口；
+  `RECEIVE`/`START_SERVICE`/`FINISH_SERVICE` 已从本接口移除，分别走接车检查、本人接单、本人完整报工与质检签字；
 - 迁移服务（矩阵、前置、行锁、幂等、审计）保持不变，只换触发它的语义接口。
 
 这一取舍写在此处，避免后续实现者把它当成长期契约。

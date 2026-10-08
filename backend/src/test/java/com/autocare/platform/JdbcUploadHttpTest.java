@@ -33,7 +33,7 @@ class JdbcUploadHttpTest {
     @BeforeAll static void schema() throws Exception {
         var source=new DriverManagerDataSource(mysql.getJdbcUrl(),mysql.getUsername(),mysql.getPassword());jdbc=new JdbcTemplate(source);
         try(var connection=source.getConnection()) {
-            for(String file:List.of("V001__baseline.sql","V003__auth_lifecycle.sql","V004__upload_http.sql","V004__upload_http.sql","V010__pickup_inspection.sql"))
+            for(String file:List.of("V001__baseline.sql","V002__staff_wechat_identity.sql","V003__auth_lifecycle.sql","V004__upload_http.sql","V004__upload_http.sql","V010__pickup_inspection.sql"))
                 ScriptUtils.executeSqlScript(connection,new FileSystemResource(Path.of("..","docs","sql","migrations",file)));
         }
     }
@@ -69,6 +69,17 @@ class JdbcUploadHttpTest {
         String key=UUID.randomUUID().toString();var a=upload(key);var b=service().upload(staff,key,"merchant.png",new ByteArrayInputStream(PrivateUploadTest.PNG));
         assertNotEquals(a.path("data").path("file_id"),b.path("data").path("file_id"));assertEquals(b,service().upload(staff,key,"merchant.png",new ByteArrayInputStream(PrivateUploadTest.PNG)));assertEquals(2,count("upload_request"));assertEquals(2,count("audit_log"));
         jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id=?",staff.session());assertEquals(401,assertThrows(UploadHttpException.class,()->service().upload(staff,key,"merchant.png",new ByteArrayInputStream(PrivateUploadTest.PNG))).status());
+    }
+    @Test void technicianUploadRevalidatesCurrentBindingEmployeeSessionAndShop(){
+        jdbc.update("INSERT INTO merchant(id,merchant_type,name,address,status) VALUES(1002,2,'synthetic-tech-upload','test',1) ON DUPLICATE KEY UPDATE status=1");
+        jdbc.update("INSERT INTO staff_account(id,merchant_id,role,account,status) VALUES(1002,1002,'TECHNICIAN','upload-tech','ACTIVE') ON DUPLICATE KEY UPDATE role='TECHNICIAN',status='ACTIVE'");
+        jdbc.update("DELETE FROM staff_wechat_identity WHERE staff_account_id=1002");jdbc.update("INSERT INTO staff_wechat_identity(id,app_id,openid,staff_account_id) VALUES(1002,'test-app','synthetic-upload-tech',1002)");
+        String session=UUID.randomUUID().toString();jdbc.update("INSERT INTO auth_session(id,subject_type,subject_id,role,app_id,merchant_id,binding_id,refresh_hash,expires_at) VALUES(?,'staff_account',1002,'TECHNICIAN','test-app',1002,1002,?,DATE_ADD(UTC_TIMESTAMP(),INTERVAL 1 HOUR))",session,UUID.randomUUID().toString());
+        var tech=new com.autocare.platform.order.TechnicianActor(1002,1002,1002,"test-app",session,Instant.now().plusSeconds(600));var subject=new UploadOwner(1002,session,tech.expires(),"staff_account",1002,tech);String key=UUID.randomUUID().toString();
+        var first=service().upload(subject,key,"tech.png",new ByteArrayInputStream(PrivateUploadTest.PNG));assertEquals(first,service().upload(subject,key,"tech.png",new ByteArrayInputStream(PrivateUploadTest.PNG)));assertEquals(1,puts);assertEquals(1,count("file_object"));assertEquals("/api/tech/files/upload",jdbc.queryForObject("SELECT request_path FROM upload_request",String.class));
+        var merchantWrapper=new UploadOwner(1002,session,tech.expires(),"staff_account",1002);assertEquals(401,assertThrows(UploadHttpException.class,()->requests.checkOwner(merchantWrapper)).status());
+        jdbc.update("UPDATE staff_wechat_identity SET status='REVOKED',unbound_at=UTC_TIMESTAMP() WHERE id=1002");assertEquals(401,assertThrows(UploadHttpException.class,()->service().upload(subject,key,"tech.png",new ByteArrayInputStream(PrivateUploadTest.PNG))).status());jdbc.update("UPDATE staff_wechat_identity SET status='ACTIVE',unbound_at=NULL WHERE id=1002");
+        jdbc.update("UPDATE staff_account SET status='DISABLED' WHERE id=1002");assertEquals(401,assertThrows(UploadHttpException.class,()->requests.checkOwner(subject)).status());jdbc.update("UPDATE staff_account SET status='ACTIVE' WHERE id=1002");jdbc.update("UPDATE merchant SET status=0 WHERE id=1002");assertEquals(401,assertThrows(UploadHttpException.class,()->requests.checkOwner(subject)).status());jdbc.update("UPDATE merchant SET status=1 WHERE id=1002");jdbc.update("UPDATE auth_session SET binding_id=9999 WHERE id=?",session);assertEquals(401,assertThrows(UploadHttpException.class,()->requests.checkOwner(subject)).status());
     }
     @Test void concurrentReservationHasExactlyOneWinnerAndActorIsolation() throws Exception {
         String key=UUID.randomUUID().toString();var pool=Executors.newFixedThreadPool(6);var start=new CountDownLatch(1);

@@ -20,4 +20,5 @@ public class ReservationConfiguration {
     @Bean PickupInspection pickupInspection(ReservationStore db){return new PickupInspection(db);}
     @Bean TechnicianAssignments technicianAssignments(ReservationStore db,@org.springframework.beans.factory.annotation.Value("${WECHAT_APP_ID:}")String appId){return new TechnicianAssignments(db,appId);}
     @Bean OrderDisputes orderDisputes(ReservationStore db){return new OrderDisputes(db);}
+    @Bean ServiceWork serviceWork(ReservationStore db,TechnicianAssignments assignments,@org.springframework.beans.factory.annotation.Value("${WECHAT_APP_ID:}")String appId){return new ServiceWork(db,assignments,appId);}
 }

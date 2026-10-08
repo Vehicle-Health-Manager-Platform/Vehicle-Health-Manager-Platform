@@ -50,6 +50,7 @@ public class MerchantOrdersController {
         if(!shaped(body))throw invalidAction();
         if(OrderStatus.RECEIVE.equals(body.get("action").textValue()))throw new FulfillmentConflict(43001,"请通过接车检查提交完整接车单");
         if(OrderStatus.START_SERVICE.equals(body.get("action").textValue()))throw new FulfillmentConflict(43004,"请由被派工技师本人接单并开始施工");
+        if(OrderStatus.FINISH_SERVICE.equals(body.get("action").textValue()))throw new FulfillmentConflict(43005,"请由被派工技师本人提交完整报工并质检签字");
         return saved(transitions().apply(actor,key,id,body.get("action").textValue(),body.has("note")?body.get("note").textValue():null));
     }
     @ExceptionHandler(org.springframework.dao.DataAccessException.class)ResponseEntity<?> database(){return ResponseEntity.status(503).cacheControl(CacheControl.noStore()).body(ApiResponse.error(50300,"本店订单暂不可用，请稍后重试"));}

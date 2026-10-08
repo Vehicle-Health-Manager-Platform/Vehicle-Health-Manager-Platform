@@ -30,3 +30,7 @@ PR #14 实现[本人车辆列表、有效车型查询与手动添加](VEHICLE_MA
 
 `POST /api/ai/chat` 已实现并接入小程序 AI Tab，但**真实 DeepSeek 上游调用与真机尚未验收**，
 降级路径与验收项见 [AI 管家接入清单](../operations/AI_CHAT_RUNBOOK.md)。该路径尚未写入 `openapi.json` 草案。
+
+## A6 防护与报工
+
+[A6.1 施工接口](SERVICE_WORK.md)：商家防护、本人完整报工与质检签字、施工记录及关联私有图片。页面与端到端验收见后续 A6.2/A6.3。

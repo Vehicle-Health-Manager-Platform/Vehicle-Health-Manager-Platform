@@ -21,14 +21,15 @@ public class UploadAdmissionFilter extends OncePerRequestFilter {
     private final ObjectProvider<UploadHttpService> services;
     private final ObjectMapper mapper;
     private final Semaphore slots;
+    @org.springframework.beans.factory.annotation.Value("${WECHAT_APP_ID:}") private String appId="";
     public UploadAdmissionFilter(ObjectProvider<UploadHttpService> services,ObjectMapper mapper,int maximum) {
         if(maximum<1) throw new IllegalArgumentException("Upload concurrency must be positive");
         this.services=services;this.mapper=mapper;slots=new Semaphore(maximum);
     }
     @Override protected boolean shouldNotFilter(HttpServletRequest request) {
         String path=request.getServletPath();
-        return !("POST".equals(request.getMethod()) && (path.equals("/api/file/upload") || path.equals("/api/merchant/files/upload")))
-            && !("GET".equals(request.getMethod()) && (path.matches("/api/file/[^/]+/access") || path.matches("/api/merchant/files/[^/]+/access")));
+        return !("POST".equals(request.getMethod()) && (path.equals("/api/file/upload") || path.equals("/api/merchant/files/upload") || path.equals("/api/tech/files/upload")))
+            && !("GET".equals(request.getMethod()) && (path.matches("/api/file/[^/]+/access") || path.matches("/api/merchant/files/[^/]+/access") || path.matches("/api/tech/files/[^/]+/access")));
     }
     @Override protected void doFilterInternal(HttpServletRequest request,HttpServletResponse response,FilterChain chain)
         throws ServletException,IOException {
@@ -37,7 +38,7 @@ public class UploadAdmissionFilter extends OncePerRequestFilter {
             var authentication=SecurityContextHolder.getContext().getAuthentication();
             if(!(authentication instanceof JwtAuthenticationToken token)) throw new UploadHttpException(401,"未登录或登录已失效");
             UploadOwner owner=request.getServletPath().startsWith("/api/merchant/files/")
-                ? UploadOwner.merchant(token.getToken()) : UploadOwner.from(token.getToken());
+                ? UploadOwner.merchant(token.getToken()) : request.getServletPath().startsWith("/api/tech/files/") ? UploadOwner.technician(token.getToken(),appId) : UploadOwner.from(token.getToken());
             boolean upload="POST".equals(request.getMethod());
             if(upload) WriteIntegrityService.normalizeKey(request.getHeader("Idempotency-Key"));
             var service=services.getIfAvailable(); if(service==null) throw UploadHttpException.unavailable();

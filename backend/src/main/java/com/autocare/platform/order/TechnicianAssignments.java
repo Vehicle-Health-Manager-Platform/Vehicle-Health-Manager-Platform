@@ -96,7 +96,7 @@ public class TechnicianAssignments {
             return new Change("ORDER_ASSIGN","technician_assignment",created,Map.of("order_id",id),after,after);
         });
     }
-    private Map<String,Object> own(TechnicianActor actor,long id,boolean lock){
+    Map<String,Object> own(TechnicianActor actor,long id,boolean lock){
         // Check ownership before revealing any state or locking another person's order.
         db.one("SELECT a.id FROM technician_assignment a JOIN `order` o ON o.id=a.order_id WHERE o.id=? AND a.technician_id=? AND a.merchant_id=? AND o.merchant_id=? AND a.is_deleted=0 AND o.is_deleted=0",id,actor.staffId(),actor.merchantId(),actor.merchantId());
         var o=order(id,actor.merchantId(),lock);var a=assignment(id,lock);
