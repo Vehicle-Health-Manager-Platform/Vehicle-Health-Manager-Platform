@@ -11,6 +11,8 @@
 - [A5.3 派工界面执行记录](../progress/A5_3_DISPATCH_UI_EXECUTION.md)：商家派工与技师工单的小程序协议测试、构建与未验收项；真机与真实技师登录属 A5.5。
 - [A5.4 派工安全与竞争执行记录](../progress/A5_4_DISPATCH_VERIFICATION_EXECUTION.md)：员工码/停用/会话撤销与派工接单的真实 MySQL 并发、无死锁、载荷与历史异常证据。
 - [A5 本机派工与本人接单端到端验收](LOCAL_TECHNICIAN_DISPATCH_ACCEPTANCE.md)：合成身份接真实后端容器与隔离 MySQL 的 37 项检查、复现步骤与未验收项。
+- [A5.6 争议处理与恢复执行记录](../progress/A5_6_DISPUTE_RESOLUTION_EXECUTION.md)：商家处理记录、车主复核恢复的 HTTP、真实 MySQL、无死锁、投影无隐私与阶段 GitHub 验证结果。
+- [A5.6 本机争议处理与恢复端到端验收](LOCAL_DISPUTE_ACCEPTANCE.md)：在派工闭环之上新增 32 项争议检查（异议建单、`43007`/`43008`、追加与重放、时间线投影、不接受保持、接受恢复并恢复派工/接单），端到端 69/69。
 
 小程序测试在仓库根目录运行 `npm test --workspace @autocare/miniapp`；登录预检离线测试运行 `python -m unittest scripts/test_check_auth_readiness.py -v`；后端在 `backend` 目录运行 `mvn test`，完整集成测试需 Docker。
 

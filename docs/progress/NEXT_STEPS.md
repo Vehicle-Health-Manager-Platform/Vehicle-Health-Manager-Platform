@@ -1,8 +1,8 @@
 # 下一步规划
 
-更新日期：2026-10-08。当前业务链路已到接车检查与车主决定；已付款订单不会自动关闭，车主未确认或订单有异议时不能派工。用户要求每完成一个阶段整理文档并上传 GitHub，执行规则见[阶段交付规则](STAGE_DELIVERY.md)。
+更新日期：2026-10-08。当前业务链路已到接车检查、车主决定与争议处理恢复；已付款订单不会自动关闭，车主未确认或订单有未解决争议时不能派工。用户要求每完成一个阶段整理文档并上传 GitHub，执行规则见[阶段交付规则](STAGE_DELIVERY.md)。
 
-## 当前优先：A5 已收口，转入争议处理设计与 A6
+## 当前优先：A5 全链路（含争议处理）已收口，转入 A6 防护与报工
 
 A3 已合并至 [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34)。A4 已上传至 [PR #35](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/35)，实现提交 `e0d4077` 六项 CI 通过（后端 271 项、小程序 120 项）。
 
@@ -16,7 +16,9 @@ A5.4 已补齐 A5.2 未覆盖的 T04/T06/T07/T09/T11 证据——员工码重发
 
 A5.5 已用合成身份接真实后端容器与隔离 MySQL 完成端到端：车主确认→候选→派工→本人查询→接单共 **37 项通过**，并验证另一技师/他店/跨角色拒绝、幂等重放、`no-store`、最小投影、双审计与 A5 边界；六项 CI 通过并上传 [PR #40](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/40) 待合并。证据见[A5.5 执行记录](A5_5_DISPATCH_E2E_EXECUTION.md)、[本机验收](../testing/LOCAL_TECHNICIAN_DISPATCH_ACCEPTANCE.md)与[A5 阶段总记录](A5_DISPATCH_EXECUTION.md)。**A5 功能链路已闭环**；真实技师微信登录与真机页面联调仍是独立验收项。
 
-下一步：先设计**争议处理记录、车主复核与恢复条件**（当前只有第一次决定，异议后订单置 `DISPUTED` 且无恢复入口），再推进 **A6 防护与报工**。交付及 CI 见[当前进度](CURRENT_STATUS.md)。
+A5.6 已补齐 A4 留下的死路——异议之后订单停在 `DISPUTED`、没有任何恢复入口。本阶段新增商家处理记录与车主复核恢复：新增 `order_dispute`/`order_dispute_record`（V013，表总数 52）与两个写接口，`DISPUTED` 期间派工/接单返回 `43007`，只有车主本人在商家提交处理记录后接受复核（`43008` 约束）才把订单恢复到争议前状态；商家与技师均不能宣布争议解决。后端争议与回归 **52/52**、小程序 **147** 项、两端构建、本机端到端 **69/69** 通过；六项 CI 结果见 [PR #41](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/41)。证据见[A5.6 执行记录](A5_6_DISPUTE_RESOLUTION_EXECUTION.md)、[本机争议验收](../testing/LOCAL_DISPUTE_ACCEPTANCE.md)、[争议处理契约](../api/DISPUTE_RESOLUTION.md)与[争议处理规格](../superpowers/specs/2026-10-08-dispute-resolution-design.md)。
+
+下一步：推进 **A6 防护与报工**（防护缺失不能报工、必要证据齐全才送核销、只能操作本人派工）。争议处理的历史遗留（A4 之前没有争议单的异议）仍由人工处理，不自动回填。交付及 CI 见[当前进度](CURRENT_STATUS.md)。
 
 ## 业务开发顺序
 
@@ -24,7 +26,7 @@ A5.5 已用合成身份接真实后端容器与隔离 MySQL 完成端到端：�
 | --- | --- | --- |
 | A4 | 车主确认接车单与提出异议，依赖 A3 | 本人确认生效；异议置争议并阻断施工；权限、幂等、回滚和并发验证通过；文档与 PR 齐全 |
 | A5 | 商家派工、技师本人工作台与接单，依赖 A4 | 未确认/争议订单不可派工；仅本店有效技师可被派；技师只能接本人单；派工与接单可联调并有审计 |
-| 争议处理 | 明确商家处理记录、车主复核与恢复条件 | 原因、处理和最终决定完整留痕；争议未解决不能恢复派工/施工；需要单独规格 |
+| 争议处理 | 商家处理记录、车主复核与恢复条件，依赖 A4 | 原因、处理和最终决定完整留痕；争议未解决不能恢复派工/施工；只有车主能宣布解决。A5.6 已交付 |
 | A6 | 防护、施工/故障件/完工照片、方案、配件、工时、质检与报工，依赖派工归属 | 防护缺失不能报工；必要证据齐全才送核销；只能操作本人派工 |
 | A7.1 | 完工与到店核销 | 服务端验码、防猜测、状态迁移与双审计成立；正式付款凭据的验收单列 |
 | A7.2 | 评价、档案回写、经验卡片 | 本人评价、回写与卡片均不重复，失败可恢复；拆成独立任务和 PR |

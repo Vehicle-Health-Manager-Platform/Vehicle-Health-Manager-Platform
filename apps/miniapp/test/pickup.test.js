@@ -5,7 +5,7 @@ import { createImageApi } from '../src/services/private-images.js'
 import { createReservationWriteFlow,initialReservationWriteState } from '../src/services/reservations.js'
 const form=()=>({code:'012345',mileage:'123',mileageReason:'',arrivalReason:'',fuel:'HALF',damageStatus:'NONE',damages:[],photos:Object.fromEntries(PICKUP_SLOTS.map((s,i)=>[s,{fileId:i+1}]))})
 const key='01234567-89ab-4cde-8fab-0123456789ab'
-const sheet={pickup_check_id:1,order_id:2,photos:Object.fromEntries(PICKUP_SLOTS.map((s,i)=>[s,i+1])),mileage:123,owner_confirm:0,damages:[]}
+const sheet={pickup_check_id:1,order_id:2,photos:Object.fromEntries(PICKUP_SLOTS.map((s,i)=>[s,i+1])),mileage:123,owner_confirm:0,damages:[],dispute:null}
 test('接车必须七个独立上传、明确油量与损伤，预约码保留前导零',()=>{
   const f=form();assert.equal(pickupBody(2,f).appointment_code,'012345');assert.equal(pickupBody(2,f).mileage,123)
   f.photos.ROOF.fileId=0;assert.throws(()=>pickupBody(2,f));f.photos.ROOF.fileId=1;assert.throws(()=>pickupBody(2,f))

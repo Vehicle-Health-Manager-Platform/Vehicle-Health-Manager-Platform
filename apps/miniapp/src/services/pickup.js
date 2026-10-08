@@ -1,6 +1,7 @@
 import { apiOrigin } from './api-config.js'
 import { apiRuntime } from './api-runtime.js'
 import { ServiceError, serviceFailure } from './service-catalog.js'
+import { disputeView } from './dispute.js'
 export const PICKUP_SLOTS = ['FRONT','REAR','LEFT','RIGHT','ROOF','DASHBOARD','INTERIOR']
 export const PICKUP_LABELS = { FRONT:'车前',REAR:'车后',LEFT:'车左',RIGHT:'车右',ROOF:'车顶',DASHBOARD:'仪表盘',INTERIOR:'内饰' }
 export const FUEL_VALUES = ['EMPTY','QUARTER','HALF','THREE_QUARTERS','FULL']
@@ -22,7 +23,7 @@ export function pickupBody(order,state) {
   }
   return body
 }
-const validSheet = s => id(s?.pickup_check_id) && id(s.order_id) && PICKUP_SLOTS.every(slot=>id(s.photos?.[slot])) && Array.isArray(s.damages) && Number.isSafeInteger(s.mileage) && [0,1,2].includes(s.owner_confirm)
+const validSheet = s => id(s?.pickup_check_id) && id(s.order_id) && PICKUP_SLOTS.every(slot=>id(s.photos?.[slot])) && Array.isArray(s.damages) && Number.isSafeInteger(s.mileage) && [0,1,2,3].includes(s.owner_confirm) && disputeView(s.dispute)
 export function createPickupApi({baseUrl,runtime}) {
   const endpoint=(baseUrl||'').replace(/\/$/,'')
   function request(token,path,accepts,body,key) {

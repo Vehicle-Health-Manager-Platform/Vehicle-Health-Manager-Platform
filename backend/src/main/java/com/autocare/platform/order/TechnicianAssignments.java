@@ -41,9 +41,12 @@ public class TechnicianAssignments {
     }
     private boolean checked(Map<String,Object> o,Map<String,Object> p){return p!=null && o.get("check_in_completed_at")!=null
         && Objects.equals(o.get("merchant_id"),p.get("merchant_id"));}
+    // 车主确认（1）与"异议后经复核接受"（3）同样满足前置：两者都表示车主同意继续履约。
     private boolean confirmed(Map<String,Object> o,Map<String,Object> p){return checked(o,p) && o.get("owner_confirmed_at")!=null
-        && p.get("owner_confirm") instanceof Number decision && decision.intValue()==1 && p.get("confirm_at")!=null;}
+        && PickupInspection.ownerConfirmed(p.get("owner_confirm")) && p.get("confirm_at")!=null;}
     private void prerequisites(Map<String,Object> o,Map<String,Object> p){
+        // 未解决的争议先用明确的业务码回答，避免界面只看到"状态已变化"。
+        if(OrderStatus.DISPUTED.equals(o.get("status")))throw new FulfillmentConflict(OrderDisputes.DISPUTE_BLOCKS_ASSIGNMENT,"订单存在未解决的争议，请先在接车单处理争议");
         if(!OrderStatus.RECEIVED.equals(o.get("status")))throw conflict();
         if(!checked(o,p))throw new FulfillmentConflict(43001,"接车检查未完成，请先完成接车检查");
         if(!confirmed(o,p))throw new FulfillmentConflict(43003,"车主尚未确认接车，不能派工或接单");

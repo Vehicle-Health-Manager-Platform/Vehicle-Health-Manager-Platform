@@ -13,8 +13,21 @@ import org.springframework.web.server.ResponseStatusException;
 
 /** Immutable pickup evidence and its PAID -> RECEIVED transition commit together. */
 public class PickupInspection {
+    /** 车主尚未决定。 */
+    public static final int OWNER_UNDECIDED=0;
+    /** 车主已确认接车单。 */
+    public static final int OWNER_CONFIRMED=1;
+    /** 车主已提出异议，订单进入 DISPUTED。 */
+    public static final int OWNER_DISPUTED=2;
+    /** 异议经车主复核接受商家处理，订单已恢复；见争议处理规格 E3。 */
+    public static final int OWNER_RESOLVED=3;
     private final ReservationStore db;
     public PickupInspection(ReservationStore db){this.db=db;}
+    /**
+     * 接车确认是否成立：正常确认（1）与争议解决后的恢复（3）都算。
+     * 派工/接单前置只问"车主是否已同意继续"，不问同意是哪条路径来的。
+     */
+    public static boolean ownerConfirmed(Object value){return value instanceof Number number && (number.intValue()==OWNER_CONFIRMED || number.intValue()==OWNER_RESOLVED);}
     private static ResponseStatusException error(HttpStatus status,String message){return new ResponseStatusException(status,message);}
     private Map<String,Object> shopOrder(MerchantActor actor,long id,boolean lock){
         db.merchant(actor,lock);
@@ -105,6 +118,10 @@ public class PickupInspection {
                 if(!OrderStatus.can(OrderStatus.RECEIVED,target))throw new FulfillmentConflict(40905,"当前订单不可提出异议");
                 db.jdbc.update("UPDATE `order` SET status='DISPUTED' WHERE id=? AND status='RECEIVED'",id);
                 db.jdbc.update("INSERT INTO order_status_transition(order_id,merchant_id,from_status,to_status,action,actor_type,actor_id,note,occurred_at) VALUES(?,?,'RECEIVED','DISPUTED',?,'user',?,?,?)",id,order.get("merchant_id"),action,owner.id(),note,ReservationStore.time(now));
+                // 争议单在此建立，A5.6 的商家处理与车主复核才有据可依。本阶段之前的历史异议
+                // 没有争议单，恢复一律拒绝（fail-closed），由人工处理，不猜历史。
+                db.jdbc.update("INSERT INTO order_dispute(order_id,merchant_id,pickup_check_id,reason,from_status,status,opened_by,opened_at) VALUES(?,?,?,?,?,'OPEN',?,?)",
+                    id,order.get("merchant_id"),sheet.get("id"),note,String.valueOf(order.get("status")),owner.id(),ReservationStore.time(now));
             }else db.jdbc.update("UPDATE `order` SET owner_confirmed_at=? WHERE id=? AND status='RECEIVED'",ReservationStore.time(now),id);
             var after=projection(db.one("SELECT * FROM pickup_check WHERE id=?",sheet.get("id")));
             return new Change(action,"pickup_check",ReservationStore.number(sheet,"id"),before,after,after);
@@ -112,10 +129,33 @@ public class PickupInspection {
     }
     private Map<String,Object> projection(Map<String,Object> row){
         var result=new LinkedHashMap<String,Object>();long check=ReservationStore.number(row,"id");
-        result.put("pickup_check_id",check);result.put("order_id",row.get("order_id"));result.put("status",db.one("SELECT status FROM `order` WHERE id=?",row.get("order_id")).get("status"));result.put("owner_confirm",row.get("owner_confirm"));result.put("confirm_at",ReservationStore.iso(row.get("confirm_at")));result.put("dispute_reason",row.get("dispute_reason"));result.put("arrived_at",ReservationStore.iso(row.get("arrived_at")));
+        String status=String.valueOf(db.one("SELECT status FROM `order` WHERE id=?",row.get("order_id")).get("status"));
+        result.put("pickup_check_id",check);result.put("order_id",row.get("order_id"));result.put("status",status);result.put("owner_confirm",row.get("owner_confirm"));result.put("confirm_at",ReservationStore.iso(row.get("confirm_at")));result.put("dispute_reason",row.get("dispute_reason"));result.put("arrived_at",ReservationStore.iso(row.get("arrived_at")));
         result.put("mileage",row.get("mileage"));result.put("mileage_source",row.get("mileage_source"));var base=db.parse(row.get("mileage_baseline"));result.put("mileage_baseline",base);result.put("mileage_delta",((Number)row.get("mileage")).longValue()-base.path("mileage").asLong());
         result.put("mileage_reason",row.get("mileage_reason"));result.put("arrival_reason",row.get("arrival_reason"));result.put("fuel_level",row.get("fuel_level"));result.put("damage_status",row.get("damage_status"));result.put("damages",db.parse(row.get("damage_marks")));
-        var photos=new LinkedHashMap<String,Object>();for(var file:db.jdbc.queryForList("SELECT photo_slot,file_id FROM pickup_check_file WHERE pickup_check_id=?",check))photos.put(file.get("photo_slot").toString(),file.get("file_id"));result.put("photos",photos);return result;
+        var photos=new LinkedHashMap<String,Object>();for(var file:db.jdbc.queryForList("SELECT photo_slot,file_id FROM pickup_check_file WHERE pickup_check_id=?",check))photos.put(file.get("photo_slot").toString(),file.get("file_id"));result.put("photos",photos);
+        result.put("dispute",disputeView(ReservationStore.number(row,"order_id"),status));return result;
+    }
+    /**
+     * 争议时间线。只投影动作、说明与时间；车主与商家员工的身份 ID 一律不出现在响应里，
+     * 过滤只保证 HTTP 响应干净，落库载荷由安全测试单独核对。
+     */
+    private Map<String,Object> disputeView(long order,String orderStatus){
+        var rows=db.jdbc.queryForList("SELECT * FROM order_dispute WHERE order_id=? AND is_deleted=0",order);
+        if(rows.isEmpty())return null;
+        var dispute=rows.get(0);long id=ReservationStore.number(dispute,"id");
+        var records=new ArrayList<Map<String,Object>>();boolean handled=false;
+        for(var record:db.jdbc.queryForList("SELECT action,note,created_at FROM order_dispute_record WHERE dispute_id=? ORDER BY id",id)){
+            handled|=OrderDisputes.HANDLE.equals(record.get("action"));
+            var item=new LinkedHashMap<String,Object>();item.put("action",record.get("action"));item.put("note",record.get("note"));item.put("created_at",ReservationStore.iso(record.get("created_at")));records.add(item);
+        }
+        var view=new LinkedHashMap<String,Object>();
+        view.put("dispute_id",id);view.put("status",dispute.get("status"));view.put("reason",dispute.get("reason"));view.put("from_status",dispute.get("from_status"));
+        view.put("opened_at",ReservationStore.iso(dispute.get("opened_at")));view.put("resolved_at",ReservationStore.iso(dispute.get("resolved_at")));
+        view.put("records",records);
+        // 只影响按钮显示；能否复核始终由写接口在事务内重新判定。
+        view.put("can_review",OrderDisputes.OPEN.equals(dispute.get("status")) && OrderStatus.DISPUTED.equals(orderStatus) && handled);
+        return view;
     }
     public FileMetadataRepository.Actor fileOwner(Object actor,long order,long file){return db.reads.execute(tx->{authorize(actor,order);
         var row=db.one("SELECT f.owner_type,f.owner_id FROM pickup_check p JOIN pickup_check_file r ON r.pickup_check_id=p.id JOIN file_object f ON f.id=r.file_id WHERE p.order_id=? AND p.is_deleted=0 AND f.id=? AND f.is_deleted=0 AND f.scan_status='CLEAN'",order,file);

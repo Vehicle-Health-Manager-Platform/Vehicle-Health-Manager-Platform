@@ -72,7 +72,9 @@ class JdbcTechnicianAssignmentsTest {
         jdbc.update("UPDATE staff_wechat_identity SET app_id='test-app',status='REVOKED' WHERE id=112");assertEquals(404,status(()->service.assign(shop,key(),1,12)));assertEquals(1L,service.candidates(shop,1,20).get("total"));
     }
     @Test void stateAndEvidenceCannotBeBypassedWithTimestamps(){
-        for(String state:List.of("PAID","DISPUTED","IN_SERVICE","CLOSED")){jdbc.update("UPDATE `order` SET status=? WHERE id=1",state);assertEquals(40905,code(()->service.assign(shop,key(),1,12)));}
+        for(String state:List.of("PAID","IN_SERVICE","CLOSED")){jdbc.update("UPDATE `order` SET status=? WHERE id=1",state);assertEquals(40905,code(()->service.assign(shop,key(),1,12)));}
+        // A5.6 收敛：DISPUTED 不再返回泛化的 40905，而是明确的"争议未解决"业务码。
+        jdbc.update("UPDATE `order` SET status='DISPUTED' WHERE id=1");assertEquals(OrderDisputes.DISPUTE_BLOCKS_ASSIGNMENT,code(()->service.assign(shop,key(),1,12)));
         jdbc.update("UPDATE `order` SET status='RECEIVED',check_in_completed_at=NULL WHERE id=1");assertEquals(43001,code(()->service.assign(shop,key(),1,12)));
         jdbc.update("UPDATE `order` SET check_in_completed_at=UTC_TIMESTAMP(),owner_confirmed_at=NULL WHERE id=1");assertEquals(43003,code(()->service.assign(shop,key(),1,12)));
         jdbc.update("UPDATE `order` SET owner_confirmed_at=UTC_TIMESTAMP() WHERE id=1");
@@ -84,7 +86,7 @@ class JdbcTechnicianAssignmentsTest {
         assertEquals(404,status(()->service.assign(other,key(),1,14)));assertEquals(404,status(()->service.merchantDetail(other,1)));
         service.assign(shop,key(),1,12);for(var actor:List.of(peer,foreign)){assertEquals(0L,service.list(actor,null,1,20).get("total"));assertEquals(404,status(()->service.detail(actor,1)));assertEquals(404,status(()->service.accept(actor,key(),1)));}
         jdbc.update("UPDATE pickup_check SET owner_confirm=2 WHERE order_id=1");assertEquals(false,service.detail(tech,1).get("can_accept"));assertEquals(43003,code(()->service.accept(tech,key(),1)));
-        jdbc.update("UPDATE `order` SET status='DISPUTED' WHERE id=1");assertEquals(40905,code(()->service.accept(tech,key(),1)));assertEquals(0,count("order_status_transition"));
+        jdbc.update("UPDATE `order` SET status='DISPUTED' WHERE id=1");assertEquals(OrderDisputes.DISPUTE_BLOCKS_ASSIGNMENT,code(()->service.accept(tech,key(),1)));assertEquals(0,count("order_status_transition"));
     }
     @Test void differentKeyCannotReassignAndSameKeyCannotChangeBody(){String k=key();service.assign(shop,k,1,12);assertEquals(400,status(()->service.assign(shop,k,1,13)));assertEquals(40905,code(()->service.assign(shop,key(),1,13)));assertEquals(12,jdbc.queryForObject("SELECT technician_id FROM technician_assignment",Integer.class));assertEquals(1,count("audit_log"));}
     @Test void cachedSuccessStillRequiresActiveSessionAndBinding(){

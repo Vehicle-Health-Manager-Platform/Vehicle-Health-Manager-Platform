@@ -4327,7 +4327,7 @@
             "description": "资源不存在/非本店或本人/不可选技师，code=40400"
           },
           "409": {
-            "description": "40905状态冲突/历史数据不一致；43001缺接车证据；43003缺车主确认"
+            "description": "40905状态冲突/历史数据不一致；43001缺接车证据；43003缺车主确认；43007订单存在未解决的争议"
           },
           "503": {
             "description": "数据库未配置/事务失败，code=50300；原键重试"
@@ -6325,7 +6325,7 @@
         ],
         "x-roles": "OWNER,MERCHANT",
         "x-implementation-status": "pickup-inspection-implemented",
-        "description": "七图接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
+        "description": "本人或本店接车单。投影新增 dispute（争议状态、异议原因、时间线与 can_review），不投影任何身份 ID；见 DISPUTE_RESOLUTION.md。"
       }
     },
     "/api/check/pickup/{order}/files/{file}/access": {
@@ -6917,7 +6917,7 @@
             "description": "资源不存在/非本店或本人/不可选技师，code=40400"
           },
           "409": {
-            "description": "40905状态冲突/历史数据不一致；43001缺接车证据；43003缺车主确认"
+            "description": "40905状态冲突/历史数据不一致；43001缺接车证据；43003缺车主确认；43007订单存在未解决的争议"
           },
           "503": {
             "description": "数据库未配置/事务失败，code=50300；原键重试"
@@ -6944,6 +6944,235 @@
         "x-roles": "TECHNICIAN",
         "x-implementation-status": "technician-dispatch-backend-implemented",
         "description": "严格校验会话/本店或本人归属。technician_id为员工ID。接车证据与车主确认齐全且无争议才可派工/接单；防护在A6报工校验。24小时幂等、行锁与审计同事务；详见 TECHNICIAN_DISPATCH.md。"
+      }
+    },
+    "/api/merchant/orders/{id}/dispute/handle": {
+      "post": {
+        "summary": "商家提交争议处理记录",
+        "operationId": "post_api_merchant_orders_id_dispute_handle",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F14",
+          "F16"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/DisputeResult"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "订单或接车单不存在/非本人或非本店，code=40400"
+          },
+          "409": {
+            "description": "40905状态冲突或恢复目标不可用；43008商家尚未提交处理记录"
+          },
+          "503": {
+            "description": "数据库未配置或事务失败，code=50300；原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "note"
+                ],
+                "properties": {
+                  "note": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500,
+                    "description": "去除首尾空白后1–500字，可多次提交"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "dispute-resolution-implemented",
+        "description": "商家只能追加处理记录，不能自行解除争议；只有车主本人复核接受后，订单才回到争议前状态并恢复派工与施工。恢复条件R1–R5、锁顺序、双审计与幂等见 DISPUTE_RESOLUTION.md。"
+      }
+    },
+    "/api/check/pickup/dispute/review": {
+      "post": {
+        "summary": "车主复核争议处理并决定是否恢复订单",
+        "operationId": "post_api_check_pickup_dispute_review",
+        "tags": [
+          "check"
+        ],
+        "x-feature-ids": [
+          "F14",
+          "F16"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/DisputeResult"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "订单或接车单不存在/非本人或非本店，code=40400"
+          },
+          "409": {
+            "description": "40905状态冲突或恢复目标不可用；43008商家尚未提交处理记录"
+          },
+          "503": {
+            "description": "数据库未配置或事务失败，code=50300；原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "order_id",
+                  "decision"
+                ],
+                "properties": {
+                  "order_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "decision": {
+                    "type": "string",
+                    "enum": [
+                      "ACCEPT",
+                      "REJECT"
+                    ]
+                  },
+                  "note": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500,
+                    "description": "REJECT 必填，ACCEPT 可省略"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-roles": "OWNER",
+        "x-implementation-status": "dispute-resolution-implemented",
+        "description": "商家只能追加处理记录，不能自行解除争议；只有车主本人复核接受后，订单才回到争议前状态并恢复派工与施工。恢复条件R1–R5、锁顺序、双审计与幂等见 DISPUTE_RESOLUTION.md。"
       }
     }
   },
@@ -9043,6 +9272,88 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 100
+          }
+        }
+      },
+      "DisputeResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "dispute_id",
+          "order_id",
+          "dispute_status",
+          "order_status",
+          "owner_confirm",
+          "record_count",
+          "last_action",
+          "updated_at",
+          "changed"
+        ],
+        "properties": {
+          "dispute_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "dispute_status": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "RESOLVED"
+            ]
+          },
+          "order_status": {
+            "type": "string",
+            "enum": [
+              "PENDING_PAYMENT",
+              "PAID",
+              "RECEIVED",
+              "IN_SERVICE",
+              "PENDING_VERIFY",
+              "COMPLETED",
+              "CLOSED",
+              "DISPUTED"
+            ]
+          },
+          "owner_confirm": {
+            "type": "integer",
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "record_count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "last_action": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "string",
+                "enum": [
+                  "HANDLE",
+                  "ACCEPT",
+                  "REJECT"
+                ]
+              }
+            ]
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "changed": {
+            "type": "boolean"
           }
         }
       }

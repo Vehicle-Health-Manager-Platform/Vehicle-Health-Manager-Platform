@@ -526,6 +526,39 @@ def main():
         document["paths"][path] = {method: item}
     schemas["MerchantOrder"]["properties"]["allowed_actions"]["description"] = "RECEIVE走接车检查，START_SERVICE走技师本人接单，两者不再投影为商家动作"
     action["description"] = "前端只能请求动作，不能提交目标状态；行锁、前置、幂等和审计同事务。A3接车、A4确认、A5.2派工与本人接单已接入；商家通用RECEIVE/START_SERVICE分别返回43001/43004，专用技师接单才开始施工。报工/核销待A6/A7，缺前置返回43005/43006。"
+    # A5.6: dispute handling, the owner review and the resume of a disputed order.
+    dispute_status = {"type": "string", "enum": ["OPEN", "RESOLVED"]}
+    schemas["DisputeResult"] = strict({"dispute_id": identifier, "order_id": identifier, "dispute_status": dispute_status,
+        "order_status": {"type": "string", "enum": fulfillment_states}, "owner_confirm": {"type": "integer", "enum": [0, 1, 2, 3]},
+        "record_count": {"type": "integer", "minimum": 1},
+        "last_action": {"anyOf": [{"type": "null"}, {"type": "string", "enum": ["HANDLE", "ACCEPT", "REJECT"]}]},
+        "updated_at": timestamp, "changed": {"type": "boolean"}})
+    for method, path, roles, title in [
+        ("post", "/api/merchant/orders/{id}/dispute/handle", "MERCHANT", "商家提交争议处理记录"),
+        ("post", "/api/check/pickup/dispute/review", "OWNER", "车主复核争议处理并决定是否恢复订单")]:
+        item = operation(method, path, title, "F14,F16")
+        item["x-roles"] = roles
+        item["x-implementation-status"] = "dispute-resolution-implemented"
+        item["description"] = "商家只能追加处理记录，不能自行解除争议；只有车主本人复核接受后，订单才回到争议前状态并恢复派工与施工。恢复条件R1–R5、锁顺序、双审计与幂等见 DISPUTE_RESOLUTION.md。"
+        for parameter in item["parameters"]:
+            if parameter["in"] == "path": parameter["schema"] = identifier
+        if path.endswith("/handle"):
+            item["requestBody"]["content"]["application/json"]["schema"] = strict({"note": {"type": "string", "minLength": 1, "maxLength": 500, "description": "去除首尾空白后1–500字，可多次提交"}})
+        else:
+            item["requestBody"]["content"]["application/json"]["schema"] = {"type": "object", "additionalProperties": False,
+                "required": ["order_id", "decision"], "properties": {"order_id": identifier,
+                    "decision": {"type": "string", "enum": ["ACCEPT", "REJECT"]},
+                    "note": {"type": "string", "minLength": 1, "maxLength": 500, "description": "REJECT 必填，ACCEPT 可省略"}}}
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [
+            {"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "properties": {"data": {"$ref": "#/components/schemas/DisputeResult"}}}]}
+        item["responses"]["404"] = {"description": "订单或接车单不存在/非本人或非本店，code=40400"}
+        item["responses"]["409"] = {"description": "40905状态冲突或恢复目标不可用；43008商家尚未提交处理记录"}
+        item["responses"]["503"] = {"description": "数据库未配置或事务失败，code=50300；原键重试"}
+        document["paths"][path] = {method: item}
+    document["paths"]["/api/check/pickup/{order}"]["get"]["description"] = "本人或本店接车单。投影新增 dispute（争议状态、异议原因、时间线与 can_review），不投影任何身份 ID；见 DISPUTE_RESOLUTION.md。"
+    # A5.6 把「未解决的争议」从泛化的 40905 收敛为明确的 43007，派工与接单的拒绝说明要同步。
+    for path in ("/api/merchant/orders/{id}/assign", "/api/tech/orders/{id}/accept"):
+        document["paths"][path]["post"]["responses"]["409"]["description"] = "40905状态冲突/历史数据不一致；43001缺接车证据；43003缺车主确认；43007订单存在未解决的争议"
     count = sum(len(value) for value in document["paths"].values())
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

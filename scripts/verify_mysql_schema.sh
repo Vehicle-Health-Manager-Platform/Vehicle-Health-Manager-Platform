@@ -66,9 +66,11 @@ run_sql_file docs/sql/migrations/V011__pickup_owner_decision.sql
 run_sql_file docs/sql/migrations/V011__pickup_owner_decision.sql
 run_sql_file docs/sql/migrations/V012__technician_dispatch.sql
 run_sql_file docs/sql/migrations/V012__technician_dispatch.sql
+run_sql_file docs/sql/migrations/V013__dispute_resolution.sql
+run_sql_file docs/sql/migrations/V013__dispute_resolution.sql
 
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
-[[ "$tables" == 50 ]] || { echo "Expected 50 tables after V012, got $tables" >&2; exit 1; }
+[[ "$tables" == 52 ]] || { echo "Expected 52 tables after V013, got $tables" >&2; exit 1; }
 
 for column in check_in_completed_at owner_confirmed_at assigned_at service_report_ready_at; do
   found=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND table_name = 'order' AND column_name = '$column'")
@@ -88,6 +90,13 @@ for entry in pickup_check:dispute_reason order_status_transition:note; do
   length=$(query "SELECT character_maximum_length FROM information_schema.columns WHERE table_schema = '$database' AND table_name = '$table' AND column_name = '$column'")
   [[ "$length" == 500 ]] || { echo "Repeated V011 left $table.$column with length $length instead of 500" >&2; exit 1; }
 done
+dispute_unique=$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema = '$database' AND table_name = 'order_dispute' AND index_name = 'uk_order' AND column_name = 'order_id' AND non_unique = 0")
+[[ "$dispute_unique" == 1 ]] || { echo "V013 did not preserve one dispute per order" >&2; exit 1; }
+dispute_records=$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema = '$database' AND table_name = 'order_dispute_record' AND index_name = 'idx_dispute' AND non_unique = 1")
+[[ "$dispute_records" == 1 ]] || { echo "Repeated V013 left order_dispute_record without its timeline index" >&2; exit 1; }
+owner_confirm_comment=$(query "SELECT column_comment FROM information_schema.columns WHERE table_schema = '$database' AND table_name = 'pickup_check' AND column_name = 'owner_confirm'")
+[[ "$owner_confirm_comment" == *3* ]] || { echo "Repeated V013 left pickup_check.owner_confirm without the resolved state" >&2; exit 1; }
+
 versions=$(query "SELECT COUNT(*) FROM merchant_project_version WHERE merchant_project_id=900001 AND version=1")
 [[ "$versions" == 1 ]] || { echo "Repeated V006 did not preserve one initial quote version" >&2; exit 1; }
 
@@ -116,4 +125,4 @@ for table in brand series model standard_project merchant merchant_project; do
   [[ "$rows" == 1 ]] || { echo "Expected one synthetic row in $table, got $rows" >&2; exit 1; }
 done
 
-echo "MySQL 8.0 schema: 50 tables after V012; repeat migration and synthetic seed passed"
+echo "MySQL 8.0 schema: 52 tables after V013; repeat migration and synthetic seed passed"

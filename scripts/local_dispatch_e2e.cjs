@@ -24,7 +24,7 @@ const MERCHANT_STAFF_A = 9201201, MERCHANT_STAFF_B = 9201202
 const TECH_A = 9201231, TECH_B = 9201232, TECH_FOREIGN = 9201233
 const BIND_A = 9201331, BIND_B = 9201332, BIND_FOREIGN = 9201333
 const OWNER = 9201290, VEHICLE = 9201290, SLOT = 9201301
-const ORDER_POSITIVE = 9201401, ORDER_NO_CHECKIN = 9201402, ORDER_NO_CONFIRM = 9201403
+const ORDER_POSITIVE = 9201401, ORDER_NO_CHECKIN = 9201402, ORDER_NO_CONFIRM = 9201403, ORDER_DISPUTE = 9201404
 const PROJECT_SNAPSHOT = JSON.stringify({ project_name: '合成保养', service_content: 'synthetic', phone: 'private', vin: 'private' })
 const APPOINTMENT_SNAPSHOT = JSON.stringify({ slot_id: SLOT, starts_at: '2026-10-08T02:00:00Z', verify_code: 'private' })
 
@@ -51,19 +51,24 @@ function verifyIsolation() {
   const image = docker(['inspect', BACKEND, '--format', '{{.Config.Image}}'])
   const columns = sql("SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND (table_name='technician_assignment' AND column_name IN ('assigned_by','accepted_at') OR table_name='pickup_check' AND column_name='dispute_reason');")
   if (columns !== '3') throw new Error('A5 requires V011 and V012 applied to the isolated database (found ' + columns + '/3 columns)')
+  const disputes = sql("SELECT (SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name IN ('order_dispute','order_dispute_record')), (SELECT column_comment FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='pickup_check' AND column_name='owner_confirm');").split('	')
+  if (disputes[0] !== '2' || !disputes[1].includes('3')) throw new Error('A5.6 requires V013 applied to the isolated database (found ' + disputes[0] + '/2 tables)')
   return image
 }
 function prepare(appId) {
   sql(`
-SET @synthetic_orders='${[ORDER_POSITIVE, ORDER_NO_CHECKIN, ORDER_NO_CONFIRM].join(',')}';
-DELETE FROM audit_log WHERE resource_type='technician_assignment' AND resource_id IN (SELECT id FROM technician_assignment WHERE order_id IN (${ORDER_POSITIVE},${ORDER_NO_CHECKIN},${ORDER_NO_CONFIRM}));
-DELETE FROM audit_log WHERE resource_type='pickup_check' AND resource_id IN (SELECT id FROM pickup_check WHERE order_id IN (${ORDER_POSITIVE},${ORDER_NO_CHECKIN},${ORDER_NO_CONFIRM}));
-DELETE FROM technician_assignment WHERE order_id IN (${ORDER_POSITIVE},${ORDER_NO_CHECKIN},${ORDER_NO_CONFIRM});
-DELETE FROM audit_log WHERE resource_type='order' AND resource_id IN (${ORDER_POSITIVE},${ORDER_NO_CHECKIN},${ORDER_NO_CONFIRM});
-DELETE FROM order_status_transition WHERE order_id IN (${ORDER_POSITIVE},${ORDER_NO_CHECKIN},${ORDER_NO_CONFIRM});
+SET @synthetic_orders='${[ORDER_POSITIVE, ORDER_NO_CHECKIN, ORDER_NO_CONFIRM, ORDER_DISPUTE].join(',')}';
+DELETE FROM audit_log WHERE resource_type='technician_assignment' AND resource_id IN (SELECT id FROM technician_assignment WHERE order_id IN (${ORDER_POSITIVE},${ORDER_NO_CHECKIN},${ORDER_NO_CONFIRM},${ORDER_DISPUTE}));
+DELETE FROM audit_log WHERE resource_type='pickup_check' AND resource_id IN (SELECT id FROM pickup_check WHERE order_id IN (${ORDER_POSITIVE},${ORDER_NO_CHECKIN},${ORDER_NO_CONFIRM},${ORDER_DISPUTE}));
+DELETE FROM order_dispute_record WHERE order_id IN (${ORDER_POSITIVE},${ORDER_NO_CHECKIN},${ORDER_NO_CONFIRM},${ORDER_DISPUTE});
+DELETE FROM order_dispute WHERE order_id IN (${ORDER_POSITIVE},${ORDER_NO_CHECKIN},${ORDER_NO_CONFIRM},${ORDER_DISPUTE});
+DELETE FROM audit_log WHERE action LIKE 'ORDER_DISPUTE%';
+DELETE FROM technician_assignment WHERE order_id IN (${ORDER_POSITIVE},${ORDER_NO_CHECKIN},${ORDER_NO_CONFIRM},${ORDER_DISPUTE});
+DELETE FROM audit_log WHERE resource_type='order' AND resource_id IN (${ORDER_POSITIVE},${ORDER_NO_CHECKIN},${ORDER_NO_CONFIRM},${ORDER_DISPUTE});
+DELETE FROM order_status_transition WHERE order_id IN (${ORDER_POSITIVE},${ORDER_NO_CHECKIN},${ORDER_NO_CONFIRM},${ORDER_DISPUTE});
 DELETE FROM idempotency_record WHERE (actor_type='user' AND actor_id=${OWNER}) OR (actor_type='staff_account' AND actor_id IN (${MERCHANT_STAFF_A},${TECH_A},${TECH_B},${TECH_FOREIGN}));
-DELETE FROM pickup_check WHERE order_id IN (${ORDER_POSITIVE},${ORDER_NO_CHECKIN},${ORDER_NO_CONFIRM});
-DELETE FROM \`order\` WHERE id IN (${ORDER_POSITIVE},${ORDER_NO_CHECKIN},${ORDER_NO_CONFIRM});
+DELETE FROM pickup_check WHERE order_id IN (${ORDER_POSITIVE},${ORDER_NO_CHECKIN},${ORDER_NO_CONFIRM},${ORDER_DISPUTE});
+DELETE FROM \`order\` WHERE id IN (${ORDER_POSITIVE},${ORDER_NO_CHECKIN},${ORDER_NO_CONFIRM},${ORDER_DISPUTE});
 DELETE FROM appointment_slot WHERE id=${SLOT};
 DELETE FROM auth_session WHERE subject_id IN (${OWNER},${MERCHANT_STAFF_A},${MERCHANT_STAFF_B},${TECH_A},${TECH_B},${TECH_FOREIGN});
 DELETE FROM staff_wechat_identity WHERE id IN (${BIND_A},${BIND_B},${BIND_FOREIGN});
@@ -100,6 +105,11 @@ INSERT INTO pickup_check(order_id,merchant_id,staff_id,owner_confirm,mileage,mil
  VALUES(${ORDER_POSITIVE},${SHOP_A},${MERCHANT_STAFF_A},0,52000,'MANUAL',CAST('{"source":"VEHICLE","mileage":51000}' AS JSON),'HALF','NONE',UTC_TIMESTAMP());
 INSERT INTO pickup_check(order_id,merchant_id,staff_id,owner_confirm,mileage,mileage_source,mileage_baseline,fuel_level,damage_status,arrived_at)
  VALUES(${ORDER_NO_CONFIRM},${SHOP_A},${MERCHANT_STAFF_A},0,52000,'MANUAL',CAST('{"source":"VEHICLE","mileage":51000}' AS JSON),'HALF','NONE',UTC_TIMESTAMP());
+INSERT INTO \`order\`(id,order_no,user_id,vehicle_id,merchant_id,amount,pay_amount,status,slot_id,check_in_completed_at,owner_confirmed_at,verify_code,project_snapshot,appointment_snapshot)
+ VALUES(${ORDER_DISPUTE},'synthetic-a5-dispute',${OWNER},${VEHICLE},${SHOP_A},128.00,128.00,'RECEIVED',${SLOT},UTC_TIMESTAMP(),NULL,'246816',
+        CAST('${PROJECT_SNAPSHOT}' AS JSON),CAST('${APPOINTMENT_SNAPSHOT}' AS JSON));
+INSERT INTO pickup_check(order_id,merchant_id,staff_id,owner_confirm,mileage,mileage_source,mileage_baseline,fuel_level,damage_status,arrived_at)
+ VALUES(${ORDER_DISPUTE},${SHOP_A},${MERCHANT_STAFF_A},0,52000,'MANUAL',CAST('{"source":"VEHICLE","mileage":51000}' AS JSON),'HALF','NONE',UTC_TIMESTAMP());
 COMMIT;
 `)
 }
@@ -259,6 +269,109 @@ async function main() {
   check('缺防护不阻断 A5（repair_protection 为 0）', evidence[7] === '0', JSON.stringify(evidence))
   const detailAfter = await api('GET', `/api/tech/orders/${ORDER_POSITIVE}`, techA.token)
   check('接单后 can_accept=false（IN_SERVICE 不等于施工完成）', dataOf(detailAfter).can_accept === false, JSON.stringify(dataOf(detailAfter)))
+
+  // ---- A5.6 dispute record, owner review and the resume of the disputed order ----------
+  // The owner raises a dispute on the real A4 confirm endpoint; the dispute row must exist.
+  const raiseKey = randomUUID()
+  const raise = await api('POST', '/api/check/pickup/confirm', owner.token, { key: raiseKey, body: { order_id: ORDER_DISPUTE, decision: 'DISPUTE', reason: '合成异议：交付前发现漆面问题' } })
+  check('车主提出异议 200', raise.status === 200, `status=${raise.status} ${raise.text}`)
+  check('异议响应 no-store', raise.noStore)
+  const sheetDispute = sql(`SELECT owner_confirm FROM pickup_check WHERE order_id=${ORDER_DISPUTE};`)
+  const orderDispute = sql(`SELECT status FROM \`order\` WHERE id=${ORDER_DISPUTE};`)
+  const disputeRow = sql(`SELECT status, from_status, reason, opened_by IS NOT NULL FROM order_dispute WHERE order_id=${ORDER_DISPUTE};`).split('\t')
+  check('异议写库：争议单 OPEN/RECEIVED、接车单 owner_confirm=2、订单 DISPUTED',
+    disputeRow[0] === 'OPEN' && disputeRow[1] === 'RECEIVED' && disputeRow[3] === '1' && sheetDispute === '2' && orderDispute === 'DISPUTED',
+    JSON.stringify({ disputeRow, sheetDispute, orderDispute }))
+  const raiseReplay = await api('POST', '/api/check/pickup/confirm', owner.token, { key: raiseKey, body: { order_id: ORDER_DISPUTE, decision: 'DISPUTE', reason: '合成异议：交付前发现漆面问题' } })
+  check('异议同键重放不新建第二条争议单', raiseReplay.status === 200 && Number(sql(`SELECT COUNT(*) FROM order_dispute WHERE order_id=${ORDER_DISPUTE};`)) === 1, `status=${raiseReplay.status} count=${sql(`SELECT COUNT(*) FROM order_dispute WHERE order_id=${ORDER_DISPUTE};`)}`)
+
+  // An open dispute blocks both dispatch and acceptance with the dedicated code.
+  const assignDisputed = await api('POST', `/api/merchant/orders/${ORDER_DISPUTE}/assign`, shopA.token, { key: randomUUID(), body: { technician_id: TECH_A } })
+  check('争议未解决时派工 409/43007', assignDisputed.status === 409 && codeOf(assignDisputed) === 43007, `status=${assignDisputed.status} code=${codeOf(assignDisputed)}`)
+  const acceptDisputed = await api('POST', `/api/tech/orders/${ORDER_DISPUTE}/accept`, techA.token, { key: randomUUID(), body: {} })
+  check('争议未解决时接单被拒（404/409）', acceptDisputed.status === 404 || acceptDisputed.status === 409, `status=${acceptDisputed.status} code=${codeOf(acceptDisputed)}`)
+
+  // R4: the owner cannot accept a resolution the merchant has not explained yet.
+  const earlyReview = await api('POST', '/api/check/pickup/dispute/review', owner.token, { key: randomUUID(), body: { order_id: ORDER_DISPUTE, decision: 'ACCEPT' } })
+  check('商家未提交处理记录时复核 409/43008', earlyReview.status === 409 && codeOf(earlyReview) === 43008, `status=${earlyReview.status} code=${codeOf(earlyReview)}`)
+
+  // Role separation on the new endpoints, validated by the real JWT chain.
+  check('商家 JWT 不能复核争议 403', (await api('POST', '/api/check/pickup/dispute/review', shopA.token, { key: randomUUID(), body: { order_id: ORDER_DISPUTE, decision: 'ACCEPT', note: '越权' } })).status === 403)
+  check('技师 JWT 不能复核争议 403', (await api('POST', '/api/check/pickup/dispute/review', techA.token, { key: randomUUID(), body: { order_id: ORDER_DISPUTE, decision: 'ACCEPT', note: '越权' } })).status === 403)
+  check('车主 JWT 不能提交商家处理记录 403', (await api('POST', `/api/merchant/orders/${ORDER_DISPUTE}/dispute/handle`, owner.token, { key: randomUUID(), body: { note: '越权' } })).status === 403)
+  const foreignHandle = await api('POST', `/api/merchant/orders/${ORDER_DISPUTE}/dispute/handle`, shopB.token, { key: randomUUID(), body: { note: '越权' } })
+  check('他店商家不能提交处理记录 404', foreignHandle.status === 404, `status=${foreignHandle.status}`)
+  const blankHandle = await api('POST', `/api/merchant/orders/${ORDER_DISPUTE}/dispute/handle`, shopA.token, { key: randomUUID(), body: { note: '   ' } })
+  check('空说明的处理记录 400', blankHandle.status === 400, `status=${blankHandle.status}`)
+
+  // Merchant handling records append, replay by key, and never overwrite history.
+  const handleKey = randomUUID()
+  const handle = await api('POST', `/api/merchant/orders/${ORDER_DISPUTE}/dispute/handle`, shopA.token, { key: handleKey, body: { note: '已安排返工并重新质检' } })
+  const handleData = dataOf(handle)
+  check('商家提交处理记录 200 且 record_count=1/HANDLE/OPEN',
+    handle.status === 200 && handleData.record_count === 1 && handleData.last_action === 'HANDLE' && handleData.dispute_status === 'OPEN' && handleData.order_status === 'DISPUTED' && handleData.changed === true,
+    JSON.stringify(handleData))
+  check('处理记录响应 no-store', handle.noStore)
+  check('处理记录响应不含任何身份 ID', !/actor_id|staff_id|owner_id/.test(handle.text), handle.text)
+  const handleReplay = await api('POST', `/api/merchant/orders/${ORDER_DISPUTE}/dispute/handle`, shopA.token, { key: handleKey, body: { note: '已安排返工并重新质检' } })
+  check('同键同体重放处理记录返回原成功快照', handleReplay.status === 200 && deepEqual(handleReplay.json, handle.json), `status=${handleReplay.status} first=${handle.text} replay=${handleReplay.text}`)
+  const handle2 = await api('POST', `/api/merchant/orders/${ORDER_DISPUTE}/dispute/handle`, shopA.token, { key: randomUUID(), body: { note: '补充：更换配件后复检通过' } })
+  check('新键追加第二条处理记录 record_count=2', handle2.status === 200 && dataOf(handle2).record_count === 2 && dataOf(handle2).last_action === 'HANDLE', JSON.stringify(dataOf(handle2)))
+
+  // The pickup sheet projects the timeline without any actor identity and exposes can_review.
+  const disputeDetail = await api('GET', `/api/check/pickup/${ORDER_DISPUTE}`, owner.token)
+  const disputeView = (dataOf(disputeDetail).dispute) || {}
+  const timeline = disputeView.records || []
+  check('车主读接车单 200 且争议时间线两条 HANDLE', disputeDetail.status === 200 && disputeView.status === 'OPEN' && disputeView.from_status === 'RECEIVED' && timeline.length === 2 && timeline.every(item => item.action === 'HANDLE') && disputeView.can_review === true, JSON.stringify(disputeView))
+  check('接车单投影不含车主/商家员工身份 ID', !disputeDetail.text.includes(String(OWNER)) && !disputeDetail.text.includes(String(MERCHANT_STAFF_A)), 'identity leak')
+  check('争议时间线只投影动作/说明/时间', timeline.every(item => Object.keys(item).sort().join(',') === 'action,created_at,note'), JSON.stringify(timeline[0] || {}))
+
+  // Owner rejects first: the dispute stays open and the order stays blocked.
+  const reject = await api('POST', '/api/check/pickup/dispute/review', owner.token, { key: randomUUID(), body: { order_id: ORDER_DISPUTE, decision: 'REJECT', note: '仍未说明返工照片' } })
+  check('车主不接受复核 200 且保持 OPEN/DISPUTED', reject.status === 200 && dataOf(reject).dispute_status === 'OPEN' && dataOf(reject).order_status === 'DISPUTED' && dataOf(reject).record_count === 3 && dataOf(reject).changed === true, JSON.stringify(dataOf(reject)))
+  const stillBlocked = await api('POST', `/api/merchant/orders/${ORDER_DISPUTE}/assign`, shopA.token, { key: randomUUID(), body: { technician_id: TECH_A } })
+  check('不接受后仍阻断派工 409/43007', stillBlocked.status === 409 && codeOf(stillBlocked) === 43007, `status=${stillBlocked.status} code=${codeOf(stillBlocked)}`)
+
+  // Owner accepts: the order resumes its pre-dispute status and the sheet records the outcome.
+  const acceptKey2 = randomUUID()
+  const acceptReview = await api('POST', '/api/check/pickup/dispute/review', owner.token, { key: acceptKey2, body: { order_id: ORDER_DISPUTE, decision: 'ACCEPT', note: '已确认处理结果' } })
+  const acceptReviewData = dataOf(acceptReview)
+  check('车主接受复核 200 且恢复 RECEIVED/RESOLVED/owner_confirm=3',
+    acceptReview.status === 200 && acceptReviewData.dispute_status === 'RESOLVED' && acceptReviewData.order_status === 'RECEIVED' && acceptReviewData.owner_confirm === 3 && acceptReviewData.last_action === 'ACCEPT' && acceptReviewData.changed === true,
+    JSON.stringify(acceptReviewData))
+  check('复核响应 no-store', acceptReview.noStore)
+  const resumeEvidence = sql(`SELECT
+   (SELECT status FROM order_dispute WHERE order_id=${ORDER_DISPUTE}),
+   (SELECT resolved_at IS NOT NULL AND resolved_by IS NOT NULL FROM order_dispute WHERE order_id=${ORDER_DISPUTE}),
+   (SELECT owner_confirm FROM pickup_check WHERE order_id=${ORDER_DISPUTE}),
+   (SELECT status FROM \`order\` WHERE id=${ORDER_DISPUTE}),
+   (SELECT COUNT(*) FROM order_status_transition WHERE order_id=${ORDER_DISPUTE} AND action='ORDER_DISPUTE_RESOLVE'),
+   (SELECT owner_confirmed_at IS NOT NULL FROM \`order\` WHERE id=${ORDER_DISPUTE});`).split('\t')
+  check('恢复写库：RESOLVED+时间/人、owner_confirm=3、订单 RECEIVED、一次 ORDER_DISPUTE_RESOLVE 迁移',
+    resumeEvidence[0] === 'RESOLVED' && resumeEvidence[1] === '1' && resumeEvidence[2] === '3' && resumeEvidence[3] === 'RECEIVED' && resumeEvidence[4] === '1' && resumeEvidence[5] === '1',
+    JSON.stringify(resumeEvidence))
+  const acceptReplay2 = await api('POST', '/api/check/pickup/dispute/review', owner.token, { key: acceptKey2, body: { order_id: ORDER_DISPUTE, decision: 'ACCEPT', note: '已确认处理结果' } })
+  check('同键重放复核返回原成功快照', acceptReplay2.status === 200 && deepEqual(acceptReplay2.json, acceptReview.json), `status=${acceptReplay2.status} first=${acceptReview.text} replay=${acceptReplay2.text}`)
+  const reviewAfterResolved = await api('POST', '/api/check/pickup/dispute/review', owner.token, { key: randomUUID(), body: { order_id: ORDER_DISPUTE, decision: 'ACCEPT', note: '重复复核' } })
+  check('已解决后再复核 409/40905', reviewAfterResolved.status === 409 && codeOf(reviewAfterResolved) === 40905, `status=${reviewAfterResolved.status} code=${codeOf(reviewAfterResolved)}`)
+
+  // The resumed order completes the dispatch chain it was blocked from.
+  const resumeAssign = await api('POST', `/api/merchant/orders/${ORDER_DISPUTE}/assign`, shopA.token, { key: randomUUID(), body: { technician_id: TECH_B } })
+  check('恢复后可正常派工 200/ASSIGNED', resumeAssign.status === 200 && dataOf(resumeAssign).assignment_status === 'ASSIGNED' && dataOf(resumeAssign).order_status === 'RECEIVED', JSON.stringify(dataOf(resumeAssign)))
+  const resumeAccept = await api('POST', `/api/tech/orders/${ORDER_DISPUTE}/accept`, techB.token, { key: randomUUID(), body: {} })
+  check('恢复后技师可正常接单 200/IN_SERVICE', resumeAccept.status === 200 && dataOf(resumeAccept).order_status === 'IN_SERVICE', JSON.stringify(dataOf(resumeAccept)))
+  const disputeAudit = sql(`SELECT
+   (SELECT COUNT(*) FROM audit_log WHERE action='ORDER_DISPUTE_HANDLE' AND resource_type='order_dispute_record'),
+   (SELECT COUNT(*) FROM audit_log WHERE action='ORDER_DISPUTE_REJECT'),
+   (SELECT COUNT(*) FROM audit_log WHERE action='ORDER_DISPUTE_RESOLVE'),
+   (SELECT COUNT(*) FROM order_dispute_record WHERE order_id=${ORDER_DISPUTE});`).split('\t')
+  check('两次处理/一次不接受/一次接受的审计与记录齐备', Number(disputeAudit[0]) === 2 && disputeAudit[1] === '1' && disputeAudit[2] === '1' && disputeAudit[3] === '4', JSON.stringify(disputeAudit))
+  const disputeIdempotent = sql(`SELECT COUNT(*) FROM idempotency_record WHERE request_path LIKE '%dispute%' AND response_body NOT LIKE '%actor_id%';`)
+  // 两次处理、一次不接受、一次接受各一条；异议本身走 /api/check/pickup/confirm，不计入本口径。
+  check('争议幂等记录的响应载荷不含身份字段且至少 4 条', Number(disputeIdempotent) >= 4, `count=${disputeIdempotent}`)
+  // Projection filtering keeps HTTP clean; stored payloads are checked separately.
+  const disputePayloadLeak = sql(`SELECT COUNT(*) FROM audit_log WHERE action LIKE 'ORDER_DISPUTE%' AND (CAST(before_state AS CHAR) LIKE '%actor_id%' OR CAST(after_state AS CHAR) LIKE '%actor_id%');`)
+  check('争议审计的落库前后快照不含任何身份字段', disputePayloadLeak === '0', `count=${disputePayloadLeak}`)
 
   // Revoke synthetic sessions; leave synthetic data for manual review.
   sql(`UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id IN ('${owner.jti}','${shopA.jti}','${shopB.jti}','${techA.jti}','${techB.jti}','${techF.jti}');`)
