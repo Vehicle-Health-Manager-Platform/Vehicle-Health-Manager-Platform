@@ -70,7 +70,7 @@ onUnload(() => { visible = false; flow.reset(); accept.reset() })
       <text v-else>当前工单尚不可接单：需商家完成派工、接车检查与车主确认；如已确认仍不可接单，请刷新后重试。</text>
 
       <text v-if="write.message" role="status" data-testid="technician-accept-message">{{ write.message }}</text>
-      <text>施工报工、配件与质检记录在后续阶段接入；「已接单」不等于施工完成。</text>
+      <button @tap="uni.navigateTo({url:`/pages/technician/work?id=${state.value.order_id}`})">施工防护、报工与质检签字</button>
       <button :disabled="write.busy" @tap="flow.load">刷新工单</button>
     </view>
     <button @tap="uni.redirectTo({ url: '/pages/technician/orders' })">返回我的工单</button>
