@@ -11,7 +11,7 @@
 | A5.3 | 商家派工页、技师独立会话、本人工单/详情/接单界面 | [执行记录](A5_3_DISPATCH_UI_EXECUTION.md)，[PR #38](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/38) |
 | A5.4 | 身份变更、竞争、持久化载荷与历史异常验证 | [执行记录](A5_4_DISPATCH_VERIFICATION_EXECUTION.md)，[PR #39](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/39) |
 | A5.5 | 本机端到端联调与阶段收口 | [执行记录](A5_5_DISPATCH_E2E_EXECUTION.md)、[本机验收](../testing/LOCAL_TECHNICIAN_DISPATCH_ACCEPTANCE.md)，[PR #40](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/40) |
-| A5.6 | 争议处理记录、车主复核恢复、两个写接口与 V013 | [执行记录](A5_6_DISPUTE_RESOLUTION_EXECUTION.md)、[本机验收](../testing/LOCAL_DISPUTE_ACCEPTANCE.md)、[争议处理契约](../api/DISPUTE_RESOLUTION.md)、[争议处理规格](../superpowers/specs/2026-10-08-dispute-resolution-design.md) |
+| A5.6 | 争议处理记录、车主复核恢复、两个写接口与 V013 | [执行记录](A5_6_DISPUTE_RESOLUTION_EXECUTION.md)、[本机验收](../testing/LOCAL_DISPUTE_ACCEPTANCE.md)、[争议处理契约](../api/DISPUTE_RESOLUTION.md)、[争议处理规格](../superpowers/specs/2026-10-08-dispute-resolution-design.md)，[PR #41](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/41) |
 
 ## 已实现的能力
 

@@ -1,6 +1,6 @@
 # A5.6 争议处理、车主复核与恢复执行记录
 
-日期：2026-10-08。状态：规格、迁移、后端、小程序、测试与本机端到端联调全部完成并上传阶段分支，PR 待合并；A5.2（PR #37）、A5.3（PR #38）、A5.4（PR #39）、A5.5（PR #40）均未合并。
+日期：2026-10-08。状态：规格、迁移、后端、小程序、测试与本机端到端联调全部完成并上传阶段分支，[PR #41](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/41) 待合并；A5.2（PR #37）、A5.3（PR #38）、A5.4（PR #39）、A5.5（PR #40）均未合并。
 
 ## 基线与范围
 
@@ -71,4 +71,4 @@ A4 只交付了「第一次决定」：车主提出异议后订单置 `DISPUTED`
 
 ## GitHub 验证
 
-阶段分支 `codex/a5-dispute` 已推送，PR 以 `codex/a5-dispatch-e2e` 为基线（A5.5 未合并），只展示本子阶段差异。六项 CI（web、miniapp、backend、schema-and-ocr、schema-mysql、compose-smoke）结果见 PR 页；端到端脚本需要本机容器与隔离库，属 opt-in 本机验收，不进 CI。
+阶段分支 `codex/a5-dispute` 已推送，[PR #41](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/41) 以 `codex/a5-dispatch-e2e` 为基线（A5.5 未合并），只展示本子阶段差异。六项 CI（web、miniapp、backend、schema-and-ocr、schema-mysql、compose-smoke）结果见 PR 页；端到端脚本需要本机容器与隔离库，属 opt-in 本机验收，不进 CI。

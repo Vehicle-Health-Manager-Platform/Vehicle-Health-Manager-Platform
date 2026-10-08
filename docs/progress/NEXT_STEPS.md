@@ -16,7 +16,7 @@ A5.4 已补齐 A5.2 未覆盖的 T04/T06/T07/T09/T11 证据——员工码重发
 
 A5.5 已用合成身份接真实后端容器与隔离 MySQL 完成端到端：车主确认→候选→派工→本人查询→接单共 **37 项通过**，并验证另一技师/他店/跨角色拒绝、幂等重放、`no-store`、最小投影、双审计与 A5 边界；六项 CI 通过并上传 [PR #40](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/40) 待合并。证据见[A5.5 执行记录](A5_5_DISPATCH_E2E_EXECUTION.md)、[本机验收](../testing/LOCAL_TECHNICIAN_DISPATCH_ACCEPTANCE.md)与[A5 阶段总记录](A5_DISPATCH_EXECUTION.md)。**A5 功能链路已闭环**；真实技师微信登录与真机页面联调仍是独立验收项。
 
-A5.6 已补齐 A4 留下的死路——异议之后订单停在 `DISPUTED`、没有任何恢复入口。本阶段新增商家处理记录与车主复核恢复：新增 `order_dispute`/`order_dispute_record`（V013，表总数 52）与两个写接口，`DISPUTED` 期间派工/接单返回 `43007`，只有车主本人在商家提交处理记录后接受复核（`43008` 约束）才把订单恢复到争议前状态；商家与技师均不能宣布争议解决。后端争议与回归 **52/52**、小程序 **147** 项、两端构建、本机端到端 **69/69** 通过；六项 CI 结果见 PR。证据见[A5.6 执行记录](A5_6_DISPUTE_RESOLUTION_EXECUTION.md)、[本机争议验收](../testing/LOCAL_DISPUTE_ACCEPTANCE.md)、[争议处理契约](../api/DISPUTE_RESOLUTION.md)与[争议处理规格](../superpowers/specs/2026-10-08-dispute-resolution-design.md)。
+A5.6 已补齐 A4 留下的死路——异议之后订单停在 `DISPUTED`、没有任何恢复入口。本阶段新增商家处理记录与车主复核恢复：新增 `order_dispute`/`order_dispute_record`（V013，表总数 52）与两个写接口，`DISPUTED` 期间派工/接单返回 `43007`，只有车主本人在商家提交处理记录后接受复核（`43008` 约束）才把订单恢复到争议前状态；商家与技师均不能宣布争议解决。后端争议与回归 **52/52**、小程序 **147** 项、两端构建、本机端到端 **69/69** 通过；六项 CI 结果见 [PR #41](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/41)。证据见[A5.6 执行记录](A5_6_DISPUTE_RESOLUTION_EXECUTION.md)、[本机争议验收](../testing/LOCAL_DISPUTE_ACCEPTANCE.md)、[争议处理契约](../api/DISPUTE_RESOLUTION.md)与[争议处理规格](../superpowers/specs/2026-10-08-dispute-resolution-design.md)。
 
 下一步：推进 **A6 防护与报工**（防护缺失不能报工、必要证据齐全才送核销、只能操作本人派工）。争议处理的历史遗留（A4 之前没有争议单的异议）仍由人工处理，不自动回填。交付及 CI 见[当前进度](CURRENT_STATUS.md)。
 

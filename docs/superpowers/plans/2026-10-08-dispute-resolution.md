@@ -1,6 +1,6 @@
 # 争议处理与恢复：中文实施计划
 
-日期：2026-10-08。状态：A5.6 规格与实施计划已整理，代码/迁移/界面按本计划实施。业务基线见
+日期：2026-10-08。状态：A5.6 已按本计划实施完成并上传阶段分支，[PR #41](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/41) 待合并，执行证据见[A5.6 执行记录](../../progress/A5_6_DISPUTE_RESOLUTION_EXECUTION.md)。业务基线见
 [争议处理规格](../specs/2026-10-08-dispute-resolution-design.md)，请求与返回见[中文接口契约](../../api/DISPUTE_RESOLUTION.md)。
 用户要求按阶段整理文档并上传 GitHub，遵循[交付规则](../../progress/STAGE_DELIVERY.md)。
 
