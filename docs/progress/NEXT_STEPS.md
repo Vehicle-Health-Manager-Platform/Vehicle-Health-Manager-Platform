@@ -6,7 +6,7 @@
 
 A5.1 已上传至 [PR #36](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/36)，规格提交六项 CI 通过；依赖尚未合并的 A4 PR #35。详细证据与最新检查入口见[A5.1 执行记录](A5_1_DISPATCH_SPEC_EXECUTION.md)。
 
-A3 已合并至 [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34)。A4 已上传至 [PR #35](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/35)，实现提交 `e0d4077` 六项 CI 通过（后端 271 项、小程序 120 项）。A5.1 已形成[规格](../superpowers/specs/2026-10-08-a5-dispatch-design.md)、[六个接口契约](../api/TECHNICIAN_DISPATCH.md)和[中文计划](../superpowers/plans/2026-10-08-a5-dispatch.md)：一单一位技师、本人接单开始施工、防护在 A6 报工校验。A5.2 已编码六个后端接口与 V012，商家通用 START_SERVICE 已停用；下一步 A5.3 接入商家派工界面与技师独立会话/本人工单。A5.2 证据见[执行记录](A5_2_DISPATCH_BACKEND_EXECUTION.md)。交付及 CI 见[当前进度](CURRENT_STATUS.md)与[A5.1 执行记录](A5_1_DISPATCH_SPEC_EXECUTION.md)。
+A3 已合并至 [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34)。A4 已上传至 [PR #35](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/35)，实现提交 `e0d4077` 六项 CI 通过（后端 271 项、小程序 120 项）。A5.1 已形成[规格](../superpowers/specs/2026-10-08-a5-dispatch-design.md)、[六个接口契约](../api/TECHNICIAN_DISPATCH.md)和[中文计划](../superpowers/plans/2026-10-08-a5-dispatch.md)：一单一位技师、本人接单开始施工、防护在 A6 报工校验。A5.2 已通过六项 CI 并上传 [PR #37](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/37)，实现六个后端接口与 V012，商家通用 START_SERVICE 已停用；下一步 A5.3 接入商家派工界面与技师独立会话/本人工单。A5.2 证据见[执行记录](A5_2_DISPATCH_BACKEND_EXECUTION.md)。交付及 CI 见[当前进度](CURRENT_STATUS.md)与[A5.1 执行记录](A5_1_DISPATCH_SPEC_EXECUTION.md)。
 
 ## 业务开发顺序
 

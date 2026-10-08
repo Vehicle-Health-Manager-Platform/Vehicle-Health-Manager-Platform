@@ -1,6 +1,6 @@
 # 三端功能缺口清点
 
-> 2026-10-08 更新：A2/A3 已合并，A4 确认与异议已验证并上传 PR #35，A5.1 [规格](../superpowers/specs/2026-10-08-a5-dispatch-design.md)与计划已整理，A5.2 后端已编码，界面待 A5.3；验证见[执行记录](A5_2_DISPATCH_BACKEND_EXECUTION.md)。除下方阶段表外，详细缺口比例与页面清点保留 2026-10-07 基线；当前状态以[当前进度](CURRENT_STATUS.md)和[下一步规划](NEXT_STEPS.md)为准。
+> 2026-10-08 更新：A2/A3 已合并，A4 确认与异议已验证并上传 PR #35，A5.1 [规格](../superpowers/specs/2026-10-08-a5-dispatch-design.md)与计划已整理，A5.2 后端已验证并上传 PR #37，界面待 A5.3；验证见[执行记录](A5_2_DISPATCH_BACKEND_EXECUTION.md)。除下方阶段表外，详细缺口比例与页面清点保留 2026-10-07 基线；当前状态以[当前进度](CURRENT_STATUS.md)和[下一步规划](NEXT_STEPS.md)为准。
 
 **历史记录（A3 交付时）**：A2 的 PR #33 已合并；A3 [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34) 已实现商家七图接车、手填里程与预约码校验，本机真实上传/扫描/存储/接车事务和两端单据展示通过。首次完整 CI 六项成功（后端259、小程序119）；最终提交与合并以 PR 为准。[契约](../api/PICKUP_INSPECTION.md)、[验收记录](../testing/LOCAL_PICKUP_ACCEPTANCE.md)。当时下一步为 A4；当前 A4 已交付，继续 A5；OCR、短信通知、真实门店相机和浏览器直连测试证书预览未验收。以下保留各阶段原始进度记录。
 
