@@ -19,6 +19,7 @@ const codeValid = computed(() => /^\d{6}$/.test(smsCode.value.trim()))
 function openOwnerTabs() { uni.switchTab({ url: '/pages/home/index' }) }
 function openMerchantProjects() { uni.navigateTo({ url: '/pages/merchant/projects' }) }
 function openMerchantOrders() { uni.navigateTo({ url: '/pages/merchant/orders' }) }
+function openTechnicianOrders() { uni.navigateTo({ url: '/pages/technician/orders' }) }
 
 // 云托管下 callContainer 不弹授权框，进入页面即静默完成真实微信登录；
 // 商家身份仍走账号+密码+短信验证码，不自动登录。
@@ -62,6 +63,7 @@ onMounted(() => {
       <button v-if="role === 'owner' && accessToken" class="login-button" :disabled="busy" @tap="openOwnerTabs">进入车主首页</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantProjects">管理本店服务</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantOrders">查看本店订单</button>
+      <button v-if="role === 'technician' && accessToken" class="login-button" :disabled="busy" @tap="openTechnicianOrders">我的工单</button>
       <view v-if="accessToken" class="signed-in">
         <text class="hint">已登录。车辆、订单等业务内容待接入。</text>
         <button class="logout-button" :loading="operation === 'logout'" :disabled="busy" @tap="tryLogout">退出登录</button>

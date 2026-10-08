@@ -4,7 +4,9 @@ import { AuthError, createAuthApi } from '../src/services/wechat-auth.js'
 import { useRoleIdentity } from '../src/services/role-identity.js'
 import { ownerSession, clearOwnerSession, setOwnerSession } from '../src/services/owner-session.js'
 import { clearMerchantSession } from '../src/services/merchant-session.js'
-test.beforeEach(clearMerchantSession)
+import { clearTechnicianSession, technicianSession } from '../src/services/technician-session.js'
+// 技师会话是跨页面的全局对象：不清干净会让后面的用例带着上一个身份，产生假通过。
+test.beforeEach(() => { clearMerchantSession(); clearTechnicianSession() })
 
 const session = (role) => ({ access_token: 'offline-access', user: { role, phone_bound: false } })
 const response = (data) => ({ statusCode: 200, data: { code: 0, data } })
@@ -271,4 +273,23 @@ test('technician binding rejects permission then requires new login; success cle
   assert.equal(page.accessToken.value, 'offline-access')
   assert.equal(page.employeeCode.value, '')
   assert.equal(page.bindingToken.value, '')
+})
+
+// 技师绑定成功要能直接打开「我的工单」：换页后不能因为会话只存在组件里而丢身份。
+test('technician session is shared across pages and cleared on logout', async () => {
+  const h = harness()
+  const landing = useRoleIdentity('technician', h.api)
+  const workbench = useRoleIdentity('technician', h.api)
+  h.reply(response({ status: 'BIND_REQUIRED', binding_token: 'binding-token' }))
+  await landing.tryLogin()
+  landing.employeeCode.value = 'employee-code'
+  h.reply(response(session('technician')))
+  await landing.tryBind()
+  assert.equal(technicianSession.accessToken, 'offline-access')
+  assert.equal(workbench.accessToken.value, 'offline-access')
+  assert.equal(workbench.phoneBound.value, false)
+  h.reply(response({ revoked: true }))
+  await landing.tryLogout()
+  assert.equal(technicianSession.accessToken, '')
+  assert.equal(workbench.accessToken.value, '')
 })
