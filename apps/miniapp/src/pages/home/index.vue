@@ -38,6 +38,7 @@ function archive() { uni.switchTab({ url: '/pages/archive/index' }) }
           <view v-if="state.latest" class="recent">
             <text class="section">最近记录</text>
             <text class="recent-title">{{ state.latest.title }}</text>
+            <text v-if="state.latest.input_type === 4 && state.latest.test_mode" class="error">测试施工记录，未真实扣款</text>
             <text class="detail">{{ typeNames[state.latest.archive_type - 1] }} · {{ archiveInputTypeName(state.latest.input_type) }} · {{ state.latest.recorded_date }}</text>
           </view>
           <text v-else class="detail">这辆车还没有档案记录。</text>

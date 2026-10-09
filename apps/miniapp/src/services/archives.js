@@ -65,9 +65,21 @@ export function createArchiveApi({ baseUrl, runtime }) {
           && Number.isSafeInteger(data.total) && data.total >= data.list.length
           && data.list.every(row => id(row.archive_id) && row.vehicle_id === vehicleId
             && Number.isInteger(row.archive_type) && row.archive_type >= 1 && row.archive_type <= 7
-            && [1, 3].includes(row.input_type)
+            && [1, 3, 4].includes(row.input_type)
+            && (row.input_type !== 4 || (['order_id', 'report_id', 'review_id', 'redemption_id'].every(k => id(row.source?.[k]))
+              && typeof row.test_mode === 'boolean' && row.mileage === null
+              && Number.isInteger(row.work_minutes) && row.work_minutes > 0 && row.work_minutes <= 1440
+              && typeof row.no_parts === 'boolean' && Array.isArray(row.parts_used) && row.no_parts === (row.parts_used.length === 0)
+              && row.parts_used.every(part => ['name', 'model', 'brand'].every(k => typeof part[k] === 'string') && Number.isInteger(part.quantity) && part.quantity > 0)
+              && ['submitted_at', 'signed_at', 'redeemed_at'].every(k => Number.isFinite(Date.parse(row[k])))))
             && typeof row.recorded_date === 'string' && typeof row.title === 'string'
             && typeof row.notes === 'string' && Array.isArray(row.file_ids) && row.file_ids.every(id)))
+    },
+    access(token, archiveId, fileId) {
+      if (!id(archiveId) || !id(fileId)) throw new ArchiveError('invalid', '档案或图片参数无效')
+      return request(token, `/api/archive/${archiveId}/files/${fileId}/access`, 'GET', undefined, undefined,
+        data => typeof data?.url === 'string' && /^https:\/\/[^/\s?#@]+(?:\/|$)/.test(data.url) && !/\s/.test(data.url)
+          && Number.isFinite(Date.parse(data.expires_at)) && Date.parse(data.expires_at) > Date.now())
     },
     add(token, body, key) {
       if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(key))
