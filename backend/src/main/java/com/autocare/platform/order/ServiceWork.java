@@ -115,7 +115,12 @@ public class ServiceWork {
     }
     /** Revalidate immutable evidence at redemption without requiring the historical technician session. */
     void redemptionGuard(Map<String,Object> order){
-        long id=ReservationStore.number(order,"id");evidenceGuard(order,true);protectionGuard(id,true);
+        long id=ReservationStore.number(order,"id");evidenceGuard(order,true);
+        var pickup=db.one("SELECT id,staff_id FROM pickup_check WHERE order_id=? AND is_deleted=0 FOR UPDATE",id);
+        var pickupFiles=db.jdbc.queryForList("SELECT r.photo_slot,f.id FROM pickup_check_file r JOIN file_object f ON f.id=r.file_id WHERE r.pickup_check_id=? AND f.owner_type='staff_account' AND f.owner_id=? AND f.scan_status='CLEAN' AND f.is_deleted=0 AND f.content_type IN ('image/jpeg','image/png') AND f.size_bytes BETWEEN 1 AND 10485760 ORDER BY f.id FOR UPDATE",pickup.get("id"),pickup.get("staff_id"));
+        var slots=new HashSet<String>();var fileIds=new HashSet<Long>();for(var file:pickupFiles){slots.add(String.valueOf(file.get("photo_slot")));fileIds.add(ReservationStore.number(file,"id"));}
+        if(pickupFiles.size()!=7 || fileIds.size()!=7 || !slots.equals(new HashSet<>(PickupInput.SLOTS)))throw new FulfillmentConflict(43001,"七张接车图片证据不完整或不可用");
+        protectionGuard(id,true);
         var rows=db.jdbc.queryForList("SELECT * FROM technician_assignment WHERE order_id=? FOR UPDATE",id);
         if(rows.size()!=1 || order.get("assigned_at")==null || !Objects.equals(order.get("merchant_id"),rows.get(0).get("merchant_id")) || !"ACCEPTED".equals(rows.get(0).get("status")) || rows.get(0).get("accepted_at")==null)throw new FulfillmentConflict(43004,"派工接单证据不完整");
         long technician=ReservationStore.number(rows.get(0),"technician_id");var r=submission(id,true);reportGuard(technician,id,r);

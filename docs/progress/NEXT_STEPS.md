@@ -4,7 +4,7 @@
 
 ## 当前交付
 
-A4–A6 的 #35–#44 已全部按顺序改回 main 后合并，main 基线 `43903c9` 六项 CI 全绿。A7.1 已完成规划、核销后端、小程序页面与真实本机联调，逐阶段上传 [#45](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/45)→[#46](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/46)→[#47](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/47)→收口 PR。规格/后端/页面均六项 CI 全绿，后端 369/369、小程序 181/181、微信/H5 构建、V015 重放 55 表；真实 HTTP 50/50、gstack 实際核销完成。见[A7 总记录](A7_REDEMPTION_EXECUTION.md)、[本机验收](../testing/LOCAL_ORDER_REDEMPTION_ACCEPTANCE.md)。核销为隔离测试付款，未真实扣款。
+A4–A6 的 #35–#44 已全部按顺序改回 main 后合并，main 基线 `43903c9` 六项 CI 全绿。A7.1 已完成规划、核销后端、小程序页面与真实本机联调，逐阶段上传 [#45](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/45)→[#46](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/46)→[#47](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/47)→[收口 #48](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/48)。规格/后端/页面均六项 CI 全绿，后端 369/369、小程序 181/181、微信/H5 构建、V015 重放 55 表；真实 HTTP 51/51、gstack 实际核销完成。见[A7 总记录](A7_REDEMPTION_EXECUTION.md)、[本机验收](../testing/LOCAL_ORDER_REDEMPTION_ACCEPTANCE.md)。核销为隔离测试付款，未真实扣款。
 
 ## 下一业务步骤：A7.2a 本人订单评价
 
@@ -28,7 +28,7 @@ A4–A6 的 #35–#44 已全部按顺序改回 main 后合并，main 基线 `439
 
 ## 阶段上传与堆叠合并
 
-每阶段：验证→中文文档→提交→推送 codex/ 分支→PR→最终 CI。前序未合并时指向直接依赖分支，后续按顺序将下一支 base 改回 main，复核 head/差异/CI 后再合并，禁止合入上一功能分支。当前 #45→#46→#47→收口 PR 等待合并授权；本次未合并 A7 PR 或部署生产。
+每阶段：验证→中文文档→提交→推送 codex/ 分支→PR→最终 CI。前序未合并时指向直接依赖分支，后续按顺序将下一支 base 改回 main，复核 head/差异/CI 后再合并，禁止合入上一功能分支。当前 #45→#46→#47→[收口 #48](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/48) 等待合并授权；本次未合并 A7 PR 或部署生产。
 
 ## 独立验收
 

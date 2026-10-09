@@ -19,7 +19,7 @@
 | A6.1 防护与报工后端 | 已合并 main | [PR #42](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/42)；`6ee0b86` 六项 CI 全绿，后端 348/小程序 147；相关 75/75 + 锁修复后施工 13/13（76 独立用例）；V014（54 表）、商家防护、本人完整报工/质检签字、私有证据访问；[规格](../superpowers/specs/2026-10-08-service-work-design.md)、[接口](../api/SERVICE_WORK.md)、[执行记录](A6_1_SERVICE_BACKEND_EXECUTION.md) |
 | A6.2 防护与报工页面 | 已合并 main | [PR #43](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/43)，9254e86 六项 CI 全绿； 小程序 169/169、微信/H5 构建、gstack 实际防护→报工→PNG 签字→待核销；[执行记录](A6_2_SERVICE_UI_EXECUTION.md) |
 | A6.3 真实 HTTP 联调 | 已合并 main | [PR #44](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/44)，504e99a；最终六项检查见 [PR #44 Checks](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/44/checks)； 真实 HTTP 65/65；[执行](A6_3_SERVICE_E2E_EXECUTION.md)、[验收](../testing/LOCAL_SERVICE_WORK_ACCEPTANCE.md)、[阶段总记录](A6_SERVICE_WORK_EXECUTION.md)；真机独立验收 |
-| A7.1 核销验码与审计 | 后端与页面六项 CI 通过，真实 HTTP / H5 验收完成，逐阶段已上传 | [规格 #45](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/45)、[后端 #46](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/46)、[页面 #47](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/47)；369/181 项、真实 HTTP 50/50；[阶段总记录](A7_REDEMPTION_EXECUTION.md)、[本机验收](../testing/LOCAL_ORDER_REDEMPTION_ACCEPTANCE.md)；未合并 |
+| A7.1 核销验码与审计 | 后端与页面六项 CI 通过，真实 HTTP / H5 验收完成，逐阶段已上传 | [规格 #45](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/45)、[后端 #46](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/46)、[页面 #47](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/47)；前序完整 CI 369/181 项，收口 #48 新增七图门禁、相关 56 项与真实 HTTP 51/51，最终全量以 #48 Checks 为准；[阶段总记录](A7_REDEMPTION_EXECUTION.md)、[本机验收](../testing/LOCAL_ORDER_REDEMPTION_ACCEPTANCE.md)；未合并 |
 | A7 后续 | 尚未实现 | 本人评价、档案回写、经验卡片分步推进；退款/取消争议订单单列，见[下一步规划](NEXT_STEPS.md) |
 
 ## 主分支合并验收
@@ -35,7 +35,7 @@
 ## 当前明确的限制
 
 - 车主确认前不能派工；提出异议后订单置为 `DISPUTED`，A5.6 已补上商家处理记录与车主复核：只有车主本人接受复核后订单才回到争议前的状态（`PAID`/`RECEIVED`/`IN_SERVICE`/`PENDING_VERIFY`），恢复前派工与施工一律 `43007` 阻断。A4 之前的历史异议没有争议单，恢复一律拒绝（fail-closed），由人工处理。
-- 派工、本人接单与争议处理的**后端、小程序界面、安全竞争验证与本机端到端联调**均已合并 main（A5.1–A5.6）；A5.6 用合成会话接真实后端容器与隔离 MySQL 完成异议→处理→复核→恢复→派工→接单闭环，合成会话是测试桥接，真实技师/车主微信登录、真机页面联调仍是独立验收项。A6.1 防护、完整报工与质检签字后端 76 个独立用例通过，已上传 PR #42，代码六项 CI 全绿，后端 348/小程序 147；A6.2 页面本地测试 169 项与两端构建通过，gstack 实际交互已验证到待核销；A6.3 可复现真实 HTTP 65/65 通过，已上传 PR #44，最新检查见 PR Checks。A7.1 已实现专用核销，规格/后端/页面 PR #45–#47 六项 CI 全绿（后端 369、小程序 181）；真实 HTTP 50/50 与 gstack 实际核销交互完成，test_mode=true 未真实扣款，正式凭据验收仍待完成。
+- 派工、本人接单与争议处理的**后端、小程序界面、安全竞争验证与本机端到端联调**均已合并 main（A5.1–A5.6）；A5.6 用合成会话接真实后端容器与隔离 MySQL 完成异议→处理→复核→恢复→派工→接单闭环，合成会话是测试桥接，真实技师/车主微信登录、真机页面联调仍是独立验收项。A6.1 防护、完整报工与质检签字后端 76 个独立用例通过，已上传 PR #42，代码六项 CI 全绿，后端 348/小程序 147；A6.2 页面本地测试 169 项与两端构建通过，gstack 实际交互已验证到待核销；A6.3 可复现真实 HTTP 65/65 通过，已上传 PR #44，最新检查见 PR Checks。A7.1 已实现专用核销，规格/后端/页面 PR #45–#47 六项 CI 全绿（后端 369、小程序 181）；真实 HTTP 51/51 与 gstack 实际核销交互完成，test_mode=true 未真实扣款，正式凭据验收仍待完成。
 - 真实相机、手机真机、本机测试证书下的直连图片预览继续待验收。
 - 正式短信、微信收款/退款、OCR、正式公网环境和上线运维有独立依赖，见[依赖清单](S0_DEPENDENCIES.md)。
 
