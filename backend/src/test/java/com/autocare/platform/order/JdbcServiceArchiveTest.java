@@ -36,6 +36,10 @@ class JdbcServiceArchiveTest {
     @BeforeEach void setup() {
         jdbc.execute("DROP TRIGGER IF EXISTS reject_service_archive");
         jdbc.execute("DROP TRIGGER IF EXISTS reject_experience_card");
+        jdbc.execute("DROP TRIGGER IF EXISTS reject_moderation");
+        jdbc.update("DELETE FROM experience_card_moderation");
+        jdbc.update("DELETE FROM operator_account");
+        for(String table:List.of("model","series","brand"))jdbc.update("DELETE FROM "+table);
         jdbc.update("DELETE FROM experience_card");
         for (String t : List.of("service_archive_job","vehicle_archive_file","vehicle_archive","service_evidence_file","service_report_submission","technician_report","order_review_file","order_review","order_redemption","order_dispute","payment_exception","payment_event","payment","file_object","audit_log","idempotency_record","auth_session","order","vehicle","user","staff_account","merchant")) jdbc.update("DELETE FROM `" + t + "`");
         var manager = new DataSourceTransactionManager(jdbc.getDataSource()); var mapper = new ObjectMapper();
@@ -221,5 +225,96 @@ class JdbcServiceArchiveTest {
         for(String bad:List.of("{}","{\"agree\":false,\"consent_version\":\"experience-v1\"}","{\"agree\":true,\"consent_version\":\"old\"}","{\"agree\":true,\"consent_version\":\"experience-v1\",\"extra\":1}","{\"agree\":true,\"agree\":false,\"consent_version\":\"experience-v1\"}","{\"agree\":true,\"consent_version\":\"experience-v1\"} {}"))assertThrows(ResponseStatusException.class,()->ExperienceCardInput.parse(bad,true));
         assertThrows(ResponseStatusException.class,()->cards().change(owner,id,key(),db.mapper.valueToTree(Map.of("agree",true)),false));
         assertEquals(audits,count("audit_log")); assertEquals(keys,count("idempotency_record"));
+    }
+    com.autocare.platform.gateway.identity.OperatorActor operator() {
+        jdbc.update("INSERT IGNORE INTO operator_account(id,account,password_hash,phone,can_review) VALUES(1,'synthetic-reviewer','synthetic-unused-password-hash','13800000000',1)");
+        String session=key();jdbc.update("INSERT INTO auth_session(id,subject_type,subject_id,role,app_id,refresh_hash,expires_at) VALUES(?,'operator_account',1,'OPERATOR','operator-account',?,DATE_ADD(UTC_TIMESTAMP(),INTERVAL 15 MINUTE))",session,key());
+        return new com.autocare.platform.gateway.identity.OperatorActor(1,session,Instant.now().plusSeconds(900));
+    }
+    ExperienceModeration moderation(boolean enabled) {
+        var identity=new com.autocare.platform.gateway.identity.OperatorIdentity(jdbc,
+            new org.springframework.security.oauth2.jwt.NimbusJwtEncoder(new com.nimbusds.jose.jwk.source.ImmutableSecret<>("synthetic-secret-32-characters-long".getBytes())),new DataSourceTransactionManager(jdbc.getDataSource()));
+        return new ExperienceModeration(db,identity,enabled);
+    }
+    void models() {
+        jdbc.update("INSERT INTO brand(id,name) VALUES(1,'合成测试品牌')");jdbc.update("INSERT INTO series(id,brand_id,name) VALUES(1,1,'合成测试车系')");
+        jdbc.update("INSERT INTO model(id,series_id,year) VALUES(1,1,'2026'),(2,1,'2025')");jdbc.update("UPDATE vehicle SET model_id=1");
+    }
+    com.fasterxml.jackson.databind.JsonNode decision(int revision,boolean approve) {
+        return ExperienceModerationInput.parse("{\"revision\":"+revision+",\"decision\":\""+(approve?"APPROVE":"REJECT")+"\",\"reason_code\":"+(approve?"null":"\"NOT_SUITABLE\"")+"}");
+    }
+    long awaiting() { long id=card(true);cards().change(owner,id,key(),consent(),true);return id; }
+    @Test void approvedExperienceUsesPublicDtoAndWithdrawalImmediatelyHides() {
+        models();long id=awaiting();var ops=operator();var service=moderation(true);
+        var pending=db.mapper.valueToTree(service.pending(ops,1,20)).path("items").get(0);
+        assertFalse(pending.has("user_id"));assertFalse(pending.has("order_id"));assertFalse(pending.has("archive_id"));
+        assertEquals(0,((List<?>)service.experiences(other,2,null).get("items")).size());
+        var accepted=service.moderate(ops,id,key(),decision(1,true));assertEquals("PUBLISHED",accepted.path("data").path("status").asText());
+        var feed=db.mapper.valueToTree(service.experiences(other,2,null)).path("items");assertEquals(1,feed.size());
+        assertEquals(Set.of("experience_id","title","summary","model_id","published_at"),db.mapper.convertValue(feed.get(0),Map.class).keySet());
+        assertDoesNotThrow(()->UUID.fromString(feed.get(0).path("experience_id").textValue()));
+        cards().change(owner,id,key(),db.mapper.createObjectNode(),false);assertEquals(0,((List<?>)service.experiences(other,2,null).get("items")).size());
+        assertEquals(1,count("vehicle_archive"));assertEquals(1,count("order_review"));
+    }
+    @Test void missingModelCannotApproveButCanRejectAndOwnerReauthorize() {
+        long id=awaiting();var ops=operator();var service=moderation(true);
+        assertEquals(45004,((FulfillmentConflict)assertThrows(ResponseStatusException.class,()->service.moderate(ops,id,key(),decision(1,true)))).code);
+        service.moderate(ops,id,key(),decision(1,false));
+        var row=db.mapper.valueToTree(cards().list(owner,1,1,20)).path("items").get(0);assertEquals("NOT_SUITABLE",row.path("review_reason").textValue());
+        cards().change(owner,id,key(),consent(),true);assertEquals(3,jdbc.queryForObject("SELECT revision FROM experience_card",Integer.class));
+        models();service.moderate(ops,id,key(),decision(3,true));assertEquals(2,count("experience_card_moderation"));
+    }
+    @Test void staleModerationKeysAndVersionsCannotOverrideWithdrawnConsent() {
+        models();long id=awaiting();var ops=operator();var service=moderation(true);String k=key();
+        var response=service.moderate(ops,id,k,decision(1,true));assertEquals(response,service.moderate(ops,id,k,decision(1,true)));
+        service.moderate(ops,id,key(),decision(1,true));assertEquals(1,count("experience_card_moderation"));
+        assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM audit_log WHERE action='EXPERIENCE_CARD_MODERATE'",Integer.class));
+        cards().change(owner,id,key(),db.mapper.createObjectNode(),false);
+        assertThrows(ResponseStatusException.class,()->service.moderate(ops,id,k,decision(1,true)));
+        cards().change(owner,id,key(),consent(),true);assertThrows(ResponseStatusException.class,()->service.moderate(ops,id,k,decision(1,true)));
+        assertEquals("PENDING_REVIEW",jdbc.queryForObject("SELECT status FROM experience_card",String.class));
+    }
+    @Test void permissionRemovalRevokedSessionAndDisabledFlagBlockOperations() {
+        models();long id=awaiting();var ops=operator();var service=moderation(true);
+        assertThrows(ResponseStatusException.class,()->moderation(false).pending(ops,1,20));assertEquals(0,((List<?>)moderation(false).experiences(other,2,null).get("items")).size());
+        jdbc.update("UPDATE operator_account SET can_review=0");assertEquals(403,assertThrows(ResponseStatusException.class,()->service.pending(ops,1,20)).getStatusCode().value());
+        assertThrows(ResponseStatusException.class,()->service.moderate(ops,id,key(),decision(1,true)));
+        jdbc.update("UPDATE operator_account SET can_review=1");jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id=?",ops.session());assertThrows(ResponseStatusException.class,()->service.moderate(ops,id,key(),decision(1,true)));
+    }
+    @Test void testDraftsAndWrongModelNeverAppearAsRealExperience() {
+        models();long id=card(false);var ops=operator();var service=moderation(true);
+        assertEquals(0L,service.pending(ops,1,20).get("total"));assertThrows(ResponseStatusException.class,()->service.moderate(ops,id,key(),decision(1,true)));
+        assertEquals(0,((List<?>)service.experiences(other,2,null).get("items")).size());
+    }
+    @Test void unsafeOrChangedSourcesCannotPublishOrContinueBeingShown() {
+        models();long id=awaiting();var ops=operator();var service=moderation(true);
+        jdbc.update("UPDATE technician_report SET repair_plan='变更来源'");assertThrows(ResponseStatusException.class,()->service.moderate(ops,id,key(),decision(1,true)));
+        jdbc.update("UPDATE technician_report SET repair_plan='检查与清洁'");service.moderate(ops,id,key(),decision(1,true));
+        jdbc.update("UPDATE file_object SET scan_status='INFECTED' WHERE id=101");assertEquals(0,((List<?>)service.experiences(other,2,null).get("items")).size());
+        jdbc.update("UPDATE file_object SET scan_status='CLEAN' WHERE id=101");jdbc.update("UPDATE experience_card SET summary=JSON_SET(summary,'$.work_minutes',999)");assertEquals(0,((List<?>)service.experiences(other,2,null).get("items")).size());
+    }
+    @Test void deletedMovedVehiclesInactiveOwnersAndModelChangeHidePublicCards() {
+        models();long id=awaiting();var ops=operator();var service=moderation(true);service.moderate(ops,id,key(),decision(1,true));
+        for(String update:List.of("UPDATE vehicle SET is_deleted=1 WHERE id=1","UPDATE vehicle SET user_id=2 WHERE id=1","UPDATE vehicle SET model_id=2 WHERE id=1","UPDATE user SET status=2 WHERE id=1","UPDATE model SET is_deleted=1 WHERE id=1")){
+            jdbc.update(update);assertEquals(0,((List<?>)service.experiences(other,2,null).get("items")).size());jdbc.update("UPDATE vehicle SET is_deleted=0,user_id=1,model_id=1 WHERE id=1");jdbc.update("UPDATE user SET status=1 WHERE id=1");jdbc.update("UPDATE model SET is_deleted=0 WHERE id=1");
+        }
+    }
+    @Test void moderationAuditFailureRollsBackAndSameKeyRetries() {
+        models();long id=awaiting();var ops=operator();var service=moderation(true);String k=key();
+        jdbc.execute("CREATE TRIGGER reject_moderation BEFORE INSERT ON audit_log FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='synthetic failure'");
+        assertEquals(503,assertThrows(ResponseStatusException.class,()->service.moderate(ops,id,k,decision(1,true))).getStatusCode().value());assertEquals(0,count("experience_card_moderation"));
+        assertEquals("PENDING_REVIEW",jdbc.queryForObject("SELECT status FROM experience_card",String.class));jdbc.execute("DROP TRIGGER reject_moderation");service.moderate(ops,id,k,decision(1,true));assertEquals(1,count("experience_card_moderation"));
+    }
+    @Test void concurrentApprovalAndWithdrawalNeverLeaveVisibleRevokedCard() throws Exception {
+        models();long id=awaiting();var ops=operator();var service=moderation(true);var pool=Executors.newFixedThreadPool(2);
+        try{var approve=pool.submit(()->{try{service.moderate(ops,id,key(),decision(1,true));}catch(FulfillmentConflict e){}});var revoke=pool.submit(()->cards().change(owner,id,key(),db.mapper.createObjectNode(),false));approve.get(30,TimeUnit.SECONDS);revoke.get(30,TimeUnit.SECONDS);
+            assertEquals("WITHDRAWN",jdbc.queryForObject("SELECT status FROM experience_card",String.class));assertEquals(0,((List<?>)service.experiences(other,2,null).get("items")).size());assertTrue(count("experience_card_moderation")<=1);
+        }finally{pool.shutdownNow();}
+    }
+    @Test void cursorPaginationScansBoundedCandidatesAndNeverReturnsPrivateFields() {
+        models();long id=awaiting();var ops=operator();var service=moderation(true);service.moderate(ops,id,key(),decision(1,true));
+        long marker=jdbc.queryForObject("SELECT id FROM experience_card_moderation",Long.class);
+        assertEquals(0,((List<?>)service.experiences(other,2,marker).get("items")).size());assertNull(service.experiences(other,2,null).get("next_cursor"));
+        assertThrows(ResponseStatusException.class,()->service.experiences(owner,2,null));
     }
 }

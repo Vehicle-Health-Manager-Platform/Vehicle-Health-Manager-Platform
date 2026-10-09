@@ -733,6 +733,35 @@ def main():
         item["responses"]["503"] = {"description": "身份/限流数据库或短信未配置，50300"}
         document["paths"][path] = {"post": item}
 
+    schemas["PrivateExperienceCard"]["properties"]["status"]["enum"].extend(["PUBLISHED", "REJECTED"])
+    reason = {"anyOf": [{"type": "string", "enum": ["INSUFFICIENT_DETAIL", "NOT_SUITABLE"]}, {"type": "null"}]}
+    schemas["PrivateExperienceCard"]["properties"]["review_reason"] = reason
+    schemas["PrivateExperienceCard"]["allOf"] = [{"if": {"properties": {"status": {"const": "REJECTED"}}}, "then": {"required": ["review_reason"]}}]
+    schemas["ExperienceModerationRequest"] = strict({"revision": {"type": "integer", "minimum": 1}, "decision": {"type": "string", "enum": ["APPROVE", "REJECT"]}, "reason_code": reason})
+    schemas["ExperienceModerationItem"] = strict({"card_id": identifier, "revision": {"type": "integer", "minimum": 1}, "title": {"const": "施工经验摘要"}, "summary": {"$ref": "#/components/schemas/PrivateExperienceSummary"}, "model_id": {"anyOf": [identifier, {"type": "null"}]}})
+    schemas["PublicExperience"] = strict({"experience_id": {"type": "string", "format": "uuid"}, "title": {"const": "施工经验摘要"}, "summary": {"$ref": "#/components/schemas/PrivateExperienceSummary"}, "model_id": identifier, "published_at": timestamp})
+    for method, path, title in [("get", "/api/admin/experience-cards", "运营经验待审列表"), ("post", "/api/admin/experience-cards/{id}/moderate", "运营批准或驳回指定授权版本"), ("get", "/api/community/experiences", "微信车主同款已发布经验")]:
+        item = operation(method, path, title, "F12,F20")
+        item["x-roles"] = "OWNER" if path.startswith("/api/community") else "OPERATOR with can_review"
+        item["x-implementation-status"] = "experience-moderation-backend-implemented"
+        item["description"] = "默认发布开关false；批准重核车主授权/可信来源/车型，固定理由驳回，UUID/revision/事务审计。公共DTO不含私有来源，测试永久排除，撤回/转移/来源异常实时隐藏，no-store。主入口微信小程序；见EXPERIENCE_PUBLICATION.md。"
+        for p in item["parameters"]:
+            if p["in"] == "path": p["schema"] = identifier
+        if method == "post":
+            item["requestBody"]["content"]["application/json"]["schema"] = {"$ref": "#/components/schemas/ExperienceModerationRequest"}
+            response = strict({"card_id": identifier, "status": {"type": "string", "enum": ["PUBLISHED", "REJECTED"]}, "revision": {"type": "integer", "minimum": 2}, "decision": {"type": "string", "enum": ["APPROVE", "REJECT"]}, "reason_code": reason})
+        elif path.startswith("/api/community"):
+            item["parameters"].extend([{"name": "vehicle_id", "in": "query", "required": True, "schema": identifier}, {"name": "cursor", "in": "query", "schema": identifier}])
+            response = strict({"items": {"type": "array", "maxItems": 20, "items": {"$ref": "#/components/schemas/PublicExperience"}}, "next_cursor": {"anyOf": [identifier, {"type": "null"}]}})
+        else:
+            item["parameters"].extend([{"name": "page", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 1000000}}, {"name": "page_size", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 50}}])
+            response = strict({"items": {"type": "array", "items": {"$ref": "#/components/schemas/ExperienceModerationItem"}}, "total": {"type": "integer", "minimum": 0}, "page": {"type": "integer"}, "page_size": {"type": "integer"}})
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "properties": {"data": response}}]}
+        item["responses"]["404"] = {"description": "本人车辆/资源不可用，40400"}
+        item["responses"]["409"] = {"description": "45001来源不可信；45003版本/授权变化；45004缺可信车型"}
+        item["responses"]["503"] = {"description": "开关/依赖/事务不可用，50300；写使用原键重试"}
+        document["paths"][path] = {method: item}
+
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     count = sum(len(item) for item in document["paths"].values())
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

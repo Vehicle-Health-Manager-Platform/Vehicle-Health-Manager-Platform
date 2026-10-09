@@ -18,7 +18,7 @@
 
 EXPERIENCE_PUBLICATION_ENABLED默认false，先迁移V019并升级微信页面再显式开启审核/展示。本人撤回不依赖发布开关。
 
-待审列表仅非测试、已明确授权PENDING_REVIEW；返回卡片id/revision、固定摘要、可信车型id或null，不提供车主/订单/档案id、原文、图片或签名。运营按UUID幂等+预期revision批准/驳回；操作前锁原订单、车辆、卡片，复核权限、状态、当前授权、冻结施工来源/当前档案/真实核销付款与无争议。缺可信车型不能批准，可驳回。
+待审列表仅非测试、已明确授权PENDING_REVIEW；返回卡片id/revision、固定摘要、可信车型id或null，不提供车主/订单/档案id、原文、图片或签名。运营按UUID幂等+预期revision批准/驳回；操作前锁原订单、卡片，复核权限、状态、当前授权；批准还锁车辆并复核冻结施工来源/当前档案/真实核销付款与无争议。缺可信车型或来源失效不能批准，可驳回。
 
 批准PENDING_REVIEW→PUBLISHED，revision+1，冻结有效车型id、随机公共UUID、审核人和时间。驳回→REJECTED，revision+1，理由仅固定码INSUFFICIENT_DETAIL/NOT_SUITABLE，无自由文字泄露。每个卡片/送审revision唯一只追加审核记录；动作/幂等响应/最小审计原子提交。旧revision/旧幂等键不得覆盖撤回或重新授权；重放复核权限与当前状态。
 

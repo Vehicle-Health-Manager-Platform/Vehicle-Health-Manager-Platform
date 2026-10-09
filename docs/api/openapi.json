@@ -8995,6 +8995,386 @@
         "x-implementation-status": "operator-auth-implemented",
         "description": "独立运营身份，密码+短信二次校验，JWT/数据库会话15分钟，无长期refresh；权限实时复核，no-store。正式短信未配置发码503。见OPERATOR_ACCOUNTS.md。"
       }
+    },
+    "/api/admin/experience-cards": {
+      "get": {
+        "summary": "运营经验待审列表",
+        "operationId": "get_api_admin_experience_cards",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F12",
+          "F20"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "items",
+                            "total",
+                            "page",
+                            "page_size"
+                          ],
+                          "properties": {
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/components/schemas/ExperienceModerationItem"
+                              }
+                            },
+                            "total": {
+                              "type": "integer",
+                              "minimum": 0
+                            },
+                            "page": {
+                              "type": "integer"
+                            },
+                            "page_size": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人车辆/资源不可用，40400"
+          },
+          "409": {
+            "description": "45001来源不可信；45003版本/授权变化；45004缺可信车型"
+          },
+          "503": {
+            "description": "开关/依赖/事务不可用，50300；写使用原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR with can_review",
+        "x-implementation-status": "experience-moderation-backend-implemented",
+        "description": "默认发布开关false；批准重核车主授权/可信来源/车型，固定理由驳回，UUID/revision/事务审计。公共DTO不含私有来源，测试永久排除，撤回/转移/来源异常实时隐藏，no-store。主入口微信小程序；见EXPERIENCE_PUBLICATION.md。"
+      }
+    },
+    "/api/admin/experience-cards/{id}/moderate": {
+      "post": {
+        "summary": "运营批准或驳回指定授权版本",
+        "operationId": "post_api_admin_experience_cards_id_moderate",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F12",
+          "F20"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "card_id",
+                            "status",
+                            "revision",
+                            "decision",
+                            "reason_code"
+                          ],
+                          "properties": {
+                            "card_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740991
+                            },
+                            "status": {
+                              "type": "string",
+                              "enum": [
+                                "PUBLISHED",
+                                "REJECTED"
+                              ]
+                            },
+                            "revision": {
+                              "type": "integer",
+                              "minimum": 2
+                            },
+                            "decision": {
+                              "type": "string",
+                              "enum": [
+                                "APPROVE",
+                                "REJECT"
+                              ]
+                            },
+                            "reason_code": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "INSUFFICIENT_DETAIL",
+                                    "NOT_SUITABLE"
+                                  ]
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人车辆/资源不可用，40400"
+          },
+          "409": {
+            "description": "45001来源不可信；45003版本/授权变化；45004缺可信车型"
+          },
+          "503": {
+            "description": "开关/依赖/事务不可用，50300；写使用原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExperienceModerationRequest"
+              }
+            }
+          }
+        },
+        "x-roles": "OPERATOR with can_review",
+        "x-implementation-status": "experience-moderation-backend-implemented",
+        "description": "默认发布开关false；批准重核车主授权/可信来源/车型，固定理由驳回，UUID/revision/事务审计。公共DTO不含私有来源，测试永久排除，撤回/转移/来源异常实时隐藏，no-store。主入口微信小程序；见EXPERIENCE_PUBLICATION.md。"
+      }
+    },
+    "/api/community/experiences": {
+      "get": {
+        "summary": "微信车主同款已发布经验",
+        "operationId": "get_api_community_experiences",
+        "tags": [
+          "community"
+        ],
+        "x-feature-ids": [
+          "F12",
+          "F20"
+        ],
+        "parameters": [
+          {
+            "name": "vehicle_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "items",
+                            "next_cursor"
+                          ],
+                          "properties": {
+                            "items": {
+                              "type": "array",
+                              "maxItems": 20,
+                              "items": {
+                                "$ref": "#/components/schemas/PublicExperience"
+                              }
+                            },
+                            "next_cursor": {
+                              "anyOf": [
+                                {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 9007199254740991
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人车辆/资源不可用，40400"
+          },
+          "409": {
+            "description": "45001来源不可信；45003版本/授权变化；45004缺可信车型"
+          },
+          "503": {
+            "description": "开关/依赖/事务不可用，50300；写使用原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "experience-moderation-backend-implemented",
+        "description": "默认发布开关false；批准重核车主授权/可信来源/车型，固定理由驳回，UUID/revision/事务审计。公共DTO不含私有来源，测试永久排除，撤回/转移/来源异常实时隐藏，no-store。主入口微信小程序；见EXPERIENCE_PUBLICATION.md。"
+      }
     }
   },
   "components": {
@@ -11885,7 +12265,9 @@
             "enum": [
               "DRAFT",
               "PENDING_REVIEW",
-              "WITHDRAWN"
+              "WITHDRAWN",
+              "PUBLISHED",
+              "REJECTED"
             ]
           },
           "revision": {
@@ -11929,8 +12311,38 @@
           },
           "summary": {
             "$ref": "#/components/schemas/PrivateExperienceSummary"
+          },
+          "review_reason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "INSUFFICIENT_DETAIL",
+                  "NOT_SUITABLE"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "REJECTED"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "review_reason"
+              ]
+            }
+          }
+        ]
       },
       "ExperienceConsent": {
         "type": "object",
@@ -11945,6 +12357,114 @@
           },
           "consent_version": {
             "const": "experience-v1"
+          }
+        }
+      },
+      "ExperienceModerationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "revision",
+          "decision",
+          "reason_code"
+        ],
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "APPROVE",
+              "REJECT"
+            ]
+          },
+          "reason_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "INSUFFICIENT_DETAIL",
+                  "NOT_SUITABLE"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "ExperienceModerationItem": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "card_id",
+          "revision",
+          "title",
+          "summary",
+          "model_id"
+        ],
+        "properties": {
+          "card_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "title": {
+            "const": "施工经验摘要"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/PrivateExperienceSummary"
+          },
+          "model_id": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "PublicExperience": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "experience_id",
+          "title",
+          "summary",
+          "model_id",
+          "published_at"
+        ],
+        "properties": {
+          "experience_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "const": "施工经验摘要"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/PrivateExperienceSummary"
+          },
+          "model_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "published_at": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       }
