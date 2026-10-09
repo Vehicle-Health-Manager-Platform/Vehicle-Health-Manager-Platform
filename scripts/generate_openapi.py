@@ -641,7 +641,40 @@ def main():
     action["description"] = "通用RECEIVE/START_SERVICE/FINISH_SERVICE/COMPLETE分别拒绝43001/43004/43005/43006；核销仅走专用redeem入口，已完成重复也不可绕过。"
     action["responses"]["409"]["description"] = "40905非法状态；43001/43004/43005/43006请使用各自业务专用入口"
     count = sum(len(value) for value in document["paths"].values())
+    # A7.2a: immutable feedback, privately visible to the authenticated order owner.
+    review_photos = {"type": "array", "items": identifier, "maxItems": 3, "uniqueItems": True}
+    schemas["OrderReviewRequest"] = strict({"order_id": identifier,
+        "rating": {"type": "integer", "minimum": 1, "maximum": 5},
+        "content": {"type": "string", "minLength": 1, "maxLength": 500, "description": "去除首尾空白后计 Unicode 码点；提交后不可修改"},
+        "photo_file_ids": review_photos})
+    schemas["OwnerOrderReview"] = strict({"review_id": identifier,
+        "rating": {"type": "integer", "minimum": 1, "maximum": 5},
+        "content": schemas["OrderReviewRequest"]["properties"]["content"], "photo_file_ids": review_photos,
+        "submitted_at": timestamp, "test_mode": {"type": "boolean"}})
+    schemas["OrderReviewResult"] = strict({"order_id": identifier, "review": {"$ref": "#/components/schemas/OwnerOrderReview"}})
+    reasons = ["ORDER_NOT_COMPLETED", "REDEMPTION_UNVERIFIED", "OPEN_DISPUTE", "PAYMENT_UNVERIFIED", "ALREADY_REVIEWED"]
+    schemas["OrderReviewDetail"] = strict({"order_id": identifier, "can_submit": {"type": "boolean"},
+        "unavailable_reason": {"anyOf": [{"type": "string", "enum": reasons}, {"type": "null"}]},
+        "test_mode": {"anyOf": [{"type": "boolean"}, {"type": "null"}]},
+        "review": {"anyOf": [{"$ref": "#/components/schemas/OwnerOrderReview"}, {"type": "null"}]}})
+    for method, path, title, response in [("post", "/api/order/review", "本人提交唯一订单评价", "OrderReviewResult"),
+        ("get", "/api/order/{id}/review", "本人查询评价资格和历史记录", "OrderReviewDetail")]:
+        item = operation(method, path, title, "F08")
+        item["x-roles"] = "OWNER"
+        item["x-implementation-status"] = "owner-review-backend-implemented"
+        item["description"] = "仅本人，COMPLETED且可信核销/付款一致，无未解决争议。1–5分、1–500字、0–3本人安全JPEG/PNG；不可修改，不公开，不计商家评分。无查询参数；严格JSON无重复键/尾随；全部响应no-store。幂等重放复核资格及图片，历史本人评价仍可读；见ORDER_REVIEWS.md。"
+        for p in item["parameters"]:
+            if p["in"] == "path": p["schema"] = identifier
+        if method == "post": item["requestBody"]["content"]["application/json"]["schema"] = {"$ref": "#/components/schemas/OrderReviewRequest"}
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "properties": {"data": {"$ref": "#/components/schemas/"+response}}}]}
+        item["responses"]["404"] = {"description": "非本人、订单不存在或已删除，code=40400"}
+        item["responses"]["409"] = {"description": "44001缺可信资格；44002已有不同评价"}
+        item["responses"]["422"] = {"description": "图片非本人安全文件或不可用，code=42200"}
+        item["responses"]["503"] = {"description": "数据库未配置或事务失败，code=50300；原载荷原键重试"}
+        document["paths"][path] = {method: item}
+
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    count = sum(len(item) for item in document["paths"].values())
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")
 
 
