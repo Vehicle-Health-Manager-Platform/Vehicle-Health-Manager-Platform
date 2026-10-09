@@ -55,6 +55,7 @@ function add(mode = 'manual') { if (vehicle.value) uni.navigateTo({ url: archive
     <template #content>
       <VehicleList :selected-id="vehicle?.vehicle_id || 0" @select="select" />
       <button v-if="vehicle" class="secondary" @tap="uni.navigateTo({url:'/pages/community/my-cards'})">我的经验卡片</button>
+      <button v-if="vehicle" class="secondary" @tap="uni.navigateTo({url:'/pages/community/experiences'})">同款施工经验</button>
       <view v-if="vehicle" class="records" data-testid="archive-records">
         <view class="top"><text class="heading">{{ vehicle.model_name || '当前车辆' }}的记录</text><view class="actions"><button class="add" :disabled="busy" @tap="add('manual')">手动录入</button><button class="add" :disabled="busy" @tap="add('photo')">拍照录入</button></view></view>
         <text v-if="busy" class="copy" role="status">正在加载档案…</text>

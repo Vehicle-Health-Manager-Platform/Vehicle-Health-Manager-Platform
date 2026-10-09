@@ -3,13 +3,14 @@ import { apiRuntime } from './api-runtime.js'
 
 export const EXPERIENCE_CONSENT_VERSION = 'experience-v1'
 export const EXPERIENCE_CONSENT_TEXT = '我授权这份不含照片、施工原文和个人身份信息的摘要接受审核，并在审核通过后用于车友经验展示。我可以撤回，原档案和评价保留。'
-export const CARD_STATES = { DRAFT: '私有草稿', PENDING_REVIEW: '已授权 · 待审核，尚未公开', WITHDRAWN: '已撤回 · 未授权' }
+export const CARD_STATES = { DRAFT: '私有草稿', PENDING_REVIEW: '已授权 · 待审核，尚未公开', WITHDRAWN: '已撤回 · 未授权', PUBLISHED: '审核通过 · 已展示', REJECTED: '审核未通过 · 尚未公开' }
+export const REVIEW_REASONS = { INSUFFICIENT_DETAIL: '摘要信息不足', NOT_SUITABLE: '不适合经验展示' }
 const id = n => Number.isSafeInteger(n) && n > 0
 const exact = (n, keys) => n && typeof n === 'object' && !Array.isArray(n) && Object.keys(n).length === keys.length && keys.every(k => Object.hasOwn(n, k))
 const time = n => typeof n === 'string' && Number.isFinite(Date.parse(n))
 export class ExperienceCardError extends Error { constructor(kind, message) { super(message); this.kind = kind } }
 export function validExperienceCard(c) {
-  if (!exact(c, ['card_id', 'vehicle_id', 'order_id', 'archive_id', 'title', 'status', 'revision', 'test_mode', 'summary', 'consent_version', 'consented_at', 'withdrawn_at'])
+  if (!exact(c, ['card_id', 'vehicle_id', 'order_id', 'archive_id', 'title', 'status', 'revision', 'test_mode', 'summary', 'consent_version', 'consented_at', 'withdrawn_at', ...(c?.status === 'REJECTED' ? ['review_reason'] : [])])
     || !['card_id', 'vehicle_id', 'order_id', 'archive_id'].every(k => id(c[k])) || c.title !== '施工经验摘要'
     || !Object.hasOwn(CARD_STATES, c.status) || !Number.isSafeInteger(c.revision) || c.revision < 0 || typeof c.test_mode !== 'boolean') return false
   const s = c.summary
@@ -18,7 +19,8 @@ export function validExperienceCard(c) {
     || !Number.isInteger(s.part_kinds) || s.part_kinds < 0 || s.part_kinds > 20 || s.no_parts !== (s.part_kinds === 0)
     || typeof s.recorded_month !== 'string' || !/^[1-9][0-9]{3}-(0[1-9]|1[0-2])$/.test(s.recorded_month)) return false
   if (c.status === 'DRAFT') return c.revision === 0 && c.consent_version === null && c.consented_at === null && c.withdrawn_at === null
-  if (c.status === 'PENDING_REVIEW') return !c.test_mode && c.revision > 0 && c.consent_version === EXPERIENCE_CONSENT_VERSION && time(c.consented_at) && c.withdrawn_at === null
+  if (['PENDING_REVIEW', 'PUBLISHED', 'REJECTED'].includes(c.status)) return !c.test_mode && c.revision > 0 && c.consent_version === EXPERIENCE_CONSENT_VERSION && time(c.consented_at) && c.withdrawn_at === null
+    && (c.status !== 'REJECTED' || c.review_reason === null || Object.hasOwn(REVIEW_REASONS, c.review_reason))
   return c.revision > 0 && c.consent_version === null && c.consented_at === null && time(c.withdrawn_at)
 }
 const errors = {
@@ -57,7 +59,7 @@ export function createExperienceCardsApi({ baseUrl, runtime }) {
     change(token, card, action, key) {
       if (!validExperienceCard(card) || !['consent', 'withdraw'].includes(action)
         || !/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(key)) throw new ExperienceCardError('invalid', '卡片操作无效，请刷新')
-      if (action === 'consent' && card.test_mode) throw new ExperienceCardError('invalid', '测试卡片不能送审')
+      if (action === 'consent' && (card.test_mode || ['PENDING_REVIEW', 'PUBLISHED'].includes(card.status))) throw new ExperienceCardError('invalid', '请刷新状态；已展示卡片需先撤回授权')
       return call(token, `/api/experience-cards/${card.card_id}/${action}`, 'POST',
         action === 'consent' ? { agree: true, consent_version: EXPERIENCE_CONSENT_VERSION } : {}, key,
         n => exact(n, ['card']) && validExperienceCard(n.card) && ['card_id', 'vehicle_id', 'order_id', 'archive_id'].every(k => n.card[k] === card[k])
@@ -86,7 +88,7 @@ export function createExperienceFlow({ state, api, token, vehicle, newKey }) {
   async function change(card, action, agreed = false) {
     if (!active || state.busy || state.writing || !token() || card.vehicle_id !== vehicle()
       || !state.rows.some(c => c.card_id === card.card_id && c.revision === card.revision)) return
-    if (action === 'consent' && (!agreed || card.test_mode || card.status === 'PENDING_REVIEW')) return
+    if (action === 'consent' && (!agreed || card.test_mode || ['PENDING_REVIEW', 'PUBLISHED'].includes(card.status))) return
     if (!['consent', 'withdraw'].includes(action) || action === 'withdraw' && card.status === 'WITHDRAWN') return
     const version = epoch, actor = token(), car = vehicle(), scope = `${card.card_id}:${card.revision}:${action}`
     if (pending?.scope !== scope) pending = { scope, key: newKey() }

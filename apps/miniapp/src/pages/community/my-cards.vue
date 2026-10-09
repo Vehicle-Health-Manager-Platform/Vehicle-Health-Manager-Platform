@@ -5,7 +5,7 @@ import VehicleList from '../../components/VehicleList.vue'
 import { ownerSession, clearOwnerSession } from '../../services/owner-session.js'
 import { selectedOwnerVehicle, selectOwnerVehicle } from '../../services/owner-vehicle-selection.js'
 import { imageRequestKey } from '../../services/private-images.js'
-import { CARD_STATES, EXPERIENCE_CONSENT_TEXT, experienceCardsApi, initialExperienceState, createExperienceFlow } from '../../services/experience-cards.js'
+import { CARD_STATES, REVIEW_REASONS, EXPERIENCE_CONSENT_TEXT, experienceCardsApi, initialExperienceState, createExperienceFlow } from '../../services/experience-cards.js'
 
 const vehicle = selectedOwnerVehicle, state = reactive(initialExperienceState()), agreements = ref({})
 let visible = false
@@ -27,7 +27,7 @@ onUnload(() => { visible = false; clear() })
 <template>
   <view class="reservation-page">
     <text class="reservation-title">我的经验卡片</text>
-    <text class="reservation-copy">卡片默认私有，仅本人查看。授权后待审核，当前尚未公开。</text>
+    <text class="reservation-copy">卡片默认私有。明确授权且审核通过后才展示同款摘要；撤回后停止展示，原档案和评价保留。</text>
     <button v-if="!ownerSession.accessToken" @tap="login">前往车主登录</button>
     <VehicleList :selected-id="vehicle?.vehicle_id || 0" @select="selectOwnerVehicle" />
     <text v-if="state.busy" role="status">正在加载卡片…</text>
@@ -35,12 +35,13 @@ onUnload(() => { visible = false; clear() })
     <view v-for="card in state.rows" :key="card.card_id" class="reservation-panel" data-testid="experience-card">
       <text class="reservation-heading">{{ card.title }}</text>
       <text data-testid="experience-state">{{ CARD_STATES[card.status] }}</text>
+      <text v-if="card.status === 'REJECTED'">{{ REVIEW_REASONS[card.review_reason] || '审核未通过，请刷新查看' }}。重新送审需要再次明确授权。</text>
       <text v-if="card.test_mode" class="notice" data-testid="experience-test">测试施工，未真实扣款；此卡片不能授权送审。</text>
       <text>{{ card.summary.recorded_month }} · 实际工时 {{ card.summary.work_minutes }} 分钟</text>
       <text>{{ card.summary.no_parts ? '本次未使用配件' : `使用 ${card.summary.part_kinds} 种配件` }}</text>
       <text>摘要不含照片、施工原文、配件详情和个人身份信息。</text>
       <button :disabled="state.writing || state.busy" @tap="uni.navigateTo({url:`/pages/order/detail?id=${card.order_id}`})">查看来源订单</button>
-      <template v-if="!card.test_mode && card.status !== 'PENDING_REVIEW'">
+      <template v-if="!card.test_mode && ['DRAFT','WITHDRAWN','REJECTED'].includes(card.status)">
         <checkbox-group @change="agree(card,$event)"><label class="consent"><checkbox value="agree" :checked="!!agreements[card.card_id]" :disabled="state.writing || state.busy" /><text>{{ EXPERIENCE_CONSENT_TEXT }}</text></label></checkbox-group>
         <button class="reservation-primary" :disabled="!agreements[card.card_id] || state.busy || state.writing" :loading="state.writing" @tap="act(card,'consent')">{{ card.status === 'WITHDRAWN' ? '重新授权送审' : '授权送审' }}</button>
       </template>
