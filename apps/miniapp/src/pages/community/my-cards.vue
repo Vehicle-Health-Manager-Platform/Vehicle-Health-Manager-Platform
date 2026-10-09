@@ -54,7 +54,7 @@ onUnload(() => { visible = false; clear() })
     <button @tap="uni.navigateBack({fail:()=>uni.switchTab({url:'/pages/archive/index'})})">返回档案</button>
   </view>
 </template>
-<style src="../../styles/reservations.css"></style>
+
 <style scoped>
 .consent{display:flex;align-items:flex-start;gap:12rpx;font-size:26rpx;line-height:40rpx}.notice{padding:18rpx;background:#fff7e6;color:#805300;border-radius:12rpx}
 </style>

@@ -83,4 +83,3 @@ onUnload(() => { visible = false; flow.reset(); apply.reset() })
     <button @tap="uni.redirectTo({ url: '/pages/merchant/orders' })">返回本店订单</button>
   </view>
 </template>
-<style src="../../styles/reservations.css"></style>

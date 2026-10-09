@@ -52,5 +52,5 @@ onHide(() => { visible = false; clear() }); onUnload(() => { visible = false; cl
     <button :disabled="state.writing || state.busy" @tap="logout">退出运营账号</button>
   </view>
 </template>
-<style src="../../styles/reservations.css"></style>
+
 <style scoped>.reason{padding:22rpx;border:1rpx solid #e5e6eb;border-radius:12rpx;font-size:28rpx}</style>

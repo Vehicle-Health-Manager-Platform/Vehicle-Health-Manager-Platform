@@ -76,4 +76,3 @@ onUnload(() => { visible = false; flow.reset(); accept.reset() })
     <button @tap="uni.redirectTo({ url: '/pages/technician/orders' })">返回我的工单</button>
   </view>
 </template>
-<style src="../../styles/reservations.css"></style>

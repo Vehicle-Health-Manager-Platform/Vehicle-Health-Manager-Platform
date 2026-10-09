@@ -47,7 +47,7 @@ onHide(stop); onUnload(stop)
     <button @tap="uni.redirectTo({url:`/pages/merchant/order-detail?id=${id}`})">返回订单详情</button>
   </view>
 </template>
-<style src="../../styles/reservations.css"></style>
+
 
 <style scoped>
 .redemption-block{display:flex;flex-direction:column;gap:18rpx}

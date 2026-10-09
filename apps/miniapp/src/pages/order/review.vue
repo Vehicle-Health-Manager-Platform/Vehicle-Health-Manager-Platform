@@ -79,7 +79,7 @@ onUnload(() => { visible = false; clear() })
     <button @tap="uni.navigateBack({fail:()=>uni.redirectTo({url:'/pages/order/list'})})">返回订单</button>
   </view>
 </template>
-<style src="../../styles/reservations.css"></style>
+
 <style scoped>
 .rating-options{display:flex;gap:10rpx;flex-wrap:wrap}.rating-options button{margin:0;padding:0 18rpx;min-width:82rpx}.rating-options .selected{background:#00b42a;color:white}.review-input{box-sizing:border-box;width:100%;min-height:220rpx;margin-top:0}.review-content{white-space:pre-wrap;overflow-wrap:anywhere}.review-notice{padding:18rpx;background:#fff7e6;color:#805300;border-radius:12rpx}.review-photo{display:flex;flex-direction:column;gap:10rpx;border-bottom:1px solid #e5e6eb;padding:16rpx 0}.review-thumb{width:100%;height:220rpx}
 </style>

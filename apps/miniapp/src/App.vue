@@ -10,6 +10,10 @@ export default {
 </script>
 
 <style>
+/* Shared page classes must live in app.wxss: repeated page style-src imports
+   are deduplicated by the WeChat build and disappear from later pages. */
+@import './styles/reservations.css';
+
 page {
   background: #f2f3f5;
   color: #1d2129;

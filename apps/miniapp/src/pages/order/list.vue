@@ -19,4 +19,3 @@ watch(token,()=>{flow.reset();if(visible&&token())flow.load()},{flush:'sync'});o
   <view v-for="row in state.items" :key="row.order_id" class="reservation-panel" :data-testid="`order-${row.order_id}`"><text class="reservation-heading">{{row.project_snapshot?.project_name || '历史订单'}}</text><text>{{row.merchant_snapshot?.merchant_name || '历史商家信息未提供'}}</text><text class="reservation-price">¥{{row.amount_due}}</text><text>{{stateLabel(row.status)}}</text><text v-if="row.payment_summary?.test_mode">测试支付，未真实扣款</text><text v-if="row.payment_summary?.requires_review">支付异常待核对</text><text>{{displayTime(row.appointment_snapshot?.starts_at)}}</text><button @tap="open(row)">查看订单详情</button></view>
   <button v-if="state.items.length<state.total" :disabled="state.busy" @tap="flow.load(true)">加载更多订单</button>
 </template></view></template>
-<style src="../../styles/reservations.css"></style>

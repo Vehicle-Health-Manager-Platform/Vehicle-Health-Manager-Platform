@@ -78,5 +78,5 @@ onUnload(() => { visible = false; clear() })
     <button @tap="uni.navigateBack()">返回本店订单</button>
   </view>
 </template>
-<style src="../../styles/reservations.css"></style>
+
 <style scoped>checkbox-group{display:flex;flex-direction:column;gap:16rpx}</style>

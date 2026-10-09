@@ -40,4 +40,3 @@ onLoad(q=>{order=Number(q?.id)||0;role=q?.role==='merchant'?'merchant':'owner'})
     </view>
     <text v-if="write.message" role="status">{{write.message}}</text><button @tap="flow.load">刷新接车单</button></view>
 </view></template>
-<style src="../../styles/reservations.css"></style>

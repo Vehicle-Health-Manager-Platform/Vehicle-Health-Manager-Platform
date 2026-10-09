@@ -142,4 +142,3 @@ onUnload(() => {
     <button @tap="uni.redirectTo({ url: `/pages/merchant/order-detail?id=${orderId}` })">返回订单详情</button>
   </view>
 </template>
-<style src="../../styles/reservations.css"></style>

@@ -52,5 +52,5 @@ onUnload(() => { visible = false; flow.reset() })
     </template>
   </view>
 </template>
-<style src="../../styles/reservations.css"></style>
+
 <style scoped>.filters{display:flex;flex-wrap:wrap;gap:8rpx}.filters button{font-size:23rpx;margin:8rpx 0}.filters .selected{background:#00b42a;color:white}</style>
