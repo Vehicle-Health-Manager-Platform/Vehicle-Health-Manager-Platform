@@ -12,7 +12,9 @@ public class ServiceArchiveJobs {
     private static final Logger log = LoggerFactory.getLogger(ServiceArchiveJobs.class);
     private final ReservationStore db;
     private final boolean enabled;
-    public ServiceArchiveJobs(ReservationStore db, boolean enabled) { this.db = db; this.enabled = enabled; }
+    private final boolean cardsEnabled;
+    public ServiceArchiveJobs(ReservationStore db, boolean enabled) { this(db, enabled, false); }
+    public ServiceArchiveJobs(ReservationStore db, boolean enabled, boolean cardsEnabled) { this.db = db; this.enabled = enabled; this.cardsEnabled = cardsEnabled; }
     static final class InvalidSource extends RuntimeException {}
     private static void require(boolean value) { if (!value) throw new InvalidSource(); }
 
@@ -102,6 +104,7 @@ public class ServiceArchiveJobs {
                 + "VALUES('system',0,'SERVICE_ARCHIVE_CREATE','vehicle_archive',?,'{}',?,?)", archive, db.json(audit), UUID.randomUUID().toString());
             db.jdbc.update("UPDATE service_archive_job SET status='DONE',archive_id=?,payload=?,completed_at=?,last_error=NULL WHERE id=?",
                 archive, db.json(current), ReservationStore.time(db.now()), id);
+            if (cardsEnabled) ExperienceCards.create(db, archive, current);
         });
     }
 
