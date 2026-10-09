@@ -1,5 +1,7 @@
 # API 文档
 
+- [微信小程序经验审核与同款摘要](EXPERIENCE_PUBLICATION.md)：独立运营认证/权限、批准/驳回、本人撤回与同款五字段DTO；[运营账号运维](../operations/OPERATOR_ACCOUNTS.md)，V019/61表、OpenAPI当前111操作（仍含历史草案，不代表全部实现）。
+
 - [本人订单评价](ORDER_REVIEWS.md)：A7.2a 可信核销后本人唯一评分/文字/私有图片；不可修改、仅本人查询、UUID 幂等与事务审计；V016/57表，OpenAPI 当前101操作（含尚未实现的历史草案）。
 
 A5.2 已实现六个后端接口，见[商家派工与技师接单契约](TECHNICIAN_DISPATCH.md)，明确六个操作、员工归属、接单迁移、权限、幂等和错误码；界面已在 A5.3 接入小程序（商家派工页、技师工作台/详情/接单）。A5.6 另实现[争议处理与恢复](DISPUTE_RESOLUTION.md)：商家追加处理记录、车主复核后恢复订单，争议未解决时派工/接单返回 `43007`。后端证据见[A5.2 执行记录](../progress/A5_2_DISPATCH_BACKEND_EXECUTION.md)、[A5.6 执行记录](../progress/A5_6_DISPUTE_RESOLUTION_EXECUTION.md)，界面证据见[A5.3 执行记录](../progress/A5_3_DISPATCH_UI_EXECUTION.md)，安全与竞争证据见[A5.4 执行记录](../progress/A5_4_DISPATCH_VERIFICATION_EXECUTION.md)，本机端到端证据见[A5.5 执行记录](../progress/A5_5_DISPATCH_E2E_EXECUTION.md)、[本机派工验收](../testing/LOCAL_TECHNICIAN_DISPATCH_ACCEPTANCE.md)、[本机争议验收](../testing/LOCAL_DISPUTE_ACCEPTANCE.md)。[规格](../superpowers/specs/2026-10-08-a5-dispatch-design.md)、[争议处理规格](../superpowers/specs/2026-10-08-dispute-resolution-design.md)与[计划](../superpowers/plans/2026-10-08-a5-dispatch.md)提供编码和验收基线。
