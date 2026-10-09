@@ -70,7 +70,7 @@ export function createArchiveApi({ baseUrl, runtime }) {
               && typeof row.test_mode === 'boolean' && row.mileage === null
               && Number.isInteger(row.work_minutes) && row.work_minutes > 0 && row.work_minutes <= 1440
               && typeof row.no_parts === 'boolean' && Array.isArray(row.parts_used) && row.no_parts === (row.parts_used.length === 0)
-              && row.parts_used.every(part => ['name', 'model', 'brand'].every(k => typeof part[k] === 'string') && Number.isInteger(part.quantity) && part.quantity > 0)
+              && row.parts_used.every(part => part && typeof part === 'object' && ['name', 'model', 'brand'].every(k => typeof part[k] === 'string') && Number.isInteger(part.quantity) && part.quantity > 0)
               && ['submitted_at', 'signed_at', 'redeemed_at'].every(k => Number.isFinite(Date.parse(row[k])))))
             && typeof row.recorded_date === 'string' && typeof row.title === 'string'
             && typeof row.notes === 'string' && Array.isArray(row.file_ids) && row.file_ids.every(id)))

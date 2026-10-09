@@ -44,7 +44,7 @@ test('automatic service archives retain traceability test status actual minutes 
 })
 test('automatic archives reject missing source test marker fake mileage and malformed report fields', async () => {
   for (const row of [{ ...service, source: {} }, { ...service, test_mode: undefined }, { ...service, mileage: 0 },
-    { ...service, work_minutes: 0 }, { ...service, parts_used: [{ name: '油' }] }, { ...service, signed_at: 'bad' }])
+    { ...service, work_minutes: 0 }, { ...service, no_parts: false, parts_used: [null] }, { ...service, parts_used: [{ name: '油' }] }, { ...service, signed_at: 'bad' }])
     await assert.rejects(listApi(row).list('owner', 11), error => error.kind === 'protocol')
 })
 test('service evidence uses archive scoped bearer route and requires fresh HTTPS signatures', async () => {

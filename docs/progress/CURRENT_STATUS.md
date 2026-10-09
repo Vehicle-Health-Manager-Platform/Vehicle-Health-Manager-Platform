@@ -4,7 +4,7 @@
 
 ## 当前阶段与 GitHub 状态
 
-A7.2b 施工档案回写正在实施：[规格 #53](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/53) 六项 CI 通过；后端已编码并在验证，页面和联调待收口。采用评价后可靠任务，默认关闭消费，测试与真机边界见[执行记录](A7_SERVICE_ARCHIVE_EXECUTION.md)。
+A7.2b 施工档案回写已实现：[规格 #53](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/53)、[后端 #54](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/54)、[页面 #55](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/55) 六项 CI 全绿；后端398/398、小程序196/196、真实HTTP29/29、本机数据库27/27，gstack档案/来源订单/首页标注通过。采用评价后可靠任务，默认关闭消费，联调收口分支codex/a7-archive-e2e最终CI见对应PR；未合并。[执行](A7_SERVICE_ARCHIVE_EXECUTION.md)、[验收](../testing/LOCAL_SERVICE_ARCHIVES_ACCEPTANCE.md)。自签证书直连图片仍待验收。
 
 | 阶段 | 状态 | 证据与下一步 |
 | --- | --- | --- |
@@ -23,7 +23,8 @@ A7.2b 施工档案回写正在实施：[规格 #53](https://github.com/Vehicle-H
 | A6.3 真实 HTTP 联调 | 已合并 main | [PR #44](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/44)，504e99a；最终六项检查见 [PR #44 Checks](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/44/checks)； 真实 HTTP 65/65；[执行](A6_3_SERVICE_E2E_EXECUTION.md)、[验收](../testing/LOCAL_SERVICE_WORK_ACCEPTANCE.md)、[阶段总记录](A6_SERVICE_WORK_EXECUTION.md)；真机独立验收 |
 | A7.1 核销验码与审计 | 后端与页面六项 CI 通过，真实 HTTP / H5 验收完成，逐阶段已上传 | [规格 #45](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/45)、[后端 #46](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/46)、[页面 #47](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/47)；前序完整 CI 369/181 项，收口 #48 新增七图门禁、相关 56 项与真实 HTTP 51/51，最终全量以 #48 Checks 为准；[阶段总记录](A7_REDEMPTION_EXECUTION.md)、[本机验收](../testing/LOCAL_ORDER_REDEMPTION_ACCEPTANCE.md)；未合并 |
 | A7.2a 本人订单评价 | 后端/页面六项CI全绿，真实HTTP/H5完成，逐阶段上传 | [规格#49](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/49)、[后端#50](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/50)、[页面#51](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/51)；后端389/389、小程序193/193、真实HTTP44/44、57表；[执行](A7_OWNER_REVIEWS_EXECUTION.md)、[验收](../testing/LOCAL_ORDER_REVIEWS_ACCEPTANCE.md)。收口最终CI见其PR，未合并 |
-| A7 后续 | 尚未实现 | 施工档案回写、经验卡片与评价公开规则分步推进；退款/取消争议订单单列，见[下一步规划](NEXT_STEPS.md) |
+| A7.2b 施工档案回写 | 已实现并逐阶段上传，收口最终CI见PR | 评价后唯一任务、来源快照、恢复、本人施工照片及测试标注；V017/58表，398/196项、HTTP29/29；[执行](A7_SERVICE_ARCHIVE_EXECUTION.md) |
+| A7.2c及后续 | 尚未实现 | 经验卡片、授权脱敏与审核、评价公开规则、退款/取消争议订单分步推进，见[下一步规划](NEXT_STEPS.md) |
 
 ## 主分支合并验收
 
