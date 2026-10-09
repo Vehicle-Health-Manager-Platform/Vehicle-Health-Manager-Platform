@@ -91,7 +91,7 @@ public class ArchiveService {
         ownVehicle(owner, vehicleId, false);
         List<Map<String, Object>> rows = jdbc.query("SELECT a.id,a.archive_type,a.input_type,a.content,"
             + "DATE_FORMAT(a.recorded_at,'%Y-%m-%d') AS recorded_date,a.created_at "
-            + "FROM vehicle_archive a WHERE a.vehicle_id=? AND a.is_deleted=0 AND a.input_type IN (1,3) "
+            + "FROM vehicle_archive a WHERE a.vehicle_id=? AND a.is_deleted=0 AND (a.input_type IN (1,3) OR (a.input_type=4 AND JSON_EXTRACT(a.content,'$.source.user_id')=?)) "
             + "ORDER BY a.recorded_at DESC,a.id DESC LIMIT ? OFFSET ?", (rs, n) -> {
                 JsonNode content;
                 try { content = mapper.readTree(rs.getString("content")); }
@@ -110,10 +110,38 @@ public class ArchiveService {
                 row.put("notes", content.path("notes").asText(""));
                 row.put("mileage", content.path("mileage").isNumber() ? content.path("mileage").intValue() : null);
                 row.put("file_ids", files); row.put("created_at", rs.getTimestamp("created_at").toInstant().toString());
+                if (rs.getInt("input_type") == 4) {
+                    var source = content.path("source");
+                    row.put("source", Map.of("order_id", source.path("order_id").asLong(), "report_id", source.path("report_id").asLong(),
+                        "review_id", source.path("review_id").asLong(), "redemption_id", source.path("redemption_id").asLong()));
+                    row.put("test_mode", content.path("test_mode").asBoolean());
+                    row.put("parts_used", content.path("parts_used")); row.put("no_parts", content.path("no_parts").asBoolean());
+                    row.put("work_minutes", content.path("work_minutes").asInt());
+                    for (String time : List.of("submitted_at", "signed_at", "redeemed_at")) row.put(time, content.path(time).asText());
+                }
                 return row;
-            }, vehicleId, size, (page - 1) * size);
-        long total = jdbc.queryForObject("SELECT COUNT(*) FROM vehicle_archive WHERE vehicle_id=? AND is_deleted=0 AND input_type IN (1,3)",
-            Long.class, vehicleId);
+            }, vehicleId, owner.id(), size, (page - 1) * size);
+        long total = jdbc.queryForObject("SELECT COUNT(*) FROM vehicle_archive a WHERE a.vehicle_id=? AND a.is_deleted=0 AND (a.input_type IN (1,3) OR (a.input_type=4 AND JSON_EXTRACT(a.content,'$.source.user_id')=?))",
+            Long.class, vehicleId, owner.id());
         return Map.of("list", rows, "total", total, "page", page, "page_size", size);
+    }
+
+    public com.autocare.platform.file.FileMetadataRepository.Actor fileOwner(VehicleOwner owner, long archiveId, long fileId) {
+        authorize(owner, false);
+        var rows = jdbc.queryForList("SELECT f.owner_type,f.owner_id FROM vehicle_archive a "
+            + "JOIN vehicle v ON v.id=a.vehicle_id AND v.user_id=? AND v.is_deleted=0 "
+            + "JOIN service_archive_job j ON j.archive_id=a.id AND j.status='DONE' "
+            + "JOIN `order` o ON o.id=j.order_id AND o.user_id=? AND o.vehicle_id=v.id AND o.is_deleted=0 "
+            + "JOIN vehicle_archive_file af ON af.archive_id=a.id AND af.file_id=? "
+            + "JOIN service_evidence_file e ON e.order_id=o.id AND e.file_id=af.file_id "
+            + "AND e.record_id=JSON_EXTRACT(a.content,'$.source.report_id') AND e.kind IN ('PROCESS','FAULT','FINISH') "
+            + "JOIN technician_report t ON t.id=e.record_id AND t.order_id=o.id AND t.is_deleted=0 AND t.status=1 AND t.signed_at IS NOT NULL "
+            + "JOIN file_object f ON f.id=af.file_id AND f.owner_type='staff_account' AND f.owner_id=t.technician_id "
+            + "AND f.scan_status='CLEAN' AND f.is_deleted=0 AND f.content_type IN ('image/jpeg','image/png') AND f.size_bytes BETWEEN 1 AND 10485760 "
+            + "WHERE a.id=? AND a.is_deleted=0 AND a.input_type=4 AND JSON_EXTRACT(a.content,'$.source.user_id')=?",
+            owner.id(), owner.id(), fileId, archiveId, owner.id());
+        if (rows.size() != 1) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "档案或图片不可用");
+        var file = rows.get(0);
+        return new com.autocare.platform.file.FileMetadataRepository.Actor(String.valueOf(file.get("owner_type")), ((Number) file.get("owner_id")).longValue());
     }
 }

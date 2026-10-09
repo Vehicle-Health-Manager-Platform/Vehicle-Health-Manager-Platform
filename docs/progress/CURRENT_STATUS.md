@@ -4,6 +4,8 @@
 
 ## 当前阶段与 GitHub 状态
 
+A7.2b 施工档案回写正在实施：[规格 #53](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/53) 六项 CI 通过；后端已编码并在验证，页面和联调待收口。采用评价后可靠任务，默认关闭消费，测试与真机边界见[执行记录](A7_SERVICE_ARCHIVE_EXECUTION.md)。
+
 | 阶段 | 状态 | 证据与下一步 |
 | --- | --- | --- |
 | A1 履约规格 | 关键规则已确认并交付 | PR #32 已合并；预约码、仅商家接车、车主二次确认与不自动关闭已固化 |

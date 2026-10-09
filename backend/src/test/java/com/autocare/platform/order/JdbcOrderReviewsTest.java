@@ -27,7 +27,7 @@ class JdbcOrderReviewsTest {
     }
     @BeforeEach void setup(){
         jdbc.execute("DROP TRIGGER IF EXISTS reject_review");
-        for(String table:List.of("order_review_file","order_review","order_redemption","order_dispute","payment_exception","payment_event","payment","file_object","audit_log","idempotency_record","auth_session","order","user","staff_account","merchant"))jdbc.update("DELETE FROM `"+table+"`");
+        for(String table:List.of("service_archive_job","order_review_file","order_review","order_redemption","order_dispute","payment_exception","payment_event","payment","file_object","audit_log","idempotency_record","auth_session","order","user","staff_account","merchant"))jdbc.update("DELETE FROM `"+table+"`");
         var manager=new DataSourceTransactionManager(jdbc.getDataSource());var mapper=new ObjectMapper();db=new ReservationStore(jdbc,mapper,new WriteIntegrityService(jdbc,mapper,manager),Clock.systemUTC(),manager);reviews=new OrderReviews(db);
         jdbc.update("INSERT INTO user(id,openid,status) VALUES(1,'synthetic-review-owner',1),(2,'synthetic-review-other',1)");
         jdbc.update("INSERT INTO merchant(id,merchant_type,name,address,status) VALUES(1,2,'synthetic-review-shop','test',1)");
@@ -82,7 +82,7 @@ class JdbcOrderReviewsTest {
     }
     @Test void textCodePointsAndZeroOrThreePhotosAreSupported(){
         var b=(com.fasterxml.jackson.databind.node.ObjectNode)body();b.put("content","🙂".repeat(500));b.set("photo_file_ids",db.mapper.valueToTree(List.of(101,102,103)));assertEquals(500,reviews.submit(owner,key(),b).path("data").path("review").path("content").asText().codePointCount(0,1000));
-        jdbc.update("DELETE FROM order_review_file");jdbc.update("DELETE FROM order_review");b.put("content","一");b.set("photo_file_ids",db.mapper.valueToTree(List.of()));assertEquals(0,reviews.submit(owner,key(),b).path("data").path("review").path("photo_file_ids").size());
+        jdbc.update("DELETE FROM service_archive_job");jdbc.update("DELETE FROM order_review_file");jdbc.update("DELETE FROM order_review");b.put("content","一");b.set("photo_file_ids",db.mapper.valueToTree(List.of()));assertEquals(0,reviews.submit(owner,key(),b).path("data").path("review").path("photo_file_ids").size());
     }
     @Test void allWritesRollbackAndSameKeyCanRetryAfterFailure(){
         String k=key();for(String table:List.of("order_review","order_review_file","audit_log","idempotency_record")){

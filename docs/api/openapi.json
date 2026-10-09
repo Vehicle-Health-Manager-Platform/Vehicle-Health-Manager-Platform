@@ -907,8 +907,8 @@
           }
         ],
         "x-roles": "正式车主",
-        "x-implementation-status": "manual-and-photo-core-implemented",
-        "description": "只列所选本人车辆的手动及拍照记录，每条带input_type，按发生日期与ID倒序；附件返回稳定file_ids，不返回签名URL。详见 ARCHIVE_MANUAL.md。"
+        "x-implementation-status": "manual-photo-and-service-archive-implemented",
+        "description": "本人车辆档案；input_type=1/3为拍照/手动，4为施工自动归档，附source、test_mode、parts_used、no_parts、work_minutes及施工时间。按日期与ID倒序；施工图片经档案专用授权，不返回签名URL。详见 SERVICE_ARCHIVES.md。"
       }
     },
     "/api/home/dashboard": {
@@ -5262,6 +5262,82 @@
         "x-roles": "车主正式会话",
         "x-implementation-status": "implemented",
         "description": "每次复核本人/未删除/CLEAN 状态和对象大小/MIME；响应 Cache-Control: no-store，默认签名 120 秒。已经签发的 URL 在 TTL 内仍可能有效。"
+      }
+    },
+    "/api/archive/{archiveId}/files/{fileId}/access": {
+      "get": {
+        "summary": "本人施工档案私有图片短时访问",
+        "operationId": "get_api_archive_archiveId_files_fileId_access",
+        "tags": [
+          "archive"
+        ],
+        "x-feature-ids": [
+          "F03"
+        ],
+        "parameters": [
+          {
+            "name": "archiveId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "fileId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "档案或图片不可用"
+          },
+          "503": {
+            "description": "数据库或私有图片暂不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "正式车主",
+        "x-implementation-status": "implemented",
+        "description": "复核会话、当前车辆归属、原订单车主、已完成任务、施工照片关系及安全文件；不开放员工签字，不改变文件所有者。返回短时url及expires_at，Cache-Control:no-store。"
       }
     },
     "/api/service/project/{id}": {

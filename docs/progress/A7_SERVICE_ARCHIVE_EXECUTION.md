@@ -10,3 +10,9 @@
 - [中文计划](../superpowers/plans/2026-10-09-a7-service-archive.md)
 
 后端、页面与联调正在实施，测试和 GitHub 状态在实际验证后追加，不把既有测试当新功能验收。
+
+规格 PR [#53](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/53)，fa7c6c5，六项 CI 通过（37890361237）；仅已有实现回归。
+
+## 后端阶段（验证中）
+
+已编码 V017、评价同事务任务、独立恢复消费、系统审计、本人施工档案列表和私有图片授权、测试 AI 历史隔离。消费者默认关闭，Compose 和示例环境支持显式开启。新增真实 MySQL 测试覆盖来源、回滚恢复、并发、权限及测试隔离；本机编译通过，数据库测试运行中。OpenAPI 生成 102 操作，生成文件与 diff 检查通过。后端先上传草稿供 CI，验收完成后转为待审阅。
