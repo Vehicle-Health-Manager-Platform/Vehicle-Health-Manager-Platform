@@ -20,7 +20,8 @@
 | A6.2 防护与报工页面 | 已合并 main | [PR #43](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/43)，9254e86 六项 CI 全绿； 小程序 169/169、微信/H5 构建、gstack 实际防护→报工→PNG 签字→待核销；[执行记录](A6_2_SERVICE_UI_EXECUTION.md) |
 | A6.3 真实 HTTP 联调 | 已合并 main | [PR #44](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/44)，504e99a；最终六项检查见 [PR #44 Checks](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/44/checks)； 真实 HTTP 65/65；[执行](A6_3_SERVICE_E2E_EXECUTION.md)、[验收](../testing/LOCAL_SERVICE_WORK_ACCEPTANCE.md)、[阶段总记录](A6_SERVICE_WORK_EXECUTION.md)；真机独立验收 |
 | A7.1 核销验码与审计 | 后端与页面六项 CI 通过，真实 HTTP / H5 验收完成，逐阶段已上传 | [规格 #45](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/45)、[后端 #46](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/46)、[页面 #47](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/47)；前序完整 CI 369/181 项，收口 #48 新增七图门禁、相关 56 项与真实 HTTP 51/51，最终全量以 #48 Checks 为准；[阶段总记录](A7_REDEMPTION_EXECUTION.md)、[本机验收](../testing/LOCAL_ORDER_REDEMPTION_ACCEPTANCE.md)；未合并 |
-| A7 后续 | 尚未实现 | 本人评价、档案回写、经验卡片分步推进；退款/取消争议订单单列，见[下一步规划](NEXT_STEPS.md) |
+| A7.2a 本人订单评价 | 后端/页面六项CI全绿，真实HTTP/H5完成，逐阶段上传 | [规格#49](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/49)、[后端#50](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/50)、[页面#51](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/51)；后端389/389、小程序193/193、真实HTTP44/44、57表；[执行](A7_OWNER_REVIEWS_EXECUTION.md)、[验收](../testing/LOCAL_ORDER_REVIEWS_ACCEPTANCE.md)。收口最终CI见其PR，未合并 |
+| A7 后续 | 尚未实现 | 施工档案回写、经验卡片与评价公开规则分步推进；退款/取消争议订单单列，见[下一步规划](NEXT_STEPS.md) |
 
 ## 主分支合并验收
 
