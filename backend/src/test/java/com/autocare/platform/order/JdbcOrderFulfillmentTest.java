@@ -91,7 +91,7 @@ class JdbcOrderFulfillmentTest {
         evidence(id,"check_in_completed_at");evidence(id,"owner_confirmed_at");evidence(id,"assigned_at");
         assertEquals("RECEIVED",data(fulfillment.apply(shop,key(),id,OrderStatus.RECEIVE,null),"status"));
         assertEquals("IN_SERVICE",data(fulfillment.apply(shop,key(),id,OrderStatus.START_SERVICE,null),"status"));
-        assertEquals(40905,codeOf(()->fulfillment.apply(shop,key(),id,OrderStatus.COMPLETE,null)));
+        assertEquals(43006,codeOf(()->fulfillment.apply(shop,key(),id,OrderStatus.COMPLETE,null)));
         evidence(id,"service_report_ready_at");
         assertEquals(43005,codeOf(()->fulfillment.apply(shop,key(),id,OrderStatus.FINISH_SERVICE,null)));
         assertEquals(40905,codeOf(()->fulfillment.apply(shop,key(),id,OrderStatus.RECEIVE,null)));

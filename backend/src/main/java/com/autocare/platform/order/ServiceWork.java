@@ -74,7 +74,7 @@ public class ServiceWork {
         ServiceWorkInput.report(body);long id=body.get("order_id").longValue();
         return db.writes.execute(new Actor("staff_account",tech.staffId()),"POST","/api/tech/report/submit",key,body,()->{
             var o=scope(tech,id,true);technicianGuard(tech,o,true);protectionGuard(id,true);
-            var old=submission(id,true);if(old!=null)reportGuard(tech,id,old);else if(!OrderStatus.IN_SERVICE.equals(o.get("status")))throw conflict();
+            var old=submission(id,true);if(old!=null)reportGuard(tech.staffId(),id,old);else if(!OrderStatus.IN_SERVICE.equals(o.get("status")))throw conflict();
         },()->{
             if(db.jdbc.queryForObject("SELECT COUNT(*) FROM technician_report WHERE order_id=?",Long.class,id)>0 || submission(id,true)!=null)throw conflict();
             var ids=new ArrayList<Long>();for(String name:List.of("process_photos","fault_part_photos","finish_photos"))ids.addAll(fileIds(body.get(name)));freshFiles(tech.staffId(),ids,false);
@@ -89,19 +89,19 @@ public class ServiceWork {
         for(String name:List.of("repair_plan","fault_analysis"))b.put(name,r.get(name)==null?null:r.get(name).toString());
         b.put("work_hours",r.get("work_hours")==null?0:ReservationStore.number(r,"work_hours"));b.put("no_fault_parts",ReservationStore.number(r,"no_fault_parts")==1);b.put("no_parts",ReservationStore.number(r,"no_parts")==1);return b;
     }
-    private void reportGuard(TechnicianActor tech,long order,Map<String,Object> r){
+    private void reportGuard(long technician,long order,Map<String,Object> r){
         if(r==null)throw new FulfillmentConflict(43005,"请先提交完整施工报工");
-        if(ReservationStore.number(r,"technician_id")!=tech.staffId() || db.jdbc.queryForObject("SELECT COUNT(*) FROM technician_report WHERE order_id=?",Long.class,order)!=1L)throw conflict();
+        if(ReservationStore.number(r,"technician_id")!=technician || db.jdbc.queryForObject("SELECT COUNT(*) FROM technician_report WHERE order_id=?",Long.class,order)!=1L)throw conflict();
         var b=reportBody(r);try{ServiceWorkInput.report(b);}catch(org.springframework.web.server.ResponseStatusException e){throw new FulfillmentConflict(43005,"施工报工证据不完整");}
         var expected=new HashMap<Long,String>();for(var pair:Map.of("process_photos","PROCESS","fault_part_photos","FAULT","finish_photos","FINISH").entrySet())for(long file:fileIds(b.get(pair.getKey())))expected.put(file,pair.getValue());
         var actual=db.jdbc.queryForList("SELECT e.file_id,e.kind,f.owner_id,f.owner_type,f.content_type,f.size_bytes,f.scan_status,f.is_deleted FROM service_evidence_file e JOIN file_object f ON f.id=e.file_id WHERE e.order_id=? AND e.record_id=? AND e.kind IN ('PROCESS','FAULT','FINISH') ORDER BY f.id FOR UPDATE",order,r.get("id"));
         if(actual.size()!=expected.size())throw new FulfillmentConflict(43005,"施工图片证据不完整");
-        for(var f:actual)if(!Objects.equals(expected.get(ReservationStore.number(f,"file_id")),f.get("kind")) || !"staff_account".equals(f.get("owner_type")) || ReservationStore.number(f,"owner_id")!=tech.staffId() || !"CLEAN".equals(f.get("scan_status")) || ReservationStore.number(f,"is_deleted")!=0 || !Set.of("image/jpeg","image/png").contains(f.get("content_type")) || ReservationStore.number(f,"size_bytes")<1 || ReservationStore.number(f,"size_bytes")>10485760)throw new FulfillmentConflict(43005,"施工图片不可用");
+        for(var f:actual)if(!Objects.equals(expected.get(ReservationStore.number(f,"file_id")),f.get("kind")) || !"staff_account".equals(f.get("owner_type")) || ReservationStore.number(f,"owner_id")!=technician || !"CLEAN".equals(f.get("scan_status")) || ReservationStore.number(f,"is_deleted")!=0 || !Set.of("image/jpeg","image/png").contains(f.get("content_type")) || ReservationStore.number(f,"size_bytes")<1 || ReservationStore.number(f,"size_bytes")>10485760)throw new FulfillmentConflict(43005,"施工图片不可用");
     }
     public JsonNode sign(TechnicianActor tech,String key,JsonNode body){
         ServiceWorkInput.sign(body);long id=body.get("order_id").longValue(),file=body.get("signature_file_id").longValue();
         return db.writes.execute(new Actor("staff_account",tech.staffId()),"POST","/api/tech/sign",key,body,()->{
-            var o=scope(tech,id,true);technicianGuard(tech,o,true);protectionGuard(id,true);var r=submission(id,true);reportGuard(tech,id,r);
+            var o=scope(tech,id,true);technicianGuard(tech,o,true);protectionGuard(id,true);var r=submission(id,true);reportGuard(tech.staffId(),id,r);
             if(ReservationStore.number(r,"status")==1){if(!OrderStatus.PENDING_VERIFY.equals(o.get("status")) || r.get("signed_at")==null || o.get("service_report_ready_at")==null)throw conflict();
                 db.one("SELECT f.id FROM service_evidence_file e JOIN file_object f ON f.id=e.file_id WHERE e.order_id=? AND e.record_id=? AND e.kind='SIGNATURE' AND e.file_id=? AND f.owner_type='staff_account' AND f.owner_id=? AND f.scan_status='CLEAN' AND f.is_deleted=0 AND f.content_type='image/png' AND f.size_bytes BETWEEN 1 AND 10485760 FOR UPDATE",id,r.get("id"),file,tech.staffId());
             }else if(ReservationStore.number(r,"status")!=0 || r.get("signed_at")!=null || o.get("service_report_ready_at")!=null || !OrderStatus.IN_SERVICE.equals(o.get("status")))throw conflict();
@@ -112,6 +112,16 @@ public class ServiceWork {
             db.jdbc.update("INSERT INTO order_status_transition(order_id,merchant_id,from_status,to_status,action,actor_type,actor_id,occurred_at) VALUES(?,?,'IN_SERVICE','PENDING_VERIFY','ORDER_SERVICE_FINISH','staff_account',?,?)",id,tech.merchantId(),tech.staffId(),now);
             var after=view(id);return new Change("ORDER_SERVICE_FINISH","technician_report",ReservationStore.number(r,"id"),before,after,after);
         });
+    }
+    /** Revalidate immutable evidence at redemption without requiring the historical technician session. */
+    void redemptionGuard(Map<String,Object> order){
+        long id=ReservationStore.number(order,"id");evidenceGuard(order,true);protectionGuard(id,true);
+        var rows=db.jdbc.queryForList("SELECT * FROM technician_assignment WHERE order_id=? FOR UPDATE",id);
+        if(rows.size()!=1 || order.get("assigned_at")==null || !Objects.equals(order.get("merchant_id"),rows.get(0).get("merchant_id")) || !"ACCEPTED".equals(rows.get(0).get("status")) || rows.get(0).get("accepted_at")==null)throw new FulfillmentConflict(43004,"派工接单证据不完整");
+        long technician=ReservationStore.number(rows.get(0),"technician_id");var r=submission(id,true);reportGuard(technician,id,r);
+        if(ReservationStore.number(r,"status")!=1 || r.get("signed_at")==null || order.get("service_report_ready_at")==null)throw new FulfillmentConflict(43005,"完整报工与质检签字尚未完成");
+        var signs=db.jdbc.queryForList("SELECT f.id FROM service_evidence_file e JOIN file_object f ON f.id=e.file_id WHERE e.order_id=? AND e.record_id=? AND e.kind='SIGNATURE' AND f.owner_type='staff_account' AND f.owner_id=? AND f.scan_status='CLEAN' AND f.is_deleted=0 AND f.content_type='image/png' AND f.size_bytes BETWEEN 1 AND 10485760 FOR UPDATE",id,r.get("id"),technician);
+        if(signs.size()!=1)throw new FulfillmentConflict(43005,"质检签字证据不可用");
     }
     public Map<String,Object> detail(Object actor,long id){return db.reads.execute(tx->{scope(actor,id,false);return view(id);});}
     private Map<String,Object> view(long id){

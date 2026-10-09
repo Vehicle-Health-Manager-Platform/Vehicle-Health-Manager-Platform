@@ -87,7 +87,7 @@ A3–A6 实现；本步先把它们的判定挂点与审计通道建好。
 | 商家处理争议（专用接口） | 本店 `ORDER` 存在 `OPEN` 争议且订单 `DISPUTED` | `40905`；见[争议处理与恢复](DISPUTE_RESOLUTION.md) |
 | 车主复核争议（专用接口） | 争议 `OPEN`、接车单 `owner_confirm=2`、接受前已有处理记录、`from_status` 可恢复 | `40905`/`43008`；见[争议处理与恢复](DISPUTE_RESOLUTION.md) |
 | `FINISH_SERVICE` | 通用动作停用，完整报工与本人质检签字走 `/api/tech/sign` | `43005` 请由本人报工并质检签字 |
-| `COMPLETE` | 核销校验（A7 接入） | `43006` 核销校验尚未接入，暂不能完成订单 |
+| `COMPLETE` | 核销校验（A7 接入） | `43006` 请通过专用核销验码入口完成订单（A7.1） |
 
 `43001` 与 `43002` 是 Spec 已定义的码（接车未完成、防护照片未上传）；`43003`/`43004`/`43005`
 按同一段位新增。`43006` 是分阶段实现期间的显式拒绝，A7 核销接入后不再出现。`43007`
@@ -169,3 +169,5 @@ V009 增加 `order.check_in_completed_at`、`owner_confirmed_at`、`assigned_at`
   覆盖角色、幂等键、正文形状、订单号与冲突码透传。
 - 小程序侧：[order-status.test.js](../../apps/miniapp/test/order-status.test.js) 锁定取值与标签，
   [merchant-orders.test.js](../../apps/miniapp/test/merchant-orders.test.js) 校验动作请求与拒绝码文案。
+
+A7.1 已接入[核销验码](ORDER_REDEMPTION.md)。通用 COMPLETE 在任何状态（含已完成）均拒绝 43006；允许动作投影仍是矩阵声明，不能代替专用验码或就绪检查。

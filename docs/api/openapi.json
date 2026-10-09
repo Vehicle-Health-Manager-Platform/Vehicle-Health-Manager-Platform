@@ -6229,7 +6229,7 @@
             "description": "订单不存在或不属于本店，code=40400"
           },
           "409": {
-            "description": "40905非法状态；43001改用接车检查；43004改用本人接单；43005改用本人报工并质检签字；43006核销未接入"
+            "description": "40905非法状态；43001/43004/43005/43006请使用各自业务专用入口"
           },
           "503": {
             "description": "数据库或事务暂不可用，code=50300"
@@ -6273,7 +6273,7 @@
         },
         "x-roles": "MERCHANT",
         "x-implementation-status": "order-fulfillment-state-machine-implemented",
-        "description": "商家通用RECEIVE/START_SERVICE/FINISH_SERVICE分别拒绝43001/43004/43005。专用接车、本人接单、本人完整报工+质检签字是唯一对应入口；核销仍待A7。"
+        "description": "通用RECEIVE/START_SERVICE/FINISH_SERVICE/COMPLETE分别拒绝43001/43004/43005/43006；核销仅走专用redeem入口，已完成重复也不可绕过。"
       }
     },
     "/api/check/pickup/context": {
@@ -7830,6 +7830,415 @@
         "x-roles": "TECHNICIAN",
         "x-implementation-status": "service-work-backend-implemented",
         "description": "仅当前AppID下正式有效技师会话与绑定；扫描、类型、大小、限流、幂等沿用私有图片基础设施。仅本人原始上传可访问；跨上传者的工单关联图片须走work/files接口。"
+      }
+    },
+    "/api/merchant/orders/{id}/redeem": {
+      "post": {
+        "summary": "本店输入六位码核销",
+        "operationId": "post_api_merchant_orders_id_redeem",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F16"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "order_id",
+                            "order_status",
+                            "redeemed_at",
+                            "test_mode",
+                            "changed"
+                          ],
+                          "properties": {
+                            "order_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740991
+                            },
+                            "order_status": {
+                              "const": "COMPLETED"
+                            },
+                            "redeemed_at": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "test_mode": {
+                              "type": "boolean"
+                            },
+                            "changed": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "409": {
+            "description": "40905状态/历史核销异常；43001/2/3/4/5施工证据缺失；43007争议未解决；43009付款缺失或异常"
+          },
+          "422": {
+            "description": "42200核销码无效"
+          },
+          "429": {
+            "description": "42900达到共享错误额度",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "50300数据库未配置/事务失败/正式付款通道未接入；原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "code"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "pattern": "^[0-9]{6}$",
+                    "writeOnly": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "redemption-backend-implemented",
+        "description": "本店/本人授权、无查询参数、no-store。写入须完整施工证据与可信付款；同店同订单共享五次错误/十分钟限额。LOCAL_TEST仅隔离测试环境可核销且未真实扣款；正式微信付款未接入。核销与双审计同事务，重复不新增成功审计。见 ORDER_REDEMPTION.md。"
+      }
+    },
+    "/api/merchant/orders/{id}/redemption": {
+      "get": {
+        "summary": "本店核销记录",
+        "operationId": "get_api_merchant_orders_id_redemption",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F16"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "order_id",
+                            "redemption"
+                          ],
+                          "properties": {
+                            "order_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740991
+                            },
+                            "redemption": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "redeemed_at",
+                                    "test_mode"
+                                  ],
+                                  "properties": {
+                                    "redeemed_at": {
+                                      "type": "string",
+                                      "format": "date-time"
+                                    },
+                                    "test_mode": {
+                                      "type": "boolean"
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "409": {
+            "description": "40905状态/历史核销异常；43001/2/3/4/5施工证据缺失；43007争议未解决；43009付款缺失或异常"
+          },
+          "422": {
+            "description": "42200核销码无效"
+          },
+          "429": {
+            "description": "42900达到共享错误额度",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "50300数据库未配置/事务失败/正式付款通道未接入；原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "redemption-backend-implemented",
+        "description": "本店/本人授权、无查询参数、no-store。写入须完整施工证据与可信付款；同店同订单共享五次错误/十分钟限额。LOCAL_TEST仅隔离测试环境可核销且未真实扣款；正式微信付款未接入。核销与双审计同事务，重复不新增成功审计。见 ORDER_REDEMPTION.md。"
+      }
+    },
+    "/api/order/{id}/redemption": {
+      "get": {
+        "summary": "本人核销记录",
+        "operationId": "get_api_order_id_redemption",
+        "tags": [
+          "order"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F16"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "order_id",
+                            "redemption"
+                          ],
+                          "properties": {
+                            "order_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740991
+                            },
+                            "redemption": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "redeemed_at",
+                                    "test_mode"
+                                  ],
+                                  "properties": {
+                                    "redeemed_at": {
+                                      "type": "string",
+                                      "format": "date-time"
+                                    },
+                                    "test_mode": {
+                                      "type": "boolean"
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "409": {
+            "description": "40905状态/历史核销异常；43001/2/3/4/5施工证据缺失；43007争议未解决；43009付款缺失或异常"
+          },
+          "422": {
+            "description": "42200核销码无效"
+          },
+          "429": {
+            "description": "42900达到共享错误额度",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "50300数据库未配置/事务失败/正式付款通道未接入；原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "redemption-backend-implemented",
+        "description": "本店/本人授权、无查询参数、no-store。写入须完整施工证据与可信付款；同店同订单共享五次错误/十分钟限额。LOCAL_TEST仅隔离测试环境可核销且未真实扣款；正式微信付款未接入。核销与双审计同事务，重复不新增成功审计。见 ORDER_REDEMPTION.md。"
       }
     }
   },

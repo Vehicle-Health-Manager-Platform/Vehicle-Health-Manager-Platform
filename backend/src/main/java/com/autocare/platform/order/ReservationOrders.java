@@ -50,6 +50,8 @@ public class ReservationOrders {
         if(OrderStatus.PAID.equals(row.get("status"))){
             String code=(String)row.get("verify_code");if(code==null||!code.matches("[0-9]{6}")){code=AppointmentCodes.create();db.jdbc.update("UPDATE `order` SET verify_code=? WHERE id=?",code,id);}
             result.put("appointment_code",code);
+        }else if(OrderStatus.PENDING_VERIFY.equals(row.get("status")) && row.get("verify_code") instanceof String code && code.matches("[0-9]{6}")){
+            result.put("appointment_code",code);
         }
         return result;
     });}
