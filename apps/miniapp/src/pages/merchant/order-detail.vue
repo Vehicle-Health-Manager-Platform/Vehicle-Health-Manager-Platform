@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, watch } from 'vue'
+import { reactive, watch, computed } from 'vue'
 import { onLoad, onShow, onHide, onUnload } from '@dcloudio/uni-app'
 import { merchantSession, clearMerchantSession } from '../../services/merchant-session.js'
 import { merchantOrdersApi } from '../../services/merchant-orders.js'
@@ -8,6 +8,7 @@ import { initialReservationReadState, initialReservationWriteState, createReserv
 import { stateLabel, actionLabel, closeReasonLabel } from '../../services/order-status.js'
 
 const state = reactive(initialReservationReadState())
+const genericActions = computed(() => (state.value?.allowed_actions || []).filter(entry => entry.action !== 'COMPLETE'))
 const write = reactive(initialReservationWriteState())
 const acting = { orderId: 0, action: '' }
 let orderId = 0, visible = false
@@ -69,10 +70,11 @@ onUnload(() => { visible = false; flow.reset(); apply.reset() })
       <button v-if="['RECEIVED','IN_SERVICE','PENDING_VERIFY','COMPLETED','DISPUTED'].includes(state.value.status)" @tap="uni.navigateTo({url:`/pages/check/pickup-detail?id=${state.value.order_id}&role=merchant`})">查看接车单</button>
       <button v-if="['RECEIVED','IN_SERVICE','PENDING_VERIFY','COMPLETED'].includes(state.value.status)" data-testid="merchant-order-dispatch" @tap="uni.navigateTo({url:`/pages/merchant/dispatch?id=${state.value.order_id}`})">{{ state.value.status==='RECEIVED' ? '派工给本店技师' : '查看派工结果' }}</button>
       <button v-if="['RECEIVED','IN_SERVICE','PENDING_VERIFY','COMPLETED','DISPUTED'].includes(state.value.status)" @tap="uni.navigateTo({url:`/pages/merchant/protection?id=${state.value.order_id}`})">施工防护与记录</button>
-      <view v-if="state.value.allowed_actions.length" data-testid="merchant-order-actions">
+      <button v-if="['PENDING_VERIFY','COMPLETED'].includes(state.value.status)" data-testid="merchant-order-redeem" @tap="uni.navigateTo({url:`/pages/merchant/redeem?id=${state.value.order_id}`})">{{ state.value.status==='PENDING_VERIFY' ? '核销验码' : '查看核销记录' }}</button>
+      <view v-if="genericActions.length" data-testid="merchant-order-actions">
         <text class="reservation-heading">可执行操作</text>
         <text>操作会记录操作人与时间；派工、报工、核销在各自步骤就绪前会给出具体原因。</text>
-        <button v-for="entry in state.value.allowed_actions" :key="entry.action" :disabled="write.busy" :loading="write.busy" :data-testid="`order-action-${entry.action}`" @tap="run(entry)">{{ actionLabel(entry.action) }}</button>
+        <button v-for="entry in genericActions" :key="entry.action" :disabled="write.busy" :loading="write.busy" :data-testid="`order-action-${entry.action}`" @tap="run(entry)">{{ actionLabel(entry.action) }}</button>
       </view>
       <text v-else>{{state.value.status==='PAID'?'请通过接车检查提交完整接车单。':'当前状态在本店侧没有可执行的履约操作。'}}</text>
       <text v-if="write.message" role="status">{{ write.message }}</text>
