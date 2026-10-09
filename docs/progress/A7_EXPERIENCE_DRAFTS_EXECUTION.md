@@ -9,10 +9,12 @@
 - 本机隔离 MySQL 相关36/36（档案18、评价12、旧档案6），HTTP4/4通过。容器内构造可信非测试 WECHAT 来源覆盖送审，未进行正式扣款。
 - 中文接口文档、OpenAPI105操作、Compose V018 和59表重复迁移门禁已更新。
 - 页面协议与生命周期204/204，微信小程序/H5构建通过。档案入口、本人卡片列表、未预选声明、待审核提示、测试禁送审、撤回/重新授权、分页与原键重试已实现。
+- 后端[PR #58](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/58)与页面[PR #59](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/59)六项CI全绿，后端411/411、页面204/204；规格#57也六项全绿。
+- 本机真实HTTP36/36与gstack草稿/测试禁送审/撤回/来源订单/重入通过，见[验收](../testing/LOCAL_EXPERIENCE_CARDS_ACCEPTANCE.md)。V018两次迁移，无历史扫描。
 
-## 本阶段后续验收
+## 收口复核
 
-完成小程序协议与生命周期测试、微信/H5构建、本机真实HTTP和gstack页面，更新收口结果与最终CI。每阶段上传对应堆叠PR。
+旧授权键在幂等记录过期后仍按当前revision拒绝，防止撤回后的旧请求重新授权；最终MySQL档案/卡片18/18通过（失败0/错误0/跳过0），重新打包/核对真实HTTP。最终codex/a7-experience-e2e对应PR当前head六项CI为准；A7堆叠未合并。
 
 ## 尚未完成
 

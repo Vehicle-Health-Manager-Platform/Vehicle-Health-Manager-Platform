@@ -4,6 +4,8 @@
 
 ## 当前阶段与 GitHub 状态
 
+A7.2c1 私有经验卡片与授权已实现并分阶段上传：规格#57、后端#58、页面#59六项CI全绿，后端411/411、小程序204/204，微信/H5构建、真实HTTP36/36与gstack草稿/测试禁送审/撤回/来源订单/重入通过。新归档同事务生成私有摘要，默认关闭生成，测试禁送审；授权仅待审核不公开，原记录保留。收口codex/a7-experience-e2e最终CI见对应PR；未合并。[执行](A7_EXPERIENCE_DRAFTS_EXECUTION.md)、[验收](../testing/LOCAL_EXPERIENCE_CARDS_ACCEPTANCE.md)。下一步A7.2c2运营身份/审核/公开同款经验。
+
 A7.2b 施工档案回写已实现：[规格 #53](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/53)、[后端 #54](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/54)、[页面 #55](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/55) 六项 CI 全绿；后端398/398、小程序196/196、真实HTTP29/29、本机数据库27/27，gstack档案/来源订单/首页标注通过。采用评价后可靠任务，默认关闭消费，联调收口分支codex/a7-archive-e2e最终CI见对应PR；未合并。[执行](A7_SERVICE_ARCHIVE_EXECUTION.md)、[验收](../testing/LOCAL_SERVICE_ARCHIVES_ACCEPTANCE.md)。自签证书直连图片仍待验收。
 
 | 阶段 | 状态 | 证据与下一步 |
