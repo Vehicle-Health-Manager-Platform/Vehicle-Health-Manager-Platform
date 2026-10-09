@@ -81,9 +81,11 @@ run_sql_file docs/sql/migrations/V017__service_archive_jobs.sql
 run_sql_file docs/sql/migrations/V017__service_archive_jobs.sql
 run_sql_file docs/sql/migrations/V018__experience_cards.sql
 run_sql_file docs/sql/migrations/V018__experience_cards.sql
+run_sql_file docs/sql/migrations/V019__experience_moderation.sql
+run_sql_file docs/sql/migrations/V019__experience_moderation.sql
 
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
-[[ "$tables" == 59 ]] || { echo "Expected 59 tables after V018, got $tables" >&2; exit 1; }
+[[ "$tables" == 61 ]] || { echo "Expected 61 tables after V019, got $tables" >&2; exit 1; }
 
 for column in check_in_completed_at owner_confirmed_at assigned_at service_report_ready_at; do
   found=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND table_name = 'order' AND column_name = '$column'")
@@ -145,4 +147,10 @@ for table in brand series model standard_project merchant merchant_project; do
   [[ "$rows" == 1 ]] || { echo "Expected one synthetic row in $table, got $rows" >&2; exit 1; }
 done
 
-echo "MySQL 8.0 schema: 59 tables after V018; repeat migration and synthetic seed passed"
+for entry in operator_account:uk_operator_account experience_card_moderation:uk_card_revision experience_card_moderation:uk_experience_public; do
+  table="${entry%%:*}"
+  index="${entry##*:}"
+  found=$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema = '$database' AND table_name = '$table' AND index_name = '$index' AND non_unique = 0")
+  [[ "$found" == 1 ]] || { echo "Missing V019 unique index $table.$index" >&2; exit 1; }
+done
+echo "MySQL 8.0 schema: 61 tables after V019; repeat migration and synthetic seed passed"

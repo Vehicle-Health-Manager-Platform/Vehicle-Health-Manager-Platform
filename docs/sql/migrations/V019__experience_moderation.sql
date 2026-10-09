@@ -1,0 +1,25 @@
+CREATE TABLE IF NOT EXISTS operator_account (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  account VARCHAR(64) NOT NULL,
+  password_hash VARCHAR(128) NOT NULL,
+  phone VARCHAR(20) NOT NULL,
+  status VARCHAR(16) NOT NULL DEFAULT 'ACTIVE',
+  can_review TINYINT NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY(id), UNIQUE KEY uk_operator_account(account)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS experience_card_moderation (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  card_id BIGINT UNSIGNED NOT NULL,
+  request_revision INT UNSIGNED NOT NULL,
+  decision VARCHAR(16) NOT NULL,
+  reason_code VARCHAR(32) DEFAULT NULL,
+  model_id BIGINT UNSIGNED DEFAULT NULL,
+  public_id CHAR(36) DEFAULT NULL,
+  operator_id BIGINT UNSIGNED NOT NULL,
+  decided_at DATETIME NOT NULL,
+  PRIMARY KEY(id), UNIQUE KEY uk_card_revision(card_id,request_revision),
+  UNIQUE KEY uk_experience_public(public_id), KEY idx_experience_model(model_id,id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

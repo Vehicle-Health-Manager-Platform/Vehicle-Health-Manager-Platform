@@ -721,6 +721,18 @@ def main():
         item["responses"]["503"] = {"description": "50300数据库未配置或事务失败；原键原载荷重试"}
         document["paths"][path] = {method: item}
 
+    for path, title, fields in [("/api/auth/operator/code", "运营密码核验后发送二次短信", {"account": {"type": "string"}, "password": {"type": "string", "writeOnly": True}}),
+        ("/api/auth/operator/login", "运营账号密码与一次短信登录", {"account": {"type": "string"}, "password": {"type": "string", "writeOnly": True}, "sms_code": {"type": "string", "pattern": "^[0-9]{6}$", "writeOnly": True}}),
+        ("/api/auth/operator/logout", "撤销当前运营短会话", {})]:
+        item = operation("post", path, title, "F20", protected=path.endswith("logout"))
+        item["x-roles"] = "OPERATOR"
+        item["x-implementation-status"] = "operator-auth-implemented"
+        item["description"] = "独立运营身份，密码+短信二次校验，JWT/数据库会话15分钟，无长期refresh；权限实时复核，no-store。正式短信未配置发码503。见OPERATOR_ACCOUNTS.md。"
+        item["requestBody"]["content"]["application/json"]["schema"] = strict(fields)
+        item["responses"]["429"] = {"description": "账号/IP/短信共享限流，42900"}
+        item["responses"]["503"] = {"description": "身份/限流数据库或短信未配置，50300"}
+        document["paths"][path] = {"post": item}
+
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     count = sum(len(item) for item in document["paths"].values())
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")
