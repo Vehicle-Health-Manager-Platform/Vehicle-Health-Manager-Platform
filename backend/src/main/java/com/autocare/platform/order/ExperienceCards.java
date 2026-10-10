@@ -87,7 +87,7 @@ public class ExperienceCards {
             db.one("SELECT id FROM `order` WHERE id=? FOR UPDATE", candidate.get("order_id"));
             var c = owned(owner, id, true);
             var cached = db.jdbc.queryForList("SELECT response_body FROM idempotency_record WHERE actor_type='user' AND actor_id=? "
-                + "AND request_method='POST' AND request_path=? AND idempotency_key=? AND is_deleted=0 AND expires_at>UTC_TIMESTAMP()", owner.id(), path, normalized);
+                + "AND request_method='POST' AND request_path=? AND idempotency_key=?", owner.id(), path, normalized);
             if (!cached.isEmpty() && cached.get(0).get("response_body") != null
                 && db.parse(cached.get(0).get("response_body")).path("data").path("card").path("revision").asLong(-1) != ReservationStore.number(c, "revision"))
                 throw new FulfillmentConflict(45002, "卡片已变更，请刷新后重新确认授权或撤回");

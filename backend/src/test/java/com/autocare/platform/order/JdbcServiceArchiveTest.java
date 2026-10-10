@@ -157,6 +157,8 @@ class JdbcServiceArchiveTest {
         assertTrue(withdrawn.path("data").path("card").path("consented_at").isNull());
         assertEquals(2,withdrawn.path("data").path("card").path("revision").asInt());
         assertEquals(45002,((FulfillmentConflict)assertThrows(ResponseStatusException.class,()->cards().change(owner,id,first,consent(),true))).code);
+        jdbc.update("UPDATE idempotency_record SET expires_at=DATE_SUB(UTC_TIMESTAMP(),INTERVAL 1 HOUR) WHERE idempotency_key=?",first);
+        assertEquals(45002,((FulfillmentConflict)assertThrows(ResponseStatusException.class,()->cards().change(owner,id,first,consent(),true))).code);
         cards().change(owner,id,key(),consent(),true);
         assertThrows(ResponseStatusException.class,()->cards().change(owner,id,withdrawal,db.mapper.createObjectNode(),false));
         assertEquals(3,jdbc.queryForObject("SELECT revision FROM experience_card",Integer.class));
