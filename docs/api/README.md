@@ -34,3 +34,5 @@ PR #14 实现[本人车辆列表、有效车型查询与手动添加](VEHICLE_MA
 ## A6 防护与报工
 
 [A6 施工接口](SERVICE_WORK.md)：商家防护、本人完整报工与质检签字、施工记录及关联私有图片。[页面](../progress/A6_2_SERVICE_UI_EXECUTION.md)与[真实 HTTP 验收](../testing/LOCAL_SERVICE_WORK_ACCEPTANCE.md)已补齐；[阶段总记录](../progress/A6_SERVICE_WORK_EXECUTION.md)。
+
+- [A7.1 核销验码与审计](ORDER_REDEMPTION.md)：本店六位码核销、可信付款、共享防猜及本人核销记录。

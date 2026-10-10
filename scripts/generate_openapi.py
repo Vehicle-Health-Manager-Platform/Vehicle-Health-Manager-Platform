@@ -616,6 +616,30 @@ def main():
     action["description"] = "商家通用RECEIVE/START_SERVICE/FINISH_SERVICE分别拒绝43001/43004/43005。专用接车、本人接单、本人完整报工+质检签字是唯一对应入口；核销仍待A7。"
     action["responses"]["409"]["description"] = "40905非法状态；43001改用接车检查；43004改用本人接单；43005改用本人报工并质检签字；43006核销未接入"
     schemas["MerchantOrder"]["properties"]["allowed_actions"]["description"] = "RECEIVE/START_SERVICE/FINISH_SERVICE均不再投影为商家动作；完工送核销走本人质检签字"
+    redemption_receipt = strict({"redeemed_at": timestamp, "test_mode": {"type": "boolean"}})
+    for method, path, role, title in [
+        ("post", "/api/merchant/orders/{id}/redeem", "MERCHANT", "本店输入六位码核销"),
+        ("get", "/api/merchant/orders/{id}/redemption", "MERCHANT", "本店核销记录"),
+        ("get", "/api/order/{id}/redemption", "OWNER", "本人核销记录")]:
+        item = operation(method, path, title, "F08,F16")
+        item["x-roles"] = role
+        item["x-implementation-status"] = "redemption-backend-implemented"
+        item["description"] = "本店/本人授权、无查询参数、no-store。写入须完整施工证据与可信付款；同店同订单共享五次错误/十分钟限额。LOCAL_TEST仅隔离测试环境可核销且未真实扣款；正式微信付款未接入。核销与双审计同事务，重复不新增成功审计。见 ORDER_REDEMPTION.md。"
+        for parameter in item["parameters"]:
+            if parameter["in"] == "path": parameter["schema"] = identifier
+        if method == "post":
+            item["requestBody"]["content"]["application/json"]["schema"] = strict({"code": {"type": "string", "pattern": "^[0-9]{6}$", "writeOnly": True}})
+            data_schema = strict({"order_id": identifier, "order_status": {"const": "COMPLETED"}, "redeemed_at": timestamp, "test_mode": {"type": "boolean"}, "changed": {"type": "boolean"}})
+        else:
+            data_schema = strict({"order_id": identifier, "redemption": {"anyOf": [redemption_receipt, {"type": "null"}]}})
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "properties": {"data": data_schema}}]}
+        item["responses"]["409"] = {"description": "40905状态/历史核销异常；43001/2/3/4/5施工证据缺失；43007争议未解决；43009付款缺失或异常"}
+        item["responses"]["422"] = {"description": "42200核销码无效"}
+        item["responses"]["429"] = {"description": "42900达到共享错误额度", "headers": {"Retry-After": {"schema": {"type": "integer", "minimum": 1}}}}
+        item["responses"]["503"] = {"description": "50300数据库未配置/事务失败/正式付款通道未接入；原键重试"}
+        document["paths"][path] = {method: item}
+    action["description"] = "通用RECEIVE/START_SERVICE/FINISH_SERVICE/COMPLETE分别拒绝43001/43004/43005/43006；核销仅走专用redeem入口，已完成重复也不可绕过。"
+    action["responses"]["409"]["description"] = "40905非法状态；43001/43004/43005/43006请使用各自业务专用入口"
     count = sum(len(value) for value in document["paths"].values())
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

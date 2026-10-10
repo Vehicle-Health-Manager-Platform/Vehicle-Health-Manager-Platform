@@ -72,8 +72,11 @@ run_sql_file docs/sql/migrations/V013__dispute_resolution.sql
 run_sql_file docs/sql/migrations/V014__service_work.sql
 run_sql_file docs/sql/migrations/V014__service_work.sql
 
+run_sql_file docs/sql/migrations/V015__order_redemption.sql
+run_sql_file docs/sql/migrations/V015__order_redemption.sql
+
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
-[[ "$tables" == 54 ]] || { echo "Expected 54 tables after V014, got $tables" >&2; exit 1; }
+[[ "$tables" == 55 ]] || { echo "Expected 55 tables after V015, got $tables" >&2; exit 1; }
 
 for column in check_in_completed_at owner_confirmed_at assigned_at service_report_ready_at; do
   found=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND table_name = 'order' AND column_name = '$column'")
@@ -100,7 +103,7 @@ dispute_records=$(query "SELECT COUNT(DISTINCT index_name) FROM information_sche
 owner_confirm_comment=$(query "SELECT column_comment FROM information_schema.columns WHERE table_schema = '$database' AND table_name = 'pickup_check' AND column_name = 'owner_confirm'")
 [[ "$owner_confirm_comment" == *3* ]] || { echo "Repeated V013 left pickup_check.owner_confirm without the resolved state" >&2; exit 1; }
 
-for entry in service_evidence_file:uk_file service_report_submission:uk_order service_report_submission:uk_report; do
+for entry in order_redemption:uk_redemption_order service_evidence_file:uk_file service_report_submission:uk_order service_report_submission:uk_report; do
   table="${entry%%:*}"
   index="${entry##*:}"
   found=$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema = '$database' AND table_name = '$table' AND index_name = '$index' AND non_unique = 0")
@@ -135,4 +138,4 @@ for table in brand series model standard_project merchant merchant_project; do
   [[ "$rows" == 1 ]] || { echo "Expected one synthetic row in $table, got $rows" >&2; exit 1; }
 done
 
-echo "MySQL 8.0 schema: 54 tables after V014; repeat migration and synthetic seed passed"
+echo "MySQL 8.0 schema: 55 tables after V015; repeat migration and synthetic seed passed"

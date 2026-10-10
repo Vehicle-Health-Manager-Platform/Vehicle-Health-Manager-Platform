@@ -40,6 +40,7 @@ public class OrderFulfillment {
     JsonNode apply(MerchantActor actor,String key,long id,String action,String note){
         ServiceCatalog.validateId(id);
         if(!OrderStatus.action(action))throw ReservationInput.bad();
+        if(OrderStatus.COMPLETE.equals(action))throw new FulfillmentConflict(GUARD_UNAVAILABLE,"请通过核销验码入口完成订单");
         if(OrderStatus.FINISH_SERVICE.equals(action))throw new FulfillmentConflict(REPORT_REQUIRED,"请由被派工技师本人提交完整报工并质检签字");
         String text=note==null?null:note.strip();
         if(text!=null && (text.isEmpty() || text.length()>200))throw ReservationInput.bad();
