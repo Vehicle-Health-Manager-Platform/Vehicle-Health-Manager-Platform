@@ -130,4 +130,38 @@ class MerchantOnboardingHttpTest {
         mvc.perform(get("/api/admin/merchant-applications/1").header("Authorization",operatorJwt))
             .andExpect(status().isNotFound()).andExpect(jsonPath("$.code").value(40400));
     }
+
+    /** The write scopes return the stored envelope; wrapping it again breaks every client. */
+    static com.fasterxml.jackson.databind.node.ObjectNode storedEnvelope(){
+        var application=JsonNodeFactory.instance.objectNode();
+        application.put("application_id",7L);application.put("revision",2);application.put("status","PENDING_REVIEW");
+        var data=JsonNodeFactory.instance.objectNode();
+        data.set("application",application);data.put("revision",2);
+        var node=JsonNodeFactory.instance.objectNode();
+        node.put("code",0);node.put("message","success");node.set("data",data);node.put("request_id","synthetic-request");
+        return node;
+    }
+
+    @Test void writeScopesReturnSingleEnvelope() throws Exception {
+        when(service.submit(any(),anyString(),any())).thenReturn(storedEnvelope());
+        when(service.moderate(any(),eq(1L),anyString(),any())).thenReturn(storedEnvelope());
+        when(service.setQuota(any(),anyString(),any())).thenReturn(storedEnvelope());
+        mvc.perform(post("/api/merchant-applications").header("Authorization",ownerJwt).header("Idempotency-Key",key())
+            .contentType(MediaType.APPLICATION_JSON).content(submit()))
+            .andExpect(status().isOk()).andExpect(header().string("Cache-Control","no-store"))
+            .andExpect(jsonPath("$.code").value(0))
+            .andExpect(jsonPath("$.data.application.application_id").value(7))
+            .andExpect(jsonPath("$.data.code").doesNotExist())
+            .andExpect(jsonPath("$.data.data").doesNotExist());
+        mvc.perform(post("/api/admin/merchant-applications/1/moderate").header("Authorization",operatorJwt).header("Idempotency-Key",key())
+            .contentType(MediaType.APPLICATION_JSON).content(moderate()))
+            .andExpect(status().isOk()).andExpect(header().string("Cache-Control","no-store"))
+            .andExpect(jsonPath("$.data.application.application_id").value(7))
+            .andExpect(jsonPath("$.data.data").doesNotExist());
+        mvc.perform(put("/api/admin/merchant-quotas").header("Authorization",operatorJwt).header("Idempotency-Key",key())
+            .contentType(MediaType.APPLICATION_JSON).content(quota()))
+            .andExpect(status().isOk()).andExpect(header().string("Cache-Control","no-store"))
+            .andExpect(jsonPath("$.data.application.application_id").value(7))
+            .andExpect(jsonPath("$.data.data").doesNotExist());
+    }
 }
