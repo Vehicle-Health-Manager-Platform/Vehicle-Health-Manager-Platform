@@ -51,7 +51,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/actuator/health", "/actuator/prometheus", "/api/dev/token", "/api/auth/wx-login", "/api/auth/cloud-login", "/api/auth/refresh", "/api/auth/merchant/code", "/api/auth/merchant/login").permitAll()
+                .requestMatchers("/actuator/health", "/actuator/prometheus", "/api/dev/token", "/api/auth/wx-login", "/api/auth/cloud-login", "/api/auth/refresh", "/api/auth/merchant/code", "/api/auth/merchant/login", "/api/auth/operator/code", "/api/auth/operator/login").permitAll()
                 .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/payments/callback/LOCAL_TEST").permitAll()
                 .requestMatchers("/api/auth/technician/bind").authenticated()
                 .anyRequest().access((authentication, context) -> {
@@ -71,7 +71,8 @@ public class SecurityConfig {
                           @Value("${WECHAT_APP_ID:}") String appId,
                           ObjectProvider<IdentityRepository> repositories,
                           ObjectProvider<MerchantIdentityRepository> merchants,
-                          ObjectProvider<AuthSessionRepository> sessions) {
+                          ObjectProvider<AuthSessionRepository> sessions,
+                          ObjectProvider<com.autocare.platform.gateway.identity.OperatorIdentity> operators) {
         byte[] key = checkedKey(secret);
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(new SecretKeySpec(key, "HmacSHA256"))
             .macAlgorithm(MacAlgorithm.HS256).build();
@@ -81,6 +82,10 @@ public class SecurityConfig {
             if (result.hasErrors()) return result;
             String type = jwt.getClaimAsString("subject_type");
             if (type == null || "wechat_binding".equals(type)) return result;
+            if ("operator_account".equals(type)) {
+                var operator=operators.getIfAvailable();
+                return operator!=null && operator.valid(jwt)?result:invalidIdentity();
+            }
             IdentityRepository repository = repositories.getIfAvailable();
             AuthSessionRepository sessionRepository = sessions.getIfAvailable();
             if (repository == null || sessionRepository == null) return invalidIdentity();

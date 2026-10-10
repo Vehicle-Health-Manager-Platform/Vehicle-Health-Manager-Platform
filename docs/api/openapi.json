@@ -8771,6 +8771,230 @@
         "x-implementation-status": "private-experience-backend-implemented",
         "description": "原车主且当前仍拥有车辆，no-store，结构化摘要不含自由文本/照片。测试不能送审；授权后待审核尚未公开；见EXPERIENCE_CARDS.md。"
       }
+    },
+    "/api/auth/operator/code": {
+      "post": {
+        "summary": "运营密码核验后发送二次短信",
+        "operationId": "post_api_auth_operator_code",
+        "tags": [
+          "auth"
+        ],
+        "x-feature-ids": [
+          "F20"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "429": {
+            "description": "账号/IP/短信共享限流，42900"
+          },
+          "503": {
+            "description": "身份/限流数据库或短信未配置，50300"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "account",
+                  "password"
+                ],
+                "properties": {
+                  "account": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "writeOnly": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-roles": "OPERATOR",
+        "x-implementation-status": "operator-auth-implemented",
+        "description": "独立运营身份，密码+短信二次校验，JWT/数据库会话15分钟，无长期refresh；权限实时复核，no-store。正式短信未配置发码503。见OPERATOR_ACCOUNTS.md。"
+      }
+    },
+    "/api/auth/operator/login": {
+      "post": {
+        "summary": "运营账号密码与一次短信登录",
+        "operationId": "post_api_auth_operator_login",
+        "tags": [
+          "auth"
+        ],
+        "x-feature-ids": [
+          "F20"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "429": {
+            "description": "账号/IP/短信共享限流，42900"
+          },
+          "503": {
+            "description": "身份/限流数据库或短信未配置，50300"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "account",
+                  "password",
+                  "sms_code"
+                ],
+                "properties": {
+                  "account": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "writeOnly": true
+                  },
+                  "sms_code": {
+                    "type": "string",
+                    "pattern": "^[0-9]{6}$",
+                    "writeOnly": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-roles": "OPERATOR",
+        "x-implementation-status": "operator-auth-implemented",
+        "description": "独立运营身份，密码+短信二次校验，JWT/数据库会话15分钟，无长期refresh；权限实时复核，no-store。正式短信未配置发码503。见OPERATOR_ACCOUNTS.md。"
+      }
+    },
+    "/api/auth/operator/logout": {
+      "post": {
+        "summary": "撤销当前运营短会话",
+        "operationId": "post_api_auth_operator_logout",
+        "tags": [
+          "auth"
+        ],
+        "x-feature-ids": [
+          "F20"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "429": {
+            "description": "账号/IP/短信共享限流，42900"
+          },
+          "503": {
+            "description": "身份/限流数据库或短信未配置，50300"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {}
+              }
+            }
+          }
+        },
+        "x-roles": "OPERATOR",
+        "x-implementation-status": "operator-auth-implemented",
+        "description": "独立运营身份，密码+短信二次校验，JWT/数据库会话15分钟，无长期refresh；权限实时复核，no-store。正式短信未配置发码503。见OPERATOR_ACCOUNTS.md。"
+      }
     }
   },
   "components": {

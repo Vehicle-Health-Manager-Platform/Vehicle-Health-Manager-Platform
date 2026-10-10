@@ -20,7 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class WriteIntegrityService {
     public record Actor(String type, long id) {
         public Actor {
-            if (!("user".equals(type) || "staff_account".equals(type)) || id <= 0) {
+            if (!("user".equals(type) || "staff_account".equals(type) || "operator_account".equals(type)) || id <= 0) {
                 throw new IllegalArgumentException("Invalid server-side actor");
             }
         }

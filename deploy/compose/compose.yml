@@ -29,6 +29,7 @@ services:
       - ../../docs/sql/migrations/V016__order_reviews.sql:/docker-entrypoint-initdb.d/016-order-reviews.sql:ro
       - ../../docs/sql/migrations/V017__service_archive_jobs.sql:/docker-entrypoint-initdb.d/017-service-archive-jobs.sql:ro
       - ../../docs/sql/migrations/V018__experience_cards.sql:/docker-entrypoint-initdb.d/018-experience-cards.sql:ro
+      - ../../docs/sql/migrations/V019__experience_moderation.sql:/docker-entrypoint-initdb.d/019-experience-moderation.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent"]
       interval: 10s
@@ -133,6 +134,7 @@ services:
       MYSQL_HOST: mysql
       SERVICE_ARCHIVE_ENABLED: ${SERVICE_ARCHIVE_ENABLED:-false}
       EXPERIENCE_CARD_ENABLED: ${EXPERIENCE_CARD_ENABLED:-false}
+      EXPERIENCE_PUBLICATION_ENABLED: ${EXPERIENCE_PUBLICATION_ENABLED:-false}
       SERVICE_ARCHIVE_INTERVAL_MS: ${SERVICE_ARCHIVE_INTERVAL_MS:-60000}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}

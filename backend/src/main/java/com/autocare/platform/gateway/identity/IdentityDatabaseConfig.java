@@ -44,6 +44,10 @@ public class IdentityDatabaseConfig {
     AuthSessionRepository authSessionRepository(JdbcTemplate identityJdbc) {
         return new JdbcAuthSessionRepository(identityJdbc);
     }
+    @Bean
+    OperatorIdentity operatorIdentity(JdbcTemplate identityJdbc,org.springframework.security.oauth2.jwt.JwtEncoder encoder,org.springframework.transaction.PlatformTransactionManager manager) {
+        return new OperatorIdentity(identityJdbc,encoder,manager);
+    }
 
     @Bean
     AuthRateLimiter authRateLimiter(JdbcTemplate identityJdbc) {
