@@ -244,6 +244,34 @@ class JdbcMerchantStaffTest {
         assertEquals(Boolean.TRUE,profiles.read(manager).get("can_edit"));
     }
 
+    /**
+     * 未填经纬度是可保存的合法状态，读写两条路径也必须给出同一个坐标字符串。
+     * 这两点都曾经是真实缺陷：`Map.of` 不接受 null 值，坐标为空时成功路径抛 NPE，
+     * 又被 WriteIntegrityService 兜底成 50300「写入服务暂不可用」——现象与后端不可用完全一样。
+     */
+    @Test void profileCoordinatesAreOptionalAndNormalized(){
+        var cleared=profiles.update(manager,key(),json("{\"name\":\"本店甲\",\"address\":\"广州市天河区演示路1号\","
+            + "\"contact_phone\":\"13800000000\",\"lng\":null,\"lat\":null}")).path("data");
+        assertTrue(cleared.path("lng").isNull());
+        assertTrue(cleared.path("lat").isNull());
+        assertNull(jdbc.queryForObject("SELECT lng FROM merchant WHERE id=1",String.class));
+        assertNull(profiles.read(manager).get("lng"));
+        assertNull(profiles.read(manager).get("lat"));
+
+        // DECIMAL(10,7) 直接读回会补满小数位（113.2644000），写响应却来自请求 JSON（113.2644）。
+        String savedKey=key();
+        var saved=profiles.update(manager,savedKey,json("{\"name\":\"本店甲\",\"address\":\"广州市天河区演示路1号\","
+            + "\"contact_phone\":\"13800000000\",\"lng\":113.2644,\"lat\":23.1291}")).path("data");
+        assertEquals("113.2644",saved.path("lng").asText());
+        assertEquals(saved.path("lng").asText(),profiles.read(manager).get("lng"));
+        assertEquals(saved.path("lat").asText(),profiles.read(manager).get("lat"));
+        // 尾随 0 不同是同一个意图：同键重放必须返回原响应，而不是「同一幂等键用于不同请求」。
+        var replay=profiles.update(manager,savedKey,json("{\"name\":\"本店甲\",\"address\":\"广州市天河区演示路1号\","
+            + "\"contact_phone\":\"13800000000\",\"lng\":113.26440000,\"lat\":23.1291000}")).path("data");
+        assertEquals("113.2644",replay.path("lng").asText());
+        assertEquals(2,audits("MERCHANT_PROFILE_UPDATE",1));
+    }
+
     @Test void switchOffBlocksReadsAndWrites(){
         var integrity=new WriteIntegrityService(jdbc,mapper,transactions);
         var closed=new MerchantStaff(jdbc,integrity,mapper,new StaffCodeOperations(jdbc),"test-app",false,transactions);

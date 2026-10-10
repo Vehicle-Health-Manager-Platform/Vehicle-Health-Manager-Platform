@@ -56,6 +56,11 @@
 
 `PUT` 白名单只有 `name`（2–64）、`address`（≤256）、`contact_phone`（大陆手机号）、`lng`（±180）、`lat`（±90，均可为 `null`）。**`merchant_type`、`status`、`region_code`、`qualification`、`grade`、`commission_rate`、`is_deleted` 一律不可经本接口修改**，出现未知字段或字段数不为 5 即 `40001`。改动经 `WriteIntegrityService` 单事务写入并追加 `audit_log`（`MERCHANT_PROFILE_UPDATE`，`resource_type=merchant`，before/after 只含白名单字段）。
 
+坐标两条容易踩的边界：
+
+- **未填经纬度是合法状态**。`lng`/`lat` 为 `null` 时必须正常保存——曾用 `Map.of` 组装写响应，而 `Map.of` 不接受 `null` 值，成功路径抛 NPE 后又被 `WriteIntegrityService` 兜底成 `50300`「写入服务暂不可用」，**现象与后端不可用完全一样**。现已改为 null 容忍的载荷容器，并有专门用例覆盖。
+- **读与写必须给出同一个坐标字符串**。`merchant.lng/lat` 是 `DECIMAL(10,7)`，直接读回会补满小数位（`113.2644` → `113.2644000`），而写响应里的坐标来自请求 JSON（`113.2644`）。两条路径现都经同一个 `stripTrailingZeros` 规范化，同值重放（`113.2644` vs `113.26440000`）也被视为同一意图，不会误报「同一幂等键不能用于不同请求」。
+
 ## 授权放宽（同批修改）
 
 新增 `STAFF` 后，履约执行面的鉴权口径由 `role='MERCHANT'` 放宽为 `role IN ('MERCHANT','STAFF')`，涉及：JWT 校验器（`SecurityConfig`）、`MerchantIdentityRepository.active()`、`AuthTokens` 登录/刷新、`MerchantActor`、`ReservationStore.merchant()`、商家上传（`JdbcUploadRequests`）、核销校验（`OrderReviews`）、防护照片归属（`ServiceWork`）。**选品定价 `MerchantQuotes` 的写路径保持店长专属**（店员读本店报价仍可）。技师分支（`TechnicianActor`、`ReservationStore.technician()`、`staff_wechat_identity` 校验）未改动。

@@ -65,8 +65,33 @@ public class MerchantProfile {
         return result;
     }
 
+    /**
+     * 坐标列是 DECIMAL(10,7)，直接 toString 会补满 7 位小数（113.2644000），
+     * 而写响应里的坐标来自请求 JSON（113.2644）——同一个值两种格式会让客户端对不上。
+     * 读与写都经这里规范化。
+     */
     private static String text(Object value) {
-        return value == null ? null : value.toString();
+        if (value == null) return null;
+        if (value instanceof java.math.BigDecimal decimal) {
+            var stripped = decimal.stripTrailingZeros();
+            // stripTrailingZeros 会把 100 表示成 1E+2，必须按 scale 还原成普通写法。
+            return stripped.scale() < 0 ? stripped.setScale(0).toPlainString() : stripped.toPlainString();
+        }
+        return value.toString();
+    }
+
+    /**
+     * 写响应的载荷。必须用 null 容忍的容器：`Map.of` 不接受 null 值，
+     * 门店未填经纬度时（lng/lat 为 null）会在成功路径上抛 NPE 变成 500。
+     */
+    private static Map<String, Object> writable(String name, String address, String phone, String lng, String lat) {
+        var result = new LinkedHashMap<String, Object>();
+        result.put("name", name);
+        result.put("address", address);
+        result.put("contact_phone", phone);
+        result.put("lng", lng);
+        result.put("lat", lat);
+        return result;
     }
 
     public Map<String, Object> read(MerchantActor actor) {
@@ -96,8 +121,10 @@ public class MerchantProfile {
         String phone = input.get("contact_phone").textValue();
         JsonNode lngNode = input.get("lng");
         JsonNode latNode = input.get("lat");
-        String lng = lngNode.isNull() ? null : lngNode.decimalValue().toString();
-        String lat = latNode.isNull() ? null : latNode.decimalValue().toString();
+        // 坐标经 text() 规范化后再入幂等载荷：113.2644 与 113.26440000 是同一个意图，
+        // 不应因为尾随 0 不同就算成两次不同的写。
+        String lng = lngNode.isNull() ? null : text(lngNode.decimalValue());
+        String lat = latNode.isNull() ? null : text(latNode.decimalValue());
         var canonical = new LinkedHashMap<String, Object>();
         canonical.put("name", name);
         canonical.put("address", address);
@@ -122,8 +149,7 @@ public class MerchantProfile {
                     actor.merchantId()).get(0);
                 jdbc.update("UPDATE merchant SET name=?,address=?,contact_phone=?,lng=?,lat=? WHERE id=?",
                     name, address, phone, lng, lat, actor.merchantId());
-                var after = Map.<String, Object>of("name", name, "address", address, "contact_phone", phone,
-                    "lng", lng, "lat", lat);
+                var after = writable(name, address, phone, lng, lat);
                 return new WriteIntegrityService.Change("MERCHANT_PROFILE_UPDATE", "merchant", actor.merchantId(),
                     editable(before), after, after);
             });
