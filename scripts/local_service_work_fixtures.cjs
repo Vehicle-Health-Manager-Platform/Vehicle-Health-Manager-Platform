@@ -5,7 +5,7 @@
 //
 // Usage: node scripts/local_service_work_fixtures.cjs --allow-local-test-writes
 const { spawnSync } = require('node:child_process')
-const { randomUUID, randomBytes, createHmac } = require('node:crypto')
+const { randomUUID, randomBytes, createHmac, createHash } = require('node:crypto')
 
 if (!process.argv.includes('--allow-local-test-writes')) {
   console.error('Requires --allow-local-test-writes; only the isolated local database is supported.')
@@ -46,7 +46,7 @@ function envVar(container, name) {
 
 // ---- Fixtures -------------------------------------------------------------------
 function verifyIsolation(stage = 'a6') {
-  if(!['a6','a7','a7-review','a7-archive','a7-card','a7-publication','r1a-onboarding'].includes(stage))throw Error('Unsupported local stage');
+  if(!['a6','a7','a7-review','a7-archive','a7-card','a7-publication','r1a-onboarding','r1b-staff'].includes(stage))throw Error('Unsupported local stage');
   const project = docker(['inspect', MYSQL, '--format', '{{index .Config.Labels "com.docker.compose.project"}}'])
   if (project !== 'vehicle-auth-local') throw new Error('Refusing non-test Docker project: ' + project)
   const backend = JSON.parse(docker(['inspect', BACKEND]))[0];
@@ -56,10 +56,12 @@ function verifyIsolation(stage = 'a6') {
   if (columns !== '3') throw new Error('A5 requires V011 and V012 applied to the isolated database (found ' + columns + '/3 columns)')
   const disputes = sql("SELECT (SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name IN ('order_dispute','order_dispute_record')), (SELECT column_comment FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='pickup_check' AND column_name='owner_confirm');").split('	')
   if (disputes[0] !== '2' || !disputes[1].includes('3')) throw new Error('A5.6 requires V013 applied to the isolated database (found ' + disputes[0] + '/2 tables)')
-  if(!image.startsWith(stage==='r1a-onboarding'?'vehicle-auth/backend:r1a-onboarding':stage==='a7-publication'?'vehicle-auth/backend:a7-experience-publication':stage==='a7-card'?'vehicle-auth/backend:a7-experience-card':stage==='a7-archive'?'vehicle-auth/backend:a7-service-archive':stage==='a7-review'?'vehicle-auth/backend:a7-owner-review':stage==='a7'?'vehicle-auth/backend:a7-redeem':'vehicle-auth/backend:a6-service'))throw Error('Expected isolated stage image');
+  if(!image.startsWith(stage==='r1b-staff'?'vehicle-auth/backend:r1b-staff':stage==='r1a-onboarding'?'vehicle-auth/backend:r1a-onboarding':stage==='a7-publication'?'vehicle-auth/backend:a7-experience-publication':stage==='a7-card'?'vehicle-auth/backend:a7-experience-card':stage==='a7-archive'?'vehicle-auth/backend:a7-service-archive':stage==='a7-review'?'vehicle-auth/backend:a7-owner-review':stage==='a7'?'vehicle-auth/backend:a7-redeem':'vehicle-auth/backend:a6-service'))throw Error('Expected isolated stage image');
   const tables=sql("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE();");
   const additions=sql("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name IN ('service_evidence_file','service_report_submission');");
-  if(tables!==(stage==='r1a-onboarding'?'63':stage==='a7-publication'?'61':stage==='a7-card'?'59':stage==='a7-archive'?'58':stage==='a7-review'?'57':stage==='a7'?'55':'54')||additions!=='2')throw Error('Expected isolated stage schema');
+  if(tables!==(stage==='r1b-staff'?'63':stage==='r1a-onboarding'?'63':stage==='a7-publication'?'61':stage==='a7-card'?'59':stage==='a7-archive'?'58':stage==='a7-review'?'57':stage==='a7'?'55':'54')||additions!=='2')throw Error('Expected isolated stage schema');
+  // V021 只扩列不加表，所以表数校验挡不住「库停在 V020」——必须逐列核对。
+  if(stage==='r1b-staff' && (image!=='vehicle-auth/backend:r1b-staff' || sql("SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='staff_account' AND column_name IN ('display_name','created_by')")!=='2'))throw Error('Exact R1b image and V021 required');
   if(stage==='r1a-onboarding' && (image!=='vehicle-auth/backend:r1a-onboarding' || sql("SELECT (SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name IN ('merchant_application_review','merchant_region_category_quota'))+(SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='operator_account' AND column_name='can_onboard')+(SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='merchant_application' AND column_name='revision')")!=='4'))throw Error('Exact R1a image and V020 required');
   if(stage==='a7-publication' && (image!=='vehicle-auth/backend:a7-experience-publication' || sql("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name IN ('experience_card','experience_card_moderation','operator_account','service_archive_job');")!=='4'))throw Error('Exact publication image and V019 required');
   if(stage==='a7-card' && (image!=='vehicle-auth/backend:a7-experience-card' || sql("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name IN ('experience_card','service_archive_job');")!=='2'))throw Error('Exact private-card image and V018 required');
@@ -136,17 +138,28 @@ COMMIT;
 }
 
 // ---- Synthetic sessions (documented test bridge) --------------------------------
+function jwt(secret, claims) {
+  const encode = value => Buffer.from(JSON.stringify(value)).toString('base64url')
+  const input = `${encode({ alg: 'HS256', typ: 'JWT' })}.${encode(claims)}`
+  return `${input}.${createHmac('sha256', secret).update(input).digest('base64url')}`
+}
+const sha256 = value => createHash('sha256').update(value).digest('hex')
 function mint(secret, appId, spec) {
   const jti = randomUUID(), now = Math.floor(Date.now() / 1000)
   const claims = { iss: 'vehicle-health-manager', sub: String(spec.subject), subject_type: spec.type, role: spec.role, jti, iat: now, exp: now + 900 }
   if (spec.appId) claims.app_id = spec.appId
   if (spec.merchantId) claims.merchant_id = spec.merchantId
   if (spec.bindingId) claims.binding_id = spec.bindingId
-  const encode = value => Buffer.from(JSON.stringify(value)).toString('base64url')
-  const input = `${encode({ alg: 'HS256', typ: 'JWT' })}.${encode(claims)}`
-  const token = `${input}.${createHmac('sha256', secret).update(input).digest('base64url')}`
-  sql(`INSERT INTO auth_session(id,subject_type,subject_id,role,app_id,binding_id,merchant_id,refresh_hash,expires_at) VALUES('${jti}','${spec.type}',${spec.subject},'${spec.role}','${spec.appId || 'local-a6'}',${spec.bindingId || 'NULL'},${spec.merchantId || 'NULL'},'${randomBytes(32).toString('hex')}',DATE_ADD(UTC_TIMESTAMP(),INTERVAL 15 MINUTE));`)
-  return { token, jti }
+  const token = jwt(secret, claims)
+  // 会话行存的是 refresh 令牌的 sha256（hex）；给定时才写真实哈希，于是 refresh 可以真的走通。
+  const stored = spec.refreshToken ? sha256(spec.refreshToken) : randomBytes(32).toString('hex')
+  sql(`INSERT INTO auth_session(id,subject_type,subject_id,role,app_id,binding_id,merchant_id,refresh_hash,expires_at) VALUES('${jti}','${spec.type}',${spec.subject},'${spec.role}','${spec.appId || 'local-a6'}',${spec.bindingId || 'NULL'},${spec.merchantId || 'NULL'},'${stored}',DATE_ADD(UTC_TIMESTAMP(),INTERVAL 15 MINUTE));`)
+  return { token, jti, refreshToken: spec.refreshToken || null }
+}
+/** 微信绑定凭证：与 AuthTokens.binding 同形（role=BIND、subject_type=wechat_binding）。 */
+function bindToken(secret, appId, openid) {
+  const now = Math.floor(Date.now() / 1000)
+  return jwt(secret, { iss: 'vehicle-health-manager', sub: openid, role: 'BIND', subject_type: 'wechat_binding', iat: now, exp: now + 300, app_id: appId })
 }
 
 // ---- HTTP ------------------------------------------------------------------------
@@ -198,5 +211,5 @@ async function setup(){
  return {owner,shopA,shopB,techA,techB,techF,order:ORDER_POSITIVE};
  } catch(error) {sql(`UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id IN (${[owner,shopA,shopB,techA,techB,techF].map(v=>"'"+v.jti+"'").join(',')});`); throw error;}
 }
-module.exports={prepare,mint,envVar,BACKEND,verifyIsolation,setup,sql,api,check,dataOf,codeOf,results,deepEqual,docker,ORDER_POSITIVE,ORDER_NO_CHECKIN,ORDER_NO_CONFIRM,ORDER_DISPUTE,TECH_A,BIND_A,randomUUID};
+module.exports={prepare,mint,bindToken,jwt,sha256,envVar,BACKEND,verifyIsolation,setup,sql,api,check,dataOf,codeOf,results,deepEqual,docker,ORDER_POSITIVE,ORDER_NO_CHECKIN,ORDER_NO_CONFIRM,ORDER_DISPUTE,TECH_A,BIND_A,randomUUID};
 if(require.main===module)setup().then(s=>{require('node:fs').writeFileSync('.cache/a6-ui-sessions.json',JSON.stringify(s));console.log('Synthetic A6 sessions prepared; real confirmation/dispatch/accept passed; credentials withheld')}).catch(e=>{console.error(e.message);process.exitCode=1});
