@@ -7,7 +7,7 @@ const key = '01234567-89ab-4cde-8fab-0123456789ab'
 const facts = { version: 1, work_minutes: 40, part_kinds: 0, no_parts: true, recorded_month: '2026-10' }
 const pending = { card_id: 4, revision: 1, title: '施工经验摘要', summary: facts, model_id: 3 }
 const item = { experience_id: key, title: '施工经验摘要', summary: facts, model_id: 3, published_at: '2026-10-09T00:00:00Z' }
-const login = { access_token: 'operator-token', token_type: 'Bearer', expires_in: 900, user: { id: 1, role: 'operator', can_review: true } }
+const login = { access_token: 'operator-token', token_type: 'Bearer', expires_in: 900, user: { id: 1, role: 'operator', can_review: true, can_onboard: false } }
 const apiFor = (data, calls = [], statusCode = 200) => createPublicationApi({ baseUrl: 'https://local', runtime: () => ({ request(r) { calls.push(r); r.success({ statusCode, data: { code: 0, data } }) } }) })
 test('公共与待审协议拒绝原文、私有来源ID、错误车型与不可信摘要', () => {
   assert.ok(validPublic(item)); assert.ok(validPending(pending)); assert.ok(validPending({ ...pending, model_id: null }))
@@ -18,6 +18,11 @@ test('运营密码短信登录严格核对独立身份，原生请求不传车�
   const calls = []; await apiFor(login, calls).login('reviewer', 'private password', '123456')
   assert.equal(calls[0].header.Authorization, undefined); assert.deepEqual(calls[0].data, { account: 'reviewer', password: 'private password', sms_code: '123456' })
   for (const result of [{ ...login, refresh_token: 'x' }, { ...login, user: { ...login.user, role: 'owner' } }, { ...login, expires_in: 0 }]) await assert.rejects(apiFor(result).login('reviewer', 'p', '123456'), e => e.kind === 'protocol')
+  // 后端登录响应已固定携带 can_onboard（与 can_review 是两组不交叉权限）。少字段即为契约漂移，
+  // 必须当场失败——此前夹具只写三个键，掩盖了真实环境新增字段导致的协议误判。
+  const { can_onboard, ...legacy } = login.user
+  await assert.rejects(apiFor({ ...login, user: legacy }).login('reviewer', 'p', '123456'), e => e.kind === 'protocol')
+  await assert.rejects(apiFor({ ...login, user: { ...login.user, can_onboard: 'yes' } }).login('reviewer', 'p', '123456'), e => e.kind === 'protocol')
   assert.throws(() => apiFor(login).login('reviewer', 'p', '123')); assert.throws(() => apiFor(login).code('reviewer', '密'.repeat(25)))
 })
 test('短信失败、限流、登录失效和错误响应不会当作成功', async () => {
