@@ -8426,6 +8426,351 @@
         "x-implementation-status": "owner-review-backend-implemented",
         "description": "仅本人，COMPLETED且可信核销/付款一致，无未解决争议。1–5分、1–500字、0–3本人安全JPEG/PNG；不可修改，不公开，不计商家评分。无查询参数；严格JSON无重复键/尾随；全部响应no-store。幂等重放复核资格及图片，历史本人评价仍可读；见ORDER_REVIEWS.md。"
       }
+    },
+    "/api/experience-cards": {
+      "get": {
+        "summary": "本人车辆私有经验卡片",
+        "operationId": "get_api_experience_cards",
+        "tags": [
+          "experience-cards"
+        ],
+        "x-feature-ids": [
+          "F12"
+        ],
+        "parameters": [
+          {
+            "name": "vehicle_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "items",
+                            "total",
+                            "page",
+                            "page_size"
+                          ],
+                          "properties": {
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/components/schemas/PrivateExperienceCard"
+                              }
+                            },
+                            "total": {
+                              "type": "integer",
+                              "minimum": 0
+                            },
+                            "page": {
+                              "type": "integer"
+                            },
+                            "page_size": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非本人或当前车辆不可用，40400"
+          },
+          "409": {
+            "description": "45001测试/来源不可信；45002旧幂等键与当前revision不符"
+          },
+          "503": {
+            "description": "50300数据库未配置或事务失败；原键原载荷重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "private-experience-backend-implemented",
+        "description": "原车主且当前仍拥有车辆，no-store，结构化摘要不含自由文本/照片。测试不能送审；授权后待审核尚未公开；见EXPERIENCE_CARDS.md。"
+      }
+    },
+    "/api/experience-cards/{id}/consent": {
+      "post": {
+        "summary": "本人授权卡片送审",
+        "operationId": "post_api_experience_cards_id_consent",
+        "tags": [
+          "experience-cards"
+        ],
+        "x-feature-ids": [
+          "F12"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "card"
+                          ],
+                          "properties": {
+                            "card": {
+                              "$ref": "#/components/schemas/PrivateExperienceCard"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非本人或当前车辆不可用，40400"
+          },
+          "409": {
+            "description": "45001测试/来源不可信；45002旧幂等键与当前revision不符"
+          },
+          "503": {
+            "description": "50300数据库未配置或事务失败；原键原载荷重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExperienceConsent"
+              }
+            }
+          }
+        },
+        "x-roles": "OWNER",
+        "x-implementation-status": "private-experience-backend-implemented",
+        "description": "原车主且当前仍拥有车辆，no-store，结构化摘要不含自由文本/照片。测试不能送审；授权后待审核尚未公开；见EXPERIENCE_CARDS.md。"
+      }
+    },
+    "/api/experience-cards/{id}/withdraw": {
+      "post": {
+        "summary": "本人撤回经验授权",
+        "operationId": "post_api_experience_cards_id_withdraw",
+        "tags": [
+          "experience-cards"
+        ],
+        "x-feature-ids": [
+          "F12"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "card"
+                          ],
+                          "properties": {
+                            "card": {
+                              "$ref": "#/components/schemas/PrivateExperienceCard"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非本人或当前车辆不可用，40400"
+          },
+          "409": {
+            "description": "45001测试/来源不可信；45002旧幂等键与当前revision不符"
+          },
+          "503": {
+            "description": "50300数据库未配置或事务失败；原键原载荷重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {}
+              }
+            }
+          }
+        },
+        "x-roles": "OWNER",
+        "x-implementation-status": "private-experience-backend-implemented",
+        "description": "原车主且当前仍拥有车辆，no-store，结构化摘要不含自由文本/照片。测试不能送审；授权后待审核尚未公开；见EXPERIENCE_CARDS.md。"
+      }
     }
   },
   "components": {
@@ -11234,6 +11579,148 @@
                 "type": "null"
               }
             ]
+          }
+        }
+      },
+      "PrivateExperienceSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "version",
+          "work_minutes",
+          "part_kinds",
+          "no_parts",
+          "recorded_month"
+        ],
+        "properties": {
+          "version": {
+            "const": 1
+          },
+          "work_minutes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1440
+          },
+          "part_kinds": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 20
+          },
+          "no_parts": {
+            "type": "boolean"
+          },
+          "recorded_month": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+          }
+        }
+      },
+      "PrivateExperienceCard": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "card_id",
+          "vehicle_id",
+          "order_id",
+          "archive_id",
+          "title",
+          "status",
+          "revision",
+          "test_mode",
+          "consent_version",
+          "consented_at",
+          "withdrawn_at",
+          "summary"
+        ],
+        "properties": {
+          "card_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "vehicle_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "archive_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "title": {
+            "const": "施工经验摘要"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "PENDING_REVIEW",
+              "WITHDRAWN"
+            ]
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "test_mode": {
+            "type": "boolean"
+          },
+          "consent_version": {
+            "anyOf": [
+              {
+                "const": "experience-v1"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "consented_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "withdrawn_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "summary": {
+            "$ref": "#/components/schemas/PrivateExperienceSummary"
+          }
+        }
+      },
+      "ExperienceConsent": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "agree",
+          "consent_version"
+        ],
+        "properties": {
+          "agree": {
+            "const": true
+          },
+          "consent_version": {
+            "const": "experience-v1"
           }
         }
       }

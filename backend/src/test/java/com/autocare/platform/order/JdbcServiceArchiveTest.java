@@ -35,6 +35,8 @@ class JdbcServiceArchiveTest {
     }
     @BeforeEach void setup() {
         jdbc.execute("DROP TRIGGER IF EXISTS reject_service_archive");
+        jdbc.execute("DROP TRIGGER IF EXISTS reject_experience_card");
+        jdbc.update("DELETE FROM experience_card");
         for (String t : List.of("service_archive_job","vehicle_archive_file","vehicle_archive","service_evidence_file","service_report_submission","technician_report","order_review_file","order_review","order_redemption","order_dispute","payment_exception","payment_event","payment","file_object","audit_log","idempotency_record","auth_session","order","vehicle","user","staff_account","merchant")) jdbc.update("DELETE FROM `" + t + "`");
         var manager = new DataSourceTransactionManager(jdbc.getDataSource()); var mapper = new ObjectMapper();
         var integrity = new WriteIntegrityService(jdbc, mapper, manager); db = new ReservationStore(jdbc, mapper, integrity, Clock.systemUTC(), manager);
@@ -121,5 +123,101 @@ class JdbcServiceArchiveTest {
             assertEquals(1,count("vehicle_archive")); assertEquals(2,count("vehicle_archive_file"));
             assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM audit_log WHERE action='SERVICE_ARCHIVE_CREATE'",Integer.class));
         } finally { pool.shutdownNow(); }
+    }
+    long card(boolean real) {
+        if (real) {
+            // Synthetic trusted payment in an isolated MySQL container; no real charge.
+            jdbc.update("UPDATE payment SET channel='WECHAT'"); jdbc.update("UPDATE payment_event SET channel='WECHAT'");
+            jdbc.update("UPDATE order_redemption SET test_mode=0");
+        }
+        new ServiceArchiveJobs(db,true,true).consume(submit());
+        return jdbc.queryForObject("SELECT id FROM experience_card",Long.class);
+    }
+    com.fasterxml.jackson.databind.JsonNode consent() { return ExperienceCardInput.parse("{\"agree\":true,\"consent_version\":\"experience-v1\"}",true); }
+    ExperienceCards cards() { return new ExperienceCards(db); }
+    @Test void cardSummaryNeverCopiesSensitiveSourceOrPublishes() {
+        jdbc.update("UPDATE technician_report SET repair_plan='客户电话13812345678 VIN 私有对象键',fault_analysis='车牌与签名保密'");
+        long id=card(false); var c=db.mapper.valueToTree(cards().list(owner,1,1,20)).path("items").get(0);
+        assertEquals("DRAFT",c.path("status").asText()); assertTrue(c.path("consent_version").isNull());
+        assertEquals(40,c.path("summary").path("work_minutes").asInt()); assertEquals("2026-10",c.path("summary").path("recorded_month").asText());
+        assertEquals(Set.of("version","work_minutes","part_kinds","no_parts","recorded_month"), db.mapper.convertValue(c.path("summary"),Map.class).keySet());
+        for(String privateField:List.of("13812345678","VIN","私有对象键","车牌","签名","file_ids","notes","user_id","review_id"))assertFalse(c.toString().contains(privateField));
+        assertEquals(409,assertThrows(ResponseStatusException.class,()->cards().change(owner,id,key(),consent(),true)).getStatusCode().value());
+        assertEquals(0,count("community_content"));
+    }
+    @Test void consentWithdrawAndNewConsentRequireFreshRevisionAndNoDuplicateAudit() {
+        long id=card(true); String first=key(), withdrawal=key();
+        var accepted=cards().change(owner,id,first,consent(),true);
+        assertEquals("PENDING_REVIEW",accepted.path("data").path("card").path("status").asText());
+        assertEquals(accepted,cards().change(owner,id,first,consent(),true));
+        cards().change(owner,id,key(),consent(),true);
+        assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM audit_log WHERE action='EXPERIENCE_CARD_CONSENT'",Integer.class));
+        var withdrawn=cards().change(owner,id,withdrawal,db.mapper.createObjectNode(),false);
+        assertTrue(withdrawn.path("data").path("card").path("consent_version").isNull());
+        assertTrue(withdrawn.path("data").path("card").path("consented_at").isNull());
+        assertEquals(2,withdrawn.path("data").path("card").path("revision").asInt());
+        assertEquals(45002,((FulfillmentConflict)assertThrows(ResponseStatusException.class,()->cards().change(owner,id,first,consent(),true))).code);
+        cards().change(owner,id,key(),consent(),true);
+        assertThrows(ResponseStatusException.class,()->cards().change(owner,id,withdrawal,db.mapper.createObjectNode(),false));
+        assertEquals(3,jdbc.queryForObject("SELECT revision FROM experience_card",Integer.class));
+        assertEquals(0,count("community_content"));
+    }
+    @Test void ownershipTransferAndRevokedSessionsBlockCardReadsWritesAndCachedReplay() {
+        long id=card(true); String k=key(); cards().change(owner,id,k,consent(),true);
+        assertThrows(ResponseStatusException.class,()->cards().change(other,id,key(),consent(),true));
+        assertThrows(ResponseStatusException.class,()->cards().list(other,1,1,20));
+        jdbc.update("UPDATE vehicle SET user_id=2 WHERE id=1");
+        assertEquals(0L,cards().list(other,1,1,20).get("total"));
+        assertThrows(ResponseStatusException.class,()->cards().change(owner,id,k,consent(),true));
+        jdbc.update("UPDATE vehicle SET user_id=1 WHERE id=1"); jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id=?",owner.session());
+        assertEquals(401,assertThrows(ResponseStatusException.class,()->cards().list(owner,1,1,20)).getStatusCode().value());
+        assertThrows(ResponseStatusException.class,()->cards().change(owner,id,k,consent(),true));
+    }
+    @Test void sourceChangeBlocksAuthorizationButWithdrawalStillSucceeds() {
+        long id=card(true); cards().change(owner,id,key(),consent(),true);
+        jdbc.update("UPDATE technician_report SET is_deleted=1");
+        assertThrows(ResponseStatusException.class,()->cards().change(owner,id,key(),consent(),true));
+        var result=cards().change(owner,id,key(),db.mapper.createObjectNode(),false);
+        assertEquals("WITHDRAWN",result.path("data").path("card").path("status").asText());
+    }
+    @Test void cardFailureRollsBackArchiveAndRecoveryCreatesOnlyOne() {
+        long job=submit(); var worker=new ServiceArchiveJobs(db,true,true);
+        jdbc.execute("CREATE TRIGGER reject_experience_card BEFORE INSERT ON experience_card FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='synthetic failure'");
+        worker.sweep(); assertEquals(0,count("experience_card")); assertEquals(0,count("vehicle_archive")); assertEquals(0,count("vehicle_archive_file"));
+        assertEquals("PENDING",jdbc.queryForObject("SELECT status FROM service_archive_job",String.class));
+        assertEquals(1,count("order_review"));
+        jdbc.execute("DROP TRIGGER reject_experience_card"); worker.consume(job); worker.consume(job);
+        assertEquals(1,count("experience_card")); assertEquals(1,count("vehicle_archive"));
+        assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM audit_log WHERE action='EXPERIENCE_CARD_CREATE'",Integer.class));
+    }
+    @Test void enablingCardsDoesNotBackfillCompletedArchives() {
+        long job=submit(); jobs.consume(job); new ServiceArchiveJobs(db,true,true).consume(job);
+        assertEquals(0,count("experience_card")); assertEquals(1,count("vehicle_archive"));
+    }
+    @Test void cardAndConsentAuditFailureRollbackCanRetrySameKey() {
+        long id=card(true); String k=key();
+        jdbc.execute("CREATE TRIGGER reject_experience_card BEFORE INSERT ON audit_log FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='synthetic failure'");
+        assertEquals(503,assertThrows(ResponseStatusException.class,()->cards().change(owner,id,k,consent(),true)).getStatusCode().value());
+        assertEquals("DRAFT",jdbc.queryForObject("SELECT status FROM experience_card",String.class));
+        jdbc.execute("DROP TRIGGER reject_experience_card"); cards().change(owner,id,k,consent(),true);
+        assertEquals(1,jdbc.queryForObject("SELECT revision FROM experience_card",Integer.class));
+    }
+    @Test void concurrentCardWorkersAndOwnerActionsCreateOneOutputAndTransition() throws Exception {
+        long job=submit(); var worker=new ServiceArchiveJobs(db,true,true); var pool=Executors.newFixedThreadPool(2);
+        try {
+            var futures=List.of(pool.submit(()->worker.consume(job)),pool.submit(()->worker.consume(job)));
+            for(var f:futures)f.get(30,TimeUnit.SECONDS); assertEquals(1,count("experience_card"));
+            long id=jdbc.queryForObject("SELECT id FROM experience_card",Long.class);
+            futures=List.of(pool.submit(()->cards().change(owner,id,key(),db.mapper.createObjectNode(),false)),pool.submit(()->cards().change(owner,id,key(),db.mapper.createObjectNode(),false)));
+            for(var f:futures)f.get(30,TimeUnit.SECONDS);
+            assertEquals(1,jdbc.queryForObject("SELECT revision FROM experience_card",Integer.class));
+            assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM audit_log WHERE action='EXPERIENCE_CARD_WITHDRAW'",Integer.class));
+        } finally { pool.shutdownNow(); }
+    }
+    @Test void invalidConsentAndWithdrawalCannotCreateAuditOrIdempotencyRecords() {
+        long id=card(true); int audits=count("audit_log"),keys=count("idempotency_record");
+        for(String bad:List.of("{}","{\"agree\":false,\"consent_version\":\"experience-v1\"}","{\"agree\":true,\"consent_version\":\"old\"}","{\"agree\":true,\"consent_version\":\"experience-v1\",\"extra\":1}","{\"agree\":true,\"agree\":false,\"consent_version\":\"experience-v1\"}","{\"agree\":true,\"consent_version\":\"experience-v1\"} {}"))assertThrows(ResponseStatusException.class,()->ExperienceCardInput.parse(bad,true));
+        assertThrows(ResponseStatusException.class,()->cards().change(owner,id,key(),db.mapper.valueToTree(Map.of("agree",true)),false));
+        assertEquals(audits,count("audit_log")); assertEquals(keys,count("idempotency_record"));
     }
 }

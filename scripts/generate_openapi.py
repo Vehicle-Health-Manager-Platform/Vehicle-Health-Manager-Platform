@@ -683,6 +683,44 @@ def main():
         item["responses"]["503"] = {"description": "数据库未配置或事务失败，code=50300；原载荷原键重试"}
         document["paths"][path] = {method: item}
 
+    # A7.2c1: private summaries and explicit owner consent; no publication API.
+    nullable_time = {"anyOf": [timestamp, {"type": "null"}]}
+    schemas["PrivateExperienceSummary"] = strict({"version": {"const": 1},
+        "work_minutes": {"type": "integer", "minimum": 1, "maximum": 1440},
+        "part_kinds": {"type": "integer", "minimum": 0, "maximum": 20},
+        "no_parts": {"type": "boolean"}, "recorded_month": {"type": "string", "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"}})
+    schemas["PrivateExperienceCard"] = strict({"card_id": identifier, "vehicle_id": identifier,
+        "order_id": identifier, "archive_id": identifier, "title": {"const": "施工经验摘要"},
+        "status": {"type": "string", "enum": ["DRAFT", "PENDING_REVIEW", "WITHDRAWN"]},
+        "revision": {"type": "integer", "minimum": 0}, "test_mode": {"type": "boolean"},
+        "consent_version": {"anyOf": [{"const": "experience-v1"}, {"type": "null"}]},
+        "consented_at": nullable_time, "withdrawn_at": nullable_time,
+        "summary": {"$ref": "#/components/schemas/PrivateExperienceSummary"}})
+    schemas["ExperienceConsent"] = strict({"agree": {"const": True}, "consent_version": {"const": "experience-v1"}})
+    for method, path, title in [("get", "/api/experience-cards", "本人车辆私有经验卡片"),
+        ("post", "/api/experience-cards/{id}/consent", "本人授权卡片送审"),
+        ("post", "/api/experience-cards/{id}/withdraw", "本人撤回经验授权")]:
+        item = operation(method, path, title, "F12")
+        item["x-roles"] = "OWNER"
+        item["x-implementation-status"] = "private-experience-backend-implemented"
+        item["description"] = "原车主且当前仍拥有车辆，no-store，结构化摘要不含自由文本/照片。测试不能送审；授权后待审核尚未公开；见EXPERIENCE_CARDS.md。"
+        for p in item["parameters"]:
+            if p["in"] == "path": p["schema"] = identifier
+        if method == "get":
+            item["parameters"].extend([{"name": "vehicle_id", "in": "query", "required": True, "schema": identifier},
+                {"name": "page", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 1000000}},
+                {"name": "page_size", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 50}}])
+            response = strict({"items": {"type": "array", "items": {"$ref": "#/components/schemas/PrivateExperienceCard"}},
+                "total": {"type": "integer", "minimum": 0}, "page": {"type": "integer"}, "page_size": {"type": "integer"}})
+        else:
+            item["requestBody"]["content"]["application/json"]["schema"] = {"$ref": "#/components/schemas/ExperienceConsent"} if path.endswith("/consent") else strict({})
+            response = strict({"card": {"$ref": "#/components/schemas/PrivateExperienceCard"}})
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "properties": {"data": response}}]}
+        item["responses"]["404"] = {"description": "非本人或当前车辆不可用，40400"}
+        item["responses"]["409"] = {"description": "45001测试/来源不可信；45002旧幂等键与当前revision不符"}
+        item["responses"]["503"] = {"description": "50300数据库未配置或事务失败；原键原载荷重试"}
+        document["paths"][path] = {method: item}
+
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     count = sum(len(item) for item in document["paths"].values())
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

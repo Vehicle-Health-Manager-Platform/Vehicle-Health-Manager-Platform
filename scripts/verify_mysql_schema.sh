@@ -79,9 +79,11 @@ run_sql_file docs/sql/migrations/V016__order_reviews.sql
 run_sql_file docs/sql/migrations/V016__order_reviews.sql
 run_sql_file docs/sql/migrations/V017__service_archive_jobs.sql
 run_sql_file docs/sql/migrations/V017__service_archive_jobs.sql
+run_sql_file docs/sql/migrations/V018__experience_cards.sql
+run_sql_file docs/sql/migrations/V018__experience_cards.sql
 
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
-[[ "$tables" == 58 ]] || { echo "Expected 58 tables after V017, got $tables" >&2; exit 1; }
+[[ "$tables" == 59 ]] || { echo "Expected 59 tables after V018, got $tables" >&2; exit 1; }
 
 for column in check_in_completed_at owner_confirmed_at assigned_at service_report_ready_at; do
   found=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND table_name = 'order' AND column_name = '$column'")
@@ -108,7 +110,7 @@ dispute_records=$(query "SELECT COUNT(DISTINCT index_name) FROM information_sche
 owner_confirm_comment=$(query "SELECT column_comment FROM information_schema.columns WHERE table_schema = '$database' AND table_name = 'pickup_check' AND column_name = 'owner_confirm'")
 [[ "$owner_confirm_comment" == *3* ]] || { echo "Repeated V013 left pickup_check.owner_confirm without the resolved state" >&2; exit 1; }
 
-for entry in service_archive_job:uk_archive_order service_archive_job:uk_archive_review service_archive_job:uk_archive_output order_review:uk_review_order order_review_file:uk_review_file order_redemption:uk_redemption_order service_evidence_file:uk_file service_report_submission:uk_order service_report_submission:uk_report; do
+for entry in experience_card:uk_card_order experience_card:uk_card_archive service_archive_job:uk_archive_order service_archive_job:uk_archive_review service_archive_job:uk_archive_output order_review:uk_review_order order_review_file:uk_review_file order_redemption:uk_redemption_order service_evidence_file:uk_file service_report_submission:uk_order service_report_submission:uk_report; do
   table="${entry%%:*}"
   index="${entry##*:}"
   found=$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema = '$database' AND table_name = '$table' AND index_name = '$index' AND non_unique = 0")
@@ -143,4 +145,4 @@ for table in brand series model standard_project merchant merchant_project; do
   [[ "$rows" == 1 ]] || { echo "Expected one synthetic row in $table, got $rows" >&2; exit 1; }
 done
 
-echo "MySQL 8.0 schema: 58 tables after V017; repeat migration and synthetic seed passed"
+echo "MySQL 8.0 schema: 59 tables after V018; repeat migration and synthetic seed passed"
