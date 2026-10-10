@@ -25,6 +25,7 @@ function openRole(path) {
       </view>
     </view>
 
+    <button @tap="openRole('pages/operator/login')">运营审核 · 独立账号登录</button>
     <view class="notice">
       <text class="notice-title">当前是 S0 工程骨架</text>
       <text class="notice-text">车辆、订单、支付和报工等功能将按阶段计划接入。此入口仅用于开发预览，不授予任何业务身份。</text>

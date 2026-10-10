@@ -27,6 +27,7 @@ function archive() { uni.switchTab({ url: '/pages/archive/index' }) }
   <OwnerTabShell label="首页" title="爱车健康，一眼掌握" description="从本人车辆和养护记录查看真实用车信息。" next-action="首页数据正在接入。" business-ready>
     <template #content>
       <VehicleList :selected-id="selectedOwnerVehicle?.vehicle_id || 0" @select="select" />
+      <button v-if="selectedOwnerVehicle" class="secondary" @tap="uni.navigateTo({url:'/pages/community/experiences'})">查看同款施工经验</button>
       <view v-if="state.vehicle" class="summary" data-testid="home-archive-summary">
         <text class="eyebrow">当前车辆</text>
         <text class="name">{{ state.vehicle.model_name || '车型信息暂不可用' }}</text>
