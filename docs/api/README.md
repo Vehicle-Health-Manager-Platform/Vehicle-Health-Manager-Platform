@@ -1,6 +1,6 @@
 # API 文档
 
-- [R1b 门店员工维护、员工码与门店资料](MERCHANT_STAFF.md)：店长新增/查看本店店员(`STAFF`)与技师、启停即时阻断原会话、员工码受控签发与撤销、门店资料白名单更新与审计；`MERCHANT_STAFF.md` 同时说明执行面放宽为 `role IN ('MERCHANT','STAFF')`、选品定价写仍限店长。V021/63表，OpenAPI 当前 127 操作。**小程序页面与真实容器端到端验收未完成**。
+- [R1b 门店员工维护、员工码与门店资料](MERCHANT_STAFF.md)：店长新增/查看本店店员(`STAFF`)与技师、启停即时阻断原会话、员工码受控签发与撤销、门店资料白名单更新与审计；`MERCHANT_STAFF.md` 同时说明执行面放宽为 `role IN ('MERCHANT','STAFF')`、选品定价写仍限店长，以及小程序客户端模块与幂等键复用规则。V021/63表，OpenAPI 当前 127 操作。小程序页面已接入（离线测试 272/272、mp-weixin 与 h5 构建通过），运维见[门店账号与员工码](../operations/STORE_ACCOUNTS.md)。**真实容器端到端验收未完成**。
 
 - [R1a 商家入驻申请、审核、区域品类配额与开店](MERCHANT_ONBOARDING.md)：车主提交/查询/重提、运营 `can_onboard` 待审列表/详情/批准/固定码驳回、fail-closed 配额与单事务开店；小程序车主端与运营端页面已接入，V020/63表。**真实容器端到端联调、账号激活与正式短信未完成**；运营入驻权限运维见[运营账号管理](../operations/OPERATOR_ACCOUNTS.md)。
 
