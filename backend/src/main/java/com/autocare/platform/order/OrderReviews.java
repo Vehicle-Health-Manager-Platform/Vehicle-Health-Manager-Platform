@@ -27,7 +27,7 @@ public class OrderReviews {
         return rows.isEmpty()?null:rows.get(0);
     }
     private static boolean present(Object s){return s instanceof String text && !text.isBlank();}
-    private String unavailable(Map<String,Object> o,Map<String,Object> r,boolean lock){
+    String unavailable(Map<String,Object> o,Map<String,Object> r,boolean lock){
         if(!OrderStatus.COMPLETED.equals(o.get("status")))return "ORDER_NOT_COMPLETED";
         long id=ReservationStore.number(o,"id");String tail=lock?" FOR UPDATE":"";
         if(!db.jdbc.queryForList("SELECT id FROM order_dispute WHERE order_id=? AND status='OPEN'"+tail,id).isEmpty())return "OPEN_DISPUTE";
@@ -72,6 +72,7 @@ public class OrderReviews {
             if(existing!=null){if(!same(existing,b))throw new FulfillmentConflict(44002,"订单已评价，不能修改或重复提交不同内容");var projection=audit(id,existing);return new Change("ORDER_REVIEW_REPLAY","order_review",ReservationStore.number(existing,"id"),projection,projection,data(id,existing),false);}
             var receipt=receipt(id,true);long record=db.insert("INSERT INTO order_review(order_id,user_id,redemption_id,rating,content,test_mode,submitted_at) VALUES(?,?,?,?,?,?,?)",id,owner.id(),receipt.get("id"),b.get("rating").intValue(),b.get("content").textValue(),receipt.get("test_mode"),ReservationStore.time(db.now()));
             int position=0;for(var file:b.get("photo_file_ids"))db.jdbc.update("INSERT INTO order_review_file(review_id,file_id,position) VALUES(?,?,?)",record,file.longValue(),position++);
+            ServiceArchiveJobs.enqueue(db,id,record);
             var after=stored(id,true);return new Change("ORDER_REVIEW_CREATE","order_review",record,Map.of("order_id",id),audit(id,after),data(id,after));
         });
     }

@@ -53,10 +53,10 @@ public class AiContextProvider {
         Map<String, Object> vehicle = vehicles.get(0);
         List<Archive> archives = jdbc.query(
             "SELECT a.archive_type,a.content,DATE_FORMAT(a.recorded_at,'%Y-%m-%d') AS recorded_date "
-                + "FROM vehicle_archive a WHERE a.vehicle_id=? AND a.is_deleted=0 AND a.input_type IN (1,3) "
+                + "FROM vehicle_archive a WHERE a.vehicle_id=? AND a.is_deleted=0 AND (a.input_type IN (1,3) OR (a.input_type=4 AND JSON_EXTRACT(a.content,'$.test_mode')=false AND JSON_EXTRACT(a.content,'$.source.user_id')=?)) "
                 + "ORDER BY a.recorded_at DESC,a.id DESC LIMIT ?",
             (rs, n) -> parseArchive(mapper, rs.getInt("archive_type"), rs.getString("content"), rs.getString("recorded_date")),
-            vehicleId, MAX_ARCHIVES);
+            vehicleId, owner.id(), MAX_ARCHIVES);
         String name = (String) vehicle.get("name");
         return new Context(vehicleId, name, describe(name, (Integer) vehicle.get("mileage"),
             (String) vehicle.get("power"), archives));

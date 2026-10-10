@@ -207,8 +207,18 @@ def main():
         archive["responses"][status] = {"description": message}
     archive_list = document["paths"]["/api/archive/list"]["get"]
     archive_list["x-roles"] = "正式车主"
-    archive_list["x-implementation-status"] = "manual-and-photo-core-implemented"
-    archive_list["description"] = "只列所选本人车辆的手动及拍照记录，每条带input_type，按发生日期与ID倒序；附件返回稳定file_ids，不返回签名URL。详见 ARCHIVE_MANUAL.md。"
+    archive_list["x-implementation-status"] = "manual-photo-and-service-archive-implemented"
+    archive_list["description"] = "本人车辆档案；input_type=1/3为拍照/手动，4为施工自动归档，附source、test_mode、parts_used、no_parts、work_minutes及施工时间。按日期与ID倒序；施工图片经档案专用授权，不返回签名URL。详见 SERVICE_ARCHIVES.md。"
+    archive_file_path = "/api/archive/{archiveId}/files/{fileId}/access"
+    archive_file = operation("get", archive_file_path, "本人施工档案私有图片短时访问", "F03")
+    archive_file["x-roles"] = "正式车主"
+    archive_file["x-implementation-status"] = "implemented"
+    archive_file["description"] = "复核会话、当前车辆归属、原订单车主、已完成任务、施工照片关系及安全文件；不开放员工签字，不改变文件所有者。返回短时url及expires_at，Cache-Control:no-store。"
+    for parameter in archive_file["parameters"]:
+        parameter["schema"] = {"type": "integer", "minimum": 1, "maximum": 9007199254740991}
+    archive_file["responses"]["404"] = {"description": "档案或图片不可用"}
+    archive_file["responses"]["503"] = {"description": "数据库或私有图片暂不可用"}
+    document["paths"][archive_file_path] = {"get": archive_file}
     archive_list["parameters"] += [
         {"name": "vehicle_id", "in": "query", "required": True,
          "schema": {"type": "integer", "minimum": 1, "maximum": 9007199254740991}},

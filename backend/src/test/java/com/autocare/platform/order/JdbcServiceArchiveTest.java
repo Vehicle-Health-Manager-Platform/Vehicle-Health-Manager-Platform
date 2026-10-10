@@ -1,0 +1,125 @@
+package com.autocare.platform.order;
+
+import com.autocare.platform.common.write.WriteIntegrityService;
+import com.autocare.platform.vehicle.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.nio.file.*;
+import java.time.*;
+import java.util.*;
+import java.util.concurrent.*;
+import org.junit.jupiter.api.*;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.*;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
+import org.springframework.web.server.ResponseStatusException;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+@Testcontainers
+class JdbcServiceArchiveTest {
+    @Container static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0").withCommand("--log-bin-trust-function-creators=1");
+    static JdbcTemplate jdbc; ReservationStore db; ServiceArchiveJobs jobs; ArchiveService archives; VehicleOwner owner, other;
+    @BeforeAll static void schema() throws Exception {
+        var ds = new DriverManagerDataSource(mysql.getJdbcUrl(), mysql.getUsername(), mysql.getPassword()); jdbc = new JdbcTemplate(ds);
+        try (var c = ds.getConnection(); var paths = Files.list(Path.of("..", "docs", "sql", "migrations"))) {
+            for (var p : paths.filter(p -> p.toString().endsWith(".sql")).sorted().toList()) ScriptUtils.executeSqlScript(c, new FileSystemResource(p));
+            ScriptUtils.executeSqlScript(c, new FileSystemResource(Path.of("..", "docs", "sql", "migrations", "V017__service_archive_jobs.sql")));
+        }
+    }
+    String key() { return UUID.randomUUID().toString(); }
+    VehicleOwner actor(long id) {
+        String session = key(); jdbc.update("INSERT INTO auth_session(id,subject_type,subject_id,role,app_id,refresh_hash,expires_at) VALUES(?,'user',?,'OWNER','test',?,DATE_ADD(UTC_TIMESTAMP(),INTERVAL 1 HOUR))", session, id, key());
+        return new VehicleOwner(id, session, Instant.now().plusSeconds(3600));
+    }
+    @BeforeEach void setup() {
+        jdbc.execute("DROP TRIGGER IF EXISTS reject_service_archive");
+        for (String t : List.of("service_archive_job","vehicle_archive_file","vehicle_archive","service_evidence_file","service_report_submission","technician_report","order_review_file","order_review","order_redemption","order_dispute","payment_exception","payment_event","payment","file_object","audit_log","idempotency_record","auth_session","order","vehicle","user","staff_account","merchant")) jdbc.update("DELETE FROM `" + t + "`");
+        var manager = new DataSourceTransactionManager(jdbc.getDataSource()); var mapper = new ObjectMapper();
+        var integrity = new WriteIntegrityService(jdbc, mapper, manager); db = new ReservationStore(jdbc, mapper, integrity, Clock.systemUTC(), manager);
+        jobs = new ServiceArchiveJobs(db, true); archives = new ArchiveService(jdbc, integrity, mapper);
+        jdbc.update("INSERT INTO user(id,openid,status) VALUES(1,'synthetic-archive-owner',1),(2,'synthetic-archive-other',1)");
+        owner=actor(1); other=actor(2);
+        jdbc.update("INSERT INTO vehicle(id,user_id,current_mileage) VALUES(1,1,12345),(2,2,0)");
+        jdbc.update("INSERT INTO merchant(id,merchant_type,name,address,status) VALUES(1,2,'synthetic-archive-shop','test',1)");
+        jdbc.update("INSERT INTO staff_account(id,merchant_id,role,account,status) VALUES(1,1,'MERCHANT','synthetic-archive-shop','ACTIVE'),(2,1,'TECHNICIAN','synthetic-archive-tech','ACTIVE')");
+        jdbc.update("INSERT INTO `order`(id,order_no,user_id,vehicle_id,merchant_id,amount,pay_amount,status,service_report_ready_at) VALUES(1,'synthetic-archive-order',1,1,1,10,10,'COMPLETED',UTC_TIMESTAMP())");
+        jdbc.update("INSERT INTO payment(id,order_id,channel,payment_no,currency,amount,status,paid_at,channel_payment_no) VALUES(1,1,'LOCAL_TEST','synthetic-paid','CNY',10,'SUCCEEDED',UTC_TIMESTAMP(),'synthetic-channel')");
+        jdbc.update("INSERT INTO payment_event(channel,event_id,payment_id,event_hash,outcome) VALUES('LOCAL_TEST',?,1,?,'PAID')",key(),"a".repeat(64));
+        jdbc.update("INSERT INTO order_redemption(id,order_id,merchant_id,staff_id,payment_id,test_mode,redeemed_at) VALUES(1,1,1,1,1,1,UTC_TIMESTAMP())");
+        jdbc.update("INSERT INTO technician_report(id,order_id,technician_id,process_photos,fault_part_photos,finish_photos,repair_plan,fault_analysis,parts_used,work_hours,status,signed_at) VALUES(1,1,2,'[101]','[]','[102]','检查与清洁','未发现需更换故障件','[]',40,1,'2026-10-09 01:00:00')");
+        jdbc.update("INSERT INTO service_report_submission(order_id,report_id,no_parts,no_fault_parts,submitted_at) VALUES(1,1,1,1,'2026-10-09 00:50:00')");
+        for (int file=101;file<=103;file++) {
+            jdbc.update("INSERT INTO file_object(id,owner_type,owner_id,object_key,content_type,size_bytes,scan_status) VALUES(?,'staff_account',2,?,'image/png',100,'CLEAN')",file,"synthetic-archive-"+file);
+            jdbc.update("INSERT INTO service_evidence_file(order_id,record_id,file_id,kind) VALUES(1,1,?,?)",file,file==101?"PROCESS":file==102?"FINISH":"SIGNATURE");
+        }
+    }
+    long submit() {
+        var body=db.mapper.valueToTree(Map.of("order_id",1,"rating",5,"content","施工反馈","photo_file_ids",List.of()));
+        new OrderReviews(db).submit(owner,key(),body);
+        return jdbc.queryForObject("SELECT id FROM service_archive_job",Long.class);
+    }
+    int count(String t) { return jdbc.queryForObject("SELECT COUNT(*) FROM `"+t+"`",Integer.class); }
+    long archive() { return jdbc.queryForObject("SELECT archive_id FROM service_archive_job",Long.class); }
+    @Test void reviewEnqueuesAndConsumerAddsTraceableArchiveWithoutInventingMileage() {
+        long id=submit(); assertEquals(0,count("vehicle_archive")); jobs.consume(id); jobs.consume(id);
+        assertEquals(1,count("vehicle_archive")); assertEquals(2,count("vehicle_archive_file"));
+        var row=db.mapper.valueToTree(archives.list(owner,1,1,20)).path("list").get(0);
+        assertEquals(4,row.path("input_type").asInt()); assertTrue(row.path("mileage").isNull());
+        assertEquals(40,row.path("work_minutes").asInt()); assertTrue(row.path("test_mode").asBoolean());
+        assertEquals(1,row.path("source").path("order_id").asLong()); assertFalse(row.path("source").has("user_id"));
+        assertEquals("2026-10-09",row.path("recorded_date").asText());
+        assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM audit_log WHERE action='SERVICE_ARCHIVE_CREATE'",Integer.class));
+        assertEquals("COMPLETED",jdbc.queryForObject("SELECT status FROM `order` WHERE id=1",String.class));
+    }
+    @Test void missingReportDoesNotUndoReviewAndRepairResumesTask() {
+        jdbc.update("UPDATE technician_report SET is_deleted=1"); long id=submit();
+        assertEquals(1,count("order_review")); assertThrows(ServiceArchiveJobs.InvalidSource.class,()->jobs.consume(id));
+        jdbc.update("UPDATE technician_report SET is_deleted=0"); jobs.consume(id); assertEquals(1,count("vehicle_archive"));
+    }
+    @Test void workerRollbackRecoveryAndAttemptMetadataAreIndependentFromReview() {
+        submit(); jdbc.execute("CREATE TRIGGER reject_service_archive BEFORE INSERT ON audit_log FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='synthetic failure'");
+        jobs.sweep(); assertEquals(0,count("vehicle_archive")); assertEquals(0,count("vehicle_archive_file")); assertEquals(1,count("order_review"));
+        assertEquals(1,jdbc.queryForObject("SELECT attempts FROM service_archive_job",Integer.class));
+        jdbc.execute("DROP TRIGGER reject_service_archive"); jdbc.update("UPDATE service_archive_job SET next_attempt_at=UTC_TIMESTAMP()"); jobs.sweep(); assertEquals(1,count("vehicle_archive"));
+    }
+    @Test void queueInsertFailureRollsBackReviewAndSameKeyCanRetry() {
+        jdbc.execute("CREATE TRIGGER reject_service_archive BEFORE INSERT ON service_archive_job FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='synthetic failure'");
+        assertThrows(ResponseStatusException.class,this::submit); assertEquals(0,count("order_review")); assertEquals(0,count("audit_log")); assertEquals(0,count("idempotency_record"));
+        jdbc.execute("DROP TRIGGER reject_service_archive"); submit(); assertEquals(1,count("service_archive_job"));
+    }
+    @Test void frozenWorkCannotBeSilentlyReplacedOrUnsafeFilesArchived() {
+        long id=submit(); jdbc.update("UPDATE technician_report SET repair_plan='修改方案'"); assertThrows(ServiceArchiveJobs.InvalidSource.class,()->jobs.consume(id));
+        jdbc.update("UPDATE technician_report SET repair_plan='检查与清洁'"); jdbc.update("UPDATE file_object SET scan_status='INFECTED' WHERE id=101"); assertThrows(ServiceArchiveJobs.InvalidSource.class,()->jobs.consume(id));
+        assertEquals(0,count("vehicle_archive")); jdbc.update("UPDATE file_object SET scan_status='CLEAN' WHERE id=101"); jobs.consume(id);
+    }
+    @Test void privateImagesRequireOriginalOwnerCurrentVehicleAndSafeFile() {
+        jobs.consume(submit()); assertEquals(2,archives.fileOwner(owner,archive(),101).id());
+        assertEquals(404,assertThrows(ResponseStatusException.class,()->archives.fileOwner(other,archive(),101)).getStatusCode().value());
+        assertThrows(ResponseStatusException.class,()->archives.fileOwner(owner,archive(),103));
+        jdbc.update("UPDATE file_object SET is_deleted=1 WHERE id=101"); assertThrows(ResponseStatusException.class,()->archives.fileOwner(owner,archive(),101));
+        jdbc.update("UPDATE vehicle SET user_id=2 WHERE id=1"); assertEquals(0L,archives.list(other,1,1,20).get("total"));
+    }
+    @Test void disabledWorkerPreservesPendingTasksAndManualArchivesRemain() {
+        submit(); new ServiceArchiveJobs(db,false).sweep(); assertEquals(0,count("vehicle_archive"));
+        archives.add(owner,key(),new ArchiveInput(1,1,LocalDate.of(2026,10,8),12345,"手动记录","旧记录",List.of(),3));
+        jobs.sweep(); assertEquals(2L,archives.list(owner,1,1,20).get("total"));
+    }
+    @Test void testServiceDoesNotEnterAiRealHistory() {
+        jobs.consume(submit());
+        var ai = new com.autocare.platform.ai.AiContextProvider(jdbc,db.mapper);
+        assertFalse(ai.forVehicle(owner,1).summary().contains("检查与清洁"));
+        // A real archive must explicitly carry a non-test marker; absent markers stay excluded.
+        jdbc.update("UPDATE vehicle_archive SET content=JSON_SET(content,'$.test_mode',CAST('false' AS JSON))");
+        assertTrue(ai.forVehicle(owner,1).summary().contains("检查与清洁"));
+    }
+    @Test void concurrentConsumersCreateOneArchiveAndAudit() throws Exception {
+        long id=submit(); var pool=Executors.newFixedThreadPool(2); var start=new CountDownLatch(1);
+        try { var tasks=new ArrayList<Future<?>>(); for(int n=0;n<2;n++) tasks.add(pool.submit(()->{start.await();jobs.consume(id);return null;}));
+            start.countDown();for(var task:tasks) task.get(30,TimeUnit.SECONDS);
+            assertEquals(1,count("vehicle_archive")); assertEquals(2,count("vehicle_archive_file"));
+            assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM audit_log WHERE action='SERVICE_ARCHIVE_CREATE'",Integer.class));
+        } finally { pool.shutdownNow(); }
+    }
+}
