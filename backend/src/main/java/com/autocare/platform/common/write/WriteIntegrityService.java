@@ -50,7 +50,10 @@ public class WriteIntegrityService {
     public JsonNode execute(Actor actor, String method, String path, String key, JsonNode request,
                             Runnable authorizeAndLock, Supplier<Change> mutate) {
         String canonicalKey = normalizeKey(key);
-        if (!"POST".equals(method) || path == null || !path.startsWith("/api/") || path.length() > 256) {
+        // POST and PUT are both usable with a client supplied idempotency key; the scope key
+        // includes the method so the two never replay each other's response.
+        if (!("POST".equals(method) || "PUT".equals(method)) || path == null
+            || !path.startsWith("/api/") || path.length() > 256) {
             throw new IllegalArgumentException("Invalid server-side write scope");
         }
         try {

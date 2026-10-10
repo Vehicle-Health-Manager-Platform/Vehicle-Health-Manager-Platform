@@ -24,6 +24,7 @@ public class ReservationConfiguration {
     @Bean ServiceArchiveJobs serviceArchiveJobs(ReservationStore db,@org.springframework.beans.factory.annotation.Value("${SERVICE_ARCHIVE_ENABLED:false}")boolean enabled,@org.springframework.beans.factory.annotation.Value("${EXPERIENCE_CARD_ENABLED:false}")boolean cardsEnabled){return new ServiceArchiveJobs(db,enabled,cardsEnabled);}
     @Bean ExperienceCards experienceCards(ReservationStore db){return new ExperienceCards(db);}
     @Bean ExperienceModeration experienceModeration(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators,@org.springframework.beans.factory.annotation.Value("${EXPERIENCE_PUBLICATION_ENABLED:false}")boolean enabled){return new ExperienceModeration(db,operators,enabled);}
+    @Bean MerchantOnboarding merchantOnboarding(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators,com.autocare.platform.gateway.identity.AuthRateLimiter limits,@org.springframework.beans.factory.annotation.Value("${MERCHANT_ONBOARDING_ENABLED:false}")String enabled){return new MerchantOnboarding(db,operators,limits,MerchantOnboardingInput.enabled(enabled));}
     @Bean OrderRedemption orderRedemption(ReservationStore db,ServiceWork work,PaymentChannels channels){return new OrderRedemption(db,work,channels);}
     @Bean ServiceWork serviceWork(ReservationStore db,TechnicianAssignments assignments,@org.springframework.beans.factory.annotation.Value("${WECHAT_APP_ID:}")String appId){return new ServiceWork(db,assignments,appId);}
 }

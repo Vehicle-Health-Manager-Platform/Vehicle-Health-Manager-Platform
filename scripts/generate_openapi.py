@@ -762,6 +762,108 @@ def main():
         item["responses"]["503"] = {"description": "开关/依赖/事务不可用，50300；写使用原键重试"}
         document["paths"][path] = {method: item}
 
+    # R1a merchant onboarding (V020). Feature flag off by default; see MERCHANT_ONBOARDING.md.
+    categories = {"type": "string", "enum": ["MAINTENANCE", "TIRE", "REPAIR", "BEAUTY", "SERVICE", "SUPPLIES"]}
+    region_code = {"type": "string", "pattern": "^[0-9]{6}$"}
+    onboard_reason = {"anyOf": [{"type": "string", "enum": ["QUALIFICATION_INCOMPLETE", "CATEGORY_MISMATCH",
+        "DUPLICATE_STORE", "REGION_QUOTA_FULL"]}, {"type": "null"}]}
+    schemas["MerchantApplicationRequest"] = strict({
+        "merchant_name": {"type": "string", "minLength": 2, "maxLength": 64, "description": "去除首尾空白后2–64字符，不含控制字符"},
+        "category": categories, "region_code": region_code,
+        "address": {"type": "string", "minLength": 1, "maxLength": 256},
+        "contact_phone": {"type": "string", "pattern": "^1[3-9][0-9]{9}$"},
+        "qualification_file_ids": {"type": "array", "minItems": 1, "maxItems": 9, "items": identifier,
+            "description": "申请人本人私有上传且已扫描完成的 file_object id，互不相同"}})
+    schemas["MerchantApplication"] = strict({
+        "application_id": identifier, "merchant_name": {"type": "string"}, "category": categories,
+        "region_code": region_code, "address": {"type": "string"}, "contact_phone": {"type": "string"},
+        "status": {"type": "string", "enum": ["PENDING_REVIEW", "APPROVED", "REJECTED"]},
+        "revision": {"type": "integer", "minimum": 1}, "merchant_id": {"anyOf": [identifier, {"type": "null"}]},
+        "review_reason": onboard_reason, "qualification_file_ids": {"type": "array", "items": identifier},
+        "created_at": timestamp, "updated_at": timestamp})
+    schemas["MerchantApplicationSummary"] = strict({"application_id": identifier, "merchant_name": {"type": "string"},
+        "category": categories, "region_code": region_code, "revision": {"type": "integer", "minimum": 1}, "submitted_at": timestamp})
+    schemas["MerchantApplicationReview"] = strict({"revision": {"type": "integer", "minimum": 1},
+        "decision": {"type": "string", "enum": ["APPROVED", "REJECTED"]}, "reason_code": onboard_reason,
+        "merchant_id": {"anyOf": [identifier, {"type": "null"}]}, "decided_at": timestamp})
+    schemas["MerchantOnboardingModeration"] = strict({"revision": {"type": "integer", "minimum": 1},
+        "decision": {"type": "string", "enum": ["APPROVE", "REJECT"]}, "reason_code": onboard_reason})
+    schemas["MerchantQuotaRequest"] = strict({"region_code": region_code, "category": categories,
+        "max_active": {"type": "integer", "minimum": 0, "maximum": 100000}})
+    schemas["MerchantQuota"] = strict({"region_code": region_code, "category": categories,
+        "max_active": {"type": "integer", "minimum": 0}, "active_stores": {"type": "integer", "minimum": 0}})
+
+    for method, path, title, response in (
+        ("post", "/api/merchant-applications", "车主提交或重提入驻申请",
+            strict({"application": {"$ref": "#/components/schemas/MerchantApplication"}, "revision": {"type": "integer", "minimum": 1}})),
+        ("get", "/api/merchant-applications/mine", "本人当前入驻申请与不可变审核历史",
+            strict({"application": {"anyOf": [{"$ref": "#/components/schemas/MerchantApplication"}, {"type": "null"}]},
+                "reviews": {"type": "array", "items": {"$ref": "#/components/schemas/MerchantApplicationReview"}}}))):
+        item = operation(method, path, title, "F13")
+        item["x-roles"] = "OWNER"
+        item["x-implementation-status"] = "merchant-onboarding-backend-implemented"
+        item["description"] = "默认开关false；一人一行申请且revision递增，资质文件必须为本人已扫描完成的私有上传；写用UUID幂等键。见MERCHANT_ONBOARDING.md。"
+        if method == "post":
+            item["requestBody"]["content"]["application/json"]["schema"] = {"$ref": "#/components/schemas/MerchantApplicationRequest"}
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"},
+            {"type": "object", "properties": {"data": response}}]}
+        item["responses"]["404"] = {"description": "资源不存在或不可见，40400"}
+        item["responses"]["409"] = {"description": "49001重复未终结申请；49002资质文件不可用"}
+        item["responses"]["503"] = {"description": "开关/依赖/事务不可用，50300；写用原幂等键"}
+        document["paths"][path] = {method: item}
+
+    for method, path, title, response in (
+        ("get", "/api/admin/merchant-applications", "运营待审入驻申请列表",
+            strict({"items": {"type": "array", "items": {"$ref": "#/components/schemas/MerchantApplicationSummary"}},
+                "total": {"type": "integer", "minimum": 0}, "page": {"type": "integer", "minimum": 1},
+                "page_size": {"type": "integer", "minimum": 1, "maximum": 50}})),
+        ("get", "/api/admin/merchant-applications/{id}", "运营入驻申请详情与审核历史",
+            strict({"application": {"$ref": "#/components/schemas/MerchantApplication"},
+                "reviews": {"type": "array", "items": {"$ref": "#/components/schemas/MerchantApplicationReview"}}})),
+        ("get", "/api/admin/merchant-applications/{id}/files/{file}/access", "运营受控换取资质文件短时地址",
+            strict({"url": {"type": "string"}, "expires_at": timestamp})),
+        ("post", "/api/admin/merchant-applications/{id}/moderate", "运营按固定码批准或驳回入驻申请",
+            strict({"application": {"$ref": "#/components/schemas/MerchantApplication"},
+                "decision": {"type": "string", "enum": ["APPROVE", "REJECT"]}, "reason_code": onboard_reason,
+                "merchant_id": {"anyOf": [identifier, {"type": "null"}]}}))):
+        item = operation(method, path, title, "F13,F20")
+        item["x-roles"] = "OPERATOR with can_onboard"
+        item["x-implementation-status"] = "merchant-onboarding-backend-implemented"
+        item["description"] = ("默认开关false；每次请求实时复核会话与can_onboard（不与can_review交叉）。列表只返回固定摘要，"
+            "资质文件仅经受控接口换取短时地址；配额缺失视为0，批准锁序为申请→配额→merchant→staff_account，门店账号为m{id}且PENDING_ACTIVATION，不下发初始密码。见MERCHANT_ONBOARDING.md。")
+        for parameter in item["parameters"]:
+            if parameter["in"] == "path": parameter["schema"] = identifier
+        if method == "post":
+            item["requestBody"]["content"]["application/json"]["schema"] = {"$ref": "#/components/schemas/MerchantOnboardingModeration"}
+        elif path == "/api/admin/merchant-applications":
+            item["parameters"].extend([{"name": "page", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 1000000, "default": 1}},
+                {"name": "page_size", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 50, "default": 20}}])
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"},
+            {"type": "object", "properties": {"data": response}}]}
+        item["responses"]["404"] = {"description": "申请或资质文件不可用，40400"}
+        item["responses"]["409"] = {"description": "49003版本/状态变化；49010区域品类满额；49011配额低于有效门店数"}
+        item["responses"]["429"] = {"description": "运营共享限流，42900"}
+        item["responses"]["503"] = {"description": "开关/依赖/事务/文件服务不可用，50300；写用原幂等键"}
+        document["paths"][path] = {method: item}
+
+    for method, path, title, response in (
+        ("get", "/api/admin/merchant-quotas", "运营查询区域品类配额", strict({"items": {"type": "array", "items": {"$ref": "#/components/schemas/MerchantQuota"}}})),
+        ("put", "/api/admin/merchant-quotas", "运营设置区域品类配额", strict({"region_code": region_code, "category": categories,
+            "max_active": {"type": "integer", "minimum": 0}, "active_stores": {"type": "integer", "minimum": 0}}))):
+        item = operation(method, path, title, "F13,F20")
+        item["x-roles"] = "OPERATOR with can_onboard"
+        item["x-implementation-status"] = "merchant-onboarding-backend-implemented"
+        item["description"] = "默认开关false；配额按(region_code,category)唯一，缺失即0（fail-closed）；调小不得低于当前有效门店数，同值重复设置不产生新审计。见MERCHANT_ONBOARDING.md。"
+        if method == "put":
+            item["requestBody"] = {"required": True, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/MerchantQuotaRequest"}}}}
+            item["parameters"].append({"name": "Idempotency-Key", "in": "header", "required": True, "schema": {"type": "string", "format": "uuid"}})
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"},
+            {"type": "object", "properties": {"data": response}}]}
+        item["responses"]["409"] = {"description": "49011配额低于当前有效门店数"}
+        item["responses"]["429"] = {"description": "运营共享限流，42900"}
+        item["responses"]["503"] = {"description": "开关/依赖/事务不可用，50300；写用原幂等键"}
+        document["paths"][path] = {method: item}
+
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     count = sum(len(item) for item in document["paths"].values())
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")
