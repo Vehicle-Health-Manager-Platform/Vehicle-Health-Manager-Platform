@@ -43,6 +43,11 @@ function responseError(status, response) {
 
 const tokenPresent = (value) => typeof value === 'string' && value.trim().length > 0
 const validSession = (result, role) => tokenPresent(result?.access_token) && result?.user?.role === role
+// 门店登录入口同时服务店长（`merchant`）与店员（`staff`）：R1b 起店员复用同一入口，
+// 服务端按员工行真实角色签发。只认 `merchant` 会让店员登录被误判为协议错误。
+const STORE_ROLES = ['merchant', 'staff']
+const validStoreSession = (result) => tokenPresent(result?.access_token)
+  && STORE_ROLES.includes(result?.user?.role)
 const malformed = () => new AuthError('protocol', '身份服务响应异常，请稍后重试')
 
 // Injection is for offline tests. The application always uses the real uni runtime.
@@ -128,7 +133,7 @@ export function createAuthApi({ baseUrl, runtime, cloud = false }) {
     },
     requestMerchantLogin(account, password, smsCode) {
       return request('/api/auth/merchant/login', { account, password, sms_code: smsCode }, undefined,
-        (result) => validSession(result, 'merchant'))
+        validStoreSession)
     },
   }
 }

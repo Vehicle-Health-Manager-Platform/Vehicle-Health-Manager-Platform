@@ -73,7 +73,7 @@ onUnload(() => {
 <template>
   <view class="reservation-page">
     <text class="reservation-title">派工</text>
-    <button v-if="!merchantSession.accessToken" @tap="login">前往商家登录</button>
+    <button v-if="!merchantSession.accessToken" @tap="login">前往门店登录</button>
     <template v-else>
       <text v-if="order.busy || assignment.busy" role="status">正在加载订单与派工状态…</text>
       <view v-if="order.message || assignment.message" class="reservation-panel" role="status">

@@ -44,7 +44,7 @@ onUnload(() => { visible = false; flow.reset(); apply.reset() })
 <template>
   <view class="reservation-page">
     <text class="reservation-title">本店订单详情</text>
-    <button v-if="!merchantSession.accessToken" @tap="login">前往商家登录</button>
+    <button v-if="!merchantSession.accessToken" @tap="login">前往门店登录</button>
     <text v-if="state.busy" role="status">正在加载订单…</text>
     <view v-if="state.message" class="reservation-panel" role="status"><text>{{ state.message }}</text>
       <button v-if="['unauthorized', 'forbidden'].includes(state.failureKind)" @tap="login">重新登录</button>

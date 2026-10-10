@@ -19,7 +19,7 @@ return await (async()=>{
     return original.request({...o,url:o.url.replace('http://127.0.0.1:18080',location.origin),success:r=>{if(r.statusCode===200&&r.data?.data?.access_token)owner='Bearer '+r.data.data.access_token;if(r.statusCode===200&&o.method==='POST'&&o.url.endsWith('/api/merchant/slots'))published=r.data.data;if(r.statusCode===200&&o.url.endsWith('/api/order/create'))created=r.data.data;o.success?.(r)}})
   }
   try{
-    await wait(()=>inputs().length===3,'merchant form');['local-quotes-merchant-A','synthetic-password','123456'].forEach((v,i)=>input(inputs()[i],v));await click('登录商家端');await wait(()=>text().includes('商家登录成功'),'merchant session')
+    await wait(()=>inputs().length===3,'merchant form');['local-quotes-merchant-A','synthetic-password','123456'].forEach((v,i)=>input(inputs()[i],v));await click('登录门店端');await wait(()=>text().includes('门店登录成功'),'merchant session')
     const previous=await api('/api/merchant/slots',merchant),used=new Set(previous.body.data.items.map(r=>r.standard_project_id));let project=9101101;while(used.has(project)&&project<9101120)project++
     const quoteWrite=await api('/api/merchant/projects',merchant,{standard_project_id:project,price:'129.00',status:1},crypto.randomUUID());assert(quoteWrite.status===200,'真实本店在售项目准备')
     const quoteId=quoteWrite.body.data.merchant_project_id

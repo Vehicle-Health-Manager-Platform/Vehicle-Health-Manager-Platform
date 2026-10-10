@@ -21,7 +21,7 @@ const clearRoleSession = role => {
 export function useRoleIdentity(role, api = authApi) {
   const operation = ref('')
   const phase = ref('idle')
-  const message = ref(role === 'merchant' ? '使用商家账号、密码和短信验证码登录' : '请使用微信验证身份')
+  const message = ref(role === 'merchant' ? '使用门店账号、密码和短信验证码登录' : '请使用微信验证身份')
   const failureKind = ref('')
   const accessToken = computed({
     get: () => readToken(role),
@@ -29,7 +29,7 @@ export function useRoleIdentity(role, api = authApi) {
   })
   const phoneBound = computed(() => role === 'owner' && ownerSession.phoneBound)
   const requiresLogin = ref(false)
-  if (accessToken.value) message.value = role === 'merchant' ? '商家已登录'
+  if (accessToken.value) message.value = role === 'merchant' ? '门店已登录'
     : role === 'technician' ? '技师已登录，可查看本人待接工单'
       : phoneBound.value ? '车主已登录，手机号已绑定' : '车主已登录，可继续授权绑定手机号'
   const bindingToken = ref('')
@@ -137,7 +137,7 @@ export function useRoleIdentity(role, api = authApi) {
   function validMerchant() {
     if (!merchantAccount.value.trim() || merchantAccount.value.trim().length > 64 ||
         !merchantPassword.value.trim() || merchantPassword.value.length > 256) {
-      invalid('请输入有效商家账号和密码')
+      invalid('请输入有效门店账号和密码')
       return false
     }
     return true
@@ -155,11 +155,11 @@ export function useRoleIdentity(role, api = authApi) {
   function tryMerchantLogin() {
     if (busy.value || !validMerchant()) return
     if (!/^\d{6}$/.test(smsCode.value.trim())) return invalid('请输入六位数字短信验证码')
-    return run('merchant-login', '正在验证商家身份…', async () => {
+    return run('merchant-login', '正在验证门店身份…', async () => {
       session(await api.requestMerchantLogin(merchantAccount.value.trim(), merchantPassword.value, smsCode.value.trim()))
       merchantPassword.value = ''
       smsCode.value = ''
-      message.value = '商家登录成功'
+      message.value = '门店登录成功'
     }, tryMerchantLogin)
   }
 

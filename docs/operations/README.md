@@ -12,5 +12,6 @@
 - [测试号真机登录清单](LAN_DEVICE_LOGIN_RUNBOOK.md)：用官方测试号 + 电脑局域网地址完成真机真实微信登录，无需域名/证书/云托管（L0–L8）。
 - [微信云托管登录验收清单](CLOUDRUN_LOGIN_RUNBOOK.md)：`callContainer` 免配通讯域名路径的部署与验收（C0–C10），含"必须关闭公网访问"这条安全前提。
 - [AI 管家接入清单](AI_CHAT_RUNBOOK.md)：DeepSeek 密钥配置、安全边界与 A0–A8 验收。
+- [门店账号、员工与员工码运维](STORE_ACCOUNTS.md)：`MERCHANT_STAFF_ENABLED` 灰度顺序、店长/店员/技师账号发放、员工码签发轮换撤销、停用即时生效与故障处置对照。
 
 2026-10-06 已核对本机环境与微信官方网络要求，形成[可信 HTTPS 部署与真机验收方案](../superpowers/specs/2026-10-06-https-device-design.md)。推荐复用现有接口部署自建 HTTPS；服务器、备案域名、证书和设备尚未确认，方案待复核，不代表已开通公网入口。

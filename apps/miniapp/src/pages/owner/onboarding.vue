@@ -78,7 +78,7 @@ onUnload(clear)
       <text class="label">当前状态</text>
       <text role="status">{{ statusText }}<template v-if="state.application">（第 {{ state.application.revision }} 次提交）</template></text>
       <text v-if="state.application?.status === 'REJECTED'" class="error">驳回原因：{{ reasonText || state.application.review_reason }}</text>
-      <text v-if="state.application?.status === 'APPROVED'">门店编号 {{ state.application.merchant_id }}。店长账号待激活，暂不能登录商家端。</text>
+      <text v-if="state.application?.status === 'APPROVED'">门店编号 {{ state.application.merchant_id }}。店长账号待激活，暂不能登录门店端。</text>
       <text v-if="state.application?.status === 'PENDING_REVIEW'" class="note">待审核期间不能修改或重复提交，请等待审核结果。</text>
 
       <template v-if="editable">

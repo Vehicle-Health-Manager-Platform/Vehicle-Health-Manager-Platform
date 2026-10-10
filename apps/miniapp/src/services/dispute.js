@@ -112,7 +112,7 @@ export function createDisputeApi({ baseUrl, runtime }) {
       if (!id(orderId)) throw invalid('订单编号无效')
       const text = String(note ?? '').trim()
       if (!text || text.length > 500) throw invalid('请填写 1–500 字的处理说明')
-      return call(token, `/api/merchant/orders/${orderId}/dispute/handle`, handled, { note: text }, key, '请先登录商家账号')
+      return call(token, `/api/merchant/orders/${orderId}/dispute/handle`, handled, { note: text }, key, '请先登录门店账号')
     },
     // 车主：复核；ACCEPT 恢复订单，REJECT 保持争议
     review(token, orderId, decision, note, key) {

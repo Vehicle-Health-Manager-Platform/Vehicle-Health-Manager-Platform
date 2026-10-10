@@ -19,6 +19,8 @@ const codeValid = computed(() => /^\d{6}$/.test(smsCode.value.trim()))
 function openOwnerTabs() { uni.switchTab({ url: '/pages/home/index' }) }
 function openMerchantProjects() { uni.navigateTo({ url: '/pages/merchant/projects' }) }
 function openMerchantOrders() { uni.navigateTo({ url: '/pages/merchant/orders' }) }
+function openMerchantStaff() { uni.navigateTo({ url: '/pages/merchant/staff' }) }
+function openMerchantProfile() { uni.navigateTo({ url: '/pages/merchant/profile' }) }
 function openTechnicianOrders() { uni.navigateTo({ url: '/pages/technician/orders' }) }
 
 // 云托管下 callContainer 不弹授权框，进入页面即静默完成真实微信登录；
@@ -63,6 +65,8 @@ onMounted(() => {
       <button v-if="role === 'owner' && accessToken" class="login-button" :disabled="busy" @tap="openOwnerTabs">进入车主首页</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantProjects">管理本店服务</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantOrders">查看本店订单</button>
+      <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantStaff">本店员工与员工码</button>
+      <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantProfile">门店资料</button>
       <button v-if="role === 'technician' && accessToken" class="login-button" :disabled="busy" @tap="openTechnicianOrders">我的工单</button>
       <view v-if="accessToken" class="signed-in">
         <text class="hint">已登录。车辆、订单等业务内容待接入。</text>
@@ -74,14 +78,15 @@ onMounted(() => {
         <button class="login-button" :loading="operation === 'bind'" :disabled="busy || !employeeCode.trim()" @tap="tryBind">绑定技师身份</button>
       </view>
       <view v-if="role === 'merchant' && !accessToken" class="binding">
-        <text class="input-label">商家账号</text>
-        <input v-model="merchantAccount" :disabled="busy" placeholder="商家账号" maxlength="64" />
+        <text class="input-label">门店账号</text>
+        <input v-model="merchantAccount" :disabled="busy" placeholder="门店账号" maxlength="64" />
         <text class="input-label">密码</text>
         <input v-model="merchantPassword" :disabled="busy" password placeholder="密码" maxlength="256" />
         <button class="login-button" :loading="operation === 'code'" :disabled="busy || !merchantAccount.trim() || !merchantPassword.trim()" @tap="tryMerchantCode">获取短信验证码</button>
         <text class="input-label">短信验证码</text>
         <input v-model="smsCode" :disabled="busy" type="number" placeholder="六位短信验证码" maxlength="6" />
-        <button class="login-button" :loading="operation === 'merchant-login'" :disabled="busy || !merchantAccount.trim() || !merchantPassword.trim() || !codeValid" @tap="tryMerchantLogin">登录商家端</button>
+        <button class="login-button" :loading="operation === 'merchant-login'" :disabled="busy || !merchantAccount.trim() || !merchantPassword.trim() || !codeValid" @tap="tryMerchantLogin">登录门店端</button>
+        <text class="hint">店长与店员使用同一入口登录；店员账号由店长在「本店员工与员工码」页创建后下发。</text>
         <text class="hint">验证码发送到账号绑定的手机号；账号与短信服务需由管理员开通。</text>
       </view>
     </view>

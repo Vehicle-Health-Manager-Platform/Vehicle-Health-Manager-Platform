@@ -163,6 +163,21 @@ test('duplicate submit is suppressed while loading, failure releases loading for
   assert.equal(page.phase.value, 'success')
 })
 
+test('门店登录入口同时接受店长与店员角色，其余角色与缺字段一律拒绝', async () => {
+  const h = harness()
+  const login = async (user) => { h.reply(response(user)); return h.api.requestMerchantLogin('account', 'password', '123456') }
+  // R1b 起店员复用门店登录入口，服务端按员工行真实角色签发 `staff`；
+  // 只认 `merchant` 会把店员的合法登录判成协议错误，等于店员永远登录不上。
+  const clerk = await login({ access_token: 'offline-access', user: { role: 'staff', merchant_id: 9208101 } })
+  assert.equal(clerk.user.role, 'staff')
+  const manager = await login({ access_token: 'offline-access', user: { role: 'merchant', merchant_id: 9208101 } })
+  assert.equal(manager.user.role, 'merchant')
+  // 车主、技师、大写角色、缺角色、以及「有角色但没令牌」都必须拒绝。
+  for (const user of [{ role: 'owner' }, { role: 'technician' }, { role: 'STAFF' }, {}, { role: 'staff' }]) {
+    await assert.rejects(login(user), { kind: 'protocol' })
+  }
+})
+
 test('merchant invalid inputs never reach API, success clears sensitive inputs', async () => {
   let calls = 0
   const page = useRoleIdentity('merchant', { requestMerchantLogin: async () => { calls++; return session('merchant') } })

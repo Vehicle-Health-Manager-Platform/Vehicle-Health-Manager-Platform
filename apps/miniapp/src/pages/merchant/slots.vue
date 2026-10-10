@@ -17,7 +17,7 @@ function closeSlot(row){uni.showModal({title:'关闭预约时段',content:'关�
 watch(()=>write.saved,r=>{if(r&&visible)flow.load()});watch(()=>closing.saved,r=>{if(r&&visible)flow.load()});watch(token,()=>{reset();if(visible&&token()){flow.load();catalog.load()}},{flush:'sync'})
 onShow(()=>{visible=true;if(token()){flow.load();catalog.load()}});onHide(()=>{visible=false;flow.suspend();catalog.suspend();publish.suspend();close.suspend()});onUnload(()=>{visible=false;reset()})
 </script>
-<template><view class="reservation-page"><text class="reservation-title">本店预约时段</text><button v-if="!merchantSession.accessToken" @tap="login">前往商家登录</button><template v-else>
+<template><view class="reservation-page"><text class="reservation-title">本店预约时段</text><button v-if="!merchantSession.accessToken" @tap="login">前往门店登录</button><template v-else>
   <view class="reservation-panel"><text class="reservation-heading">发布项目时段</text><text>未来30天内、同一天；同项目时段不可重叠。发布后时间和容量不可编辑。</text>
     <button v-for="row in projects.items.filter(r=>r.available&&r.status===1)" :key="row.standard_project_id" :disabled="write.busy||!!write.saved" :data-testid="`slot-project-${row.standard_project_id}`" @tap="form.project=row.standard_project_id">{{form.project===row.standard_project_id?'✓ ':''}}{{row.project_name}}</button>
     <text v-if="projects.loaded&&!projects.items.some(r=>r.available&&r.status===1)">暂无在售项目，请先维护本店报价。</text><text v-if="projects.message">{{projects.message}}</text><button v-if="projects.message" @tap="catalog.retry">重试本店选品</button><button v-if="projects.items.length<projects.total" @tap="catalog.load(true)">加载更多本店选品</button>

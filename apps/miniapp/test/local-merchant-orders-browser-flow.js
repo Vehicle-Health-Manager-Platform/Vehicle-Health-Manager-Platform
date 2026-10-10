@@ -26,8 +26,8 @@ return await (async () => {
   try {
     await wait(() => inputs().length === 3, 'merchant form')
     ;['local-quotes-merchant-A', 'synthetic-password', '123456'].forEach((value, index) => input(inputs()[index], value))
-    await click('登录商家端')
-    await wait(() => text().includes('商家登录成功'), 'synthetic merchant session')
+    await click('登录门店端')
+    await wait(() => text().includes('门店登录成功'), 'synthetic merchant session')
     stage = 'orders'
     await click('查看本店订单')
     await wait(() => text().includes('本店订单'), 'merchant order page')
