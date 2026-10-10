@@ -23,6 +23,7 @@ public class ReservationConfiguration {
     @Bean OrderReviews orderReviews(ReservationStore db){return new OrderReviews(db);}
     @Bean ServiceArchiveJobs serviceArchiveJobs(ReservationStore db,@org.springframework.beans.factory.annotation.Value("${SERVICE_ARCHIVE_ENABLED:false}")boolean enabled,@org.springframework.beans.factory.annotation.Value("${EXPERIENCE_CARD_ENABLED:false}")boolean cardsEnabled){return new ServiceArchiveJobs(db,enabled,cardsEnabled);}
     @Bean ExperienceCards experienceCards(ReservationStore db){return new ExperienceCards(db);}
+    @Bean ExperienceModeration experienceModeration(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators,@org.springframework.beans.factory.annotation.Value("${EXPERIENCE_PUBLICATION_ENABLED:false}")boolean enabled){return new ExperienceModeration(db,operators,enabled);}
     @Bean OrderRedemption orderRedemption(ReservationStore db,ServiceWork work,PaymentChannels channels){return new OrderRedemption(db,work,channels);}
     @Bean ServiceWork serviceWork(ReservationStore db,TechnicianAssignments assignments,@org.springframework.beans.factory.annotation.Value("${WECHAT_APP_ID:}")String appId){return new ServiceWork(db,assignments,appId);}
 }

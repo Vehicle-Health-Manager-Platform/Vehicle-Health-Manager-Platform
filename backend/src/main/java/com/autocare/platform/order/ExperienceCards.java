@@ -34,7 +34,7 @@ public class ExperienceCards {
         db.one("SELECT id FROM vehicle WHERE id=? AND user_id=? AND is_deleted=0" + tail, c.get("vehicle_id"), owner.id());
         return c;
     }
-    private Map<String,Object> view(Map<String,Object> c) {
+    Map<String,Object> view(Map<String,Object> c) {
         var summary = db.parse(c.get("summary"));
         var out = new LinkedHashMap<String,Object>();
         for (String k : List.of("id", "vehicle_id", "order_id", "archive_id", "status", "revision", "consent_version"))
@@ -44,7 +44,9 @@ public class ExperienceCards {
             "part_kinds", summary.path("part_kinds").intValue(), "no_parts", summary.path("no_parts").booleanValue(),
             "recorded_month", summary.path("recorded_month").asText()));
         out.put("consented_at", ReservationStore.iso(c.get("consented_at")));
-        out.put("withdrawn_at", ReservationStore.iso(c.get("withdrawn_at"))); return out;
+        out.put("withdrawn_at", ReservationStore.iso(c.get("withdrawn_at")));
+        if("REJECTED".equals(c.get("status"))){var reasons=db.jdbc.queryForList("SELECT reason_code FROM experience_card_moderation WHERE card_id=? AND request_revision=? AND decision='REJECT'",c.get("id"),ReservationStore.number(c,"revision")-1);out.put("review_reason",reasons.isEmpty()?null:reasons.get(0).get("reason_code"));}
+        return out;
     }
     public Map<String,Object> list(VehicleOwner owner, long vehicle, int page, int size) {
         ServiceCatalog.validateId(vehicle);
@@ -58,7 +60,7 @@ public class ExperienceCards {
             return ReservationStore.page(rows, total, page, size);
         });
     }
-    private void trusted(Map<String,Object> c) {
+    void trusted(Map<String,Object> c) {
         if (ReservationStore.number(c, "test_mode") != 0) throw conflict();
         try {
             var job = db.one("SELECT * FROM service_archive_job WHERE order_id=? AND review_id=? AND archive_id=? AND status='DONE'",
@@ -69,6 +71,10 @@ public class ExperienceCards {
             if (!frozen.equals(db.parse(archive.get("content"))) || !frozen.equals(ServiceArchiveJobs.snapshot(db,
                 ReservationStore.number(c, "order_id"), ReservationStore.number(c, "review_id")))
                 || frozen.path("test_mode").asBoolean(true) || frozen.path("source").path("user_id").asLong() != ReservationStore.number(c, "user_id")) throw conflict();
+            var expected=db.mapper.valueToTree(Map.of("version",1,"work_minutes",frozen.path("work_minutes").intValue(),
+                "part_kinds",frozen.path("parts_used").size(),"no_parts",frozen.path("no_parts").booleanValue(),
+                "recorded_month",frozen.path("recorded_date").textValue().substring(0,7)));
+            if(!expected.equals(db.parse(c.get("summary"))))throw conflict();
         } catch (ServiceArchiveJobs.InvalidSource | org.springframework.web.server.ResponseStatusException e) { throw conflict(); }
     }
     private static FulfillmentConflict conflict() { return new FulfillmentConflict(45001, "测试记录或施工来源不可用于授权，请刷新；原档案保留"); }
@@ -95,7 +101,8 @@ public class ExperienceCards {
         }, () -> {
             var before = owned(owner, id, true);
             String target = consent ? "PENDING_REVIEW" : "WITHDRAWN";
-            if (!Set.of("DRAFT", "PENDING_REVIEW", "WITHDRAWN").contains(before.get("status"))) throw conflict();
+            if (!Set.of("DRAFT", "PENDING_REVIEW", "WITHDRAWN", "PUBLISHED", "REJECTED").contains(before.get("status"))
+                || consent && "PUBLISHED".equals(before.get("status"))) throw conflict();
             boolean changed = !target.equals(before.get("status"));
             if (changed) {
                 if (consent) db.jdbc.update("UPDATE experience_card SET status=?,revision=revision+1,consent_version=?,consented_at=?,withdrawn_at=NULL WHERE id=?",
