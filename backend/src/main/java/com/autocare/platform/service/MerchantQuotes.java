@@ -28,14 +28,15 @@ public class MerchantQuotes {
     private static ResponseStatusException missing() { return new ResponseStatusException(HttpStatus.NOT_FOUND,"项目或报价已不可用"); }
     private void authorize(MerchantActor actor,boolean lock) {
         String suffix=lock?" FOR UPDATE":"";
-        var sessions=jdbc.query("SELECT id FROM auth_session WHERE id=? AND subject_type='staff_account' AND subject_id=? AND role='MERCHANT' "
-            + "AND app_id='merchant-account' AND merchant_id=? AND revoked_at IS NULL AND expires_at>UTC_TIMESTAMP()"+suffix,(rs,n)->rs.getString(1),actor.session(),actor.staffId(),actor.merchantId());
-        var staff=jdbc.query("SELECT id FROM staff_account WHERE id=? AND merchant_id=? AND role='MERCHANT' AND status='ACTIVE' AND is_deleted=0"+suffix,
-            (rs,n)->rs.getLong(1),actor.staffId(),actor.merchantId());
+        var sessions=jdbc.query("SELECT id FROM auth_session WHERE id=? AND subject_type='staff_account' AND subject_id=? AND role=? "
+            + "AND app_id='merchant-account' AND merchant_id=? AND revoked_at IS NULL AND expires_at>UTC_TIMESTAMP()"+suffix,(rs,n)->rs.getString(1),actor.session(),actor.staffId(),actor.role(),actor.merchantId());
+        var staff=jdbc.query("SELECT id FROM staff_account WHERE id=? AND merchant_id=? AND role=? AND status='ACTIVE' AND is_deleted=0"+suffix,
+            (rs,n)->rs.getLong(1),actor.staffId(),actor.merchantId(),actor.role());
         var shops=jdbc.query("SELECT id FROM merchant WHERE id=? AND status=1 AND is_deleted=0"+suffix,(rs,n)->rs.getLong(1),actor.merchantId());
         if(!Instant.now().isBefore(actor.expires()) || sessions.isEmpty() || staff.isEmpty() || shops.isEmpty())
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"商家身份已失效，请重新登录");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"门店登录已失效，请重新登录");
     }
+    /** 选品定价属管理面：读本店报价允许店员（走 authorize），写只允许店长（见 lockProject）。 */
     private Map<String,Object> page(List<?> items,long total,int page,int size) {
         return Map.of("items",items,"total",total,"page",page,"page_size",size);
     }
@@ -88,6 +89,7 @@ public class MerchantQuotes {
         });
     }
     private void lockProject(MerchantActor actor,QuoteInput input) {
+        if(!actor.manager()) throw new ResponseStatusException(HttpStatus.FORBIDDEN,"仅店长可维护本店选品定价");
         authorize(actor,true);
         var projects=jdbc.query("SELECT status,is_deleted FROM standard_project WHERE id=? FOR UPDATE",(rs,n)->rs.getInt(1)==1 && rs.getInt(2)==0,input.projectId());
         var quotes=jdbc.query("SELECT price,is_deleted FROM merchant_project WHERE merchant_id=? AND project_id=? FOR UPDATE",

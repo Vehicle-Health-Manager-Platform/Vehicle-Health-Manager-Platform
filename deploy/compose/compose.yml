@@ -30,6 +30,8 @@ services:
       - ../../docs/sql/migrations/V017__service_archive_jobs.sql:/docker-entrypoint-initdb.d/017-service-archive-jobs.sql:ro
       - ../../docs/sql/migrations/V018__experience_cards.sql:/docker-entrypoint-initdb.d/018-experience-cards.sql:ro
       - ../../docs/sql/migrations/V019__experience_moderation.sql:/docker-entrypoint-initdb.d/019-experience-moderation.sql:ro
+      - ../../docs/sql/migrations/V020__merchant_onboarding.sql:/docker-entrypoint-initdb.d/020-merchant-onboarding.sql:ro
+      - ../../docs/sql/migrations/V021__merchant_staff_store.sql:/docker-entrypoint-initdb.d/021-merchant-staff-store.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent"]
       interval: 10s

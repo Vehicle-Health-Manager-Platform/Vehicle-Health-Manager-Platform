@@ -32,7 +32,7 @@ public class OrderReviews {
         long id=ReservationStore.number(o,"id");String tail=lock?" FOR UPDATE":"";
         if(!db.jdbc.queryForList("SELECT id FROM order_dispute WHERE order_id=? AND status='OPEN'"+tail,id).isEmpty())return "OPEN_DISPUTE";
         if(r==null || !Objects.equals(r.get("merchant_id"),o.get("merchant_id")) || r.get("redeemed_at")==null
-            || db.jdbc.queryForList("SELECT id FROM staff_account WHERE id=? AND merchant_id=? AND role='MERCHANT'",r.get("staff_id"),o.get("merchant_id")).size()!=1)return "REDEMPTION_UNVERIFIED";
+            || db.jdbc.queryForList("SELECT id FROM staff_account WHERE id=? AND merchant_id=? AND role IN ('MERCHANT','STAFF')",r.get("staff_id"),o.get("merchant_id")).size()!=1)return "REDEMPTION_UNVERIFIED";
         if(!db.jdbc.queryForList("SELECT id FROM payment_exception WHERE order_id=?"+tail,id).isEmpty())return "PAYMENT_UNVERIFIED";
         var payments=db.jdbc.queryForList("SELECT * FROM payment WHERE order_id=? AND status='SUCCEEDED' AND is_deleted=0 ORDER BY id"+tail,id);
         if(payments.size()!=1)return "PAYMENT_UNVERIFIED";var p=payments.get(0);String channel=String.valueOf(p.get("channel"));

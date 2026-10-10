@@ -104,12 +104,15 @@ public class SecurityConfig {
                             && repository.technicianByBindingId(bindingId.longValue())
                                 .filter(staff -> staff.active() && staff.staffId() == subjectId
                                     && staff.merchantId() == merchantId.longValue()).isPresent();
+                        // 店长（MERCHANT）与店员（STAFF）共用门店账号令牌；令牌角色必须与员工行一致。
+                        String role = jwt.getClaimAsString("role");
                         MerchantIdentityRepository merchantRepository = merchants.getIfAvailable();
-                        boolean merchant = "MERCHANT".equals(jwt.getClaimAsString("role")) && bindingId == null
+                        boolean storefront = ("MERCHANT".equals(role) || "STAFF".equals(role)) && bindingId == null
                             && merchantId != null && AuthTokens.MERCHANT_APP_ID.equals(jwt.getClaimAsString("app_id"))
                             && merchantRepository != null && merchantRepository.byId(subjectId)
-                                .filter(staff -> staff.active() && staff.merchantId() == merchantId.longValue()).isPresent();
-                        yield technician || merchant;
+                                .filter(staff -> staff.active() && role.equals(staff.role())
+                                    && staff.merchantId() == merchantId.longValue()).isPresent();
+                        yield technician || storefront;
                     }
                     default -> false;
                 };

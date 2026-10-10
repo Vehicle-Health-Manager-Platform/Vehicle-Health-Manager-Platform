@@ -862,7 +862,111 @@ def main():
         item["responses"]["409"] = {"description": "49011配额低于当前有效门店数"}
         item["responses"]["429"] = {"description": "运营共享限流，42900"}
         item["responses"]["503"] = {"description": "开关/依赖/事务不可用，50300；写用原幂等键"}
-        document["paths"][path] = {method: item}
+        # 同一路径可有多个方法：必须合并而不是整条覆盖，否则 GET 会被 PUT 顶掉。
+        document["paths"].setdefault(path, {})[method] = item
+
+    # R1b 门店员工与门店资料（V021）。店员业务同级、管理面限店长；员工码为轮换语义无幂等键。
+    staff_roles = {"type": "string", "enum": ["STAFF", "TECHNICIAN"]}
+    coordinate = {"anyOf": [{"type": "number", "minimum": -180, "maximum": 180}, {"type": "null"}]}
+    latitude = {"anyOf": [{"type": "number", "minimum": -90, "maximum": 90}, {"type": "null"}]}
+    schemas["MerchantStaffCreate"] = {
+        "type": "object", "additionalProperties": False, "required": ["role", "display_name", "password"],
+        "properties": {
+            "role": staff_roles,
+            "display_name": {"type": "string", "minLength": 2, "maxLength": 32},
+            "phone": {"type": "string", "pattern": "^1[3-9][0-9]{9}$", "description": "店员必填；技师可选"},
+            "password": {"type": "string", "minLength": 8, "maxLength": 64,
+                "description": "8–64 位可打印 ASCII，须同时含字母与数字；响应不回显"}}}
+    schemas["MerchantStaff"] = strict({
+        "staff_id": identifier, "account": {"type": "string"}, "role": staff_roles,
+        "display_name": {"type": ["string", "null"]}, "phone_masked": {"type": ["string", "null"]},
+        "status": {"type": "string", "enum": ["ACTIVE", "DISABLED"]},
+        "employee_code_issued": {"type": "boolean"}, "wechat_bound": {"type": "boolean"}, "created_at": timestamp})
+    schemas["MerchantProfile"] = strict({
+        "merchant_id": identifier, "name": {"type": "string"}, "address": {"type": "string"},
+        "contact_phone": {"type": ["string", "null"]}, "lng": {"type": ["string", "null"]},
+        "lat": {"type": ["string", "null"]}, "merchant_type": {"type": "integer", "minimum": 1, "maximum": 6},
+        "region_code": {"type": "string"}, "status": {"type": "integer", "minimum": 0, "maximum": 2},
+        "can_edit": {"type": "boolean"}})
+    schemas["MerchantProfileUpdate"] = strict({
+        "name": {"type": "string", "minLength": 2, "maxLength": 64},
+        "address": {"type": "string", "minLength": 1, "maxLength": 256},
+        "contact_phone": {"type": "string", "pattern": "^1[3-9][0-9]{9}$"},
+        "lng": coordinate, "lat": latitude})
+
+    for method, path, title, roles, response in (
+        ("get", "/api/merchant/staff", "本店店员与技师列表",
+            "MERCHANT/STAFF",
+            strict({"items": {"type": "array", "items": {"$ref": "#/components/schemas/MerchantStaff"}},
+                "total": {"type": "integer", "minimum": 0}, "page": {"type": "integer", "minimum": 1},
+                "page_size": {"type": "integer", "minimum": 1, "maximum": 50}})),
+        ("post", "/api/merchant/staff", "店长新增本店店员或技师", "MERCHANT",
+            {"$ref": "#/components/schemas/MerchantStaff"}),
+        ("post", "/api/merchant/staff/{id}/disable", "店长停用本店员工并立即阻断原会话", "MERCHANT",
+            strict({"staff_id": identifier, "status": {"type": "string", "enum": ["DISABLED"]},
+                "sessions_revoked": {"type": "integer", "minimum": 0}})),
+        ("post", "/api/merchant/staff/{id}/enable", "店长启用本店员工", "MERCHANT",
+            strict({"staff_id": identifier, "status": {"type": "string", "enum": ["ACTIVE"]}})),
+        ("post", "/api/merchant/staff/{id}/employee-code", "店长签发或轮换技师一次性员工码", "MERCHANT",
+            strict({"staff_id": identifier, "employee_code": {"type": "string"}, "single_use": {"type": "boolean"}})),
+        ("delete", "/api/merchant/staff/{id}/employee-code", "店长撤销技师员工码与微信绑定", "MERCHANT",
+            strict({"staff_id": identifier, "employee_code_revoked": {"type": "boolean"}})),
+    ):
+        item = operation(method, path, title, "M-02,T-02")
+        item["x-roles"] = roles
+        item["x-implementation-status"] = "merchant-staff-backend-implemented"
+        item["description"] = ("角色必须与会话令牌一致；跨店目标按不存在处理。停用为单事务：改状态+撤销该员工全部会话"
+            "+（技师）撤销微信绑定，因此原令牌立即失效且刷新不可用。见 MERCHANT_STAFF.md。")
+        for parameter in item["parameters"]:
+            if parameter["in"] == "path": parameter["schema"] = identifier
+        if path == "/api/merchant/staff":
+            if method == "get":
+                item["parameters"].extend([
+                    {"name": "role", "in": "query", "schema": staff_roles},
+                    {"name": "page", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 1000000, "default": 1}},
+                    {"name": "page_size", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 50, "default": 20}}])
+            else:
+                item["requestBody"]["content"]["application/json"]["schema"] = {"$ref": "#/components/schemas/MerchantStaffCreate"}
+        elif method == "post" and path.endswith("/employee-code"):
+            # 轮换语义：不使用幂等键，避免一次性明文码落进幂等记录。
+            item["parameters"] = [p for p in item["parameters"] if p["name"] != "Idempotency-Key"]
+            item.pop("requestBody", None)
+            item["description"] += " 本接口不使用 Idempotency-Key：每次调用都会让旧码失效，明文码仅本次响应可见。"
+        elif method == "delete":
+            item["description"] += " 本接口不使用 Idempotency-Key：结果为撤销，可安全重复调用。"
+        else:
+            item["requestBody"] = {"required": True, "content": {"application/json": {"schema": {
+                "type": "object", "additionalProperties": False, "maxProperties": 0}}}}
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"},
+            {"type": "object", "properties": {"data": response}}]}
+        item["responses"]["403"] = {"description": "店员调用管理面，40300"}
+        item["responses"]["404"] = {"description": "员工不存在或不属于本店，40400"}
+        item["responses"]["409"] = {"description": "40900员工已停用不可签发员工码；本店账号序号用尽"}
+        item["responses"]["503"] = {"description": "依赖/事务不可用，50300；写用原幂等键"}
+        document["paths"].setdefault(path, {})[method] = item
+
+    for method, path, title, response in (
+        ("get", "/api/merchant/profile", "本店对外资料",
+            {"$ref": "#/components/schemas/MerchantProfile"}),
+        ("put", "/api/merchant/profile", "店长更新本店对外资料（白名单字段+审计）",
+            strict({"name": {"type": "string"}, "address": {"type": "string"},
+                "contact_phone": {"type": ["string", "null"]}, "lng": {"type": ["string", "null"]},
+                "lat": {"type": ["string", "null"]}})),
+    ):
+        item = operation(method, path, title, "M-02")
+        item["x-roles"] = "MERCHANT/STAFF（PUT 仅 MERCHANT）"
+        item["x-implementation-status"] = "merchant-staff-backend-implemented"
+        item["description"] = ("只允许改 name/address/contact_phone/lng/lat；merchant_type、status、region_code、"
+            "qualification 等一律不可经本接口修改，未知字段 400。改动写 audit_log。见 MERCHANT_STAFF.md。")
+        if method == "put":
+            item["requestBody"] = {"required": True, "content": {"application/json": {"schema": {
+                "$ref": "#/components/schemas/MerchantProfileUpdate"}}}}
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"},
+            {"type": "object", "properties": {"data": response}}]}
+        item["responses"]["403"] = {"description": "店员尝试修改资料，40300"}
+        item["responses"]["404"] = {"description": "本店不存在或已停用，40400"}
+        item["responses"]["503"] = {"description": "依赖/事务不可用，50300；写用原幂等键"}
+        document["paths"].setdefault(path, {})[method] = item
 
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     count = sum(len(item) for item in document["paths"].values())

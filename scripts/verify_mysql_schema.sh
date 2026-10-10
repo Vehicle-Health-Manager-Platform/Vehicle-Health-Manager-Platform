@@ -85,9 +85,11 @@ run_sql_file docs/sql/migrations/V019__experience_moderation.sql
 run_sql_file docs/sql/migrations/V019__experience_moderation.sql
 run_sql_file docs/sql/migrations/V020__merchant_onboarding.sql
 run_sql_file docs/sql/migrations/V020__merchant_onboarding.sql
+run_sql_file docs/sql/migrations/V021__merchant_staff_store.sql
+run_sql_file docs/sql/migrations/V021__merchant_staff_store.sql
 
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
-[[ "$tables" == 63 ]] || { echo "Expected 63 tables after V020, got $tables" >&2; exit 1; }
+[[ "$tables" == 63 ]] || { echo "Expected 63 tables after V021, got $tables" >&2; exit 1; }
 
 for column in check_in_completed_at owner_confirmed_at assigned_at service_report_ready_at; do
   found=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND table_name = 'order' AND column_name = '$column'")
@@ -168,4 +170,10 @@ for entry in merchant_application:idx_applicant_status merchant_application:idx_
   found=$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema = '$database' AND table_name = '$table' AND index_name = '$index' AND non_unique = 1")
   [[ "$found" == 1 ]] || { echo "Repeated V020 left $table.$index missing" >&2; exit 1; }
 done
-echo "MySQL 8.0 schema: 63 tables after V020; repeat migration and synthetic seed passed"
+for entry in staff_account:display_name staff_account:created_by; do
+  table="${entry%%:*}"
+  column="${entry##*:}"
+  found=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND table_name = '$table' AND column_name = '$column'")
+  [[ "$found" == 1 ]] || { echo "Repeated V021 left $table.$column missing" >&2; exit 1; }
+done
+echo "MySQL 8.0 schema: 63 tables after V021; repeat migration and synthetic seed passed"
