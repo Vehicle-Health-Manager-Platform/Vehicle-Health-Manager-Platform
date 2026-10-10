@@ -113,9 +113,13 @@ async function main(){
   await waitElement(client.rpc,p,'button',e=>e.text?.trim()==='前往车主登录')
   assert.equal((await elements(client.rpc,p,'text')).filter(e=>e.text?.startsWith('本人评价已保存')).length,0);pass('cleared native identity requires login and clears private feedback')
   report.completed=true
+  return {work,archive,review,photo,record,report}
 }
-main().catch(e=>{report.failure=e.message;console.error(e.message);process.exitCode=1}).finally(async()=>{
+async function cleanupNativeCompletion(){
   report.cleaned=await cleanupNativeWorkFiles()
   report.finishedAt=new Date().toISOString();fs.mkdirSync('test-results',{recursive:true});fs.writeFileSync('test-results/wechat-native-completion.json',JSON.stringify(report,null,2))
   console.log(`Native completion ${report.completed&&report.cleaned?'COMPLETE':'INCOMPLETE'}: ${report.checks.length} passed (prior work preparation recorded separately)`)
-})
+  return report.cleaned
+}
+module.exports={runNativeCompletion:main,cleanupNativeCompletion}
+if(require.main===module)main().catch(e=>{report.failure=e.message;console.error(e.message);process.exitCode=1}).finally(cleanupNativeCompletion)
