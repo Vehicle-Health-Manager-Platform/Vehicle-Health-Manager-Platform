@@ -38,7 +38,8 @@
 - 账号（`account`）由系统生成，不使用自由文本：店长 `m{merchant_id}`（既有）、店员 `s{merchant_id}-{seq}`、技师 `t{merchant_id}-{seq}`；`seq` 在该门店同角色内自 1 递增。
 - 账号生成在**商家行锁**下完成（锁序与既有身份写操作一致），并对 `uk_account` 唯一冲突重试，杜绝并发建号串号。
 - 新员工初始 `status=ACTIVE`（店长已显式设定初始密码），`password_hash` 用 BCrypt 存储，明文密码**不出现在任何响应、日志、审计或幂等记录中**。
-- 创建后**不返回密码**；响应只含 `staff_id`、`account`、`role`、`display_name`、`status`、`phone_masked`。
+- 创建后**不返回密码**；响应与**列表行逐字段同形**，即后述列表投影的九字段：`staff_id`、`account`、`role`、`display_name`、`status`、`phone_masked`、`employee_code_issued`、`wechat_bound`、`created_at`。新员工与列表行同形，小程序可直接用创建响应就地渲染新行，无需再拉一次列表。
+  （本行曾在初版写成"只含 `staff_id`/`account`/`role`/`display_name`/`status`/`phone_masked` 六字段"，与实现不符；实现返回的九字段是列表行的超集，未违反任何约束，故以实现为准修正规格文字，并在真实容器验收中按九字段断言。）
 
 ## 启停语义（停用立即阻断原会话）
 

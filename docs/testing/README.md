@@ -14,6 +14,7 @@
 - [A5.6 争议处理与恢复执行记录](../progress/A5_6_DISPUTE_RESOLUTION_EXECUTION.md)：商家处理记录、车主复核恢复的 HTTP、真实 MySQL、无死锁、投影无隐私与阶段 GitHub 验证结果。
 - [A5.6 本机争议处理与恢复端到端验收](LOCAL_DISPUTE_ACCEPTANCE.md)：在派工闭环之上新增 32 项争议检查（异议建单、`43007`/`43008`、追加与重放、时间线投影、不接受保持、接受恢复并恢复派工/接单），端到端 69/69。
 - [R1a 商家入驻本机端到端验收](LOCAL_MERCHANT_ONBOARDING_ACCEPTANCE.md)：真实后端容器与隔离 MySQL 上的 **92/92**——申请/待审/详情/资质受控访问/配额/批准开店/驳回重提/满额/幂等/越权/不安全文件/审计最小化，资质走真实私有上传与 ClamAV；含写接口单层信封缺陷的定位与修复。
+- [R1b 门店员工与门店资料本机端到端验收](LOCAL_MERCHANT_STAFF_ACCEPTANCE.md)：真实后端容器与隔离 MySQL 上的 **136/136**——员工维护严格正文、停用即时阻断会话与刷新、技师停用连带撤销微信绑定、员工码经真实绑定接口走完签发/轮换/撤销（明文不落库）、门店资料十字段读白名单与五字段写审计、零残留；含「店员根本登录不上」等两处小程序真实缺陷的定位与修复。
 
 小程序测试在仓库根目录运行 `npm test --workspace @autocare/miniapp`；登录预检离线测试运行 `python -m unittest scripts/test_check_auth_readiness.py -v`；后端在 `backend` 目录运行 `mvn test`，完整集成测试需 Docker。
 
