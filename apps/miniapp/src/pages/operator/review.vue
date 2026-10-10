@@ -49,8 +49,9 @@ onHide(() => { visible = false; clear() }); onUnload(() => { visible = false; cl
     <button :disabled="state.busy || state.writing" @tap="refresh">刷新待审列表</button>
     <text v-if="state.loaded">待审 {{ state.total }} 条 · 第 {{ state.page }} 页</text>
     <button v-if="state.loaded && state.page * 20 < state.total" :disabled="state.busy || state.writing" @tap="flow.load(true)">加载下一页</button>
+    <button class="secondary" :disabled="state.busy || state.writing" @tap="uni.navigateTo({url:'/pages/operator/onboarding'})">商家入驻审核</button>
     <button :disabled="state.writing || state.busy" @tap="logout">退出运营账号</button>
   </view>
 </template>
 
-<style scoped>.reason{padding:22rpx;border:1rpx solid #e5e6eb;border-radius:12rpx;font-size:28rpx}</style>
+<style scoped>.reason{padding:22rpx;border:1rpx solid #e5e6eb;border-radius:12rpx;font-size:28rpx}.secondary{align-self:flex-start;min-height:68rpx;padding:0 24rpx;margin:12rpx 0 0;background:#eef8f0;color:#008f24;font-size:24rpx}</style>
