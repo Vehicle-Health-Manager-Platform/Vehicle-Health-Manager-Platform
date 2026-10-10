@@ -1873,7 +1873,7 @@
     },
     "/api/order/review": {
       "post": {
-        "summary": "评价",
+        "summary": "本人提交唯一订单评价",
         "operationId": "post_api_order_review",
         "tags": [
           "order"
@@ -1898,7 +1898,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/OrderReviewResult"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -1918,6 +1930,18 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非本人、订单不存在或已删除，code=40400"
+          },
+          "409": {
+            "description": "44001缺可信资格；44002已有不同评价"
+          },
+          "422": {
+            "description": "图片非本人安全文件或不可用，code=42200"
+          },
+          "503": {
+            "description": "数据库未配置或事务失败，code=50300；原载荷原键重试"
           }
         },
         "security": [
@@ -1930,12 +1954,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "additionalProperties": true
+                "$ref": "#/components/schemas/OrderReviewRequest"
               }
             }
           }
-        }
+        },
+        "x-roles": "OWNER",
+        "x-implementation-status": "owner-review-backend-implemented",
+        "description": "仅本人，COMPLETED且可信核销/付款一致，无未解决争议。1–5分、1–500字、0–3本人安全JPEG/PNG；不可修改，不公开，不计商家评分。无查询参数；严格JSON无重复键/尾随；全部响应no-store。幂等重放复核资格及图片，历史本人评价仍可读；见ORDER_REVIEWS.md。"
       }
     },
     "/api/coupon/receive": {
@@ -8240,6 +8266,90 @@
         "x-implementation-status": "redemption-backend-implemented",
         "description": "本店/本人授权、无查询参数、no-store。写入须完整施工证据与可信付款；同店同订单共享五次错误/十分钟限额。LOCAL_TEST仅隔离测试环境可核销且未真实扣款；正式微信付款未接入。核销与双审计同事务，重复不新增成功审计。见 ORDER_REDEMPTION.md。"
       }
+    },
+    "/api/order/{id}/review": {
+      "get": {
+        "summary": "本人查询评价资格和历史记录",
+        "operationId": "get_api_order_id_review",
+        "tags": [
+          "order"
+        ],
+        "x-feature-ids": [
+          "F08"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/OrderReviewDetail"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非本人、订单不存在或已删除，code=40400"
+          },
+          "409": {
+            "description": "44001缺可信资格；44002已有不同评价"
+          },
+          "422": {
+            "description": "图片非本人安全文件或不可用，code=42200"
+          },
+          "503": {
+            "description": "数据库未配置或事务失败，code=50300；原载荷原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "owner-review-backend-implemented",
+        "description": "仅本人，COMPLETED且可信核销/付款一致，无未解决争议。1–5分、1–500字、0–3本人安全JPEG/PNG；不可修改，不公开，不计商家评分。无查询参数；严格JSON无重复键/尾随；全部响应no-store。幂等重放复核资格及图片，历史本人评价仍可读；见ORDER_REVIEWS.md。"
+      }
     }
   },
   "components": {
@@ -10882,6 +10992,167 @@
                     ]
                   }
                 }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "OrderReviewRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order_id",
+          "rating",
+          "content",
+          "photo_file_ids"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "content": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500,
+            "description": "去除首尾空白后计 Unicode 码点；提交后不可修改"
+          },
+          "photo_file_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "maxItems": 3,
+            "uniqueItems": true
+          }
+        }
+      },
+      "OwnerOrderReview": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "review_id",
+          "rating",
+          "content",
+          "photo_file_ids",
+          "submitted_at",
+          "test_mode"
+        ],
+        "properties": {
+          "review_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "content": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500,
+            "description": "去除首尾空白后计 Unicode 码点；提交后不可修改"
+          },
+          "photo_file_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "maxItems": 3,
+            "uniqueItems": true
+          },
+          "submitted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "test_mode": {
+            "type": "boolean"
+          }
+        }
+      },
+      "OrderReviewResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order_id",
+          "review"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "review": {
+            "$ref": "#/components/schemas/OwnerOrderReview"
+          }
+        }
+      },
+      "OrderReviewDetail": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order_id",
+          "can_submit",
+          "unavailable_reason",
+          "test_mode",
+          "review"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "can_submit": {
+            "type": "boolean"
+          },
+          "unavailable_reason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "ORDER_NOT_COMPLETED",
+                  "REDEMPTION_UNVERIFIED",
+                  "OPEN_DISPUTE",
+                  "PAYMENT_UNVERIFIED",
+                  "ALREADY_REVIEWED"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "test_mode": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "review": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OwnerOrderReview"
               },
               {
                 "type": "null"

@@ -25,6 +25,8 @@ services:
       - ../../docs/sql/migrations/V012__technician_dispatch.sql:/docker-entrypoint-initdb.d/012-technician-dispatch.sql:ro
       - ../../docs/sql/migrations/V013__dispute_resolution.sql:/docker-entrypoint-initdb.d/013-dispute-resolution.sql:ro
       - ../../docs/sql/migrations/V014__service_work.sql:/docker-entrypoint-initdb.d/014-service-work.sql:ro
+      - ../../docs/sql/migrations/V015__order_redemption.sql:/docker-entrypoint-initdb.d/015-order-redemption.sql:ro
+      - ../../docs/sql/migrations/V016__order_reviews.sql:/docker-entrypoint-initdb.d/016-order-reviews.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent"]
       interval: 10s
