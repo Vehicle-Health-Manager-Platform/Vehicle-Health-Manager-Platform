@@ -27,7 +27,7 @@
 
 这九个字段与列表行**逐字段同形**：创建成功后会以同一投影回读再作为响应载荷，并有防漂移断言（创建响应的键集合必须等于列表行的键集合）。曾经出现过创建响应少 `created_at`/`employee_code_issued`/`wechat_bound` 三个字段的漂移，客户端会把合法响应判成协议错误——OpenAPI 生成一致性与 MockMvc 都发现不了，只能靠这条断言。
 
-> **与规格的一处差异（待收口对齐）**：[规格](../superpowers/specs/2026-10-11-r1b-staff-store-design.md)写的是创建响应"只含"`staff_id/account/role/display_name/status/phone_masked` 六个字段。实现刻意放宽为列表行的同九个字段（多出 `created_at`、`employee_code_issued`、`wechat_bound`），理由有二：其一，客户端因此只需一套行校验器，且新建行可以直接并入列表；其二，那三个字段本来就在列表行里，不含任何秘密。规格的实质约束（不返回密码、明文不落库）未被突破。规格正文将在收口 PR 中改齐。
+> **与规格的一处差异（收口 PR 已改齐）**：[规格](../superpowers/specs/2026-10-11-r1b-staff-store-design.md)原写创建响应"只含"`staff_id/account/role/display_name/status/phone_masked` 六个字段。实现刻意放宽为列表行的同九个字段（多出 `created_at`、`employee_code_issued`、`wechat_bound`），理由有二：其一，客户端因此只需一套行校验器，且新建行可以直接并入列表；其二，那三个字段本来就在列表行里，不含任何秘密。规格的实质约束（不返回密码、明文不落库）未被突破，故**以实现为准**：规格正文已改为"与列表行逐字段同形的九字段"，本机端到端按九字段断言（`创建响应九字段`、`创建与列表行逐字段同形`）。
 
 ## 启停与"停用立即阻断原会话"
 
