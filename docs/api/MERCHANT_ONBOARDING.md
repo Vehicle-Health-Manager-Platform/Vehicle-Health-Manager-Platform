@@ -59,4 +59,8 @@ V020 扩展 `merchant_application`（`address/contact_phone/revision/merchant_id
 
 ## 状态
 
-本阶段只交付后端与迁移：接口、锁序、幂等、审计、配额并发与失败回滚已有 MockMvc 与真实 MySQL 测试覆盖。车主端申请/进度页面与运营端审核/配额页面尚未接入；**真实后端容器 + 隔离库 + 微信开发者工具的全链路验收、正式短信与账号激活均未完成**，不得当作已验收。
+后端与迁移：接口、锁序、幂等、审计、配额并发与失败回滚已有 MockMvc 与真实 MySQL 测试覆盖。
+
+小程序侧已接入，服务层 `apps/miniapp/src/services/merchant-onboarding.js` 与服务端逐字段对齐（固定品类、固定驳回码、6 位行政区划码、1..9 个互不相同的资质文件 id 与 0–100000 配额上限），页面为车主端 `pages/owner/onboarding`（申请＋进度＋驳回重提，入口在「我的」）、运营端 `pages/operator/onboarding`（待审＋详情＋批准/固定码驳回＋资质受控查看）与 `pages/operator/quotas`（配额列表与设置）。运营身份登录响应固定携带 `can_review` 与 `can_onboard` 两个布尔权限位，客户端按各自权限决定入口，缺字段或类型不符即判协议错误。
+
+**真实后端容器 + 隔离库 + 微信开发者工具的端到端验收、正式短信与门店账号激活（R9）均未完成**，不得当作已验收；开发者工具也无法替代真机验证。

@@ -1,6 +1,6 @@
 # API 文档
 
-- [R1a 商家入驻申请、审核、区域品类配额与开店](MERCHANT_ONBOARDING.md)：车主提交/查询/重提、运营 `can_onboard` 待审列表/详情/批准/固定码驳回、fail-closed 配额与单事务开店；V020/63表，OpenAPI 当前 118 操作。**仅后端与迁移已实现，页面与真实联调未完成**；运营入驻权限运维见[运营账号管理](../operations/OPERATOR_ACCOUNTS.md)。
+- [R1a 商家入驻申请、审核、区域品类配额与开店](MERCHANT_ONBOARDING.md)：车主提交/查询/重提、运营 `can_onboard` 待审列表/详情/批准/固定码驳回、fail-closed 配额与单事务开店；小程序车主端与运营端页面已接入，V020/63表，OpenAPI 当前 118 操作。**真实容器端到端联调、账号激活与正式短信未完成**；运营入驻权限运维见[运营账号管理](../operations/OPERATOR_ACCOUNTS.md)。
 
 - [微信小程序经验审核与同款摘要](EXPERIENCE_PUBLICATION.md)：独立运营认证/权限、批准/驳回、本人撤回与同款五字段DTO；[运营账号运维](../operations/OPERATOR_ACCOUNTS.md)，V019/61表、OpenAPI当前111操作（仍含历史草案，不代表全部实现）。
 
