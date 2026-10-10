@@ -41,7 +41,7 @@ onUnload(() => { visible = false; clear() })
 <template>
   <view class="reservation-page">
     <text class="reservation-title">施工防护</text>
-    <button v-if="!merchantSession.accessToken" @tap="login">前往商家登录</button>
+    <button v-if="!merchantSession.accessToken" @tap="login">前往门店登录</button>
     <text v-if="read.busy">正在加载施工记录…</text>
     <view v-if="read.message" class="reservation-panel"><text role="status">{{ read.message }}</text><button @tap="flow.load">重试加载</button><button v-if="['unauthorized','forbidden'].includes(read.failureKind)" @tap="login">重新登录</button></view>
     <view v-if="read.value" class="reservation-panel">

@@ -28,7 +28,7 @@ return await (async()=>{
   try{
     await wait(()=>visibleInputs().length===3,'merchant form')
     const fields=visibleInputs();['local-quotes-merchant-A','synthetic-password','123456'].forEach((value,i)=>input(fields[i],value))
-    await click('登录商家端');await wait(()=>text().includes('商家登录成功'),'merchant response bridge')
+    await click('登录门店端');await wait(()=>text().includes('门店登录成功'),'merchant response bridge')
     await click('管理本店服务');await wait(()=>text().includes('本店服务与报价'),'merchant page')
     const before=await local('merchant-database')
     const ownBefore=await api('/api/merchant/projects',merchant)

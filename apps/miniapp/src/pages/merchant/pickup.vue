@@ -50,7 +50,7 @@ function sheet(){uni.redirectTo({url:`/pages/check/pickup-detail?id=${order}&rol
 <template>
   <view class="reservation-page" data-testid="pickup-form">
     <text class="reservation-title">接车检查</text>
-    <button v-if="!merchantSession.accessToken" @tap="login">前往商家登录</button>
+    <button v-if="!merchantSession.accessToken" @tap="login">前往门店登录</button>
     <text v-if="read.busy">正在加载订单…</text>
     <view v-if="read.message" class="reservation-panel"><text>{{read.message}}</text><button @tap="flow.load">重试加载</button><button v-if="read.failureKind==='conflict'" @tap="sheet">查看已提交接车单</button></view>
     <view v-if="read.value" class="reservation-panel">

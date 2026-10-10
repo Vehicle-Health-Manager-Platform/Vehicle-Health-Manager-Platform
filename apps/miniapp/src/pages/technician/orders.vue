@@ -34,7 +34,10 @@ onUnload(() => { visible = false; flow.reset() })
       <text v-if="state.busy" role="status">正在加载本人工单…</text>
       <view v-if="state.message" class="reservation-panel" role="status">
         <text>{{ state.message }}</text>
-        <button v-if="['unauthorized', 'forbidden'].includes(state.failureKind)" @tap="login">重新登录</button>
+        <text v-if="['unauthorized', 'forbidden'].includes(state.failureKind)" data-testid="technician-session-action">
+          账号可能已被店长停用，或微信绑定已被撤销。请向店长索取新的员工码，然后重新绑定。
+        </text>
+        <button v-if="['unauthorized', 'forbidden'].includes(state.failureKind)" @tap="login">重新绑定员工码</button>
         <button v-else :disabled="state.busy" @tap="flow.retry">重试本人工单</button>
       </view>
       <view v-if="state.loaded && !state.items.length && !state.busy" class="reservation-panel" data-testid="technician-orders-empty">

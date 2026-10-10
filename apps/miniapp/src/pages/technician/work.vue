@@ -67,7 +67,7 @@ onUnload(() => { visible.value = false; clear() })
     <text class="reservation-title">施工报工与质检</text>
     <button v-if="!technicianSession.accessToken" @tap="login">前往技师登录</button>
     <text v-if="read.busy">正在加载本人工单…</text>
-    <view v-if="read.message" class="reservation-panel"><text role="status">{{ read.message }}</text><button @tap="flow.load">重试加载</button><button v-if="['unauthorized','forbidden'].includes(read.failureKind)" @tap="login">重新登录</button></view>
+    <view v-if="read.message" class="reservation-panel"><text role="status">{{ read.message }}</text><text v-if="['unauthorized','forbidden'].includes(read.failureKind)" data-testid="technician-session-action">账号可能已被店长停用，或微信绑定已被撤销。请向店长索取新的员工码，然后重新绑定。</text><button v-if="['unauthorized','forbidden'].includes(read.failureKind)" @tap="login">重新绑定员工码</button><button v-else @tap="flow.load">重试加载</button></view>
     <view v-if="work && job" class="reservation-panel">
       <text class="reservation-heading">{{ job.project_snapshot?.project_name || '历史工单' }}</text>
       <text>工单号 {{ job.order_no }} · {{ stateLabel(work.order_status) }}</text>
@@ -106,7 +106,7 @@ onUnload(() => { visible.value = false; clear() })
       </template>
       <text v-if="photos.message" role="status">{{ photos.message }}</text><button v-if="photos.failureKind==='permission'" @tap="images.authorize">开启相机权限</button>
       <text v-if="reportWrite.message" role="status">{{ reportWrite.message }}</text><text v-if="signWrite.message" role="status">{{ signWrite.message }}</text>
-      <button v-if="[reportWrite.failureKind,signWrite.failureKind].some(k=>['unauthorized','forbidden'].includes(k))" @tap="login">重新登录</button>
+      <button v-if="[reportWrite.failureKind,signWrite.failureKind].some(k=>['unauthorized','forbidden'].includes(k))" @tap="login">重新绑定员工码</button>
       <button :disabled="photos.busy||reportWrite.busy||signWrite.busy||modal" @tap="flow.load">刷新施工记录</button>
     </view>
     <button @tap="uni.navigateBack()">返回本人工单</button>

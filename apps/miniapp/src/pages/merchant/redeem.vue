@@ -25,7 +25,7 @@ onHide(stop); onUnload(stop)
 <template>
   <view class="reservation-page">
     <text class="reservation-title">核销验码</text>
-    <button v-if="!merchantSession.accessToken" @tap="login">前往商家登录</button>
+    <button v-if="!merchantSession.accessToken" @tap="login">前往门店登录</button>
     <text v-if="detail.busy || receipt.busy" role="status">正在核对订单…</text>
     <view v-if="detail.message || receipt.message" class="reservation-panel" role="status"><text>{{ detail.message || receipt.message }}</text><button v-if="['unauthorized','forbidden'].includes(detail.failureKind) || ['unauthorized','forbidden'].includes(receipt.failureKind)" @tap="login">重新登录</button><button v-else @tap="refresh">重试查询</button></view>
     <view v-if="detail.value" class="reservation-panel">

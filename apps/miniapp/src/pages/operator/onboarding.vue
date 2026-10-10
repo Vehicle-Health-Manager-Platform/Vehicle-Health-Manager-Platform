@@ -35,7 +35,7 @@ function decide(summary, decision) {
   uni.showModal({
     title: decision === 'APPROVE' ? '批准入驻并开店' : '驳回入驻申请',
     content: decision === 'APPROVE'
-      ? `将通过「${summary.merchant_name}」并按区域品类配额开店，同时创建待激活的店长账号。开通账号需要正式身份接入，届时才能登录商家端。`
+      ? `将通过「${summary.merchant_name}」并按区域品类配额开店，同时创建待激活的店长账号。开通账号需要正式身份接入，届时才能登录门店端。`
       : `将以「${REJECT_REASONS[selected]}」驳回，车主可修改后重新提交。审核记录不可修改。`,
     success: result => {
       const now = { visible, token: operatorToken(), target: target(summary) }

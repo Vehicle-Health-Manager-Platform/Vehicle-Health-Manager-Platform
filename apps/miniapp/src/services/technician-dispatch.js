@@ -116,12 +116,12 @@ export function createDispatchApi({ baseUrl, runtime }) {
     candidates(token, page = 1) {
       if (!pageNumber(page)) throw invalid('分页无效')
       return call(token, `/api/merchant/technicians?page=${page}&page_size=20`, result => candidatePage(result, page),
-        { hint: '请先登录商家账号' })
+        { hint: '请先登录门店账号' })
     },
     // 商家：查询本店订单的派工结果
     assignment(token, orderId) {
       if (!id(orderId)) throw invalid('订单编号无效')
-      return call(token, `/api/merchant/orders/${orderId}/assignment`, assignmentView, { hint: '请先登录商家账号' })
+      return call(token, `/api/merchant/orders/${orderId}/assignment`, assignmentView, { hint: '请先登录门店账号' })
     },
     // 商家：首次派工
     assign(token, orderId, technicianId, key) {
@@ -130,7 +130,7 @@ export function createDispatchApi({ baseUrl, runtime }) {
       if (!requestKeyValid(key)) throw invalid('提交键无效')
       return call(token, `/api/merchant/orders/${orderId}/assign`,
         result => writeView(result) && result.assignment_status === 'ASSIGNED' && result.order_status === 'RECEIVED',
-        { body: { technician_id: technicianId }, key, hint: '请先登录商家账号' })
+        { body: { technician_id: technicianId }, key, hint: '请先登录门店账号' })
     },
     // 技师：本人工单列表
     orders(token, page = 1, assignmentStatus = '') {

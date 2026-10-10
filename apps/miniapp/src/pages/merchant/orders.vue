@@ -23,7 +23,7 @@ onUnload(() => { visible = false; flow.reset() })
 <template>
   <view class="reservation-page">
     <text class="reservation-title">本店订单</text>
-    <button v-if="!merchantSession.accessToken" @tap="login">前往商家登录</button>
+    <button v-if="!merchantSession.accessToken" @tap="login">前往门店登录</button>
     <template v-else>
       <view class="filters">
         <button :class="{ selected: status === '' }" @tap="changeStatus('')">全部</button>

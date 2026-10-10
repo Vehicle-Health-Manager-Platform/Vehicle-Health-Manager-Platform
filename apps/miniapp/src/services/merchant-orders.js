@@ -35,7 +35,7 @@ const MESSAGES = { 400: '订单操作参数无效', 401: '登录已失效，请�
 export function createMerchantOrdersApi({ baseUrl, runtime }) {
   const endpoint = (baseUrl || '').replace(/\/$/, '')
   function request(token, path, validate, body, key) {
-    if (!token) throw new ServiceError('unauthorized', '请先登录商家账号')
+    if (!token) throw new ServiceError('unauthorized', '请先登录门店账号')
     if (!endpoint) throw new ServiceError('unconfigured', '本店订单服务尚未配置')
     return new Promise((resolve, reject) => {
       try { runtime().request({ url: endpoint + path, method: body ? 'POST' : 'GET', data: body, timeout: 15000,
