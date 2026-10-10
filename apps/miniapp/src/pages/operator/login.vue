@@ -35,5 +35,5 @@ onHide(clear); onUnload(clear)
     <text class="reservation-copy">登录有效期为十五分钟，失效后需重新验证。账号与短信服务由运营管理员配置。</text>
   </view>
 </template>
-<style src="../../styles/reservations.css"></style>
+
 <style scoped>input{padding:20rpx;border:1rpx solid #e5e6eb;border-radius:12rpx;min-height:48rpx}</style>

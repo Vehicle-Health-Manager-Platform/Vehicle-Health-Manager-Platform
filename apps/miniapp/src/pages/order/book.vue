@@ -40,4 +40,3 @@ function login(){clearOwnerSession();uni.navigateTo({url:'/pages/owner/index'})}
     <view class="reservation-panel"><text>最迟在创建后15分钟或时段开始时关闭未支付订单。支付功能尚未接入。</text><text v-if="write.message" role="status">{{write.message}}</text><button class="reservation-primary" :loading="write.busy" :disabled="write.busy||!!write.saved" @tap="submit.save">创建待支付预约</button></view>
   </template>
 </view></template>
-<style src="../../styles/reservations.css"></style>

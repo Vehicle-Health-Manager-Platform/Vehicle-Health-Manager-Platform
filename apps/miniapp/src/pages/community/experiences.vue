@@ -36,4 +36,3 @@ onShow(() => { visible = true; start() }); onHide(() => { visible = false; flow.
     <button @tap="uni.navigateTo({url:'/pages/community/my-cards'})">管理我的经验授权</button>
   </view>
 </template>
-<style src="../../styles/reservations.css"></style>
