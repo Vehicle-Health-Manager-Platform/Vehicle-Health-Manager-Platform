@@ -111,6 +111,16 @@ public class MerchantStaff {
         return result;
     }
 
+    private static final int MAX_SEQ = 9999;
+    /**
+     * 员工行投影：列表、回读与「新增响应」共用同一份，避免创建响应与列表行字段不一致
+     * （少字段会让客户端把合法响应判成协议错误）。密码哈希与员工码明文永不出现。
+     */
+    private static final String PROJECTION = "SELECT s.id,s.account,s.role,s.display_name,s.phone,s.status,s.created_at,"
+        + "(s.employee_code_hash IS NOT NULL) AS code_issued,EXISTS(SELECT 1 FROM staff_wechat_identity b "
+        + "WHERE b.staff_account_id=s.id AND b.app_id=? AND b.status='ACTIVE' AND b.is_deleted=0 "
+        + "AND b.unbound_at IS NULL) AS wechat_bound";
+
     public Map<String, Object> list(MerchantActor actor, String role, int page, int size) {
         requireEnabled();
         MerchantStaffInput.page(page, size);
@@ -129,19 +139,23 @@ public class MerchantStaff {
             args.addAll(filter);
             args.add(size);
             args.add((page - 1L) * size);
-            var rows = jdbc.queryForList("SELECT s.id,s.account,s.role,s.display_name,s.phone,s.status,s.created_at,"
-                + "(s.employee_code_hash IS NOT NULL) AS code_issued,EXISTS(SELECT 1 FROM staff_wechat_identity b "
-                + "WHERE b.staff_account_id=s.id AND b.app_id=? AND b.status='ACTIVE' AND b.is_deleted=0 "
-                + "AND b.unbound_at IS NULL) AS wechat_bound" + where + " ORDER BY s.id LIMIT ? OFFSET ?",
-                args.toArray());
+            var rows = jdbc.queryForList(PROJECTION + where + " ORDER BY s.id LIMIT ? OFFSET ?", args.toArray());
             return Map.of("items", rows.stream().map(MerchantStaff::view).toList(),
                 "total", total, "page", page, "page_size", size);
         });
     }
 
+    /** 按同一投影回读本店单行；新增后用它作为响应载荷，保证与列表行同形。 */
+    private Map<String, Object> row(MerchantActor actor, long staffId) {
+        var rows = jdbc.queryForList(PROJECTION + " FROM staff_account s WHERE s.id=? AND s.merchant_id=? AND s.is_deleted=0",
+            appId, staffId, actor.merchantId());
+        if (rows.isEmpty()) throw new ResponseStatusException(HttpStatus.CONFLICT, "新增员工后读取失败，请使用原幂等键重试");
+        return view(rows.get(0));
+    }
+
     private String account(long merchantId, String role) {
         String prefix = "STAFF".equals(role) ? "s" : "t";
-        for (int seq = 1; seq <= 9999; seq++) {
+        for (int seq = 1; seq <= MAX_SEQ; seq++) {
             String candidate = prefix + merchantId + "-" + seq;
             Integer used = jdbc.queryForObject("SELECT COUNT(*) FROM staff_account WHERE account=?", Integer.class, candidate);
             if (used == null || used == 0) return candidate;
@@ -183,15 +197,10 @@ public class MerchantStaff {
                     return statement;
                 }, holder);
                 long staffId = holder.getKey().longValue();
-                var after = new LinkedHashMap<String, Object>();
-                after.put("staff_id", staffId);
-                after.put("account", generated);
-                after.put("role", role);
-                after.put("display_name", displayName);
-                after.put("phone_masked", mask(phone));
-                after.put("status", "ACTIVE");
+                // 响应载荷用同一投影回读：与列表行逐字段同形，不含密码与手机号原文。
+                var created = row(actor, staffId);
                 return new WriteIntegrityService.Change("MERCHANT_STAFF_CREATE", "staff_account", staffId,
-                    Map.of(), after, after);
+                    Map.of(), created, created);
             });
     }
 

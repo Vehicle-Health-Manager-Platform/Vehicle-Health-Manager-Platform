@@ -25,6 +25,8 @@
 
 响应 `data`：`{staff_id,account,role,display_name,phone_masked,status,employee_code_issued,wechat_bound,created_at}`。
 
+这九个字段与列表行**逐字段同形**：创建成功后会以同一投影回读再作为响应载荷，并有防漂移断言（创建响应的键集合必须等于列表行的键集合）。曾经出现过创建响应少 `created_at`/`employee_code_issued`/`wechat_bound` 三个字段的漂移，客户端会把合法响应判成协议错误——OpenAPI 生成一致性与 MockMvc 都发现不了，只能靠这条断言。
+
 ## 启停与"停用立即阻断原会话"
 
 停用在单事务内完成，锁序 **商家 → 员工 → 微信绑定**：

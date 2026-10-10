@@ -115,6 +115,9 @@ class JdbcMerchantStaffTest {
         @SuppressWarnings("unchecked") var items=(List<Map<String,Object>>)page.get("items");
         assertTrue(items.stream().noneMatch(item->"MERCHANT".equals(item.get("role"))));
         assertEquals(2L,((Number)service.list(manager,"TECHNICIAN",1,20).get("total")).longValue());
+        // 创建响应必须与列表行逐字段同形：少字段会让客户端把合法响应判成协议错误。
+        var createdRow=items.stream().filter(item->((Number)item.get("staff_id")).longValue()==id).findFirst().orElseThrow();
+        assertEquals(new TreeSet<>(names(created)),new TreeSet<>(createdRow.keySet()));
     }
 
     @Test void anotherStoreCannotSeeOrTouchThisStoreStaff(){
