@@ -44,7 +44,8 @@ function envVar(container, name) {
 }
 
 // ---- Fixtures -------------------------------------------------------------------
-function verifyIsolation() {
+function verifyIsolation(stage = 'a6') {
+  if(!['a6','a7'].includes(stage))throw Error('Unsupported local stage');
   const project = docker(['inspect', MYSQL, '--format', '{{index .Config.Labels "com.docker.compose.project"}}'])
   if (project !== 'vehicle-auth-local') throw new Error('Refusing non-test Docker project: ' + project)
   const backend = JSON.parse(docker(['inspect', BACKEND]))[0];
@@ -54,10 +55,12 @@ function verifyIsolation() {
   if (columns !== '3') throw new Error('A5 requires V011 and V012 applied to the isolated database (found ' + columns + '/3 columns)')
   const disputes = sql("SELECT (SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name IN ('order_dispute','order_dispute_record')), (SELECT column_comment FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='pickup_check' AND column_name='owner_confirm');").split('	')
   if (disputes[0] !== '2' || !disputes[1].includes('3')) throw new Error('A5.6 requires V013 applied to the isolated database (found ' + disputes[0] + '/2 tables)')
-  if(!image.startsWith('vehicle-auth/backend:a6-service'))throw Error('A6 backend image required');
+  if(!image.startsWith(stage==='a7'?'vehicle-auth/backend:a7-redeem':'vehicle-auth/backend:a6-service'))throw Error('Expected isolated stage image');
   const tables=sql("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE();");
   const additions=sql("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name IN ('service_evidence_file','service_report_submission');");
-  if(tables!=='54'||additions!=='2')throw Error('V014 and 54-table isolated database required');
+  if(tables!==(stage==='a7'?'55':'54')||additions!=='2')throw Error('Expected isolated stage schema');
+  if(stage==='a7' && image!=='vehicle-auth/backend:a7-redeem')throw Error('Exact A7 test image required');
+  if(stage==='a7' && sql("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name='order_redemption';")!=='1')throw Error('V015 required');
   return image
 }
 function prepare(appId) {
@@ -189,5 +192,5 @@ async function setup(){
  return {owner,shopA,shopB,techA,techB,techF,order:ORDER_POSITIVE};
  } catch(error) {sql(`UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id IN (${[owner,shopA,shopB,techA,techB,techF].map(v=>"'"+v.jti+"'").join(',')});`); throw error;}
 }
-module.exports={verifyIsolation,setup,sql,api,check,dataOf,codeOf,results,deepEqual,docker,ORDER_POSITIVE,ORDER_NO_CHECKIN,ORDER_NO_CONFIRM,ORDER_DISPUTE,TECH_A,BIND_A,randomUUID};
+module.exports={prepare,mint,envVar,BACKEND,verifyIsolation,setup,sql,api,check,dataOf,codeOf,results,deepEqual,docker,ORDER_POSITIVE,ORDER_NO_CHECKIN,ORDER_NO_CONFIRM,ORDER_DISPUTE,TECH_A,BIND_A,randomUUID};
 if(require.main===module)setup().then(s=>{require('node:fs').writeFileSync('.cache/a6-ui-sessions.json',JSON.stringify(s));console.log('Synthetic A6 sessions prepared; real confirmation/dispatch/accept passed; credentials withheld')}).catch(e=>{console.error(e.message);process.exitCode=1});

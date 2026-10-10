@@ -33,10 +33,10 @@ onHide(stop); onUnload(stop)
       <text>订单号 {{ detail.value.order_no }}</text><text class="reservation-price">应付 ¥{{ detail.value.amount_due }}</text><text>{{ stateLabel(detail.value.status) }}</text>
       <text v-if="detail.value.payment_summary?.test_mode" data-testid="redeem-test-warning">测试核销，未真实扣款，不可作为收款凭据</text>
       <text v-if="detail.value.has_payment_exception">付款存在异常，暂不可核销，请核对付款记录。</text>
-      <view v-if="receipt.value?.redemption" data-testid="redemption-receipt"><text class="reservation-heading">{{ receipt.value.redemption.test_mode ? '测试核销已完成' : '已核销' }}</text><text>核销时间 {{ displayTime(receipt.value.redemption.redeemed_at) }}</text><text v-if="receipt.value.redemption.test_mode">未真实扣款，不可作为收款凭据</text></view>
-      <view v-else-if="detail.value.status==='PENDING_VERIFY' && receipt.loaded && !receipt.message && !detail.value.has_payment_exception && !state.saved">
+      <view v-if="receipt.value?.redemption" class="redemption-block" data-testid="redemption-receipt"><text class="reservation-heading">{{ receipt.value.redemption.test_mode ? '测试核销已完成' : '已核销' }}</text><text>核销时间 {{ displayTime(receipt.value.redemption.redeemed_at) }}</text><text v-if="receipt.value.redemption.test_mode">未真实扣款，不可作为收款凭据</text></view>
+      <view class="redemption-block" v-else-if="detail.value.status==='PENDING_VERIFY' && receipt.loaded && !receipt.message && !detail.value.has_payment_exception && !state.saved">
         <text>请向车主核对六位核销码，确认车辆服务完成后提交。</text>
-        <input v-model="state.code" type="number" maxlength="6" :disabled="state.busy" placeholder="输入六位核销码" aria-label="六位核销码" data-testid="redeem-code" />
+        <input class="reservation-field" v-model="state.code" type="number" maxlength="6" :disabled="state.busy" placeholder="输入六位核销码" aria-label="六位核销码" data-testid="redeem-code" />
         <button :disabled="state.busy || remaining>0 || !/^[0-9]{6}$/.test(state.code)" :loading="state.busy" data-testid="redeem-submit" @tap="submit.submit">{{ remaining>0 ? `请等待 ${remaining} 秒` : '验码并核销' }}</button>
       </view>
       <text v-else-if="detail.value.status==='COMPLETED' && !receipt.value?.redemption">此历史完成订单没有可信核销记录，请人工核对。</text>
@@ -48,3 +48,8 @@ onHide(stop); onUnload(stop)
   </view>
 </template>
 <style src="../../styles/reservations.css"></style>
+
+<style scoped>
+.redemption-block{display:flex;flex-direction:column;gap:18rpx}
+.redemption-block input{height:48rpx;font-size:30rpx;letter-spacing:6rpx}
+</style>

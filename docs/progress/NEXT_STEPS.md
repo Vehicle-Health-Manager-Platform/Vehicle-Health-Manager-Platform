@@ -1,58 +1,39 @@
-> 2026-10-09 更新：A4–A6（#35–#44）已全部合并 main `43903c9`，最终六项 CI 通过。当前实施 A7.1，见[中文计划](../superpowers/plans/2026-10-09-a7-redeem.md)。下列旧堆叠分支描述为阶段提交历史。
-
 # 下一步规划
 
-更新日期：2026-10-08。当前业务链路已到接车检查、车主决定与争议处理恢复；已付款订单不会自动关闭，车主未确认或订单有未解决争议时不能派工。用户要求每完成一个阶段整理文档并上传 GitHub，执行规则见[阶段交付规则](STAGE_DELIVERY.md)。
+更新日期：2026-10-09。需求与范围以 Spec 和对应阶段规格为准。
 
-## 当前优先：A6 防护与报工收口，下一业务阶段 A7.1 核销
+## 当前交付
 
-A3 已合并至 [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34)。A4 已上传至 [PR #35](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/35)，实现提交 `e0d4077` 六项 CI 通过（后端 271 项、小程序 120 项）。
+A4–A6 的 #35–#44 已全部按顺序改回 main 后合并，main 基线 `43903c9` 六项 CI 全绿。A7.1 已完成规划、核销后端、小程序页面与真实本机联调，逐阶段上传 [#45](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/45)→[#46](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/46)→[#47](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/47)→[收口 #48](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/48)。规格/后端/页面均六项 CI 全绿，后端 369/369、小程序 181/181、微信/H5 构建、V015 重放 55 表；真实 HTTP 51/51、gstack 实际核销完成。见[A7 总记录](A7_REDEMPTION_EXECUTION.md)、[本机验收](../testing/LOCAL_ORDER_REDEMPTION_ACCEPTANCE.md)。核销为隔离测试付款，未真实扣款。
 
-A5.1 已形成[规格](../superpowers/specs/2026-10-08-a5-dispatch-design.md)、[六个接口契约](../api/TECHNICIAN_DISPATCH.md)和[中文计划](../superpowers/plans/2026-10-08-a5-dispatch.md)：一单一位技师、本人接单开始施工、防护在 A6 报工校验；规格已上传 [PR #36](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/36)，证据见[A5.1 执行记录](A5_1_DISPATCH_SPEC_EXECUTION.md)。
+## 下一业务步骤：A7.2a 本人订单评价
 
-A5.2 已通过六项 CI 并上传 [PR #37](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/37)，实现六个后端接口与 V012，商家通用 `START_SERVICE` 已停用；证据见[A5.2 执行记录](A5_2_DISPATCH_BACKEND_EXECUTION.md)。
+先补中文规格与计划，复核后分阶段编码、验证、文档和上传。最低验收目标：
 
-A5.3 已接入商家派工页、技师独立会话与「我的工单」/工单详情/接单，小程序 140 项测试、微信与 H5 构建通过，六项 CI 全绿并上传 [PR #38](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/38) 待合并；证据见[A5.3 执行记录](A5_3_DISPATCH_UI_EXECUTION.md)。
+- 仅车主本人、已完成且有可信核销记录的订单可评价；争议、取消、历史缺核销记录不能凭状态补资格。
+- 同订单唯一评价，UUID 幂等、并发只保存一次，审计与评价同事务；测试核销评价仍明确测试来源。
+- 评分范围、文字/图片、匿名与展示范围、修改窗口先对照来源文档确定；不把未确认的公开展示规则作为既定需求。
+- 本人查询/提交、无权限隔离、小程序失败重试与身份切换成立；每阶段中文契约/OpenAPI/迁移/验收同步上传。
 
-A5.4 已补齐 A5.2 未覆盖的 T04/T06/T07/T09/T11 证据——员工码重发与回收、账号停用、会话撤销与派工/接单的真实 MySQL 并发、多轮无死锁、幂等载荷与审计不落隐私、历史异常冻结；新增验证 11 项、相关回归 76 项通过，六项 CI 全绿并上传 [PR #39](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/39) 待合并；证据见[A5.4 执行记录](A5_4_DISPATCH_VERIFICATION_EXECUTION.md)。
+## 后续拆分
 
-A5.5 已用合成身份接真实后端容器与隔离 MySQL 完成端到端：车主确认→候选→派工→本人查询→接单共 **37 项通过**，并验证另一技师/他店/跨角色拒绝、幂等重放、`no-store`、最小投影、双审计与 A5 边界；六项 CI 通过并上传 [PR #40](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/40) 待合并。证据见[A5.5 执行记录](A5_5_DISPATCH_E2E_EXECUTION.md)、[本机验收](../testing/LOCAL_TECHNICIAN_DISPATCH_ACCEPTANCE.md)与[A5 阶段总记录](A5_DISPATCH_EXECUTION.md)。**A5 功能链路已闭环**；真实技师微信登录与真机页面联调仍是独立验收项。
+| 阶段 | 范围与验收目标 |
+| --- | --- |
+| A7.2a | 本人唯一订单评价、授权、幂等、页面与审计 |
+| A7.2b | 施工证据写回车辆档案，来源可追溯、唯一写回、失败可恢复，保留用户已有档案 |
+| A7.2c | 经验卡片生成与发布规则，脱敏、车主授权、去重、失败恢复及内容审核边界 |
+| 资金与争议终结 | 正式收款、退款/取消争议订单的资格、资金通道、回调/对账、状态与审计独立规格；不能用 LOCAL_TEST 代替真实退款 |
 
-A5.6 已补齐 A4 留下的死路——异议之后订单停在 `DISPUTED`、没有任何恢复入口。本阶段新增商家处理记录与车主复核恢复：新增 `order_dispute`/`order_dispute_record`（V013，表总数 52）与两个写接口，`DISPUTED` 期间派工/接单返回 `43007`，只有车主本人在商家提交处理记录后接受复核（`43008` 约束）才把订单恢复到争议前状态；商家与技师均不能宣布争议解决。后端争议与回归 **52/52**、小程序 **147** 项、两端构建、本机端到端 **69/69** 通过；六项 CI 结果见 [PR #41](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/41)。证据见[A5.6 执行记录](A5_6_DISPUTE_RESOLUTION_EXECUTION.md)、[本机争议验收](../testing/LOCAL_DISPUTE_ACCEPTANCE.md)、[争议处理契约](../api/DISPUTE_RESOLUTION.md)与[争议处理规格](../superpowers/specs/2026-10-08-dispute-resolution-design.md)。
+第二次异议、超时自动处理继续不实施；历史缺争议单/核销记录不自动回填。佣金、增长能力、运营后台与 AI 后续能力按角色缺口另排。
 
-A6 已开始：[规格](../superpowers/specs/2026-10-08-service-work-design.md)、[中文计划](../superpowers/plans/2026-10-08-service-work.md)。A6.1 后端 76 个独立用例通过，已上传 [PR #42](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/42)，代码六项 CI 全绿（后端 348、小程序 147），A6.2 防护与报工页面已通过 169 项客户端测试、微信/H5 构建与 gstack 实际签名交互（[执行记录](A6_2_SERVICE_UI_EXECUTION.md)）；A6.2 已上传 [PR #43](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/43)，六项 CI 全绿；A6.3 真实 HTTP **65/65** 通过，已上传 [PR #44](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/44)，最新检查见 [PR #44 Checks](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/44/checks)（[A6 总记录](A6_SERVICE_WORK_EXECUTION.md)）。下一业务阶段 **A7.1 核销验码与审计**，当前没有开始 A7 编码。防护缺失不能报工、必要证据及本人质检签字齐全才送核销、只能操作本人派工。退款/取消争议订单归 A7；第二次异议与超时自动处理不在本阶段。争议处理的历史遗留（A4 之前没有争议单的异议）仍由人工处理，不自动回填。交付及 CI 见[当前进度](CURRENT_STATUS.md)。
+## 阶段上传与堆叠合并
 
-## 业务开发顺序
+每阶段：验证→中文文档→提交→推送 codex/ 分支→PR→最终 CI。前序未合并时指向直接依赖分支，后续按顺序将下一支 base 改回 main，复核 head/差异/CI 后再合并，禁止合入上一功能分支。当前 #45→#46→#47→[收口 #48](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/48) 等待合并授权；本次未合并 A7 PR 或部署生产。
 
-| 阶段 | 范围与前置 | 阶段完成条件 |
-| --- | --- | --- |
-| A4 | 车主确认接车单与提出异议，依赖 A3 | 本人确认生效；异议置争议并阻断施工；权限、幂等、回滚和并发验证通过；文档与 PR 齐全 |
-| A5 | 商家派工、技师本人工作台与接单，依赖 A4 | 未确认/争议订单不可派工；仅本店有效技师可被派；技师只能接本人单；派工与接单可联调并有审计 |
-| 争议处理 | 商家处理记录、车主复核与恢复条件，依赖 A4 | 原因、处理和最终决定完整留痕；争议未解决不能恢复派工/施工；只有车主能宣布解决。A5.6 已交付 |
-| A6 | 防护、施工/故障件/完工照片、方案、配件、工时、质检与报工，依赖派工归属 | 防护缺失不能报工；必要证据齐全才送核销；只能操作本人派工 |
-| A7.1 | 完工与到店核销 | 服务端验码、防猜测、状态迁移与双审计成立；正式付款凭据的验收单列 |
-| A7.2 | 评价、档案回写、经验卡片 | 本人评价、回写与卡片均不重复，失败可恢复；拆成独立任务和 PR |
+## 独立验收
 
-A5 详细顺序、验收和需要统一的业务规则见[A5 下一阶段计划](../superpowers/plans/2026-10-08-a5-dispatch.md)。预约码已经由 A3 生成和展示；最终核销在 A7.1 实现，A4 只交付确认与异议。
+真实相机、手机真机/真实微信账号、本机测试证书下直连图片预览、正式短信、微信收款/退款、正式公网与运维仍分别待验收。继续本机优先推进，外部凭据和手机操作不伪造通过。
 
-## 每阶段文档与仓库交付
-
-每个子阶段同步对应规格/计划、接口、OpenAPI、迁移、验收记录与进度。提交到 `codex/` 阶段分支并推送 GitHub；前序已合并时 PR 指向 `main`，否则指向直接依赖分支，依赖合并后调整基线并复核 CI。未完成验证保持草稿；不能把“已上传”写成“已验收”。见[交付规则](STAGE_DELIVERY.md)。
-
-## 独立验收与外部依赖
-
-真实相机与真机、测试证书下的直连图片预览、正式短信、正式微信支付/退款和公网环境仍各自待验收。继续按已有决定先推进本机业务开发，外部凭据和手机操作分别记录依赖，不伪造通过结果。
-
-- [真实相机清单](../testing/REAL_CAMERA_ACCEPTANCE.md)、[接车验收](../testing/LOCAL_PICKUP_ACCEPTANCE.md)。
-- [真机登录](../operations/LAN_DEVICE_LOGIN_RUNBOOK.md)、[网络环境](../operations/MINIAPP_NETWORK_ENVIRONMENTS.md)。
-- [外部依赖](S0_DEPENDENCIES.md)、[三端及运营端缺口](ROLE_GAP_ANALYSIS.md)。
-
-## 后续产品范围
-
-履约闭环后按缺口清点推进增长能力、车主体验、运营与考核、上线运维。AI 流式输出、方案与商家联动、转人工按独立规格推进。OCR/VIN/车牌录车、评分提醒与附近商家等功能仍需各自数据源或业务规则。
-
-旧规划、曾用网络路径与历史执行说明移至[2026-10-07 历史规划](history/NEXT_STEPS_2026-10-07.md)。历史文件中的“下一步”不代表当前执行顺序。
-
-## 堆叠 PR 合并规则
-
-#41 当前 base 是 codex/a5-dispatch-e2e，A6.1 以 codex/a5-dispute 为 base，A6.2 以 codex/a6-service-backend 为 base，A6.3 以 codex/a6-service-ui 为 base。先完成 #35/#36 依赖，再按 #37→#38→#39→#40→#41→A6 顺序，在前一依赖合并后逐支改回 main、检查差异及 CI，再合并。禁止把 #41 直接合入 #40 分支；本次只授权阶段上传，未执行合并或提前修改 base。
+- [真实相机](../testing/REAL_CAMERA_ACCEPTANCE.md)、[真机登录](../operations/LAN_DEVICE_LOGIN_RUNBOOK.md)。
+- [外部依赖](S0_DEPENDENCIES.md)、[角色缺口](ROLE_GAP_ANALYSIS.md)、[阶段交付规则](STAGE_DELIVERY.md)。
+- A5/A6 历史阶段执行见 [A5 总记录](A5_DISPATCH_EXECUTION.md)、[A6 总记录](A6_SERVICE_WORK_EXECUTION.md)，历史堆叠状态不代表当前 main 状态。

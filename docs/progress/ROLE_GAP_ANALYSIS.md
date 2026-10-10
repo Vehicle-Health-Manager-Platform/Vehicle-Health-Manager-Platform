@@ -1,5 +1,7 @@
 # 三端功能缺口清点
 
+> 2026-10-09 当前更新：A4–A6 已全部合并 main；A7.1 核销（专用验码、可信付款、防猜、双审计、本店/本人结果与页面）已实现并逐阶段上传 #45–#47，六项 CI 全绿，后端 369 / 小程序 181，真实 HTTP 51/51 与 gstack 交互通过。正式付款、真机、直连图片预览独立验收；评价/档案回写/卡片、退款/取消争议订单未实现。详见[A7 总记录](A7_REDEMPTION_EXECUTION.md)。下方比例/清点保留历史基线。
+
 > 2026-10-08 更新：A2/A3 已合并，A4 确认与异议已验证并上传 PR #35；A5.1 [规格](../superpowers/specs/2026-10-08-a5-dispatch-design.md)与计划已整理，A5.2 后端（PR #37）、A5.3 商家派工页与技师工作台（PR #38）、A5.4 安全与竞争验证（PR #39）均已通过六项 CI 并上传待合并，A5.5 本机端到端联调 37 项通过；验证见[A5.2 执行记录](A5_2_DISPATCH_BACKEND_EXECUTION.md)、[A5.3 执行记录](A5_3_DISPATCH_UI_EXECUTION.md)、[A5.4 执行记录](A5_4_DISPATCH_VERIFICATION_EXECUTION.md)与[A5.5 执行记录](A5_5_DISPATCH_E2E_EXECUTION.md)。除下方阶段表、技师端与派工相关行外，详细缺口比例与页面清点保留 2026-10-07 基线；当前状态以[当前进度](CURRENT_STATUS.md)和[下一步规划](NEXT_STEPS.md)为准。
 
 **历史记录（A3 交付时）**：A2 的 PR #33 已合并；A3 [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34) 已实现商家七图接车、手填里程与预约码校验，本机真实上传/扫描/存储/接车事务和两端单据展示通过。首次完整 CI 六项成功（后端259、小程序119）；最终提交与合并以 PR 为准。[契约](../api/PICKUP_INSPECTION.md)、[验收记录](../testing/LOCAL_PICKUP_ACCEPTANCE.md)。当时下一步为 A4；当前 A4 已交付，继续 A5；OCR、短信通知、真实门店相机和浏览器直连测试证书预览未验收。以下保留各阶段原始进度记录。

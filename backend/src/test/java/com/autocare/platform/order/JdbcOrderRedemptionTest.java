@@ -43,6 +43,8 @@ class JdbcOrderRedemptionTest {
         for(int i=101;i<=106;i++)jdbc.update("INSERT INTO file_object(id,owner_type,owner_id,object_key,content_type,size_bytes,scan_status) VALUES(?,'staff_account',?,?, 'image/png',100,'CLEAN')",i,i==101?1:12,"synthetic-work-"+i);
     }
     void ready(){
+        long checkId=jdbc.queryForObject("SELECT id FROM pickup_check WHERE order_id=1",Long.class);
+        for(int i=0;i<PickupInput.SLOTS.size();i++){int file=201+i;jdbc.update("INSERT INTO file_object(id,owner_type,owner_id,object_key,content_type,size_bytes,scan_status) VALUES(?,'staff_account',1,?,'image/png',100,'CLEAN')",file,"synthetic-pickup-"+file);jdbc.update("INSERT INTO pickup_check_file(pickup_check_id,file_id,photo_slot) VALUES(?,?,?)",checkId,file,PickupInput.SLOTS.get(i));}
         submitted();work.sign(tech,key(),signature());
         var env=new org.springframework.mock.env.MockEnvironment().withProperty("PAYMENT_LOCAL_TEST_ENABLED","true").withProperty("PAYMENT_LOCAL_TEST_SECRET","synthetic-secret-at-least-32-characters");env.setActiveProfiles("local-payment-test");
         redemption=new OrderRedemption(db,work,new PaymentChannels(env,Clock.systemUTC()));
@@ -106,6 +108,11 @@ class JdbcOrderRedemptionTest {
     @Test void replaysRevalidatePaymentAndEvidenceAndLegacyCodesAreNotIssued(){
         ready();String k=key();redeem(k);jdbc.update("UPDATE payment SET amount=11 WHERE id=1");assertEquals(43009,code(()->redeem(k)));jdbc.update("UPDATE payment SET amount=10 WHERE id=1");jdbc.update("UPDATE file_object SET is_deleted=1 WHERE id=105");assertEquals(43005,code(()->redeem(k)));assertEquals(1,count("order_redemption"));
         jdbc.update("UPDATE `order` SET status='PENDING_VERIFY',verify_code=NULL WHERE id=1");var owner=owner(99);assertFalse(new ReservationOrders(db,new ReservationExpiry(db)).detail(owner,1).containsKey("appointment_code"));assertNull(jdbc.queryForObject("SELECT verify_code FROM `order` WHERE id=1",String.class));
+    }
+    @Test void allSevenPickupPhotosMustRemainAvailableIncludingOnReplay(){
+        ready();for(String change:List.of("is_deleted=1","scan_status='INFECTED'","owner_id=12","content_type='text/plain'","size_bytes=0")){
+            jdbc.update("UPDATE file_object SET "+change+" WHERE id=201");assertEquals(43001,code(()->redeem(key())));jdbc.update("UPDATE file_object SET is_deleted=0,scan_status='CLEAN',owner_id=1,content_type='image/png',size_bytes=100 WHERE id=201");
+        }String k=key();redeem(k);jdbc.update("DELETE FROM pickup_check_file WHERE file_id=207");assertEquals(43001,code(()->redeem(k)));assertEquals(1,count("order_redemption"));
     }
     @Test void wrongShopAndRevokedSessionCannotWriteOrReplay(){
         ready();assertEquals(404,status(()->redemption.redeem(other,key(),1,redeemBody())));assertEquals(404,status(()->redemption.detail(other,1)));String k=key();redeem(k);jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id=?",shop.session());assertEquals(401,status(()->redeem(k)));assertEquals(1,count("order_redemption"));
