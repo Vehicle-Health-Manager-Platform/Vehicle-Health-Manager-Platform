@@ -84,7 +84,8 @@ export function createPublicationFlow({ state, api, token, vehicle = () => null,
       const field = operator ? 'card_id' : 'experience_id'
       state.rows = more ? [...state.rows, ...result.items.filter(c => !state.rows.some(old => old[field] === c[field]))] : result.items
       state.total = result.total || 0; state.page = page; state.cursor = result.next_cursor ?? null; state.loaded = true
-    } catch (e) { if (current(version, actor, car)) { state.message = e.message || '加载失败'; state.kind = e.kind || 'network' } }
+    } catch (e) { if (current(version, actor, car)) { state.message = e.message || '加载失败'; state.kind = e.kind || 'network'
+      if (['unauthorized', 'forbidden'].includes(state.kind)) { state.rows = []; state.total = 0; state.cursor = null; state.loaded = false } } }
     finally { if (current(version, actor, car)) state.busy = false }
   }
   async function moderate(card, decision, reason) {
@@ -98,6 +99,7 @@ export function createPublicationFlow({ state, api, token, vehicle = () => null,
       state.loaded = false; state.page = 0
       state.message = decision === 'APPROVE' ? '已批准；车主可随时撤回授权' : '已驳回；车主可重新明确授权送审'
     } catch (e) { if (current(version, actor, car)) { state.message = e.message || '审核未确认，请重试'; state.kind = e.kind || 'network'
+      if (['unauthorized', 'forbidden'].includes(state.kind)) { state.rows = []; state.total = 0; state.loaded = false }
       if (['invalid', 'unauthorized', 'forbidden', 'missing', 'conflict'].includes(state.kind)) pending = null } }
     finally { if (current(version, actor, car)) state.writing = false }
   }

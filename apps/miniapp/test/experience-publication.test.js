@@ -79,6 +79,14 @@ test('审核成功移除待审且要求刷新分页；离页不回写，双击�
   finish({}); await p; assert.deepEqual(f.state.rows, []); assert.equal(f.state.loaded, false)
   await f.flow.load(); const late = f.flow.moderate(pending, 'APPROVE', null); f.flow.reset(); finish({}); await late; assert.deepEqual(f.state.rows, [])
 })
+test('运营权限或会话失效时清除已加载摘要，分页失败也不残留', async () => {
+  for (const kind of ['unauthorized','forbidden']) {
+    const f = fixture(true, { moderate: async () => { throw new PublicationError(kind, 'denied') } })
+    await f.flow.load(); await f.flow.moderate(pending, 'APPROVE', null); assert.deepEqual(f.state.rows, []); assert.equal(f.state.loaded, false)
+    let failed=false;const page=fixture(true,{pending:async()=>{if(failed)throw new PublicationError(kind,'denied');return {items:[pending],total:50}}})
+    await page.flow.load(); failed=true;await page.flow.load(true);assert.deepEqual(page.state.rows, [])
+  }
+})
 for (const cloud of [false, true]) test(`${cloud ? '微信云托管' : 'uni.request'}运输登录、审核和同款请求，不混用身份`, async () => {
   const requests = [], send = r => { requests.push(r); const path = r.path || r.url
     r.success({ statusCode: 200, data: { code: 0, data: path.includes('/login') ? login : path.includes('/moderate') ? { card_id: 4, revision: 2, status: 'PUBLISHED', decision: 'APPROVE', reason_code: null } : { items: [item], next_cursor: null } } }) }

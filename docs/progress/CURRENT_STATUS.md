@@ -4,7 +4,7 @@
 
 ## 当前阶段与 GitHub 状态
 
-A7.2c1 私有经验卡片与授权已实现并分阶段上传：规格#57、后端#58、页面#59六项CI全绿，后端411/411、小程序204/204，微信/H5构建、真实HTTP36/36与gstack草稿/测试禁送审/撤回/来源订单/重入通过。新归档同事务生成私有摘要，默认关闭生成，测试禁送审；授权仅待审核不公开，原记录保留。收口codex/a7-experience-e2e最终CI见对应PR；未合并。[执行](A7_EXPERIENCE_DRAFTS_EXECUTION.md)、[验收](../testing/LOCAL_EXPERIENCE_CARDS_ACCEPTANCE.md)。下一步A7.2c2运营身份/审核/公开同款经验。
+A7.2c2 微信小程序经验审核与同款摘要已实现并上传：规格#61、独立运营认证#62、审核后端#63、微信页面#64，六项CI全绿；页面阶段后端437/437、小程序216/216，收口新增权限失效清理后小程序217/217。独立密码+短信二次认证核心、离线账号管理、批准/固定码驳回、本人重新授权/撤回、同款五字段摘要与来源实时过滤已完成。微信构建及开发者工具导入成功，真实HTTP43/43和gstack辅助实际批准/撤回/同款展示通过；模拟器自动化与真机未验收。默认发布关闭，正式短信尚需供应商适配。收口codex/a7-publication-e2e最终CI见对应PR，未合并。[执行](A7_EXPERIENCE_PUBLICATION_EXECUTION.md)、[验收](../testing/LOCAL_EXPERIENCE_PUBLICATION_ACCEPTANCE.md)。
 
 A7.2b 施工档案回写已实现：[规格 #53](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/53)、[后端 #54](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/54)、[页面 #55](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/55) 六项 CI 全绿；后端398/398、小程序196/196、真实HTTP29/29、本机数据库27/27，gstack档案/来源订单/首页标注通过。采用评价后可靠任务，默认关闭消费，联调收口分支codex/a7-archive-e2e最终CI见对应PR；未合并。[执行](A7_SERVICE_ARCHIVE_EXECUTION.md)、[验收](../testing/LOCAL_SERVICE_ARCHIVES_ACCEPTANCE.md)。自签证书直连图片仍待验收。
 
@@ -26,7 +26,8 @@ A7.2b 施工档案回写已实现：[规格 #53](https://github.com/Vehicle-Heal
 | A7.1 核销验码与审计 | 后端与页面六项 CI 通过，真实 HTTP / H5 验收完成，逐阶段已上传 | [规格 #45](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/45)、[后端 #46](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/46)、[页面 #47](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/47)；前序完整 CI 369/181 项，收口 #48 新增七图门禁、相关 56 项与真实 HTTP 51/51，最终全量以 #48 Checks 为准；[阶段总记录](A7_REDEMPTION_EXECUTION.md)、[本机验收](../testing/LOCAL_ORDER_REDEMPTION_ACCEPTANCE.md)；未合并 |
 | A7.2a 本人订单评价 | 后端/页面六项CI全绿，真实HTTP/H5完成，逐阶段上传 | [规格#49](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/49)、[后端#50](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/50)、[页面#51](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/51)；后端389/389、小程序193/193、真实HTTP44/44、57表；[执行](A7_OWNER_REVIEWS_EXECUTION.md)、[验收](../testing/LOCAL_ORDER_REVIEWS_ACCEPTANCE.md)。收口最终CI见其PR，未合并 |
 | A7.2b 施工档案回写 | 已实现并逐阶段上传，收口最终CI见PR | 评价后唯一任务、来源快照、恢复、本人施工照片及测试标注；V017/58表，398/196项、HTTP29/29；[执行](A7_SERVICE_ARCHIVE_EXECUTION.md) |
-| A7.2c及后续 | 尚未实现 | 经验卡片、授权脱敏与审核、评价公开规则、退款/取消争议订单分步推进，见[下一步规划](NEXT_STEPS.md) |
+| A7.2c1–c2 | 微信小程序私有授权、独立运营审核和同款摘要已实现并上传 | #57–#64及收口PR；默认开关关闭，正式短信/微信模拟器/真机另验收 |
+| 后续 | 尚未实现 | 正式收退款、评价展示/商家评分、入驻/运营治理/增长，见[下一步规划](NEXT_STEPS.md) |
 
 ## 主分支合并验收
 

@@ -45,7 +45,7 @@ function envVar(container, name) {
 
 // ---- Fixtures -------------------------------------------------------------------
 function verifyIsolation(stage = 'a6') {
-  if(!['a6','a7','a7-review','a7-archive','a7-card'].includes(stage))throw Error('Unsupported local stage');
+  if(!['a6','a7','a7-review','a7-archive','a7-card','a7-publication'].includes(stage))throw Error('Unsupported local stage');
   const project = docker(['inspect', MYSQL, '--format', '{{index .Config.Labels "com.docker.compose.project"}}'])
   if (project !== 'vehicle-auth-local') throw new Error('Refusing non-test Docker project: ' + project)
   const backend = JSON.parse(docker(['inspect', BACKEND]))[0];
@@ -55,10 +55,11 @@ function verifyIsolation(stage = 'a6') {
   if (columns !== '3') throw new Error('A5 requires V011 and V012 applied to the isolated database (found ' + columns + '/3 columns)')
   const disputes = sql("SELECT (SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name IN ('order_dispute','order_dispute_record')), (SELECT column_comment FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='pickup_check' AND column_name='owner_confirm');").split('	')
   if (disputes[0] !== '2' || !disputes[1].includes('3')) throw new Error('A5.6 requires V013 applied to the isolated database (found ' + disputes[0] + '/2 tables)')
-  if(!image.startsWith(stage==='a7-card'?'vehicle-auth/backend:a7-experience-card':stage==='a7-archive'?'vehicle-auth/backend:a7-service-archive':stage==='a7-review'?'vehicle-auth/backend:a7-owner-review':stage==='a7'?'vehicle-auth/backend:a7-redeem':'vehicle-auth/backend:a6-service'))throw Error('Expected isolated stage image');
+  if(!image.startsWith(stage==='a7-publication'?'vehicle-auth/backend:a7-experience-publication':stage==='a7-card'?'vehicle-auth/backend:a7-experience-card':stage==='a7-archive'?'vehicle-auth/backend:a7-service-archive':stage==='a7-review'?'vehicle-auth/backend:a7-owner-review':stage==='a7'?'vehicle-auth/backend:a7-redeem':'vehicle-auth/backend:a6-service'))throw Error('Expected isolated stage image');
   const tables=sql("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE();");
   const additions=sql("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name IN ('service_evidence_file','service_report_submission');");
-  if(tables!==(stage==='a7-card'?'59':stage==='a7-archive'?'58':stage==='a7-review'?'57':stage==='a7'?'55':'54')||additions!=='2')throw Error('Expected isolated stage schema');
+  if(tables!==(stage==='a7-publication'?'61':stage==='a7-card'?'59':stage==='a7-archive'?'58':stage==='a7-review'?'57':stage==='a7'?'55':'54')||additions!=='2')throw Error('Expected isolated stage schema');
+  if(stage==='a7-publication' && (image!=='vehicle-auth/backend:a7-experience-publication' || sql("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name IN ('experience_card','experience_card_moderation','operator_account','service_archive_job');")!=='4'))throw Error('Exact publication image and V019 required');
   if(stage==='a7-card' && (image!=='vehicle-auth/backend:a7-experience-card' || sql("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name IN ('experience_card','service_archive_job');")!=='2'))throw Error('Exact private-card image and V018 required');
   if(stage==='a7-archive' && (image!=='vehicle-auth/backend:a7-service-archive' || sql("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name='service_archive_job';")!=='1'))throw Error('Exact archive image and V017 required');
   if(stage==='a7' && image!=='vehicle-auth/backend:a7-redeem')throw Error('Exact A7 test image required');
