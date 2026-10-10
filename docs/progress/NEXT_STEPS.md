@@ -1,6 +1,10 @@
 # 下一步规划
 
-> **2026-10-10 当前下一步：R1a 收口联调**。规格→后端→页面三支已完成（[规格](../superpowers/specs/2026-10-10-r1a-merchant-onboarding-design.md)、[计划](../superpowers/plans/2026-10-10-r1a-merchant-onboarding.md)、[契约](../api/MERCHANT_ONBOARDING.md)）：V020 迁移（63 表）、后端服务与幂等/配额并发/开店事务、车主与运营三端页面均已上传，小程序 254 项离线测试与 mp-weixin/h5 构建通过。下一步在真实容器＋隔离库上做端到端联调：写入本机库 V020、重建含该阶段代码的后端镜像、开启 `MERCHANT_ONBOARDING_ENABLED`、用运营 CLI 授予 `can_onboard`，跑通「车主上传资质→提交→运营批准→门店与 PENDING_ACTIVATION 店长账号落库→配额占满后再批准被拒」，并如实记录未验收项（账号激活、正式短信、真机）。随后 R1b 员工与基础数据→R2 交易业务→车辆档案→健康 AI/服务→券→邀请→进度消息→积分/考核/社区。完整三端清单、拆分和门槛见 [业务优先规划](THREE_ROLE_BUSINESS_PLAN_2026-10-10.md)。
+> **2026-10-10 当前下一步：R1b 员工与基础数据**。R1a 已收口：35 支堆叠 PR 全部合并回 `main`（`b389973`），真实容器＋隔离库端到端 **92/92**（[验收](../testing/LOCAL_MERCHANT_ONBOARDING_ACCEPTANCE.md)），并修复了 #78 引入的写接口双层信封契约漂移（[契约](../api/MERCHANT_ONBOARDING.md)）。R1b 范围：店员/技师维护、员工码受控签发与撤销、门店资料与标准项目/车型治理，门槛见 [业务优先规划](THREE_ROLE_BUSINESS_PLAN_2026-10-10.md)。随后 R2 交易业务（退款/佣金）→车辆档案→健康 AI/服务→券→邀请→进度消息→积分/考核/社区；账号激活与正式短信统一 R9。**正式短信、真实微信登录、真机与开发者工具模拟器页面流程仍未验收**。
+
+> **2026-10-10 R1a 收口联调已完成**：写入本机库 V020、重建含该阶段代码的镜像 `vehicle-auth/backend:r1a-onboarding`、开启 `MERCHANT_ONBOARDING_ENABLED`、用运营 CLI 授予 `can_onboard`，跑通「车主真实上传资质→提交→运营批准→门店与 `PENDING_ACTIVATION` 店长账号落库→配额占满后再批准被拒」，并覆盖驳回重提、幂等重放、越权、不安全文件与审计最小化共 92 项。下文为历史进度。
+
+> **2026-10-10 R1a 收口联调计划（已完成，见上）**。规格→后端→页面三支已完成（[规格](../superpowers/specs/2026-10-10-r1a-merchant-onboarding-design.md)、[计划](../superpowers/plans/2026-10-10-r1a-merchant-onboarding.md)、[契约](../api/MERCHANT_ONBOARDING.md)）：V020 迁移（63 表）、后端服务与幂等/配额并发/开店事务、车主与运营三端页面均已上传，小程序 254 项离线测试与 mp-weixin/h5 构建通过。下一步在真实容器＋隔离库上做端到端联调：写入本机库 V020、重建含该阶段代码的后端镜像、开启 `MERCHANT_ONBOARDING_ENABLED`、用运营 CLI 授予 `can_onboard`，跑通「车主上传资质→提交→运营批准→门店与 PENDING_ACTIVATION 店长账号落库→配额占满后再批准被拒」，并如实记录未验收项（账号激活、正式短信、真机）。随后 R1b 员工与基础数据→R2 交易业务→车辆档案→健康 AI/服务→券→邀请→进度消息→积分/考核/社区。完整三端清单、拆分和门槛见 [业务优先规划](THREE_ROLE_BUSINESS_PLAN_2026-10-10.md)。
 
 > **2026-10-10 R1a 页面已交付（未联调）**：车主端申请/进度/驳回重提页与运营端待审/审核/配额页已实现并注册路由，服务层与后端逐字段对齐；修复 #78 运营登录新增 `can_onboard` 导致的消费端契约漂移。下文为历史进度。
 

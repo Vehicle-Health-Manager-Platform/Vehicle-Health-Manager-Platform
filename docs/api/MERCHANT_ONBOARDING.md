@@ -57,10 +57,12 @@ V020 扩展 `merchant_application`（`address/contact_phone/revision/merchant_id
 
 错误：`40001` 参数/未知字段/重复键，`40100` 会话失效，`40300` 角色或运营权限不足，`40400` 申请或资质文件不可用，`40900` 业务冲突（`49001` 重复未终结申请、`49002` 资质文件不可用、`49003` 版本或状态变化、`49010` 区域品类满额、`49011` 配额低于当前有效门店数），`42900` 运营共享限流，`50300` 开关/依赖/事务不可用（写请用原幂等键原载荷重试）。
 
+**响应信封为单层**：成功为 `{code:0,message,data,request_id}`，`data` 直接是上表的业务载荷（`mine`/`pending`/`detail`/`quotas` 与 `submit`/`moderate`/`setQuota` 一致）。三个写接口返回的就是幂等记录里保存的同一份信封，**不得再次包裹**（曾经多包一层成 `data.data` 会导致客户端判协议错误）；`MerchantOnboardingHttpTest.writeScopesReturnSingleEnvelope` 断言了这一点。写接口一律 `Cache-Control: no-store`。
+
 ## 状态
 
-后端与迁移：接口、锁序、幂等、审计、配额并发与失败回滚已有 MockMvc 与真实 MySQL 测试覆盖。
+后端与迁移：接口、锁序、幂等、审计、配额并发与失败回滚已有 MockMvc 与真实 MySQL 测试覆盖，并在**真实后端容器＋真实隔离库**上端到端验收通过（含真实私有上传与 ClamAV 扫描的资质受控访问），见[本机端到端验收](../testing/LOCAL_MERCHANT_ONBOARDING_ACCEPTANCE.md)。
 
 小程序侧已接入，服务层 `apps/miniapp/src/services/merchant-onboarding.js` 与服务端逐字段对齐（固定品类、固定驳回码、6 位行政区划码、1..9 个互不相同的资质文件 id 与 0–100000 配额上限），页面为车主端 `pages/owner/onboarding`（申请＋进度＋驳回重提，入口在「我的」）、运营端 `pages/operator/onboarding`（待审＋详情＋批准/固定码驳回＋资质受控查看）与 `pages/operator/quotas`（配额列表与设置）。运营身份登录响应固定携带 `can_review` 与 `can_onboard` 两个布尔权限位，客户端按各自权限决定入口，缺字段或类型不符即判协议错误。
 
-**真实后端容器 + 隔离库 + 微信开发者工具的端到端验收、正式短信与门店账号激活（R9）均未完成**，不得当作已验收；开发者工具也无法替代真机验证。
+**真实后端容器 + 隔离库的端到端验收已完成（92/92）**；**微信开发者工具模拟器页面流程、正式短信与门店账号激活（R9）、真机仍未完成**，不得当作已验收。
