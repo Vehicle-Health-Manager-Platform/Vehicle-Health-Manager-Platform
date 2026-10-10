@@ -6,7 +6,7 @@ const { connectDevtools, waitForPage } = require('../apps/miniapp/test/helpers/d
 const { elements, waitElement, tapButton, tapElement } = require('../apps/miniapp/test/helpers/native-elements.cjs')
 const ids = { owner:9301290, vehicle:9301290, shop:9301201, otherShop:9301202, tech:9301231, otherTech:9301232, binding:9301331, otherBinding:9301332, slot:9301301 }
 const report = { completed:false, startedAt:new Date().toISOString(), checks:[], scope:'synthetic identity; real native page buttons and HTTP; showModal system result is mocked (native modal click pending); LOCAL_TEST is not real payment; uploads are HTTP preparation', nativeModalClickAccepted:false }
-const sessions = []; let actors, order, client
+const sessions = []; let actors, order, client, modalMocked=false
 const pass = name => { report.checks.push({name,passed:true}); console.log(`PASS ${name}`) }
 const delay = ms => new Promise(resolve=>setTimeout(resolve,ms))
 function status() { return f.sql(`SELECT status FROM \`order\` WHERE id=${order}`) }
@@ -25,9 +25,10 @@ async function modal(p,label,confirm) {
   report.step=`${p.path}: ${confirm?'confirm':'cancel'} ${label}`
   // Official SDK system-API mock only; page methods/data and HTTP remain real.
   await client.rpc('App.mockWxMethod',{method:'showModal',result:{confirm,cancel:!confirm,errMsg:'showModal:ok'}})
+  modalMocked=true
   try {
     await tapButton(client.rpc,p,label); await delay(150)
-  } finally {await client.rpc('App.mockWxMethod',{method:'showModal'})}
+  } finally {await client.rpc('App.mockWxMethod',{method:'showModal'});modalMocked=false}
 }
 async function expectHttp(method,target,token,options) {
   const response=await f.api(method,target,token,options)
@@ -140,10 +141,11 @@ async function main() {
   p=await page('pages/technician/orders'); await waitElement(client.rpc,p,'button',e=>e.text==='前往技师登录'); pass('cleared identities restore native technician login requirement')
   report.completed=true
 }
-main().catch(error=>{report.failure=error.message;console.error(error.message);process.exitCode=1}).finally(async()=>{
+module.exports={nativeFixtureSessions:sessions,prepareNativeFixture:async()=>{await prepare();return {actors,order,ids,sessions,checks:[...report.checks]}}}
+if(require.main===module)main().catch(error=>{report.failure=error.message;console.error(error.message);process.exitCode=1}).finally(async()=>{
   let cleaned=true
   if(client){
-    try{await client.rpc('App.mockWxMethod',{method:'showModal'})}catch{cleaned=false;process.exitCode=1}
+    if(modalMocked)try{await client.rpc('App.mockWxMethod',{method:'showModal'})}catch{cleaned=false;process.exitCode=1}
     try{await client.rpc('App.callWxMethod',{method:'__autocareNativeAcceptance',args:[{role:'clear'}]})}catch{cleaned=false;process.exitCode=1}
     finally{client.close()}
   }
