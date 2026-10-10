@@ -5,8 +5,8 @@ if(!process.argv.includes('--allow-local-upload-tls')) {
   process.exit(2)
 }
 const server=https.createServer({
-  key:fs.readFileSync('test-results/local-upload-key.pem'),
-  cert:fs.readFileSync('test-results/local-upload-cert.pem'),
+  key:fs.readFileSync(process.argv.includes('--native-preview-certificate')?'test-results/native-preview-key.pem':'test-results/local-upload-key.pem'),
+  cert:fs.readFileSync(process.argv.includes('--native-preview-certificate')?'test-results/native-preview-cert.pem':'test-results/local-upload-cert.pem'),
 },(req,res)=>{
   if(req.headers.origin&&req.headers.origin!=='http://127.0.0.1:4317'){res.writeHead(403);return res.end()}
   if(req.method==='OPTIONS'){
