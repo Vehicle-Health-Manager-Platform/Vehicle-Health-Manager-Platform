@@ -6,4 +6,4 @@ export function archiveEntryUrl(vehicleId, mode = 'manual') {
 
 export function archiveInputType(query) { return query?.mode === 'photo' ? 1 : 3 }
 
-export function archiveInputTypeName(value) { return value === 1 ? '拍照录入' : value === 3 ? '手动录入' : '其他录入' }
+export function archiveInputTypeName(value) { return value === 1 ? '拍照录入' : value === 3 ? '手动录入' : value === 4 ? '施工自动归档' : '其他录入' }

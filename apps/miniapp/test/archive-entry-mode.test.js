@@ -15,4 +15,5 @@ test('only the exact photo mode marks a photo entry and labels known sources', (
   assert.equal(archiveInputType(null), 3)
   assert.equal(archiveInputTypeName(1), '拍照录入')
   assert.equal(archiveInputTypeName(3), '手动录入')
+  assert.equal(archiveInputTypeName(4), '施工自动归档')
 })

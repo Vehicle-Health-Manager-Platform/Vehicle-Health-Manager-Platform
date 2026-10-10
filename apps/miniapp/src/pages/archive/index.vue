@@ -8,6 +8,7 @@ import { archiveApi, archiveFailure } from '../../services/archives.js'
 import { imageApi } from '../../services/private-images.js'
 import { selectedOwnerVehicle, selectOwnerVehicle } from '../../services/owner-vehicle-selection.js'
 import { archiveEntryUrl, archiveInputTypeName } from '../../services/archive-entry-mode.js'
+import { displayTime } from '../../services/reservations.js'
 
 const vehicle = selectedOwnerVehicle, rows = ref([]), total = ref(0), page = ref(0)
 const busy = ref(false), loaded = ref(false), message = ref(''), kind = ref(''), retryMore = ref(false)
@@ -32,10 +33,10 @@ async function load(more = false) {
     const safe = archiveFailure(error); message.value = safe.message; kind.value = safe.kind
   } finally { if (current === generation) busy.value = false }
 }
-async function preview(id) {
+async function preview(item, id) {
   const token = ownerSession.accessToken, current = generation
   try {
-    const result = await imageApi.access(token, id)
+    const result = item.input_type === 4 ? await archiveApi.access(token, item.archive_id, id) : await imageApi.access(token, id)
     if (current !== generation || token !== ownerSession.accessToken) return
     await imageApi.preview(result.url)
   } catch { if (current === generation) { message.value = '图片预览未打开，请重试'; kind.value = 'preview' } }
@@ -61,7 +62,16 @@ function add(mode = 'manual') { if (vehicle.value) uni.navigateTo({ url: archive
           <view class="record-top"><text class="name">{{ item.title }}</text><text class="type">{{ labels[item.archive_type - 1] }} · {{ archiveInputTypeName(item.input_type) }}</text></view>
           <text class="copy">{{ item.recorded_date }}<text v-if="item.mileage !== null"> · {{ item.mileage }} km</text></text>
           <text v-if="item.notes" class="copy">{{ item.notes }}</text>
-          <view v-if="item.file_ids.length" class="images"><button v-for="(id, index) in item.file_ids" :key="id" class="secondary" @tap="preview(id)">查看图片 {{ index + 1 }}</button></view>
+          <view v-if="item.input_type === 4" class="service-source" data-testid="service-archive-source">
+            <text v-if="item.test_mode" class="error" data-testid="archive-test-warning">测试施工记录，未真实扣款</text>
+            <text class="copy">实际工时 {{ item.work_minutes }} 分钟</text>
+            <text v-if="item.no_parts" class="copy">本次未使用配件</text>
+            <text v-for="(part, index) in item.parts_used" :key="index" class="copy">{{ part.name }} · {{ part.brand }} · {{ part.model }} × {{ part.quantity }}</text>
+            <text class="copy">报工 {{ displayTime(item.submitted_at) }}</text><text class="copy">质检签字 {{ displayTime(item.signed_at) }}</text>
+            <text class="copy">核销 {{ displayTime(item.redeemed_at) }}</text>
+            <button class="secondary" @tap="uni.navigateTo({url:`/pages/order/detail?id=${item.source.order_id}`})">查看来源订单</button>
+          </view>
+          <view v-if="item.file_ids.length" class="images"><button v-for="(id, index) in item.file_ids" :key="id" class="secondary" @tap="preview(item, id)">查看{{ item.input_type === 4 ? '施工' : '' }}图片 {{ index + 1 }}</button></view>
         </view>
         <text v-if="message" class="error" role="status">{{ message }}</text>
         <button v-if="['unauthorized','forbidden'].includes(kind)" class="secondary" @tap="login">重新登录</button>
@@ -73,6 +83,8 @@ function add(mode = 'manual') { if (vehicle.value) uni.navigateTo({ url: archive
 </template>
 
 <style scoped>
+.service-source { display: flex; flex-direction: column; gap: 12rpx; margin: 16rpx 0; }
+.record > .copy { white-space: pre-line; }
 .records { margin-top: 28rpx; padding: 32rpx; border-radius: 24rpx; background: white; display: flex; flex-direction: column; }
 .top,.record-top { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
 .actions { display: flex; flex-wrap: wrap; gap: 12rpx; justify-content: flex-end; }
