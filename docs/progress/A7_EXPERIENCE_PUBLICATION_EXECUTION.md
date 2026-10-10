@@ -29,4 +29,4 @@
 
 真实HTTP43/43通过；运营由无HTTP CLI随机创建，密码+合成bcrypt OTP实际登录，非正式短信；独立合成WECHAT来源不是真实扣款，也未修改原LOCAL_TEST来源。gstack实际车主撤回→另一同款车主隐藏、运营点击批准→另一车主展示通过，原文保持私有。第一次gstack启动超时不计通过。见[验收](../testing/LOCAL_EXPERIENCE_PUBLICATION_ACCEPTANCE.md)。
 
-所有阶段已按直接依赖堆叠，#60→#61→#62→#63→#64→收口，未合并或发布生产。最终CI待收口PR当前head检查，不重复承诺历史测试数量。
+所有阶段已按直接依赖堆叠，#60→#61→#62→#63→#64→收口#65，未合并或发布生产。#65提交da75ef34b029eb781915c598b7c2e37e3f32eed5最终[CI运行37920868127](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37920868127)六项全绿，后端437/437、小程序217/217，微信/H5构建通过。保留的合成UI会话已撤销、账号禁用，私有会话文件已删除，临时H5与转发端口已停止。
