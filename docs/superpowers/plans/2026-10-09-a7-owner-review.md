@@ -26,16 +26,16 @@ OWNER 本人；COMPLETED 且核销/付款一致、无未解决争议；1–5 整
 
 接口：`OrderReviewInput.parse(String): JsonNode` 与 `normalize(JsonNode): JsonNode`；`OrderReviews.submit(VehicleOwner,String,JsonNode): JsonNode`、`detail(VehicleOwner,long): Map<String,Object>`。
 
-- [ ] 新建真实 MySQL 测试，使用已有迁移和合成订单/付款/核销，实际运行：
+- [x] 新建真实 MySQL 测试，使用已有迁移和合成订单/付款/核销，实际运行：
   ```java
   var a=reviews.submit(owner,key,body).path("data");
   var b=reviews.submit(owner,key,body).path("data");
   assertEquals(a,b);assertEquals(1,count("order_review"));
   ```
-- [ ] 实现严格整数、码点长度、图片唯一和 JSON 重复键/尾随拒绝；服务端资格及最小投影。
-- [ ] 实现锁顺序和事务，加入三种失败触发器分别使评价、审计、幂等缓存回滚；真实并发同/异内容断言唯一评价及唯一审计。
-- [ ] 运行 `mvn -B -Dtest=JdbcOrderReviewsTest,OrderReviewsHttpTest,OrderReviewsNoDatabaseTest,JdbcOrderRedemptionTest test`，零失败/错误/跳过；执行 OpenAPI 生成及 V016 重放验证。
-- [ ] 更新中文接口、阶段记录；提交/推送 `codex/a7-review-backend`，创建后端 PR。
+- [x] 实现严格整数、码点长度、图片唯一和 JSON 重复键/尾随拒绝；服务端资格及最小投影。
+- [x] 实现锁顺序和事务，加入三种失败触发器分别使评价、审计、幂等缓存回滚；真实并发同/异内容断言唯一评价及唯一审计。
+- [x] 运行 `mvn -B -Dtest=JdbcOrderReviewsTest,OrderReviewsHttpTest,OrderReviewsNoDatabaseTest,JdbcOrderRedemptionTest test`，零失败/错误/跳过；执行 OpenAPI 生成及 V016 重放验证。
+- [x] 更新中文接口、阶段记录；提交/推送 `codex/a7-review-backend`，创建后端 PR。
 
 ## 阶段 3：小程序评价
 
@@ -43,24 +43,28 @@ OWNER 本人；COMPLETED 且核销/付款一致、无未解决争议；1–5 整
 
 接口：`createOrderReviewsApi({baseUrl,runtime})` 提供 `detail(token,order)`、`submit(token,body,key)`；`reviewBody(order,rating,content,files)`；`createOrderReviewFlow({state,token,body,api,newKey,confirm,onConflict})` 提供 `resume/reset/submit`。
 
-- [ ] 测试缺资格、最小字段、错误响应不展示服务端文本、输入上下界；拒绝错误 order_id、额外身份字段及不一致 test_mode。
-- [ ] 状态流用可延迟 Promise 验证确认取消不提交、同载荷网络失败原键重试、不同内容换键、隐藏/账号切换丢弃旧响应、成功不重复提交：
+- [x] 测试缺资格、最小字段、错误响应不展示服务端文本、输入上下界；拒绝错误 order_id、额外身份字段及不一致 test_mode。
+- [x] 状态流用可延迟 Promise 验证确认取消不提交、同载荷网络失败原键重试、不同内容换键、隐藏/账号切换丢弃旧响应、成功不重复提交：
   ```js
   await flow.submit();await flow.submit();
   assert.equal(requests[0].key,requests[1].key)
   ```
-- [ ] 评价页接真实 API：不默认选择评分；文字/图片、二次确认、已评展示、原图上传重试、图片失败提示、测试标签；离页/换号全部清空。
-- [ ] 运行 `npm test --workspace @autocare/miniapp`、`npm run build:miniapp`、`npm run build:h5 --workspace @autocare/miniapp`；更新文档，提交/推送 `codex/a7-review-ui` 并创建页面 PR。
+- [x] 评价页接真实 API：不默认选择评分；文字/图片、二次确认、已评展示、原图上传重试、图片失败提示、测试标签；离页/换号全部清空。
+- [x] 运行 `npm test --workspace @autocare/miniapp`、`npm run build:miniapp`、`npm run build:h5 --workspace @autocare/miniapp`；更新文档，提交/推送 `codex/a7-review-ui` 并创建页面 PR。
 
 ## 阶段 4：联调与收口
 
 文件：`scripts/local_order_reviews_e2e.cjs`、`docs/testing/LOCAL_ORDER_REVIEWS_ACCEPTANCE.md`、`docs/progress/A7_OWNER_REVIEWS_EXECUTION.md`；进度/下一步/角色缺口。
 
-- [ ] 打包最终 JAR，与原隔离环境备份后创建评价测试镜像，仅回环端口；在隔离 MySQL 应用 V016 两次。
-- [ ] 可复现真实 HTTP：合成登录只桥接身份，真实核销记录作为前置；真实私有上传→本人评价→原键重试→本人读取与唯一审计；覆盖角色、他人、状态、缺核销、支付异常、图片和撤销会话。检查运行 JAR 摘要及精确镜像/网络/表数；凭据不打印、不提交，结束撤销。
-- [ ] gstack 验证实际填写/取消确认/提交/本人结果、离页清空；仅 CORS 与合成身份桥接，业务请求真实转发。真机和直连预览留独立验收。
-- [ ] 更新所有中文证据和 A7.2b 规划，提交/推送 `codex/a7-review-e2e`，创建收口 PR，最终 head 六项 CI 全绿后标记可审阅。
+- [x] 打包最终 JAR，与原隔离环境备份后创建评价测试镜像，仅回环端口；在隔离 MySQL 应用 V016 两次。
+- [x] 可复现真实 HTTP：合成登录只桥接身份，真实核销记录作为前置；真实私有上传→本人评价→原键重试→本人读取与唯一审计；覆盖角色、他人、状态、缺核销、支付异常、图片和撤销会话。检查运行 JAR 摘要及精确镜像/网络/表数；凭据不打印、不提交，结束撤销。
+- [x] gstack 验证实际填写/取消确认/提交/本人结果、离页清空；仅 CORS 与合成身份桥接，业务请求真实转发。真机和直连预览留独立验收。
+- [x] 更新所有中文证据和 A7.2b 规划，提交/推送 `codex/a7-review-e2e`，创建收口 PR，最终 head 六项 CI 全绿后标记可审阅。
 
 ## 上传与合并关系
 
 评价四 PR 连在现有 #45→#48 后；待用户另行授权合并时，按依赖顺序逐支把下一支 base 改回 main，复核差异与当前 CI 再合并。阶段上传授权不等于合并或部署授权。
+
+## 实际完成记录
+
+规格#49、后端#50、页面#51均六项CI通过；新评价19项+核销回归15项共34项本地通过，小程序193项、两端构建、真实HTTP44项和gstack带真实上传图片的确认/取消/本人查询通过。收口分支codex/a7-review-e2e，最终CI见其PR当前head。没有合并或生产部署。真实相机、真机、正式付款、直连预览独立验收。
