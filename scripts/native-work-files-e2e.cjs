@@ -95,8 +95,9 @@ async function main(){
   await actor('shop');p=await page(`pages/merchant/protection?id=${order}`)
   await waitElement(client.rpc,p,'text',e=>e.text.startsWith('已质检签字'));pass('native merchant reads locked signed service report')
   report.completed=true
+  return {fixture,client,localFile,mockScope,page,actor,decide,input,report}
 }
-main().catch(error=>{report.failure=error.message;console.error(error.message);process.exitCode=1}).finally(async()=>{
+async function cleanupNativeWorkFiles(){
   let cleaned=true
   if(client){
     for(const method of mockScope?.methods||[])try{await restore(method)}catch{cleaned=false}
@@ -109,4 +110,7 @@ main().catch(error=>{report.failure=error.message;console.error(error.message);p
   if(!cleaned)process.exitCode=1
   report.cleaned=cleaned;report.finishedAt=new Date().toISOString();const output=path.resolve('test-results/wechat-native-work-files.json');fs.mkdirSync(path.dirname(output),{recursive:true});fs.writeFileSync(output,JSON.stringify(report,null,2))
   console.log(`Native work/files ${report.completed&&cleaned?'COMPLETE':'INCOMPLETE'}: ${report.checks.length} passed`)
-})
+  return cleaned
+}
+module.exports={runNativeWorkFiles:main,cleanupNativeWorkFiles}
+if(require.main===module)main().catch(error=>{report.failure=error.message;console.error(error.message);process.exitCode=1}).finally(cleanupNativeWorkFiles)
