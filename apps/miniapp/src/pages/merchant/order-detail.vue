@@ -61,7 +61,7 @@ onUnload(() => { visible = false; flow.reset(); apply.reset() })
       <text>报价版本 {{ state.value.price_snapshot?.version || '未提供' }} · 下单价 ¥{{ state.value.price_snapshot?.price || state.value.amount_due }}</text>
       <text data-testid="merchant-order-status">{{ stateLabel(state.value.status) }}</text>
       <text v-if="state.value.status==='DISPUTED'">车主已对接车单提出异议，派工与施工已阻断。请打开接车单提交处理记录；是否解除争议由车主复核决定，商家不能单方面恢复订单。</text>
-      <text v-else-if="state.value.status==='RECEIVED'">车主已确认接车，可派工给本店已绑定微信的技师；未确认或存在异议时服务端会拒绝派工。</text>
+      <text v-else-if="state.value.status==='RECEIVED'">已完成接车检查；车主确认后可派工给本店已绑定微信的技师，未确认或存在异议时服务端会拒绝派工。</text>
       <text v-if="state.value.status === 'PENDING_PAYMENT'">支付期限 {{ displayTime(state.value.expires_at) }}</text>
       <text v-if="state.value.close_reason">关闭原因 {{ closeReasonLabel(state.value.close_reason) }}</text>
       <view v-if="state.value.payment_summary"><text>支付状态 {{ state.value.payment_summary.status }}</text><text v-if="state.value.payment_summary.test_mode">测试支付，未真实扣款，不可作为收款凭据</text></view>

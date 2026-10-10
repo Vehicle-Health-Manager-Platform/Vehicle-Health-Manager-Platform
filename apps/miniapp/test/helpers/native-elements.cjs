@@ -25,7 +25,14 @@ async function waitElement(rpc, page, selector, predicate = () => true) {
   throw new Error(`Native element timeout: ${selector}`)
 }
 async function tapButton(rpc, page, label) {
-  const button = await waitElement(rpc, page, 'button', element => element.text === label)
-  await rpc('Element.tap', { pageId: page.pageId, elementId: button.elementId })
+  const button = await waitElement(rpc, page, 'button', element => element.text?.trim() === label)
+  await tapElement(rpc,page,button)
 }
-module.exports = { elements, waitElement, tapButton }
+async function tapElement(rpc,page,element) {
+  const offset=await rpc('Element.getOffset',{pageId:page.pageId,elementId:element.elementId})
+  assert.ok(Number.isFinite(offset.top),'Native element offset missing')
+  await rpc('App.callWxMethod',{method:'pageScrollTo',args:[{scrollTop:Math.max(0,offset.top-120),duration:0}]})
+  await new Promise(resolve=>setTimeout(resolve,150))
+  await rpc('Element.tap',{pageId:page.pageId,elementId:element.elementId})
+}
+module.exports = { elements, waitElement, tapButton, tapElement }
