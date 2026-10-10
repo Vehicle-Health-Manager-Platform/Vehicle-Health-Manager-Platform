@@ -4,9 +4,9 @@
 
 `migrations/V002__staff_wechat_identity.sql` 是独立版本化迁移，不改变上述生成的 V001 基线。它为技师添加按 AppID 区分的微信绑定历史；同一 AppID 下一个微信身份和一个员工账号各只能有一条有效绑定。解除绑定保留历史记录。应用层仍需校验员工角色、账号状态和商家状态；唯一索引不能代替授权。
 
-## 当前迁移版本（2026-10-09）
+## 当前迁移版本（2026-10-11）
 
-当前结构为 V001–V019，共 61 张表；生成的 V001 仍是 39 表基线，后续结构通过独立迁移叠加。新 Compose 数据卷按版本顺序初始化，已有数据库先备份再逐项补迁移。
+当前结构为 V001–V021，共 63 张表；生成的 V001 仍是 39 表基线，后续结构通过独立迁移叠加。新 Compose 数据卷按版本顺序初始化，已有数据库先备份再逐项补迁移。
 
 | 版本 | 当前业务结构 |
 | --- | --- |
@@ -22,6 +22,8 @@
 | V016–V017 | 不可变本人评价及私有附件；可靠施工归档任务，订单/评价/输出唯一 |
 | V018 | experience_card：私有结构化摘要，订单/档案各唯一；授权版本/时间、撤回、revision；不回填历史、不自动公开 |
 | V019 | operator_account独立密码/权限与experience_card_moderation只追加审核，card/revision及公共UUID唯一；累计61表，历史不补授权或审核 |
+| V020 | merchant_application扩展（地址/联系电话/revision/merchant_id/驳回码）、新增只追加merchant_application_review与merchant_region_category_quota、operator_account.can_onboard、merchant.region_code；累计63表 |
+| V021 | staff_account补display_name与created_by，供店长维护本店店员/技师；不新建平行表，员工码哈希沿用V001列；只扩列不改旧数据 |
 
 V011 复用既有 `pickup_check.owner_confirm`（0 待决定、1 确认、2 异议）、`confirm_at` 和 `order.owner_confirmed_at`。单据决定、订单变化、审计与幂等响应同事务提交，契约见[车主接车单决定](../api/PICKUP_OWNER_DECISION.md)。CI 同时检查 V011 重复执行与两处原因容量。
 

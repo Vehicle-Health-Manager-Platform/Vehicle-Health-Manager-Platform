@@ -57,8 +57,9 @@ public class AuthTokens {
     }
 
     public Map<String, Object> merchant(MerchantIdentityRepository.Merchant merchant) {
+        // 店长/店员共用同一登录入口，令牌角色必须等于员工行的真实角色。
         return issue(new AuthSessionRepository.Session(UUID.randomUUID().toString(), "staff_account",
-            merchant.staffId(), "MERCHANT", MERCHANT_APP_ID, null, merchant.merchantId()),
+            merchant.staffId(), merchant.role(), MERCHANT_APP_ID, null, merchant.merchantId()),
             merchantUser(merchant));
     }
 
@@ -75,7 +76,7 @@ public class AuthTokens {
         var session = requiredSessions().rotate(sha256(refreshToken), sha256(next))
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "刷新凭证无效或已失效"));
         if (!currentAppId.equals(session.appId())
-            && !("MERCHANT".equals(session.role()) && MERCHANT_APP_ID.equals(session.appId()))) {
+            && !(isStorefrontRole(session.role()) && MERCHANT_APP_ID.equals(session.appId()))) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "刷新凭证无效");
         }
         Map<String, Object> user = currentUser(session);
@@ -120,16 +121,21 @@ public class AuthTokens {
                 .map(AuthTokens::technicianUser)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "员工或商家不可用"));
         }
-        if ("staff_account".equals(session.subjectType()) && "MERCHANT".equals(session.role())
+        if ("staff_account".equals(session.subjectType()) && isStorefrontRole(session.role())
             && MERCHANT_APP_ID.equals(session.appId()) && session.merchantId() != null) {
             MerchantIdentityRepository merchantRepository = merchants.getIfAvailable();
             if (merchantRepository == null) throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "身份数据库尚未配置");
             return merchantRepository.byId(session.subjectId())
-                .filter(merchant -> merchant.active() && merchant.merchantId() == session.merchantId())
+                .filter(merchant -> merchant.active() && session.role().equals(merchant.role())
+                    && merchant.merchantId() == session.merchantId())
                 .map(AuthTokens::merchantUser)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "员工或商家不可用"));
         }
         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "刷新凭证无效");
+    }
+
+    private static boolean isStorefrontRole(String role) {
+        return "MERCHANT".equals(role) || "STAFF".equals(role);
     }
 
     private String jwt(String subject, String role, String type, String sessionId, long seconds,
@@ -174,6 +180,7 @@ public class AuthTokens {
     }
 
     private static Map<String, Object> merchantUser(MerchantIdentityRepository.Merchant merchant) {
-        return Map.of("id", merchant.staffId(), "role", "merchant", "merchant_id", merchant.merchantId());
+        return Map.of("id", merchant.staffId(), "role", merchant.manager() ? "merchant" : "staff",
+            "merchant_id", merchant.merchantId());
     }
 }

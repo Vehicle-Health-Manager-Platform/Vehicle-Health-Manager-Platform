@@ -1,6 +1,8 @@
 # 下一步规划
 
-> **2026-10-11 当前下一步：R1b 员工（已在实施中）**。规格与四段计划已定稿（[规格](../superpowers/specs/2026-10-11-r1b-staff-store-design.md)、[计划](../superpowers/plans/2026-10-11-r1b-staff-store.md)）：新增角色 `STAFF`（店员），店员与店长在履约执行面同级、仅管理面限店长；V021 只加 `display_name`/`created_by` 两列；员工码走轮换语义且明文不落库；授权放宽 9 个落点（`MerchantQuotes` 写保持店长专属）。下一步：后端 PR（迁移＋服务/控制器＋授权放宽＋MockMvc/MySQL 测试＋契约）→ 页面 PR → 真实容器收口。R1c 标准项目/车型治理随后另起一套堆叠 PR。
+> **2026-10-11 当前下一步：R1b 页面 PR（后端已完成）**。规格与四段计划见[规格](../superpowers/specs/2026-10-11-r1b-staff-store-design.md)、[计划](../superpowers/plans/2026-10-11-r1b-staff-store.md)。后端已实施并上传：V021（63 表）、员工维护/门店资料服务与控制器、员工码受控签发撤销、停用即时阻断会话，履约执行面放宽为 `role IN ('MERCHANT','STAFF')` 而管理面限店长，契约见 [MERCHANT_STAFF.md](../api/MERCHANT_STAFF.md)、OpenAPI 127 操作，MockMvc 6 + 真实 MySQL 8 通过、相关回归 200/200。下一步：**小程序页面 PR**（店长端员工列表/新增/启停/员工码签发撤销/门店资料编辑，店员复用商家登录入口，离线测试与 mp-weixin/h5 构建）→ **真实容器收口 PR**（`scripts/local_merchant_staff_e2e.cjs` 走全验收矩阵）。R1c 标准项目/车型治理随后另起一套堆叠 PR。**正式短信、真实微信员工绑定与账号激活统一 R9。**
+
+> **2026-10-11 R1b 员工规格与计划（历史）**。规格与四段计划已定稿（[规格](../superpowers/specs/2026-10-11-r1b-staff-store-design.md)、[计划](../superpowers/plans/2026-10-11-r1b-staff-store.md)）：新增角色 `STAFF`（店员），店员与店长在履约执行面同级、仅管理面限店长；V021 只加 `display_name`/`created_by` 两列；员工码走轮换语义且明文不落库；授权放宽 9 个落点（`MerchantQuotes` 写保持店长专属）。下一步：后端 PR（迁移＋服务/控制器＋授权放宽＋MockMvc/MySQL 测试＋契约）→ 页面 PR → 真实容器收口。R1c 标准项目/车型治理随后另起一套堆叠 PR。下文为历史进度。
 
 > **2026-10-10 R1b 员工与基础数据（历史规划）**。R1a 已收口：35 支堆叠 PR 全部合并回 `main`（`b389973`），真实容器＋隔离库端到端 **92/92**（[验收](../testing/LOCAL_MERCHANT_ONBOARDING_ACCEPTANCE.md)），并修复了 #78 引入的写接口双层信封契约漂移（[契约](../api/MERCHANT_ONBOARDING.md)）。R1b 范围：店员/技师维护、员工码受控签发与撤销、门店资料与标准项目/车型治理，门槛见 [业务优先规划](THREE_ROLE_BUSINESS_PLAN_2026-10-10.md)。随后 R2 交易业务（退款/佣金）→车辆档案→健康 AI/服务→券→邀请→进度消息→积分/考核/社区；账号激活与正式短信统一 R9。**正式短信、真实微信登录、真机与开发者工具模拟器页面流程仍未验收**。
 

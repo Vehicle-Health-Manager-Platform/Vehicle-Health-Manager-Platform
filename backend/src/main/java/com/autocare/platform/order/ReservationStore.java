@@ -33,10 +33,11 @@ public class ReservationStore {
     }
     void merchant(MerchantActor actor,boolean lock){
         String tail=lock?" FOR UPDATE":"";
-        var session=jdbc.query("SELECT id FROM auth_session WHERE id=? AND subject_type='staff_account' AND subject_id=? AND role='MERCHANT' AND app_id='merchant-account' AND merchant_id=? AND revoked_at IS NULL AND expires_at>UTC_TIMESTAMP()"+tail,(r,n)->r.getString(1),actor.session(),actor.staffId(),actor.merchantId());
-        var staff=jdbc.query("SELECT id FROM staff_account WHERE id=? AND merchant_id=? AND role='MERCHANT' AND status='ACTIVE' AND is_deleted=0"+tail,(r,n)->r.getLong(1),actor.staffId(),actor.merchantId());
+        // 店长与店员共用履约执行面：角色必须与令牌一致，未知角色一律拒绝。
+        var session=jdbc.query("SELECT id FROM auth_session WHERE id=? AND subject_type='staff_account' AND subject_id=? AND role=? AND app_id='merchant-account' AND merchant_id=? AND revoked_at IS NULL AND expires_at>UTC_TIMESTAMP()"+tail,(r,n)->r.getString(1),actor.session(),actor.staffId(),actor.role(),actor.merchantId());
+        var staff=jdbc.query("SELECT id FROM staff_account WHERE id=? AND merchant_id=? AND role=? AND status='ACTIVE' AND is_deleted=0"+tail,(r,n)->r.getLong(1),actor.staffId(),actor.merchantId(),actor.role());
         var shop=jdbc.query("SELECT id FROM merchant WHERE id=? AND status=1 AND is_deleted=0"+tail,(r,n)->r.getLong(1),actor.merchantId());
-        if(session.isEmpty() || staff.isEmpty() || shop.isEmpty() || !Instant.now().isBefore(actor.expires()))throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"商家登录已失效");
+        if(session.isEmpty() || staff.isEmpty() || shop.isEmpty() || !Instant.now().isBefore(actor.expires()))throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"门店登录已失效，请重新登录");
     }
     void lockShop(long id){if(jdbc.query("SELECT id FROM merchant WHERE id=? FOR UPDATE",(r,n)->r.getLong(1),id).isEmpty())throw missing();}
     void technician(TechnicianActor actor,String appId,boolean lock){

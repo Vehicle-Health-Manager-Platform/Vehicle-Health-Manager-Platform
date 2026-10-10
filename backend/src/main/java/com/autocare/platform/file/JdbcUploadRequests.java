@@ -46,11 +46,11 @@ public class JdbcUploadRequests {
         }
         if ("staff_account".equals(owner.type())) {
             var sessions = jdbc.query("SELECT s.id FROM auth_session s JOIN staff_account a ON a.id=s.subject_id JOIN merchant m ON m.id=a.merchant_id "
-                + "WHERE s.id=? AND s.subject_type='staff_account' AND s.subject_id=? AND s.role='MERCHANT' AND s.app_id='merchant-account' "
-                + "AND s.merchant_id=? AND s.revoked_at IS NULL AND s.expires_at>UTC_TIMESTAMP() AND a.role='MERCHANT' "
+                + "WHERE s.id=? AND s.subject_type='staff_account' AND s.subject_id=? AND s.role IN ('MERCHANT','STAFF') AND s.app_id='merchant-account' "
+                + "AND s.merchant_id=? AND s.revoked_at IS NULL AND s.expires_at>UTC_TIMESTAMP() AND a.role=s.role "
                 + "AND a.merchant_id=? AND a.status='ACTIVE' AND a.is_deleted=0 AND m.status=1 AND m.is_deleted=0 FOR UPDATE",
                 (rs,n) -> rs.getString(1), owner.session(), owner.id(), owner.merchantId(), owner.merchantId());
-            if (sessions.isEmpty()) throw new UploadHttpException(401, "商家登录已失效");
+            if (sessions.isEmpty()) throw new UploadHttpException(401, "门店登录已失效");
             return;
         }
         if (!"user".equals(owner.type())) throw new UploadHttpException(403, "无权上传");
