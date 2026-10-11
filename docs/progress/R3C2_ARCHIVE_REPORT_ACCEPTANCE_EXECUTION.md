@@ -1,6 +1,6 @@
 # R3c2 收口验收阶段执行记录
 
-日期：2026-10-11。收口验收 PR [#118](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/118) head `codex/r3c2-archive-report-acceptance`、base `codex/r3c2-archive-report-miniapp`。PR #115–#118 各六项 CI 全绿；#118 的 backend、schema-mysql、compose-smoke 全部成功，新增 500/501 条边界由 Testcontainers backend CI 验证。PR #114 仍 OPEN，未合并任何阶段。
+日期：2026-10-11。收口验收 PR [#118](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/118) head `codex/r3c2-archive-report-acceptance`、最初 base `codex/r3c2-archive-report-miniapp`。PR #115–#118 各六项 CI 全绿；#118 的 backend、schema-mysql、compose-smoke 全部成功，新增 500/501 条边界由 Testcontainers backend CI 验证。**合并结果：**R1c–R3c2 的阶段 PR #85–#118 已按依赖顺序合并到 main；#118 merge commit 为 `7688c554c3ce3b94363e7ec167b8e2eed68a93dd`。
 
 ## 本阶段收口工作
 
