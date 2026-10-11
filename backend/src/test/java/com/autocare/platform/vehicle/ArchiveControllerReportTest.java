@@ -66,6 +66,21 @@ class ArchiveControllerReportTest {
         assertArrayEquals(pdf, Base64.getDecoder().decode(data.path("content_base64").asText()));
     }
 
+    @Test void acceptsThreeMiBExactlyAndRejectsTheNextByteWithoutReturningPartialPdf() throws Exception {
+        byte[] atLimit = new byte[3 * 1024 * 1024];
+        when(renderer.render(report)).thenReturn(atLimit, new byte[atLimit.length + 1]);
+
+        var accepted = controller.report(ownerJwt(), request(), null);
+        assertEquals(200, accepted.getStatusCode().value());
+        assertEquals(atLimit.length, accepted.getHeaders().getContentLength());
+        assertSame(atLimit, accepted.getBody());
+
+        var tooLarge = assertThrows(ResponseStatusException.class,
+            () -> controller.report(ownerJwt(), request(), null));
+        assertEquals(409, tooLarge.getStatusCode().value());
+        assertEquals("报告文件超过导出上限，请缩小日期范围", tooLarge.getReason());
+    }
+
     private static MockHttpServletRequest request() {
         var request = new MockHttpServletRequest();
         request.addParameter("vehicle_id", "12");

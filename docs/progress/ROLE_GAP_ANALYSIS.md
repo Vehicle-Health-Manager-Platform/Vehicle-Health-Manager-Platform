@@ -1,6 +1,6 @@
 # 三端功能缺口清点
 
-> **2026-10-11 当前 R3c2**：#114 OPEN；规格 #115 以 #114 分支为 base、后端 #116 以 #115 分支为 base，均六项 CI 全绿；后端 CI 的 backend/schema-mysql/compose-smoke均通过。微信页面/传输/临时文件生命周期已完成本地实现，小程序331项通过，微信与H5构建通过；微信阶段 PR [#117](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/117) 已创建，CI运行中。实施记录见[微信阶段](R3C2_ARCHIVE_REPORT_MINIAPP_EXECUTION.md)及[后端阶段](R3C2_ARCHIVE_REPORT_BACKEND_EXECUTION.md)。后端非 Testcontainers 测试246项与报告定向6项通过。真实设备 PDF 阅读器验收仍留 R9。商家/技师未获得车主全档案权限；OCR/VIN供应商未开通；正式身份/资金仍 R9。
+> **2026-10-11 当前 R3c2 收口验收**：#114 OPEN；规格#115、后端#116、微信#117按前序分支堆叠且六项CI全绿。小程序331项、mp-weixin/H5构建通过；后端非Testcontainers测试246项、报告定向6项通过。当前补充500/501与3 MiB边界测试、汇总验收证据，待收口PR/CI。真实微信PDF阅读器验收留R9。商家/技师没有车主全档案权限；OCR/VIN供应商未开通；正式短信/身份/资金后置，无PC。
 
 > **2026-10-11 三端总规划**：[三端剩余功能与实施规划](THREE_ROLE_BUSINESS_PLAN_2026-10-11.md)。当前 R3c1 接车扫码/油表及 R3c2 本人档案报告处于堆叠 PR 路线，依次核对 CI 并收口；R1a 入驻/配额和 R1b 员工/员工码/门店资料已实现并合并。正式身份与真机最后验收。
 
