@@ -90,6 +90,10 @@ run_sql_file docs/sql/migrations/V021__merchant_staff_store.sql
 
 run_sql_file docs/sql/migrations/V022__catalog_governance.sql
 run_sql_file docs/sql/migrations/V022__catalog_governance.sql
+run_sql_file docs/sql/migrations/V023__completion_archive_jobs.sql
+run_sql_file docs/sql/migrations/V023__completion_archive_jobs.sql
+[[ "$(query "SELECT is_nullable FROM information_schema.columns WHERE table_schema='$database' AND table_name='service_archive_job' AND column_name='review_id'")" == YES ]] || { echo 'V023 review_id must allow null' >&2; exit 1; }
+[[ "$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='$database' AND table_name='service_archive_job' AND column_name='card_requested' AND column_default='0'")" == 1 ]] || { echo 'V023 card_requested missing' >&2; exit 1; }
 
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
 [[ "$tables" == 63 ]] || { echo "Expected 63 tables after V022, got $tables" >&2; exit 1; }

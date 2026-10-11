@@ -85,6 +85,7 @@ public class OrderRedemption {
             db.jdbc.update("INSERT INTO order_redemption(order_id,merchant_id,staff_id,payment_id,test_mode,redeemed_at) VALUES(?,?,?,?,?,?)",id,actor.merchantId(),actor.staffId(),p.get("id"),test?1:0,now);
             if(!OrderStatus.can(OrderStatus.PENDING_VERIFY,OrderStatus.COMPLETED) || db.jdbc.update("UPDATE `order` SET status='COMPLETED' WHERE id=? AND status='PENDING_VERIFY'",id)!=1)throw new FulfillmentConflict(40905,"当前订单不可核销");
             db.jdbc.update("INSERT INTO order_status_transition(order_id,merchant_id,from_status,to_status,action,actor_type,actor_id,occurred_at) VALUES(?,?,'PENDING_VERIFY','COMPLETED','ORDER_COMPLETE','staff_account',?,?)",id,actor.merchantId(),actor.staffId(),now);
+            ServiceArchiveJobs.enqueueCompletion(db,id);
             var after=result(id,receipt(id),true);return new Change("ORDER_COMPLETE","order",id,Map.of("order_id",id,"order_status",OrderStatus.PENDING_VERIFY),after,after);
         });
     }

@@ -112,8 +112,10 @@ public class ArchiveService {
                 row.put("file_ids", files); row.put("created_at", rs.getTimestamp("created_at").toInstant().toString());
                 if (rs.getInt("input_type") == 4) {
                     var source = content.path("source");
-                    row.put("source", Map.of("order_id", source.path("order_id").asLong(), "report_id", source.path("report_id").asLong(),
-                        "review_id", source.path("review_id").asLong(), "redemption_id", source.path("redemption_id").asLong()));
+                    var sourceView = new java.util.LinkedHashMap<String,Object>();
+                    sourceView.put("order_id",source.path("order_id").asLong()); sourceView.put("report_id",source.path("report_id").asLong());
+                    sourceView.put("review_id",source.path("review_id").isNull()?null:source.path("review_id").asLong());
+                    sourceView.put("redemption_id",source.path("redemption_id").asLong()); row.put("source",sourceView);
                     row.put("test_mode", content.path("test_mode").asBoolean());
                     row.put("parts_used", content.path("parts_used")); row.put("no_parts", content.path("no_parts").asBoolean());
                     row.put("work_minutes", content.path("work_minutes").asInt());

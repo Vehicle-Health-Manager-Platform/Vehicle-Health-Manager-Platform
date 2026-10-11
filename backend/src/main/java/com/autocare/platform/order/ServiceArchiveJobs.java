@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 
-/** Database outbox: producers join the review transaction, consumers own a new transaction. */
+/** Database outbox: producers join completion/review transactions; consumers own a new transaction. */
 public class ServiceArchiveJobs {
     private static final Logger log = LoggerFactory.getLogger(ServiceArchiveJobs.class);
     private final ReservationStore db;
@@ -21,11 +21,13 @@ public class ServiceArchiveJobs {
     static JsonNode snapshot(ReservationStore db, long orderId, long reviewId) {
         var o = db.one("SELECT * FROM `order` WHERE id=? AND is_deleted=0", orderId);
         var r = db.one("SELECT * FROM order_redemption WHERE order_id=?", orderId);
-        var review = db.one("SELECT * FROM order_review WHERE id=? AND order_id=?", reviewId, orderId);
         require(new OrderReviews(db).unavailable(o, r, false) == null);
-        require(Objects.equals(review.get("user_id"), o.get("user_id"))
-            && Objects.equals(review.get("redemption_id"), r.get("id"))
-            && Objects.equals(review.get("test_mode"), r.get("test_mode")));
+        if (reviewId > 0) {
+            var review = db.one("SELECT * FROM order_review WHERE id=? AND order_id=?", reviewId, orderId);
+            require(Objects.equals(review.get("user_id"), o.get("user_id"))
+                && Objects.equals(review.get("redemption_id"), r.get("id"))
+                && Objects.equals(review.get("test_mode"), r.get("test_mode")));
+        }
         require(!db.jdbc.queryForList("SELECT id FROM vehicle WHERE id=? AND user_id=? AND is_deleted=0",
             o.get("vehicle_id"), o.get("user_id")).isEmpty());
         var reports = db.jdbc.queryForList("SELECT t.*,s.no_parts,s.no_fault_parts,s.submitted_at FROM technician_report t "
@@ -68,8 +70,11 @@ public class ServiceArchiveJobs {
         content.put("signed_at", ReservationStore.iso(report.get("signed_at")));
         content.put("redeemed_at", ReservationStore.iso(r.get("redeemed_at")));
         content.set("file_ids", db.mapper.valueToTree(expected.keySet()));
-        content.set("source", db.mapper.valueToTree(Map.of("order_id", orderId, "report_id", report.get("id"),
-            "review_id", reviewId, "redemption_id", r.get("id"), "vehicle_id", o.get("vehicle_id"), "user_id", o.get("user_id"))));
+        var source = db.mapper.valueToTree(Map.of("order_id", orderId, "report_id", report.get("id"),
+            "redemption_id", r.get("id"), "vehicle_id", o.get("vehicle_id"), "user_id", o.get("user_id")));
+        if (reviewId > 0) ((com.fasterxml.jackson.databind.node.ObjectNode)source).put("review_id", reviewId);
+        else ((com.fasterxml.jackson.databind.node.ObjectNode)source).putNull("review_id");
+        content.set("source", source);
         // Canonicalize numeric node widths before comparing with MySQL JSON on a retry.
         return db.parse(db.json(content));
     }
@@ -79,8 +84,31 @@ public class ServiceArchiveJobs {
         // Incomplete historical work must not invalidate an otherwise valid owner review.
         try { payload = snapshot(db, orderId, reviewId); }
         catch (InvalidSource | org.springframework.web.server.ResponseStatusException e) { /* recoverable source gap */ }
-        db.jdbc.update("INSERT INTO service_archive_job(order_id,review_id,payload) VALUES(?,?,?)", orderId, reviewId,
-            payload == null ? null : db.json(payload));
+        db.jdbc.update("INSERT INTO service_archive_job(order_id,review_id,payload) VALUES(?,?,?) "
+            + "ON DUPLICATE KEY UPDATE card_requested=IF(review_id IS NULL,1,card_requested),"
+            + "next_attempt_at=IF(review_id IS NULL,?,next_attempt_at)", orderId, reviewId,
+            payload == null ? null : db.json(payload), ReservationStore.time(db.now()));
+    }
+
+    static void enqueueCompletion(ReservationStore db, long orderId) {
+        JsonNode payload = null;
+        try { payload = snapshot(db, orderId, 0); }
+        catch (InvalidSource | org.springframework.web.server.ResponseStatusException e) { /* recoverable source gap */ }
+        db.jdbc.update("INSERT INTO service_archive_job(order_id,review_id,payload) VALUES(?,NULL,?)",
+            orderId, payload == null ? null : db.json(payload));
+    }
+
+    private void requestedCard(Map<String,Object> job) {
+        if (!cardsEnabled || ReservationStore.number(job,"card_requested") != 1 || job.get("review_id") != null) return;
+        long order = ReservationStore.number(job,"order_id");
+        var review = db.one("SELECT id FROM order_review WHERE order_id=?", order);
+        var current = snapshot(db, order, 0);
+        require(current.equals(db.parse(job.get("payload"))));
+        var archive = db.one("SELECT content FROM vehicle_archive WHERE id=? AND is_deleted=0", job.get("archive_id"));
+        require(current.equals(db.parse(archive.get("content"))));
+        if (db.jdbc.queryForList("SELECT id FROM experience_card WHERE order_id=?", order).isEmpty())
+            ExperienceCards.create(db, ReservationStore.number(job,"archive_id"), snapshot(db,order,ReservationStore.number(review,"id")));
+        db.jdbc.update("UPDATE service_archive_job SET card_requested=0,last_error=NULL WHERE id=?", job.get("id"));
     }
 
     public void consume(long id) {
@@ -88,8 +116,8 @@ public class ServiceArchiveJobs {
             var candidate = db.one("SELECT order_id FROM service_archive_job WHERE id=?", id);
             db.one("SELECT id FROM `order` WHERE id=? FOR UPDATE", candidate.get("order_id"));
             var job = db.one("SELECT * FROM service_archive_job WHERE id=? FOR UPDATE", id);
-            if ("DONE".equals(job.get("status"))) return;
-            var current = snapshot(db, ReservationStore.number(job, "order_id"), ReservationStore.number(job, "review_id"));
+            if ("DONE".equals(job.get("status"))) { requestedCard(job); return; }
+            var current = snapshot(db, ReservationStore.number(job, "order_id"), job.get("review_id") == null ? 0 : ReservationStore.number(job, "review_id"));
             var frozen = db.parse(job.get("payload"));
             require(frozen.isNull() || frozen.equals(current));
             var source = current.get("source");
@@ -99,12 +127,16 @@ public class ServiceArchiveJobs {
                 source.get("vehicle_id").longValue(), db.json(current), java.sql.Date.valueOf(current.get("recorded_date").textValue()));
             int position = 0; for (var file : current.get("file_ids"))
                 db.jdbc.update("INSERT INTO vehicle_archive_file(archive_id,file_id,position) VALUES(?,?,?)", archive, file.longValue(), position++);
-            var audit = Map.of("archive_id", archive, "order_id", candidate.get("order_id"), "review_id", job.get("review_id"), "test_mode", current.get("test_mode").booleanValue());
+            var audit = new LinkedHashMap<String,Object>();
+            audit.put("archive_id",archive); audit.put("order_id",candidate.get("order_id"));
+            audit.put("review_id",job.get("review_id")); audit.put("test_mode",current.get("test_mode").booleanValue());
             db.jdbc.update("INSERT INTO audit_log(actor_type,actor_id,action,resource_type,resource_id,before_state,after_state,request_id) "
                 + "VALUES('system',0,'SERVICE_ARCHIVE_CREATE','vehicle_archive',?,'{}',?,?)", archive, db.json(audit), UUID.randomUUID().toString());
             db.jdbc.update("UPDATE service_archive_job SET status='DONE',archive_id=?,payload=?,completed_at=?,last_error=NULL WHERE id=?",
                 archive, db.json(current), ReservationStore.time(db.now()), id);
-            if (cardsEnabled) ExperienceCards.create(db, archive, current);
+            if (cardsEnabled && job.get("review_id") != null) ExperienceCards.create(db, archive, current);
+            if (cardsEnabled && job.get("review_id") == null && ReservationStore.number(job,"card_requested") == 1)
+                requestedCard(db.one("SELECT * FROM service_archive_job WHERE id=?",id));
         });
     }
 
@@ -112,12 +144,12 @@ public class ServiceArchiveJobs {
     public void sweep() {
         if (!enabled) return;
         List<Long> ids;
-        try { ids = db.jdbc.query("SELECT id FROM service_archive_job WHERE status='PENDING' AND next_attempt_at<=? ORDER BY next_attempt_at,id LIMIT 20",
-            (rs, n) -> rs.getLong(1), ReservationStore.time(db.now())); }
+        try { ids = db.jdbc.query("SELECT id FROM service_archive_job WHERE (status='PENDING' OR (status='DONE' AND card_requested=1 AND ?)) AND next_attempt_at<=? ORDER BY next_attempt_at,id LIMIT 20",
+            (rs, n) -> rs.getLong(1), cardsEnabled, ReservationStore.time(db.now())); }
         catch (RuntimeException e) { log.warn("施工归档任务查询暂不可用"); return; }
         for (long id : ids) try { consume(id); }
         catch (RuntimeException e) {
-            try { db.transactions.executeWithoutResult(tx -> db.jdbc.update("UPDATE service_archive_job SET attempts=attempts+1,last_error=?,next_attempt_at=? WHERE id=? AND status='PENDING'",
+            try { db.transactions.executeWithoutResult(tx -> db.jdbc.update("UPDATE service_archive_job SET attempts=attempts+1,last_error=?,next_attempt_at=? WHERE id=? AND (status='PENDING' OR (status='DONE' AND card_requested=1))",
                 e instanceof InvalidSource ? "SOURCE_UNAVAILABLE" : "DATABASE_UNAVAILABLE", ReservationStore.time(db.now().plusSeconds(60)), id)); }
             catch (RuntimeException ignored) { log.warn("施工归档恢复记录暂不可用"); }
         }

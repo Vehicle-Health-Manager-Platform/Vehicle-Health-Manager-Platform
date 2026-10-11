@@ -28,6 +28,8 @@ class JdbcOrderRedemptionTest {
             ScriptUtils.executeSqlScript(c,new FileSystemResource(Path.of("..","docs","sql","migrations","V015__order_redemption.sql")));}
     }
     @BeforeEach void setup(){
+        jdbc.update("DELETE FROM service_archive_job");
+        jdbc.execute("DROP TRIGGER IF EXISTS reject_archive_queue");
         for(String trigger:List.of("reject_dispatch_audit","reject_dispatch_transition","reject_dispatch_cache","reject_work_audit","reject_work_transition","reject_work_cache","reject_redeem"))jdbc.execute("DROP TRIGGER IF EXISTS "+trigger);
         for(String table:List.of("order_redemption","auth_rate_limit","payment_event","payment_exception","payment","user","order_dispute_record","order_dispute","service_evidence_file","service_report_submission","repair_protection","technician_report","file_object","pickup_check_file","technician_assignment","pickup_check","order_status_transition","audit_log","idempotency_record","auth_session","staff_wechat_identity","order","appointment_slot","staff_account","merchant"))jdbc.update("DELETE FROM `"+table+"`");
         var manager=new DataSourceTransactionManager(jdbc.getDataSource());db=new ReservationStore(jdbc,new ObjectMapper(),new WriteIntegrityService(jdbc,new ObjectMapper(),manager),Clock.systemUTC(),manager);service=new TechnicianAssignments(db,"test-app");
@@ -60,6 +62,13 @@ class JdbcOrderRedemptionTest {
     int status(Runnable action){return assertThrows(ResponseStatusException.class,action::run).getStatusCode().value();}
     int code(Runnable action){return assertThrows(FulfillmentConflict.class,action::run).code;}
     String state(){return jdbc.queryForObject("SELECT status FROM `order` WHERE id=1",String.class);}
+    @Test void completionQueueFailureRollsBackReceiptTransitionAuditAndCanRetrySameKey() {
+        ready(); int audits=count("audit_log"),transitions=count("order_status_transition"); String k=key();
+        jdbc.execute("CREATE TRIGGER reject_archive_queue BEFORE INSERT ON service_archive_job FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='synthetic failure'");
+        assertEquals(503,status(()->redeem(k))); assertEquals("PENDING_VERIFY",state()); assertEquals(0,count("order_redemption"));
+        assertEquals(audits,count("audit_log")); assertEquals(transitions,count("order_status_transition")); assertEquals(0,count("service_archive_job"));
+        jdbc.execute("DROP TRIGGER reject_archive_queue"); redeem(k); assertEquals("COMPLETED",state()); assertEquals(1,count("service_archive_job"));
+    }
 
     JsonNode protection(){return db.mapper.valueToTree(Map.of("order_id",1,"items",List.of("SEAT_COVER","STEERING_COVER"),"photo_file_id",101));}
     JsonNode report(){return db.mapper.valueToTree(Map.of("order_id",1,"process_photos",List.of(102),"fault_part_photos",List.of(103),"finish_photos",List.of(104),"no_fault_parts",false,"repair_plan","synthetic work","fault_analysis","synthetic diagnosis","parts_used",List.of(Map.of("name","test","model","test","brand","test","quantity",1)),"no_parts",false,"work_hours",45));}
@@ -69,6 +78,7 @@ class JdbcOrderRedemptionTest {
     @Test void successSameKeyAndNewKeyCommitExactlyOnceAndNeverLeakCode(){
         ready();int audits=count("audit_log"),transitions=count("order_status_transition");String k=key();var first=redeem(k);assertEquals(first,redeem(k));assertFalse(redeem(key()).path("data").path("changed").asBoolean());
         assertEquals("COMPLETED",state());assertEquals(audits+1,count("audit_log"));assertEquals(transitions+1,count("order_status_transition"));assertEquals(1,count("order_redemption"));assertTrue(first.path("data").path("test_mode").asBoolean());
+        assertEquals(1,count("service_archive_job")); assertNull(jdbc.queryForObject("SELECT review_id FROM service_archive_job",Long.class));
         String payload=jdbc.queryForObject("SELECT after_state FROM audit_log WHERE action='ORDER_COMPLETE'",String.class)+jdbc.queryForObject("SELECT response_body FROM idempotency_record WHERE request_path LIKE '%/redeem' LIMIT 1",String.class);
         for(String secret:List.of("123456","verify_code","code_digest","channel_payment_no","user_id","staff_id"))assertFalse(payload.contains(secret),secret);
         assertNotNull(redemption.detail(shop,1).get("redemption"));
