@@ -1,6 +1,6 @@
 # 下一步规划
 
-> **2026-10-11 当前单元 R3c2 收口验收**：#114 OPEN；规格#115、后端#116、微信#117依次堆叠，三者六项CI全绿。小程序331/331，mp-weixin原生检查及H5兼容构建通过；后端246项本机非Testcontainers测试和报告定向6项通过。当前以 #117 为 base 补齐精确500/501条、3 MiB边界测试和完整验收记录，随后推送独立收口PR并核对CI。真机PDF阅读器验收留R9；收口通过后进入R3c3限时分享/撤销。OCR/VIN供应商未开通，正式短信/身份/资金后置；不做PC。执行见[R3c2验收记录](R3C2_ARCHIVE_REPORT_ACCEPTANCE_EXECUTION.md)和[验收证据](../testing/LOCAL_ARCHIVE_REPORT_ACCEPTANCE.md)。下方记录为历史。
+> **2026-10-11 当前单元 R3c2 收口验收**：#114 OPEN；规格#115、后端#116、微信#117依次堆叠，三者六项CI全绿。小程序331/331，mp-weixin原生检查及H5兼容构建通过；后端246项本机非Testcontainers测试和报告定向6项通过。收口PR [#118](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/118) 已以 #117 为 base，新增500/501条及PDF 3 MiB边界；控制器测试3/3通过，GitHub CI运行中。真机PDF阅读器验收留R9；收口通过后进入R3c3限时分享/撤销。OCR/VIN供应商未开通，正式短信/身份/资金后置；不做PC。执行见[R3c2验收记录](R3C2_ARCHIVE_REPORT_ACCEPTANCE_EXECUTION.md)和[验收证据](../testing/LOCAL_ARCHIVE_REPORT_ACCEPTANCE.md)。下方记录为历史。
 
 > **2026-10-11 R3c1已实施待合并**：规格#111、后端#112、微信#113、验收#114逐阶段上传。车主PAID二维码不含预约码，本店扫码先授权context再导航；新表单8图含独立FUEL，旧七图可读/重放且不补造油表。接车MySQL15项+履约13项、mock业务HTTP6项，微信319/319、微信/H5构建通过；六CI/全量结果见#114正文。原生扫码/二维码视觉/真机未验收，OCR/VIN/里程识别仍欠。见[执行](R3C1_PICKUP_SCAN_FUEL_EXECUTION.md)、[验收](../testing/LOCAL_PICKUP_SCAN_FUEL_ACCEPTANCE.md)。正式身份资金设备R9，无PC；以下保留历史。
 

@@ -1,6 +1,6 @@
 # R3c2 收口验收阶段执行记录
 
-日期：2026-10-11。当前分支 `codex/r3c2-archive-report-acceptance` 从微信阶段分支 `codex/r3c2-archive-report-miniapp` 建立；该分支在 PR #117 全六项 CI 通过后继续。当前阶段新增边界回归并整理全链路验收文档，作为单独堆叠 PR 上传；不合并任何 PR。
+日期：2026-10-11。收口验收 PR [#118](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/118) 已创建，head `codex/r3c2-archive-report-acceptance`、base `codex/r3c2-archive-report-miniapp`。PR #117 六项 CI 全绿；#118 checks 运行中。当前阶段新增边界回归并整理全链路验收文档；不合并任何 PR。
 
 ## 本阶段收口工作
 
@@ -14,4 +14,4 @@
 
 本机未安装 Maven；解除沙箱的 Docker 读取限制后，Maven 容器内控制器单测可运行，但 Testcontainers 仍无法连到 Windows Docker Desktop 命名管道。本阶段 JDBC 新增边界测试需由 GitHub `backend` CI 验证后才能记为通过。车主微信真机操作、系统 PDF 阅读器显示及返回清理仍保留 R9。
 
-通过本阶段全部 CI 后，R3c2 的代码/API/文档阶段收口完成；随后规划 R3c3 限时分享授权与撤销。正式短信、真实微信登录/资金和 PC 后台不进入本阶段。
+通过 #118 全部 CI 后，R3c2 的代码/API/文档阶段收口完成；随后规划 R3c3 限时分享授权与撤销。正式短信、真实微信登录/资金和 PC 后台不进入本阶段。
