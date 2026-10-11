@@ -112,8 +112,11 @@ public class ServiceArchiveJobs {
     }
 
     public void consume(long id) {
+        // Resolve immutable routing before the new transaction. A consistent read
+        // here inside REPEATABLE READ would freeze a snapshot before the order
+        // lock, hiding a review committed while this consumer waits for that lock.
+        var candidate = db.one("SELECT order_id FROM service_archive_job WHERE id=?", id);
         db.transactions.executeWithoutResult(tx -> {
-            var candidate = db.one("SELECT order_id FROM service_archive_job WHERE id=?", id);
             db.one("SELECT id FROM `order` WHERE id=? FOR UPDATE", candidate.get("order_id"));
             var job = db.one("SELECT * FROM service_archive_job WHERE id=? FOR UPDATE", id);
             if ("DONE".equals(job.get("status"))) { requestedCard(job); return; }
