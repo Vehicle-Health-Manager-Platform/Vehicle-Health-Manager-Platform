@@ -42,6 +42,12 @@ test('automatic service archives retain traceability test status actual minutes 
   assert.deepEqual((await listApi(service).list('owner', 11)).list[0], service)
   assert.throws(() => archiveBody({ ...fields, inputType: 4 }))
 })
+test('completion archives accept explicit null review while rejecting missing zero and malformed references', async () => {
+  const row = { ...service, source: { ...service.source, review_id: null } }
+  assert.equal((await listApi(row).list('owner', 11)).list[0].source.review_id, null)
+  for (const review_id of [undefined, 0, '9', -1])
+    await assert.rejects(listApi({ ...service, source: { ...service.source, review_id } }).list('owner', 11), e => e.kind === 'protocol')
+})
 test('automatic archives reject missing source test marker fake mileage and malformed report fields', async () => {
   for (const row of [{ ...service, source: {} }, { ...service, test_mode: undefined }, { ...service, mileage: 0 },
     { ...service, work_minutes: 0 }, { ...service, no_parts: false, parts_used: [null] }, { ...service, parts_used: [{ name: '油' }] }, { ...service, signed_at: 'bad' }])
