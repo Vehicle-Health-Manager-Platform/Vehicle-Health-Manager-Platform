@@ -227,6 +227,37 @@ def main():
     ]
     archive_list["responses"]["404"] = {"description": "本人车辆不可用"}
     archive_list["responses"]["503"] = {"description": "数据库暂不可用"}
+    archive_report_path = "/api/archive/report"
+    archive_report = operation("get", archive_report_path, "导出本人车辆档案 PDF", "F03")
+    archive_report["x-roles"] = "正式车主"
+    archive_report["x-implementation-status"] = "implemented"
+    archive_report["description"] = (
+        "单一只读 REPEATABLE READ 快照；仅本人手动/拍照档案和本人已完成施工归档。"
+        "默认导出全部可见记录；from/to 必须成对且日期首尾含。未知日期在全量报告中明示，"
+        "筛选时排除并报告未分类数量。最多500条、PDF最多3 MiB；不持久化报告。"
+        "无 Accept 或 application/pdf 返回 application/pdf；"
+        "Accept: application/vnd.autocare.pdf-base64+json;version=1 返回 JSON Base64 信封。"
+        "响应 no-store。详见 ARCHIVE_MANUAL.md。")
+    archive_report["parameters"] = [
+        {"name": "vehicle_id", "in": "query", "required": True,
+         "schema": {"type": "integer", "minimum": 1, "maximum": 9007199254740991}},
+        {"name": "from", "in": "query", "required": False, "schema": {"type": "string", "format": "date"}},
+        {"name": "to", "in": "query", "required": False, "schema": {"type": "string", "format": "date"}},
+        {"name": "Accept", "in": "header", "required": False, "schema": {"type": "string",
+         "enum": ["application/pdf", "application/vnd.autocare.pdf-base64+json;version=1"]}},
+    ]
+    archive_report["responses"] = {
+        "200": {"description": "本人私有报告，服务端不保存报告副本", "headers": {
+            "Cache-Control": {"schema": {"type": "string", "const": "no-store"}}},
+            "content": {"application/pdf": {"schema": {"type": "string", "format": "binary"}},
+                "application/json": {"schema": {"allOf": [{"$ref": "#/components/schemas/ApiResponse"},
+                    {"type": "object", "properties": {"data": {"$ref": "#/components/schemas/ArchiveReportEnvelope"}}}]}}}},
+        "400": {"description": "缺参、重复参数、未知参数或日期范围无效"},
+        "401": {"description": "OWNER 会话无效"}, "403": {"description": "非 OWNER 身份"},
+        "404": {"description": "车辆不可用"}, "409": {"description": "超过500条或 PDF 超过3 MiB"},
+        "503": {"description": "数据库、中文字体或 PDF 生成暂不可用"},
+    }
+    document["paths"][archive_report_path] = {"get": archive_report}
     project_fields = {
         "id": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
         "project_name": {"type": "string"}, "category": {"type": "integer", "minimum": 1, "maximum": 6},
@@ -234,6 +265,15 @@ def main():
         "base_price_high": {"type": "string", "pattern": r"^\d{1,8}\.\d{2}$"},
     }
     schemas = document["components"]["schemas"]
+    report_envelope_fields = {
+        "version": {"type": "integer", "const": 1},
+        "file_name": {"type": "string", "const": "vehicle-archive-report.pdf"},
+        "content_type": {"type": "string", "const": "application/pdf"},
+        "content_length": {"type": "integer", "minimum": 1, "maximum": 3145728},
+        "content_base64": {"type": "string", "contentEncoding": "base64"},
+    }
+    schemas["ArchiveReportEnvelope"] = {"type": "object", "additionalProperties": False,
+        "required": list(report_envelope_fields), "properties": report_envelope_fields}
     schemas["ServiceProject"] = {"type": "object", "required": list(project_fields), "properties": project_fields}
     detail_fields = {**project_fields, "service_content": {"type": "string"}, "quality_standard": {"type": ["string", "null"]}}
     schemas["ServiceProjectDetail"] = {"type": "object", "required": list(detail_fields), "properties": detail_fields}
