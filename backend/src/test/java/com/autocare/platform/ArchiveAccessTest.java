@@ -21,6 +21,8 @@ class ArchiveAccessTest {
         mvc.perform(get("/api/archive/1/files/1/access")).andExpect(status().isUnauthorized());
         mvc.perform(get("/api/archive/list").param("vehicle_id", "1"))
             .andExpect(status().isUnauthorized()).andExpect(jsonPath("$.code").value(40100));
+        mvc.perform(get("/api/archive/report").param("vehicle_id", "1"))
+            .andExpect(status().isUnauthorized()).andExpect(jsonPath("$.code").value(40100));
         mvc.perform(post("/api/archive/add").contentType("application/json").content("{}"))
             .andExpect(status().isUnauthorized()).andExpect(jsonPath("$.code").value(40100));
     }
@@ -30,6 +32,8 @@ class ArchiveAccessTest {
             String bearer = "Bearer " + LocalMileageTest.token(encoder, role);
             mvc.perform(get("/api/archive/1/files/1/access").header("Authorization", bearer)).andExpect(status().isForbidden());
             mvc.perform(get("/api/archive/list").header("Authorization", bearer).param("vehicle_id", "1"))
+                .andExpect(status().isForbidden()).andExpect(jsonPath("$.code").value(40300));
+            mvc.perform(get("/api/archive/report").header("Authorization", bearer).param("vehicle_id", "1"))
                 .andExpect(status().isForbidden()).andExpect(jsonPath("$.code").value(40300));
             mvc.perform(post("/api/archive/add").header("Authorization", bearer)
                 .header("Idempotency-Key", "123e4567-e89b-42d3-a456-426614174000")

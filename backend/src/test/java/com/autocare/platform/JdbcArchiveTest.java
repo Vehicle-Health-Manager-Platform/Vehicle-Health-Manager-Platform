@@ -2,12 +2,17 @@ package com.autocare.platform;
 
 import com.autocare.platform.common.write.WriteIntegrityService;
 import com.autocare.platform.vehicle.ArchiveInput;
+import com.autocare.platform.vehicle.ArchiveReport;
+import com.autocare.platform.vehicle.ArchiveReportFilter;
+import com.autocare.platform.vehicle.ArchiveReportService;
 import com.autocare.platform.vehicle.ArchiveService;
 import com.autocare.platform.vehicle.VehicleOwner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeAll;
@@ -30,6 +35,7 @@ class JdbcArchiveTest {
     static JdbcTemplate jdbc;
     static final ObjectMapper mapper = new ObjectMapper();
     ArchiveService service;
+    ArchiveReportService reports;
     VehicleOwner owner, other;
 
     @BeforeAll static void schema() throws Exception {
@@ -58,8 +64,9 @@ class JdbcArchiveTest {
             + "(12,'user',1,'test-archive-12','image/png',100,'CLEAN'),"
             + "(21,'user',2,'test-archive-21','image/jpeg',100,'CLEAN'),"
             + "(31,'user',1,'test-archive-31','image/jpeg',100,'PENDING')");
-        service = new ArchiveService(jdbc,
-            new WriteIntegrityService(jdbc, mapper, new DataSourceTransactionManager(jdbc.getDataSource())), mapper);
+        var transactions = new DataSourceTransactionManager(jdbc.getDataSource());
+        service = new ArchiveService(jdbc, new WriteIntegrityService(jdbc, mapper, transactions), mapper);
+        reports = new ArchiveReportService(jdbc, mapper, transactions);
     }
 
     ArchiveInput input(long vehicle, List<Long> files) {
@@ -151,5 +158,61 @@ class JdbcArchiveTest {
         assertEquals(2, count("vehicle_archive"));
         assertEquals(2, count("audit_log"));
         assertTrue(jdbc.queryForObject("SELECT after_state FROM audit_log ORDER BY id DESC LIMIT 1", String.class).contains("input_type"));
+    }
+
+    @Test void reportUsesTheSameOwnerVisibleSourcesAndDateRulesWithoutWriting() throws Exception {
+        service.add(owner, key(), input(101, List.of()));
+        service.add(owner, key(), new ArchiveInput(101, 1, LocalDate.of(2026, 10, 5), null,
+            "拍照记录", "保养照片", List.of(11L), 1));
+        insertArchive(101, 3, 3, null, "{\"version\":1,\"title\":\"日期未提供\",\"notes\":\"未知时间\"}");
+        insertArchive(101, 2, 4, Date.valueOf("2026-10-05"), """
+            {"version":2,"title":"施工记录","notes":"维修方案：检查发动机","mileage":null,
+             "test_mode":true,"work_minutes":45,"no_parts":true,"parts_used":[],
+             "submitted_at":"2026-10-05T01:00:00Z","signed_at":"2026-10-05T02:00:00Z",
+             "redeemed_at":"2026-10-05T03:00:00Z","source":{"user_id":1,"order_id":501}}
+            """);
+        insertArchive(101, 2, 4, Date.valueOf("2026-10-05"),
+            "{\"title\":\"他人施工\",\"source\":{\"user_id\":2},\"parts_used\":[],\"no_parts\":true}");
+        insertArchive(101, 2, 2, Date.valueOf("2026-10-05"), "{\"title\":\"历史语音\"}");
+        insertArchive(101, 1, 3, Date.valueOf("2026-10-05"), "{\"title\":\"已删除\"}");
+        jdbc.update("UPDATE vehicle_archive SET is_deleted=1 WHERE content->>'$.title'='已删除'");
+        jdbc.update("INSERT INTO vehicle_archive_file(archive_id,file_id,position) "
+            + "SELECT id,12,0 FROM vehicle_archive WHERE vehicle_id=101 AND input_type=4 AND content->>'$.source.user_id'='1'");
+        int auditsBefore = count("audit_log");
+
+        ArchiveReport complete = reports.load(owner, new ArchiveReportFilter(101, null, null));
+        assertEquals(4, complete.entries().size());
+        assertEquals(0, complete.undatedCount());
+        assertTrue(complete.entries().stream().anyMatch(row -> row.recordedDate() == null && row.title().equals("日期未提供")));
+        ArchiveReport.Entry work = complete.entries().stream().filter(row -> row.inputType() == 4).findFirst().orElseThrow();
+        assertTrue(work.testMode());
+        assertEquals(45, work.workMinutes());
+        assertTrue(work.noParts());
+        assertEquals(1, work.photoCount());
+        assertTrue(work.notes().contains("检查发动机"));
+
+        ArchiveReport filtered = reports.load(owner, new ArchiveReportFilter(101,
+            LocalDate.of(2026, 10, 5), LocalDate.of(2026, 10, 5)));
+        assertEquals(2, filtered.entries().size());
+        assertEquals(1, filtered.undatedCount());
+        assertTrue(filtered.entries().stream().allMatch(row -> LocalDate.of(2026, 10, 5).equals(row.recordedDate())));
+        assertEquals(auditsBefore, count("audit_log"));
+        assertEquals(404, status(() -> reports.load(other, new ArchiveReportFilter(101, null, null))));
+    }
+
+    @Test void reportRejectsRevokedSessionsAndMoreThanFiveHundredRows() {
+        String json = "{\"version\":1,\"title\":\"保养\",\"notes\":\"\"}";
+        List<Object[]> rows = new ArrayList<>();
+        for (int i = 0; i < 501; i++) rows.add(new Object[]{101, 1, json, 3, Date.valueOf("2026-10-04")});
+        jdbc.batchUpdate("INSERT INTO vehicle_archive(vehicle_id,archive_type,content,input_type,recorded_at) VALUES(?,?,?,?,?)", rows);
+        assertEquals(409, status(() -> reports.load(owner, new ArchiveReportFilter(101, null, null))));
+        jdbc.update("DELETE FROM vehicle_archive");
+        jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id=?", owner.session());
+        assertEquals(401, status(() -> reports.load(owner, new ArchiveReportFilter(101, null, null))));
+    }
+
+    private void insertArchive(long vehicleId, int archiveType, int inputType, Date date, String content) {
+        jdbc.update("INSERT INTO vehicle_archive(vehicle_id,archive_type,content,input_type,recorded_at) VALUES(?,?,?,?,?)",
+            vehicleId, archiveType, content, inputType, date);
     }
 }

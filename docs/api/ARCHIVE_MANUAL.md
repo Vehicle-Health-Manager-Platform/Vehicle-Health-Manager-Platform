@@ -21,6 +21,14 @@
 
 `GET /api/archive/list?vehicle_id=123&page=1&page_size=20` 先验证车辆属于当前车主，再分页返回拍照与手动记录，按发生日期和档案 ID 倒序返回 `{list,total,page,page_size}`；`total` 使用相同的方式过滤条件。每条含 `archive_id,vehicle_id,archive_type,input_type,recorded_date,mileage,title,notes,file_ids,created_at`。图片仅返回稳定文件 ID；预览时调用 `GET /api/file/{id}/access` 获取短时 URL，不把 URL 存入档案。首页摘要使用第一页的 `total` 与首条记录。
 
+## 导出本人档案报告
+
+`GET /api/archive/report?vehicle_id=123` 只允许有效 `user/OWNER` 会话导出本人未删除车辆。可选 `from=YYYY-MM-DD&to=YYYY-MM-DD` 必须成对、使用真实日期且 `from <= to`；首尾均含。拒绝重复或未知参数。服务端在只读 `REPEATABLE_READ` 快照中读取与本人列表相同的手动/拍照记录和 `source.user_id` 属于当前车主的完工施工归档，不读取历史语音、其他车主或施工中数据。未筛选时日期为空的记录仍包含并标明；使用日期区间时日期为空的记录排除，报告列出未归类数量。
+
+默认返回 `application/pdf` 和固定 `Content-Disposition: attachment; filename="vehicle-archive-report.pdf"`。微信云托管 `callContainer` 使用 `Accept: application/vnd.autocare.pdf-base64+json;version=1`，返回标准 `ApiResponse`；`data` 只有 `version=1,file_name,content_type,content_length,content_base64`。两种传输封装对应同一 PDF 字节，所有成功响应均 `Cache-Control: no-store`。PDF 使用仓库内 Noto Sans SC 字体子集，来源/再分发许可见 `backend/src/main/resources/fonts/NotoSansSC-OFL.txt`；报告按请求生成后直接返回，不保存副本或文件对象。
+
+超过 500 条、生成的 PDF 超过 3 MiB 返回 409，提示缩小日期范围，不截断或返回部分文件。参数错误400、会话失效401、非车主403、本人车辆不可用404、数据库/字体/PDF生成故障503；所有错误均为 no-store JSON。报告仅包含脱敏车牌/VIN、车辆登记里程、档案日期/类型/来源/标题/备注/记录里程/附件数量，以及施工归档的测试标记/时长/配件/关键时间；不含姓名、手机号、码值、对象键、签名图、照片原件、健康评分或推算指标。
+
 参数错误返回 400；失效会话 401；角色错误 403；车辆或图片不可用 404；数据库或事务不可用 503。跨车主图片与不存在图片使用相同的 404 文案，避免泄露他人资源。业务、幂等响应与成功审计一起提交，审计记录录入方式但不含标题、备注、对象键或签名 URL。详情见[手动设计](../superpowers/specs/2026-10-04-archive-manual-design.md)与[拍照设计](../superpowers/specs/2026-10-05-archive-photo-design.md)。
 
 V005 增加 `vehicle_archive_file`，已有数据库应先应用 V001–V004，再执行 V005；新建 Compose 卷自动按顺序执行。未进行真实微信、私有 MinIO/ClamAV、HTTPS 合法域名或真机联调前，不将其计作真实环境验收。
