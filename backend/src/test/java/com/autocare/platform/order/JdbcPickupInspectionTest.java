@@ -58,6 +58,38 @@ class JdbcPickupInspectionTest {
         assertEquals(409,assertThrows(ResponseStatusException.class,()->submit(key(),body())).getStatusCode().value());
         var changed=body().put("mileage",111);assertEquals(400,assertThrows(ResponseStatusException.class,()->submit(key,changed)).getStatusCode().value());
     }
+    com.fasterxml.jackson.databind.node.ObjectNode fuelBody(){
+        var body=body();((com.fasterxml.jackson.databind.node.ObjectNode)body.get("photos")).put("FUEL",8);return body;
+    }
+    void fuelFile(){jdbc.update("INSERT INTO file_object(id,owner_type,owner_id,object_key,content_type,size_bytes,scan_status) VALUES(8,'staff_account',1,'test/8','image/png',100,'CLEAN')");}
+    @Test void independentFuelCommitsReplaysAndSharesOnlyWithAuthorizedReaders(){
+        fuelFile();String key=key();var result=submit(key,fuelBody());assertEquals(result,submit(key,fuelBody()));
+        assertEquals(8,count("pickup_check_file"));assertEquals(1,count("audit_log"));
+        assertEquals(8,result.path("data").path("photos").path("FUEL").asLong());
+        assertEquals(6,result.path("data").path("photos").path("DASHBOARD").asLong());
+        assertEquals(service.detail(owner,1),service.detail(shop,1));assertEquals("staff_account",service.fileOwner(owner,1,8).type());
+        assertEquals(404,assertThrows(ResponseStatusException.class,()->service.fileOwner(foreign,1,8)).getStatusCode().value());
+        assertEquals(404,assertThrows(ResponseStatusException.class,()->service.fileOwner(other,1,8)).getStatusCode().value());
+    }
+    @Test void rejectsUnknownDuplicateAndUnsafeFuelWithoutPartialEvidence(){
+        fuelFile();
+        for(String slot:List.of("FUEL","UNKNOWN")){
+            var b=body();((com.fasterxml.jackson.databind.node.ObjectNode)b.get("photos")).put(slot,6);
+            assertEquals(400,assertThrows(ResponseStatusException.class,()->submit(key(),b)).getStatusCode().value());
+        }
+        var b=fuelBody();((com.fasterxml.jackson.databind.node.ObjectNode)b.get("photos")).putNull("FUEL");
+        assertEquals(400,assertThrows(ResponseStatusException.class,()->submit(key(),b)).getStatusCode().value());
+        for(String update:List.of("UPDATE file_object SET owner_id=2 WHERE id=8","UPDATE file_object SET owner_id=1,scan_status='PENDING' WHERE id=8","UPDATE file_object SET scan_status='CLEAN',is_deleted=1 WHERE id=8")){
+            jdbc.update(update);assertEquals(422,assertThrows(ResponseStatusException.class,()->submit(key(),fuelBody())).getStatusCode().value());
+            assertEquals("PAID",state());assertEquals(0,count("pickup_check_file"));assertEquals(0,count("pickup_check"));
+        }
+    }
+    @Test void fuelEvidenceRollsBackWithAuditAndRetriesSameKey(){
+        fuelFile();String key=key();jdbc.execute("CREATE TRIGGER reject_pickup_audit BEFORE INSERT ON audit_log FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='private failure'");
+        assertEquals(503,assertThrows(ResponseStatusException.class,()->submit(key,fuelBody())).getStatusCode().value());
+        assertEquals("PAID",state());for(String table:List.of("pickup_check","pickup_check_file","order_status_transition","audit_log","idempotency_record"))assertEquals(0,count(table));
+        jdbc.execute("DROP TRIGGER reject_pickup_audit");submit(key,fuelBody());assertEquals(8,count("pickup_check_file"));
+    }
     @Test void ownerConfirmIsPrivateIdempotentAndEnablesAssignmentGuard(){
         submit(key(),body());String decisionKey=key();
         assertEquals(404,assertThrows(ResponseStatusException.class,()->service.decide(foreign,key(),1,"CONFIRM",null)).getStatusCode().value());

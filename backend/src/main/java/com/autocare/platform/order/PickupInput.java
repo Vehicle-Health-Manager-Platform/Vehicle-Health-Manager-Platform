@@ -14,9 +14,11 @@ public record PickupInput(long orderId, String code, Map<String,Long> photos, in
         body.fieldNames().forEachRemaining(k->{if(!FIELDS.contains(k))throw ReservationInput.bad();});
         long order=id(body.path("order_id"));
         String code=text(body,"appointment_code",6,true);if(!code.matches("[0-9]{6}"))throw ReservationInput.bad();
-        var photo=body.path("photos");if(!photo.isObject()||photo.size()!=7)throw ReservationInput.bad();
+        var photo=body.path("photos");if(!photo.isObject()||(photo.size()!=7&&photo.size()!=8))throw ReservationInput.bad();
+        photo.fieldNames().forEachRemaining(slot->{if(!SLOTS.contains(slot)&&!slot.equals("FUEL"))throw ReservationInput.bad();});
         var photos=new LinkedHashMap<String,Long>();for(String slot:SLOTS)photos.put(slot,id(photo.path(slot)));
-        if(new HashSet<>(photos.values()).size()!=7)throw ReservationInput.bad();
+        if(photo.has("FUEL"))photos.put("FUEL",id(photo.path("FUEL")));
+        if(new HashSet<>(photos.values()).size()!=photos.size())throw ReservationInput.bad();
         var mileage=body.path("mileage");if(!mileage.isIntegralNumber()||!mileage.canConvertToInt()||mileage.intValue()<0||mileage.intValue()>9999999)throw ReservationInput.bad();
         String fuel=text(body,"fuel_level",16,true);if(!Set.of("EMPTY","QUARTER","HALF","THREE_QUARTERS","FULL").contains(fuel))throw ReservationInput.bad();
         String status=text(body,"damage_status",16,true);var damages=body.path("damages");

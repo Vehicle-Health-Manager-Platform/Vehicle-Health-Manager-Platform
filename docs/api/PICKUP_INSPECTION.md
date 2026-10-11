@@ -24,7 +24,7 @@ TECHNICIAN、其他店铺、非关联车主不能接车或读单。身份有效�
 {
   "order_id": 123,
   "appointment_code": "012345",
-  "photos": {"FRONT": 1, "REAR": 2, "LEFT": 3, "RIGHT": 4, "ROOF": 5, "DASHBOARD": 6, "INTERIOR": 7},
+  "photos": {"FRONT": 1, "REAR": 2, "LEFT": 3, "RIGHT": 4, "ROOF": 5, "DASHBOARD": 6, "INTERIOR": 7, "FUEL": 8},
   "mileage": 1200,
   "fuel_level": "HALF",
   "damage_status": "PRESENT",
@@ -33,7 +33,7 @@ TECHNICIAN、其他店铺、非关联车主不能接车或读单。身份有效�
 }
 ```
 
-例中的码和 ID 均为合成示例。服务端拒绝未知字段及目标状态字段。七个槽位必须完整、ID 互不重复、属于当前提交员工且 CLEAN/未删除，文件不能复用到第二份接车单。单张 ≤10MiB，JPEG/PNG/WebP，扫描和存储在接车事务外独立完成。
+例中的码和 ID 均为合成示例。服务端拒绝未知字段及目标状态字段。七个原槽位必须完整，允许追加唯一命名 FUEL 油表槽（严格 7/8 图），微信新表单要求八图、ID 互不重复、属于当前提交员工且 CLEAN/未删除，文件不能复用到第二份接车单。单张 ≤10MiB，JPEG/PNG/WebP，扫描和存储在接车事务外独立完成。
 
 - mileage：0–9999999 整数，来源固定 MANUAL。
 - 里程基线：最新有整数里程的本人车辆档案（recorded_at、id 降序，方式 1/3），无档案则车辆 current_mileage。接车事务锁车辆后重读并保存快照；低于基线时 mileage_reason 必填 1–200 字，说明后允许提交。
@@ -46,7 +46,7 @@ TECHNICIAN、其他店铺、非关联车主不能接车或读单。身份有效�
 
 预约码复用 order.verify_code，由服务端安全随机生成；新订单生成、旧 PAID 订单本人详情安全补码，商家投影和审计不返回/保留明文码。先鉴权及验码，失败以独立事务计数，按员工与订单的固定 10 分钟窗口最多 5 次失败，随后 429/Retry-After。
 
-接车写入带 UUID Idempotency-Key。验码通过后同键同正文返回原响应，同键不同正文返回 400；错误码校验先于幂等匹配。新键不能修改已提交单据。成功响应含 pickup_check_id、order_id、status、owner_confirm、实到时间、里程比较、七槽 file_id 与损伤信息，不含预约码、手机号、完整车牌/VIN、对象键或长期图片链接。
+接车写入带 UUID Idempotency-Key。验码通过后同键同正文返回原响应，同键不同正文返回 400；错误码校验先于幂等匹配。新键不能修改已提交单据。成功响应含 pickup_check_id、order_id、status、owner_confirm、实到时间、里程比较、实际七或八槽 file_id 与损伤信息，不含预约码、手机号、完整车牌/VIN、对象键或长期图片链接。
 
 接车单、图片关联、check_in_completed_at、RECEIVED、order_status_transition、audit_log、幂等成功响应同事务；任一步失败整体回滚。成功重复请求不会新增检查单和两类成功审计。接车后仍占预约名额、owner_confirm=0；START_SERVICE 继续返回 43003。
 
@@ -61,3 +61,11 @@ V010 扩展上传作用域和 pickup_check，新增 pickup_check_file 的单据/
 统一错误：400 字段/必要原因；401 失效会话；403 角色不符；404 资源不属于本人/本店；409 状态冲突；422 错码/非本人安全或已关联文件；429 验码/上传限流；503 扫描、存储或写入不可用。数据库/私有存储细节不向客户端暴露。
 
 验证与本机辅助边界见[验收记录](../testing/LOCAL_PICKUP_ACCEPTANCE.md)。
+
+## R3c1 微信扫码与油表（2026-10-11）
+
+车主 PAID 订单二维码严格为 `VHMP:PICKUP:1:<安全正整数订单ID>`，不含预约码、车牌、电话或URL。商家/员工扫码仅定位：先调用本店 context，通过后打开接车表单；仍手填预约码验码，不因扫描改变状态。取消扫码无错误提示，其他格式和外部URL拒绝，身份变化/页面隐藏废弃迟到回调。
+
+FUEL 与 DASHBOARD 必须不同文件，沿用 CLEAN、上传员工本人、未删除、全局不可重复关联及同事务写入/审计/幂等。FUEL 不作为损伤标注槽。旧七图响应不会补造油表照片，客户端明确显示历史未提供。已有 `pickup_check_file.photo_slot VARCHAR(16)` 可存 FUEL，无新增表或迁移（仍66表）。图片签发仍受订单归属授权。
+
+原生扫码/二维码视觉与真机留在R9；离线独立解码只证明生成内容可解码。二维码不是授权凭证。

@@ -465,12 +465,12 @@ def main():
     count = sum(len(value) for value in document["paths"].values())
     # A3 pickup: photos are private file IDs, never persistent URLs.
     slots = ["FRONT", "REAR", "LEFT", "RIGHT", "ROOF", "DASHBOARD", "INTERIOR"]
-    photo_fields = {slot: identifier for slot in slots}
+    photo_fields = {slot: identifier for slot in slots + ["FUEL"]}
     damage = {"type": "object", "additionalProperties": False, "required": ["photo_slot", "x", "y", "note"], "properties": {
         "photo_slot": {"type": "string", "enum": slots}, "x": {"type": "number", "minimum": 0, "maximum": 1},
         "y": {"type": "number", "minimum": 0, "maximum": 1}, "note": {"type": "string", "minLength": 1, "maxLength": 200}}}
     pickup_fields = {"order_id": identifier, "appointment_code": {"type": "string", "pattern": "^[0-9]{6}$", "writeOnly": True},
-        "photos": {"type": "object", "additionalProperties": False, "required": slots, "properties": photo_fields},
+        "photos": {"type": "object", "additionalProperties": False, "required": slots, "minProperties": 7, "maxProperties": 8, "description": "七图历史兼容；新微信表单要求独立FUEL油表照片，所有ID必须互异", "properties": photo_fields},
         "mileage": {"type": "integer", "minimum": 0, "maximum": 9999999}, "fuel_level": {"type": "string", "enum": ["EMPTY", "QUARTER", "HALF", "THREE_QUARTERS", "FULL"]},
         "damage_status": {"type": "string", "enum": ["NONE", "PRESENT"]}, "damages": {"type": "array", "maxItems": 20, "items": damage},
         "mileage_reason": {"type": "string", "minLength": 1, "maxLength": 200}, "arrival_reason": {"type": "string", "minLength": 1, "maxLength": 200}}
@@ -486,7 +486,7 @@ def main():
         item = operation(method, path, title, "F14")
         item["x-roles"] = roles
         item["x-implementation-status"] = "pickup-inspection-implemented"
-        item["description"] = "七图接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
+        item["description"] = "七图历史兼容及独立FUEL油表接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
         for parameter in item["parameters"]:
             if parameter["in"] == "path": parameter["schema"] = identifier
         if path.endswith("/context"): item["parameters"].append({"name": "order_id", "in": "query", "required": True, "schema": identifier})
