@@ -48,7 +48,7 @@ export function createPublicationApi({ baseUrl, runtime }) {
     login(account, password, sms_code) { credentials(account, password); if (!/^[0-9]{6}$/.test(sms_code)) throw new PublicationError('invalid', '请输入六位短信验证码')
       return call('/api/auth/operator/login', 'POST', '', { account, password, sms_code }, n => exact(n, ['access_token', 'token_type', 'expires_in', 'user'])
         && typeof n.access_token === 'string' && n.access_token.length > 0 && n.token_type === 'Bearer' && n.expires_in === 900
-        && exact(n.user, ['id', 'role', 'can_review', 'can_onboard']) && safeId(n.user.id) && n.user.role === 'operator'
+        && (exact(n.user, ['id', 'role', 'can_review', 'can_onboard']) || (exact(n.user, ['id', 'role', 'can_review', 'can_onboard', 'can_catalog']) && typeof n.user.can_catalog === 'boolean')) && safeId(n.user.id) && n.user.role === 'operator'
         && typeof n.user.can_review === 'boolean' && typeof n.user.can_onboard === 'boolean') },
     logout(token) { authorized(token); return call('/api/auth/operator/logout', 'POST', token, {}, n => exact(n, ['revoked']) && n.revoked === true) },
     pending(token, page = 1) { authorized(token); if (!Number.isInteger(page) || page < 1 || page > 1000000) throw new PublicationError('invalid', '页码无效')

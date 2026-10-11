@@ -30,7 +30,7 @@ class JdbcVehicleTest {
         try(var connection=source.getConnection()) {
             ScriptUtils.executeSqlScript(connection,new FileSystemResource(Path.of("..","docs","sql","migrations","V001__baseline.sql")));
             try(var paths=java.nio.file.Files.list(Path.of("..","docs","sql","migrations"))) {
-                for(var path:paths.filter(p->p.getFileName().toString().startsWith("V003")).toList())
+                for(var path:paths.filter(p->p.toString().endsWith(".sql")).sorted().toList())
                     ScriptUtils.executeSqlScript(connection,new FileSystemResource(path));
             }
         }

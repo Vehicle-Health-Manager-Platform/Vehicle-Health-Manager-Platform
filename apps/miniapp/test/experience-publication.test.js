@@ -8,6 +8,11 @@ const facts = { version: 1, work_minutes: 40, part_kinds: 0, no_parts: true, rec
 const pending = { card_id: 4, revision: 1, title: '施工经验摘要', summary: facts, model_id: 3 }
 const item = { experience_id: key, title: '施工经验摘要', summary: facts, model_id: 3, published_at: '2026-10-09T00:00:00Z' }
 const login = { access_token: 'operator-token', token_type: 'Bearer', expires_in: 900, user: { id: 1, role: 'operator', can_review: true, can_onboard: false } }
+test('运营目录权限扩展不导致合法登录协议漂移', async () => {
+  const result = { ...login, user: { ...login.user, can_catalog: true } }
+  const api = createPublicationApi({ baseUrl: 'https://local', runtime: () => ({ request(r) { r.success({statusCode:200,data:{code:0,data:result}}) } }) })
+  assert.equal((await api.login('catalog', 'password', '123456')).user.can_catalog, true)
+})
 const apiFor = (data, calls = [], statusCode = 200) => createPublicationApi({ baseUrl: 'https://local', runtime: () => ({ request(r) { calls.push(r); r.success({ statusCode, data: { code: 0, data } }) } }) })
 test('公共与待审协议拒绝原文、私有来源ID、错误车型与不可信摘要', () => {
   assert.ok(validPublic(item)); assert.ok(validPending(pending)); assert.ok(validPending({ ...pending, model_id: null }))

@@ -968,6 +968,45 @@ def main():
         item["responses"]["503"] = {"description": "依赖/事务不可用，50300；写用原幂等键"}
         document["paths"].setdefault(path, {})[method] = item
 
+    catalog_id = {"type": "integer", "minimum": 1, "maximum": 9007199254740991}
+    catalog_text = lambda limit: {"type": "string", "maxLength": limit}
+    catalog_fields = {
+        "projects": {"project_name": catalog_text(128), "category": {"type": "integer", "minimum": 1, "maximum": 6},
+            "service_content": catalog_text(2000), "quality_standard": catalog_text(2000),
+            "base_price_low": {"type": "string", "pattern": r"^(0|[1-9][0-9]{0,5})\.[0-9]{2}$"},
+            "base_price_high": {"type": "string", "pattern": r"^(0|[1-9][0-9]{0,5})\.[0-9]{2}$"}},
+        "brands": {"name": catalog_text(64)},
+        "series": {"name": catalog_text(128), "brand_id": catalog_id},
+        "models": {"series_id": catalog_id, "year": {"type": "string", "pattern": r"^[0-9]{4}$"},
+            "config_name": catalog_text(128), "power_type": {"type": "string", "enum": ["FUEL", "HYBRID", "ELECTRIC"]}},
+    }
+    for kind, fields in catalog_fields.items():
+        common = {**fields, "sort_order": {"type": "integer", "minimum": 0, "maximum": 9999},
+            "source_note": {"type": "string", "minLength": 2, "maxLength": 256}}
+        schemas["CatalogCreate_" + kind] = strict(common)
+        schemas["CatalogUpdate_" + kind] = strict({**common, "status": {"type": "integer", "enum": [0, 1]}, "revision": catalog_id})
+    for method, path, title in (("get", "/api/admin/catalog/{kind}", "运营目录分页"),
+        ("post", "/api/admin/catalog/{kind}", "新增未发布目录"), ("put", "/api/admin/catalog/{kind}/{id}", "维护目录与发布状态")):
+        item = operation(method, path, title, "F17,F20,F02")
+        item["x-roles"] = "OPERATOR with can_catalog"
+        item["x-implementation-status"] = "catalog-governance-implemented"
+        item["description"] = "四种kind：projects/brands/series/models。独立权限、开关默认false、UUID幂等、revision冲突409，上级不可变；详情见 CATALOG_GOVERNANCE.md。"
+        for param in item["parameters"]:
+            param["schema"] = {"type": "string", "enum": list(catalog_fields)} if param["name"] == "kind" else catalog_id
+        if method == "get":
+            item["parameters"].extend([{"name": "page", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 1000000, "default": 1}},
+                {"name": "page_size", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 50, "default": 20}}])
+        else:
+            if method == "put":
+                item["parameters"].append({"name": "Idempotency-Key", "in": "header", "required": True,
+                    "schema": {"type": "string", "format": "uuid"}})
+            prefix = "CatalogCreate_" if method == "post" else "CatalogUpdate_"
+            item["requestBody"] = {"required": True, "content": {"application/json": {"schema": {"oneOf": [
+                {"$ref": "#/components/schemas/" + prefix + kind} for kind in catalog_fields]}}}}
+        item["responses"]["409"] = {"description": "版本/重复名称/上级状态/历史引用冲突，40900"}
+        item["responses"]["503"] = {"description": "开关关闭或事务依赖不可用，50300"}
+        document["paths"].setdefault(path, {})[method] = item
+
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     count = sum(len(item) for item in document["paths"].values())
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")
