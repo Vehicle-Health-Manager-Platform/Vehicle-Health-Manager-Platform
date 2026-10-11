@@ -14,8 +14,8 @@
 
 1. **规格阶段**：核对字段与权限、日期缺失语义、500 条/3 MiB 限额、普通/云托管双传输、PDF 隐私及授权；更新本规格、详细实施计划、全局当前进度与缺口清单。自检后提交推送为依赖 #114 的规格 PR。不得把规格阶段 CI 当功能验收。
 2. **后端阶段（实现完成，真库待 CI）**：新增 OWNER `GET /api/archive/report`。同事务校验有效会话、本人未删除车辆、过滤允许的档案源/日期并取 501 判限额；一次性返回 allow-list DTO，事务外用 PDFBox 与上述 OFL 字体生成 PDF。普通 HTTP 返回 `application/pdf`；云托管 `Accept: application/vnd.autocare.pdf-base64+json;version=1` 返回固定字段 Base64 信封。两者均 no-store、固定文件名；PDF 失败或超限无文件/表/审计副作用。中文 API 契约、OpenAPI 与执行记录已更新；本地单测/权限链通过，Testcontainers 本机无法连 Docker daemon，真 MySQL 用阶段 PR CI 验证。
-3. **微信阶段（PR #117 已创建，CI 运行中）**：档案页增加日期区间选择与导出入口；普通 HTTPS 用带 OWNER Bearer 的原生 `downloadFile`，云托管继续使用 `request/callContainer` 并严格解码 Base64 到临时 PDF。验证状态码/MIME/文件名/大小/魔数/版本；页面隐藏、退出/换身份、切车或新任务时取消下载、作废迟到回调并删除临时文件；成功后用 `openDocument`。小程序331项通过，mp-weixin原生构建检查和H5兼容构建通过；Terser登记为 workspace 直接依赖。PR #117 以 #116 分支为 base。执行细节见[微信阶段记录](R3C2_ARCHIVE_REPORT_MINIAPP_EXECUTION.md)。
-4. **验收收口（待实施）**：真 MySQL覆盖 A/B隔离、软删除、施工归属、日期边界/空日期、500/501、3 MiB上限；HTTP 覆盖 OWNER/角色、no-store、PDF 与 JSON 信封；PDF 解析和中文提取、字体许可/嵌入检查；微信生命周期和云托管假运行时测试。真实微信设备视觉/PDF 打开另列 R9。更新当前状态、三端缺口、执行/验收与下阶段 R3c3 计划，推送末阶段 PR，等待 CI 全绿；不自动合并。
+3. **微信阶段（PR #117 六项 CI 全绿）**：档案页增加日期区间选择与导出入口；普通 HTTPS 用带 OWNER Bearer 的原生 `downloadFile`，云托管继续使用 `request/callContainer` 并严格解码 Base64 到临时 PDF。验证状态码/MIME/文件名/大小/魔数/版本；页面隐藏、退出/换身份、切车或新任务时取消下载、作废迟到回调并删除临时文件；成功后用 `openDocument`。小程序331项通过，mp-weixin原生构建检查和H5兼容构建通过；Terser登记为 workspace 直接依赖。PR #117 以 #116 分支为 base。执行细节见[微信阶段记录](R3C2_ARCHIVE_REPORT_MINIAPP_EXECUTION.md)。
+4. **验收收口（PR #118 六项 CI 全绿，完成）**：新增正好500/第501条与3 MiB/超1字节边界测试，Maven 控制器定向3/3通过；GitHub backend/Testcontainers验证新增 MySQL边界，权限、来源、日期、双传输、PDF及文件生命周期证据已整理。真实微信设备视觉/PDF打开仍列 R9。阶段 PR 仍按堆叠顺序等待后续合并，不自动合并。下一单元 R3c3 限时分享与撤销。
 
 ## 错误与验收边界
 

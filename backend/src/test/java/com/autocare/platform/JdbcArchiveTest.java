@@ -203,9 +203,14 @@ class JdbcArchiveTest {
     @Test void reportRejectsRevokedSessionsAndMoreThanFiveHundredRows() {
         String json = "{\"version\":1,\"title\":\"保养\",\"notes\":\"\"}";
         List<Object[]> rows = new ArrayList<>();
-        for (int i = 0; i < 501; i++) rows.add(new Object[]{101, 1, json, 3, Date.valueOf("2026-10-04")});
+        for (int i = 0; i < 500; i++) rows.add(new Object[]{101, 1, json, 3, Date.valueOf("2026-10-04")});
+        jdbc.batchUpdate("INSERT INTO vehicle_archive(vehicle_id,archive_type,content,input_type,recorded_at) VALUES(?,?,?,?,?)", rows);
+        assertEquals(500, reports.load(owner, new ArchiveReportFilter(101, null, null)).entries().size());
+        rows.clear();
+        rows.add(new Object[]{101, 1, json, 3, Date.valueOf("2026-10-04")});
         jdbc.batchUpdate("INSERT INTO vehicle_archive(vehicle_id,archive_type,content,input_type,recorded_at) VALUES(?,?,?,?,?)", rows);
         assertEquals(409, status(() -> reports.load(owner, new ArchiveReportFilter(101, null, null))));
+        assertEquals(0, count("audit_log"));
         jdbc.update("DELETE FROM vehicle_archive");
         jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id=?", owner.session());
         assertEquals(401, status(() -> reports.load(owner, new ArchiveReportFilter(101, null, null))));
