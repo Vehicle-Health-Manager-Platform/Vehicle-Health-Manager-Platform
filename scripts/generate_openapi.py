@@ -476,13 +476,13 @@ def main():
         "mileage_reason": {"type": "string", "minLength": 1, "maxLength": 200}, "arrival_reason": {"type": "string", "minLength": 1, "maxLength": 200}}
     schemas["PickupSubmit"] = {"type": "object", "additionalProperties": False, "required": [k for k in pickup_fields if k not in ("mileage_reason", "arrival_reason")], "properties": pickup_fields}
     for method, path, roles, title in [
-        ("get", "/api/check/pickup/context", "MERCHANT", "本店接车上下文与里程基线"),
-        ("post", "/api/check/pickup/submit", "MERCHANT", "验预约码并提交完整接车单"),
+        ("get", "/api/check/pickup/context", "MERCHANT,STAFF", "本店接车上下文与里程基线"),
+        ("post", "/api/check/pickup/submit", "MERCHANT,STAFF", "验预约码并提交完整接车单"),
         ("post", "/api/check/pickup/confirm", "OWNER", "车主确认接车单或提出异议"),
-        ("get", "/api/check/pickup/{order}", "OWNER,MERCHANT", "本人或本店接车单"),
-        ("get", "/api/check/pickup/{order}/files/{file}/access", "OWNER,MERCHANT", "接车单关联图片短时访问"),
-        ("post", "/api/merchant/files/upload", "MERCHANT", "商家本人私有图片上传"),
-        ("get", "/api/merchant/files/{id}/access", "MERCHANT", "商家上传者本人图片预览")]:
+        ("get", "/api/check/pickup/{order}", "OWNER,MERCHANT,STAFF", "本人或本店接车单"),
+        ("get", "/api/check/pickup/{order}/files/{file}/access", "OWNER,MERCHANT,STAFF", "接车单关联图片短时访问"),
+        ("post", "/api/merchant/files/upload", "MERCHANT,STAFF", "商家本人私有图片上传"),
+        ("get", "/api/merchant/files/{id}/access", "MERCHANT,STAFF", "商家上传者本人图片预览")]:
         item = operation(method, path, title, "F14")
         item["x-roles"] = roles
         item["x-implementation-status"] = "pickup-inspection-implemented"

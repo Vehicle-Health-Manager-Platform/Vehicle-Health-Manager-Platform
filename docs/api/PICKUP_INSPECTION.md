@@ -9,11 +9,11 @@
 | 方法/路径 | 身份与作用 |
 | --- | --- |
 | GET /api/order/{id} | 本人 OWNER；PAID 详情返回 appointment_code，六位字符串，保留前导零 |
-| POST /api/merchant/files/upload | 有效 MERCHANT；单个 multipart file、UUID Idempotency-Key |
-| GET /api/merchant/files/{id}/access | 上传者本人 MERCHANT，CLEAN 文件短时签名 |
-| GET /api/check/pickup/context?order_id={id} | 本店 MERCHANT；可接车订单及最新里程基线，不返回码 |
-| POST /api/check/pickup/submit | 本店 MERCHANT；完整单据、预约验码与状态迁移 |
-| GET /api/check/pickup/{order} | 本店 MERCHANT 或关联本人 OWNER |
+| POST /api/merchant/files/upload | 有效 MERCHANT/STAFF；单个 multipart file、UUID Idempotency-Key |
+| GET /api/merchant/files/{id}/access | 上传者本人 MERCHANT/STAFF，CLEAN 文件短时签名 |
+| GET /api/check/pickup/context?order_id={id} | 本店 MERCHANT/STAFF；可接车订单及最新里程基线，不返回码 |
+| POST /api/check/pickup/submit | 本店 MERCHANT/STAFF；完整单据、预约验码与状态迁移 |
+| GET /api/check/pickup/{order} | 本店 MERCHANT/STAFF 或关联本人 OWNER |
 | GET /api/check/pickup/{order}/files/{file}/access | 同上；仅单据实际关联且 CLEAN 的图片 |
 
 TECHNICIAN、其他店铺、非关联车主不能接车或读单。身份有效性、店铺/用户状态在真库复核；读取响应 Cache-Control=no-store。
