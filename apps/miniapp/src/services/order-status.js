@@ -8,7 +8,7 @@ const STATE_LABELS = {
   PENDING_VERIFY: '待核销', COMPLETED: '已完成', CLOSED: '已关闭', DISPUTED: '争议中',
 }
 const ACTION_LABELS = { RECEIVE: '确认接车', START_SERVICE: '开始施工', FINISH_SERVICE: '完工送核销', COMPLETE: '确认完成' }
-const CLOSE_REASONS = { OWNER_CANCELLED: '车主取消', PAYMENT_EXPIRED: '未支付到期' }
+const CLOSE_REASONS = { OWNER_CANCELLED: '车主取消', PAYMENT_EXPIRED: '未支付到期', REFUND_CANCELLED: '双方同意取消，退款状态请单独查看' }
 
 export const stateLabel = value => STATE_LABELS[value] || '状态未提供'
 export const actionLabel = value => ACTION_LABELS[value] || '未知操作'
