@@ -21,6 +21,7 @@ class VehicleNoDatabaseTest {
     @MockitoBean JwtDecoder decoder;
     @Test void missingDatabaseFailsClosedForAllRoutes() throws Exception {
         when(decoder.decode("owner")).thenReturn(Jwt.withTokenValue("owner").header("alg","HS256").subject("1").claim("subject_type","user").claim("role","OWNER").claim("jti","test").issuedAt(Instant.now()).expiresAt(Instant.now().plusSeconds(600)).build());
+        mvc.perform(post("/api/vehicle/match-plate").header("Authorization","Bearer owner").contentType(MediaType.APPLICATION_JSON).content("{\"plate_no\":\"粤B12345\"}")).andExpect(status().isServiceUnavailable());
         for(String path:new String[]{"/api/vehicle/list","/api/brand/list","/api/series/list?brand_id=1","/api/model/list?series_id=1"})
             mvc.perform(get(path).header("Authorization","Bearer owner")).andExpect(status().isServiceUnavailable()).andExpect(jsonPath("$.code").value(50300));
         mvc.perform(post("/api/vehicle/add").header("Authorization","Bearer owner").header("Idempotency-Key",UUID.randomUUID().toString())

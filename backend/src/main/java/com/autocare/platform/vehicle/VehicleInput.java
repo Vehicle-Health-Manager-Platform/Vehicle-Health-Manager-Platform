@@ -30,6 +30,22 @@ public record VehicleInput(long modelId, int mileage, String plate, String vin) 
         if (!body.get(name).isTextual() || body.get(name).textValue().length() > 32) throw invalid();
         return body.get(name).textValue().trim().toUpperCase(Locale.ROOT);
     }
+    public static String requiredPlate(String value) {
+        if (value == null || value.length() > 32) throw invalid();
+        String plate=value.trim().toUpperCase(Locale.ROOT);
+        if (!plate.matches("[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼][A-Z][A-Z0-9]{5,6}")) throw invalid();
+        return plate;
+    }
+    public static String matchPlate(String raw) {
+        if (raw == null || raw.length() > 256) throw invalid();
+        try {
+            var json=com.fasterxml.jackson.databind.json.JsonMapper.builder()
+                .enable(com.fasterxml.jackson.core.StreamReadFeature.STRICT_DUPLICATE_DETECTION)
+                .enable(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_TRAILING_TOKENS).build().readTree(raw);
+            if (json==null || !json.isObject() || json.size()!=1 || !json.path("plate_no").isTextual()) throw invalid();
+            return requiredPlate(json.get("plate_no").textValue());
+        } catch (java.io.IOException e) { throw invalid(); }
+    }
     public Map<String, Object> canonical() {
         return Map.of("add_type", 4, "model_id", modelId, "current_mileage", mileage, "plate_no", plate, "vin", vin);
     }

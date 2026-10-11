@@ -76,4 +76,37 @@ class VehicleHttpTest {
             .andExpect(status().isServiceUnavailable()).andExpect(header().string("Cache-Control","no-store"))
             .andExpect(jsonPath("$.code").value(50300)).andExpect(jsonPath("$.message").value("车辆数据库暂不可用，请稍后重试"));
     }
+    @Test void plateMatchOnlyAllowsOwner() throws Exception {
+        mvc.perform(post("/api/vehicle/match-plate").contentType(MediaType.APPLICATION_JSON).content("{}"))
+            .andExpect(status().isUnauthorized());
+        for (String token:List.of("local","staff","binding","missing-session"))
+            mvc.perform(post("/api/vehicle/match-plate").header("Authorization","Bearer "+token)
+                .contentType(MediaType.APPLICATION_JSON).content("{\"plate_no\":\"粤B12345\"}"))
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(service);
+    }
+    @Test void plateMatchRejectsPrivateQueryUnknownDuplicateAndTrailingInput() throws Exception {
+        for(String body:List.of("null","[]","{}"," ","{\"plate_no\":1}","{\"plate_no\":\"\"}",
+            "{\"plate_no\":\"粤B12345\",\"user_id\":2}","{\"plate_no\":\"粤B12345\",\"plate_no\":\"粤B12345\"}",
+            "{\"plate_no\":\"粤B12345\"} {}"))
+            mvc.perform(post("/api/vehicle/match-plate").header("Authorization","Bearer owner")
+                .contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isBadRequest());
+        mvc.perform(post("/api/vehicle/match-plate?plate_no=secret").header("Authorization","Bearer owner")
+            .contentType(MediaType.APPLICATION_JSON).content("{\"plate_no\":\"粤B12345\"}")).andExpect(status().isBadRequest());
+        verifyNoInteractions(service);
+    }
+    @Test void plateMatchNormalizesOwnerAndNoStoreAndFiltersDatabaseErrors() throws Exception {
+        when(service.matchPlate(any(),eq("粤B12345"))).thenReturn(Map.of("matches",List.of()));
+        mvc.perform(post("/api/vehicle/match-plate").header("Authorization","Bearer owner")
+            .contentType(MediaType.APPLICATION_JSON).content("{\"plate_no\":\" 粤b12345 \"}"))
+            .andExpect(status().isOk()).andExpect(header().string("Cache-Control","no-store"))
+            .andExpect(jsonPath("$.data.matches").isEmpty());
+        verify(service).matchPlate(argThat(o->o.id()==1 && o.session().equals("vehicle-test-session")),eq("粤B12345"));
+        when(service.matchPlate(any(),anyString())).thenThrow(new org.springframework.dao.DataAccessResourceFailureException("private db"));
+        mvc.perform(post("/api/vehicle/match-plate").header("Authorization","Bearer owner")
+            .contentType(MediaType.APPLICATION_JSON).content("{\"plate_no\":\"粤B12345\"}"))
+            .andExpect(status().isServiceUnavailable()).andExpect(header().string("Cache-Control","no-store"))
+            .andExpect(jsonPath("$.message").value("车辆数据库暂不可用，请稍后重试"));
+    }
+
 }

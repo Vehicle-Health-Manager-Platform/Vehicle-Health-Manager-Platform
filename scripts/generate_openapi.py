@@ -1085,6 +1085,18 @@ def main():
     for code, message in (("401", "门店会话失效"), ("403", "非店长无账单权限"), ("503", "数据库未配置或不可用")): item["responses"][code] = {"description": message}
     document["paths"]["/api/merchant/commissions"] = {"get": item}
 
+    match_row={"type":"object","additionalProperties":False,"required":["vehicle_id","model_id","model_name","current_mileage","plate_no_masked","vin_masked"],"properties":{
+        "vehicle_id":{"type":"integer","minimum":1,"maximum":9007199254740991},"model_id":{"type":"integer","minimum":0},
+        "model_name":{"type":"string"},"current_mileage":{"type":"integer","minimum":0},"plate_no_masked":{"type":"string"},"vin_masked":{"type":"string"}}}
+    document["paths"]["/api/vehicle/match-plate"]={"post":{
+        "summary":"本人车牌精确匹配（只读）","x-roles":"正式车主","x-implementation-status":"core-implemented",
+        "description":"只查有效会话的本人未删除车辆，不证明所有权、不解码车型。JSON单字段，不接受query，无需幂等键；no-store。详见VEHICLE_ENTRY.md。",
+        "security":[{"bearerAuth":[]}],"requestBody":{"required":True,"content":{"application/json":{"schema":{
+            "type":"object","additionalProperties":False,"required":["plate_no"],"properties":{"plate_no":{"type":"string","minLength":1,"maxLength":32}}}}}},
+        "responses":{"200":{"description":"脱敏匹配结果，无匹配空数组","content":{"application/json":{"schema":{
+            "allOf":[{"$ref":"#/components/schemas/ApiResponse"},{"type":"object","properties":{"data":{"type":"object","additionalProperties":False,"required":["matches"],"properties":{"matches":{"type":"array","maxItems":20,"items":match_row}}}}}]}}}},
+            "400":{"description":"body/query无效"},"401":{"description":"会话失效"},"403":{"description":"非车主身份"},"409":{"description":"本人旧记录过多需核对"},"503":{"description":"数据库未配置或不可用"}}}}
+
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     count = sum(len(item) for item in document["paths"].values())
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

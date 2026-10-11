@@ -51,6 +51,19 @@ public class VehicleService {
             owner.id(), size, (page-1)*size);
         return result(rows, jdbc.queryForObject("SELECT COUNT(*) FROM vehicle WHERE user_id=? AND is_deleted=0", Long.class, owner.id()), page, size);
     }
+    public Map<String,Object> matchPlate(VehicleOwner owner,String value) {
+        String plate=VehicleInput.requiredPlate(value); authorize(owner,false);
+        var rows=jdbc.query("SELECT v.id,v.model_id,v.current_mileage,v.plate_no,v.vin,"
+            + "CONCAT_WS(' ',b.name,s.name,m.year,m.config_name) AS model_name FROM vehicle v "
+            + "LEFT JOIN model m ON m.id=v.model_id LEFT JOIN series s ON s.id=m.series_id "
+            + "LEFT JOIN brand b ON b.id=s.brand_id WHERE v.user_id=? AND v.is_deleted=0 AND v.plate_no=? "
+            + "ORDER BY v.id DESC LIMIT 21",(rs,n)->Map.<String,Object>of(
+                "vehicle_id",rs.getLong("id"),"model_id",rs.getLong("model_id"),"model_name",rs.getString("model_name"),
+                "current_mileage",rs.getInt("current_mileage"),"plate_no_masked",mask(rs.getString("plate_no"),2,1),
+                "vin_masked",mask(rs.getString("vin"),3,4)),owner.id(),plate);
+        if (rows.size()>20) throw new ResponseStatusException(HttpStatus.CONFLICT,"本人匹配记录过多，请核对车辆资料");
+        return Map.of("matches",rows);
+    }
     public Map<String, Object> catalog(VehicleOwner owner, String kind, long parent, int page, int size) {
         page(page, size); authorize(owner, false);
         String from, select;
