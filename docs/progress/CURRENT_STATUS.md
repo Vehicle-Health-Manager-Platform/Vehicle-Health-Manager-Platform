@@ -1,6 +1,6 @@
 # 当前进度
 
-> **2026-10-11 当前实施单元 R3c2 本人档案报告/私有导出**：PR #114 仍 OPEN；规格 PR #115、后端 PR #116、微信 PR #117 均按正确前序分支堆叠，六项 CI 全绿。代码已覆盖本人报告 PDF、普通 HTTPS/云托管双传输、日期范围、原生打开和临时文件生命周期；小程序 **331/331**，微信构建/H5兼容构建通过；后端非 Testcontainers 测试246项及报告定向测试6项通过。收口验收 PR [#118](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/118) 已以 #117 分支为 base；控制器边界测试3/3通过，真实MySQL 500/501边界等待 #118 backend CI。真微信设备上的 PDF 视觉和系统阅读器仍留 R9。收口通过后进入R3c3限时分享/撤销；正式短信/身份/资金及PC后台不在本阶段。原始交付文档保持原样。执行见[微信阶段](R3C2_ARCHIVE_REPORT_MINIAPP_EXECUTION.md)、[验收阶段](R3C2_ARCHIVE_REPORT_ACCEPTANCE_EXECUTION.md)。
+> **2026-10-11 R3c2 本人档案报告/私有导出已收口**：PR #114 仍 OPEN；规格 #115、后端 #116、微信 #117、验收 #118 按直接依赖顺序堆叠，四个 PR 各六项 CI 全绿。小程序 **331/331**，mp-weixin/H5构建通过；后端非 Testcontainers测试246项、报告定向测试6项、控制器边界3项通过；#118 backend CI 已验证真实MySQL 500/501边界及 PDF 3 MiB上限。代码含本人 PDF、普通 HTTPS/云托管双传输、日期范围、原生打开与临时文件生命周期。真微信PDF视觉和系统阅读器验收留R9。**下一步 R3c3 限时分享授权/撤销**，先规格再后端、微信与验收逐段上传。正式短信/身份/资金及PC后台不在本阶段；原始交付文档保持原样。执行见[收口验收记录](R3C2_ARCHIVE_REPORT_ACCEPTANCE_EXECUTION.md)及[验收证据](../testing/LOCAL_ARCHIVE_REPORT_ACCEPTANCE.md)。
 
 
 > **2026-10-11 R3a1录车独立功能已实施，待合并**：用户确认OCR/VIN尚未开通，规格#107、后端#108、微信#109逐段上传。新增四入口、本人车牌只读匹配、VIN格式校验及手动确认回退；令牌绑定60秒一次内存带入，不写标识URL/本地缓存、不上传行驶证。后端25/25、微信312/312及微信/H5构建通过，真库与mock HTTP证据分开，原生新增页面/真机未验收。见[执行](R3A1_VEHICLE_ENTRY_EXECUTION.md)、[验收](../testing/LOCAL_VEHICLE_ENTRY_ACCEPTANCE.md)。**下一独立单元R3c1接车扫码与独立油表照片**；真实OCR/VIN仍R3a2欠项，照片语音识别/报告后续，正式身份资金R9，无PC。以下历史。
