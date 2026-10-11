@@ -88,8 +88,13 @@ run_sql_file docs/sql/migrations/V020__merchant_onboarding.sql
 run_sql_file docs/sql/migrations/V021__merchant_staff_store.sql
 run_sql_file docs/sql/migrations/V021__merchant_staff_store.sql
 
+run_sql_file docs/sql/migrations/V022__catalog_governance.sql
+run_sql_file docs/sql/migrations/V022__catalog_governance.sql
+
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
-[[ "$tables" == 63 ]] || { echo "Expected 63 tables after V021, got $tables" >&2; exit 1; }
+[[ "$tables" == 63 ]] || { echo "Expected 63 tables after V022, got $tables" >&2; exit 1; }
+catalog_columns=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND ((table_name IN ('brand','series','model','standard_project') AND column_name IN ('sort_order','source_note','revision')) OR (table_name IN ('brand','series','model') AND column_name='status') OR (table_name='operator_account' AND column_name='can_catalog'))")
+[[ "$catalog_columns" == 16 ]] || { echo "V022 catalogue fields incomplete: $catalog_columns/16" >&2; exit 1; }
 
 for column in check_in_completed_at owner_confirmed_at assigned_at service_report_ready_at; do
   found=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND table_name = 'order' AND column_name = '$column'")

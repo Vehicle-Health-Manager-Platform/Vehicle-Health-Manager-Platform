@@ -66,7 +66,7 @@ public class MerchantQuotes {
             Object[] counts=category==null?new Object[]{}:new Object[]{category};
             Object[] rows=category==null?new Object[]{size,(page-1)*size}:new Object[]{category,size,(page-1)*size};
             long total=jdbc.queryForObject("SELECT COUNT(*)"+from,Long.class,counts);
-            var items=jdbc.query("SELECT id,project_name,category,base_price_low,base_price_high"+from+" ORDER BY id LIMIT ? OFFSET ?",
+            var items=jdbc.query("SELECT id,project_name,category,base_price_low,base_price_high"+from+" ORDER BY sort_order,id LIMIT ? OFFSET ?",
                 (rs,n)->Map.<String,Object>of("id",rs.getLong("id"),"project_name",rs.getString("project_name"),"category",rs.getInt("category"),
                     "base_price_low",rs.getBigDecimal("base_price_low").setScale(2).toPlainString(),"base_price_high",rs.getBigDecimal("base_price_high").setScale(2).toPlainString()),rows);
             return page(items,total,page,size);

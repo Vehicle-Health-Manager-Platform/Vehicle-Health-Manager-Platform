@@ -25,7 +25,7 @@ class JdbcServiceCatalogTest {
         var source=new DriverManagerDataSource(mysql.getJdbcUrl(),mysql.getUsername(),mysql.getPassword());
         jdbc=new JdbcTemplate(source);
         try(var connection=source.getConnection()) {
-            for(String file:new String[]{"V001__baseline.sql","V003__auth_lifecycle.sql"})
+            for(String file:new String[]{"V001__baseline.sql","V003__auth_lifecycle.sql","V022__catalog_governance.sql"})
                 ScriptUtils.executeSqlScript(connection,new FileSystemResource(Path.of("..","docs","sql","migrations",file)));
         }
     }

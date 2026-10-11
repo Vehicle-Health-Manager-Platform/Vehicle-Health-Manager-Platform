@@ -30,7 +30,7 @@ class JdbcMerchantQuotesTest {
     @BeforeAll static void schema() throws Exception {
         var ds=new DriverManagerDataSource(mysql.getJdbcUrl(),mysql.getUsername(),mysql.getPassword());jdbc=new JdbcTemplate(ds);
         try(var connection=ds.getConnection()) {
-            for(String file:List.of("V001__baseline.sql","V003__auth_lifecycle.sql","V006__merchant_project_versions.sql"))
+            for(String file:List.of("V001__baseline.sql","V003__auth_lifecycle.sql","V022__catalog_governance.sql","V006__merchant_project_versions.sql"))
                 ScriptUtils.executeSqlScript(connection,new FileSystemResource(Path.of("..","docs","sql","migrations",file)));
         }
     }

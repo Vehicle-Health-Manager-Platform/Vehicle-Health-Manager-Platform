@@ -40,6 +40,7 @@ public class OperatorAdminCli implements ApplicationRunner {
                 if("disable".equals(action)){jdbc.update("UPDATE operator_account SET status='DISABLED' WHERE id=?",id);after=Map.of("status","DISABLED");}
                 else if("review-permission".equals(action)){boolean permission=permission();jdbc.update("UPDATE operator_account SET can_review=? WHERE id=?",permission,id);after=Map.of("can_review",permission);}
                 else if("onboard-permission".equals(action)){boolean permission=onboardPermission(true);jdbc.update("UPDATE operator_account SET can_onboard=? WHERE id=?",permission,id);after=Map.of("can_onboard",permission);}
+                else if("catalog-permission".equals(action)){String value=env.getRequiredProperty("OPERATOR_CAN_CATALOG");if(!value.equals("true")&&!value.equals("false"))throw new IllegalArgumentException("Explicit catalog permission required");boolean permission=Boolean.parseBoolean(value);jdbc.update("UPDATE operator_account SET can_catalog=? WHERE id=?",permission,id);after=Map.of("can_catalog",permission);}
                 else throw new IllegalArgumentException("Unsupported operator action");
                 jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE subject_type='operator_account' AND subject_id=? AND revoked_at IS NULL",id);
             }

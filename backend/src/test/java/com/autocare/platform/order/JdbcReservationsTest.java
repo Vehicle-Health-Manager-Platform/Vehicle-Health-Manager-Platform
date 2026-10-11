@@ -49,8 +49,10 @@ class JdbcReservationsTest {
     int count(String table){return jdbc.queryForObject("SELECT COUNT(*) FROM `"+table+"`",Integer.class);}
     @Test void snapshotIdempotencyAndHistory(){long slot=slot(2);String k=key();var first=orders.create(a,k,booking(a,slot));long id=first.path("data").path("order_id").asLong();
         jdbc.update("UPDATE merchant_project SET price=99,on_shelf=0 WHERE id=1");slots.close(shop,key(),slot);
+        jdbc.update("UPDATE standard_project SET status=0,project_name='新目录名称' WHERE id=1");
         assertEquals(first,orders.create(a,k,booking(a,slot)));assertEquals(1,count("order"));assertEquals(1,jdbc.queryForObject("SELECT reserved_count FROM appointment_slot WHERE id=?",Integer.class,slot));
         assertEquals("12.34",((com.fasterxml.jackson.databind.JsonNode)orders.detail(a,id).get("price_snapshot")).path("price").asText());
+        assertNotEquals("新目录名称",((com.fasterxml.jackson.databind.JsonNode)orders.detail(a,id).get("project_snapshot")).path("project_name").asText());
         assertEquals(400,assertThrows(ResponseStatusException.class,()->orders.create(a,k,new ReservationInput.Booking(1,2,1,slot))).getStatusCode().value());
     }
     @Test void oneLastPlaceHasOneWinner()throws Exception{long slot=slot(1);var pool=Executors.newFixedThreadPool(2);var gate=new CountDownLatch(1);

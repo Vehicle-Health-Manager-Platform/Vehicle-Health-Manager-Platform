@@ -62,7 +62,7 @@ public class ServiceCatalog {
             Object[] rowArgs = category == null ? new Object[]{size,(page-1)*size} : new Object[]{category,size,(page-1)*size};
             long total = jdbc.queryForObject("SELECT COUNT(*)" + filter, Long.class, countArgs);
             var items = jdbc.query("SELECT id,project_name,category,base_price_low,base_price_high" + filter
-                + " ORDER BY id ASC LIMIT ? OFFSET ?", (rs,n) -> row(rs,false), rowArgs);
+                + " ORDER BY sort_order,id ASC LIMIT ? OFFSET ?", (rs,n) -> row(rs,false), rowArgs);
             return Map.of("items",items,"total",total,"page",page,"page_size",size);
         });
     }

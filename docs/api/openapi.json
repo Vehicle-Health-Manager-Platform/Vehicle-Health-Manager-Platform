@@ -11099,6 +11099,315 @@
           }
         }
       }
+    },
+    "/api/admin/catalog/{kind}": {
+      "get": {
+        "summary": "运营目录分页",
+        "operationId": "get_api_admin_catalog_kind",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F17",
+          "F20",
+          "F02"
+        ],
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "projects",
+                "brands",
+                "series",
+                "models"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "409": {
+            "description": "版本/重复名称/上级状态/历史引用冲突，40900"
+          },
+          "503": {
+            "description": "开关关闭或事务依赖不可用，50300"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR with can_catalog",
+        "x-implementation-status": "catalog-governance-implemented",
+        "description": "四种kind：projects/brands/series/models。独立权限、开关默认false、UUID幂等、revision冲突409，上级不可变；详情见 CATALOG_GOVERNANCE.md。"
+      },
+      "post": {
+        "summary": "新增未发布目录",
+        "operationId": "post_api_admin_catalog_kind",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F17",
+          "F20",
+          "F02"
+        ],
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "projects",
+                "brands",
+                "series",
+                "models"
+              ]
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "409": {
+            "description": "版本/重复名称/上级状态/历史引用冲突，40900"
+          },
+          "503": {
+            "description": "开关关闭或事务依赖不可用，50300"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CatalogCreate_projects"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CatalogCreate_brands"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CatalogCreate_series"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CatalogCreate_models"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "x-roles": "OPERATOR with can_catalog",
+        "x-implementation-status": "catalog-governance-implemented",
+        "description": "四种kind：projects/brands/series/models。独立权限、开关默认false、UUID幂等、revision冲突409，上级不可变；详情见 CATALOG_GOVERNANCE.md。"
+      }
+    },
+    "/api/admin/catalog/{kind}/{id}": {
+      "put": {
+        "summary": "维护目录与发布状态",
+        "operationId": "put_api_admin_catalog_kind_id",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F17",
+          "F20",
+          "F02"
+        ],
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "projects",
+                "brands",
+                "series",
+                "models"
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "409": {
+            "description": "版本/重复名称/上级状态/历史引用冲突，40900"
+          },
+          "503": {
+            "description": "开关关闭或事务依赖不可用，50300"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR with can_catalog",
+        "x-implementation-status": "catalog-governance-implemented",
+        "description": "四种kind：projects/brands/series/models。独立权限、开关默认false、UUID幂等、revision冲突409，上级不可变；详情见 CATALOG_GOVERNANCE.md。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CatalogUpdate_projects"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CatalogUpdate_brands"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CatalogUpdate_series"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CatalogUpdate_models"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -14764,6 +15073,366 @@
                 "type": "null"
               }
             ]
+          }
+        }
+      },
+      "CatalogCreate_projects": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "project_name",
+          "category",
+          "service_content",
+          "quality_standard",
+          "base_price_low",
+          "base_price_high",
+          "sort_order",
+          "source_note"
+        ],
+        "properties": {
+          "project_name": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "category": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 6
+          },
+          "service_content": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "quality_standard": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "base_price_low": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,5})\\.[0-9]{2}$"
+          },
+          "base_price_high": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,5})\\.[0-9]{2}$"
+          },
+          "sort_order": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9999
+          },
+          "source_note": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 256
+          }
+        }
+      },
+      "CatalogUpdate_projects": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "project_name",
+          "category",
+          "service_content",
+          "quality_standard",
+          "base_price_low",
+          "base_price_high",
+          "sort_order",
+          "source_note",
+          "status",
+          "revision"
+        ],
+        "properties": {
+          "project_name": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "category": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 6
+          },
+          "service_content": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "quality_standard": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "base_price_low": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,5})\\.[0-9]{2}$"
+          },
+          "base_price_high": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,5})\\.[0-9]{2}$"
+          },
+          "sort_order": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9999
+          },
+          "source_note": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 256
+          },
+          "status": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        }
+      },
+      "CatalogCreate_brands": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "sort_order",
+          "source_note"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "sort_order": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9999
+          },
+          "source_note": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 256
+          }
+        }
+      },
+      "CatalogUpdate_brands": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "sort_order",
+          "source_note",
+          "status",
+          "revision"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "sort_order": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9999
+          },
+          "source_note": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 256
+          },
+          "status": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        }
+      },
+      "CatalogCreate_series": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "brand_id",
+          "sort_order",
+          "source_note"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "brand_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "sort_order": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9999
+          },
+          "source_note": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 256
+          }
+        }
+      },
+      "CatalogUpdate_series": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "brand_id",
+          "sort_order",
+          "source_note",
+          "status",
+          "revision"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "brand_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "sort_order": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9999
+          },
+          "source_note": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 256
+          },
+          "status": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        }
+      },
+      "CatalogCreate_models": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "series_id",
+          "year",
+          "config_name",
+          "power_type",
+          "sort_order",
+          "source_note"
+        ],
+        "properties": {
+          "series_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "year": {
+            "type": "string",
+            "pattern": "^[0-9]{4}$"
+          },
+          "config_name": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "power_type": {
+            "type": "string",
+            "enum": [
+              "FUEL",
+              "HYBRID",
+              "ELECTRIC"
+            ]
+          },
+          "sort_order": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9999
+          },
+          "source_note": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 256
+          }
+        }
+      },
+      "CatalogUpdate_models": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "series_id",
+          "year",
+          "config_name",
+          "power_type",
+          "sort_order",
+          "source_note",
+          "status",
+          "revision"
+        ],
+        "properties": {
+          "series_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "year": {
+            "type": "string",
+            "pattern": "^[0-9]{4}$"
+          },
+          "config_name": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "power_type": {
+            "type": "string",
+            "enum": [
+              "FUEL",
+              "HYBRID",
+              "ELECTRIC"
+            ]
+          },
+          "sort_order": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9999
+          },
+          "source_note": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 256
+          },
+          "status": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
           }
         }
       }

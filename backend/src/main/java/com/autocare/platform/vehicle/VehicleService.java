@@ -56,22 +56,22 @@ public class VehicleService {
         String from, select;
         Object[] countArgs, rowArgs;
         if ("brand".equals(kind)) {
-            from = " FROM brand b WHERE b.is_deleted=0"; select = "SELECT b.id,b.name";
+            from = " FROM brand b WHERE b.is_deleted=0 AND b.status=1"; select = "SELECT b.id,b.name";
             countArgs = new Object[]{}; rowArgs = new Object[]{size,(page-1)*size};
         } else {
             if (parent <= 0 || parent > 9007199254740991L) throw WriteIntegrityService.badRequest("上级车型参数无效");
             if ("series".equals(kind)) {
-                from = " FROM series s JOIN brand b ON b.id=s.brand_id WHERE s.is_deleted=0 AND b.is_deleted=0 AND b.id=?";
+                from = " FROM series s JOIN brand b ON b.id=s.brand_id WHERE s.is_deleted=0 AND s.status=1 AND b.is_deleted=0 AND b.status=1 AND b.id=?";
                 select = "SELECT s.id,s.name";
             } else if ("model".equals(kind)) {
                 from = " FROM model m JOIN series s ON s.id=m.series_id JOIN brand b ON b.id=s.brand_id "
-                    + "WHERE m.is_deleted=0 AND s.is_deleted=0 AND b.is_deleted=0 AND s.id=?";
+                    + "WHERE m.is_deleted=0 AND m.status=1 AND s.is_deleted=0 AND s.status=1 AND b.is_deleted=0 AND b.status=1 AND s.id=?";
                 select = "SELECT m.id,m.year,COALESCE(m.config_name,'') AS config_name";
             } else throw new IllegalArgumentException("Invalid server catalog kind");
             countArgs = new Object[]{parent}; rowArgs = new Object[]{parent,size,(page-1)*size};
         }
         String order = "model".equals(kind) ? "m.id" : "series".equals(kind) ? "s.id" : "b.id";
-        var rows = jdbc.query(select + from + " ORDER BY " + order + " LIMIT ? OFFSET ?", (rs,n) ->
+        var rows = jdbc.query(select + from + " ORDER BY " + order.substring(0,1) + ".sort_order," + order + " LIMIT ? OFFSET ?", (rs,n) ->
             "model".equals(kind) ? Map.<String,Object>of("id",rs.getLong("id"),"year",rs.getString("year"),"config_name",rs.getString("config_name"))
             : Map.<String,Object>of("id",rs.getLong("id"),"name",rs.getString("name")), rowArgs);
         return result(rows, jdbc.queryForObject("SELECT COUNT(*)" + from, Long.class, countArgs), page, size);
@@ -79,9 +79,15 @@ public class VehicleService {
     public JsonNode add(VehicleOwner owner, String key, VehicleInput input) {
         return integrity.execute(new WriteIntegrityService.Actor("user",owner.id()), "POST", "/api/vehicle/add", key,
             mapper.valueToTree(input.canonical()), () -> authorize(owner,true), () -> {
+                // Match operator hierarchy locks: brand -> series -> model. Associations are immutable.
+                var lineage=jdbc.queryForList("SELECT m.series_id,s.brand_id FROM model m JOIN series s ON s.id=m.series_id WHERE m.id=?",input.modelId());
+                if(lineage.isEmpty())throw new ResponseStatusException(HttpStatus.NOT_FOUND,"车型不存在或已停用，请重新选择");
+                jdbc.queryForList("SELECT id FROM brand WHERE id=? FOR SHARE",lineage.get(0).get("brand_id"));
+                jdbc.queryForList("SELECT id FROM series WHERE id=? FOR SHARE",lineage.get(0).get("series_id"));
+                jdbc.queryForList("SELECT id FROM model WHERE id=? FOR SHARE",input.modelId());
                 var models = jdbc.query("SELECT CONCAT_WS(' ',b.name,s.name,m.year,m.config_name),m.power_type "
                     + "FROM model m JOIN series s ON s.id=m.series_id JOIN brand b ON b.id=s.brand_id "
-                    + "WHERE m.id=? AND m.is_deleted=0 AND s.is_deleted=0 AND b.is_deleted=0 FOR SHARE",
+                    + "WHERE m.id=? AND m.is_deleted=0 AND m.status=1 AND s.is_deleted=0 AND s.status=1 AND b.is_deleted=0 AND b.status=1 FOR SHARE",
                     (rs,n) -> new String[]{rs.getString(1),rs.getString(2)}, input.modelId());
                 if (models.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND,"车型不存在或已停用，请重新选择");
                 int duplicates = jdbc.queryForObject("SELECT COUNT(*) FROM vehicle WHERE user_id=? AND is_deleted=0 "
