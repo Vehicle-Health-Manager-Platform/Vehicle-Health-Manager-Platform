@@ -20,6 +20,7 @@ function openOwnerTabs() { uni.switchTab({ url: '/pages/home/index' }) }
 function openMerchantProjects() { uni.navigateTo({ url: '/pages/merchant/projects' }) }
 function openMerchantOrders() { uni.navigateTo({ url: '/pages/merchant/orders' }) }
 function openMerchantStaff() { uni.navigateTo({ url: '/pages/merchant/staff' }) }
+function openMerchantCommissions() { uni.navigateTo({ url: '/pages/merchant/commissions' }) }
 function openMerchantProfile() { uni.navigateTo({ url: '/pages/merchant/profile' }) }
 function openTechnicianOrders() { uni.navigateTo({ url: '/pages/technician/orders' }) }
 
@@ -67,6 +68,7 @@ onMounted(() => {
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantOrders">查看本店订单</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantStaff">本店员工与员工码</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantProfile">门店资料</button>
+      <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantCommissions">本店佣金账单（店长）</button>
       <button v-if="role === 'technician' && accessToken" class="login-button" :disabled="busy" @tap="openTechnicianOrders">我的工单</button>
       <view v-if="accessToken" class="signed-in">
         <text class="hint">已登录。车辆、订单等业务内容待接入。</text>
