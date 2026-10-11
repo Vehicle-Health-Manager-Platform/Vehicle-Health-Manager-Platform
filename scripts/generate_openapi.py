@@ -383,6 +383,16 @@ def main():
         item["responses"]["409"] = {"description":"订单/支付状态或事件冲突"}
         item["responses"]["503"] = {"description":"渠道未配置或数据库/事务暂不可用"}
         document["paths"][path] = {method:item}
+    recovery = operation("post", "/api/payments/{id}/reconcile", "本人支付结果可信查询核对", "F07,F08")
+    recovery["x-roles"] = "OWNER"
+    recovery["x-implementation-status"] = "payment-query-recovery-local-test-implemented"
+    recovery["description"] = "严格空JSON；核对独立供应商已验签事实，200不表示支付成功。60秒持久租约防重复查询，未知/超时保持状态；迟到账待核对，不恢复关闭订单，不执行退款。正式资金保持R9。详见PAYMENT_RECOVERY.md。"
+    recovery["parameters"] = [{"name":"id", "in":"path", "required":True, "schema":identifier}]
+    recovery["requestBody"] = {"required":True, "content":{"application/json":{"schema":{"type":"object", "additionalProperties":False, "maxProperties":0}}}}
+    recovery["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf":[{"$ref":"#/components/schemas/ApiResponse"},{"type":"object","properties":{"data":{"$ref":"#/components/schemas/PaymentDetail"}}}]}
+    recovery["responses"]["409"] = {"description":"历史支付信息不完整"}
+    recovery["responses"]["503"] = {"description":"数据库/渠道查询未配置或暂不可用"}
+    document["paths"]["/api/payments/{id}/reconcile"] = {"post":recovery}
     notice_fields = {"event_id":{"type":"string","format":"uuid"},"payment_id":identifier,"channel_payment_no":{"type":"string","pattern":"^[a-zA-Z0-9_-]{1,128}$"},"status":{"type":"string","enum":["SUCCEEDED","FAILED"]},"amount":quote_fields["price"],"currency":{"type":"string","const":"CNY"},"order_no":{"type":"string"},"occurred_at":timestamp}
     callback = operation("post","/api/payments/callback/LOCAL_TEST","隔离测试渠道签名通知","F07,F08")
     callback["security"] = []

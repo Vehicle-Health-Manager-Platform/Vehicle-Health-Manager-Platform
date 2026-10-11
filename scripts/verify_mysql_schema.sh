@@ -92,6 +92,10 @@ run_sql_file docs/sql/migrations/V022__catalog_governance.sql
 run_sql_file docs/sql/migrations/V022__catalog_governance.sql
 run_sql_file docs/sql/migrations/V023__completion_archive_jobs.sql
 run_sql_file docs/sql/migrations/V023__completion_archive_jobs.sql
+run_sql_file docs/sql/migrations/V024__payment_query_recovery.sql
+run_sql_file docs/sql/migrations/V024__payment_query_recovery.sql
+[[ "$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='$database' AND table_name='payment' AND column_name IN ('query_token','next_query_at','query_attempts','last_query_at','last_query_error')")" == 5 ]] || { echo 'V024 payment query fields missing' >&2; exit 1; }
+[[ "$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='$database' AND table_name='payment' AND column_name='query_attempts' AND column_default='0'")" == 1 ]] || { echo 'V024 attempts default missing' >&2; exit 1; }
 [[ "$(query "SELECT is_nullable FROM information_schema.columns WHERE table_schema='$database' AND table_name='service_archive_job' AND column_name='review_id'")" == YES ]] || { echo 'V023 review_id must allow null' >&2; exit 1; }
 [[ "$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='$database' AND table_name='service_archive_job' AND column_name='card_requested' AND column_default='0'")" == 1 ]] || { echo 'V023 card_requested missing' >&2; exit 1; }
 

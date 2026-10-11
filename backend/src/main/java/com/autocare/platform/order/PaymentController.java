@@ -17,11 +17,16 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 public class PaymentController {
-    final ObjectProvider<PaymentService> services;final PaymentChannels channels;
-    public PaymentController(ObjectProvider<PaymentService> services,PaymentChannels channels){this.services=services;this.channels=channels;}
+    final ObjectProvider<PaymentService> services;final PaymentChannels channels;final ObjectProvider<PaymentRecovery> recoveries;
+    public PaymentController(ObjectProvider<PaymentService> services,PaymentChannels channels,ObjectProvider<PaymentRecovery> recoveries){this.services=services;this.channels=channels;this.recoveries=recoveries;}
     PaymentService service(){var s=services.getIfAvailable();if(s==null)throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"支付数据库尚未配置");return s;}
     @PostMapping("/api/payments/create") ResponseEntity<?> create(@AuthenticationPrincipal Jwt jwt,@RequestHeader(value="Idempotency-Key",required=false)String key,@RequestBody JsonNode body){var owner=VehicleOwner.from(jwt);WriteIntegrityService.normalizeKey(key);ReservationInput.fields(body,"order_id","channel");long id=ReservationInput.id(body.get("order_id"));if(!body.path("channel").isTextual())throw ReservationInput.bad();String channel=body.path("channel").asText();channels.create(channel);return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(service().create(owner,key,id,channel));}
     @GetMapping("/api/payments/{id}") ResponseEntity<?> detail(@AuthenticationPrincipal Jwt jwt,@PathVariable long id){var owner=VehicleOwner.from(jwt);ServiceCatalog.validateId(id);return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(ApiResponse.success(service().detail(owner,id)));}
+    @PostMapping("/api/payments/{id}/reconcile") ResponseEntity<?> reconcile(@AuthenticationPrincipal Jwt jwt,@PathVariable long id,@RequestBody JsonNode body){
+        var owner=VehicleOwner.from(jwt);ServiceCatalog.validateId(id);ReservationInput.fields(body);
+        var recovery=recoveries.getIfAvailable();if(recovery==null)throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"支付数据库尚未配置");
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(ApiResponse.success(recovery.reconcile(owner,id)));
+    }
     @PostMapping(value="/api/payments/callback/LOCAL_TEST",consumes=MediaType.APPLICATION_JSON_VALUE) ResponseEntity<?> callback(HttpServletRequest request,@RequestHeader(value="X-Test-Timestamp",required=false)String timestamp,@RequestHeader(value="X-Test-Nonce",required=false)String nonce,@RequestHeader(value="X-Test-Signature",required=false)String signature)throws IOException{
         var adapter=channels.callback();byte[] raw=request.getInputStream().readNBytes(16385);var notice=adapter.verify(raw,timestamp,nonce,signature);service().notify(notice);return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(Map.of("code","SUCCESS"));
     }

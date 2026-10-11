@@ -27,7 +27,7 @@ class JdbcPaymentsTest {
     PaymentService payments;Time clock;ReservationStore db;ReservationSlots slots;ReservationOrders orders;ReservationExpiry expiry;MerchantActor shop;VehicleOwner a,b;
     @BeforeAll static void schema()throws Exception{
         var ds=new DriverManagerDataSource(mysql.getJdbcUrl(),mysql.getUsername(),mysql.getPassword());jdbc=new JdbcTemplate(ds);
-        try(var c=ds.getConnection()){for(String file:List.of("V001__baseline.sql","V003__auth_lifecycle.sql","V006__merchant_project_versions.sql","V007__reservation_orders.sql","V007__reservation_orders.sql","V008__payment_foundation.sql","V008__payment_foundation.sql"))ScriptUtils.executeSqlScript(c,new FileSystemResource(Path.of("..","docs","sql","migrations",file)));}
+        try(var c=ds.getConnection()){for(String file:List.of("V001__baseline.sql","V003__auth_lifecycle.sql","V006__merchant_project_versions.sql","V007__reservation_orders.sql","V007__reservation_orders.sql","V008__payment_foundation.sql","V008__payment_foundation.sql","V024__payment_query_recovery.sql","V024__payment_query_recovery.sql"))ScriptUtils.executeSqlScript(c,new FileSystemResource(Path.of("..","docs","sql","migrations",file)));}
     }
     @BeforeEach void setup(){
         jdbc.execute("DROP TRIGGER IF EXISTS reject_reservation_audit");
@@ -39,6 +39,90 @@ class JdbcPaymentsTest {
         jdbc.update("INSERT INTO vehicle(id,user_id,model_id,vin,current_mileage) VALUES(1,1,1,'TEST-A',0),(2,2,1,'TEST-B',0)");
         jdbc.update("INSERT INTO standard_project(id,project_name,category,service_content,base_price_low,base_price_high) VALUES(1,'测试项目',1,'测试',1,100)");
         jdbc.update("INSERT INTO merchant_project(id,merchant_id,project_id,price,on_shelf) VALUES(1,1,1,12.34,1)");jdbc.update("INSERT INTO merchant_project_version(id,merchant_project_id,version,price,on_shelf,actor_staff_id) VALUES(1,1,1,12.34,1,1)");
+    }
+    PaymentRecovery recovery(java.util.function.Function<PaymentQuery,Optional<PaymentNotice>> query){
+        var channel=new LocalTestPaymentChannel(LocalTestPaymentChannelTest.KEY,clock){
+            public boolean canQuery(){return true;}
+            public Optional<PaymentNotice> query(PaymentQuery q){assertFalse(org.springframework.transaction.support.TransactionSynchronizationManager.isActualTransactionActive(),"供应商IO不可占用事务");return query.apply(q);}
+        };
+        return new PaymentRecovery(new PaymentService(db,expiry,new PaymentChannels(channel)),true);
+    }
+    @Test void missingCallbackQueryPaysOnceAndStops(){
+        long o=order(a,slot(1)),p=pay(o);var n=notice(p,"SUCCEEDED",key(),"query-receipt");var calls=new java.util.concurrent.atomic.AtomicInteger();
+        var recovery=recovery(q->{calls.incrementAndGet();assertEquals(p,q.paymentId());assertEquals("12.34",q.amount().toString());return Optional.of(n);});
+        assertEquals("SUCCEEDED",recovery.reconcile(a,p).get("status"));recovery.sweep();recovery.reconcile(a,p);payments.notify(n);
+        assertEquals(1,calls.get());assertEquals("PAID",orders.detail(a,o).get("status"));assertEquals(1,count("payment_event"));
+        assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM audit_log WHERE action='ORDER_PAID'",Integer.class));
+    }
+    @Test void unknownAndNetworkErrorRetryAcrossNewWorker(){
+        long o=order(a,slot(1)),p=pay(o);var r=recovery(q->{throw new IllegalStateException("secret supplier response");});r.sweep();
+        assertEquals("PENDING",state(p));assertEquals("QUERY_FAILED",jdbc.queryForObject("SELECT last_query_error FROM payment WHERE id=?",String.class,p));
+        assertEquals(1L,jdbc.queryForObject("SELECT query_attempts FROM payment WHERE id=?",Long.class,p));r.sweep();assertEquals(1L,jdbc.queryForObject("SELECT query_attempts FROM payment WHERE id=?",Long.class,p));
+        clock.value=clock.value.plusSeconds(60);recovery(q->Optional.empty()).sweep();assertEquals("PENDING",state(p));assertEquals(0,count("payment_event"));
+        clock.value=clock.value.plusSeconds(60);recovery(q->Optional.of(notice(p,"SUCCEEDED",key(),"recovered"))).sweep();assertEquals("PAID",orders.detail(a,o).get("status"));
+    }
+    @Test void abandonedLeaseAndOldWorkerCannotOverwriteNewSchedule(){
+        long p=pay(order(a,slot(1)));var r=recovery(q->Optional.empty());var old=r.claim(a,p);assertNotNull(old);assertNull(r.claim(a,p));
+        clock.value=clock.value.plusSeconds(60);var fresh=r.claim(a,p);assertNotNull(fresh);r.process(old);
+        assertEquals(fresh.token(),jdbc.queryForObject("SELECT query_token FROM payment WHERE id=?",String.class,p));r.process(fresh);
+        assertNull(jdbc.queryForObject("SELECT query_token FROM payment WHERE id=?",String.class,p));assertEquals(2L,jdbc.queryForObject("SELECT query_attempts FROM payment WHERE id=?",Long.class,p));
+    }
+    @Test void concurrentWorkersUseOneLease()throws Exception{
+        long p=pay(order(a,slot(1)));var calls=new java.util.concurrent.atomic.AtomicInteger();var r=recovery(q->{calls.incrementAndGet();return Optional.empty();});var pool=Executors.newFixedThreadPool(2);
+        try{var x=pool.submit(()->r.reconcile(a,p));var y=pool.submit(()->recovery(q->{calls.incrementAndGet();return Optional.empty();}).reconcile(a,p));x.get(20,TimeUnit.SECONDS);y.get(20,TimeUnit.SECONDS);assertEquals(1,calls.get());}finally{pool.shutdownNow();}
+    }
+    @Test void wrongOwnerAndRevokedSessionNeverQuery(){
+        long p=pay(order(a,slot(1)));var r=recovery(q->{fail("不可查询");return Optional.empty();});assertEquals(404,assertThrows(ResponseStatusException.class,()->r.reconcile(b,p)).getStatusCode().value());
+        jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id=?",a.session());assertEquals(401,assertThrows(ResponseStatusException.class,()->r.reconcile(a,p)).getStatusCode().value());assertEquals(0L,jdbc.queryForObject("SELECT query_attempts FROM payment WHERE id=?",Long.class,p));
+    }
+    @Test void revokedDuringQueryDoesNotDiscloseButTrustedReceiptApplies(){
+        long o=order(a,slot(1)),p=pay(o);var r=recovery(q->{jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id=?",a.session());return Optional.of(notice(p,"SUCCEEDED",key(),"revoked-receipt"));});
+        assertEquals(401,assertThrows(ResponseStatusException.class,()->r.reconcile(a,p)).getStatusCode().value());assertEquals("SUCCEEDED",jdbc.queryForObject("SELECT status FROM payment WHERE id=?",String.class,p));
+    }
+    @Test void cancelledQueryReceiptDoesNotRestoreSlot(){
+        long s=slot(1),o=order(a,s),p=pay(o);orders.cancel(a,key(),o);order(b,s);recovery(q->Optional.of(notice(p,"SUCCEEDED",key(),"late"))).sweep();
+        assertEquals("CLOSED",orders.detail(a,o).get("status"));assertEquals(true,payments.detail(a,p).get("requires_review"));assertEquals("ORDER_CANCELLED",jdbc.queryForObject("SELECT reason FROM payment_exception",String.class));assertEquals(1,jdbc.queryForObject("SELECT reserved_count FROM appointment_slot",Integer.class));
+    }
+    @Test void expiredAndFailedQuerySuccessStayReviewable(){
+        long o=order(a,slot(1)),p=pay(o);clock.value=clock.value.plusSeconds(900);recovery(q->Optional.of(notice(p,"SUCCEEDED",key(),"expired"))).sweep();assertEquals("ORDER_EXPIRED",jdbc.queryForObject("SELECT reason FROM payment_exception",String.class));
+        assertEquals("CLOSED",orders.detail(a,o).get("status"));assertEquals(0,jdbc.queryForObject("SELECT reserved_count FROM appointment_slot",Integer.class));
+    }
+    @Test void failedQuerySuccessCannotBecomeNormalReceipt(){
+        long o=order(a,slot(1)),p=pay(o);send(p,"FAILED");recovery(q->Optional.of(notice(p,"SUCCEEDED",key(),"failed-late"))).sweep();assertEquals("PENDING_PAYMENT",orders.detail(a,o).get("status"));assertEquals("FAILED_PAYMENT_SUCCEEDED",jdbc.queryForObject("SELECT reason FROM payment_exception",String.class));
+    }
+    @Test void queryMismatchAndReceiptCollisionNeverPay(){
+        long s=slot(2),p=pay(order(a,s)),other=pay(order(a,s));var n=notice(p,"SUCCEEDED",key(),"shared");payments.notify(n);
+        var wrong=recovery(q->Optional.of(n));wrong.reconcile(a,other);assertEquals("PENDING",state(other));assertEquals("INVALID_RESULT",jdbc.queryForObject("SELECT last_query_error FROM payment WHERE id=?",String.class,other));
+        clock.value=clock.value.plusSeconds(60);recovery(q->Optional.of(notice(other,"SUCCEEDED",key(),"shared"))).sweep();assertEquals("PENDING",state(other));assertEquals("APPLY_FAILED",jdbc.queryForObject("SELECT last_query_error FROM payment WHERE id=?",String.class,other));
+    }
+    @Test void queryAuditFailureRollsBackAndRetries(){
+        long o=order(a,slot(1)),p=pay(o);var n=notice(p,"SUCCEEDED",key(),"audit-retry");var r=recovery(q->Optional.of(n));jdbc.execute("CREATE TRIGGER reject_reservation_audit BEFORE INSERT ON audit_log FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='test failure'");r.sweep();
+        assertEquals("PENDING",state(p));assertEquals(0,count("payment_event"));assertEquals("APPLY_FAILED",jdbc.queryForObject("SELECT last_query_error FROM payment WHERE id=?",String.class,p));
+        jdbc.execute("DROP TRIGGER reject_reservation_audit");clock.value=clock.value.plusSeconds(60);recovery(q->Optional.of(n)).sweep();assertEquals("PAID",orders.detail(a,o).get("status"));assertEquals(1,count("payment_event"));
+    }
+    @Test void callbackCanWinWhileSupplierQueryIsRunning(){
+        long o=order(a,slot(1)),p=pay(o);var n=notice(p,"SUCCEEDED",key(),"callback-wins");recovery(q->{payments.notify(n);return Optional.of(n);}).sweep();assertEquals("PAID",orders.detail(a,o).get("status"));assertEquals(1,count("payment_event"));
+    }
+    @Test void recoveryRequiresProviderAndDisabledSweepNeverQueries(){
+        long p=pay(order(a,slot(1)));assertThrows(IllegalStateException.class,()->new PaymentRecovery(payments,true));
+        assertEquals(503,assertThrows(ResponseStatusException.class,()->new PaymentRecovery(payments,false).reconcile(a,p)).getStatusCode().value());
+        new PaymentRecovery(recovery(q->{fail("disabled");return Optional.empty();}).payments,false).sweep();assertEquals(0L,jdbc.queryForObject("SELECT query_attempts FROM payment WHERE id=?",Long.class,p));
+    }
+    @Test void independentHttpSupplierAndRealMysqlRecoverMissingNotification()throws Exception{
+        long o=order(a,slot(1)),p=pay(o);var n=notice(p,"SUCCEEDED",key(),"http-independent");
+        var raw=db.mapper.writeValueAsBytes(Map.of("event_id",n.eventId(),"payment_id",p,"channel_payment_no",n.transaction(),"status",n.status(),"amount",n.amount().toString(),"currency",n.currency(),"order_no",n.orderNo(),"occurred_at",n.occurred().toString()));
+        var server=com.sun.net.httpserver.HttpServer.create(new java.net.InetSocketAddress("127.0.0.1",0),0);
+        server.createContext("/payments/",exchange->{try{
+            String time=""+clock.value.getEpochSecond(),nonce=key();exchange.getResponseHeaders().add("X-Test-Timestamp",time);exchange.getResponseHeaders().add("X-Test-Nonce",nonce);exchange.getResponseHeaders().add("X-Test-Signature",LocalTestPaymentChannelTest.sign(raw,time,nonce));exchange.sendResponseHeaders(200,raw.length);exchange.getResponseBody().write(raw);
+        }catch(Exception failure){throw new RuntimeException(failure);}finally{exchange.close();}});server.start();
+        try{
+            var channel=new LocalTestPaymentChannel(LocalTestPaymentChannelTest.KEY,clock,"http://127.0.0.1:"+server.getAddress().getPort());var r=new PaymentRecovery(new PaymentService(db,expiry,new PaymentChannels(channel)),true);r.sweep();
+            assertEquals("SUCCEEDED",state(p));assertEquals("PAID",orders.detail(a,o).get("status"));assertEquals(1,count("payment_event"));assertEquals(0,count("payment_exception"));
+        }finally{server.stop(0);}
+    }
+    @Test void corruptedHistoricalRowDoesNotStarveHealthyQueries(){
+        long o=order(a,slot(2)),bad=pay(o);jdbc.update("UPDATE `order` SET slot_id=NULL WHERE id=?",o);long good=pay(order(a,jdbc.queryForObject("SELECT id FROM appointment_slot",Long.class)));
+        var r=recovery(q->Optional.of(notice(good,"SUCCEEDED",key(),"healthy")));r.sweep();assertEquals("CLAIM_FAILED",jdbc.queryForObject("SELECT last_query_error FROM payment WHERE id=?",String.class,bad));assertEquals("SUCCEEDED",state(good));
     }
     void session(String id,String type,long subject,String role,String app,long merchant){jdbc.update("INSERT INTO auth_session(id,subject_type,subject_id,role,app_id,merchant_id,refresh_hash,expires_at) VALUES(?,?,?,?,?,?,?,DATE_ADD(UTC_TIMESTAMP(),INTERVAL 1 HOUR))",id,type,subject,role,app,merchant,UUID.randomUUID().toString());}
     VehicleOwner owner(long id){var o=new VehicleOwner(id,UUID.randomUUID().toString(),Instant.now().plusSeconds(3600));session(o.session(),"user",id,"OWNER","test",0);return o;}
