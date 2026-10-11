@@ -80,7 +80,7 @@ public class PickupInspection {
         var around=new LinkedHashMap<String,Long>();for(String slot:PickupInput.SLOTS.subList(0,5))around.put(slot,input.photos().get(slot));
         long check=db.insert("INSERT INTO pickup_check(order_id,merchant_id,staff_id,around_photos,dashboard_photo_id,mileage,mileage_source,mileage_baseline,mileage_reason,fuel_level,interior_photos,damage_status,damage_marks,arrived_at,arrival_reason,owner_confirm) VALUES(?,?,?,?,?,?,'MANUAL',?,?,?,?,?,?,?,?,0)",
             id,actor.merchantId(),actor.staffId(),db.json(around),input.photos().get("DASHBOARD"),input.mileage(),db.json(base),input.mileageReason(),input.fuel(),db.json(List.of(input.photos().get("INTERIOR"))),input.damageStatus(),db.json(input.damages()),ReservationStore.time(now),input.arrivalReason());
-        for(String slot:PickupInput.SLOTS)db.jdbc.update("INSERT INTO pickup_check_file(pickup_check_id,file_id,photo_slot) VALUES (?,?,?)",check,input.photos().get(slot),slot);
+        for(var photo:input.photos().entrySet())db.jdbc.update("INSERT INTO pickup_check_file(pickup_check_id,file_id,photo_slot) VALUES (?,?,?)",check,photo.getValue(),photo.getKey());
         db.jdbc.update("UPDATE `order` SET status='RECEIVED',check_in_completed_at=? WHERE id=? AND status='PAID'",ReservationStore.time(now),id);
         db.jdbc.update("INSERT INTO order_status_transition(order_id,merchant_id,from_status,to_status,action,actor_type,actor_id,occurred_at) VALUES(?,?,'PAID','RECEIVED','ORDER_CHECK_IN','staff_account',?,?)",id,actor.merchantId(),actor.staffId(),ReservationStore.time(now));
         var result=projection(db.one("SELECT * FROM pickup_check WHERE id=?",check));

@@ -2455,7 +2455,7 @@
         },
         "x-roles": "MERCHANT",
         "x-implementation-status": "pickup-inspection-implemented",
-        "description": "七图接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
+        "description": "七图历史兼容及独立FUEL油表接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
       }
     },
     "/api/check/pickup/confirm": {
@@ -2564,7 +2564,7 @@
         },
         "x-roles": "OWNER",
         "x-implementation-status": "pickup-inspection-implemented",
-        "description": "七图接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
+        "description": "七图历史兼容及独立FUEL油表接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
       }
     },
     "/api/check/protection/upload": {
@@ -6541,7 +6541,7 @@
         ],
         "x-roles": "MERCHANT",
         "x-implementation-status": "pickup-inspection-implemented",
-        "description": "七图接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
+        "description": "七图历史兼容及独立FUEL油表接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
       }
     },
     "/api/check/pickup/{order}": {
@@ -6701,7 +6701,7 @@
         ],
         "x-roles": "OWNER,MERCHANT",
         "x-implementation-status": "pickup-inspection-implemented",
-        "description": "七图接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
+        "description": "七图历史兼容及独立FUEL油表接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
       }
     },
     "/api/merchant/files/upload": {
@@ -6795,7 +6795,7 @@
         },
         "x-roles": "MERCHANT",
         "x-implementation-status": "pickup-inspection-implemented",
-        "description": "七图接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
+        "description": "七图历史兼容及独立FUEL油表接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
       }
     },
     "/api/merchant/files/{id}/access": {
@@ -6870,7 +6870,7 @@
         ],
         "x-roles": "MERCHANT",
         "x-implementation-status": "pickup-inspection-implemented",
-        "description": "七图接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
+        "description": "七图历史兼容及独立FUEL油表接车与本人车主决策；身份、状态和图片归属由服务端校验。详见 PICKUP_INSPECTION.md 与 PICKUP_OWNER_DECISION.md。"
       }
     },
     "/api/merchant/technicians": {
@@ -14113,6 +14113,9 @@
               "DASHBOARD",
               "INTERIOR"
             ],
+            "minProperties": 7,
+            "maxProperties": 8,
+            "description": "七图历史兼容；新微信表单要求独立FUEL油表照片，所有ID必须互异",
             "properties": {
               "FRONT": {
                 "type": "integer",
@@ -14145,6 +14148,11 @@
                 "maximum": 9007199254740991
               },
               "INTERIOR": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "FUEL": {
                 "type": "integer",
                 "minimum": 1,
                 "maximum": 9007199254740991
