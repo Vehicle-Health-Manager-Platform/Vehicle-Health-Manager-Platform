@@ -208,7 +208,7 @@ def main():
     archive_list = document["paths"]["/api/archive/list"]["get"]
     archive_list["x-roles"] = "正式车主"
     archive_list["x-implementation-status"] = "manual-photo-and-service-archive-implemented"
-    archive_list["description"] = "本人车辆档案；input_type=1/3为拍照/手动，4为施工自动归档，附source、test_mode、parts_used、no_parts、work_minutes及施工时间。按日期与ID倒序；施工图片经档案专用授权，不返回签名URL。详见 SERVICE_ARCHIVES.md。"
+    archive_list["description"] = "本人车辆档案；input_type=1/3为拍照/手动，4为施工自动归档，附source、test_mode、parts_used、no_parts、work_minutes及施工时间。新核销完成即登记归档、无需评价；source.review_id完成来源为null，旧评价来源为正整数，字段不缺失且不为0；后续评价不改快照。按日期与ID倒序；施工图片经档案专用授权，不返回签名URL。详见 SERVICE_ARCHIVES.md。"
     archive_file_path = "/api/archive/{archiveId}/files/{fileId}/access"
     archive_file = operation("get", archive_file_path, "本人施工档案私有图片短时访问", "F03")
     archive_file["x-roles"] = "正式车主"

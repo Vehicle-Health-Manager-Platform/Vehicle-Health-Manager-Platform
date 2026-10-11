@@ -26,6 +26,7 @@ class JdbcServiceArchiveTest {
         try (var c = ds.getConnection(); var paths = Files.list(Path.of("..", "docs", "sql", "migrations"))) {
             for (var p : paths.filter(p -> p.toString().endsWith(".sql")).sorted().toList()) ScriptUtils.executeSqlScript(c, new FileSystemResource(p));
             ScriptUtils.executeSqlScript(c, new FileSystemResource(Path.of("..", "docs", "sql", "migrations", "V017__service_archive_jobs.sql")));
+            ScriptUtils.executeSqlScript(c, new FileSystemResource(Path.of("..", "docs", "sql", "migrations", "V023__completion_archive_jobs.sql")));
         }
     }
     String key() { return UUID.randomUUID().toString(); }
@@ -68,6 +69,51 @@ class JdbcServiceArchiveTest {
     }
     int count(String t) { return jdbc.queryForObject("SELECT COUNT(*) FROM `"+t+"`",Integer.class); }
     long archive() { return jdbc.queryForObject("SELECT archive_id FROM service_archive_job",Long.class); }
+    long completion() { db.transactions.executeWithoutResult(tx -> ServiceArchiveJobs.enqueueCompletion(db,1)); return jdbc.queryForObject("SELECT id FROM service_archive_job",Long.class); }
+    @Test void completedWithoutReviewArchivesPrivatelyAndRetainsNullSource() {
+        long job=completion(); new ServiceArchiveJobs(db,true,true).consume(job);
+        assertEquals(0,count("order_review")); assertEquals(0,count("experience_card")); assertEquals(1,count("vehicle_archive"));
+        var row=db.mapper.valueToTree(archives.list(owner,1,1,20)).path("list").get(0);
+        assertTrue(row.path("source").has("review_id")); assertTrue(row.path("source").path("review_id").isNull());
+        assertEquals(404,assertThrows(ResponseStatusException.class,()->archives.list(other,1,1,20)).getStatusCode().value());
+    }
+    @Test void laterReviewRequestsOneDraftWithoutRewritingCompletedArchive() {
+        jdbc.update("UPDATE payment SET channel='WECHAT'"); jdbc.update("UPDATE payment_event SET channel='WECHAT'"); jdbc.update("UPDATE order_redemption SET test_mode=0");
+        long job=completion(); var worker=new ServiceArchiveJobs(db,true,true); worker.consume(job);
+        String before=jdbc.queryForObject("SELECT content FROM vehicle_archive",String.class);
+        submit(); worker.sweep(); worker.consume(job);
+        assertEquals(1,count("service_archive_job")); assertEquals(1,count("vehicle_archive")); assertEquals(1,count("experience_card"));
+        assertEquals("DRAFT",jdbc.queryForObject("SELECT status FROM experience_card",String.class));
+        assertEquals(before,jdbc.queryForObject("SELECT content FROM vehicle_archive",String.class));
+        long card=jdbc.queryForObject("SELECT id FROM experience_card",Long.class); cards().change(owner,card,key(),consent(),true);
+        assertEquals("PENDING_REVIEW",jdbc.queryForObject("SELECT status FROM experience_card",String.class));
+    }
+    @Test void reviewBeforeWorkerStillGeneratesOneArchiveAndPrivateDraft() {
+        long job=completion(); submit(); new ServiceArchiveJobs(db,true,true).consume(job);
+        assertEquals(1,count("vehicle_archive")); assertEquals(1,count("experience_card"));
+        assertNull(jdbc.queryForObject("SELECT review_id FROM service_archive_job",Long.class));
+    }
+    @Test void completionSourceGapAndDisabledConsumerRecoverWithoutEvaluation() {
+        jdbc.update("UPDATE technician_report SET is_deleted=1"); completion(); jobs.sweep();
+        assertEquals(0,count("vehicle_archive")); assertEquals("SOURCE_UNAVAILABLE",jdbc.queryForObject("SELECT last_error FROM service_archive_job",String.class));
+        jdbc.update("UPDATE technician_report SET is_deleted=0"); jdbc.update("UPDATE service_archive_job SET next_attempt_at=UTC_TIMESTAMP()");
+        new ServiceArchiveJobs(db,false,true).sweep(); assertEquals(0,count("vehicle_archive")); jobs.sweep(); assertEquals(1,count("vehicle_archive"));
+    }
+    @Test void lateDraftAuditFailurePreservesArchiveAndRequestForRetry() {
+        completion(); jobs.sweep(); submit(); String before=jdbc.queryForObject("SELECT content FROM vehicle_archive",String.class);
+        jdbc.execute("CREATE TRIGGER reject_experience_card BEFORE INSERT ON audit_log FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='synthetic failure'");
+        var worker=new ServiceArchiveJobs(db,true,true); worker.sweep();
+        assertEquals(0,count("experience_card")); assertEquals(1,count("vehicle_archive")); assertEquals(1,jdbc.queryForObject("SELECT card_requested FROM service_archive_job",Integer.class));
+        jdbc.execute("DROP TRIGGER reject_experience_card"); jdbc.update("UPDATE service_archive_job SET next_attempt_at=UTC_TIMESTAMP()"); worker.sweep();
+        assertEquals(1,count("experience_card")); assertEquals(before,jdbc.queryForObject("SELECT content FROM vehicle_archive",String.class));
+    }
+    @Test void completionConcurrentConsumersAndLaterReviewCreateOneOutput() throws Exception {
+        long job=completion(); var worker=new ServiceArchiveJobs(db,true,true); var pool=Executors.newFixedThreadPool(2);
+        try { var a=pool.submit(()->worker.consume(job)); var b=pool.submit(this::submit); a.get(30,TimeUnit.SECONDS); b.get(30,TimeUnit.SECONDS);
+            var c=pool.submit(()->worker.consume(job)); var d=pool.submit(()->worker.consume(job)); c.get(30,TimeUnit.SECONDS); d.get(30,TimeUnit.SECONDS);
+            assertEquals(1,count("vehicle_archive")); assertEquals(1,count("experience_card")); assertEquals(1,count("service_archive_job"));
+        } finally { pool.shutdownNow(); }
+    }
     @Test void reviewEnqueuesAndConsumerAddsTraceableArchiveWithoutInventingMileage() {
         long id=submit(); assertEquals(0,count("vehicle_archive")); jobs.consume(id); jobs.consume(id);
         assertEquals(1,count("vehicle_archive")); assertEquals(2,count("vehicle_archive_file"));

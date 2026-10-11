@@ -63,13 +63,15 @@ public class ExperienceCards {
     void trusted(Map<String,Object> c) {
         if (ReservationStore.number(c, "test_mode") != 0) throw conflict();
         try {
-            var job = db.one("SELECT * FROM service_archive_job WHERE order_id=? AND review_id=? AND archive_id=? AND status='DONE'",
+            var job = db.one("SELECT * FROM service_archive_job WHERE order_id=? AND (review_id=? OR review_id IS NULL) AND archive_id=? AND status='DONE'",
                 c.get("order_id"), c.get("review_id"), c.get("archive_id"));
             var archive = db.one("SELECT content FROM vehicle_archive WHERE id=? AND vehicle_id=? AND input_type=4 AND is_deleted=0",
                 c.get("archive_id"), c.get("vehicle_id"));
             var frozen = db.parse(job.get("payload"));
+            // A later review validates independently; completion archive contents stay immutable.
+            if (job.get("review_id") == null) ServiceArchiveJobs.snapshot(db, ReservationStore.number(c,"order_id"), ReservationStore.number(c,"review_id"));
             if (!frozen.equals(db.parse(archive.get("content"))) || !frozen.equals(ServiceArchiveJobs.snapshot(db,
-                ReservationStore.number(c, "order_id"), ReservationStore.number(c, "review_id")))
+                ReservationStore.number(c, "order_id"), job.get("review_id") == null ? 0 : ReservationStore.number(c, "review_id")))
                 || frozen.path("test_mode").asBoolean(true) || frozen.path("source").path("user_id").asLong() != ReservationStore.number(c, "user_id")) throw conflict();
             var expected=db.mapper.valueToTree(Map.of("version",1,"work_minutes",frozen.path("work_minutes").intValue(),
                 "part_kinds",frozen.path("parts_used").size(),"no_parts",frozen.path("no_parts").booleanValue(),
