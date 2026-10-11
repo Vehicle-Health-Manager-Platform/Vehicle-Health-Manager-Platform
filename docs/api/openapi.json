@@ -5924,6 +5924,97 @@
         "description": "本机预约订单子集，支付基础接入、正式扣款/券/退款未接入；时间带时区、数据库UTC，日历按北京时间。详见 RESERVATION_ORDERS.md。"
       }
     },
+    "/api/payments/{id}/reconcile": {
+      "post": {
+        "summary": "本人支付结果可信查询核对",
+        "operationId": "post_api_payments_id_reconcile",
+        "tags": [
+          "payments"
+        ],
+        "x-feature-ids": [
+          "F07",
+          "F08"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/PaymentDetail"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "409": {
+            "description": "历史支付信息不完整"
+          },
+          "503": {
+            "description": "数据库/渠道查询未配置或暂不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "maxProperties": 0
+              }
+            }
+          }
+        },
+        "x-roles": "OWNER",
+        "x-implementation-status": "payment-query-recovery-local-test-implemented",
+        "description": "严格空JSON；核对独立供应商已验签事实，200不表示支付成功。60秒持久租约防重复查询，未知/超时保持状态；迟到账待核对，不恢复关闭订单，不执行退款。正式资金保持R9。详见PAYMENT_RECOVERY.md。"
+      }
+    },
     "/api/payments/callback/LOCAL_TEST": {
       "post": {
         "summary": "隔离测试渠道签名通知",
