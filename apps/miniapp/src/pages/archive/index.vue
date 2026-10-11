@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { onShow, onHide, onUnload } from '@dcloudio/uni-app'
 import OwnerTabShell from '../../components/OwnerTabShell.vue'
 import VehicleList from '../../components/VehicleList.vue'
@@ -9,15 +9,36 @@ import { imageApi } from '../../services/private-images.js'
 import { selectedOwnerVehicle, selectOwnerVehicle } from '../../services/owner-vehicle-selection.js'
 import { archiveEntryUrl, archiveInputTypeName } from '../../services/archive-entry-mode.js'
 import { displayTime } from '../../services/reservations.js'
+import { archiveReportApi } from '../../services/archive-report.js'
+import { createArchiveReportFlow } from '../../services/archive-report-flow.js'
 
 const vehicle = selectedOwnerVehicle, rows = ref([]), total = ref(0), page = ref(0)
 const busy = ref(false), loaded = ref(false), message = ref(''), kind = ref(''), retryMore = ref(false)
 const labels = ['保养', '维修', '保险', '事故', '改装', '违章', '年检']
+const reportRangeEnabled = ref(false), reportFrom = ref(''), reportTo = ref('')
+const reportState = reactive({ busy: false, message: '', kind: '' })
+const reportFlow = createArchiveReportFlow({ api: archiveReportApi, token: () => ownerSession.accessToken,
+  vehicleId: () => vehicle.value?.vehicle_id || 0, onChange: next => Object.assign(reportState, next) })
 let generation = 0
 let visible = false
 function suspend() { generation++; busy.value = false }
 function clear() { suspend(); rows.value = []; total.value = 0; page.value = 0; loaded.value = false; message.value = ''; kind.value = '' }
 function select(item) { selectOwnerVehicle(item) }
+function setReportRange(enabled) {
+  reportRangeEnabled.value = enabled
+  if (!enabled) { reportFrom.value = ''; reportTo.value = '' }
+  reportFlow.invalidate()
+}
+function setReportDate(edge, event) {
+  if (edge === 'from') reportFrom.value = event.detail.value
+  else reportTo.value = event.detail.value
+  reportFlow.invalidate()
+}
+function exportReport() {
+  const range = reportRangeEnabled.value ? { from: reportFrom.value, to: reportTo.value } : null
+  reportFlow.export(range)
+}
+function loginForReport() { clearOwnerSession(); uni.navigateTo({ url: '/pages/owner/index' }) }
 async function load(more = false) {
   if (busy.value || !vehicle.value || !ownerSession.accessToken) return
   const current = ++generation, token = ownerSession.accessToken, vehicleId = vehicle.value.vehicle_id, next = more ? page.value + 1 : 1
@@ -41,11 +62,11 @@ async function preview(item, id) {
     await imageApi.preview(result.url)
   } catch { if (current === generation) { message.value = '图片预览未打开，请重试'; kind.value = 'preview' } }
 }
-watch(() => ownerSession.accessToken, clear, { flush: 'sync' })
-watch(() => vehicle.value?.vehicle_id, (next, previous) => { if (next && next !== previous) { suspend(); if (visible) load() } }, { flush: 'sync' })
-onShow(() => { visible = true; if (vehicle.value) load() })
-onHide(() => { visible = false; suspend() })
-onUnload(() => { visible = false; clear() })
+watch(() => ownerSession.accessToken, () => { clear(); reportFlow.invalidate(); reportRangeEnabled.value = false; reportFrom.value = ''; reportTo.value = '' }, { flush: 'sync' })
+watch(() => vehicle.value?.vehicle_id, (next, previous) => { if (next && next !== previous) { suspend(); reportFlow.invalidate(); reportRangeEnabled.value = false; reportFrom.value = ''; reportTo.value = ''; if (visible) load() } }, { flush: 'sync' })
+onShow(() => { visible = true; reportFlow.resume(); if (vehicle.value) load() })
+onHide(() => { visible = false; reportFlow.suspend(); suspend() })
+onUnload(() => { visible = false; reportFlow.dispose(); clear() })
 function login() { clearOwnerSession(); uni.navigateTo({ url: '/pages/owner/index' }) }
 function add(mode = 'manual') { if (vehicle.value) uni.navigateTo({ url: archiveEntryUrl(vehicle.value.vehicle_id, mode) }) }
 </script>
@@ -57,6 +78,32 @@ function add(mode = 'manual') { if (vehicle.value) uni.navigateTo({ url: archive
       <button v-if="vehicle" class="secondary" @tap="uni.navigateTo({url:'/pages/community/my-cards'})">我的经验卡片</button>
       <button v-if="vehicle" class="secondary" @tap="uni.navigateTo({url:'/pages/community/experiences'})">同款施工经验</button>
       <view v-if="vehicle" class="records" data-testid="archive-records">
+        <view class="report-export" data-testid="archive-report-export">
+          <view class="report-head">
+            <view class="report-heading"><text class="report-kicker">本人可见 · 离线留存</text><text class="report-title">档案报告</text></view>
+            <text class="report-badge">PDF</text>
+          </view>
+          <text class="report-copy">导出 {{ total }} 条当前可见档案。照片原件仍可在小程序档案页查看。</text>
+          <view class="report-scope" aria-label="报告范围">
+            <button class="scope-choice" :class="{selected: !reportRangeEnabled}" @tap="setReportRange(false)">全部记录</button>
+            <button class="scope-choice" :class="{selected: reportRangeEnabled}" @tap="setReportRange(true)">按日期范围</button>
+          </view>
+          <view v-if="reportRangeEnabled" class="report-dates">
+            <picker mode="date" :value="reportFrom" @change="setReportDate('from', $event)">
+              <view class="date-choice"><text class="date-label">开始日期</text><text :class="{'date-empty': !reportFrom}">{{ reportFrom || '请选择' }}</text></view>
+            </picker>
+            <text class="date-divider">至</text>
+            <picker mode="date" :value="reportTo" @change="setReportDate('to', $event)">
+              <view class="date-choice"><text class="date-label">结束日期</text><text :class="{'date-empty': !reportTo}">{{ reportTo || '请选择' }}</text></view>
+            </picker>
+          </view>
+          <text v-if="reportRangeEnabled" class="report-hint">日期首尾均包含；开始和结束日期都要选择。</text>
+          <button class="report-action" data-testid="archive-report-download" :disabled="reportState.busy" :loading="reportState.busy" @tap="exportReport">
+            {{ reportState.busy ? '正在生成报告' : '导出档案 PDF' }}
+          </button>
+          <text v-if="reportState.message" class="report-message" :class="{'report-error': reportState.kind !== 'success'}" role="status">{{ reportState.message }}</text>
+          <button v-if="['unauthorized','forbidden'].includes(reportState.kind)" class="report-login" @tap="loginForReport">重新登录车主账号</button>
+        </view>
         <view class="top"><text class="heading">{{ vehicle.model_name || '当前车辆' }}的记录</text><view class="actions"><button class="add" :disabled="busy" @tap="add('manual')">手动录入</button><button class="add" :disabled="busy" @tap="add('photo')">拍照录入</button></view></view>
         <text v-if="busy" class="copy" role="status">正在加载档案…</text>
         <text v-else-if="loaded && !rows.length" class="copy">这辆车还没有档案记录，可手动录入第一条。</text>
@@ -89,6 +136,24 @@ function add(mode = 'manual') { if (vehicle.value) uni.navigateTo({ url: archive
 .service-source { display: flex; flex-direction: column; gap: 12rpx; margin: 16rpx 0; }
 .record > .copy { white-space: pre-line; }
 .records { margin-top: 28rpx; padding: 32rpx; border-radius: 24rpx; background: white; display: flex; flex-direction: column; }
+.report-export { display: flex; flex-direction: column; gap: 16rpx; margin-bottom: 32rpx; padding: 26rpx 24rpx; border-left: 6rpx solid #00b42a; border-radius: 16rpx; background: #f5fbf6; }
+.report-head { display: flex; align-items: center; justify-content: space-between; }
+.report-heading { display: flex; flex-direction: column; gap: 6rpx; }
+.report-kicker { color: #008f24; font-size: 21rpx; font-weight: 600; letter-spacing: 1rpx; }
+.report-title { color: #1d2129; font-size: 30rpx; font-weight: 700; }
+.report-badge { padding: 6rpx 12rpx; border: 1rpx solid #b7e3c1; border-radius: 8rpx; color: #008f24; font-size: 20rpx; font-weight: 700; letter-spacing: 1rpx; }
+.report-copy,.report-hint { color: #4e5969; font-size: 23rpx; line-height: 34rpx; }
+.report-scope { display: flex; gap: 12rpx; }
+.scope-choice { min-height: 62rpx; padding: 0 20rpx; border: 1rpx solid #d9e7dc; border-radius: 12rpx; background: #fff; color: #4e5969; font-size: 23rpx; }
+.scope-choice.selected { border-color: #00b42a; background: #e8f7eb; color: #008f24; font-weight: 600; }
+.report-dates { display: flex; align-items: center; gap: 12rpx; }
+.date-choice { display: flex; flex: 1; flex-direction: column; gap: 8rpx; min-width: 0; padding: 14rpx; border: 1rpx solid #e1e7e2; border-radius: 12rpx; background: #fff; color: #1d2129; font-size: 23rpx; }
+.date-label,.date-empty { color: #86909c; font-size: 20rpx; }
+.date-divider { color: #86909c; font-size: 22rpx; }
+.report-action { width: 100%; min-height: 76rpx; border-radius: 14rpx; background: #00b42a; color: #fff; font-size: 25rpx; font-weight: 600; }
+.report-login { align-self: flex-start; margin-top: 0; background: #eef8f0; color: #008f24; }
+.report-message { color: #008f24; font-size: 23rpx; line-height: 34rpx; }
+.report-error { color: #b42318; }
 .top,.record-top { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
 .actions { display: flex; flex-wrap: wrap; gap: 12rpx; justify-content: flex-end; }
 .heading { font-size: 30rpx; font-weight: 650; color: #1d2129; }

@@ -18,11 +18,11 @@ function withUni(fake, run) {
   }
 }
 
-const REQUIRED = ['scanCode', 'chooseMedia', 'chooseImage', 'uploadFile', 'previewImage', 'openSetting', 'request', 'login']
+const REQUIRED = ['scanCode', 'chooseMedia', 'chooseImage', 'uploadFile', 'previewImage', 'openSetting', 'downloadFile', 'openDocument', 'request', 'login']
 
 test('运行时暴露取图、文件与请求所需的全部方法', () => {
   for (const name of REQUIRED) assert.equal(typeof apiRuntime[name], 'function', `运行时缺少 ${name}`)
-  for (const name of ['initCloud', 'supports', 'environment', 'getFileSystemManager'])
+  for (const name of ['initCloud', 'supports', 'environment', 'getFileSystemManager', 'userDataPath'])
     assert.equal(typeof apiRuntime[name], 'function', `运行时缺少 ${name}`)
 })
 
@@ -36,10 +36,13 @@ test('原生方法透传并保持回调语义', () => {
       uploadFile: options => { seen.push('uploadFile'); options.success({ statusCode: 200, data: '{}' }); return { abort() {} } },
       previewImage: options => { seen.push('previewImage'); options.success() },
       openSetting: options => { seen.push('openSetting'); options.success({ authSetting: {} }) },
+      downloadFile: options => { seen.push('downloadFile'); options.success({ statusCode: 200, tempFilePath: '/tmp/report.pdf' }); return { abort() {} } },
+      openDocument: options => { seen.push('openDocument'); options.success() },
       request: options => { seen.push('request'); options.success({ statusCode: 200, data: {} }) },
       login: options => { seen.push('login'); options.success({ code: 'offline' }) },
       getSystemInfoSync: () => ({ platform: 'devtools' }),
       getFileSystemManager: () => ({ getFileInfo() {} }),
+      env: { USER_DATA_PATH: '/user/data' },
     },
     () => {
       let chosen, scanned
@@ -49,6 +52,8 @@ test('原生方法透传并保持回调语义', () => {
       apiRuntime.uploadFile({ url: '/api/file/upload', success() {} })
       apiRuntime.previewImage({ current: 'https://offline.invalid/one', success() {} })
       apiRuntime.openSetting({ success() {} })
+      apiRuntime.downloadFile({ success() {} })
+      apiRuntime.openDocument({ success() {} })
       apiRuntime.request({ url: '/api/vehicles', success() {} })
       apiRuntime.login({ success() {} })
       // 选择结果必须原样返回给调用方，否则上层拿不到图片路径。
@@ -58,9 +63,10 @@ test('原生方法透传并保持回调语义', () => {
       assert.equal(apiRuntime.supports('chooseVideo'), false)
       assert.equal(apiRuntime.environment(), 'devtools')
       assert.notEqual(apiRuntime.getFileSystemManager(), undefined)
+      assert.equal(apiRuntime.userDataPath(), '/user/data')
     },
   )
-  assert.deepEqual(seen, ['scanCode', 'chooseMedia', 'chooseImage', 'uploadFile', 'previewImage', 'openSetting', 'request', 'login'])
+  assert.deepEqual(seen, ['scanCode', 'chooseMedia', 'chooseImage', 'uploadFile', 'previewImage', 'openSetting', 'downloadFile', 'openDocument', 'request', 'login'])
 })
 
 test('service 源码里实际调用的运行时方法都已暴露', async () => {
@@ -87,6 +93,7 @@ test('底层缺少能力时走 fail 回调而不是抛错', () => {
     assert.equal(apiRuntime.supports('chooseMedia'), false)
     assert.equal(apiRuntime.environment(), 'device')
     assert.equal(apiRuntime.getFileSystemManager(), undefined)
+    assert.equal(apiRuntime.userDataPath(), '')
   })
 })
 
@@ -99,4 +106,5 @@ test('没有运行时全局对象时降级为 fail 回调与真机判定', () =>
   assert.equal(apiRuntime.supports('chooseImage'), false)
   assert.equal(apiRuntime.environment(), 'device')
   assert.equal(apiRuntime.getFileSystemManager(), undefined)
+  assert.equal(apiRuntime.userDataPath(), '')
 })
