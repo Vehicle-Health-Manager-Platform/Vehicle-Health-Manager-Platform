@@ -18,4 +18,8 @@ public class PaymentChannels {
     PaymentChannels(PaymentChannel local){this.local=local;}
     public PaymentChannel callback(){if(local==null)throw new ResponseStatusException(HttpStatus.NOT_FOUND,"测试支付渠道未开放");return local;}
     public PaymentChannel create(String channel){if("WECHAT".equals(channel))throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"正式微信支付尚未配置，当前不可支付");if(!"LOCAL_TEST".equals(channel))throw ReservationInput.bad();return callback();}
+    public PaymentChannel query(String channel){
+        if("LOCAL_TEST".equals(channel)&&(local==null||!local.canQuery()))throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"支付渠道查询尚未配置");
+        return create(channel);
+    }
 }
