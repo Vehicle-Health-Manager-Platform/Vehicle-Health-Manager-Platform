@@ -41,7 +41,7 @@ public class LocalTestPaymentChannel implements PaymentChannel {
                 return Optional.of(result);
         }catch(InterruptedException error){Thread.currentThread().interrupt();throw new IllegalStateException("查询中断");}catch(java.util.concurrent.ExecutionException error){throw new IllegalStateException("查询暂不可用");}
     }
-    private static java.net.http.HttpResponse.BodySubscriber<byte[]> boundedBody(){
+    static java.net.http.HttpResponse.BodySubscriber<byte[]> boundedBody(){
         return new java.net.http.HttpResponse.BodySubscriber<>(){
             final java.net.http.HttpResponse.BodySubscriber<byte[]> delegate=java.net.http.HttpResponse.BodySubscribers.ofByteArray();
             java.util.concurrent.Flow.Subscription subscription;int count;
