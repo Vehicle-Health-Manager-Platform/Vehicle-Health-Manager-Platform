@@ -1017,6 +1017,50 @@ def main():
         item["responses"]["503"] = {"description": "开关关闭或事务依赖不可用，50300"}
         document["paths"].setdefault(path, {})[method] = item
 
+    refund_fields = {
+        "refund_id": identifier, "refund_no": {"type": "string", "pattern": "^R[a-f0-9]{32}$"},
+        "payment_id": identifier, "amount": {"type": "string", "pattern": r"^(0|[1-9][0-9]{0,7})\.[0-9]{2}$"},
+        "currency": {"type": "string", "const": "CNY"},
+        "status": {"type": "string", "enum": ["REQUESTED", "REJECTED", "WITHDRAWN", "PENDING", "FAILED", "SUCCEEDED"]},
+        "revision": identifier, "from_status": {"type": "string", "enum": ["PAID", "RECEIVED", "IN_SERVICE", "PENDING_VERIFY", "DISPUTED"]},
+        "reason": {"type": "string", "minLength": 1, "maxLength": 256},
+        "decision_note": {"type": ["string", "null"], "maxLength": 256},
+        "owner_consented_at": {"type": "string", "format": "date-time"},
+        "merchant_consented_at": {"type": ["string", "null"], "format": "date-time"},
+        "refunded_at": {"type": ["string", "null"], "format": "date-time"}, "test_mode": {"type": "boolean"}}
+    schemas["OrderRefund"] = strict(refund_fields)
+    schemas["OrderRefundDetail"] = strict({"order_id": identifier, "order_status": {"type": "string", "enum": ["PENDING_PAYMENT", "PAID", "RECEIVED", "IN_SERVICE", "PENDING_VERIFY", "COMPLETED", "DISPUTED", "CLOSED"]},
+        "can_request": {"type": "boolean"}, "refund": {"oneOf": [{"$ref": "#/components/schemas/OrderRefund"}, {"type": "null"}]}})
+    for method, path, title, role, body in (
+        ("get", "/api/order/{id}/refund", "本人订单取消退款记录", "OWNER", None),
+        ("post", "/api/order/{id}/refund", "本人申请双方同意全额退款", "OWNER", strict({"reason": refund_fields["reason"]})),
+        ("post", "/api/order/{id}/refund/withdraw", "本人撤回待决定申请", "OWNER", strict({"revision": identifier})),
+        ("get", "/api/merchant/orders/{id}/refund", "本店店长退款记录", "MERCHANT", None),
+        ("post", "/api/merchant/orders/{id}/refund/decision", "店长按申请版本决定", "MERCHANT", {"type": "object", "additionalProperties": False, "required": ["revision", "decision"], "properties": {"revision": identifier, "decision": {"type": "string", "enum": ["ACCEPT", "REJECT"]}, "note": refund_fields["reason"]}}),
+        ("post", "/api/merchant/orders/{id}/refund/reconcile", "本店店长可信退款查询恢复", "MERCHANT", {"type": "object", "additionalProperties": False, "maxProperties": 0}),
+    ):
+        item = operation(method, path, title, "F07,F08")
+        item["x-roles"] = role
+        item["x-implementation-status"] = "order-refunds-local-test-implemented"
+        item["description"] = "全额按服务器原支付冻结，双方同意后关闭订单、释放容量，资金状态独立。申请时订单继续原流程，状态变化须撤回重提。拒绝必须note；核对不使用幂等键。正式微信渠道503，测试成功无真实资金。见ORDER_REFUNDS.md。"
+        for param in item["parameters"]:
+            if param["in"] == "path": param["schema"] = identifier
+        if path.endswith("/reconcile"):
+            item["parameters"] = [p for p in item["parameters"] if p["name"] != "Idempotency-Key"]
+        if body is not None: item["requestBody"] = {"required": True, "content": {"application/json": {"schema": body}}}
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "properties": {"data": {"$ref": "#/components/schemas/OrderRefundDetail"}}}]}
+        for code, message in (("403", "身份无退款权限"), ("404", "本人或本店订单不存在"), ("409", "订单/申请版本/可信支付变化"), ("503", "数据库或渠道尚不可用")): item["responses"][code] = {"description": message}
+        document["paths"].setdefault(path, {})[method] = item
+    callback = operation("post", "/api/refunds/callback/LOCAL_TEST", "隔离测试退款签名通知", "F08")
+    callback["security"] = []
+    callback["parameters"] = [{"name": name, "in": "header", "required": True, "schema": {"type": "string"}} for name in ("X-Test-Timestamp", "X-Test-Nonce", "X-Test-Signature")]
+    callback["x-implementation-status"] = "order-refunds-local-test-implemented"
+    callback["description"] = "仅隔离测试开关和local-payment-test配置启用；原文最多16KiB，HMAC五分钟时间窗，事件哈希去重、原支付/退款绑定、全额校验与审计。不是微信官方协议。字段见ORDER_REFUNDS.md。"
+    callback["requestBody"] = {"required": True, "content": {"application/json": {"schema": strict({"event_id": {"type": "string", "format": "uuid"}, "refund_id": identifier, "refund_no": refund_fields["refund_no"], "payment_id": identifier, "channel_refund_no": {"type": "string", "pattern": "^[a-zA-Z0-9_-]{1,128}$"}, "status": {"type": "string", "enum": ["SUCCEEDED", "FAILED"]}, "amount": refund_fields["amount"], "currency": refund_fields["currency"], "occurred_at": {"type": "string", "format": "date-time"}})}}}
+    callback["responses"]["200"]["content"]["application/json"]["schema"] = strict({"code": {"type": "string", "const": "SUCCESS"}})
+    for code, message in (("400", "严格通知字段错误"), ("401", "验签或时间窗失败"), ("404", "测试渠道关闭或退款不存在"), ("409", "原支付/全额/事件哈希/供应商流水冲突"), ("503", "应用事务失败，可重放通知")): callback["responses"][code] = {"description": message}
+    document["paths"]["/api/refunds/callback/LOCAL_TEST"] = {"post": callback}
+
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     count = sum(len(item) for item in document["paths"].values())
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

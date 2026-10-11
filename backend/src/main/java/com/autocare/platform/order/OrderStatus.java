@@ -31,6 +31,8 @@ public final class OrderStatus {
 
     /** 全部状态。列表筛选白名单的唯一来源。 */
     public static final Set<String> ALL=Set.of(PENDING_PAYMENT,PAID,RECEIVED,IN_SERVICE,PENDING_VERIFY,COMPLETED,CLOSED,DISPUTED);
+    /** Dedicated mutually agreed refund cancellation; never a generic merchant action. */
+    public static final Set<String> REFUND_CANCELLABLE=Set.of(PAID,RECEIVED,IN_SERVICE,PENDING_VERIFY,DISPUTED);
 
     /** 商家侧动作：接车。 */
     public static final String RECEIVE="RECEIVE";

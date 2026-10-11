@@ -11499,6 +11499,757 @@
           }
         }
       }
+    },
+    "/api/order/{id}/refund": {
+      "get": {
+        "summary": "本人订单取消退款记录",
+        "operationId": "get_api_order_id_refund",
+        "tags": [
+          "order"
+        ],
+        "x-feature-ids": [
+          "F07",
+          "F08"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/OrderRefundDetail"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "身份无退款权限"
+          },
+          "404": {
+            "description": "本人或本店订单不存在"
+          },
+          "409": {
+            "description": "订单/申请版本/可信支付变化"
+          },
+          "503": {
+            "description": "数据库或渠道尚不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "order-refunds-local-test-implemented",
+        "description": "全额按服务器原支付冻结，双方同意后关闭订单、释放容量，资金状态独立。申请时订单继续原流程，状态变化须撤回重提。拒绝必须note；核对不使用幂等键。正式微信渠道503，测试成功无真实资金。见ORDER_REFUNDS.md。"
+      },
+      "post": {
+        "summary": "本人申请双方同意全额退款",
+        "operationId": "post_api_order_id_refund",
+        "tags": [
+          "order"
+        ],
+        "x-feature-ids": [
+          "F07",
+          "F08"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/OrderRefundDetail"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "身份无退款权限"
+          },
+          "404": {
+            "description": "本人或本店订单不存在"
+          },
+          "409": {
+            "description": "订单/申请版本/可信支付变化"
+          },
+          "503": {
+            "description": "数据库或渠道尚不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "reason"
+                ],
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-roles": "OWNER",
+        "x-implementation-status": "order-refunds-local-test-implemented",
+        "description": "全额按服务器原支付冻结，双方同意后关闭订单、释放容量，资金状态独立。申请时订单继续原流程，状态变化须撤回重提。拒绝必须note；核对不使用幂等键。正式微信渠道503，测试成功无真实资金。见ORDER_REFUNDS.md。"
+      }
+    },
+    "/api/order/{id}/refund/withdraw": {
+      "post": {
+        "summary": "本人撤回待决定申请",
+        "operationId": "post_api_order_id_refund_withdraw",
+        "tags": [
+          "order"
+        ],
+        "x-feature-ids": [
+          "F07",
+          "F08"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/OrderRefundDetail"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "身份无退款权限"
+          },
+          "404": {
+            "description": "本人或本店订单不存在"
+          },
+          "409": {
+            "description": "订单/申请版本/可信支付变化"
+          },
+          "503": {
+            "description": "数据库或渠道尚不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "revision"
+                ],
+                "properties": {
+                  "revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-roles": "OWNER",
+        "x-implementation-status": "order-refunds-local-test-implemented",
+        "description": "全额按服务器原支付冻结，双方同意后关闭订单、释放容量，资金状态独立。申请时订单继续原流程，状态变化须撤回重提。拒绝必须note；核对不使用幂等键。正式微信渠道503，测试成功无真实资金。见ORDER_REFUNDS.md。"
+      }
+    },
+    "/api/merchant/orders/{id}/refund": {
+      "get": {
+        "summary": "本店店长退款记录",
+        "operationId": "get_api_merchant_orders_id_refund",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F07",
+          "F08"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/OrderRefundDetail"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "身份无退款权限"
+          },
+          "404": {
+            "description": "本人或本店订单不存在"
+          },
+          "409": {
+            "description": "订单/申请版本/可信支付变化"
+          },
+          "503": {
+            "description": "数据库或渠道尚不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "order-refunds-local-test-implemented",
+        "description": "全额按服务器原支付冻结，双方同意后关闭订单、释放容量，资金状态独立。申请时订单继续原流程，状态变化须撤回重提。拒绝必须note；核对不使用幂等键。正式微信渠道503，测试成功无真实资金。见ORDER_REFUNDS.md。"
+      }
+    },
+    "/api/merchant/orders/{id}/refund/decision": {
+      "post": {
+        "summary": "店长按申请版本决定",
+        "operationId": "post_api_merchant_orders_id_refund_decision",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F07",
+          "F08"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/OrderRefundDetail"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "身份无退款权限"
+          },
+          "404": {
+            "description": "本人或本店订单不存在"
+          },
+          "409": {
+            "description": "订单/申请版本/可信支付变化"
+          },
+          "503": {
+            "description": "数据库或渠道尚不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "revision",
+                  "decision"
+                ],
+                "properties": {
+                  "revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "decision": {
+                    "type": "string",
+                    "enum": [
+                      "ACCEPT",
+                      "REJECT"
+                    ]
+                  },
+                  "note": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "order-refunds-local-test-implemented",
+        "description": "全额按服务器原支付冻结，双方同意后关闭订单、释放容量，资金状态独立。申请时订单继续原流程，状态变化须撤回重提。拒绝必须note；核对不使用幂等键。正式微信渠道503，测试成功无真实资金。见ORDER_REFUNDS.md。"
+      }
+    },
+    "/api/merchant/orders/{id}/refund/reconcile": {
+      "post": {
+        "summary": "本店店长可信退款查询恢复",
+        "operationId": "post_api_merchant_orders_id_refund_reconcile",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F07",
+          "F08"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/OrderRefundDetail"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "身份无退款权限"
+          },
+          "404": {
+            "description": "本人或本店订单不存在"
+          },
+          "409": {
+            "description": "订单/申请版本/可信支付变化"
+          },
+          "503": {
+            "description": "数据库或渠道尚不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "maxProperties": 0
+              }
+            }
+          }
+        },
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "order-refunds-local-test-implemented",
+        "description": "全额按服务器原支付冻结，双方同意后关闭订单、释放容量，资金状态独立。申请时订单继续原流程，状态变化须撤回重提。拒绝必须note；核对不使用幂等键。正式微信渠道503，测试成功无真实资金。见ORDER_REFUNDS.md。"
+      }
+    },
+    "/api/refunds/callback/LOCAL_TEST": {
+      "post": {
+        "summary": "隔离测试退款签名通知",
+        "operationId": "post_api_refunds_callback_LOCAL_TEST",
+        "tags": [
+          "refunds"
+        ],
+        "x-feature-ids": [
+          "F08"
+        ],
+        "parameters": [
+          {
+            "name": "X-Test-Timestamp",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Test-Nonce",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Test-Signature",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "code"
+                  ],
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "SUCCESS"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "严格通知字段错误"
+          },
+          "401": {
+            "description": "验签或时间窗失败"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "测试渠道关闭或退款不存在"
+          },
+          "409": {
+            "description": "原支付/全额/事件哈希/供应商流水冲突"
+          },
+          "503": {
+            "description": "应用事务失败，可重放通知"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "event_id",
+                  "refund_id",
+                  "refund_no",
+                  "payment_id",
+                  "channel_refund_no",
+                  "status",
+                  "amount",
+                  "currency",
+                  "occurred_at"
+                ],
+                "properties": {
+                  "event_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "refund_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "refund_no": {
+                    "type": "string",
+                    "pattern": "^R[a-f0-9]{32}$"
+                  },
+                  "payment_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "channel_refund_no": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9_-]{1,128}$"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "SUCCEEDED",
+                      "FAILED"
+                    ]
+                  },
+                  "amount": {
+                    "type": "string",
+                    "pattern": "^(0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "const": "CNY"
+                  },
+                  "occurred_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-implementation-status": "order-refunds-local-test-implemented",
+        "description": "仅隔离测试开关和local-payment-test配置启用；原文最多16KiB，HMAC五分钟时间窗，事件哈希去重、原支付/退款绑定、全额校验与审计。不是微信官方协议。字段见ORDER_REFUNDS.md。"
+      }
     }
   },
   "components": {
@@ -15524,6 +16275,152 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 9007199254740991
+          }
+        }
+      },
+      "OrderRefund": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "refund_id",
+          "refund_no",
+          "payment_id",
+          "amount",
+          "currency",
+          "status",
+          "revision",
+          "from_status",
+          "reason",
+          "decision_note",
+          "owner_consented_at",
+          "merchant_consented_at",
+          "refunded_at",
+          "test_mode"
+        ],
+        "properties": {
+          "refund_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "refund_no": {
+            "type": "string",
+            "pattern": "^R[a-f0-9]{32}$"
+          },
+          "payment_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+          },
+          "currency": {
+            "type": "string",
+            "const": "CNY"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "REQUESTED",
+              "REJECTED",
+              "WITHDRAWN",
+              "PENDING",
+              "FAILED",
+              "SUCCEEDED"
+            ]
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "from_status": {
+            "type": "string",
+            "enum": [
+              "PAID",
+              "RECEIVED",
+              "IN_SERVICE",
+              "PENDING_VERIFY",
+              "DISPUTED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "decision_note": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 256
+          },
+          "owner_consented_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "merchant_consented_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "refunded_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "test_mode": {
+            "type": "boolean"
+          }
+        }
+      },
+      "OrderRefundDetail": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order_id",
+          "order_status",
+          "can_request",
+          "refund"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "order_status": {
+            "type": "string",
+            "enum": [
+              "PENDING_PAYMENT",
+              "PAID",
+              "RECEIVED",
+              "IN_SERVICE",
+              "PENDING_VERIFY",
+              "COMPLETED",
+              "DISPUTED",
+              "CLOSED"
+            ]
+          },
+          "can_request": {
+            "type": "boolean"
+          },
+          "refund": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/OrderRefund"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         }
       }
