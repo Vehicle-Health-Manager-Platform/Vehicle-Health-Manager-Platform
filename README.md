@@ -1,95 +1,170 @@
 # 汽车健康管家平台
 
-面向车主、商家和技师的微信小程序及配套后端，车主另有 H5 兜底目标，运营使用 PC 网页。本团队负责小程序和共用接口；运营 PC 后台由协作团队负责。
+面向车主、汽车服务门店和技师的汽车服务平台。当前产品交付重点是**微信小程序**及其共用后端：车主用小程序管理车辆、档案和服务订单；门店与技师在小程序中完成门店运营和履约；必要的运营审核能力也通过受限的小程序入口提供。
 
-**A4 已验证并上传 PR #35；A5.2 派工与技师本人接单后端已验证并上传 PR #37，下一步 A5.3 界面。** A3 七图接车检查已合并；本人车辆、档案、预约订单、商家报价、测试支付及 AI 对话已有实现和本机验证。真机、真实相机、正式收款/退款及上线环境仍分别待验收。每阶段同步文档并上传 GitHub，见[阶段交付规则](docs/progress/STAGE_DELIVERY.md)、[当前进度](docs/progress/CURRENT_STATUS.md)及[下一步规划](docs/progress/NEXT_STEPS.md)。
+**PC 运营后台不在本项目交付范围内。** 仓库中的旧 Vue/Vite 网页项目和 PC 管理端只作为历史原型及兼容性构建目标，不代表本阶段正在开发桌面运营产品。
 
-A3 商家接车检查已实现，详见 [PR #34](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/34)：七图检查、手填里程、预约验码、私有图片及同事务接车；本机真实业务链路通过。A4 车主确认已验证；A5 派工实现和真机预览待后续验收。[契约](docs/api/PICKUP_INSPECTION.md) · [验收记录](docs/testing/LOCAL_PICKUP_ACCEPTANCE.md)。
+## 项目范围与角色
 
-## 已实现的能力
+| 使用者 | 微信小程序能力 |
+| --- | --- |
+| 车主 | 管理本人车辆；手动录入车辆、维护档案与私有图片；浏览标准服务、比较门店报价、预约和查看订单；确认服务、提出异议；查看完工档案；核对支付与退款状态；导出本人档案 PDF。 |
+| 门店店长 | 维护门店资料、员工和员工码、服务项目与营业时段；查看本店订单、报价和佣金账单；处理接车、派工、履约防护、服务报工、异议及退款申请。 |
+| 门店店员 | 在受限权限内协助门店接车和履约。员工管理、员工码、门店资料、定价等管理能力仍限店长。 |
+| 技师 | 通过门店员工码绑定后查看派给本人的工单、接受/拒绝任务、提交服务过程与完工证据；不能查看不属于自己的客户和工单。 |
+| 平台运营 | 通过小程序受限入口处理入驻审核、配额、标准目录和经验内容审核等运营事务。没有 PC 运营后台交付。 |
 
-| 范围 | 当前能力 | 验证与边界 |
-| --- | --- | --- |
-| 微信小程序 | uni-app 3 / Vue3 单测试号三角色入口，车主五个原生 Tab，身份页加载、错误与重试状态 | 小程序与 H5 构建、75 项离线测试通过；车主真实登录按钮已进入首页。真实相机与有数据业务流程仍待验收。 |
-| 车主与技师身份 | 微信身份持久化、角色授权、技师绑定、员工码发放/回收、手机号绑定、限流、刷新凭证轮换与退出撤销 | 开发者工具真实 code、车主按钮、技师绑定、刷新和退出已通过；真机网络与手机号授权未验收。 |
-| 商家身份 | 密码加一次性短信码、账号/商家状态复核、可刷新与撤销的会话 | 服务商未定，没有生产短信发送器，验证码请求当前返回 503。 |
-| 写入完整性 | 24 小时幂等、权限复核、业务/成功响应/成功审计同事务提交 | MySQL 容器验证通过；已接入车辆、档案、图片上传、商家报价、时段与订单写操作；其他业务继续逐项接入。 |
-| 私有上传基础 | 10 MiB 文件校验、扫描后存储、JDBC 元数据与失败补偿；真实 MinIO/ClamAV 适配器、内部短时签名及独立账号初始化 | PR #12/#13 的上传与小程序图片操作、PR #15 的业务档案关联已合入 main；官方病毒库的本机上传/签名/归档及 H5 交互已通过；正式部署和真实相机仍待验收。测试合成病毒签名不代表生产官方病毒库验收。 |
-| 数据库与 CI | 当前分支包含 V001–V012 与车辆档案图片关联表；网页、小程序、后端、生成文件/OCR、MySQL 和 Compose 共六项 CI | 本机测试卷已完成 V001–V010；[拍照 PR 最终 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37257482023)和[登录修复首次 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37317893587)均六项全绿。整合后的结果以对应提交 CI 为准。 |
-| S1 本人车辆与手动录入 | 档案Tab车辆列表、品牌→车系→年款→配置选择、幂等添加、归属隔离、脱敏与成功审计 | [PR #14](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/14) 已实现；39项离线测试、H5 11项替身交互和模拟器10条路由通过。车型库只读取现有有效数据，生产来源未确定；完整F02/M1未验收。[接口契约](docs/api/VEHICLE_MANUAL.md)。 |
-| S1 本人车辆档案手动录入 | [PR #15](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/15) 新增七类通用记录、按车分页、至多五张私有图片关联及本人/CLEAN校验 | [CI 37203770229](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37203770229) 六项全绿，后端132项无失败/跳过；小程序43项Node测试、微信/H5构建通过。无图真实有数据业务已通过本地联调，本机图片归档已通过，真机仍待验收。[接口契约](docs/api/ARCHIVE_MANUAL.md)。 |
-| S1 首页车辆与档案摘要 | [PR #16](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/16) 复用本人接口，显示当前车辆、真实档案总数及最近记录，并在首页与档案 Tab 共用车辆选择 | 48项离线测试与小程序/H5构建已通过；H5 实际交互接真实本地后端的两车/摘要已通过，微信完整业务 UI 和真机仍待验收。健康评分和提醒没有数据规则，本步不展示推测值。 |
-| S1 本人档案拍照录入 | [PR #17](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/17) 在档案 Tab 增加拍照入口，保存来源为 `input_type=1`，至少一张本人 CLEAN 图片；列表和首页摘要包含拍照记录 | [CI 37256441618](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/37256441618) 六项全绿，后端 133 项、小程序 52 项通过；本机真实私有接口及 H5 图片交互已通过；微信真实相机/真机仍待验证。[接口契约](docs/api/ARCHIVE_MANUAL.md)。 |
+业务读写由后端按有效会话、角色、本人或本店归属进行复核。小程序角色入口和本地测试身份不等于正式身份认证或生产授权。
 
-[PR #23](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/23) 商家报价与选品已接入：车主价格排序、本店维护、版本与幂等审计；本机 H5 15 项、后端 154 项、小程序 65 项通过；首次完整 CI 六项全绿，商家登录使用明确的合成会话桥接。真实短信仍待接入。[接口](docs/api/MERCHANT_QUOTES.md) · [复现](docs/testing/LOCAL_MERCHANT_QUOTES_ACCEPTANCE.md)。
+## 已交付阶段
 
-[PR #24](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/24) 已实现商家时段、本人待支付预约、列表/详情、取消与自动到期释放。后端 170 项、小程序 71 项、本机 H5 12 项与模拟器 16 条路由通过；支付、券与退款后续接入。[契约](docs/api/RESERVATION_ORDERS.md) · [复现](docs/testing/LOCAL_RESERVATIONS_ACCEPTANCE.md)。最终交付状态见执行记录。
+截至 2026-10-11，主要业务实现推进至 R3c2。每阶段的接口契约、测试证据和未验收项见对应文档；**CI 通过、PR 合并、生产部署和真机验收是不同状态**。
 
-[PR #25](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/25) 新增支付基础与默认关闭的隔离测试渠道：本人支付记录、签名通知去重、PAID与容量联动、迟到付款异常。H5 24项通过；测试支付明确未真实扣款，正式微信、退款/券仍待接入。[契约](docs/api/PAYMENT_FOUNDATION.md) · [复现](docs/testing/LOCAL_PAYMENTS_ACCEPTANCE.md)。
+| 阶段 | 交付内容 |
+| --- | --- |
+| R1a–R1b | 门店入驻申请与审核、区域/品类配额、员工维护与员工码、门店资料及履约角色隔离。 |
+| R1c | 服务项目、品牌、车型等标准目录治理，发布/停用、排序、权限和历史引用保护。 |
+| R2a | 订单完成事件可靠归档；完工快照与经验草稿保持私有，评价不改写已归档服务快照。 |
+| R2b1–R2b2 | 支付结果核对与恢复；双方同意取消时全额退款，暂不支持部分退款；测试支付渠道不发生真实扣款或退款。 |
+| R2c | 佣金应计与退款冲销、门店店长只读账单；账单不代表真实资金扣佣或结算。 |
+| R3a1 | 车主录车入口、本人车辆/车牌匹配、VIN 格式检查与手动确认回退。未接入真实 VIN 或行驶证 OCR 服务。 |
+| R3c1 | 车主接车二维码、本店授权扫码、接车八图和独立油表照片；旧七图历史记录仍可读取，不伪造缺失油表证据。 |
+| R3c2 | 车主本人档案 PDF 导出、日期区间、HTTP 与云托管传输、原生下载/打开及任务取消和临时文件清理。小程序测试 331/331；mp-weixin 与 H5 构建通过；后端 CI 验证 500/501 条数及 PDF 3 MiB 边界。 |
 
-商家本店订单只读视图已实现：按有效商家会话查询本店订单分页/详情，筛选状态和北京时间预约日期，显示安全下单快照、支付摘要与整单付款异常。[PR #26](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/26) 修正提交CI六项通过，后端201项、小程序78项；本机H5真实后端/MySQL 17项与微信模拟器18条路由通过。商家登录仍用隔离合成会话，未联通真实短信。[契约](docs/api/MERCHANT_ORDERS.md) · [复现](docs/testing/LOCAL_MERCHANT_ORDERS_ACCEPTANCE.md)。
+对应阶段记录入口：[当前进度](docs/progress/CURRENT_STATUS.md)、[下一步规划](docs/progress/NEXT_STEPS.md)、[三端功能缺口](docs/progress/ROLE_GAP_ANALYSIS.md)、[测试与验收目录](docs/testing/README.md)、[接口文档目录](docs/api/README.md)。
 
-## 从源码构建微信小程序
+### 当前仍待完成或验收
 
-使用 Node.js 22，在包含根 `package.json` 的仓库目录运行：
+- R3c3 限时分享授权与撤销：需先明确分享内容、接收方式、有效期、撤销后的即时失效和访问审计，再按规格、后端、小程序、验收分阶段实现。
+- VIN/行驶证 OCR、里程识别、照片或语音档案识别：尚无已开通供应商，本地流程提供手动录入或确认回退。
+- 车主真实微信登录、正式手机号绑定、门店账号激活及正式短信：供应商/生产配置和最终验收仍待完成。
+- 微信支付与退款的真实资金流、佣金结算：现有隔离测试渠道和账单不能作为真实资金完成证明。
+- 真机相机、扫码和系统 PDF 阅读器的视觉及生命周期验收；本地单测、H5 页面和模拟器路由验证不能替代真机验收。
+- 正式环境的 HTTPS/通讯域名、微信主体权限、数据库与对象存储部署及发布验收。
+- PC 运营后台不实施。
 
-```powershell
+## 技术架构
+
+- **微信客户端**：uni-app 3、Vue 3、JavaScript；目标构建为微信小程序 mp-weixin。H5 用于兼容构建和部分本地联调，不是 PC 运营产品。
+- **共用后端**：Java 17、Spring Boot 3、Maven 模块化单体。
+- **数据与文件**：MySQL；私有上传适配器支持 MinIO 与 ClamAV。存储和扫描通过显式配置开启，不能把未配置的开发环境当作生产安全部署。
+- **登录与会话**：服务端执行角色及归属校验。微信登录、手机号和门店短信能力需私有凭据及正式环境配置；敏感凭据不得写入前端、README 或 Git。
+- **AI 服务**：车主 AI 接口可配置外部服务凭据；未配置时返回明确降级状态，不影响其他业务。
+- **CI**：GitHub Actions 分别检查旧网页构建、微信小程序测试/构建、后端测试、生成文件与 OCR Python、MySQL schema 和 Compose smoke。CI 通过不代表已完成真机、真实资金或生产部署验收。
+
+## 仓库目录
+
+| 路径 | 内容 |
+| --- | --- |
+| apps/miniapp | 当前微信小程序源码、页面、服务、状态流和离线测试。 |
+| backend | 车主、门店、技师及受限运营业务共用的 Spring Boot 后端。 |
+| docs/api | API 契约、权限和数据边界说明。 |
+| docs/progress | 阶段计划、执行记录、当前进度和功能缺口。 |
+| docs/testing | 本地复现、自动化结果、验收证据和未验收边界。 |
+| docs/sql | MySQL 初始化脚本、版本化迁移和测试数据说明。 |
+| deploy/compose | 本地/CI 使用的 Docker Compose 设施。 |
+| deploy/cloudrun | 微信云托管后端部署示例和环境变量模板。 |
+| services/ocr | OCR 服务骨架；接入真实供应商前，识别能力不能视为已交付。 |
+| apps/owner、apps/merchant、apps/technician | 历史 Vue/Vite 网页原型，非当前微信小程序源码。 |
+| apps/admin | 历史 PC 运营网页原型，非本项目交付目标。 |
+
+## 开发环境
+
+- Node.js 22：小程序、工作区依赖与前端构建。
+- Java 17：Spring Boot 后端。
+- Docker Desktop 或兼容 Docker Engine：运行 Compose 和后端真实 MySQL/MinIO/ClamAV Testcontainers 测试。
+- 微信开发者工具：导入编译产物并进行原生小程序验证。
+
+### 构建与测试微信小程序
+
+在仓库根目录执行：
+
+~~~powershell
 npm ci
+npm test --workspace @autocare/miniapp
 npm run build:miniapp
 Test-Path .\apps\miniapp\dist\build\mp-weixin\app.json
-```
+~~~
 
-最后一行应返回 `True`。微信开发者工具导入 **`apps/miniapp/dist/build/mp-weixin`**，再点击编译。源码根目录没有 `app.json`，直接导入根目录会导致“模拟器启动失败”。源码与产物可以放在任何磁盘；产物位于执行构建的那份仓库下，不提交到 Git。
+最后一条命令应返回 True。微信开发者工具导入目录：
 
-开发时运行 `npm run dev:miniapp`，保持终端运行，并导入 `apps/miniapp/dist/dev/mp-weixin`。后端联调地址通过 `apps/miniapp/.env.local` 的 `VITE_API_BASE_URL` 配置，详见[小程序构建与联调说明](apps/miniapp/README.md)。AppSecret 只配置在后端私有环境，不能进入前端或构建产物。
+~~~text
+apps/miniapp/dist/build/mp-weixin
+~~~
 
-## 后端与验证
+源码在 apps/miniapp/src，**不要将仓库根目录或 src 目录直接当作开发者工具项目导入目录**。持续开发可运行：
 
-后端使用 Java 17、Spring Boot 3.x 和 Maven；数据库使用 MySQL。按[后端说明](backend/README.md)配置私有 `JWT_SECRET`、数据库与微信变量，再运行：
+~~~powershell
+npm run dev:miniapp
+~~~
 
-```powershell
+然后导入 apps/miniapp/dist/dev/mp-weixin。构建产物位于本仓库的 apps/miniapp/dist，不提交到 Git。
+
+H5 兼容构建及工作区历史网页构建：
+
+~~~powershell
+npm run build:h5 --workspace @autocare/miniapp
+npm run build:legacy-web
+~~~
+
+H5 和旧网页构建只用于兼容性/回归，不代表微信原生交互或 PC 产品验收。
+
+### 启动后端
+
+后端说明、私有环境变量和业务测试边界见 [backend/README.md](backend/README.md)。本机运行可在仓库根目录准备私有配置后启动：
+
+~~~powershell
 cd backend
 mvn spring-boot:run
-```
+~~~
 
-默认端口为 8080，健康检查为 `GET /actuator/health`。数据库须按顺序应用 V001–V012：新建 Compose 数据卷自动初始化，**已有数据卷须人工补迁移**。上传适配器默认关闭；启用、私有桶初始化及 ClamAV 配置见[上传适配器说明](docs/api/UPLOAD_ADAPTERS.md)。
+后端默认端口为 8080，健康检查为 GET /actuator/health。启动数据库身份和业务仓储需要 MySQL 环境变量以及已应用的数据库结构；完整后端测试运行：
 
-在仓库根目录验证：
+~~~powershell
+cd backend
+mvn test
+~~~
 
-```powershell
-npm test --workspace @autocare/miniapp
-npm run build
-npm run build:h5 --workspace @autocare/miniapp
-```
+完整测试需要可用 Docker，以实际运行 MySQL 等容器测试。没有 Docker 的测试结果不应标记为完整后端测试通过。
 
-后端完整测试在 `backend` 目录运行 `mvn test`，需要可运行的 Docker 执行真实 MySQL、MinIO 和 ClamAV 容器测试。完整六项检查由 [CI](.github/workflows/ci.yml) 定义；构建与容器测试通过不等于真机或生产部署通过。
+### 本地 Compose
 
-## 工程目录
+仓库的 Compose 配置是本地开发/CI 基础设施和历史网页方案的过渡部署，不是已验收的生产部署。按 [deploy/README.md](deploy/README.md) 操作；典型启动命令如下：
 
-| 目录 | 用途 |
-| --- | --- |
-| `apps/miniapp/src` | 当前微信小程序源码与车主 H5 构建目标 |
-| `backend` | 三角色共用身份及业务后端 |
-| `apps/owner`、`apps/merchant`、`apps/technician` | 旧 Vue/Vite 网页原型，不是小程序工程 |
-| `apps/admin` | 协作团队的运营 PC 网页骨架 |
-| `deploy`、`services/ocr` | 部署配置及 OCR 服务骨架 |
-| `docs` | 需求、接口、SQL、设计、进度与验证证据 |
+~~~powershell
+Copy-Item .env.example .env
+# 编辑 .env：替换全部占位口令和密钥，只存放在本机私有文件
+docker compose --env-file .env -f deploy/compose/compose.yml up --build -d
+~~~
 
-## 下一步
+新建数据库卷会运行初始化 SQL；已有数据卷不会自动应用新迁移。升级前备份数据库，再按 docs/sql/migrations 中的版本顺序执行迁移。Compose 中 CI 专用演示身份配置不得用于生产。
 
-1. 本地车辆与无图档案联调已完成，22 项真实检查见[复现说明](docs/testing/LOCAL_BUSINESS_ACCEPTANCE.md)；第二个真实微信身份仍待验收。
-2. 本机 MinIO/ClamAV、图片归档、签名与重试已通过 26 项后端及 11 项 H5 检查，见[复现说明](docs/testing/LOCAL_PRIVATE_IMAGE_ACCEPTANCE.md)。
-3. 2026-10-06 用户决定先完成本机功能开发，再处理公网、域名、云托管与真机。标准项目、商家报价、预约与本人订单已实现；支付基础与测试通知已接入；当前交付商家本店订单视图，后续明确接车/履约规则，正式支付能力后置联调。识别服务和评分规则另行明确。真实短信仍依赖服务商。
+## 配置与安全
 
-现在可用本机模拟器继续开发，无需先购买公网服务器或域名。正式发布连接自建后端时需备案 HTTPS 通讯域名；微信云托管提供指定免配域名调用方式，当前尚未适配。详见[网络环境说明](docs/operations/MINIAPP_NETWORK_ENVIRONMENTS.md)与[中文下一步计划](docs/progress/NEXT_STEPS.md)。
+1. 根目录 .env.example 和各模块 .env.example 是变量名/占位值模板；把真实密钥只放在被 Git 忽略的本地私有文件或部署平台密钥管理中。
+2. JWT_SECRET 必须是足够长度的随机私有值。WECHAT_APP_SECRET、短信、AI 和对象存储凭据不得放进小程序变量、源码、构建产物或日志。
+3. UPLOAD_STORAGE_ENABLED 和 UPLOAD_SCAN_ENABLED 默认关闭。启用私有文件上传前，需配置独立最小权限存储账号、私有桶、ClamAV 扫描和数据库迁移；不要用 MinIO root 账号作为应用上传账号。
+4. PAYMENT_LOCAL_TEST 等测试支付配置只限独立隔离环境。当前测试渠道不真实扣款/退款，禁止连接生产资金。
+5. 启用微信云托管身份入口前，必须关闭服务公网访问并核验网关注入身份头的部署条件。详细步骤见 [云托管说明](deploy/cloudrun/README.md)。
+6. 每次写入仍须在服务端复核当前会话、角色、目标资源归属和状态；前端页面隐藏或按钮禁用不能替代后端授权。
 
-## 项目文档
+## 数据库与接口文档
 
-- [原始 v1.0 交付文档（归档）](docs/reference/DELIVERY_V1.md)、[MVP 规格说明](docs/SPEC.md)、[需求决策](docs/DECISIONS.md)
-- [分阶段开发计划](汽车健康管家平台分阶段开发计划.md)、[工程目录说明](docs/STRUCTURE.md)
-- [当前进度](docs/progress/CURRENT_STATUS.md)、[执行记录](docs/progress/S0_EXECUTION_LOG.md)、[外部依赖](docs/progress/S0_DEPENDENCIES.md)
-- [API 文档](docs/api/README.md)、[写入完整性](docs/api/WRITE_INTEGRITY.md)、[上传核心](docs/api/PRIVATE_UPLOAD_CORE.md)、[真实上传适配器](docs/api/UPLOAD_ADAPTERS.md)
+初始化 SQL 与数据库迁移位于 docs/sql；OpenAPI 与生成文件由 schema-and-ocr CI 校验。修改接口后应同步更新：
 
-PR #12–#17 已合并；#18 的预检内容整合至 #19，保留提交历史。后续从最新 `main` 创建独立 PR，完整 CI 通过后合并。真机、公网和手机号仍待验收；正式主体、支付和提审条件待确认。
+- API 文档与 OpenAPI 定义：docs/api。
+- 数据追踪、初始化 SQL 和迁移：docs/progress/S0_TRACEABILITY.csv、docs/sql。
+- 阶段计划、执行和验收记录：docs/progress、docs/testing。
+- 页面入口、错误状态和用户提示：对应小程序页面及其状态流测试。
 
-登录联调与环境验收：[运维清单](docs/operations/AUTH_INTEGRATION_RUNBOOK.md)、[开发与上线网络说明](docs/operations/MINIAPP_NETWORK_ENVIRONMENTS.md)。
+浏览入口：[API 文档](docs/api/README.md) · [运维文档](docs/operations/README.md) · [用户指南](docs/user-guides/README.md) · [项目进度](docs/progress/README.md)。
+
+## 贡献与交付约定
+
+- 一个阶段完成后同步规格、接口、进度和测试文档，再将该阶段推送为独立 GitHub PR。
+- 堆叠 PR 按依赖顺序合并；合并时先把当前 PR 的 base 调整到 main，确认变更范围与检查结果后再合并。
+- 记录测试时区分离线替身、真实后端/数据库、开发者工具和真实微信设备证据；不得用前者替代后者。
+- 变更 API、数据库或权限时补充正反向测试，覆盖本人/跨用户、本店/跨店、重复提交、状态竞争和失败回滚等实际边界。
+- PR 中不提交个人交付文档、密钥、数据库口令、真实用户数据、临时构建产物或测试凭据。
+
+欢迎从 [当前进度](docs/progress/CURRENT_STATUS.md) 和 [下一步规划](docs/progress/NEXT_STEPS.md) 开始了解项目。
