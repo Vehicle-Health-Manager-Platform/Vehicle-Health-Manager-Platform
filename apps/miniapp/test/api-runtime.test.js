@@ -18,7 +18,7 @@ function withUni(fake, run) {
   }
 }
 
-const REQUIRED = ['chooseMedia', 'chooseImage', 'uploadFile', 'previewImage', 'openSetting', 'request', 'login']
+const REQUIRED = ['scanCode', 'chooseMedia', 'chooseImage', 'uploadFile', 'previewImage', 'openSetting', 'request', 'login']
 
 test('运行时暴露取图、文件与请求所需的全部方法', () => {
   for (const name of REQUIRED) assert.equal(typeof apiRuntime[name], 'function', `运行时缺少 ${name}`)
@@ -30,6 +30,7 @@ test('原生方法透传并保持回调语义', () => {
   const seen = []
   withUni(
     {
+      scanCode: options => { seen.push('scanCode'); options.success({ result: 'VHMP:PICKUP:1:1' }) },
       chooseMedia: options => { seen.push('chooseMedia'); options.success({ tempFiles: [{ tempFilePath: 'a.jpg', size: 10 }] }) },
       chooseImage: options => { seen.push('chooseImage'); options.success({ tempFiles: [{ path: 'a.jpg', size: 10 }] }) },
       uploadFile: options => { seen.push('uploadFile'); options.success({ statusCode: 200, data: '{}' }); return { abort() {} } },
@@ -41,7 +42,8 @@ test('原生方法透传并保持回调语义', () => {
       getFileSystemManager: () => ({ getFileInfo() {} }),
     },
     () => {
-      let chosen
+      let chosen, scanned
+      apiRuntime.scanCode({ onlyFromCamera: true, success: value => { scanned = value } })
       apiRuntime.chooseMedia({ sourceType: ['camera'], success: value => { chosen = value } })
       apiRuntime.chooseImage({ sourceType: ['camera'], success() {} })
       apiRuntime.uploadFile({ url: '/api/file/upload', success() {} })
@@ -50,6 +52,7 @@ test('原生方法透传并保持回调语义', () => {
       apiRuntime.request({ url: '/api/vehicles', success() {} })
       apiRuntime.login({ success() {} })
       // 选择结果必须原样返回给调用方，否则上层拿不到图片路径。
+      assert.equal(scanned.result, 'VHMP:PICKUP:1:1')
       assert.equal(chosen.tempFiles[0].tempFilePath, 'a.jpg')
       assert.equal(apiRuntime.supports('chooseMedia'), true)
       assert.equal(apiRuntime.supports('chooseVideo'), false)
@@ -57,7 +60,7 @@ test('原生方法透传并保持回调语义', () => {
       assert.notEqual(apiRuntime.getFileSystemManager(), undefined)
     },
   )
-  assert.deepEqual(seen, ['chooseMedia', 'chooseImage', 'uploadFile', 'previewImage', 'openSetting', 'request', 'login'])
+  assert.deepEqual(seen, ['scanCode', 'chooseMedia', 'chooseImage', 'uploadFile', 'previewImage', 'openSetting', 'request', 'login'])
 })
 
 test('service 源码里实际调用的运行时方法都已暴露', async () => {

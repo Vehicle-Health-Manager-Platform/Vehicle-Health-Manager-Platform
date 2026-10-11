@@ -4,27 +4,34 @@ import { onShow, onHide, onUnload } from '@dcloudio/uni-app'
 import { merchantSession, clearMerchantSession } from '../../services/merchant-session.js'
 import { initialQuoteListState, createQuoteListFlow } from '../../services/quote-flow.js'
 import { merchantOrdersApi } from '../../services/merchant-orders.js'
+import { apiRuntime } from '../../services/api-runtime.js'
+import { pickupApi } from '../../services/pickup.js'
+import { createPickupScanFlow } from '../../services/pickup-scan.js'
 import { displayTime } from '../../services/reservations.js'
 
 const state = reactive(initialQuoteListState()), status = ref(''), date = ref('')
 let visible = false
 const token = () => merchantSession.accessToken
+const scanState = reactive({ busy: false, message: '' })
+const scanner = createPickupScanFlow({ state: scanState, token, runtime: () => apiRuntime, context: (actor, id) => pickupApi.context(actor, id), navigate: url => uni.navigateTo({ url }) })
 const flow = createQuoteListFlow({ state, token, fetchPage: (actor, page) => merchantOrdersApi.list(actor, page, status.value, date.value) })
 function changeStatus(value) { status.value = value; flow.reset(); if (token()) flow.load() }
 function changeDate(event) { date.value = event.detail.value; flow.reset(); if (token()) flow.load() }
 function clearDate() { date.value = ''; flow.reset(); if (token()) flow.load() }
 function login() { clearMerchantSession(); uni.navigateTo({ url: '/pages/merchant/index' }) }
 function open(row) { uni.navigateTo({ url: `/pages/merchant/order-detail?id=${row.order_id}` }) }
-watch(token, () => { flow.reset(); if (visible && token()) flow.load() }, { flush: 'sync' })
+watch(token, () => { scanner.reset(); flow.reset(); if (visible && token()) flow.load() }, { flush: 'sync' })
 onShow(() => { visible = true; if (token()) flow.load() })
-onHide(() => { visible = false; flow.suspend() })
-onUnload(() => { visible = false; flow.reset() })
+onHide(() => { visible = false; scanner.reset(); flow.suspend() })
+onUnload(() => { visible = false; scanner.reset(); flow.reset() })
 </script>
 <template>
   <view class="reservation-page">
     <text class="reservation-title">本店订单</text>
     <button v-if="!merchantSession.accessToken" @tap="login">前往门店登录</button>
     <template v-else>
+      <button :disabled="scanState.busy" :loading="scanState.busy" @tap="scanner.scan">扫码接车</button>
+      <text v-if="scanState.message" role="status">{{ scanState.message }}</text>
       <view class="filters">
         <button :class="{ selected: status === '' }" @tap="changeStatus('')">全部</button>
         <button :class="{ selected: status === 'PENDING_PAYMENT' }" @tap="changeStatus('PENDING_PAYMENT')">待支付</button>

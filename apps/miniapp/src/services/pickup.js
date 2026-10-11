@@ -2,8 +2,9 @@ import { apiOrigin } from './api-config.js'
 import { apiRuntime } from './api-runtime.js'
 import { ServiceError, serviceFailure } from './service-catalog.js'
 import { disputeView } from './dispute.js'
-export const PICKUP_SLOTS = ['FRONT','REAR','LEFT','RIGHT','ROOF','DASHBOARD','INTERIOR']
-export const PICKUP_LABELS = { FRONT:'车前',REAR:'车后',LEFT:'车左',RIGHT:'车右',ROOF:'车顶',DASHBOARD:'仪表盘',INTERIOR:'内饰' }
+export const LEGACY_PICKUP_SLOTS = ['FRONT','REAR','LEFT','RIGHT','ROOF','DASHBOARD','INTERIOR']
+export const PICKUP_SLOTS = [...LEGACY_PICKUP_SLOTS, 'FUEL']
+export const PICKUP_LABELS = { FRONT:'车前',REAR:'车后',LEFT:'车左',RIGHT:'车右',ROOF:'车顶',DASHBOARD:'仪表盘',INTERIOR:'内饰',FUEL:'油表' }
 export const FUEL_VALUES = ['EMPTY','QUARTER','HALF','THREE_QUARTERS','FULL']
 export const FUEL_LABELS = ['空','¼','½','¾','满']
 const id = n => Number.isSafeInteger(n) && n > 0
@@ -12,18 +13,18 @@ export function pickupBody(order,state) {
   if (!id(order) || !/^\d{6}$/.test(state.code)) throw invalid('请输入车主提供的六位预约码')
   if (!/^\d{1,7}$/.test(String(state.mileage))) throw invalid('请输入 0–9999999 的整数里程')
   const photos = Object.fromEntries(PICKUP_SLOTS.map(slot => [slot,state.photos[slot]?.fileId]))
-  if (!Object.values(photos).every(id) || new Set(Object.values(photos)).size !== 7) throw invalid('请完成七个位置的图片上传')
+  if (!Object.values(photos).every(id) || new Set(Object.values(photos)).size !== 8) throw invalid('请完成八个位置的独立图片上传（含油表）')
   if (!FUEL_VALUES.includes(state.fuel)) throw invalid('请选择油量')
   if (!['NONE','PRESENT'].includes(state.damageStatus)) throw invalid('请明确选择有无损伤')
   const damages = state.damageStatus === 'NONE' ? [] : state.damages.map(d=>({...d,note:d.note.trim()}))
-  if (state.damageStatus === 'PRESENT' && (!damages.length || damages.length>20 || damages.some(d=>!PICKUP_SLOTS.includes(d.photo_slot)||!Number.isFinite(d.x)||d.x<0||d.x>1||!Number.isFinite(d.y)||d.y<0||d.y>1||!d.note||d.note.length>200))) throw invalid('请在照片上标注损伤位置并填写说明，最多 20 处')
+  if (state.damageStatus === 'PRESENT' && (!damages.length || damages.length>20 || damages.some(d=>!LEGACY_PICKUP_SLOTS.includes(d.photo_slot)||!Number.isFinite(d.x)||d.x<0||d.x>1||!Number.isFinite(d.y)||d.y<0||d.y>1||!d.note||d.note.length>200))) throw invalid('请在照片上标注损伤位置并填写说明，最多 20 处')
   const body={order_id:order,appointment_code:state.code,photos,mileage:Number(state.mileage),fuel_level:state.fuel,damage_status:state.damageStatus,damages}
   for(const [field,value] of [['mileage_reason',state.mileageReason],['arrival_reason',state.arrivalReason]]) {
     const text=value.trim();if(text.length>200)throw invalid('原因不能超过 200 字');if(text)body[field]=text
   }
   return body
 }
-const validSheet = s => id(s?.pickup_check_id) && id(s.order_id) && PICKUP_SLOTS.every(slot=>id(s.photos?.[slot])) && Array.isArray(s.damages) && Number.isSafeInteger(s.mileage) && [0,1,2,3].includes(s.owner_confirm) && disputeView(s.dispute)
+const validSheet = s => id(s?.pickup_check_id) && id(s.order_id) && LEGACY_PICKUP_SLOTS.every(slot=>id(s.photos?.[slot])) && Object.keys(s.photos).every(slot=>PICKUP_SLOTS.includes(slot)) && (!Object.hasOwn(s.photos,'FUEL')||id(s.photos.FUEL)) && new Set(Object.values(s.photos)).size===Object.keys(s.photos).length && Array.isArray(s.damages) && Number.isSafeInteger(s.mileage) && [0,1,2,3].includes(s.owner_confirm) && disputeView(s.dispute)
 export function createPickupApi({baseUrl,runtime}) {
   const endpoint=(baseUrl||'').replace(/\/$/,'')
   function request(token,path,accepts,body,key) {
