@@ -15,6 +15,12 @@
 
 最新本地定向组合：39项（2+16+13+4+3+1），失败/错误/跳过均为0。前次59项为早期版本的佣金与原核销16/退款20/入驻8回归，其中用例有重叠，不相加。收口发现新增入驻回滚断言误写 PENDING，已修正为实际 PENDING_REVIEW 并独占重编译重跑；CI以最新提交为准。
 
+## 前序归档并发修复
+
+规格PR全量CI暴露 JdbcServiceArchiveTest.completionConcurrentConsumersAndLaterReviewCreateOneOutput 偶发404：消费者在REPEATABLE READ事务内先一致读任务归属，随后等订单锁；期间评价已提交，锁后读到card_requested=1，但普通读仍是旧快照，找不到评价。修复将不可变任务归属读取移到新事务之前，事务先锁订单再开始读取业务快照，不改既有冻结档案。
+
+新增 reviewCommittedAfterRoutingReadIsVisibleToConsumer 以两个闩锁精确安排“读完归属→评价提交→消费者继续”，真实MySQL验证1档案/1经验草稿且请求标记清除。JdbcServiceArchiveTest全套35/35，失败/错误/跳过0；该独立回归与佣金39组合分开记录。修复自规格支同步后端、微信、收口支，最终CI包含此修复。
+
 ## 微信与契约
 
 - 微信离线304/304；新增佣金10项：严格金额/枚举/字段及未知金额、GET与安全错误、分页去重/失败保留重试、切换身份/隐藏/旧响应丢弃、门店混页拒绝。金额以字符串保留，未引入 BigInt 的原生兼容要求。
