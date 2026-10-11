@@ -1,6 +1,6 @@
 # R3c2 后端阶段执行记录
 
-日期：2026-10-11。分支 `codex/r3c2-archive-report-backend`，直接依赖规格 PR #115；#115 继续以 #114 为 base。本阶段只实现后端和 API 契约，不合并任何 PR。
+日期：2026-10-11。后端阶段 PR [#116](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/116) 已创建，head `codex/r3c2-archive-report-backend`、base `codex/r3c2-archive-report-spec`（规格 PR #115）；#115 继续以 #114 为 base。本阶段只实现后端和 API 契约，不合并任何 PR。PR CI 当前运行中。
 
 ## 实施内容
 
@@ -21,4 +21,4 @@
 
 ## 下一阶段
 
-推送本后端阶段 PR 并等待 CI（尤其真 MySQL 集成测试）；之后进入微信小程序阶段，实施档案页筛选、HTTP/云托管下载、请求生命周期清理与原生文档打开。真实微信设备视觉仍保留 R9。
+等待 #116 CI（尤其真 MySQL 集成测试）；通过后进入微信小程序阶段，实施档案页筛选、HTTP/云托管下载、请求生命周期清理与原生文档打开。真实微信设备视觉仍保留 R9。

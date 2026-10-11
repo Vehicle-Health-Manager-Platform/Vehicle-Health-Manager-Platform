@@ -1,6 +1,6 @@
 # 三端功能缺口清点
 
-> **2026-10-11 当前 R3c2**：规格 PR #115 已创建；本人档案只读报告后端及 HTTP/云托管双传输已实现，执行情况见[R3c2后端记录](R3C2_ARCHIVE_REPORT_BACKEND_EXECUTION.md)。不依赖 Testcontainers 的 63 个后端测试类、246 项测试通过；微信小程序入口/文件生命周期还未实现；真库集成待 GitHub CI（本机 Testcontainers 无法连接 Docker daemon）。商家/技师无车主全档案权限，后续分别为商家 R3 里程识别、技师 R7 最小档案授权；OCR/VIN供应商仍未开通；正式身份/资金/真机留 R9。
+> **2026-10-11 当前 R3c2**：规格 PR #115 已创建；本人档案只读报告后端及 HTTP/云托管双传输已实现，后端阶段 PR #116 已创建且 CI 运行中，执行情况见[R3c2后端记录](R3C2_ARCHIVE_REPORT_BACKEND_EXECUTION.md)。不依赖 Testcontainers 的 63 个后端测试类、246 项测试通过；微信小程序入口/文件生命周期还未实现；真库集成待 GitHub CI（本机 Testcontainers 无法连接 Docker daemon）。商家/技师无车主全档案权限，后续分别为商家 R3 里程识别、技师 R7 最小档案授权；OCR/VIN供应商仍未开通；正式身份/资金/真机留 R9。
 
 > **2026-10-11 三端总规划**：[三端剩余功能与实施规划](THREE_ROLE_BUSINESS_PLAN_2026-10-11.md)。当前 R3c1 接车扫码/油表已实现待合并；本人档案报告 R3c2 已进入规格阶段。R1a 入驻/配额和 R1b 员工/员工码/门店资料已实现并合并；正式身份与真机最后验收。
 

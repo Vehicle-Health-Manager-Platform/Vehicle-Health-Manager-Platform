@@ -1,6 +1,6 @@
 # 下一步规划
 
-> **2026-10-11 当前单元 R3c2 本人档案报告/私有导出**：规格 PR #115 已创建；后端实现与中文接口契约已完成。不依赖 Testcontainers 的 63 个测试类、246 项测试全部通过；本机 Docker daemon socket 不可用，真库集成测试待 PR CI。下一步推送后端阶段 PR 并确认 CI，再实施微信小程序日期范围、普通 HTTPS 下载/云托管信封、取消/隐藏/切车清理及 openDocument 生命周期，最后收口验收。分阶段计划见[R3c2计划](R3C2_ARCHIVE_REPORT_NEXT_PLAN.md)，后续 R3c3 分享撤销；OCR/VIN 供应商未开通，正式身份/资金/真机仍 R9；不做 PC。下方记录为历史。
+> **2026-10-11 当前单元 R3c2 本人档案报告/私有导出**：规格 PR #115 已创建；后端阶段 PR [#116](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/116) 已创建，CI 运行中。不依赖 Testcontainers 的 63 个测试类、246 项测试全部通过，最终报告定向测试 6 项通过；本机 Docker daemon socket 不可用，真库集成测试待 PR CI。确认 CI 后进入微信小程序日期范围、普通 HTTPS 下载/云托管信封、取消/隐藏/切车清理及 openDocument 生命周期，最后收口验收。分阶段计划见[R3c2计划](R3C2_ARCHIVE_REPORT_NEXT_PLAN.md)，后续 R3c3 分享撤销；OCR/VIN 供应商未开通，正式身份/资金/真机仍 R9；不做 PC。下方记录为历史。
 
 > **2026-10-11 R3c1已实施待合并**：规格#111、后端#112、微信#113、验收#114逐阶段上传。车主PAID二维码不含预约码，本店扫码先授权context再导航；新表单8图含独立FUEL，旧七图可读/重放且不补造油表。接车MySQL15项+履约13项、mock业务HTTP6项，微信319/319、微信/H5构建通过；六CI/全量结果见#114正文。原生扫码/二维码视觉/真机未验收，OCR/VIN/里程识别仍欠。见[执行](R3C1_PICKUP_SCAN_FUEL_EXECUTION.md)、[验收](../testing/LOCAL_PICKUP_SCAN_FUEL_ACCEPTANCE.md)。正式身份资金设备R9，无PC；以下保留历史。
 
