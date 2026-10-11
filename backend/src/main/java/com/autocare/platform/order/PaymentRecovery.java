@@ -27,7 +27,7 @@ public class PaymentRecovery {
             var order=payments.lockOrder(ReservationStore.number(meta,"order_id"),owner);
             var p=db.one("SELECT * FROM payment WHERE id=? FOR UPDATE",id);
             String status=p.get("status").toString();if("SUCCEEDED".equals(status))return null;
-            var channel=payments.channels.create(p.get("channel").toString());
+            var channel=payments.channels.query(p.get("channel").toString());
             if(!channel.canQuery())throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"支付渠道查询尚未配置");
             if(p.get("payment_no")==null)throw PaymentService.conflict();
             Instant now=db.now();if(p.get("next_query_at")!=null&&ReservationStore.instant(p.get("next_query_at")).isAfter(now))return null;
