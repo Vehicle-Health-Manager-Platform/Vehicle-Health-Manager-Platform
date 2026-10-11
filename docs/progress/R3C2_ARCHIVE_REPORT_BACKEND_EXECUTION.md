@@ -1,6 +1,6 @@
 # R3c2 后端阶段执行记录
 
-日期：2026-10-11。后端阶段 PR [#116](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/116) 已创建，head `codex/r3c2-archive-report-backend`、base `codex/r3c2-archive-report-spec`（规格 PR #115）；#115 继续以 #114 为 base。本阶段只实现后端和 API 契约，不合并任何 PR。PR CI 当前运行中。
+日期：2026-10-11。后端阶段 PR [#116](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/116) head `codex/r3c2-archive-report-backend`、base `codex/r3c2-archive-report-spec`（规格 PR #115）；#115 以 R3c1 验收分支为 base。PR #115 和 #116 六项 CI 全部成功，#116 的 `backend`、`schema-mysql`、`compose-smoke` 均通过。PR #114 仍 OPEN；本阶段只实现后端和 API 契约，不合并 PR。
 
 ## 实施内容
 
@@ -21,4 +21,4 @@
 
 ## 下一阶段
 
-等待 #116 CI（尤其真 MySQL 集成测试）；通过后进入微信小程序阶段，实施档案页筛选、HTTP/云托管下载、请求生命周期清理与原生文档打开。真实微信设备视觉仍保留 R9。
+微信小程序阶段已在后端分支上继续实施：档案页筛选、HTTP/云托管下载、请求生命周期清理与原生文档打开见[R3c2微信阶段记录](R3C2_ARCHIVE_REPORT_MINIAPP_EXECUTION.md)。本机小程序331项及 mp-weixin/H5 构建通过；PR #116 的 backend 和 schema-mysql CI 检查通过。真实微信设备视觉仍保留 R9。
