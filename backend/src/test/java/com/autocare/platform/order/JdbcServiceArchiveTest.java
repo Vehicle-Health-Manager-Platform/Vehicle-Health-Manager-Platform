@@ -114,6 +114,30 @@ class JdbcServiceArchiveTest {
             assertEquals(1,count("vehicle_archive")); assertEquals(1,count("experience_card")); assertEquals(1,count("service_archive_job"));
         } finally { pool.shutdownNow(); }
     }
+    @Test void reviewCommittedAfterRoutingReadIsVisibleToConsumer() throws Exception {
+        long job=completion(); jobs.consume(job);
+        var routed=new CountDownLatch(1); var proceed=new CountDownLatch(1);
+        var delayed=new JdbcTemplate(jdbc.getDataSource()) {
+            @Override public List<Map<String,Object>> queryForList(String sql,Object... args) {
+                var rows=super.queryForList(sql,args);
+                if (sql.equals("SELECT order_id FROM service_archive_job WHERE id=?")) {
+                    routed.countDown();
+                    try { if (!proceed.await(10,TimeUnit.SECONDS)) throw new IllegalStateException("review did not commit"); }
+                    catch (InterruptedException e) { Thread.currentThread().interrupt(); throw new IllegalStateException(e); }
+                }
+                return rows;
+            }
+        };
+        var manager=new DataSourceTransactionManager(jdbc.getDataSource());
+        var consumer=new ServiceArchiveJobs(new ReservationStore(delayed,db.mapper,db.writes,db.clock,manager),true,true);
+        var pool=Executors.newSingleThreadExecutor();
+        try {
+            var task=pool.submit(()->consumer.consume(job));
+            assertTrue(routed.await(10,TimeUnit.SECONDS)); submit(); proceed.countDown(); task.get(30,TimeUnit.SECONDS);
+            assertEquals(1,count("vehicle_archive")); assertEquals(1,count("experience_card"));
+            assertEquals(0,jdbc.queryForObject("SELECT card_requested FROM service_archive_job WHERE id=?",Integer.class,job));
+        } finally { proceed.countDown(); pool.shutdownNow(); }
+    }
     @Test void reviewEnqueuesAndConsumerAddsTraceableArchiveWithoutInventingMileage() {
         long id=submit(); assertEquals(0,count("vehicle_archive")); jobs.consume(id); jobs.consume(id);
         assertEquals(1,count("vehicle_archive")); assertEquals(2,count("vehicle_archive_file"));
