@@ -46,4 +46,3 @@ PREPARE catalog_statement FROM @catalog_ddl; EXECUTE catalog_statement; DEALLOCA
 
 SET @catalog_ddl=IF((SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='operator_account' AND column_name='can_catalog')=0 AND (SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name='operator_account')=1, 'ALTER TABLE operator_account ADD COLUMN can_catalog TINYINT NOT NULL DEFAULT 0', 'SELECT 1');
 PREPARE catalog_statement FROM @catalog_ddl; EXECUTE catalog_statement; DEALLOCATE PREPARE catalog_statement;
-
