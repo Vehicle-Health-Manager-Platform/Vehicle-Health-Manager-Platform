@@ -66,7 +66,8 @@ export function createArchiveApi({ baseUrl, runtime }) {
           && data.list.every(row => id(row.archive_id) && row.vehicle_id === vehicleId
             && Number.isInteger(row.archive_type) && row.archive_type >= 1 && row.archive_type <= 7
             && [1, 3, 4].includes(row.input_type)
-            && (row.input_type !== 4 || (['order_id', 'report_id', 'review_id', 'redemption_id'].every(k => id(row.source?.[k]))
+            && (row.input_type !== 4 || (['order_id', 'report_id', 'redemption_id'].every(k => id(row.source?.[k]))
+              && (row.source.review_id === null || id(row.source.review_id))
               && typeof row.test_mode === 'boolean' && row.mileage === null
               && Number.isInteger(row.work_minutes) && row.work_minutes > 0 && row.work_minutes <= 1440
               && typeof row.no_parts === 'boolean' && Array.isArray(row.parts_used) && row.no_parts === (row.parts_used.length === 0)

@@ -71,6 +71,7 @@ function add(mode = 'manual') { if (vehicle.value) uni.navigateTo({ url: archive
             <text v-for="(part, index) in item.parts_used" :key="index" class="copy">{{ part.name }} · {{ part.brand }} · {{ part.model }} × {{ part.quantity }}</text>
             <text class="copy">报工 {{ displayTime(item.submitted_at) }}</text><text class="copy">质检签字 {{ displayTime(item.signed_at) }}</text>
             <text class="copy">核销 {{ displayTime(item.redeemed_at) }}</text>
+            <text v-if="item.source.review_id === null" class="copy">订单完成后自动归档，无需先评价。</text>
             <button class="secondary" @tap="uni.navigateTo({url:`/pages/order/detail?id=${item.source.order_id}`})">查看来源订单</button>
           </view>
           <view v-if="item.file_ids.length" class="images"><button v-for="(id, index) in item.file_ids" :key="id" class="secondary" @tap="preview(item, id)">查看{{ item.input_type === 4 ? '施工' : '' }}图片 {{ index + 1 }}</button></view>

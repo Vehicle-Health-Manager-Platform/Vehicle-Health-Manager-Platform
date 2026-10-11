@@ -31,7 +31,7 @@ onUnload(() => { visible = false; clear() })
     <button v-if="!ownerSession.accessToken" @tap="login">前往车主登录</button>
     <VehicleList :selected-id="vehicle?.vehicle_id || 0" @select="selectOwnerVehicle" />
     <text v-if="state.busy" role="status">正在加载卡片…</text>
-    <text v-else-if="state.loaded && !state.rows.length">这辆车还没有经验卡片。新施工完成归档后会生成私有摘要。</text>
+    <text v-else-if="state.loaded && !state.rows.length">这辆车还没有经验卡片。施工归档并提交本人评价后，可生成私有摘要；公开仍需授权和审核。</text>
     <view v-for="card in state.rows" :key="card.card_id" class="reservation-panel" data-testid="experience-card">
       <text class="reservation-heading">{{ card.title }}</text>
       <text data-testid="experience-state">{{ CARD_STATES[card.status] }}</text>
