@@ -6,7 +6,7 @@ import { createReservationWriteFlow,initialReservationWriteState } from '../src/
 const form=()=>({code:'012345',mileage:'123',mileageReason:'',arrivalReason:'',fuel:'HALF',damageStatus:'NONE',damages:[],photos:Object.fromEntries(PICKUP_SLOTS.map((s,i)=>[s,{fileId:i+1}]))})
 const key='01234567-89ab-4cde-8fab-0123456789ab'
 const sheet={pickup_check_id:1,order_id:2,photos:Object.fromEntries(PICKUP_SLOTS.map((s,i)=>[s,i+1])),mileage:123,owner_confirm:0,damages:[],dispute:null}
-test('接车必须七个独立上传、明确油量与损伤，预约码保留前导零',()=>{
+test('接车必须八个独立上传、明确油量与损伤，预约码保留前导零',()=>{
   const f=form();assert.equal(pickupBody(2,f).appointment_code,'012345');assert.equal(pickupBody(2,f).mileage,123)
   f.photos.ROOF.fileId=0;assert.throws(()=>pickupBody(2,f));f.photos.ROOF.fileId=1;assert.throws(()=>pickupBody(2,f))
   for(const field of ['fuel','damageStatus','code','mileage']){const invalid=form();invalid[field]='';assert.throws(()=>pickupBody(2,invalid))}
@@ -34,4 +34,15 @@ test('车主决策只提交动作与本人订单，异议必须说明',async()=>
   await api.decide('owner',2,'CONFIRM','',key);assert.equal(sent.url,'http://local/api/check/pickup/confirm');assert.equal(sent.header['Idempotency-Key'],key);assert.deepEqual(sent.data,{order_id:2,decision:'CONFIRM'})
   await api.decide('owner',2,'DISPUTE',' 照片不符 ',key);assert.deepEqual(sent.data,{order_id:2,decision:'DISPUTE',reason:'照片不符'})
   assert.throws(()=>api.decide('owner',2,'DISPUTE','  ',key));assert.throws(()=>api.decide('owner',2,'DISPUTE','x'.repeat(501),key))
+})
+
+test('新表单油表独立且不作损伤标注，旧七图响应仍可读',async()=>{
+  const f=form();f.photos.FUEL.fileId=6;assert.throws(()=>pickupBody(2,f));delete f.photos.FUEL;assert.throws(()=>pickupBody(2,f))
+  const damage=form();damage.damageStatus='PRESENT';damage.damages=[{photo_slot:'FUEL',x:0.5,y:0.5,note:'污损'}];assert.throws(()=>pickupBody(2,damage))
+  let data={...sheet,photos:{...sheet.photos}};delete data.photos.FUEL
+  const api=createPickupApi({baseUrl:'http://local',runtime:()=>({request:o=>o.success({statusCode:200,data:{code:0,data}})})})
+  assert.equal((await api.detail('owner',2)).photos.FUEL,undefined)
+  data.photos.FUEL=6;await assert.rejects(api.detail('owner',2),e=>e.kind==='protocol')
+  data.photos.FUEL=null;await assert.rejects(api.detail('owner',2),e=>e.kind==='protocol')
+  delete data.photos.FUEL;data.photos.UNKNOWN=8;await assert.rejects(api.detail('owner',2),e=>e.kind==='protocol')
 })

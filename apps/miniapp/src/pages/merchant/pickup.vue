@@ -33,7 +33,7 @@ async function choose(slot){
 }
 async function preview(slot){const version=generation,actor=token();try{const result=await images.access(actor,form.photos[slot].fileId);if(version===generation&&actor===token()){form.photos[slot].url=result.url;await images.preview(result.url)}}catch(error){if(version===generation)message.value=error?.message||'预览未打开，请重试'}}
 function mark(slot,event){
-  if(disabled.value||form.damageStatus!=='PRESENT'||form.damages.length>=20)return
+  if(slot==='FUEL'||disabled.value||form.damageStatus!=='PRESENT'||form.damages.length>=20)return
   const point=event.changedTouches?.[0]||event.touches?.[0]||event.detail
   const x=point?.clientX??point?.x,y=point?.clientY??point?.y,version=generation,fileId=form.photos[slot].fileId
   uni.createSelectorQuery().select(`.pickup-photo-${slot}`).boundingClientRect(rect=>{
@@ -43,7 +43,7 @@ function mark(slot,event){
 }
 function submit(){
   try{pickupBody(order,form)}catch(error){write.message=error.message;return}
-  const version=generation,actor=token();uni.showModal({title:'提交接车单',content:'确认检查信息完整？提交后不可修改，车主可以在订单中查看，车主确认功能随后接入。',success:r=>{if(r.confirm&&visible&&version===generation&&actor===token())save.save()}})
+  const version=generation,actor=token();uni.showModal({title:'提交接车单',content:'确认检查信息完整？提交后不可修改，车主可以在订单中查看，仍需车主确认后才能派工。',success:r=>{if(r.confirm&&visible&&version===generation&&actor===token())save.save()}})
 }
 function sheet(){uni.redirectTo({url:`/pages/check/pickup-detail?id=${order}&role=merchant`})}
 </script>
@@ -57,7 +57,7 @@ function sheet(){uni.redirectTo({url:`/pages/check/pickup-detail?id=${order}&rol
       <text class="reservation-heading">{{read.value.order.project_snapshot?.project_name}}</text>
       <text>预约 {{displayTime(read.value.order.appointment_snapshot?.starts_at)}}</text>
       <text>比较里程 {{read.value.mileage_baseline.mileage}} km（{{read.value.mileage_baseline.source==='ARCHIVE'?'最近档案':'车辆里程'}}）</text>
-      <text>逐项拍摄或选择真实照片，七张全部上传后提交。</text>
+      <text>逐项拍摄或选择真实照片，八张全部上传后提交，油表照片须独立于仪表盘。</text>
       <view v-for="slot in PICKUP_SLOTS" :key="slot" class="photo-block" :data-testid="`pickup-slot-${slot}`">
         <text class="reservation-heading">{{PICKUP_LABELS[slot]}}</text>
         <view v-if="form.photos[slot].url" class="photo-canvas">
@@ -74,7 +74,7 @@ function sheet(){uni.redirectTo({url:`/pages/check/pickup-detail?id=${order}&rol
       <text>里程低于基线时填写原因</text><textarea v-model="form.mileageReason" maxlength="200" :disabled="disabled" placeholder="里程回退原因" />
       <text>油量</text><picker :disabled="disabled" :range="FUEL_LABELS" @change="form.fuel=FUEL_VALUES[Number($event.detail.value)]"><view class="picker-value">{{FUEL_LABELS[FUEL_VALUES.indexOf(form.fuel)]||'请选择油量'}}</view></picker>
       <text>损伤情况（必须明确选择）</text><view><button :disabled="disabled" @tap="form.damageStatus='NONE';form.damages=[]">{{form.damageStatus==='NONE'?'已选：':'选择'}}无损伤</button><button :disabled="disabled" @tap="form.damageStatus='PRESENT'">{{form.damageStatus==='PRESENT'?'已选：':'选择'}}有损伤</button></view>
-      <text v-if="form.damageStatus==='PRESENT'">点击上方照片标注损伤位置，再填写说明，最多 20 处。替换照片会清除该照片标注。</text>
+      <text v-if="form.damageStatus==='PRESENT'">点击上方车身/仪表盘/内饰照片标注损伤位置（油表不标注损伤），再填写说明，最多 20 处。替换照片会清除该照片标注。</text>
       <view v-for="(damage,index) in form.damages" :key="index"><text>{{PICKUP_LABELS[damage.photo_slot]}} · 标注 {{index+1}}</text><input v-model="damage.note" maxlength="200" :disabled="disabled" placeholder="损伤说明（必填）" /><button :disabled="disabled" @tap="form.damages.splice(index,1)">删除标注</button></view>
       <text>到店与预约时间偏差超过 2 小时需填写原因</text><textarea v-model="form.arrivalReason" maxlength="200" :disabled="disabled" placeholder="提前或延迟到店原因" />
       <text>车主提供的六位预约码</text><input v-model="form.code" type="number" maxlength="6" :disabled="disabled" placeholder="保留前导零" />

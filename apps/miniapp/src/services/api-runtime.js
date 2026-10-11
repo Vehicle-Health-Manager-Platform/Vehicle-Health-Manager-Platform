@@ -13,7 +13,7 @@ import { apiOrigin, cloudRun } from './api-config.js'
 const JSON_CONTENT_TYPE = { 'content-type': 'application/json' }
 
 // 需要原样透传的本地能力（回调式，参数与 uni/wx 一致）。
-const FORWARDED = ['chooseMedia', 'chooseImage', 'uploadFile', 'previewImage', 'openSetting']
+const FORWARDED = ['chooseMedia', 'scanCode', 'chooseImage', 'uploadFile', 'previewImage', 'openSetting']
 
 // 小程序运行时全局对象；Node 离线测试与 H5 构建下不存在。
 function defaultCloud() {
