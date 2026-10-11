@@ -53,6 +53,14 @@ public class VehicleController {
         var owner=VehicleOwner.from(jwt); VehicleService.page(page,size);
         return response(service().catalog(owner,"model",id,page,size));
     }
+    @PostMapping(value="/api/vehicle/match-plate",consumes="application/json")
+    public ResponseEntity<?> matchPlate(@AuthenticationPrincipal Jwt jwt,
+        @RequestBody String raw,jakarta.servlet.http.HttpServletRequest request) {
+        var owner=VehicleOwner.from(jwt);
+        if (request.getQueryString()!=null) throw WriteIntegrityService.badRequest("车牌匹配不接受查询参数");
+        var plate=VehicleInput.matchPlate(raw);
+        return response(service().matchPlate(owner,plate));
+    }
     @PostMapping("/api/vehicle/add")
     public ResponseEntity<JsonNode> add(@AuthenticationPrincipal Jwt jwt,
         @RequestHeader(value="Idempotency-Key",required=false) String key,@RequestBody JsonNode body) {

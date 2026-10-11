@@ -139,4 +139,26 @@ class JdbcVehicleTest {
         }
         String key=key();assertEquals(service.add(owner,key,parsed),service.add(owner,key,new VehicleInput(1,0,"粤B12345","LSVNV2180H2123456")));
     }
+    @Test void plateMatchIsOwnMaskedExactReadAndPreservesRetiredModel() {
+        service.add(owner,key(),input("粤B12345")); service.add(other,key(),input("粤B12345"));
+        int vehicles=count("vehicle"),audits=count("audit_log"),keys=count("idempotency_record");
+        jdbc.update("UPDATE model SET status=0");
+        var result=mapper.valueToTree(service.matchPlate(owner," 粤b12345 "));
+        assertEquals(1,result.path("matches").size()); var row=result.path("matches").get(0);
+        assertEquals(6,row.size()); assertEquals("粤B****5",row.path("plate_no_masked").asText());
+        assertFalse(result.toString().contains("LSVNV2180H2123456"));
+        assertEquals(0,mapper.valueToTree(service.matchPlate(owner,"粤B54321")).path("matches").size());
+        jdbc.update("UPDATE vehicle SET is_deleted=1 WHERE user_id=1");
+        assertEquals(0,mapper.valueToTree(service.matchPlate(owner,"粤B12345")).path("matches").size());
+        assertEquals(1,mapper.valueToTree(service.matchPlate(other,"粤B12345")).path("matches").size());
+        assertEquals(vehicles,count("vehicle"));assertEquals(audits,count("audit_log"));assertEquals(keys,count("idempotency_record"));
+    }
+    @Test void plateMatchChecksSessionAndBoundsAmbiguousLegacyRows() {
+        for(int n=0;n<21;n++) jdbc.update("INSERT INTO vehicle(user_id,model_id,current_mileage,plate_no) VALUES(1,1,0,'粤B12345')");
+        assertEquals(409,status(()->service.matchPlate(owner,"粤B12345")));
+        jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id=?",owner.session());
+        assertEquals(401,status(()->service.matchPlate(owner,"粤B12345")));
+        assertEquals(400,status(()->service.matchPlate(other,"invalid")));
+    }
+
 }
