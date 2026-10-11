@@ -1,16 +1,22 @@
 <script setup>
-import { reactive, computed, watch } from 'vue'
-import { onShow, onHide, onUnload } from '@dcloudio/uni-app'
+import { reactive, computed, watch, ref } from 'vue'
+import { onShow, onHide, onUnload, onLoad } from '@dcloudio/uni-app'
 import { ownerSession, clearOwnerSession } from '../../services/owner-session.js'
 import { vehicleApi } from '../../services/vehicles.js'
 import { imageRequestKey } from '../../services/private-images.js'
 import { createVehicleFlow, initialVehicleState } from '../../services/vehicle-flow.js'
+import { vehicleEntryPrefill } from '../../services/vehicle-entry-session.js'
+const sourceMessage = ref('')
 const state = reactive(initialVehicleState())
 const flow = createVehicleFlow({ state, api: vehicleApi, token: () => ownerSession.accessToken, newKey: imageRequestKey })
 const years = computed(() => [...new Set(state.model.map(model => model.year))])
 const configs = computed(() => state.model.filter(model => model.year === state.year))
 const locked = computed(() => state.busy || Boolean(state.saved) || ['unauthorized', 'forbidden'].includes(state.failureKind))
-watch(() => ownerSession.accessToken, () => flow.reset(), { flush: 'sync' })
+watch(() => ownerSession.accessToken, () => { flow.reset(); sourceMessage.value = '' }, { flush: 'sync' })
+onLoad(() => {
+ const incoming=vehicleEntryPrefill.take(ownerSession.accessToken)
+ if(incoming){state.plate=incoming.plate;state.vin=incoming.vin;sourceMessage.value={plate:'车牌已带入，请确认车型与里程后保存。',vin:'VIN已校验并带入，尚未解码车型，请手动选择确认。',license:'请按证件手动填写；行驶证识别尚未开通。'}[incoming.source]}
+})
 onShow(() => {
   if (state.saved) return
   if (!state.brand.length) flow.load('brand')
@@ -34,6 +40,7 @@ function retryCatalog() { if (state.catalogRetry) flow.load(state.catalogRetry.k
     <text class="intro">选择车型并记录当前里程，车牌与VIN可不填。</text>
     <view v-if="!ownerSession.accessToken" class="panel"><text>请先登录车主账号</text><button @tap="login">前往登录</button></view>
     <view v-else class="panel">
+      <text v-if="sourceMessage" class="note">{{ sourceMessage }}</text>
       <text class="label">品牌</text>
       <picker :disabled="locked || !state.brand.length" :range="state.brand" range-key="name" @change="pickBrand"><view class="field">{{ state.brand.find(item => item.id === state.brandId)?.name || '请选择品牌' }}</view></picker>
       <button v-if="state.brand.length < state.totals.brand" class="more" :disabled="locked" @tap="flow.load('brand', true)">加载更多品牌</button>

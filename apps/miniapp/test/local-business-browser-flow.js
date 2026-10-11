@@ -49,7 +49,7 @@ return await (async () => {
     el.value=value; el.dispatchEvent(new Event('input',{bubbles:true}))
   }
   async function createVehicle(mileage,plate,drop){
-    await click('手动添加'); await wait(()=>text().includes('添加我的车辆'),'vehicle form')
+    await click('添加车辆'); await wait(() => text().includes('选择录车方式')); await click('进入手动录车'); await wait(()=>text().includes('添加我的车辆'),'vehicle form')
     await wait(()=>!document.querySelector('uni-picker')?.hasAttribute('disabled'),'brand loaded')
     await pick(0); await pick(1); await pick(2); await pick(3)
     assert(text().includes('本地合成测试品牌') && text().includes('合成配置A'),'真实四级车型选择 '+mileage)

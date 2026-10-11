@@ -34,12 +34,12 @@ onMounted(() => load())
 onHide(suspend)
 onUnload(suspend)
 function login() { clearOwnerSession(); uni.navigateTo({ url: '/pages/owner/index' }) }
-function add() { uni.navigateTo({ url: '/pages/vehicle/manual' }) }
+function add() { uni.navigateTo({ url: '/pages/vehicle/entry' }) }
 </script>
 
 <template>
   <view class="vehicles" data-testid="vehicle-list">
-    <view class="top"><text class="heading">我的车辆</text><button class="add" :disabled="busy || ['unauthorized','forbidden'].includes(kind)" @tap="add">手动添加</button></view>
+    <view class="top"><text class="heading">我的车辆</text><button class="add" :disabled="busy || ['unauthorized','forbidden'].includes(kind)" @tap="add">添加车辆</button></view>
     <text v-if="busy" class="copy" role="status">正在加载车辆…</text>
     <text v-else-if="loaded && !rows.length" class="copy">还没有车辆，先添加一辆开始记录养护。</text>
     <view v-for="vehicle in rows" :key="vehicle.vehicle_id" class="vehicle" :class="{ selected: vehicle.vehicle_id === selectedId }" @tap="emit('select', vehicle)">

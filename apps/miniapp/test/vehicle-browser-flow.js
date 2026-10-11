@@ -39,10 +39,10 @@ return await (async () => {
   try {
     await uni.navigateTo({ url: '/pages/owner/index' }); await wait(() => button('微信登录')); await click('微信登录'); await wait(() => button('进入车主首页'))
     stage = 'empty-list'; await uni.switchTab({ url: '/pages/archive/index' }); await wait(() => text().includes('还没有车辆'))
-    assert(Boolean(button('手动添加')), 'owner empty list offers manual entry')
-    stage = 'empty-catalog'; await sleep(350); await click('手动添加'); await wait(() => text().includes('暂无可选车型'))
+    assert(Boolean(button('添加车辆')), 'owner empty list offers manual entry')
+    stage = 'empty-catalog'; await sleep(350); await click('添加车辆'); await wait(() => text().includes('选择录车方式')); await click('进入手动录车'); await wait(() => text().includes('暂无可选车型'))
     assert(button('保存车辆').getAttribute('disabled') === 'true', 'empty catalog disables save')
-    empty = false; await uni.switchTab({ url: '/pages/archive/index' }); await wait(() => button('手动添加')); await sleep(350); await click('手动添加')
+    empty = false; await uni.switchTab({ url: '/pages/archive/index' }); await wait(() => button('添加车辆')); await sleep(350); await click('添加车辆'); await wait(() => text().includes('选择录车方式')); await click('进入手动录车')
     await wait(() => { const picker = document.querySelector('uni-picker'); return picker && picker.getAttribute('disabled') !== 'true' })
     await pick(0); await pick(1); await pick(2); await pick(3)
     assert(text().includes('测试配置') && button('保存车辆').getAttribute('disabled') !== 'true', 'four native H5 picker steps select an existing model')

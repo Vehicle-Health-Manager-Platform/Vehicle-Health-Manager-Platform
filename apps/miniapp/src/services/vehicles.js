@@ -16,6 +16,18 @@ const messages = {
   503: ['unavailable', '车辆服务暂不可用，请稍后重试'],
 }
 export const vehicleFailure = error => error instanceof VehicleError ? error : new VehicleError('network', '无法连接车辆服务，请检查网络后重试')
+export function normalizedPlate(value) {
+ if(typeof value!=='string'||value.length>32)throw new VehicleError('invalid','请输入普通或新能源大陆车牌')
+ const plate=value.trim().toUpperCase()
+ if(!/^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼][A-Z][A-Z0-9]{5,6}$/.test(plate))throw new VehicleError('invalid','请输入普通或新能源大陆车牌')
+ return plate
+}
+export function normalizedVin(value) {
+ if(typeof value!=='string'||value.length>32)throw new VehicleError('invalid','请输入17位VIN，不含I、O、Q')
+ const vin=value.trim().toUpperCase()
+ if(!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin))throw new VehicleError('invalid','请输入17位VIN，不含I、O、Q')
+ return vin
+}
 export function vehicleBody(fields) {
   const plate = fields.plate.trim().toUpperCase(), vin = fields.vin.trim().toUpperCase()
   if (!id(fields.modelId) || !/^\d{1,10}$/.test(fields.mileage) || Number(fields.mileage) > 2147483647
@@ -50,6 +62,15 @@ export function createVehicleApi({ baseUrl, runtime }) {
     && Number.isSafeInteger(result.total) && result.total >= result.list.length && result.total >= 0
     && result.page === page && result.page_size === size && result.list.every(row)
   return {
+    matchPlate(token,value) {
+      const plate=normalizedPlate(value), mask=plate.slice(0,2)+'*'.repeat(plate.length-3)+plate.slice(-1)
+      const exact=(v,keys)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length===keys.length&&keys.every(k=>Object.hasOwn(v,k))
+      const row=v=>exact(v,['vehicle_id','model_id','model_name','current_mileage','plate_no_masked','vin_masked'])&&id(v.vehicle_id)
+        &&Number.isSafeInteger(v.model_id)&&v.model_id>=0&&text(v.model_name)&&Number.isSafeInteger(v.current_mileage)&&v.current_mileage>=0
+        &&v.plate_no_masked===mask&&text(v.vin_masked)&&(v.vin_masked===''||/^[A-HJ-NPR-Z0-9]{3}\*+[A-HJ-NPR-Z0-9]{4}$/.test(v.vin_masked))
+      return request(token,'/api/vehicle/match-plate','POST',{plate_no:plate},undefined,
+        v=>exact(v,['matches'])&&Array.isArray(v.matches)&&v.matches.length<=20&&v.matches.every(row)&&new Set(v.matches.map(r=>r.vehicle_id)).size===v.matches.length)
+    },
     list(token, page = 1) {
       return request(token, `/api/vehicle/list?page=${page}&page_size=20`, 'GET', undefined, undefined,
         result => paged(result, page, 20, item => id(item.vehicle_id) && Number.isSafeInteger(item.current_mileage)
