@@ -65,3 +65,7 @@ V005 在 V004 之后新增 `vehicle_archive_file`，以 `(archive_id,position)` 
 `migrations/V001__baseline.sql` 是版本化初始迁移，`init.sql` 是空库快速初始化的同内容副本。两者**择一执行**；不要顺序执行以掩盖迁移问题。重跑 V001 只会跳过已有表，不会修改旧结构；后续字段变化必须新增 V002 等迁移，并记录回滚/灰度策略。测试环境可单独执行 `seed_test.sql`；生产环境不得执行该文件。
 
 本次按原始小程序文档重生的 V001 已在 [CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/36974338523) 通过 MySQL 8 空库与重复迁移验证。已存在的网页方案开发数据库不会因 `CREATE TABLE IF NOT EXISTS` 自动增加 `openid` 或放宽 `phone`，需要单独的版本化迁移或重建可丢弃的开发库，不可直接用于生产升级。
+
+## R2c V026 佣金台账增量
+
+V026重复迁移后共66表，新增`order_commission_snapshot`（订单唯一、下单政策冻结）、`merchant_commission_entry`（订单事件唯一/退款ID唯一、追加应计/冲销/未知金额）。`merchant_commission_policy`新增rule_version/source_application_id，仅唯一可信入驻批准可补默认3%/3自然月免佣；不把merchant.created_at当审批时间。核销/退款与台账/审计同事务，旧单无下单快照WAIT_LEGACY，金额null；不存在真实资金结算字段。详见[佣金契约](../api/COMMISSIONS.md)。已有库需按序手动迁移至V026，Compose init只作用新卷。

@@ -36,6 +36,7 @@ services:
       - ../../docs/sql/migrations/V023__completion_archive_jobs.sql:/docker-entrypoint-initdb.d/023-completion-archive-jobs.sql:ro
       - ../../docs/sql/migrations/V024__payment_query_recovery.sql:/docker-entrypoint-initdb.d/024-payment-query-recovery.sql:ro
       - ../../docs/sql/migrations/V025__order_refunds.sql:/docker-entrypoint-initdb.d/025-order-refunds.sql:ro
+      - ../../docs/sql/migrations/V026__commission_ledger.sql:/docker-entrypoint-initdb.d/026-commission-ledger.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent"]
       interval: 10s

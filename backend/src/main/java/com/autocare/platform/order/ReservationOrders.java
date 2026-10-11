@@ -33,6 +33,7 @@ public class ReservationOrders {
             var price=Map.of("merchant_project_id",input.quote(),"quote_version_id",input.version(),"version",q.get("version"),"price",q.get("price").toString());
             var appointment=Map.of("slot_id",input.slot(),"starts_at",start.toString(),"ends_at",ReservationStore.iso(slot.get("ends_at")));
             long id=db.insert("INSERT INTO `order`(order_no,user_id,vehicle_id,merchant_id,project_id,amount,pay_amount,status,appointment_at,project_snapshot,merchant_snapshot,price_snapshot,slot_id,expires_at,merchant_project_id,quote_version_id,appointment_snapshot,created_at) VALUES(?,?,?,?,?,?,?,'PENDING_PAYMENT',?,?,?,?,?,?,?,?,?,?)",orderNo,owner.id(),input.vehicle(),q.get("merchant_id"),q.get("project_id"),q.get("price"),q.get("price"),ReservationStore.time(start),db.json(project),db.json(merchant),db.json(price),input.slot(),ReservationStore.time(deadline),input.quote(),input.version(),db.json(appointment),ReservationStore.time(now));
+            CommissionLedger.booking(db,id);
             db.jdbc.update("UPDATE `order` SET verify_code=? WHERE id=?",AppointmentCodes.create(),id);
             db.jdbc.update("UPDATE appointment_slot SET reserved_count=? WHERE id=?",occupied+1,input.slot());
             var result=Map.<String,Object>of("order_id",id,"order_no",orderNo,"amount_due",q.get("price").toString(),"status","PENDING_PAYMENT","expires_at",deadline.toString());return new Change("ORDER_CREATE","order",id,Map.of(),db.orderRow(db.one("SELECT * FROM `order` WHERE id=? FOR UPDATE",id),true),result);

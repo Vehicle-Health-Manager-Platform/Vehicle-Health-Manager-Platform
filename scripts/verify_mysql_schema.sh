@@ -96,6 +96,8 @@ run_sql_file docs/sql/migrations/V024__payment_query_recovery.sql
 run_sql_file docs/sql/migrations/V024__payment_query_recovery.sql
 run_sql_file docs/sql/migrations/V025__order_refunds.sql
 run_sql_file docs/sql/migrations/V025__order_refunds.sql
+run_sql_file docs/sql/migrations/V026__commission_ledger.sql
+run_sql_file docs/sql/migrations/V026__commission_ledger.sql
 [[ "$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='$database' AND table_name='refund' AND column_name IN ('refund_no','revision','owner_consented_at','merchant_consented_at','dispatch_token','next_attempt_at','controlled_order_id')")" == 7 ]] || { echo 'V025 refund fields missing' >&2; exit 1; }
 [[ "$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema='$database' AND table_name='refund' AND non_unique=0 AND index_name IN ('uk_managed_refund_no','uk_managed_refund_order')")" == 2 ]] || { echo 'V025 refund unique guards missing' >&2; exit 1; }
 [[ "$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='$database' AND table_name='payment' AND column_name IN ('query_token','next_query_at','query_attempts','last_query_at','last_query_error')")" == 5 ]] || { echo 'V024 payment query fields missing' >&2; exit 1; }
@@ -103,8 +105,10 @@ run_sql_file docs/sql/migrations/V025__order_refunds.sql
 [[ "$(query "SELECT is_nullable FROM information_schema.columns WHERE table_schema='$database' AND table_name='service_archive_job' AND column_name='review_id'")" == YES ]] || { echo 'V023 review_id must allow null' >&2; exit 1; }
 [[ "$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='$database' AND table_name='service_archive_job' AND column_name='card_requested' AND column_default='0'")" == 1 ]] || { echo 'V023 card_requested missing' >&2; exit 1; }
 
+[[ "$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='$database' AND table_name IN ('order_commission_snapshot','merchant_commission_entry')")" == 2 ]] || { echo 'V026 commission tables missing' >&2; exit 1; }
+[[ "$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='$database' AND table_name='merchant_commission_policy' AND column_name IN ('rule_version','source_application_id')")" == 2 ]] || { echo 'V026 policy provenance missing' >&2; exit 1; }
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
-[[ "$tables" == 64 ]] || { echo "Expected 64 tables after V025, got $tables" >&2; exit 1; }
+[[ "$tables" == 66 ]] || { echo "Expected 66 tables after V026, got $tables" >&2; exit 1; }
 catalog_columns=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND ((table_name IN ('brand','series','model','standard_project') AND column_name IN ('sort_order','source_note','revision')) OR (table_name IN ('brand','series','model') AND column_name='status') OR (table_name='operator_account' AND column_name='can_catalog'))")
 [[ "$catalog_columns" == 16 ]] || { echo "V022 catalogue fields incomplete: $catalog_columns/16" >&2; exit 1; }
 
@@ -193,4 +197,4 @@ for entry in staff_account:display_name staff_account:created_by; do
   found=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND table_name = '$table' AND column_name = '$column'")
   [[ "$found" == 1 ]] || { echo "Repeated V021 left $table.$column missing" >&2; exit 1; }
 done
-echo "MySQL 8.0 schema: 64 tables after V025; repeat migration and synthetic seed passed"
+echo "MySQL 8.0 schema: 66 tables after V026; repeat migration and synthetic seed passed"

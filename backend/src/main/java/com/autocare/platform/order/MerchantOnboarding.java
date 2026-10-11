@@ -258,11 +258,13 @@ public class MerchantOnboarding {
                     before.get("address"), before.get("contact_phone"), db.json(snapshotFiles(before)), region);
                 db.jdbc.update("INSERT INTO staff_account(merchant_id,role,account,status) "
                     + "VALUES(?,?,?, 'PENDING_ACTIVATION')", merchant, "MERCHANT", "m" + merchant);
+                var approvedAt=db.now();
                 db.jdbc.update("UPDATE merchant_application SET status='APPROVED',merchant_id=?,last_reason_code=NULL,"
-                    + "reviewed_by=?,reviewed_at=? WHERE id=?", merchant, actor.id(), ReservationStore.time(db.now()), id);
+                    + "reviewed_by=?,reviewed_at=? WHERE id=?", merchant, actor.id(), ReservationStore.time(approvedAt), id);
                 db.jdbc.update("INSERT INTO merchant_application_review(application_id,revision,decision,reason_code,"
                     + "merchant_id,operator_id,decided_at) VALUES(?,?,?,?,?,?,?)",
-                    id, revision, "APPROVED", null, merchant, actor.id(), ReservationStore.time(db.now()));
+                    id, revision, "APPROVED", null, merchant, actor.id(), ReservationStore.time(approvedAt));
+                CommissionLedger.initialize(db,merchant,id,approvedAt);
             } else {
                 String reason = body.get("reason_code").textValue();
                 db.jdbc.update("UPDATE merchant_application SET status='REJECTED',last_reason_code=?,merchant_id=NULL,"

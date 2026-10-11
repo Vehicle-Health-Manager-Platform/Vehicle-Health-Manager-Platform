@@ -1061,6 +1061,30 @@ def main():
     for code, message in (("400", "严格通知字段错误"), ("401", "验签或时间窗失败"), ("404", "测试渠道关闭或退款不存在"), ("409", "原支付/全额/事件哈希/供应商流水冲突"), ("503", "应用事务失败，可重放通知")): callback["responses"][code] = {"description": message}
     document["paths"]["/api/refunds/callback/LOCAL_TEST"] = {"post": callback}
 
+    commission_money = {"type": "string", "pattern": r"^-?(0|[1-9][0-9]*)\.[0-9]{2}$"}
+    commission_date = {"type": ["string", "null"], "format": "date-time"}
+    schemas["CommissionPolicy"] = strict({"state": {"type": "string", "enum": ["CONFIGURED", "UNCONFIGURED"]}, "rate_percent": {"type": ["string", "null"], "enum": ["3.00", None]}, "effective_from": commission_date, "waived_until": commission_date, "rule_version": {"type": ["string", "null"], "enum": ["R2C_V1", None]}})
+    schemas["CommissionTotals"] = strict({"accrued": commission_money, "reversed": commission_money, "net": commission_money, "pending_count": {"type": "integer", "minimum": 0}})
+    nullable_id = {"type": ["integer", "null"], "minimum": 1, "maximum": 9007199254740991}
+    schemas["CommissionEntry"] = strict({"entry_id": identifier, "order_id": identifier, "payment_id": identifier, "refund_id": nullable_id,
+        "kind": {"type": "string", "enum": ["ACCRUAL", "WAIT_REVIEW", "REFUND_REVERSAL", "REFUND_NO_CHARGE"]}, "base_amount": commission_money,
+        "rate_percent": {"type": ["string", "null"], "enum": ["3.00", None]}, "exemption": {"type": "string", "enum": ["NEW_MERCHANT", "NONE", "WAIT_POLICY", "WAIT_LEGACY", "WAIT_COUPON", "REFUND_BEFORE_COMPLETION"]},
+        "amount": {"type": ["string", "null"], "pattern": commission_money["pattern"]}, "currency": {"type": "string", "const": "CNY"},
+        "occurred_at": {"type": "string", "format": "date-time"}, "test_mode": {"type": "boolean"}, "rule_version": {"type": "string", "const": "R2C_V1"},
+        "reference_entry_id": nullable_id, "booked_at": {"type": "string", "format": "date-time"}, "waived_until": commission_date})
+    schemas["CommissionPage"] = strict({"merchant_id": identifier, "policy": {"$ref": "#/components/schemas/CommissionPolicy"},
+        "summary": strict({"real": {"$ref": "#/components/schemas/CommissionTotals"}, "test": {"$ref": "#/components/schemas/CommissionTotals"}}),
+        "page": {"type": "integer", "minimum": 1, "maximum": 1000000}, "page_size": {"type": "integer", "minimum": 1, "maximum": 50},
+        "total": {"type": "integer", "minimum": 0}, "items": {"type": "array", "items": {"$ref": "#/components/schemas/CommissionEntry"}}})
+    item = operation("get", "/api/merchant/commissions", "本店店长只读佣金应计账单", "F16")
+    item["x-roles"] = "MERCHANT"
+    item["x-implementation-status"] = "commission-ledger-implemented"
+    item["description"] = "下单冻结3%/前三自然月免佣，核销应计、可信退款按原台账冲销；无应计退款0记录，未知政策/旧单/券金额null待核对。汇总按全店、真实和测试分开，非已结算资金；见COMMISSIONS.md。"
+    item["parameters"].extend([{"name": "page", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 1000000, "default": 1}}, {"name": "page_size", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 50, "default": 20}}])
+    item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "properties": {"data": {"$ref": "#/components/schemas/CommissionPage"}}}]}
+    for code, message in (("401", "门店会话失效"), ("403", "非店长无账单权限"), ("503", "数据库未配置或不可用")): item["responses"][code] = {"description": message}
+    document["paths"]["/api/merchant/commissions"] = {"get": item}
+
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     count = sum(len(item) for item in document["paths"].values())
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

@@ -47,6 +47,8 @@ class MerchantOnboardingMySqlTest {
         }
     }
     @BeforeEach void setup(){
+        jdbc.update("DELETE FROM merchant_commission_entry");jdbc.update("DELETE FROM order_commission_snapshot");jdbc.update("DELETE FROM merchant_commission_policy");
+
         jdbc.execute("DROP TRIGGER IF EXISTS reject_merchant_onboarding_account");
         for(String table:List.of("merchant_application_review","merchant_application","merchant_region_category_quota",
             "staff_account","merchant","file_object","auth_session","audit_log","idempotency_record","auth_rate_limit",
@@ -331,4 +333,6 @@ class MerchantOnboardingMySqlTest {
         assertEquals(2,count("merchant_application_review"));
         assertEquals("",deadlockSection());
     }
+
+    @Test void approvalPolicyIsAtomicSourcedCalendarBasedAndIdempotent(){var applicant=owner(7001);var actor=operator(1);onboarding.setQuota(actor,key(),quotaBody("440106","REPAIR",5));onboarding.submit(applicant,key(),application("演示汽修厂","REPAIR","440106",List.of(1L)));long id=applicationId();String decisionKey=key();jdbc.execute("CREATE TRIGGER reject_merchant_onboarding_account BEFORE INSERT ON merchant_commission_policy FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='policy failure'");assertEquals(503,status(()->onboarding.moderate(actor,id,decisionKey,decision(1,"APPROVE",null))));assertEquals(0,count("merchant"));assertEquals(0,count("staff_account"));assertEquals(0,count("merchant_commission_policy"));assertEquals("PENDING_REVIEW",row("merchant_application",id).get("status"));jdbc.execute("DROP TRIGGER reject_merchant_onboarding_account");onboarding.moderate(actor,id,decisionKey,decision(1,"APPROVE",null));onboarding.moderate(actor,id,decisionKey,decision(1,"APPROVE",null));assertEquals(1,count("merchant_commission_policy"));long merchant=number(row("merchant_application",id),"merchant_id");var policy=CommissionLedger.policy(db,merchant,db.now());assertNotNull(policy);assertEquals(id,number(policy,"source_application_id"));assertEquals(new java.math.BigDecimal("3.00"),policy.get("rate_percent"));assertEquals(ReservationStore.instant(row("merchant_application",id).get("reviewed_at")),ReservationStore.instant(policy.get("effective_from")));assertEquals(CommissionLedger.waivedUntil(ReservationStore.instant(policy.get("effective_from"))),ReservationStore.instant(policy.get("waived_until")));}
 }
