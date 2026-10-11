@@ -30,6 +30,8 @@ class JdbcOrderRefundsTest {
         try(var c=ds.getConnection();var paths=java.nio.file.Files.list(Path.of("..","docs","sql","migrations"))){for(var file:paths.filter(p->p.toString().endsWith(".sql")).sorted().toList())ScriptUtils.executeSqlScript(c,new FileSystemResource(file));ScriptUtils.executeSqlScript(c,new FileSystemResource(Path.of("..","docs","sql","migrations","V025__order_refunds.sql")));}
     }
     @BeforeEach void setup(){
+        jdbc.update("DELETE FROM merchant_commission_entry");jdbc.update("DELETE FROM order_commission_snapshot");jdbc.update("DELETE FROM merchant_commission_policy");
+
         jdbc.execute("DROP TRIGGER IF EXISTS reject_reservation_audit");
         for(String t:List.of("refund_event","refund","order_dispute_record","order_dispute","pickup_check_file","pickup_check","order_status_transition","payment_event","payment_exception","payment","audit_log","idempotency_record","order","appointment_slot","merchant_project_version","merchant_project","standard_project","auth_session","staff_account","merchant","vehicle","user"))jdbc.update("DELETE FROM `"+t+"`");
         clock=new Time();var mapper=new ObjectMapper();var manager=new DataSourceTransactionManager(jdbc.getDataSource());db=new ReservationStore(jdbc,mapper,new WriteIntegrityService(jdbc,mapper,manager),clock,manager);expiry=new ReservationExpiry(db);slots=new ReservationSlots(db);orders=new ReservationOrders(db,expiry);payments=new PaymentService(db,expiry,new PaymentChannels(new LocalTestPaymentChannel(LocalTestPaymentChannelTest.KEY,clock)));

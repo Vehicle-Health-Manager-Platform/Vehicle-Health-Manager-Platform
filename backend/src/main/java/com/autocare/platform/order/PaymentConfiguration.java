@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 @Configuration
 public class PaymentConfiguration {
+    @Bean @ConditionalOnProperty("MYSQL_HOST") CommissionLedger commissionLedger(ReservationStore db){return new CommissionLedger(db);}
     @Bean PaymentChannels paymentChannels(Environment env){return new PaymentChannels(env,Clock.systemUTC());}
     @Bean RefundChannels refundChannels(Environment env,PaymentChannels payments){return new RefundChannels(env,payments,Clock.systemUTC());}
     @Bean @ConditionalOnProperty("MYSQL_HOST") OrderRefunds orderRefunds(ReservationStore db,PaymentService payments,RefundChannels channels){return new OrderRefunds(db,payments,channels);}

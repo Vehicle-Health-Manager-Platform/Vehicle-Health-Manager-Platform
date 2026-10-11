@@ -12250,6 +12250,91 @@
         "x-implementation-status": "order-refunds-local-test-implemented",
         "description": "仅隔离测试开关和local-payment-test配置启用；原文最多16KiB，HMAC五分钟时间窗，事件哈希去重、原支付/退款绑定、全额校验与审计。不是微信官方协议。字段见ORDER_REFUNDS.md。"
       }
+    },
+    "/api/merchant/commissions": {
+      "get": {
+        "summary": "本店店长只读佣金应计账单",
+        "operationId": "get_api_merchant_commissions",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F16"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CommissionPage"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "门店会话失效"
+          },
+          "403": {
+            "description": "非店长无账单权限"
+          },
+          "503": {
+            "description": "数据库未配置或不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "commission-ledger-implemented",
+        "description": "下单冻结3%/前三自然月免佣，核销应计、可信退款按原台账冲销；无应计退款0记录，未知政策/旧单/券金额null待核对。汇总按全店、真实和测试分开，非已结算资金；见COMMISSIONS.md。"
+      }
     }
   },
   "components": {
@@ -16421,6 +16506,269 @@
                 "type": "null"
               }
             ]
+          }
+        }
+      },
+      "CommissionPolicy": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "state",
+          "rate_percent",
+          "effective_from",
+          "waived_until",
+          "rule_version"
+        ],
+        "properties": {
+          "state": {
+            "type": "string",
+            "enum": [
+              "CONFIGURED",
+              "UNCONFIGURED"
+            ]
+          },
+          "rate_percent": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "3.00",
+              null
+            ]
+          },
+          "effective_from": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "waived_until": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "rule_version": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "R2C_V1",
+              null
+            ]
+          }
+        }
+      },
+      "CommissionTotals": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "accrued",
+          "reversed",
+          "net",
+          "pending_count"
+        ],
+        "properties": {
+          "accrued": {
+            "type": "string",
+            "pattern": "^-?(0|[1-9][0-9]*)\\.[0-9]{2}$"
+          },
+          "reversed": {
+            "type": "string",
+            "pattern": "^-?(0|[1-9][0-9]*)\\.[0-9]{2}$"
+          },
+          "net": {
+            "type": "string",
+            "pattern": "^-?(0|[1-9][0-9]*)\\.[0-9]{2}$"
+          },
+          "pending_count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "CommissionEntry": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "entry_id",
+          "order_id",
+          "payment_id",
+          "refund_id",
+          "kind",
+          "base_amount",
+          "rate_percent",
+          "exemption",
+          "amount",
+          "currency",
+          "occurred_at",
+          "test_mode",
+          "rule_version",
+          "reference_entry_id",
+          "booked_at",
+          "waived_until"
+        ],
+        "properties": {
+          "entry_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "payment_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "refund_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "ACCRUAL",
+              "WAIT_REVIEW",
+              "REFUND_REVERSAL",
+              "REFUND_NO_CHARGE"
+            ]
+          },
+          "base_amount": {
+            "type": "string",
+            "pattern": "^-?(0|[1-9][0-9]*)\\.[0-9]{2}$"
+          },
+          "rate_percent": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "3.00",
+              null
+            ]
+          },
+          "exemption": {
+            "type": "string",
+            "enum": [
+              "NEW_MERCHANT",
+              "NONE",
+              "WAIT_POLICY",
+              "WAIT_LEGACY",
+              "WAIT_COUPON",
+              "REFUND_BEFORE_COMPLETION"
+            ]
+          },
+          "amount": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^-?(0|[1-9][0-9]*)\\.[0-9]{2}$"
+          },
+          "currency": {
+            "type": "string",
+            "const": "CNY"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "test_mode": {
+            "type": "boolean"
+          },
+          "rule_version": {
+            "type": "string",
+            "const": "R2C_V1"
+          },
+          "reference_entry_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "booked_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "waived_until": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "CommissionPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "merchant_id",
+          "policy",
+          "summary",
+          "page",
+          "page_size",
+          "total",
+          "items"
+        ],
+        "properties": {
+          "merchant_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "policy": {
+            "$ref": "#/components/schemas/CommissionPolicy"
+          },
+          "summary": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "real",
+              "test"
+            ],
+            "properties": {
+              "real": {
+                "$ref": "#/components/schemas/CommissionTotals"
+              },
+              "test": {
+                "$ref": "#/components/schemas/CommissionTotals"
+              }
+            }
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommissionEntry"
+            }
           }
         }
       }

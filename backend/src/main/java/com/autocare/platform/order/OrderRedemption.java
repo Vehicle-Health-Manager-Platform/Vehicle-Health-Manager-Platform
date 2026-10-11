@@ -80,11 +80,12 @@ public class OrderRedemption {
             if(!attempts.isEmpty() && ReservationStore.number(attempts.get(0),"attempts")>=5)throw new RateLimited(Math.max(1,(int)(start+600-db.now().getEpochSecond())));
         },()->{
             var o=db.one("SELECT * FROM `order` WHERE id=? FOR UPDATE",id);var p=payment(o);var existing=receipt(id);
-            if(existing!=null){var current=result(id,existing,false);return new Change("ORDER_REDEEM_REPLAY","order",id,current,current,current,false);}
+            if(existing!=null){CommissionLedger.completed(db,id);var current=result(id,existing,false);return new Change("ORDER_REDEEM_REPLAY","order",id,current,current,current,false);}
             var now=ReservationStore.time(db.now());boolean test="LOCAL_TEST".equals(p.get("channel"));
             db.jdbc.update("INSERT INTO order_redemption(order_id,merchant_id,staff_id,payment_id,test_mode,redeemed_at) VALUES(?,?,?,?,?,?)",id,actor.merchantId(),actor.staffId(),p.get("id"),test?1:0,now);
             if(!OrderStatus.can(OrderStatus.PENDING_VERIFY,OrderStatus.COMPLETED) || db.jdbc.update("UPDATE `order` SET status='COMPLETED' WHERE id=? AND status='PENDING_VERIFY'",id)!=1)throw new FulfillmentConflict(40905,"当前订单不可核销");
             db.jdbc.update("INSERT INTO order_status_transition(order_id,merchant_id,from_status,to_status,action,actor_type,actor_id,occurred_at) VALUES(?,?,'PENDING_VERIFY','COMPLETED','ORDER_COMPLETE','staff_account',?,?)",id,actor.merchantId(),actor.staffId(),now);
+            CommissionLedger.completed(db,id);
             ServiceArchiveJobs.enqueueCompletion(db,id);
             var after=result(id,receipt(id),true);return new Change("ORDER_COMPLETE","order",id,Map.of("order_id",id,"order_status",OrderStatus.PENDING_VERIFY),after,after);
         });

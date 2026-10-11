@@ -25,8 +25,8 @@ fi
 rm "$startup_log"
 
 # A green startup must include the current business schema, not just a live MySQL process.
-schema_count=$("${compose[@]}" exec -T mysql sh -c 'MYSQL_PWD="$MYSQL_ROOT_PASSWORD" mysql --user=root --batch --skip-column-names "$MYSQL_DATABASE" --execute "$1"' sh "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND ((table_name='payment' AND column_name IN ('query_token','next_query_at','query_attempts','last_query_at','last_query_error')) OR (table_name='service_archive_job' AND column_name='review_id' AND is_nullable='YES') OR (table_name='service_archive_job' AND column_name='card_requested') OR (table_name='operator_account' AND column_name='can_catalog') OR (table_name='refund' AND column_name IN ('refund_no','controlled_order_id','dispatch_token')) OR (table_name='refund_event' AND column_name='event_hash'))")
-[[ "$schema_count" == 12 ]] || { echo "::error title=Business schema::Compose initialization missed V022-V025 fields"; exit 1; }
+schema_count=$("${compose[@]}" exec -T mysql sh -c 'MYSQL_PWD="$MYSQL_ROOT_PASSWORD" mysql --user=root --batch --skip-column-names "$MYSQL_DATABASE" --execute "$1"' sh "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND ((table_name='payment' AND column_name IN ('query_token','next_query_at','query_attempts','last_query_at','last_query_error')) OR (table_name='service_archive_job' AND column_name='review_id' AND is_nullable='YES') OR (table_name='service_archive_job' AND column_name='card_requested') OR (table_name='operator_account' AND column_name='can_catalog') OR (table_name='refund' AND column_name IN ('refund_no','controlled_order_id','dispatch_token')) OR (table_name='refund_event' AND column_name='event_hash') OR (table_name='merchant_commission_policy' AND column_name='rule_version') OR (table_name='order_commission_snapshot' AND column_name='commission_amount') OR (table_name='merchant_commission_entry' AND column_name='event_key'))")
+[[ "$schema_count" == 15 ]] || { echo "::error title=Business schema::Compose initialization missed V022-V026 fields"; exit 1; }
 
 for port in 8081 8082 8083 8084; do
   response=''
@@ -82,4 +82,4 @@ denied_status=$(curl --silent --output "$denied_body" --write-out '%{http_code}'
 python3 -c 'import json,sys; assert json.load(open(sys.argv[1]))["code"] == 40300' "$denied_body"
 rm "$denied_body"
 
-echo "Compose smoke: current V022-V025 schema, four compatibility web entries, anonymous 401, owner 200, cross-owner 40300 passed"
+echo "Compose smoke: current V022-V026 schema, four compatibility web entries, anonymous 401, owner 200, cross-owner 40300 passed"

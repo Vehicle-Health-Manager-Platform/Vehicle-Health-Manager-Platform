@@ -28,6 +28,8 @@ class JdbcOrderRedemptionTest {
             ScriptUtils.executeSqlScript(c,new FileSystemResource(Path.of("..","docs","sql","migrations","V015__order_redemption.sql")));}
     }
     @BeforeEach void setup(){
+        jdbc.update("DELETE FROM merchant_commission_entry");jdbc.update("DELETE FROM order_commission_snapshot");jdbc.update("DELETE FROM merchant_commission_policy");
+
         jdbc.update("DELETE FROM service_archive_job");
         jdbc.execute("DROP TRIGGER IF EXISTS reject_archive_queue");
         for(String trigger:List.of("reject_dispatch_audit","reject_dispatch_transition","reject_dispatch_cache","reject_work_audit","reject_work_transition","reject_work_cache","reject_redeem"))jdbc.execute("DROP TRIGGER IF EXISTS "+trigger);
@@ -77,7 +79,7 @@ class JdbcOrderRedemptionTest {
     void submitted(){protectedOrder();work.submit(tech,key(),report());}
     @Test void successSameKeyAndNewKeyCommitExactlyOnceAndNeverLeakCode(){
         ready();int audits=count("audit_log"),transitions=count("order_status_transition");String k=key();var first=redeem(k);assertEquals(first,redeem(k));assertFalse(redeem(key()).path("data").path("changed").asBoolean());
-        assertEquals("COMPLETED",state());assertEquals(audits+1,count("audit_log"));assertEquals(transitions+1,count("order_status_transition"));assertEquals(1,count("order_redemption"));assertTrue(first.path("data").path("test_mode").asBoolean());
+        assertEquals("COMPLETED",state());assertEquals(audits+2,count("audit_log"));assertEquals(transitions+1,count("order_status_transition"));assertEquals(1,count("order_redemption"));assertTrue(first.path("data").path("test_mode").asBoolean());
         assertEquals(1,count("service_archive_job")); assertNull(jdbc.queryForObject("SELECT review_id FROM service_archive_job",Long.class));
         String payload=jdbc.queryForObject("SELECT after_state FROM audit_log WHERE action='ORDER_COMPLETE'",String.class)+jdbc.queryForObject("SELECT response_body FROM idempotency_record WHERE request_path LIKE '%/redeem' LIMIT 1",String.class);
         for(String secret:List.of("123456","verify_code","code_digest","channel_payment_no","user_id","staff_id"))assertFalse(payload.contains(secret),secret);
@@ -141,6 +143,6 @@ class JdbcOrderRedemptionTest {
     }
     @Test void concurrentRedemptionWithTwoEmployeesCommitsOnlyOneTransition()throws Exception{
         ready();jdbc.update("INSERT INTO staff_account(id,merchant_id,role,account,status) VALUES(3,1,'MERCHANT','shop-peer','ACTIVE')");var peerShop=merchant(3,1);int audits=count("audit_log"),transitions=count("order_status_transition");var start=new CountDownLatch(1);var pool=Executors.newFixedThreadPool(2);
-        try{var jobs=new ArrayList<Future<Boolean>>();for(var actor:List.of(shop,peerShop))jobs.add(pool.submit(()->{start.await();return redemption.redeem(actor,key(),1,redeemBody()).path("data").path("changed").asBoolean();}));start.countDown();int changed=0;for(var job:jobs)if(job.get(30,TimeUnit.SECONDS))changed++;assertEquals(1,changed);assertEquals(1,count("order_redemption"));assertEquals(audits+1,count("audit_log"));assertEquals(transitions+1,count("order_status_transition"));}finally{pool.shutdownNow();}
+        try{var jobs=new ArrayList<Future<Boolean>>();for(var actor:List.of(shop,peerShop))jobs.add(pool.submit(()->{start.await();return redemption.redeem(actor,key(),1,redeemBody()).path("data").path("changed").asBoolean();}));start.countDown();int changed=0;for(var job:jobs)if(job.get(30,TimeUnit.SECONDS))changed++;assertEquals(1,changed);assertEquals(1,count("order_redemption"));assertEquals(audits+2,count("audit_log"));assertEquals(transitions+1,count("order_status_transition"));}finally{pool.shutdownNow();}
     }
 }
