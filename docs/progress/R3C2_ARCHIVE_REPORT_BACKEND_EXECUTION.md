@@ -21,4 +21,4 @@
 
 ## 下一阶段
 
-微信小程序阶段已在后端分支上继续实施：档案页筛选、HTTP/云托管下载、请求生命周期清理与原生文档打开见[R3c2微信阶段记录](R3C2_ARCHIVE_REPORT_MINIAPP_EXECUTION.md)。本机小程序331项及 mp-weixin/H5 构建通过；PR #116 的 backend 和 schema-mysql CI 检查通过。真实微信设备视觉仍保留 R9。
+微信小程序阶段已在后端分支上继续实施并上传 PR [#117](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/117)：档案页筛选、HTTP/云托管下载、请求生命周期清理与原生文档打开见[R3c2微信阶段记录](R3C2_ARCHIVE_REPORT_MINIAPP_EXECUTION.md)。本机小程序331项及 mp-weixin/H5 构建通过；PR #116 六项 CI 全绿，#117 CI 运行中。真实微信设备视觉仍保留 R9。

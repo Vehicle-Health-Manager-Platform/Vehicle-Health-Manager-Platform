@@ -1,6 +1,6 @@
 # R3c2 微信小程序阶段执行记录
 
-日期：2026-10-11。当前代码位于 `codex/r3c2-archive-report-miniapp`，以 R3c2 后端分支为基础，形成依赖 PR #116 的微信小程序阶段；上传后补录 PR 链接和 CI 结果。PR #114 仍 OPEN；规格 PR #115 以 #114 分支为 base 且六项 CI 全绿；后端 PR #116 以 #115 分支为 base且六项 CI 全绿（backend、schema-mysql、compose-smoke 均成功）。范围为车主微信小程序及必要服务调用，不实施 PC 页面，不合并 PR。
+日期：2026-10-11。微信阶段 PR [#117](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/117) 已创建，head `codex/r3c2-archive-report-miniapp`、base `codex/r3c2-archive-report-backend`；初始 CI 检查运行中，以 PR 最新 Checks 为准。PR #114 仍 OPEN；规格 PR #115 以 #114 分支为 base 且六项 CI 全绿；后端 PR #116 以 #115 分支为 base且六项 CI 全绿（backend、schema-mysql、compose-smoke 均成功）。范围为车主微信小程序及必要服务调用，不实施 PC 页面，不合并 PR。
 
 ## 已实现
 
@@ -21,4 +21,4 @@
 
 ## 下一步
 
-完成本阶段中文文档与代码提交，推送并创建基于 `codex/r3c2-archive-report-backend` 的堆叠 PR；创建后核对 #117 checks。后续收口验收单独检查访问隔离、双传输、PDF 字体/可解析性、500/501 条数、3 MiB边界及云托管/任务生命周期，再上传收口阶段 PR；不自动合并。真机视觉列入 R9，随后进入 R3c3 限时分享与撤销。
+#117 已创建并以 `codex/r3c2-archive-report-backend` 为 base；当前先核对最新 CI 并修复失败项。通过后进入单独的收口验收阶段，检查访问隔离、双传输、PDF 字体/可解析性、500/501 条数、3 MiB边界及云托管/任务生命周期，再上传收口阶段 PR；不自动合并。真机视觉列入 R9，随后进入 R3c3 限时分享与撤销。

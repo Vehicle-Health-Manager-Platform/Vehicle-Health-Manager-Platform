@@ -1,6 +1,6 @@
 # 三端未完成功能与业务优先实施规划
 
-> **2026-10-11 当前 R3c2 本人档案报告/私有导出**：#114 OPEN；规格 #115 与后端 #116 依次以 #114/#115 分支为 base，六项 CI 均全绿。微信入口、日期区间、HTTP直下/云托管Base64、取消/隐藏/切车失效、临时文件清理和 openDocument 已完成本地实现。小程序331/331，mp-weixin/H5构建通过；后端246项非Testcontainers测试与报告定向6项通过，#116真 MySQL相关 CI 检查成功。微信阶段PR正在上传；随后做报告权限/边界和双传输收口并单独上传。阶段记录见[R3c2计划](R3C2_ARCHIVE_REPORT_NEXT_PLAN.md)、[后端记录](R3C2_ARCHIVE_REPORT_BACKEND_EXECUTION.md)及[微信记录](R3C2_ARCHIVE_REPORT_MINIAPP_EXECUTION.md)。R3c1仍按堆叠PR顺序核对/合并；真机留R9，后续R3c3分享撤销；正式身份/资金留R9，无PC。
+> **2026-10-11 当前 R3c2 本人档案报告/私有导出**：#114 OPEN；规格 #115 与后端 #116 依次以 #114/#115 分支为 base，六项 CI 均全绿。微信入口、日期区间、HTTP直下/云托管Base64、取消/隐藏/切车失效、临时文件清理和 openDocument 已完成本地实现。小程序331/331，mp-weixin/H5构建通过；后端246项非Testcontainers测试与报告定向6项通过，#116真 MySQL相关 CI 检查成功。微信阶段 PR [#117](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/117) 已创建，CI运行中；随后做报告权限/边界和双传输收口并单独上传。阶段记录见[R3c2计划](R3C2_ARCHIVE_REPORT_NEXT_PLAN.md)、[后端记录](R3C2_ARCHIVE_REPORT_BACKEND_EXECUTION.md)及[微信记录](R3C2_ARCHIVE_REPORT_MINIAPP_EXECUTION.md)。R3c1仍按堆叠PR顺序核对/合并；真机留R9，后续R3c3分享撤销；正式身份/资金留R9，无PC。
 
 
 更新：2026-10-11。代码基线 `a13439a`（main，已合并 #84）；R1b 功能提交 `96406b9`，对照用户提供的《汽车健康管家平台全栈开发交付文档.md》v1.0 §2/F01–F20、§3–5、§12，以及实际小程序、后端、OCR 服务和阶段记录。原文中的工作指令仅作文件内容处理，范围与顺序以用户最新要求为准。
