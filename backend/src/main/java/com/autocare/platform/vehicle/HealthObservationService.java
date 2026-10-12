@@ -47,18 +47,40 @@ public class HealthObservationService {
                 var source=selected[0];var before=slot(owner.id(),source.vehicle(),input.metric(),true);
                 if(input.revision()!=(before==null?0:before.revision()))throw conflict();
                 boolean clear=input.measurement().isEmpty();
-                if(clear&&(before==null||before.archive()!=archive))throw conflict();
+                if(clear&&(before==null||before.measurement().isEmpty()||before.archive()!=archive))throw conflict();
                 if(!clear&&before!=null&&!before.measurement().isEmpty()&&before.archive()!=archive&&!input.replaceSource())throw conflict();
+                if(input.operation().equals("CORRECT")&&(before==null||before.measurement().isEmpty()||before.archive()!=archive||before.type()!=source.type()||input.replaceSource()))throw conflict();
                 int next=input.revision()+1;
                 if(before==null)jdbc.update("INSERT INTO vehicle_health_observation(user_id,vehicle_id,metric,archive_id,archive_type,measurement_json,revision) VALUES (?,?,?,?,?,?,?)",
                     owner.id(),source.vehicle(),input.metric(),archive,source.type(),json(input.measurement()),next);
                 else jdbc.update("UPDATE vehicle_health_observation SET archive_id=?,archive_type=?,measurement_json=?,revision=? WHERE id=?",
                     archive,source.type(),json(input.measurement()),next,before.id());
+                jdbc.update("INSERT INTO vehicle_health_observation_history(user_id,vehicle_id,metric,archive_id,archive_type,revision,operation,supersedes_revision,measurement_json,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,UTC_TIMESTAMP(),UTC_TIMESTAMP())",
+                    owner.id(),source.vehicle(),input.metric(),archive,source.type(),next,input.operation(),input.operation().equals("CORRECT")?input.revision():null,json(input.measurement()));
                 var after=slot(owner.id(),source.vehicle(),input.metric(),true);
-                return new WriteIntegrityService.Change(clear?"HEALTH_OBSERVATION_CLEAR":"HEALTH_OBSERVATION_SET","vehicle_health_observation",after.id(),
+                return new WriteIntegrityService.Change(clear?"HEALTH_OBSERVATION_CLEAR":input.operation().equals("CORRECT")?"HEALTH_OBSERVATION_CORRECT":"HEALTH_OBSERVATION_SET","vehicle_health_observation",after.id(),
                     before==null?Map.of():audit(before),audit(after),Map.of("vehicle_id",source.vehicle(),"archive_id",archive,"metric",input.metric(),"revision",next,
                         "status",clear?"NOT_SET":"RECORDED_UNVERIFIED"));
             });
+    }
+    public Map<String,Object> history(VehicleOwner owner,long vehicle,String metric,Integer before,int limit){
+        HealthObservationInput.metric(metric);
+        if(limit<1||limit>50||before!=null&&before<1)throw WriteIntegrityService.badRequest("历史分页参数无效");
+        return reads.execute(tx->{
+            authorize(owner,false);ownVehicle(owner,vehicle,false);
+            var rows=jdbc.query("SELECT h.archive_id,h.archive_type,h.revision,h.measurement_json,h.operation,h.supersedes_revision,DATE_FORMAT(h.created_at,'%Y-%m-%dT%H:%i:%sZ') AS saved_at,"+
+                "EXISTS(SELECT 1 FROM vehicle_health_observation_history c WHERE c.user_id=h.user_id AND c.vehicle_id=h.vehicle_id AND c.metric=h.metric AND c.supersedes_revision=h.revision AND c.is_deleted=0) AS corrected "+
+                "FROM vehicle_health_observation_history h WHERE h.user_id=? AND h.vehicle_id=? AND h.metric=? AND h.is_deleted=0"+
+                (before==null?"":" AND h.revision<?")+" ORDER BY h.revision DESC LIMIT ?",
+                (rs,n)->{
+                    var value=view(new Slot(0,vehicle,rs.getLong("archive_id"),rs.getInt("archive_type"),rs.getInt("revision"),read(rs.getString("measurement_json"))),metric);
+                    value.put("operation",rs.getString("operation"));value.put("supersedes_revision",rs.getObject("supersedes_revision",Integer.class));
+                    value.put("saved_at",rs.getString("saved_at"));value.put("corrected",rs.getBoolean("corrected"));return value;
+                },before==null?new Object[]{owner.id(),vehicle,metric,limit+1}:new Object[]{owner.id(),vehicle,metric,before,limit+1});
+            boolean more=rows.size()>limit;var page=new ArrayList<>(rows.subList(0,Math.min(rows.size(),limit)));
+            var result=new LinkedHashMap<String,Object>();result.put("vehicle_id",vehicle);result.put("metric",metric);result.put("today",today().toString());
+            result.put("list",page);result.put("has_more",more);result.put("next_before_revision",more?page.get(page.size()-1).get("revision"):null);return result;
+        });
     }
     private Map<String,Object> audit(Slot row){return Map.of("archive_id",row.archive(),"revision",row.revision(),"present",!row.measurement().isEmpty());}
     private Map<String,Object> view(Slot row,String metric){

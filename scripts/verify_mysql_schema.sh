@@ -115,8 +115,11 @@ run_sql_file docs/sql/migrations/V030__vehicle_health_observations.sql
 
 [[ "$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='$database' AND table_name IN ('order_commission_snapshot','merchant_commission_entry')")" == 2 ]] || { echo 'V026 commission tables missing' >&2; exit 1; }
 [[ "$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='$database' AND table_name='merchant_commission_policy' AND column_name IN ('rule_version','source_application_id')")" == 2 ]] || { echo 'V026 policy provenance missing' >&2; exit 1; }
+run_sql_file docs/sql/migrations/V031__vehicle_health_observation_history.sql
+run_sql_file docs/sql/migrations/V031__vehicle_health_observation_history.sql
+
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
-[[ "$tables" == 70 ]] || { echo "Expected 70 tables after V030, got $tables" >&2; exit 1; }
+[[ "$tables" == 71 ]] || { echo "Expected 71 tables after V031, got $tables" >&2; exit 1; }
 catalog_columns=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND ((table_name IN ('brand','series','model','standard_project') AND column_name IN ('sort_order','source_note','revision')) OR (table_name IN ('brand','series','model') AND column_name='status') OR (table_name='operator_account' AND column_name='can_catalog'))")
 [[ "$catalog_columns" == 16 ]] || { echo "V022 catalogue fields incomplete: $catalog_columns/16" >&2; exit 1; }
 
@@ -208,4 +211,4 @@ done
 [[ "$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='$database' AND table_name='archive_report_share' AND column_name IN ('token_hash','public_id','summary','revoked_at','expires_at','owner_id','vehicle_id')")" == 7 ]] || { echo 'V027 share fields missing' >&2; exit 1; }
 [[ "$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema='$database' AND table_name='archive_report_share' AND index_name IN ('uk_archive_share_public','uk_archive_share_hash') AND non_unique=0")" == 2 ]] || { echo 'V027 share unique indexes missing' >&2; exit 1; }
 [[ "$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema='$database' AND table_name='archive_reminder' AND index_name='uk_archive_reminder_owner_vehicle_type' AND non_unique=0")" == 1 ]] || { echo 'V028 reminder uniqueness missing' >&2; exit 1; }
-echo "MySQL 8.0 schema: 70 tables after V030; repeat migration and synthetic seed passed"
+echo "MySQL 8.0 schema: 71 tables after V031; repeat migration and synthetic seed passed"

@@ -6560,6 +6560,15 @@
                     "minimum": 0,
                     "maximum": 2147483646
                   },
+                  "operation": {
+                    "type": "string",
+                    "enum": [
+                      "RECORD",
+                      "CORRECT",
+                      "CLEAR"
+                    ],
+                    "description": "省略时空值CLEAR，否则RECORD；CORRECT仅修正同来源当前版本"
+                  },
                   "replace_source": {
                     "type": "boolean",
                     "default": false
@@ -6697,6 +6706,111 @@
         "x-roles": "正式车主",
         "x-implementation-status": "implemented",
         "description": "本人手动/附图保养维修来源，原始读数未核验，无诊断/分数/推断适用性，no-store。详见HEALTH_OBSERVATIONS.md。"
+      }
+    },
+    "/api/vehicle/health-observation-history": {
+      "get": {
+        "summary": "本人读数分页历史与修正履历",
+        "operationId": "get_api_vehicle_health_observation_history",
+        "tags": [
+          "vehicle"
+        ],
+        "x-feature-ids": [
+          "F03",
+          "F04"
+        ],
+        "parameters": [
+          {
+            "name": "vehicle_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "metric",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "OIL",
+                "BRAKE_PAD",
+                "TIRE",
+                "TRACTION_BATTERY",
+                "COOLANT",
+                "AUX_BATTERY"
+              ]
+            }
+          },
+          {
+            "name": "before_revision",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "有效本人来源不可用"
+          },
+          "409": {
+            "description": "版本或来源变化"
+          },
+          "503": {
+            "description": "数据库或审计失败"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "正式车主",
+        "x-implementation-status": "implemented",
+        "description": "本人手动/附图保养维修来源，原始读数未核验，无诊断/分数/推断适用性，no-store。详见HEALTH_OBSERVATIONS.md。按版本倒序分页；逐行验证来源，失效时隐藏读数与来源；原版本不可覆盖。详见HEALTH_OBSERVATION_HISTORY.md。"
       }
     },
     "/api/service/project/{id}": {
