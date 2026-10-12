@@ -1,5 +1,7 @@
 # 当前进度
 
+> **2026-10-12 R4a2 已实施分段上传，待合并**：后端#128、微信#129，本人保养/保险/年检结构化资料、修正/清空、来源/账号隔离与未核验状态已实现。后端本地定向8/8、微信361/361、mp-weixin/H5和新页面产物通过；全量CI见最新PR。旧档案/报告/分享/登记里程/提醒兼容。完整证件、六指标/健康评分、正式接入和真机仍欠。下一步[R4a3健康来源与指标口径](R4A3_HEALTH_DATA_NEXT_PLAN.md)，详见[执行](R4A2_STRUCTURED_ARCHIVE_EXECUTION.md)。下方历史不用于当前欠项判断。
+
 > **2026-10-12 R4a1 已编码分段上传，待合并**：后端 #125、微信 #126；本人保养日期/里程与保险/年检日期目标、来源替换/停用、三类列表和首页摘要已实现。用户确认仅目标到达提醒；来源失效不触发，未知不当正常。后端定向8/8、微信351/351、mp-weixin/H5及新页面产物通过；全量CI见最新PR。下一单元 R4a2 结构化字段与数据来源，六指标/健康评分未实现，真机/正式身份仍未验。详见[执行](R4A1_ARCHIVE_REMINDERS_EXECUTION.md)。下方为历史记录。
 
 > **2026-10-12 R3c3 已实施并分阶段上传，待合并**：后端 [#122](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/122)、微信 [#123](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/123)。用户确认登录车主持链接只读查看；固定字段摘要、1/24/168小时、撤销/过期、源账号/车辆归属、幂等及访问审计已实现。微信 **341/341**、mp-weixin/H5构建及新增原生页面产物通过；后端真实MySQL/HTTP权限/并发验证见[执行记录](R3C3_ARCHIVE_SHARE_EXECUTION.md)。CI表数断言已修复，最终状态以PR检查为准。原生分享/真机/真实身份仍待验收；下一独立单元 **R4a1 档案结构化与可追溯提醒**，不凭空计算健康分数。下方保留历史。

@@ -1,5 +1,8 @@
 # 测试资料
 
+- [R4a2 结构化档案验收](LOCAL_STRUCTURED_ARCHIVE_ACCEPTANCE.md)：后端定向8项、微信361项、新页面产物和未验收范围。
+
+
 - [R4a1 目标提醒验收](LOCAL_ARCHIVE_REMINDERS_ACCEPTANCE.md)：后端8项定向、微信351项、原生产物与未验范围。
 
 

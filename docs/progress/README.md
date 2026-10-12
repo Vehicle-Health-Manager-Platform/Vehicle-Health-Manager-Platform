@@ -1,5 +1,9 @@
 # 项目进度与下一步规划
 
+- [R4a2 结构化档案执行](R4A2_STRUCTURED_ARCHIVE_EXECUTION.md)：三类私有字段、后端#128/微信#129、兼容与验收。
+- [R4a3 健康数据下一步](R4A3_HEALTH_DATA_NEXT_PLAN.md)：六指标来源、单位、适用车型与评分前置。
+
+
 - [R4a1 目标提醒执行记录](R4A1_ARCHIVE_REMINDERS_EXECUTION.md)：#125后端、#126微信、到达提醒规则、测试及合并依赖。
 - [R4a2 下一步方案](R4A2_STRUCTURED_ARCHIVE_NEXT_PLAN.md)：结构化字段、可追溯来源和健康评分前置门槛。
 
