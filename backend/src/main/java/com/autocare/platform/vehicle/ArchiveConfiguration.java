@@ -18,6 +18,10 @@ public class ArchiveConfiguration {
         return new ArchiveReportService(jdbc, mapper, transactions);
     }
     @Bean ArchiveReportPdfRenderer archiveReportPdfRenderer() { return new ArchiveReportPdfRenderer(); }
+    @Bean ArchiveReminderService archiveReminderService(JdbcTemplate jdbc, WriteIntegrityService integrity,
+        ObjectMapper mapper, PlatformTransactionManager transactions) {
+        return new ArchiveReminderService(jdbc, integrity, mapper, transactions, java.time.Clock.systemUTC());
+    }
     @Bean ArchiveShareService archiveShareService(JdbcTemplate jdbc, WriteIntegrityService integrity,
         ArchiveReportService reports, ObjectMapper mapper, PlatformTransactionManager transactions,
         @org.springframework.beans.factory.annotation.Value("${JWT_SECRET:}") String secret) {
