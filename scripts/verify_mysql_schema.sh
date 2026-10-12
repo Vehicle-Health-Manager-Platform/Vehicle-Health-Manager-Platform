@@ -110,7 +110,7 @@ run_sql_file docs/sql/migrations/V027__archive_report_shares.sql
 [[ "$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='$database' AND table_name IN ('order_commission_snapshot','merchant_commission_entry')")" == 2 ]] || { echo 'V026 commission tables missing' >&2; exit 1; }
 [[ "$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='$database' AND table_name='merchant_commission_policy' AND column_name IN ('rule_version','source_application_id')")" == 2 ]] || { echo 'V026 policy provenance missing' >&2; exit 1; }
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
-[[ "$tables" == 66 ]] || { echo "Expected 66 tables after V026, got $tables" >&2; exit 1; }
+[[ "$tables" == 67 ]] || { echo "Expected 67 tables after V027, got $tables" >&2; exit 1; }
 catalog_columns=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND ((table_name IN ('brand','series','model','standard_project') AND column_name IN ('sort_order','source_note','revision')) OR (table_name IN ('brand','series','model') AND column_name='status') OR (table_name='operator_account' AND column_name='can_catalog'))")
 [[ "$catalog_columns" == 16 ]] || { echo "V022 catalogue fields incomplete: $catalog_columns/16" >&2; exit 1; }
 
