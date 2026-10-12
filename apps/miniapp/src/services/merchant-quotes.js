@@ -32,9 +32,10 @@ export function createQuotesApi({ baseUrl, runtime }) {
     })
   }
   return {
-    ownerList(token,project,sort='price_asc',n=1) {
+    ownerList(token,project,sort='price_asc',n=1,region=null) {
+      if(region!==null&&(typeof region!=='string'||!/^\d{6}$/.test(region)))throw new ServiceError('invalid','请重新选择省市区')
       if(!id(project) || !['price_asc','price_desc'].includes(sort) || !id(n) || n>1000000)throw new ServiceError('invalid','项目或排序无效')
-      return request(token,`/api/service/project/${project}/merchants?sort=${sort}&page=${n}&page_size=20`,result=>page(result,n,20,item=>version(item)
+      return request(token,`/api/service/project/${project}/merchants?sort=${sort}&page=${n}&page_size=20${region===null?'':`&region_code=${region}`}`,result=>page(result,n,20,item=>version(item)
         && id(item.merchant_id) && typeof item.merchant_name==='string' && typeof item.address==='string'))
     },
     ownList(token,n=1) {return request(token,`/api/merchant/projects?page=${n}&page_size=20`,result=>page(result,n,20,item=>version(item)
