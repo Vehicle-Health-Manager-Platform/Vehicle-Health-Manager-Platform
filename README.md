@@ -18,6 +18,17 @@
 
 业务读写由后端按有效会话、角色、本人或本店归属进行复核。小程序角色入口和本地测试身份不等于正式身份认证或生产授权。
 
+## 微信小程序界面演示
+
+以下为微信开发者工具模拟器中的小程序截图。派工画面使用合成订单和技师数据；截图用于展示界面与操作流程，真机及生产环境验收状态见下方交付说明。点击图片可查看原图。
+
+| 车主入口 | 门店派工确认 | 运营审核入口 |
+| --- | --- | --- |
+| [<img src="docs/ui/screenshots/owner-entry.png" alt="微信小程序车主入口，展示车辆档案与预约流程介绍及微信登录按钮" width="240">](docs/ui/screenshots/owner-entry.png) | [<img src="docs/ui/screenshots/merchant-dispatch.png" alt="微信小程序门店派工确认弹窗，使用合成订单和技师数据" width="240">](docs/ui/screenshots/merchant-dispatch.png) | [<img src="docs/ui/screenshots/operator-login.png" alt="微信小程序运营审核登录表单，包含账号、密码和短信验证码输入框" width="240">](docs/ui/screenshots/operator-login.png) |
+| 车主工作入口与登录提示 | 确认派工及技师接单说明 | 受限运营审核登录表单 |
+
+截图来源与更新方式见[演示图集说明](docs/ui/screenshots/README.md)。
+
 ## 已交付阶段
 
 截至 2026-10-11，主要业务实现推进至 R3c2。每阶段的接口契约、测试证据和未验收项见对应文档；**CI 通过、PR 合并、生产部署和真机验收是不同状态**。
