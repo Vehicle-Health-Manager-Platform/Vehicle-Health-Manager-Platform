@@ -77,6 +77,7 @@ function add(mode = 'manual') { if (vehicle.value) uni.navigateTo({ url: archive
       <VehicleList :selected-id="vehicle?.vehicle_id || 0" @select="select" />
       <button v-if="vehicle" class="secondary" @tap="uni.navigateTo({url:'/pages/community/my-cards'})">我的经验卡片</button>
       <button v-if="vehicle" class="secondary" @tap="uni.navigateTo({url:'/pages/community/experiences'})">同款施工经验</button>
+      <button v-if="vehicle" class="secondary" @tap="uni.navigateTo({url:'/pages/archive/shares?vehicle_id=' + vehicle.vehicle_id})">分享档案摘要与撤销</button>
       <view v-if="vehicle" class="records" data-testid="archive-records">
         <view class="report-export" data-testid="archive-report-export">
           <view class="report-head">
