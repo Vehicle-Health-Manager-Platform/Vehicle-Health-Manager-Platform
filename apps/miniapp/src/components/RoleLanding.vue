@@ -3,6 +3,7 @@ import { computed, onMounted } from 'vue'
 import { useRoleIdentity } from '../services/role-identity.js'
 import { cloudRunEnabled } from '../services/api-config.js'
 import { canReturnToArchiveShare } from '../services/archive-shares.js'
+import { canReturnToStructured } from '../services/archive-structured.js'
 import { canReturnToReminder } from '../services/archive-reminders.js'
 
 const props = defineProps({
@@ -21,6 +22,7 @@ const codeValid = computed(() => /^\d{6}$/.test(smsCode.value.trim()))
 function openOwnerTabs() { uni.switchTab({ url: '/pages/home/index' }) }
 function shareReturnAvailable() { return canReturnToArchiveShare(getCurrentPages()) }
 function returnToShare() { uni.navigateBack() }
+function structuredReturnAvailable() { return canReturnToStructured(typeof getCurrentPages === 'function' ? getCurrentPages() : []) }
 function reminderReturnAvailable() { return canReturnToReminder(getCurrentPages()) }
 function openMerchantProjects() { uni.navigateTo({ url: '/pages/merchant/projects' }) }
 function openMerchantOrders() { uni.navigateTo({ url: '/pages/merchant/orders' }) }
@@ -71,6 +73,7 @@ onMounted(() => {
       <button v-if="role === 'owner' && accessToken" class="login-button" :disabled="busy" @tap="openOwnerTabs">进入车主首页</button>
       <button v-if="role === 'owner' && accessToken && shareReturnAvailable()" class="login-button" :disabled="busy" @tap="returnToShare">返回查看档案摘要</button>
       <button v-if="role === 'owner' && accessToken && reminderReturnAvailable()" class="login-button" :disabled="busy" @tap="returnToShare">返回个人目标与提醒</button>
+      <button v-if="role === 'owner' && accessToken && structuredReturnAvailable()" class="login-button" :disabled="busy" @tap="returnToShare">返回本人档案资料</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantProjects">管理本店服务</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantOrders">查看本店订单</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantStaff">本店员工与员工码</button>

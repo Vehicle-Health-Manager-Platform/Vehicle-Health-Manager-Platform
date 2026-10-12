@@ -113,6 +113,7 @@ function add(mode = 'manual') { if (vehicle.value) uni.navigateTo({ url: archive
           <view class="record-top"><text class="name">{{ item.title }}</text><text class="type">{{ labels[item.archive_type - 1] }} · {{ archiveInputTypeName(item.input_type) }}</text></view>
           <text class="copy">{{ item.recorded_date }}<text v-if="item.mileage !== null"> · {{ item.mileage }} km</text></text>
           <text v-if="item.notes" class="copy">{{ item.notes }}</text>
+          <button v-if="[1,3,7].includes(item.archive_type) && [1,3].includes(item.input_type)" class="secondary" @tap="uni.navigateTo({url:'/pages/archive/structured?vehicle_id=' + vehicle.vehicle_id + '&archive_id=' + item.archive_id})">查看/填写本条资料</button>
           <button v-if="[1,3,7].includes(item.archive_type) && [1,3].includes(item.input_type)" class="secondary" @tap="uni.navigateTo({url:'/pages/archive/reminder?vehicle_id=' + vehicle.vehicle_id + '&archive_id=' + item.archive_id})">设置本类目标与提醒</button>
           <view v-if="item.input_type === 4" class="service-source" data-testid="service-archive-source">
             <text v-if="item.test_mode" class="error" data-testid="archive-test-warning">测试施工记录，未真实扣款</text>
