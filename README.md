@@ -8,7 +8,9 @@
 
 **2026-10-12 实施更新：** R3c3 档案摘要限时分享与撤销已在后端 [#122](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/122) 和微信小程序 [#123](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/123) 分阶段上传，尚未合并。支持登录车主持链接只读查看固定摘要、1小时/24小时/7天有效期和车主撤销；不含车牌/VIN、备注、照片、签字或PDF。微信341项测试及mp-weixin构建通过；原生分享与真机仍待验收。R3c3详见[执行记录](docs/progress/R3C3_ARCHIVE_SHARE_EXECUTION.md)。
 
-**R4a1实施更新：** 本人保养日期/里程、保险与年检日期目标到达提醒已在后端[#125](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/125)和微信[#126](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/126)上传。含来源替换/停用、提醒列表及首页摘要；不预设周期，提前提醒后补。后端本地定向8项、微信351项及微信/H5构建通过。下一步[R4a2结构化字段与来源](docs/progress/R4A2_STRUCTURED_ARCHIVE_NEXT_PLAN.md)，六指标/健康分数未完成；详见[执行](docs/progress/R4A1_ARCHIVE_REMINDERS_EXECUTION.md)。
+**R4a1实施更新：** 本人保养日期/里程、保险与年检日期目标到达提醒已在后端[#125](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/125)和微信[#126](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/126)上传。含来源替换/停用、提醒列表及首页摘要；不预设周期，提前提醒后补。后端本地定向8项、微信351项及微信/H5构建通过。其后R4a2三类本人字段也已实施（见下方），六指标/健康分数未完成；详见[执行](docs/progress/R4A1_ARCHIVE_REMINDERS_EXECUTION.md)。
+
+**R4a2实施更新：** 后端[#128](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/128)、微信[#129](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/129)补齐本人保养项目/单位/里程、保险资料及年检资料的结构化字段，支持修正/确认清空并标注尚未核验。旧档案/报告/分享摘要兼容，不自动改目标或登记里程。后端定向8项、微信361项、微信/H5构建通过；下一步[R4a3健康来源与指标口径](docs/progress/R4A3_HEALTH_DATA_NEXT_PLAN.md)，完整证件/健康评分及真机仍欠。[执行与验收](docs/progress/R4A2_STRUCTURED_ARCHIVE_EXECUTION.md)。
 
 ## 项目范围与角色
 
@@ -24,7 +26,7 @@
 
 ## 已交付阶段
 
-截至 2026-10-12，main主要业务推进至R3c2，分支新增R3c3分享和R4a1到达提醒，尚未合并。每阶段的接口契约、测试证据和未验收项见对应文档；**CI 通过、PR 合并、生产部署和真机验收是不同状态**。
+截至 2026-10-12，main主要业务推进至R3c2，分支新增R3c3分享、R4a1到达提醒和R4a2本人结构化资料，尚未合并。每阶段的接口契约、测试证据和未验收项见对应文档；**CI 通过、PR 合并、生产部署和真机验收是不同状态**。
 
 | 阶段 | 交付内容 |
 | --- | --- |
@@ -40,12 +42,14 @@
 | R3c3（分支） | 登录车主持链接只读摘要、限时分享与撤销、来源权限和访问审计。 |
 | R4a1（分支） | 本人档案关联日期/保养里程目标、到达提醒、替换/停用与首页摘要；完整证件字段及评分仍欠。 |
 
+| R4a2（分支） | 本人保养、保险、年检结构化资料与修正/清空，来源/未核验状态；不扩展公开分享权限。 |
+
 对应阶段记录入口：[当前进度](docs/progress/CURRENT_STATUS.md)、[下一步规划](docs/progress/NEXT_STEPS.md)、[三端功能缺口](docs/progress/ROLE_GAP_ANALYSIS.md)、[测试与验收目录](docs/testing/README.md)、[接口文档目录](docs/api/README.md)。
 
 ### 当前仍待完成或验收
 
 - R3c3 分享与 R4a1 目标提醒已编码上传，仍待按依赖合并与原生/真机验收。
-- R4a2 完整证件/养护结构化字段与数据来源、六指标趋势/评分及五类提醒仍欠。
+- R4a2本人三类资料已编码上传；驾驶证/违章完整资料与官方核验仍欠。R4a3健康测量来源、六指标趋势/评分及五类提醒继续规划。
 - 商家发现/公开评价、AI方案到有效服务预约、券/邀请/积分、三端进度及取车对比、关联档案/通知、经营考核/社区补齐依次推进，详见[三端总规划](docs/progress/THREE_ROLE_BUSINESS_PLAN_2026-10-12.md)。
 - VIN/行驶证 OCR、里程识别、照片或语音档案识别：尚无已开通供应商，本地流程提供手动录入或确认回退。
 - 车主真实微信登录、正式手机号绑定、门店账号激活及正式短信：供应商/生产配置和最终验收仍待完成。
