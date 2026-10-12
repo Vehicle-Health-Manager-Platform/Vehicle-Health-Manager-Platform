@@ -6374,6 +6374,331 @@
         }
       }
     },
+    "/api/archive/{id}/health-observation": {
+      "get": {
+        "summary": "本人档案读数来源context",
+        "operationId": "get_api_archive_id_health_observation",
+        "tags": [
+          "archive"
+        ],
+        "x-feature-ids": [
+          "F03",
+          "F04"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "metric",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "OIL",
+                "BRAKE_PAD",
+                "TIRE",
+                "TRACTION_BATTERY",
+                "COOLANT",
+                "AUX_BATTERY"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "有效本人来源不可用"
+          },
+          "409": {
+            "description": "版本或来源变化"
+          },
+          "503": {
+            "description": "数据库或审计失败"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "正式车主",
+        "x-implementation-status": "implemented",
+        "description": "本人手动/附图保养维修来源，原始读数未核验，无诊断/分数/推断适用性，no-store。详见HEALTH_OBSERVATIONS.md。"
+      },
+      "put": {
+        "summary": "设置或清空本人当前读数",
+        "operationId": "put_api_archive_id_health_observation",
+        "tags": [
+          "archive"
+        ],
+        "x-feature-ids": [
+          "F03",
+          "F04"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "有效本人来源不可用"
+          },
+          "409": {
+            "description": "版本或来源变化"
+          },
+          "503": {
+            "description": "数据库或审计失败"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "正式车主",
+        "x-implementation-status": "implemented",
+        "description": "本人手动/附图保养维修来源，原始读数未核验，无诊断/分数/推断适用性，no-store。详见HEALTH_OBSERVATIONS.md。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "metric",
+                  "expected_revision",
+                  "measurement"
+                ],
+                "properties": {
+                  "metric": {
+                    "type": "string",
+                    "enum": [
+                      "OIL",
+                      "BRAKE_PAD",
+                      "TIRE",
+                      "TRACTION_BATTERY",
+                      "COOLANT",
+                      "AUX_BATTERY"
+                    ]
+                  },
+                  "expected_revision": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 2147483646
+                  },
+                  "replace_source": {
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "measurement": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "maxProperties": 0
+                      },
+                      {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "measurement_name",
+                          "value",
+                          "unit",
+                          "measured_on",
+                          "method",
+                          "provenance"
+                        ],
+                        "properties": {
+                          "measurement_name": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 80
+                          },
+                          "value": {
+                            "type": "string",
+                            "pattern": "^-?(0|[1-9][0-9]{0,8})(\\.[0-9]{1,3})?$"
+                          },
+                          "unit": {
+                            "type": "string",
+                            "enum": [
+                              "KM",
+                              "PERCENT",
+                              "MM",
+                              "KPA",
+                              "V",
+                              "CELSIUS"
+                            ]
+                          },
+                          "measured_on": {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          "method": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "provenance": {
+                            "type": "string",
+                            "enum": [
+                              "OWNER_MEASURED",
+                              "OWNER_TRANSCRIBED"
+                            ]
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/vehicle/health-observations": {
+      "get": {
+        "summary": "本人车辆六类当前读数",
+        "operationId": "get_api_vehicle_health_observations",
+        "tags": [
+          "vehicle"
+        ],
+        "x-feature-ids": [
+          "F03",
+          "F04"
+        ],
+        "parameters": [
+          {
+            "name": "vehicle_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "有效本人来源不可用"
+          },
+          "409": {
+            "description": "版本或来源变化"
+          },
+          "503": {
+            "description": "数据库或审计失败"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "正式车主",
+        "x-implementation-status": "implemented",
+        "description": "本人手动/附图保养维修来源，原始读数未核验，无诊断/分数/推断适用性，no-store。详见HEALTH_OBSERVATIONS.md。"
+      }
+    },
     "/api/service/project/{id}": {
       "get": {
         "summary": "车主标准服务项目详情",

@@ -340,6 +340,32 @@ def main():
                     "expected_revision": {"type": "integer", "minimum": 0, "maximum": 2147483646},
                     "fields": {"anyOf": [{"type": "object", "additionalProperties": False, "properties": {name: typed[name] for name in names}} for names in variants]}}}}}}
         document["paths"].setdefault(path, {})[method] = op
+    metrics = ["OIL", "BRAKE_PAD", "TIRE", "TRACTION_BATTERY", "COOLANT", "AUX_BATTERY"]
+    for method, path, summary in (("get", "/api/archive/{id}/health-observation", "本人档案读数来源context"),
+            ("put", "/api/archive/{id}/health-observation", "设置或清空本人当前读数"),
+            ("get", "/api/vehicle/health-observations", "本人车辆六类当前读数")):
+        op = operation(method, path, summary, "F03,F04")
+        op["x-roles"] = "正式车主"
+        op["x-implementation-status"] = "implemented"
+        op["description"] = "本人手动/附图保养维修来源，原始读数未核验，无诊断/分数/推断适用性，no-store。详见HEALTH_OBSERVATIONS.md。"
+        op["responses"].update({"404": {"description": "有效本人来源不可用"}, "409": {"description": "版本或来源变化"}, "503": {"description": "数据库或审计失败"}})
+        if path == "/api/vehicle/health-observations":
+            op["parameters"] = [{"name": "vehicle_id", "in": "query", "required": True, "schema": {"type": "integer", "minimum": 1, "maximum": 9007199254740991}}]
+        elif method == "get":
+            op["parameters"].append({"name": "metric", "in": "query", "required": True, "schema": {"type": "string", "enum": metrics}})
+        if method == "put":
+            op["parameters"].append({"name": "Idempotency-Key", "in": "header", "required": True, "schema": {"type": "string", "format": "uuid"}})
+            fields = {"measurement_name": {"type": "string", "minLength": 1, "maxLength": 80},
+                "value": {"type": "string", "pattern": r"^-?(0|[1-9][0-9]{0,8})(\.[0-9]{1,3})?$"},
+                "unit": {"type": "string", "enum": ["KM", "PERCENT", "MM", "KPA", "V", "CELSIUS"]},
+                "measured_on": {"type": "string", "format": "date"}, "method": {"type": "string", "minLength": 1, "maxLength": 120},
+                "provenance": {"type": "string", "enum": ["OWNER_MEASURED", "OWNER_TRANSCRIBED"]}}
+            op["requestBody"] = {"required": True, "content": {"application/json": {"schema": {
+                "type": "object", "additionalProperties": False, "required": ["metric", "expected_revision", "measurement"], "properties": {
+                    "metric": {"type": "string", "enum": metrics}, "expected_revision": {"type": "integer", "minimum": 0, "maximum": 2147483646},
+                    "replace_source": {"type": "boolean", "default": False}, "measurement": {"oneOf": [
+                        {"type": "object", "maxProperties": 0}, {"type": "object", "additionalProperties": False, "required": list(fields), "properties": fields}]}}}}}}
+        document["paths"].setdefault(path, {})[method] = op
     project_fields = {
         "id": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
         "project_name": {"type": "string"}, "category": {"type": "integer", "minimum": 1, "maximum": 6},

@@ -17,6 +17,9 @@ public class ArchiveConfiguration {
     @Bean ArchiveReportService archiveReportService(JdbcTemplate jdbc, ObjectMapper mapper, PlatformTransactionManager transactions) {
         return new ArchiveReportService(jdbc, mapper, transactions);
     }
+    @Bean HealthObservationService healthObservationService(JdbcTemplate jdbc,WriteIntegrityService integrity,ObjectMapper mapper,PlatformTransactionManager manager){
+        return new HealthObservationService(jdbc,integrity,mapper,manager,java.time.Clock.systemUTC());
+    }
     @Bean ArchiveStructuredService archiveStructuredService(JdbcTemplate jdbc, WriteIntegrityService integrity, ObjectMapper mapper, PlatformTransactionManager transactions) {
         return new ArchiveStructuredService(jdbc, integrity, mapper, transactions);
     }
