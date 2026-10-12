@@ -258,6 +258,38 @@ def main():
         "503": {"description": "数据库、中文字体或 PDF 生成暂不可用"},
     }
     document["paths"][archive_report_path] = {"get": archive_report}
+    for method, path, summary in (
+        ("post", "/api/archive/shares", "创建本人档案摘要限时分享"),
+        ("get", "/api/archive/shares", "查看本人车辆最近100条分享"),
+        ("get", "/api/archive/shares/{id}/link", "取得本人有效分享小程序路由"),
+        ("post", "/api/archive/shares/{id}/revoke", "撤销本人分享"),
+        ("post", "/api/archive/share/view", "已登录车主持能力令牌读取摘要"),
+    ):
+        share_op = operation(method, path, summary, "F03")
+        share_op["x-roles"] = "正式车主"
+        share_op["x-implementation-status"] = "implemented"
+        share_op["description"] = "固定字段快照，不含车牌/VIN、自由文本、照片、签字或PDF。所有响应no-store。详见 ARCHIVE_SHARES.md。"
+        share_op["responses"]["410"] = {"description": "分享过期、撤销或来源车辆/账号失效"}
+        share_op["responses"]["409"] = {"description": "记录超过500条或有效分享超过20条"}
+        share_op["responses"]["503"] = {"description": "数据库或摘要暂不可用"}
+        if path == "/api/archive/shares" and method == "get":
+            share_op["parameters"] = [{"name": "vehicle_id", "in": "query", "required": True,
+                "schema": {"type": "integer", "minimum": 1, "maximum": 9007199254740991}}]
+        if method == "post":
+            props = {}
+            required = []
+            if path == "/api/archive/shares":
+                props = {"vehicle_id": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+                    "expires_in_hours": {"type": "integer", "enum": [1, 24, 168], "default": 24},
+                    "from": {"type": "string", "format": "date"}, "to": {"type": "string", "format": "date"}}
+                required = ["vehicle_id"]
+            if path == "/api/archive/share/view":
+                share_op["parameters"] = []
+                props = {"share_token": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+                required = ["share_token"]
+            share_op["requestBody"]["content"]["application/json"]["schema"] = {
+                "type": "object", "additionalProperties": False, "properties": props, "required": required}
+        document["paths"].setdefault(path, {})[method] = share_op
     project_fields = {
         "id": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
         "project_name": {"type": "string"}, "category": {"type": "integer", "minimum": 1, "maximum": 6},

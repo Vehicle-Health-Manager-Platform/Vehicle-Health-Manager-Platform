@@ -98,6 +98,8 @@ run_sql_file docs/sql/migrations/V025__order_refunds.sql
 run_sql_file docs/sql/migrations/V025__order_refunds.sql
 run_sql_file docs/sql/migrations/V026__commission_ledger.sql
 run_sql_file docs/sql/migrations/V026__commission_ledger.sql
+run_sql_file docs/sql/migrations/V027__archive_report_shares.sql
+run_sql_file docs/sql/migrations/V027__archive_report_shares.sql
 [[ "$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='$database' AND table_name='refund' AND column_name IN ('refund_no','revision','owner_consented_at','merchant_consented_at','dispatch_token','next_attempt_at','controlled_order_id')")" == 7 ]] || { echo 'V025 refund fields missing' >&2; exit 1; }
 [[ "$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema='$database' AND table_name='refund' AND non_unique=0 AND index_name IN ('uk_managed_refund_no','uk_managed_refund_order')")" == 2 ]] || { echo 'V025 refund unique guards missing' >&2; exit 1; }
 [[ "$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='$database' AND table_name='payment' AND column_name IN ('query_token','next_query_at','query_attempts','last_query_at','last_query_error')")" == 5 ]] || { echo 'V024 payment query fields missing' >&2; exit 1; }
@@ -197,4 +199,6 @@ for entry in staff_account:display_name staff_account:created_by; do
   found=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND table_name = '$table' AND column_name = '$column'")
   [[ "$found" == 1 ]] || { echo "Repeated V021 left $table.$column missing" >&2; exit 1; }
 done
-echo "MySQL 8.0 schema: 66 tables after V026; repeat migration and synthetic seed passed"
+[[ "$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='$database' AND table_name='archive_report_share' AND column_name IN ('token_hash','public_id','summary','revoked_at','expires_at','owner_id','vehicle_id')")" == 7 ]] || { echo 'V027 share fields missing' >&2; exit 1; }
+[[ "$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema='$database' AND table_name='archive_report_share' AND index_name IN ('uk_archive_share_public','uk_archive_share_hash') AND non_unique=0")" == 2 ]] || { echo 'V027 share unique indexes missing' >&2; exit 1; }
+echo "MySQL 8.0 schema: 67 tables after V027; repeat migration and synthetic seed passed"

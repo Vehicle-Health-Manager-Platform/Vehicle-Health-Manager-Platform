@@ -5458,6 +5458,413 @@
         "description": "单一只读 REPEATABLE READ 快照；仅本人手动/拍照档案和本人已完成施工归档。默认导出全部可见记录；from/to 必须成对且日期首尾含。未知日期在全量报告中明示，筛选时排除并报告未分类数量。最多500条、PDF最多3 MiB；不持久化报告。无 Accept 或 application/pdf 返回 application/pdf；Accept: application/vnd.autocare.pdf-base64+json;version=1 返回 JSON Base64 信封。响应 no-store。详见 ARCHIVE_MANUAL.md。"
       }
     },
+    "/api/archive/shares": {
+      "post": {
+        "summary": "创建本人档案摘要限时分享",
+        "operationId": "post_api_archive_shares",
+        "tags": [
+          "archive"
+        ],
+        "x-feature-ids": [
+          "F03"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "410": {
+            "description": "分享过期、撤销或来源车辆/账号失效"
+          },
+          "409": {
+            "description": "记录超过500条或有效分享超过20条"
+          },
+          "503": {
+            "description": "数据库或摘要暂不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "vehicle_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "expires_in_hours": {
+                    "type": "integer",
+                    "enum": [
+                      1,
+                      24,
+                      168
+                    ],
+                    "default": 24
+                  },
+                  "from": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "to": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                },
+                "required": [
+                  "vehicle_id"
+                ]
+              }
+            }
+          }
+        },
+        "x-roles": "正式车主",
+        "x-implementation-status": "implemented",
+        "description": "固定字段快照，不含车牌/VIN、自由文本、照片、签字或PDF。所有响应no-store。详见 ARCHIVE_SHARES.md。"
+      },
+      "get": {
+        "summary": "查看本人车辆最近100条分享",
+        "operationId": "get_api_archive_shares",
+        "tags": [
+          "archive"
+        ],
+        "x-feature-ids": [
+          "F03"
+        ],
+        "parameters": [
+          {
+            "name": "vehicle_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "410": {
+            "description": "分享过期、撤销或来源车辆/账号失效"
+          },
+          "409": {
+            "description": "记录超过500条或有效分享超过20条"
+          },
+          "503": {
+            "description": "数据库或摘要暂不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "正式车主",
+        "x-implementation-status": "implemented",
+        "description": "固定字段快照，不含车牌/VIN、自由文本、照片、签字或PDF。所有响应no-store。详见 ARCHIVE_SHARES.md。"
+      }
+    },
+    "/api/archive/shares/{id}/link": {
+      "get": {
+        "summary": "取得本人有效分享小程序路由",
+        "operationId": "get_api_archive_shares_id_link",
+        "tags": [
+          "archive"
+        ],
+        "x-feature-ids": [
+          "F03"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "410": {
+            "description": "分享过期、撤销或来源车辆/账号失效"
+          },
+          "409": {
+            "description": "记录超过500条或有效分享超过20条"
+          },
+          "503": {
+            "description": "数据库或摘要暂不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "正式车主",
+        "x-implementation-status": "implemented",
+        "description": "固定字段快照，不含车牌/VIN、自由文本、照片、签字或PDF。所有响应no-store。详见 ARCHIVE_SHARES.md。"
+      }
+    },
+    "/api/archive/shares/{id}/revoke": {
+      "post": {
+        "summary": "撤销本人分享",
+        "operationId": "post_api_archive_shares_id_revoke",
+        "tags": [
+          "archive"
+        ],
+        "x-feature-ids": [
+          "F03"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "410": {
+            "description": "分享过期、撤销或来源车辆/账号失效"
+          },
+          "409": {
+            "description": "记录超过500条或有效分享超过20条"
+          },
+          "503": {
+            "description": "数据库或摘要暂不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {},
+                "required": []
+              }
+            }
+          }
+        },
+        "x-roles": "正式车主",
+        "x-implementation-status": "implemented",
+        "description": "固定字段快照，不含车牌/VIN、自由文本、照片、签字或PDF。所有响应no-store。详见 ARCHIVE_SHARES.md。"
+      }
+    },
+    "/api/archive/share/view": {
+      "post": {
+        "summary": "已登录车主持能力令牌读取摘要",
+        "operationId": "post_api_archive_share_view",
+        "tags": [
+          "archive"
+        ],
+        "x-feature-ids": [
+          "F03"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "410": {
+            "description": "分享过期、撤销或来源车辆/账号失效"
+          },
+          "409": {
+            "description": "记录超过500条或有效分享超过20条"
+          },
+          "503": {
+            "description": "数据库或摘要暂不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "share_token": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "share_token"
+                ]
+              }
+            }
+          }
+        },
+        "x-roles": "正式车主",
+        "x-implementation-status": "implemented",
+        "description": "固定字段快照，不含车牌/VIN、自由文本、照片、签字或PDF。所有响应no-store。详见 ARCHIVE_SHARES.md。"
+      }
+    },
     "/api/service/project/{id}": {
       "get": {
         "summary": "车主标准服务项目详情",
