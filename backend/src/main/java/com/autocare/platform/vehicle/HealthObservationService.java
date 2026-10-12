@@ -49,7 +49,7 @@ public class HealthObservationService {
                 boolean clear=input.measurement().isEmpty();
                 if(clear&&(before==null||before.measurement().isEmpty()||before.archive()!=archive))throw conflict();
                 if(!clear&&before!=null&&!before.measurement().isEmpty()&&before.archive()!=archive&&!input.replaceSource())throw conflict();
-                if(input.operation().equals("CORRECT")&&(before==null||before.measurement().isEmpty()||before.archive()!=archive||input.replaceSource()))throw conflict();
+                if(input.operation().equals("CORRECT")&&(before==null||before.measurement().isEmpty()||before.archive()!=archive||before.type()!=source.type()||input.replaceSource()))throw conflict();
                 int next=input.revision()+1;
                 if(before==null)jdbc.update("INSERT INTO vehicle_health_observation(user_id,vehicle_id,metric,archive_id,archive_type,measurement_json,revision) VALUES (?,?,?,?,?,?,?)",
                     owner.id(),source.vehicle(),input.metric(),archive,source.type(),json(input.measurement()),next);
