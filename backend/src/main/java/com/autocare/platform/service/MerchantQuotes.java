@@ -41,6 +41,10 @@ public class MerchantQuotes {
         return Map.of("items",items,"total",total,"page",page,"page_size",size);
     }
     public Map<String,Object> ownerList(VehicleOwner owner,long project,String sort,int page,int size) {
+        return ownerList(owner,project,sort,page,size,null);
+    }
+    public Map<String,Object> ownerList(VehicleOwner owner,long project,String sort,int page,int size,String region) {
+        MerchantDiscovery.validateRegion(region);
         ServiceCatalog.validateId(project); ServiceCatalog.validate(null,page,size);
         if(!Set.of("price_asc","price_desc").contains(sort)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"报价排序无效");
         return reads.execute(status->{
@@ -48,13 +52,15 @@ public class MerchantQuotes {
             if(jdbc.queryForObject("SELECT COUNT(*) FROM standard_project WHERE id=? AND status=1 AND is_deleted=0",Integer.class,project)!=1) throw missing();
             String from=" FROM merchant_project q JOIN merchant m ON m.id=q.merchant_id JOIN standard_project p ON p.id=q.project_id "
                 + "JOIN merchant_project_version v ON v.merchant_project_id=q.id AND v.version=(SELECT MAX(v2.version) FROM merchant_project_version v2 WHERE v2.merchant_project_id=q.id) "
-                + "WHERE q.project_id=? AND q.on_shelf=1 AND q.is_deleted=0 AND m.status=1 AND m.is_deleted=0 AND p.status=1 AND p.is_deleted=0";
-            long total=jdbc.queryForObject("SELECT COUNT(*)"+from,Long.class,project);
+                + "WHERE q.project_id=? AND q.on_shelf=1 AND q.is_deleted=0 AND m.status=1 AND m.is_deleted=0 AND p.status=1 AND p.is_deleted=0"+(region==null?"":" AND m.region_code=?");
+            var args=new ArrayList<Object>();args.add(project);if(region!=null)args.add(region);
+            long total=jdbc.queryForObject("SELECT COUNT(*)"+from,Long.class,args.toArray());
+            args.add(size);args.add((page-1)*size);
             var items=jdbc.query("SELECT q.id,m.id AS merchant_id,m.name,m.address,q.price,v.id AS version_id,v.version"+from
                 + " ORDER BY q.price "+(sort.equals("price_desc")?"DESC":"ASC")+",q.id ASC LIMIT ? OFFSET ?",(rs,n)->Map.<String,Object>of(
                     "merchant_project_id",rs.getLong("id"),"merchant_id",rs.getLong("merchant_id"),"merchant_name",rs.getString("name"),
                     "address",rs.getString("address"),"price",rs.getBigDecimal("price").setScale(2).toPlainString(),
-                    "version_id",rs.getLong("version_id"),"version",rs.getLong("version")),project,size,(page-1)*size);
+                    "version_id",rs.getLong("version_id"),"version",rs.getLong("version")),args.toArray());
             return page(items,total,page,size);
         });
     }

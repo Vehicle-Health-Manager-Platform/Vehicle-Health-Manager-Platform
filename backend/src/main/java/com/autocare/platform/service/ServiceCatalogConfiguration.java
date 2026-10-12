@@ -9,6 +9,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 @ConditionalOnProperty("MYSQL_HOST")
 public class ServiceCatalogConfiguration {
+    @Bean MerchantDiscovery merchantDiscovery(JdbcTemplate jdbc,ServiceCatalog catalog,PlatformTransactionManager manager){
+        return new MerchantDiscovery(jdbc,catalog,manager);
+    }
     @Bean CatalogGovernance catalogGovernance(JdbcTemplate jdbc,com.autocare.platform.common.write.WriteIntegrityService integrity,
         com.fasterxml.jackson.databind.ObjectMapper mapper,com.autocare.platform.gateway.identity.OperatorIdentity operators,
         PlatformTransactionManager manager,@org.springframework.beans.factory.annotation.Value("${CATALOG_GOVERNANCE_ENABLED:false}")boolean enabled) {

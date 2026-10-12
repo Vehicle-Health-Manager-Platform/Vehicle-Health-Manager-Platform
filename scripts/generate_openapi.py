@@ -450,6 +450,7 @@ def main():
             if "{id}" in path:
                 item["parameters"][0]["schema"] = project_fields["id"]
                 item["parameters"].append({"name": "sort", "in": "query", "schema": {"type": "string", "enum": ["price_asc", "price_desc"], "default": "price_asc"}})
+                item["parameters"].append({"name":"region_code","in":"query","schema":{"type":"string","pattern":"^[0-9]{6}$"},"description":"精确筛选上线门店区划码，省略时全部；无匹配空页，旧无区域门店仅全部显示"})
             if path.endswith("standard-projects"):
                 item["parameters"].append(document["paths"]["/api/service/projects"]["get"]["parameters"][0])
         else:
@@ -463,6 +464,22 @@ def main():
             {"$ref": "#/components/schemas/ApiResponse"},
             {"type": "object", "required": ["data"], "properties": {"data": {"$ref": f"#/components/schemas/{result}"}}}]}
         document["paths"].setdefault(path, {})[method] = item
+    shop_fields={"merchant_id":project_fields["id"],"name":{"type":"string"},"address":{"type":"string"},
+        "merchant_type":{"type":"integer","minimum":1,"maximum":6},"region_code":{"type":["string","null"],"pattern":"^[0-9]{6}$"}}
+    offer_fields={**quote_fields,"standard_project_id":project_fields["id"],"project_name":{"type":"string"},"category":{"type":"integer","minimum":1,"maximum":6}}
+    schemas["OwnerStorefront"]={"type":"object","additionalProperties":False,"required":list(shop_fields),"properties":shop_fields}
+    schemas["StorefrontOffer"]={"type":"object","additionalProperties":False,"required":list(offer_fields),"properties":offer_fields}
+    schemas["StorefrontOffers"]={**schemas["ServiceProjectPage"],"additionalProperties":False,"properties":{**schemas["ServiceProjectPage"]["properties"],"items":{"type":"array","items":{"$ref":"#/components/schemas/StorefrontOffer"}}}}
+    schemas["OwnerStorefrontDetail"]={"type":"object","additionalProperties":False,"required":["merchant","offers"],"properties":{
+        "merchant":{"$ref":"#/components/schemas/OwnerStorefront"},"offers":{"$ref":"#/components/schemas/StorefrontOffers"}}}
+    item=operation("get","/api/service/merchant/{id}","车主门店详情与在售服务分页","F06")
+    item["x-roles"]="正式车主";item["x-implementation-status"]="implemented"
+    item["description"]="有效车主会话；只读最小门店投影，不含电话/坐标/资质/员工/客户信息。无评分与距离。no-store。详见MERCHANT_DISCOVERY.md。"
+    item["parameters"][0]["schema"]=project_fields["id"]
+    item["parameters"] += [{"name":"project_id","in":"query","schema":project_fields["id"]}]+document["paths"]["/api/service/projects"]["get"]["parameters"][-2:]
+    item["responses"].update({"404":{"description":"门店/指定项目停用、删除或不可用"},"503":{"description":"数据库尚未配置/服务不可用"}})
+    item["responses"]["200"]["content"]["application/json"]["schema"]={"allOf":[{"$ref":"#/components/schemas/ApiResponse"},{"type":"object","required":["data"],"properties":{"data":{"$ref":"#/components/schemas/OwnerStorefrontDetail"}}}]}
+    document["paths"]["/api/service/merchant/{id}"]={"get":item}
     identifier = project_fields["id"]
     timestamp = {"type": "string", "format": "date-time"}
     fulfillment_states = ["PENDING_PAYMENT", "PAID", "RECEIVED", "IN_SERVICE", "PENDING_VERIFY", "COMPLETED", "CLOSED", "DISPUTED"]

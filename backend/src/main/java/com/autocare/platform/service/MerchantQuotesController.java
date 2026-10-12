@@ -18,11 +18,12 @@ public class MerchantQuotesController {
     private MerchantQuotes service() {var result=services.getIfAvailable();if(result==null)throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"报价数据库尚未配置");return result;}
     private ResponseEntity<?> response(Object data) {return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(ApiResponse.success(data));}
     @GetMapping("/api/service/project/{id}/merchants")
-    public ResponseEntity<?> owners(@AuthenticationPrincipal Jwt jwt,@PathVariable long id,@RequestParam(defaultValue="price_asc") String sort,
+    public ResponseEntity<?> owners(@AuthenticationPrincipal Jwt jwt,@PathVariable long id,@RequestParam(defaultValue="price_asc") String sort,@RequestParam(value="region_code",required=false) String region,
         @RequestParam(defaultValue="1") int page,@RequestParam(name="page_size",defaultValue="20") int size) {
         var owner=VehicleOwner.from(jwt);ServiceCatalog.validateId(id);ServiceCatalog.validate(null,page,size);
         if(!java.util.Set.of("price_asc","price_desc").contains(sort))throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"报价排序无效");
-        return response(service().ownerList(owner,id,sort,page,size));
+        MerchantDiscovery.validateRegion(region);
+        return response(region==null?service().ownerList(owner,id,sort,page,size):service().ownerList(owner,id,sort,page,size,region));
     }
     @GetMapping("/api/merchant/standard-projects")
     public ResponseEntity<?> standards(@AuthenticationPrincipal Jwt jwt,@RequestParam(required=false) Integer category,
