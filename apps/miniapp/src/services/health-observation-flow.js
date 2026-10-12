@@ -14,7 +14,7 @@ export function createObservationFlow({ state, api, token, newKey, confirmClear,
       if (!valid(current, owner)) return
       state.context = context; state.loaded = true
       state.form = observationForm(context)
-    } catch (e) { if (valid(current, owner)) { state.message = e.message || '资料加载失败，请重试'; state.kind = e.kind || 'server' } }
+    } catch (e) { if (valid(current, owner)) { state.message = e.message || '读数加载失败，请重试'; state.kind = e.kind || 'server' } }
     finally { if (current === generation) state.busy = false }
   }
   async function save(clear = false) {
@@ -60,7 +60,7 @@ export function createObservationListFlow({ state, api, token }) {
       const result = await api.list(owner, vehicle)
       if (current !== generation || owner !== token() || vehicle !== state.vehicleId || !visible) return
       state.rows = result.list; state.today = result.today; state.loaded = true
-    } catch (e) { if (current === generation && owner === token()) { state.message = e.message || '提醒加载失败，请重试'; state.kind = e.kind || 'server' } }
+    } catch (e) { if (current === generation && owner === token()) { state.message = e.message || '读数加载失败，请重试'; state.kind = e.kind || 'server' } }
     finally { if (current === generation) state.busy = false }
   }
   return {
