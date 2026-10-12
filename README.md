@@ -6,6 +6,8 @@
 
 **2026-10-11 合并状态：** R1c 至 R3c2 阶段 PR #85–#118 已按依赖顺序合并到 `main`；各阶段六项 CI 均通过。当前下一步是 R3c3 限时分享授权与撤销规格。真实短信/身份、正式资金、供应商识别和真机验收仍按下方边界单独跟踪。
 
+**2026-10-12 实施更新：** R3c3 档案摘要限时分享与撤销已在后端 [#122](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/122) 和微信小程序 [#123](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/123) 分阶段上传，尚未合并。支持登录车主持链接只读查看固定摘要、1小时/24小时/7天有效期和车主撤销；不含车牌/VIN、备注、照片、签字或PDF。微信341项测试及mp-weixin构建通过；原生分享与真机仍待验收。下一步R4a1档案结构化与可追溯提醒，详见[执行记录](docs/progress/R3C3_ARCHIVE_SHARE_EXECUTION.md)。
+
 ## 项目范围与角色
 
 | 使用者 | 微信小程序能力 |
