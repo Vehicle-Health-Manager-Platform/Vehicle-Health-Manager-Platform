@@ -46,7 +46,8 @@ public class ArchiveShareService {
     public Map<String, Object> list(VehicleOwner owner, long vehicle) {
         return tx.execute(status -> {
             authorize(owner, false); ownVehicle(owner.id(), vehicle, false);
-            var ids = jdbc.query("SELECT id FROM archive_report_share WHERE owner_id=? AND vehicle_id=? AND is_deleted=0 ORDER BY id DESC LIMIT 100",
+            var ids = jdbc.query("SELECT id FROM archive_report_share WHERE owner_id=? AND vehicle_id=? AND is_deleted=0 "
+                + "ORDER BY (revoked_at IS NULL AND expires_at>UTC_TIMESTAMP()) DESC,id DESC LIMIT 100",
                 (rs, n) -> rs.getLong(1), owner.id(), vehicle);
             return Map.of("list", ids.stream().map(id -> metadata(load(id, false))).toList());
         });

@@ -127,4 +127,17 @@ class JdbcArchiveShareTest {
             assertEquals(410, reading.get(10, java.util.concurrent.TimeUnit.SECONDS));
         } finally { pool.shutdownNow(); }
     }
+    @Test void activeLimitAndOldActiveLinksRemainRevocableAmongManyHistoricalRows() throws Exception {
+        for (int i = 0; i < 20; i++) create();
+        var input = input();
+        assertEquals(409, status(() -> service.create(owner, key(), input)));
+        for (int i = 0; i < 100; i++) jdbc.update("INSERT INTO archive_report_share(public_id,token_hash,owner_id,vehicle_id,summary,expires_at,revoked_at) "
+            + "VALUES (?,?,1,101,'{}',DATE_ADD(UTC_TIMESTAMP(),INTERVAL 1 HOUR),UTC_TIMESTAMP())", UUID.randomUUID().toString(), ArchiveShareTokens.hash(UUID.randomUUID().toString()));
+        var rows = mapper.valueToTree(service.list(owner, 101)).path("list");
+        assertEquals(100, rows.size());
+        for (int i = 0; i < 20; i++) assertEquals("ACTIVE", rows.get(i).path("status").asText());
+        long id = rows.get(0).path("share_id").asLong();
+        service.revoke(owner, id, key(), mapper.createObjectNode());
+        assertTrue(create() > 0);
+    }
 }

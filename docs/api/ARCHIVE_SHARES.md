@@ -5,7 +5,7 @@
 | 接口 | 请求 | 返回 data |
 |---|---|---|
 | POST /api/archive/shares | UUID Idempotency-Key；`vehicle_id`、可选成对 `from/to`、`expires_in_hours`（1/24/168，默认24） | 分享元信息 |
-| GET /api/archive/shares?vehicle_id=... | 本人车辆 | `list` 最近100条元信息 |
+| GET /api/archive/shares?vehicle_id=... | 本人车辆 | `list` 最多100条，优先全部未过期未撤销分享，再按新建时间排列历史 |
 | GET /api/archive/shares/{id}/link | 本人有效分享 | `share_id,path,expires_at` |
 | POST /api/archive/shares/{id}/revoke | UUID Idempotency-Key；`{}` | 撤销后的元信息 |
 | POST /api/archive/share/view | `{"share_token":"64位小写十六进制能力令牌"}`，不需幂等键 | `summary,expires_at` |

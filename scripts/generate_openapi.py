@@ -260,7 +260,7 @@ def main():
     document["paths"][archive_report_path] = {"get": archive_report}
     for method, path, summary in (
         ("post", "/api/archive/shares", "创建本人档案摘要限时分享"),
-        ("get", "/api/archive/shares", "查看本人车辆最近100条分享"),
+        ("get", "/api/archive/shares", "查看本人车辆最多100条分享，优先有效分享"),
         ("get", "/api/archive/shares/{id}/link", "取得本人有效分享小程序路由"),
         ("post", "/api/archive/shares/{id}/revoke", "撤销本人分享"),
         ("post", "/api/archive/share/view", "已登录车主持能力令牌读取摘要"),
