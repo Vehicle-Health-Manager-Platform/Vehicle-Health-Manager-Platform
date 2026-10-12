@@ -1,6 +1,6 @@
 # R4a4 读数历史与修正履历下一步
 
-2026-10-12。已有R4a3本人当前读数，无历史或评分；所有README继续等待用户要求。
+2026-10-12。此计划已按R4a4实施：本人不可变历史/修正履历已上传#134/#135，详见[执行](R4A4_OBSERVATION_HISTORY_EXECUTION.md)。曲线/评分未实现，下一[R4b1](R4B1_MERCHANT_DISCOVERY_NEXT_PLAN.md)。下方冻结前的步骤保留；所有README继续等待用户要求。
 
 ## 实施顺序
 
