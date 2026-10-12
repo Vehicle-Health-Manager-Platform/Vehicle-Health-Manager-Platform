@@ -290,6 +290,29 @@ def main():
             share_op["requestBody"]["content"]["application/json"]["schema"] = {
                 "type": "object", "additionalProperties": False, "properties": props, "required": required}
         document["paths"].setdefault(path, {})[method] = share_op
+    for method, path, summary in (
+        ("get", "/api/archive/{id}/reminder", "本人来源档案与当前类目目标设置"),
+        ("put", "/api/archive/{id}/reminder", "设置或停用本人档案目标"),
+        ("get", "/api/vehicle/reminders", "本人车辆三类可追溯提醒"),
+    ):
+        op = operation(method, path, summary, "F03,F04")
+        op["x-roles"] = "正式车主"
+        op["x-implementation-status"] = "implemented"
+        op["description"] = "用户填写保养/保险/年检目标，Asia/Shanghai日期或登记里程达到时提醒。不推断养护周期/法定日期。no-store。详见ARCHIVE_REMINDERS.md。"
+        op["responses"].update({"404": {"description": "本人车辆或有效来源不可用"},
+            "409": {"description": "版本/来源变化，请刷新并复核"}, "503": {"description": "数据库不可用"}})
+        if path == "/api/vehicle/reminders":
+            op["parameters"] = [{"name": "vehicle_id", "in": "query", "required": True,
+                "schema": {"type": "integer", "minimum": 1, "maximum": 9007199254740991}}]
+        if method == "put":
+            op["parameters"].append({"name": "Idempotency-Key", "in": "header", "required": True, "schema": {"type": "string", "format": "uuid"}})
+            op["requestBody"] = {"required": True, "content": {"application/json": {"schema": {
+                "type": "object", "additionalProperties": False, "required": ["expected_revision", "active"], "properties": {
+                    "expected_revision": {"type": "integer", "minimum": 0, "maximum": 2147483646},
+                    "active": {"type": "boolean"}, "due_date": {"type": ["string", "null"], "format": "date"},
+                    "due_mileage": {"type": ["integer", "null"], "minimum": 0, "maximum": 2147483647},
+                    "replace_source": {"type": "boolean", "default": False}}}}}}
+        document["paths"].setdefault(path, {})[method] = op
     project_fields = {
         "id": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
         "project_name": {"type": "string"}, "category": {"type": "integer", "minimum": 1, "maximum": 6},

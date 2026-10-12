@@ -100,6 +100,8 @@ run_sql_file docs/sql/migrations/V026__commission_ledger.sql
 run_sql_file docs/sql/migrations/V026__commission_ledger.sql
 run_sql_file docs/sql/migrations/V027__archive_report_shares.sql
 run_sql_file docs/sql/migrations/V027__archive_report_shares.sql
+run_sql_file docs/sql/migrations/V028__archive_reminders.sql
+run_sql_file docs/sql/migrations/V028__archive_reminders.sql
 [[ "$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='$database' AND table_name='refund' AND column_name IN ('refund_no','revision','owner_consented_at','merchant_consented_at','dispatch_token','next_attempt_at','controlled_order_id')")" == 7 ]] || { echo 'V025 refund fields missing' >&2; exit 1; }
 [[ "$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema='$database' AND table_name='refund' AND non_unique=0 AND index_name IN ('uk_managed_refund_no','uk_managed_refund_order')")" == 2 ]] || { echo 'V025 refund unique guards missing' >&2; exit 1; }
 [[ "$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='$database' AND table_name='payment' AND column_name IN ('query_token','next_query_at','query_attempts','last_query_at','last_query_error')")" == 5 ]] || { echo 'V024 payment query fields missing' >&2; exit 1; }
@@ -110,7 +112,7 @@ run_sql_file docs/sql/migrations/V027__archive_report_shares.sql
 [[ "$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='$database' AND table_name IN ('order_commission_snapshot','merchant_commission_entry')")" == 2 ]] || { echo 'V026 commission tables missing' >&2; exit 1; }
 [[ "$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='$database' AND table_name='merchant_commission_policy' AND column_name IN ('rule_version','source_application_id')")" == 2 ]] || { echo 'V026 policy provenance missing' >&2; exit 1; }
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
-[[ "$tables" == 67 ]] || { echo "Expected 67 tables after V027, got $tables" >&2; exit 1; }
+[[ "$tables" == 68 ]] || { echo "Expected 68 tables after V028, got $tables" >&2; exit 1; }
 catalog_columns=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND ((table_name IN ('brand','series','model','standard_project') AND column_name IN ('sort_order','source_note','revision')) OR (table_name IN ('brand','series','model') AND column_name='status') OR (table_name='operator_account' AND column_name='can_catalog'))")
 [[ "$catalog_columns" == 16 ]] || { echo "V022 catalogue fields incomplete: $catalog_columns/16" >&2; exit 1; }
 
@@ -201,4 +203,5 @@ for entry in staff_account:display_name staff_account:created_by; do
 done
 [[ "$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='$database' AND table_name='archive_report_share' AND column_name IN ('token_hash','public_id','summary','revoked_at','expires_at','owner_id','vehicle_id')")" == 7 ]] || { echo 'V027 share fields missing' >&2; exit 1; }
 [[ "$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema='$database' AND table_name='archive_report_share' AND index_name IN ('uk_archive_share_public','uk_archive_share_hash') AND non_unique=0")" == 2 ]] || { echo 'V027 share unique indexes missing' >&2; exit 1; }
-echo "MySQL 8.0 schema: 67 tables after V027; repeat migration and synthetic seed passed"
+[[ "$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema='$database' AND table_name='archive_reminder' AND index_name='uk_archive_reminder_owner_vehicle_type' AND non_unique=0")" == 1 ]] || { echo 'V028 reminder uniqueness missing' >&2; exit 1; }
+echo "MySQL 8.0 schema: 68 tables after V028; repeat migration and synthetic seed passed"

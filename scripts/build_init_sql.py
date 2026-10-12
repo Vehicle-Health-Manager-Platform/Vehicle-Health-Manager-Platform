@@ -50,8 +50,8 @@ SET NAMES utf8mb4;
 """
     content = header + "\n\n".join(output) + "\n\n" + EXTRA.read_text(encoding="utf-8")
     names = re.findall(r"CREATE TABLE IF NOT EXISTS `([^`]+)`", content)
-    if len(names) != 40 or len(names) != len(set(names)):
-        raise ValueError(f"Expected 40 distinct tables; got {len(names)}")
+    if len(names) != 41 or len(names) != len(set(names)):
+        raise ValueError(f"Expected 41 distinct tables; got {len(names)}")
     for name in names:
         table = re.search(rf"CREATE TABLE IF NOT EXISTS `{name}` \(.*?\) ENGINE=InnoDB", content, re.S).group(0)
         for column in ("id", "created_at", "updated_at", "is_deleted"):
