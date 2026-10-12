@@ -35,7 +35,7 @@ class JdbcHealthObservationTest {
     }
     @BeforeEach void setup() {
         jdbc.execute("DROP TRIGGER IF EXISTS reject_reminder_audit");
-        for (String table : List.of("vehicle_health_observation", "vehicle_archive", "audit_log", "idempotency_record", "vehicle", "auth_session", "user")) jdbc.update("DELETE FROM " + table);
+        for (String table : List.of("vehicle_health_observation_history", "vehicle_health_observation", "vehicle_archive", "audit_log", "idempotency_record", "vehicle", "auth_session", "user")) jdbc.update("DELETE FROM " + table);
         jdbc.update("INSERT INTO user(id,openid,status) VALUES (1,'reminder-one',1),(2,'reminder-two',1)");
         owner = new VehicleOwner(1, key(), Instant.now().plusSeconds(600)); other = new VehicleOwner(2, key(), Instant.now().plusSeconds(600));
         for (var actor : List.of(owner, other)) jdbc.update("INSERT INTO auth_session(id,subject_type,subject_id,role,app_id,refresh_hash,expires_at) "
@@ -85,15 +85,63 @@ class JdbcHealthObservationTest {
         service.save(owner,14,key(),reading("AUX_BATTERY",1,true));assertEquals(14,row(owner,101,5).path("archive_id").asLong());
         jdbc.execute("CREATE TRIGGER reject_reminder_audit BEFORE INSERT ON audit_log FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='audit fail'");
         var clear=input("{\"metric\":\"AUX_BATTERY\",\"expected_revision\":2,\"measurement\":{}}");
-        assertEquals(503,status(()->service.save(owner,14,key(),clear)));assertEquals(2,row(owner,101,5).path("revision").asInt());assertFalse(row(owner,101,5).path("measurement").isEmpty());
+        assertEquals(503,status(()->service.save(owner,14,key(),clear)));assertEquals(2,jdbc.queryForObject("SELECT COUNT(*) FROM vehicle_health_observation_history",Integer.class));assertEquals(2,row(owner,101,5).path("revision").asInt());assertFalse(row(owner,101,5).path("measurement").isEmpty());
     }
     @Test void versionRaceHasOneWinnerAndDifferentMetricsAreIndependent() throws Exception {
         var pool=java.util.concurrent.Executors.newFixedThreadPool(2);var input=reading("AUX_BATTERY",0,false);
         try{
             var calls=pool.invokeAll(List.of(()->{try{service.save(owner,11,key(),input);return 200;}catch(ResponseStatusException e){return e.getStatusCode().value();}},
                 ()->{try{service.save(owner,14,key(),input);return 200;}catch(ResponseStatusException e){return e.getStatusCode().value();}}));
-            var results=List.of(calls.get(0).get(),calls.get(1).get());assertTrue(results.contains(200));assertTrue(results.contains(409));
+            var results=List.of(calls.get(0).get(),calls.get(1).get());assertTrue(results.contains(200));assertTrue(results.contains(409));assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM vehicle_health_observation_history",Integer.class));
             service.save(owner,11,key(),reading("TRACTION_BATTERY",0,false));assertEquals(1,row(owner,101,3).path("revision").asInt());
         }finally{pool.shutdownNow();}
+    }
+
+    com.fasterxml.jackson.databind.JsonNode history(VehicleOwner actor,Integer before,int limit){return mapper.valueToTree(service.history(actor,101,"AUX_BATTERY",before,limit));}
+    HealthObservationInput correction(int version,String value) throws Exception {
+        var node=mapper.valueToTree(reading("AUX_BATTERY",version,false).canonical());
+        ((com.fasterxml.jackson.databind.node.ObjectNode)node).put("operation","CORRECT");
+        ((com.fasterxml.jackson.databind.node.ObjectNode)node.path("measurement")).put("value",value);
+        return HealthObservationInput.parse(node);
+    }
+    @Test void immutableCorrectionChainClearAndCursorPagination() throws Exception {
+        var first=reading("AUX_BATTERY",0,false);String originalKey=key();service.save(owner,11,originalKey,first);
+        var correction=correction(1,"12.6");String correctionKey=key();var receipt=service.save(owner,11,correctionKey,correction);
+        assertEquals(receipt,service.save(owner,11,correctionKey,correction));
+        service.save(owner,11,key(),correction(2,"12.7"));
+        service.save(owner,11,key(),input("{\"metric\":\"AUX_BATTERY\",\"expected_revision\":3,\"measurement\":{}}"));
+        var page=history(owner,null,2);assertTrue(page.path("has_more").asBoolean());assertEquals(3,page.path("next_before_revision").asInt());
+        assertEquals("CLEAR",page.path("list").get(0).path("operation").asText());assertTrue(page.path("list").get(0).path("measurement").isEmpty());
+        var older=history(owner,3,2);assertFalse(older.path("has_more").asBoolean());assertTrue(older.path("next_before_revision").isNull());
+        assertEquals("12.50",older.path("list").get(1).path("measurement").path("value").asText());
+        assertTrue(older.path("list").get(1).path("corrected").asBoolean());assertTrue(older.path("list").get(0).path("corrected").asBoolean());
+        assertEquals(1,older.path("list").get(0).path("supersedes_revision").asInt());
+        assertEquals(4,jdbc.queryForObject("SELECT COUNT(*) FROM vehicle_health_observation_history",Integer.class));
+        assertEquals(409,status(()->service.save(owner,11,key(),correction)));
+        var afterClear=correction(4,"12.8");assertEquals(409,status(()->service.save(owner,11,key(),afterClear)));
+        var repeatedClear=input("{\"metric\":\"AUX_BATTERY\",\"expected_revision\":4,\"measurement\":{}}");assertEquals(409,status(()->service.save(owner,11,key(),repeatedClear)));
+        assertEquals(400,status(()->service.history(owner,101,"AUX_BATTERY",0,20)));assertEquals(400,status(()->service.history(owner,101,"AUX_BATTERY",null,51)));
+        assertTrue(history(owner,1,20).path("list").isEmpty());
+    }
+    @Test void historyAlwaysRechecksSourcesAndNeverPassesToNewOwner() throws Exception {
+        service.save(owner,11,key(),reading("AUX_BATTERY",0,false));var correction=correction(1,"13");
+        assertEquals(409,status(()->service.save(owner,14,key(),correction)));
+        service.save(owner,14,key(),reading("AUX_BATTERY",1,true));
+        jdbc.update("UPDATE vehicle_archive SET is_deleted=1 WHERE id=11");
+        var old=history(owner,null,20).path("list").get(1);assertEquals("SOURCE_UNAVAILABLE",old.path("status").asText());
+        assertTrue(old.path("archive_id").isNull());assertTrue(old.path("recorded_date").isNull());assertTrue(old.path("measurement").isEmpty());
+        jdbc.update("UPDATE vehicle_archive SET vehicle_id=201 WHERE id=14");assertTrue(history(owner,null,20).path("list").get(0).path("measurement").isEmpty());
+        jdbc.update("UPDATE vehicle SET user_id=2 WHERE id=101");assertEquals(404,status(()->service.history(owner,101,"AUX_BATTERY",null,20)));
+        assertTrue(history(other,null,20).path("list").isEmpty());
+        jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id=?",other.session());assertEquals(401,status(()->service.history(other,101,"AUX_BATTERY",null,20)));
+    }
+    @Test void migrationAddsOnlyOneHonestCurrentSnapshotAndCanReplay() throws Exception {
+        jdbc.update("INSERT INTO vehicle_health_observation(user_id,vehicle_id,metric,archive_id,archive_type,measurement_json,revision) VALUES (1,101,'AUX_BATTERY',11,1,?,9)",mapper.writeValueAsString(reading("AUX_BATTERY",0,false).measurement()));
+        try(var connection=jdbc.getDataSource().getConnection()){
+            for(int i=0;i<2;i++)ScriptUtils.executeSqlScript(connection,new FileSystemResource(Path.of("..","docs/sql/migrations/V031__vehicle_health_observation_history.sql")));
+        }
+        var page=history(owner,null,20);assertEquals(1,page.path("list").size());assertEquals("MIGRATED_SNAPSHOT",page.path("list").get(0).path("operation").asText());
+        assertEquals(9,page.path("list").get(0).path("revision").asInt());assertTrue(page.path("list").get(0).path("supersedes_revision").isNull());
+        service.save(owner,11,key(),correction(9,"13"));assertEquals(2,history(owner,null,20).path("list").size());
     }
 }

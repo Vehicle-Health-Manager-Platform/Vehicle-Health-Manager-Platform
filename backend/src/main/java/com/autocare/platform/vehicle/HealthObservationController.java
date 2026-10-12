@@ -29,6 +29,11 @@ public class HealthObservationController {
     public ResponseEntity<?> list(@AuthenticationPrincipal Jwt jwt,@RequestParam("vehicle_id") long vehicle){
         var owner=VehicleOwner.from(jwt);return ok(ApiResponse.success(service().list(owner,vehicle)));
     }
+    @GetMapping("/api/vehicle/health-observation-history")
+    public ResponseEntity<?> history(@AuthenticationPrincipal Jwt jwt,@RequestParam("vehicle_id") long vehicle,@RequestParam("metric") String metric,
+                                    @RequestParam(value="before_revision",required=false) Integer before,@RequestParam(value="limit",defaultValue="20") int limit){
+        var owner=VehicleOwner.from(jwt);return ok(ApiResponse.success(service().history(owner,vehicle,metric,before,limit)));
+    }
     @PutMapping("/api/archive/{id}/health-observation")
     public ResponseEntity<?> save(@AuthenticationPrincipal Jwt jwt, @PathVariable long id,
                                 @RequestHeader(value="Idempotency-Key", required=false) String key, @RequestBody JsonNode body) {

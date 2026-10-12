@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public record HealthObservationInput(String metric, int revision, ObjectNode measurement, boolean replaceSource) {
+public record HealthObservationInput(String metric, int revision, ObjectNode measurement, boolean replaceSource, String operation) {
     public static final List<String> METRICS=List.of("OIL","BRAKE_PAD","TIRE","TRACTION_BATTERY","COOLANT","AUX_BATTERY");
     public static final Map<String,Set<String>> UNITS=Map.of("OIL",Set.of("KM","PERCENT"),"BRAKE_PAD",Set.of("MM"),"TIRE",Set.of("MM","KPA"),
         "TRACTION_BATTERY",Set.of("PERCENT","V"),"COOLANT",Set.of("CELSIUS"),"AUX_BATTERY",Set.of("V","PERCENT"));
@@ -18,10 +18,12 @@ public record HealthObservationInput(String metric, int revision, ObjectNode mea
         if(body==null||!body.isObject()||!body.path("metric").isTextual()||!body.path("measurement").isObject()
             ||!body.path("expected_revision").isIntegralNumber()||!body.path("expected_revision").canConvertToInt()
             ||body.path("expected_revision").intValue()<0||body.path("expected_revision").intValue()>=Integer.MAX_VALUE)throw invalid();
-        body.fieldNames().forEachRemaining(k->{if(!Set.of("metric","expected_revision","measurement","replace_source").contains(k))throw invalid();});
+        body.fieldNames().forEachRemaining(k->{if(!Set.of("metric","expected_revision","measurement","replace_source","operation").contains(k))throw invalid();});
         if(body.has("replace_source")&&!body.path("replace_source").isBoolean())throw invalid();
+        String operation=body.has("operation")?body.path("operation").asText(""):body.path("measurement").isEmpty()?"CLEAR":"RECORD";
+        if(!Set.of("RECORD","CORRECT","CLEAR").contains(operation)||operation.equals("CLEAR")!=body.path("measurement").isEmpty())throw invalid();
         return new HealthObservationInput(metric(body.path("metric").textValue()),body.path("expected_revision").intValue(),
-            ((ObjectNode)body.get("measurement")).deepCopy(),body.path("replace_source").asBoolean(false));
+            ((ObjectNode)body.get("measurement")).deepCopy(),body.path("replace_source").asBoolean(false),operation);
     }
     public void validate(LocalDate today) {
         if(measurement.isEmpty()){if(replaceSource)throw invalid();return;}
@@ -44,6 +46,10 @@ public record HealthObservationInput(String metric, int revision, ObjectNode mea
         if(!node.isTextual()||node.textValue().isBlank()||!node.textValue().equals(node.textValue().strip())
             ||node.textValue().codePointCount(0,node.textValue().length())>maximum||node.textValue().codePoints().anyMatch(Character::isISOControl))throw invalid();
     }
-    public Map<String,Object> canonical(){return Map.of("metric",metric,"expected_revision",revision,"measurement",measurement,"replace_source",replaceSource);}
+    public Map<String,Object> canonical(){
+        var result=new java.util.LinkedHashMap<String,Object>();result.put("metric",metric);result.put("expected_revision",revision);
+        result.put("measurement",measurement);result.put("replace_source",replaceSource);
+        if(operation.equals("CORRECT"))result.put("operation",operation);return result;
+    }
     private static org.springframework.web.server.ResponseStatusException invalid(){return WriteIntegrityService.badRequest("请检查指标、读数、单位、来源说明和日期");}
 }

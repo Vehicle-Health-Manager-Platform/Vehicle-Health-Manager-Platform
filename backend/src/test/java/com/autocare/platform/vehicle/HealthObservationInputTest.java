@@ -22,4 +22,14 @@ class HealthObservationInputTest {
         for(String raw:new String[]{"{\"metric\":\"OIL\",\"expected_revision\":0,\"measurement\":{\"score\":90}}","{\"metric\":\"OIL\",\"expected_revision\":0,\"measurement\":{},\"replace_source\":true}","{\"metric\":\"OIL\",\"expected_revision\":0,\"measurement\":{},\"other\":1}"})
             assertThrows(org.springframework.web.server.ResponseStatusException.class,()->HealthObservationInput.parse(mapper.readTree(raw)).validate(LocalDate.of(2026,10,12)));
     }
+
+    @Test void operationIsExplicitAndLegacyFingerprintRemainsStable() throws Exception {
+        var legacy=mapper.readTree("{\"metric\":\"OIL\",\"expected_revision\":1,\"measurement\":{}}");
+        var parsed=HealthObservationInput.parse(legacy);assertEquals("CLEAR",parsed.operation());assertFalse(parsed.canonical().containsKey("operation"));
+        for(String operation:new String[]{"RECORD","CORRECT","OTHER",""}){
+            var node=legacy.deepCopy();((com.fasterxml.jackson.databind.node.ObjectNode)node).put("operation",operation);
+            assertThrows(org.springframework.web.server.ResponseStatusException.class,()->HealthObservationInput.parse(node));
+        }
+        ((com.fasterxml.jackson.databind.node.ObjectNode)legacy).put("operation","CLEAR");assertEquals(parsed.canonical(),HealthObservationInput.parse(legacy).canonical());
+    }
 }
