@@ -1,5 +1,7 @@
 # 三端剩余功能与下一阶段实施规划
 
+> **2026-10-12 合并后更新**：#120–#139均已合并main，R3c3、R4a1–R4a4及R4b1代码缺口已补，根README本次更新。下一R4b2a位置距离→R4b2b公开评价；原始规划表与下方上传描述保留当时状态，当前缺项见[README](../../README.md)及[合并记录](MERGE_README_2026-10-12.md)。 [合并记录](MERGE_README_2026-10-12.md)。
+
 R4b1更新：商家详情/在售服务分页/微信原生选区与区域报价已上传#137/#138，见[执行](R4B1_MERCHANT_DISCOVERY_EXECUTION.md)。R4b剩余距离与真实公开评价拆成[R4b2a/R4b2b](R4B2_LOCATION_REVIEWS_NEXT_PLAN.md)，先冻结坐标系/来源与公开授权，不编造距离或评分。下方原队列保留，README未改。
 
 R4a4更新：本人不可变历史/修正链/清空履历/迁移快照与分页已上传#134/#135，详见[执行](R4A4_OBSERVATION_HISTORY_EXECUTION.md)。R4a六指标历史记录代码缺口已补，曲线/可信健康指标/分数仍欠，下一可独立单元[R4b1商家详情与区域选择](R4B1_MERCHANT_DISCOVERY_NEXT_PLAN.md)。下方原队列保留；README等用户要求再更新。
