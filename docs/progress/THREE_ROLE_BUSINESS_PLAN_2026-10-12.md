@@ -1,5 +1,7 @@
 # 三端剩余功能与下一阶段实施规划
 
+R4a3更新：本人六类当前原始读数已上传#131/#132，见[执行](R4A3_HEALTH_OBSERVATIONS_EXECUTION.md)。下一独立单元[R4a4历史与修正履历](R4A4_OBSERVATION_HISTORY_NEXT_PLAN.md)；无可信来源/适用性/算法规则时先推进R4b1。下方保留原总队列与历史，所有README等待用户要求。
+
 更新：2026-10-12（Asia/Shanghai）。需求与实现差异逐项见[交付审计](DELIVERY_GAP_AUDIT_2026-10-12.md)。规划后已实施 R3c3（#122/#123，待合并），见[执行](R3C3_ARCHIVE_SHARE_EXECUTION.md)。R4a1目标到达提醒也已上传#125/#126，见[执行](R4A1_ARCHIVE_REMINDERS_EXECUTION.md)。R4a2本人三类资料已上传#128/#129，见[执行](R4A2_STRUCTURED_ARCHIVE_EXECUTION.md)；下一独立功能[R4a3健康数据来源与指标口径](R4A3_HEALTH_DATA_NEXT_PLAN.md)；正式验收范围不因代码完成而销项。
 
 ## 1. 当前起点与原则
