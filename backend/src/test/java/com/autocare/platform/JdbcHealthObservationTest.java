@@ -130,7 +130,10 @@ class JdbcHealthObservationTest {
         jdbc.update("UPDATE vehicle_archive SET is_deleted=1 WHERE id=11");
         var old=history(owner,null,20).path("list").get(1);assertEquals("SOURCE_UNAVAILABLE",old.path("status").asText());
         assertTrue(old.path("archive_id").isNull());assertTrue(old.path("recorded_date").isNull());assertTrue(old.path("measurement").isEmpty());
-        jdbc.update("UPDATE vehicle_archive SET vehicle_id=201 WHERE id=14");assertTrue(history(owner,null,20).path("list").get(0).path("measurement").isEmpty());
+        jdbc.update("UPDATE vehicle_archive SET archive_type=1 WHERE id=14");
+        var changedType=correction(2,"13");assertEquals(409,status(()->service.save(owner,14,key(),changedType)));
+        assertTrue(history(owner,null,20).path("list").get(0).path("measurement").isEmpty());
+        jdbc.update("UPDATE vehicle_archive SET archive_type=2,vehicle_id=201 WHERE id=14");assertTrue(history(owner,null,20).path("list").get(0).path("measurement").isEmpty());
         jdbc.update("UPDATE vehicle SET user_id=2 WHERE id=101");assertEquals(404,status(()->service.history(owner,101,"AUX_BATTERY",null,20)));
         assertTrue(history(other,null,20).path("list").isEmpty());
         jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id=?",other.session());assertEquals(401,status(()->service.history(other,101,"AUX_BATTERY",null,20)));
