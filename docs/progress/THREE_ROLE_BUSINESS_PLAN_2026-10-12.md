@@ -1,5 +1,7 @@
 # 三端剩余功能与下一阶段实施规划
 
+R4b1更新：商家详情/在售服务分页/微信原生选区与区域报价已上传#137/#138，见[执行](R4B1_MERCHANT_DISCOVERY_EXECUTION.md)。R4b剩余距离与真实公开评价拆成[R4b2a/R4b2b](R4B2_LOCATION_REVIEWS_NEXT_PLAN.md)，先冻结坐标系/来源与公开授权，不编造距离或评分。下方原队列保留，README未改。
+
 R4a4更新：本人不可变历史/修正链/清空履历/迁移快照与分页已上传#134/#135，详见[执行](R4A4_OBSERVATION_HISTORY_EXECUTION.md)。R4a六指标历史记录代码缺口已补，曲线/可信健康指标/分数仍欠，下一可独立单元[R4b1商家详情与区域选择](R4B1_MERCHANT_DISCOVERY_NEXT_PLAN.md)。下方原队列保留；README等用户要求再更新。
 
 R4a3更新：本人六类当前原始读数已上传#131/#132，见[执行](R4A3_HEALTH_OBSERVATIONS_EXECUTION.md)。下一独立单元[R4a4历史与修正履历](R4A4_OBSERVATION_HISTORY_NEXT_PLAN.md)；无可信来源/适用性/算法规则时先推进R4b1。下方保留原总队列与历史，所有README等待用户要求。

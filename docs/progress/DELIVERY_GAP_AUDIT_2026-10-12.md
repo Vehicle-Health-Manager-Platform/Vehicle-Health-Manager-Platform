@@ -1,5 +1,7 @@
 # 开发交付文档与当前实现差异审计
 
+R4b1分支更新：F06车主商家详情、手选区域、真实在售报价与预约衔接代码缺口已补#137/#138；距离/公开评分/评价汇总与AI总结未补，原生实际地区选择和真机仍待验收。下一[R4b2](R4B2_LOCATION_REVIEWS_NEXT_PLAN.md)，[执行](R4B1_MERCHANT_DISCOVERY_EXECUTION.md)。README保持不动。
+
 R4a4分支更新：本人六类不可变历史、修正链/原值、清空保留、迁移快照和分页已补#134/#135。F04本人历史记录代码不再列未实现；曲线/可信来源/适用性/有效期/健康分与完整五类/提前提醒仍欠。下一[R4b1](R4B1_MERCHANT_DISCOVERY_NEXT_PLAN.md)，[执行](R4A4_OBSERVATION_HISTORY_EXECUTION.md)。README继续不动。
 
 更新：2026-10-12（Asia/Shanghai）。配套实施队列见[三端后续规划](THREE_ROLE_BUSINESS_PLAN_2026-10-12.md)。
