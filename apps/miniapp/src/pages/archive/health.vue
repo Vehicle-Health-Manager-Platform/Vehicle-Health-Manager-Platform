@@ -30,6 +30,7 @@ function edit(row){uni.navigateTo({url:`/pages/archive/health-observation?vehicl
         <button class="secondary" @tap="edit(row)">查看来源与修正</button>
       </template>
       <button v-else class="secondary" @tap="uni.switchTab({url:'/pages/archive/index'})">从本人保养或维修档案录入</button>
+      <button class="secondary" @tap="uni.navigateTo({url:'/pages/archive/health-history?vehicle_id='+vehicle+'&metric='+row.metric})">历史与修正履历</button>
     </view>
     <text v-if="state.message" class="error">{{ state.message }}</text>
     <button v-if="!ownerSession.accessToken||['unauthorized','forbidden'].includes(state.kind)" @tap="login">登录车主账号</button>

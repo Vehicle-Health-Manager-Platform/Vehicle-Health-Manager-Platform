@@ -9,7 +9,8 @@ const state=reactive(initialObservationState())
 const unitChoices=computed(()=> (healthUnits[state.context?.metric] || []).map(unit=>unitLabels[unit]))
 const confirm=(title,content)=>new Promise(resolve=>uni.showModal({title,content,success:r=>resolve(Boolean(r.confirm)),fail:()=>resolve(false)}))
 const flow=createObservationFlow({state,api:healthObservationApi,token:()=>ownerSession.accessToken,newKey:imageRequestKey,
-  confirmClear:()=>confirm('清空本类当前读数','本类将显示未录入，原档案及照片保留。'),
+  confirmClear:()=>confirm('清空本类当前读数','本类将显示未录入。历史读数、修正履历、原档案及照片仍保留。'),
+  confirmCorrection:()=>confirm('修正当前读数','修正同一来源的当前版本，原值保留在历史中。若这是新一次测量，请取消后选择新增测量。'),
   confirmReplacement:()=>confirm('更换本类读数来源','使用当前档案及本次读数替换原来源与当前读数。请先核对原资料。'),
 })
 let visible=false
@@ -44,7 +45,10 @@ function login(){flow.reset();clearOwnerSession();uni.navigateTo({url:'/pages/ow
       <text class="label">测量方法或资料位置</text><input v-model="state.form.method" class="input" maxlength="120" :disabled="state.busy" placeholder="注明仪表/检测方法，或抄录资料的位置" />
       <text class="label">本人数据来源</text><picker :range="provenanceLabels" :disabled="state.busy" @change="state.form.provenance=provenanceValues[Number($event.detail.value)]"><view class="input">{{ provenanceLabels[provenanceValues.indexOf(state.form.provenance)] || '请选择来源' }}</view></picker>
       <text class="hint">百分比只表示资料中的读数，不是平台健康分。数据有效期、合格阈值及车型适用性尚未核验。</text>
-      <button :disabled="state.busy||state.kind==='conflict'" :loading="state.busy" @tap="flow.save(false)">保存本人读数</button>
+      <button :disabled="state.busy||state.kind==='conflict'" :loading="state.busy" @tap="flow.save(false)">保存为新增测量</button>
+      <text class="hint">新增测量保存为新的记录；修正用于纠正当前记录，保留原值。最后保存值是当前值，不一定是测量日期最新的值。</text>
+      <button v-if="state.context.observation.archive_id===state.context.archive_id" class="secondary" :disabled="state.busy||state.kind==='conflict'" @tap="flow.save(false,'CORRECT')">修正当前读数（保留原值）</button>
+      <button class="secondary" :disabled="state.busy" @tap="uni.navigateTo({url:'/pages/archive/health-history?vehicle_id='+state.context.vehicle_id+'&metric='+state.context.metric})">查看历史与修正履历</button>
       <button v-if="state.context.observation.archive_id===state.context.archive_id" class="danger" :disabled="state.busy||state.kind==='conflict'" @tap="flow.save(true)">清空本类当前读数</button>
     </view>
     <text v-if="state.message" class="message" :class="{error:state.kind}">{{ state.message }}</text>

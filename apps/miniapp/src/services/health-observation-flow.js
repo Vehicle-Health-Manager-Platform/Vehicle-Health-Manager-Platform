@@ -1,7 +1,7 @@
 import { observationBody, observationForm, HealthObservationError } from './health-observations.js'
 
 export function initialObservationState() { return { context: null, form: {}, busy: false, loaded: false, message: '', kind: '' } }
-export function createObservationFlow({ state, api, token, newKey, confirmClear, confirmReplacement }) {
+export function createObservationFlow({ state, api, token, newKey, confirmClear, confirmReplacement, confirmCorrection = async () => false }) {
   let generation = 0, visible = false, archive = 0, vehicle = 0, metric = '', pending = null
   const valid = (current, owner) => current === generation && owner === token() && visible
   function suspend() { generation++; visible = false; state.context = null; state.loaded = false; state.busy = false; state.form = {} }
@@ -17,24 +17,25 @@ export function createObservationFlow({ state, api, token, newKey, confirmClear,
     } catch (e) { if (valid(current, owner)) { state.message = e.message || '读数加载失败，请重试'; state.kind = e.kind || 'server' } }
     finally { if (current === generation) state.busy = false }
   }
-  async function save(clear = false) {
+  async function save(clear = false, operation = clear ? 'CLEAR' : 'RECORD') {
     if (state.busy || !visible || !state.context || state.kind === 'conflict') return
     const current = ++generation, owner = token(), context = state.context
     state.busy = true; state.message = ''; state.kind = ''
     try {
-      const body = observationBody(context, state.form, clear)
+      const body = observationBody(context, state.form, clear, operation)
       if (body.replace_source && !(await confirmReplacement())) return
+      if (operation === 'CORRECT' && !(await confirmCorrection())) return
       if (clear && !(await confirmClear())) return
       if (!valid(current, owner)) return
       const canonical = JSON.stringify(body)
       if (!pending || pending.owner !== owner || pending.archive !== archive || pending.canonical !== canonical) pending = { owner, archive, canonical, key: newKey() }
-      const operation = pending
-      await api.save(owner, context, body, operation.key)
+      const attempt = pending
+      await api.save(owner, context, body, attempt.key)
       if (!valid(current, owner)) return
-      if (pending === operation) pending = null
+      if (pending === attempt) pending = null
       state.busy = false
       await load()
-      if (visible && owner === token() && !state.kind) state.message = clear ? '本类当前读数已清空，原档案保留' : '本人读数已保存，尚未核验'
+      if (visible && owner === token() && !state.kind) state.message = clear ? '本类当前读数已清空，历史与原档案保留' : operation === 'CORRECT' ? '修正已保存，原读数仍在历史中' : '新增测量已保存，尚未核验'
     } catch (e) {
       if (valid(current, owner)) { state.message = e.message || '保存未成功，请重试'; state.kind = e.kind || 'server'; if (e instanceof HealthObservationError && e.kind === 'conflict') pending = null }
     } finally { if (current === generation) state.busy = false }

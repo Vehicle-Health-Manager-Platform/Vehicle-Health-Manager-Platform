@@ -26,14 +26,16 @@ export function validObservation(row,today){
   return row.status==='RECORDED_UNVERIFIED'&&row.revision>0&&id(row.archive_id)&&(row.recorded_date===null||date(row.recorded_date))&&validMeasurement(row.metric,row.measurement,today)
 }
 export function observationForm(context){return {measurement_name:'',value:'',unit:'',measured_on:'',method:'',provenance:'',...(context.observation.archive_id===context.archive_id?context.observation.measurement:{})}}
-export function observationBody(context,form,clear=false){
+export function observationBody(context,form,clear=false,operation=clear?'CLEAR':'RECORD'){
   if(!context||!healthMetrics.includes(context.metric)||!revision(context.observation?.revision)||context.observation.revision>=2147483647)throw new HealthObservationError('invalid','请先刷新来源读数')
   const measurement=clear?{}:Object.fromEntries(['measurement_name','value','unit','measured_on','method','provenance'].map(k=>[k,String(form[k]??'').trim()]))
   if(!clear&&!validMeasurement(context.metric,measurement,context.today))throw new HealthObservationError('invalid','请填写本类完整读数、单位、来源说明及有效日期')
-  return {metric:context.metric,expected_revision:context.observation.revision,measurement,
+  if(!['RECORD','CORRECT','CLEAR'].includes(operation)||(operation==='CLEAR')!==clear)throw new HealthObservationError('invalid','读数操作无效')
+  if(operation==='CORRECT'&&(context.observation.status!=='RECORDED_UNVERIFIED'||context.observation.archive_id!==context.archive_id))throw new HealthObservationError('invalid','请先读取同来源的当前读数再修正')
+  return {...(operation==='CORRECT'?{operation}:{}),metric:context.metric,expected_revision:context.observation.revision,measurement,
     replace_source:!clear&&context.observation.status!=='NOT_SET'&&context.observation.archive_id!==context.archive_id}
 }
-export function canReturnToHealth(pages){return Array.isArray(pages)&&pages.length>1&&['pages/archive/health','pages/archive/health-observation'].includes(pages[pages.length-2]?.route)}
+export function canReturnToHealth(pages){return Array.isArray(pages)&&pages.length>1&&['pages/archive/health','pages/archive/health-observation','pages/archive/health-history'].includes(pages[pages.length-2]?.route)}
 export function createHealthObservationApi({ baseUrl, runtime }) {
   const endpoint = (baseUrl || '').replace(/\/$/, '')
   function request(token, path, method, body, key, validate) {
@@ -64,6 +66,10 @@ export function createHealthObservationApi({ baseUrl, runtime }) {
       return request(token,`/api/vehicle/health-observations?vehicle_id=${vehicle}`,'GET',undefined,undefined,data=>exact(data,['vehicle_id','today','list'])&&data.vehicle_id===vehicle&&date(data.today)
         &&Array.isArray(data.list)&&data.list.length===6&&data.list.every((row,i)=>row.metric===healthMetrics[i]&&validObservation(row,data.today)))
     },
+    history(token,vehicle,metric,before=null,limit=20){
+      if(!id(vehicle)||!healthMetrics.includes(metric)||(before!==null&&(!revision(before)||before<1))||!Number.isInteger(limit)||limit<1||limit>50)throw new HealthObservationError('invalid','历史分页参数无效')
+      return request(token,`/api/vehicle/health-observation-history?vehicle_id=${vehicle}&metric=${metric}&limit=${limit}${before===null?'':`&before_revision=${before}`}`,'GET',undefined,undefined,data=>validHistoryPage(data,vehicle,metric,before,limit))
+    },
     context(token,archive,vehicle,metric){
       if(!id(archive)||!id(vehicle)||!healthMetrics.includes(metric))throw new HealthObservationError('invalid','来源或指标参数无效')
       return request(token,`/api/archive/${archive}/health-observation?metric=${metric}`,'GET',undefined,undefined,data=>exact(data,['vehicle_id','archive_id','archive_type','recorded_date','metric','today','observation'])
@@ -79,3 +85,19 @@ export function createHealthObservationApi({ baseUrl, runtime }) {
   }
 }
 export const healthObservationApi=createHealthObservationApi({baseUrl:apiOrigin,runtime:()=>apiRuntime})
+
+export const historyOperationLabels={RECORD:'新增测量',CORRECT:'修正当前读数',CLEAR:'清空当前值（保留历史）',MIGRATED_SNAPSHOT:'迁移时当前快照（此前履历未知）'}
+export function validHistoryPage(data,vehicle,metric,before=null,limit=20){
+  if(!exact(data,['vehicle_id','metric','today','list','has_more','next_before_revision'])||data.vehicle_id!==vehicle||data.metric!==metric||!date(data.today)||!Array.isArray(data.list)||data.list.length>limit||typeof data.has_more!=='boolean')return false
+  let previous=before===null?2147483648:before
+  for(const row of data.list){
+    if(!exact(row,['metric','revision','archive_id','recorded_date','measurement','status','operation','supersedes_revision','saved_at','corrected']))return false
+    const projection=Object.fromEntries(['metric','revision','archive_id','recorded_date','measurement','status'].map(k=>[k,row[k]]))
+    if(!validObservation(projection,data.today)||row.metric!==metric||row.revision<1||row.revision>=previous||!Object.hasOwn(historyOperationLabels,row.operation)||typeof row.corrected!=='boolean'
+      ||typeof row.saved_at!=='string'||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(row.saved_at)||!Number.isFinite(Date.parse(row.saved_at)))return false
+    if(row.operation==='CORRECT'?(row.supersedes_revision!==row.revision-1||row.status==='NOT_SET'):row.supersedes_revision!==null)return false
+    if(row.operation==='CLEAR'&&(row.status!=='NOT_SET'||row.corrected)||row.operation==='RECORD'&&row.status==='NOT_SET')return false
+    previous=row.revision
+  }
+  return data.has_more?data.list.length===limit&&data.next_before_revision===previous:data.next_before_revision===null
+}
