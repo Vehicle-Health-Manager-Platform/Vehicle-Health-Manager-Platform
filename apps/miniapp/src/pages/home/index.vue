@@ -39,6 +39,7 @@ function archive() { uni.switchTab({ url: '/pages/archive/index' }) }
       <VehicleList :selected-id="selectedOwnerVehicle?.vehicle_id || 0" @select="select" />
       <button v-if="selectedOwnerVehicle" class="secondary" @tap="uni.navigateTo({url:'/pages/community/experiences'})">查看同款施工经验</button>
       <view v-if="selectedOwnerVehicle" class="summary">
+        <button class="secondary" @tap="uni.navigateTo({url:'/pages/archive/health?vehicle_id=' + selectedOwnerVehicle.vehicle_id})">查看六类本人当前读数</button>
         <text class="section">个人目标与提醒</text>
         <text class="detail">来自本人档案设置，到日期或保养里程才提示；未设置不表示正常。</text>
         <text v-if="reminders.busy" class="detail">正在读取提醒…</text>
