@@ -313,6 +313,33 @@ def main():
                     "due_mileage": {"type": ["integer", "null"], "minimum": 0, "maximum": 2147483647},
                     "replace_source": {"type": "boolean", "default": False}}}}}}
         document["paths"].setdefault(path, {})[method] = op
+    for method, summary in (("get", "本人来源结构化资料"), ("put", "替换或清空本人结构化资料")):
+        path = "/api/archive/{id}/structured"
+        op = operation(method, path, summary, "F03,F04")
+        op["x-roles"] = "正式车主"
+        op["x-implementation-status"] = "implemented"
+        op["description"] = "本人未核验资料；保养/保险/年检类型白名单、有效会话与当前归属。no-store；不改原档案/里程/目标或分享白名单。详见ARCHIVE_STRUCTURED.md。"
+        op["responses"].update({"404": {"description": "有效本人来源不可用"}, "409": {"description": "资料版本变化"}, "503": {"description": "数据库或审计失败"}})
+        if method == "put":
+            op["parameters"].append({"name": "Idempotency-Key", "in": "header", "required": True, "schema": {"type": "string", "format": "uuid"}})
+            typed = {
+                "provider_name": {"type": "string", "minLength": 1, "maxLength": 100},
+                "performed_mileage": {"type": "integer", "minimum": 0, "maximum": 2147483647},
+                "service_items": {"type": "array", "minItems": 1, "maxItems": 20, "uniqueItems": True, "items": {"type": "string", "minLength": 1, "maxLength": 80}},
+                "insurer_name": {"type": "string", "minLength": 1, "maxLength": 100},
+                "policy_number": {"type": "string", "minLength": 1, "maxLength": 64},
+                "coverage_type": {"type": "string", "enum": ["COMPULSORY", "COMMERCIAL", "COMBINED", "OTHER"]},
+                "coverage_start": {"type": "string", "format": "date"}, "coverage_end": {"type": "string", "format": "date"},
+                "inspection_station": {"type": "string", "minLength": 1, "maxLength": 100},
+                "inspection_result": {"type": "string", "enum": ["PASSED", "FAILED", "UNKNOWN"]},
+                "valid_until": {"type": "string", "format": "date"},
+            }
+            variants = [["provider_name", "performed_mileage", "service_items"], ["insurer_name", "policy_number", "coverage_type", "coverage_start", "coverage_end"], ["inspection_station", "inspection_result", "valid_until"]]
+            op["requestBody"] = {"required": True, "content": {"application/json": {"schema": {
+                "type": "object", "additionalProperties": False, "required": ["expected_revision", "fields"], "properties": {
+                    "expected_revision": {"type": "integer", "minimum": 0, "maximum": 2147483646},
+                    "fields": {"anyOf": [{"type": "object", "additionalProperties": False, "properties": {name: typed[name] for name in names}} for names in variants]}}}}}}
+        document["paths"].setdefault(path, {})[method] = op
     project_fields = {
         "id": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
         "project_name": {"type": "string"}, "category": {"type": "integer", "minimum": 1, "maximum": 6},

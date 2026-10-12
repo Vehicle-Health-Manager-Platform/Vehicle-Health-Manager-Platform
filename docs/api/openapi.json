@@ -6122,6 +6122,258 @@
         "description": "用户填写保养/保险/年检目标，Asia/Shanghai日期或登记里程达到时提醒。不推断养护周期/法定日期。no-store。详见ARCHIVE_REMINDERS.md。"
       }
     },
+    "/api/archive/{id}/structured": {
+      "get": {
+        "summary": "本人来源结构化资料",
+        "operationId": "get_api_archive_id_structured",
+        "tags": [
+          "archive"
+        ],
+        "x-feature-ids": [
+          "F03",
+          "F04"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "有效本人来源不可用"
+          },
+          "409": {
+            "description": "资料版本变化"
+          },
+          "503": {
+            "description": "数据库或审计失败"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "正式车主",
+        "x-implementation-status": "implemented",
+        "description": "本人未核验资料；保养/保险/年检类型白名单、有效会话与当前归属。no-store；不改原档案/里程/目标或分享白名单。详见ARCHIVE_STRUCTURED.md。"
+      },
+      "put": {
+        "summary": "替换或清空本人结构化资料",
+        "operationId": "put_api_archive_id_structured",
+        "tags": [
+          "archive"
+        ],
+        "x-feature-ids": [
+          "F03",
+          "F04"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "有效本人来源不可用"
+          },
+          "409": {
+            "description": "资料版本变化"
+          },
+          "503": {
+            "description": "数据库或审计失败"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "正式车主",
+        "x-implementation-status": "implemented",
+        "description": "本人未核验资料；保养/保险/年检类型白名单、有效会话与当前归属。no-store；不改原档案/里程/目标或分享白名单。详见ARCHIVE_STRUCTURED.md。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "expected_revision",
+                  "fields"
+                ],
+                "properties": {
+                  "expected_revision": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 2147483646
+                  },
+                  "fields": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "provider_name": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 100
+                          },
+                          "performed_mileage": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 2147483647
+                          },
+                          "service_items": {
+                            "type": "array",
+                            "minItems": 1,
+                            "maxItems": 20,
+                            "uniqueItems": true,
+                            "items": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 80
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "insurer_name": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 100
+                          },
+                          "policy_number": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 64
+                          },
+                          "coverage_type": {
+                            "type": "string",
+                            "enum": [
+                              "COMPULSORY",
+                              "COMMERCIAL",
+                              "COMBINED",
+                              "OTHER"
+                            ]
+                          },
+                          "coverage_start": {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          "coverage_end": {
+                            "type": "string",
+                            "format": "date"
+                          }
+                        }
+                      },
+                      {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "inspection_station": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 100
+                          },
+                          "inspection_result": {
+                            "type": "string",
+                            "enum": [
+                              "PASSED",
+                              "FAILED",
+                              "UNKNOWN"
+                            ]
+                          },
+                          "valid_until": {
+                            "type": "string",
+                            "format": "date"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/service/project/{id}": {
       "get": {
         "summary": "车主标准服务项目详情",
