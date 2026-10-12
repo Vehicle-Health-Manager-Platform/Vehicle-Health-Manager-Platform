@@ -1,5 +1,7 @@
 # 下一步规划
 
+> **2026-10-12 当前队列**：下一独立单元 R3c3 限时分享/撤销，随后 R4 健康/提醒/商家发现/结构化 AI → R5 券 → R6 邀请 → R7 三端进度/取车对比/授权档案/通知草稿 → R8 积分/考核经营/社区 → R9 外部接入与交付。OCR/VIN 与正式短信/身份/资金继续后置，不阻塞可独立业务；无 PC 后台。详见[实施规划](THREE_ROLE_BUSINESS_PLAN_2026-10-12.md)和[缺口审计](DELIVERY_GAP_AUDIT_2026-10-12.md)。下方保持历史记录。
+
 > **2026-10-11 R1c–R3c2 阶段 PR #85–#118 已全部合并至 main，六项 CI 均通过。下一步 R3c3 限时分享授权/撤销**：先明确分享范围、接收方式、有效期、撤销即时失效与访问审计，再按规格→后端→车主微信小程序→验收分段上传。小程序 331/331、mp-weixin/H5 构建通过；#118 backend CI 验证 500/501 条与 PDF 3 MiB 边界。真机 PDF 阅读器验收留 R9；OCR/VIN 供应商未开通，正式短信/身份/资金后置；不做 PC。验收见[R3c2记录](R3C2_ARCHIVE_REPORT_ACCEPTANCE_EXECUTION.md)和[验收证据](../testing/LOCAL_ARCHIVE_REPORT_ACCEPTANCE.md)。下方历史条目记录各阶段当时状态。
 
 > **2026-10-11 R3c1已实施待合并**：规格#111、后端#112、微信#113、验收#114逐阶段上传。车主PAID二维码不含预约码，本店扫码先授权context再导航；新表单8图含独立FUEL，旧七图可读/重放且不补造油表。接车MySQL15项+履约13项、mock业务HTTP6项，微信319/319、微信/H5构建通过；六CI/全量结果见#114正文。原生扫码/二维码视觉/真机未验收，OCR/VIN/里程识别仍欠。见[执行](R3C1_PICKUP_SCAN_FUEL_EXECUTION.md)、[验收](../testing/LOCAL_PICKUP_SCAN_FUEL_ACCEPTANCE.md)。正式身份资金设备R9，无PC；以下保留历史。

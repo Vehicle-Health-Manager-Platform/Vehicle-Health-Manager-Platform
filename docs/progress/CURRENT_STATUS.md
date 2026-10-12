@@ -1,5 +1,7 @@
 # 当前进度
 
+> **2026-10-12 交付审计**：GitHub main 核对为 `bd10ae4`（#119），业务已推进至 R3c2；README 图集 #120 是独立文档 PR。最新 F01–F20 与三端缺口见[审计](DELIVERY_GAP_AUDIT_2026-10-12.md)，后续实施见[规划](THREE_ROLE_BUSINESS_PLAN_2026-10-12.md)。本次只核对并规划，没有新增业务或重新执行正式验收。
+
 > **2026-10-11 R1c–R3c2 已合并至 main**：阶段 PR #85–#118 已按依赖顺序合并，六项 CI 均通过。R3c2 完成本人档案 PDF、日期范围、普通 HTTPS/云托管双传输、原生打开与临时文件生命周期；小程序 **331/331**、mp-weixin/H5 构建通过，后端 CI 验证 500/501 条边界和 PDF 3 MiB 上限。真实微信 PDF 阅读器/视觉验收仍列 R9。**下一步 R3c3 限时分享授权/撤销**，先明确范围、接收方式、有效期、撤销即时失效和访问审计，再分阶段实施。短信/正式身份/真实资金及 PC 后台不在当前交付范围；原始交付文档保持原样。执行见[收口验收记录](R3C2_ARCHIVE_REPORT_ACCEPTANCE_EXECUTION.md)及[验收证据](../testing/LOCAL_ARCHIVE_REPORT_ACCEPTANCE.md)。
 
 
