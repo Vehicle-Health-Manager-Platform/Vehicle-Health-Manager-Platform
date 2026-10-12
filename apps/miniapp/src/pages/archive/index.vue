@@ -78,6 +78,7 @@ function add(mode = 'manual') { if (vehicle.value) uni.navigateTo({ url: archive
       <button v-if="vehicle" class="secondary" @tap="uni.navigateTo({url:'/pages/community/my-cards'})">我的经验卡片</button>
       <button v-if="vehicle" class="secondary" @tap="uni.navigateTo({url:'/pages/community/experiences'})">同款施工经验</button>
       <button v-if="vehicle" class="secondary" @tap="uni.navigateTo({url:'/pages/archive/shares?vehicle_id=' + vehicle.vehicle_id})">分享档案摘要与撤销</button>
+      <button v-if="vehicle" class="secondary" @tap="uni.navigateTo({url:'/pages/archive/reminders?vehicle_id=' + vehicle.vehicle_id})">个人目标与提醒</button>
       <view v-if="vehicle" class="records" data-testid="archive-records">
         <view class="report-export" data-testid="archive-report-export">
           <view class="report-head">
@@ -112,6 +113,7 @@ function add(mode = 'manual') { if (vehicle.value) uni.navigateTo({ url: archive
           <view class="record-top"><text class="name">{{ item.title }}</text><text class="type">{{ labels[item.archive_type - 1] }} · {{ archiveInputTypeName(item.input_type) }}</text></view>
           <text class="copy">{{ item.recorded_date }}<text v-if="item.mileage !== null"> · {{ item.mileage }} km</text></text>
           <text v-if="item.notes" class="copy">{{ item.notes }}</text>
+          <button v-if="[1,3,7].includes(item.archive_type) && [1,3].includes(item.input_type)" class="secondary" @tap="uni.navigateTo({url:'/pages/archive/reminder?vehicle_id=' + vehicle.vehicle_id + '&archive_id=' + item.archive_id})">设置本类目标与提醒</button>
           <view v-if="item.input_type === 4" class="service-source" data-testid="service-archive-source">
             <text v-if="item.test_mode" class="error" data-testid="archive-test-warning">测试施工记录，未真实扣款</text>
             <text class="copy">实际工时 {{ item.work_minutes }} 分钟</text>

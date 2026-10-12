@@ -8,16 +8,26 @@ import { selectedOwnerVehicle, selectOwnerVehicle } from '../../services/owner-v
 import { archiveApi } from '../../services/archives.js'
 import { createHomeSummaryFlow, initialHomeSummaryState } from '../../services/home-summary-flow.js'
 import { archiveInputTypeName } from '../../services/archive-entry-mode.js'
+import ArchiveReminderList from '../../components/ArchiveReminderList.vue'
+import { archiveReminderApi } from '../../services/archive-reminders.js'
+import { createReminderListFlow, initialReminderListState } from '../../services/archive-reminder-flow.js'
 
 const state = reactive(initialHomeSummaryState())
 const flow = createHomeSummaryFlow({ state, api: archiveApi, token: () => ownerSession.accessToken })
+const reminders = reactive(initialReminderListState())
+const reminderFlow = createReminderListFlow({ state: reminders, api: archiveReminderApi, token: () => ownerSession.accessToken })
 const typeNames = ['保养', '维修', '保险', '事故', '改装', '违章', '年检']
 let visible = false
 watch(() => selectedOwnerVehicle.value, row => { if (visible) flow.select(row); else flow.reset() }, { flush: 'sync' })
 watch(() => ownerSession.accessToken, flow.reset, { flush: 'sync' })
+watch(() => selectedOwnerVehicle.value, row => { if (visible) reminderFlow.select(row?.vehicle_id || 0); else reminderFlow.reset() }, { flush: 'sync' })
+watch(() => ownerSession.accessToken, reminderFlow.reset, { flush: 'sync' })
 onShow(() => { visible = true; if (selectedOwnerVehicle.value) { flow.select(selectedOwnerVehicle.value); flow.load() } })
 onHide(() => { visible = false; flow.suspend() })
 onUnload(() => { visible = false; flow.reset() })
+onShow(() => reminderFlow.resume(selectedOwnerVehicle.value?.vehicle_id || 0))
+onHide(() => reminderFlow.suspend())
+onUnload(() => reminderFlow.suspend())
 function select(item) { selectOwnerVehicle(item) }
 function login() { clearOwnerSession(); uni.navigateTo({ url: '/pages/owner/index' }) }
 function archive() { uni.switchTab({ url: '/pages/archive/index' }) }
@@ -28,6 +38,16 @@ function archive() { uni.switchTab({ url: '/pages/archive/index' }) }
     <template #content>
       <VehicleList :selected-id="selectedOwnerVehicle?.vehicle_id || 0" @select="select" />
       <button v-if="selectedOwnerVehicle" class="secondary" @tap="uni.navigateTo({url:'/pages/community/experiences'})">查看同款施工经验</button>
+      <view v-if="selectedOwnerVehicle" class="summary">
+        <text class="section">个人目标与提醒</text>
+        <text class="detail">来自本人档案设置，到日期或保养里程才提示；未设置不表示正常。</text>
+        <text v-if="reminders.busy" class="detail">正在读取提醒…</text>
+        <text v-if="reminders.loaded" class="detail">核对日期：{{ reminders.today }} · 登记里程：{{ reminders.currentMileage === null ? '未知' : `${reminders.currentMileage} 公里` }}</text>
+        <ArchiveReminderList v-if="reminders.loaded" :rows="reminders.rows" :vehicle-id="reminders.vehicleId" />
+        <text v-if="reminders.message" class="error">{{ reminders.message }}</text>
+        <button v-if="['unauthorized','forbidden'].includes(reminders.kind)" class="secondary" @tap="login">重新登录</button>
+        <button v-else class="secondary" :disabled="reminders.busy" @tap="reminderFlow.load">刷新提醒</button>
+      </view>
       <view v-if="state.vehicle" class="summary" data-testid="home-archive-summary">
         <text class="eyebrow">当前车辆</text>
         <text class="name">{{ state.vehicle.model_name || '车型信息暂不可用' }}</text>
