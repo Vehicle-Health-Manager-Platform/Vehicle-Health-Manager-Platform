@@ -4,6 +4,7 @@ import { onShow, onHide, onUnload } from '@dcloudio/uni-app'
 import OwnerTabShell from '../../components/OwnerTabShell.vue'
 import VehicleList from '../../components/VehicleList.vue'
 import { ownerSession, clearOwnerSession } from '../../services/owner-session.js'
+import { healthMetrics,healthLabels } from '../../services/health-observations.js'
 import { archiveApi, archiveFailure } from '../../services/archives.js'
 import { imageApi } from '../../services/private-images.js'
 import { selectedOwnerVehicle, selectOwnerVehicle } from '../../services/owner-vehicle-selection.js'
@@ -54,6 +55,13 @@ async function load(more = false) {
     const safe = archiveFailure(error); message.value = safe.message; kind.value = safe.kind
   } finally { if (current === generation) busy.value = false }
 }
+function chooseHealth(item) {
+  const owner=ownerSession.accessToken,current=generation,vehicleId=vehicle.value?.vehicle_id
+  uni.showActionSheet({itemList:healthMetrics.map(key=>healthLabels[key]),success:result=>{
+    if(!visible||current!==generation||owner!==ownerSession.accessToken||vehicleId!==vehicle.value?.vehicle_id||!healthMetrics[result.tapIndex])return
+    uni.navigateTo({url:`/pages/archive/health-observation?vehicle_id=${vehicleId}&archive_id=${item.archive_id}&metric=${healthMetrics[result.tapIndex]}`})
+  }})
+}
 async function preview(item, id) {
   const token = ownerSession.accessToken, current = generation
   try {
@@ -78,6 +86,7 @@ function add(mode = 'manual') { if (vehicle.value) uni.navigateTo({ url: archive
       <button v-if="vehicle" class="secondary" @tap="uni.navigateTo({url:'/pages/community/my-cards'})">我的经验卡片</button>
       <button v-if="vehicle" class="secondary" @tap="uni.navigateTo({url:'/pages/community/experiences'})">同款施工经验</button>
       <button v-if="vehicle" class="secondary" @tap="uni.navigateTo({url:'/pages/archive/shares?vehicle_id=' + vehicle.vehicle_id})">分享档案摘要与撤销</button>
+      <button v-if="vehicle" class="secondary" @tap="uni.navigateTo({url:'/pages/archive/health?vehicle_id=' + vehicle.vehicle_id})">六类本人当前读数</button>
       <button v-if="vehicle" class="secondary" @tap="uni.navigateTo({url:'/pages/archive/reminders?vehicle_id=' + vehicle.vehicle_id})">个人目标与提醒</button>
       <view v-if="vehicle" class="records" data-testid="archive-records">
         <view class="report-export" data-testid="archive-report-export">
@@ -113,6 +122,7 @@ function add(mode = 'manual') { if (vehicle.value) uni.navigateTo({ url: archive
           <view class="record-top"><text class="name">{{ item.title }}</text><text class="type">{{ labels[item.archive_type - 1] }} · {{ archiveInputTypeName(item.input_type) }}</text></view>
           <text class="copy">{{ item.recorded_date }}<text v-if="item.mileage !== null"> · {{ item.mileage }} km</text></text>
           <text v-if="item.notes" class="copy">{{ item.notes }}</text>
+          <button v-if="[1,2].includes(item.archive_type) && [1,3].includes(item.input_type)" class="secondary" @tap="chooseHealth(item)">记录/修正本类读数</button>
           <button v-if="[1,3,7].includes(item.archive_type) && [1,3].includes(item.input_type)" class="secondary" @tap="uni.navigateTo({url:'/pages/archive/structured?vehicle_id=' + vehicle.vehicle_id + '&archive_id=' + item.archive_id})">查看/填写本条资料</button>
           <button v-if="[1,3,7].includes(item.archive_type) && [1,3].includes(item.input_type)" class="secondary" @tap="uni.navigateTo({url:'/pages/archive/reminder?vehicle_id=' + vehicle.vehicle_id + '&archive_id=' + item.archive_id})">设置本类目标与提醒</button>
           <view v-if="item.input_type === 4" class="service-source" data-testid="service-archive-source">
