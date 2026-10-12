@@ -1,5 +1,7 @@
 # 当前进度
 
+> **2026-10-12 R4a1 已编码分段上传，待合并**：后端 #125、微信 #126；本人保养日期/里程与保险/年检日期目标、来源替换/停用、三类列表和首页摘要已实现。用户确认仅目标到达提醒；来源失效不触发，未知不当正常。后端定向8/8、微信351/351、mp-weixin/H5及新页面产物通过；全量CI见最新PR。下一单元 R4a2 结构化字段与数据来源，六指标/健康评分未实现，真机/正式身份仍未验。详见[执行](R4A1_ARCHIVE_REMINDERS_EXECUTION.md)。下方为历史记录。
+
 > **2026-10-12 R3c3 已实施并分阶段上传，待合并**：后端 [#122](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/122)、微信 [#123](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/123)。用户确认登录车主持链接只读查看；固定字段摘要、1/24/168小时、撤销/过期、源账号/车辆归属、幂等及访问审计已实现。微信 **341/341**、mp-weixin/H5构建及新增原生页面产物通过；后端真实MySQL/HTTP权限/并发验证见[执行记录](R3C3_ARCHIVE_SHARE_EXECUTION.md)。CI表数断言已修复，最终状态以PR检查为准。原生分享/真机/真实身份仍待验收；下一独立单元 **R4a1 档案结构化与可追溯提醒**，不凭空计算健康分数。下方保留历史。
 
 > **2026-10-12 交付审计**：GitHub main 核对为 `bd10ae4`（#119），业务已推进至 R3c2；README 图集 #120 是独立文档 PR。最新 F01–F20 与三端缺口见[审计](DELIVERY_GAP_AUDIT_2026-10-12.md)，后续实施见[规划](THREE_ROLE_BUSINESS_PLAN_2026-10-12.md)。本次只核对并规划，没有新增业务或重新执行正式验收。

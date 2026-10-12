@@ -1,5 +1,9 @@
 # 项目进度与下一步规划
 
+- [R4a1 目标提醒执行记录](R4A1_ARCHIVE_REMINDERS_EXECUTION.md)：#125后端、#126微信、到达提醒规则、测试及合并依赖。
+- [R4a2 下一步方案](R4A2_STRUCTURED_ARCHIVE_NEXT_PLAN.md)：结构化字段、可追溯来源和健康评分前置门槛。
+
+
 本目录集中记录项目的当前状态、下一步工作和阶段完成情况。
 
 - [R3c3 档案摘要分享执行记录](R3C3_ARCHIVE_SHARE_EXECUTION.md)：后端#122、微信#123、迁移、验收范围、合并依赖及R4a1下一步。
