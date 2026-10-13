@@ -2,13 +2,14 @@ import { initialQuoteListState,createQuoteListFlow } from './quote-flow.js'
 import { nativeRegion } from './merchant-discovery.js'
 import { serviceFailure } from './service-catalog.js'
 import { nearbyApi as defaultNearbyApi, requestNativeLocation } from './nearby-merchants.js'
+import { ratedQuotesApi } from './rated-quotes.js'
 
 export const initialRegionalQuoteState=()=>({...initialQuoteListState(),regionCode:null,regionNames:[],position:null,locating:false,locationMessage:''})
-export function createRegionalQuoteFlow({state,api,token,project,nearbyApi=defaultNearbyApi,locate=requestNativeLocation}){
+export function createRegionalQuoteFlow({state,api,token,project,nearbyApi=defaultNearbyApi,locate=requestNativeLocation,ratedApi=ratedQuotesApi}){
   let visible=false,generation=0,opened=null
   const list=createQuoteListFlow({state,token,fetchPage:async(owner,page,sort)=>{
     const current=generation
-    try{return state.position ? await nearbyApi.list(owner,project(),state.position,sort,page,state.regionCode) : await api.ownerList(owner,project(),sort,page,state.regionCode)}
+    try{return sort==='rating_desc'?await ratedApi.list(owner,project(),page,state.regionCode):state.position ? await nearbyApi.list(owner,project(),state.position,sort,page,state.regionCode) : await api.ownerList(owner,project(),sort,page,state.regionCode)}
     catch(e){
       if(visible&&current===generation&&owner===token()&&['unauthorized','forbidden','missing'].includes(e.kind)){
         state.items=[];state.page=0;state.total=0;state.loaded=false;state.position=null;state.locating=false
@@ -32,7 +33,7 @@ export function createRegionalQuoteFlow({state,api,token,project,nearbyApi=defau
     load(more=false){if(visible)return list.load(more)},
     retry(){if(visible)return list.retry()},
     nearby,
-    sort(value){if(visible&&(['price_asc','price_desc'].includes(value)||value==='distance_asc'&&state.position)){clear();state.sort=value;return list.load()}},
+    sort(value){if(visible&&(['price_asc','price_desc','rating_desc'].includes(value)||value==='distance_asc'&&state.position)){clear();if(value==='rating_desc'){state.position=null;state.locationMessage=''}state.sort=value;return list.load()}},
     beginRegion(){if(visible&&token())opened={generation,owner:token()}},
     selectRegion(detail){
       const selection=opened;opened=null

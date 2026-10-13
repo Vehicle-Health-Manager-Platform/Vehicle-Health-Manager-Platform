@@ -43,12 +43,14 @@ function back() { uni.switchTab({ url: '/pages/service/index' }) }
         <!-- #endif -->
         <text v-if="quotes.locationMessage" class="copy" role="status">{{ quotes.locationMessage }}</text>
         <button v-if="quotes.position" class="action" :disabled="quotes.busy" @tap="quoteFlow.sort('distance_asc')">按直线距离从近到远</button>
-        <text class="copy">{{ quotes.position ? '距离基于本次定位和店长确认的位置，仅为直线距离；按距离排序时，未知距离排在已知距离之后。' : '可手选区域或按价格查看门店。' }} 暂无公开评分，没有匹配时可更换区域或查看全部。</text>
+        <text class="copy">{{ quotes.position ? '距离基于本次定位和店长确认的位置，仅为直线距离；按距离排序时，未知距离排在已知距离之后。' : '可手选区域或按价格、有效公开星级查看门店。' }} 无公开样本时星级未知，没有匹配时可更换区域或查看全部。</text>
         <view><button class="action" :disabled="quotes.busy" @tap="quoteFlow.sort('price_asc')">价格从低到高</button><button class="action" :disabled="quotes.busy" @tap="quoteFlow.sort('price_desc')">价格从高到低</button></view>
+        <button class="action" :disabled="quotes.busy" @tap="quoteFlow.sort('rating_desc')">按有效公开星级从高到低</button>
         <text v-if="quotes.busy" class="copy" role="status">正在加载商家报价…</text>
         <text v-if="quotes.loaded && !quotes.items.length && !quotes.busy" class="copy">暂无在售商家报价。</text>
         <view v-if="quotes.message"><text class="error">{{ quotes.message }}</text><button v-if="['unauthorized','forbidden'].includes(quotes.failureKind)" class="action" @tap="login">重新登录</button><button v-else class="action" :disabled="quotes.busy" @tap="quoteFlow.retry">重试商家报价</button></view>
         <view v-for="row in quotes.items" :key="row.merchant_project_id" class="quote" :data-testid="`owner-quote-${row.merchant_id}`">
+          <text v-if="row.rating_summary" class="copy">{{row.rating_summary.average_rating===null?'暂无有效公开星级':row.rating_summary.average_rating+' 星 · '+row.rating_summary.count+' 个有效公开样本'}}</text>
           <text class="name">{{ row.merchant_name }}</text><text class="copy">{{ row.address }}</text><text v-if="quotes.position" class="copy">{{ distanceLabel(row) }}</text><text class="price">商家报价 ¥{{ row.price }}</text><button class="action" @tap="uni.navigateTo({url:`/pages/service/merchant?id=${row.merchant_id}&project_id=${id}`})">查看商家详情</button><button class="action" @tap="uni.navigateTo({url:`/pages/order/book?id=${row.merchant_project_id}`})">预约此服务</button>
         </view>
         <button v-if="quotes.items.length<quotes.total" class="action" :disabled="quotes.busy" @tap="quoteFlow.load(true)">加载更多商家报价</button>

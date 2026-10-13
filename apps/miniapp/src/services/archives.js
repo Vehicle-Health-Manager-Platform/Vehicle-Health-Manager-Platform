@@ -25,7 +25,7 @@ export function archiveBody(fields) {
   const fileIds = fields.fileIds || []
   const mileageText = fields.mileage === '' || fields.mileage == null ? '' : String(fields.mileage)
   const mileage = mileageText === '' ? null : Number(mileageText)
-  if (!id(fields.vehicleId) || ![1, 3].includes(inputType) || !Number.isInteger(fields.archiveType) || fields.archiveType < 1 || fields.archiveType > 7
+  if (!id(fields.vehicleId) || ![1, 3].includes(inputType) || !Number.isInteger(fields.archiveType) || fields.archiveType < 1 || fields.archiveType > 10
     || !validDate(fields.recordedDate)
     || typeof title !== 'string' || !title.length || [...title].length > 80
     || [...notes].length > 1000 || (mileage !== null && (!/^\d+$/.test(mileageText) || !Number.isInteger(mileage) || mileage > 2147483647))
@@ -64,7 +64,7 @@ export function createArchiveApi({ baseUrl, runtime }) {
         data => Array.isArray(data?.list) && data.page === page && data.page_size === 20
           && Number.isSafeInteger(data.total) && data.total >= data.list.length
           && data.list.every(row => id(row.archive_id) && row.vehicle_id === vehicleId
-            && Number.isInteger(row.archive_type) && row.archive_type >= 1 && row.archive_type <= 7
+            && Number.isInteger(row.archive_type) && row.archive_type >= 1 && row.archive_type <= 10
             && [1, 3, 4].includes(row.input_type)
             && (row.input_type !== 4 || (['order_id', 'report_id', 'redemption_id'].every(k => id(row.source?.[k]))
               && (row.source.review_id === null || id(row.source.review_id))

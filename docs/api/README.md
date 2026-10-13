@@ -1,5 +1,7 @@
 # API 文档
 
+> R4完整健康/人工档案/提醒、星级报价与搜索契约见[R4_COMPLETION.md](R4_COMPLETION.md)。
+
 > R4c3同快照方案预约复核见[PLAN_BOOKING.md](PLAN_BOOKING.md)。
 
 > R4c2本人本地证据与精确车型适用性见[VEHICLE_PLAN_EVIDENCE.md](VEHICLE_PLAN_EVIDENCE.md)。

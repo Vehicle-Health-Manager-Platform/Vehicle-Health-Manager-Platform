@@ -127,12 +127,14 @@ run_sql_file docs/sql/migrations/V035__review_summary_consent.sql
 run_sql_file docs/sql/migrations/V035__review_summary_consent.sql
 run_sql_file docs/sql/migrations/V036__project_model_applicability.sql
 run_sql_file docs/sql/migrations/V036__project_model_applicability.sql
+run_sql_file docs/sql/migrations/V037__health_policies_and_confirmations.sql
+run_sql_file docs/sql/migrations/V037__health_policies_and_confirmations.sql
 [[ "$(query "SELECT COUNT(*) FROM review_summary_consent")" == 0 ]] || { echo "AI consent was inferred" >&2; exit 1; }
 [[ "$(query "SELECT COUNT(*) FROM public_review_text")" == 0 ]] || { echo "Private review texts were backfilled" >&2; exit 1; }
 [[ "$(query "SELECT COUNT(*) FROM review_publication")" == 0 ]] || { echo "Legacy reviews were published" >&2; exit 1; }
 
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
-[[ "$tables" == 77 ]] || { echo "Expected 77 tables after V036, got $tables" >&2; exit 1; }
+[[ "$tables" == 80 ]] || { echo "Expected 80 tables after V037, got $tables" >&2; exit 1; }
 [[ "$(query "SELECT COUNT(*) FROM merchant_location")" == 0 ]] || { echo 'V032 must not infer legacy coordinates' >&2; exit 1; }
 catalog_columns=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND ((table_name IN ('brand','series','model','standard_project') AND column_name IN ('sort_order','source_note','revision')) OR (table_name IN ('brand','series','model') AND column_name='status') OR (table_name='operator_account' AND column_name='can_catalog'))")
 [[ "$catalog_columns" == 16 ]] || { echo "V022 catalogue fields incomplete: $catalog_columns/16" >&2; exit 1; }
@@ -226,4 +228,6 @@ done
 [[ "$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema='$database' AND table_name='archive_report_share' AND index_name IN ('uk_archive_share_public','uk_archive_share_hash') AND non_unique=0")" == 2 ]] || { echo 'V027 share unique indexes missing' >&2; exit 1; }
 [[ "$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema='$database' AND table_name='archive_reminder' AND index_name='uk_archive_reminder_owner_vehicle_type' AND non_unique=0")" == 1 ]] || { echo 'V028 reminder uniqueness missing' >&2; exit 1; }
 [[ "$(query 'SELECT COUNT(*) FROM project_model_applicability')" == 0 ]] || { echo 'Applicability must not seed technical rules' >&2; exit 1; }
-echo "MySQL 8.0 schema: 77 tables after V036; repeat migration and synthetic seed passed"
+[[ "$(query 'SELECT COUNT(*) FROM model_health_policy')" == 0 ]] || { echo 'Must not seed health thresholds' >&2; exit 1; }
+[[ "$(query 'SELECT COUNT(*) FROM health_evidence_confirmation')" == 0 ]] || { echo 'Must not confirm historical observations' >&2; exit 1; }
+echo "MySQL 8.0 schema: 80 tables after V037; repeat migration and synthetic seed passed"

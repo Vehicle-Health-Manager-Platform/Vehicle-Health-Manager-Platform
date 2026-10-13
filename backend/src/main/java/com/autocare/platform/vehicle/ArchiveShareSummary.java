@@ -18,6 +18,7 @@ public final class ArchiveShareSummary {
         summary.put("undated_count", report.undatedCount());
         var rows = summary.putArray("entries");
         for (var row : report.entries()) {
+            if(row.archiveType()>7)continue;
             ObjectNode item = rows.addObject();
             item.put("archive_type", row.archiveType());
             item.put("input_type", row.inputType());

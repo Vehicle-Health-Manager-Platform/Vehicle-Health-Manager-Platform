@@ -4,6 +4,7 @@ import csv
 import json
 import re
 from pathlib import Path
+from r4_openapi import add_r4_completion
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -193,7 +194,7 @@ def main():
                    "then": {"required": ["file_ids"], "properties": {"file_ids": {"minItems": 1}}}}],
         "properties": {
             "vehicle_id": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
-            "archive_type": {"type": "integer", "minimum": 1, "maximum": 7},
+            "archive_type": {"type": "integer", "minimum": 1, "maximum": 10},
             "input_type": {"type": "integer", "enum": [1, 3], "default": 3,
                            "description": "1拍照，须有1–5张图片；3手动，可无图片；省略取3"},
             "recorded_date": {"type": "string", "format": "date"},
@@ -1468,6 +1469,7 @@ def main():
     item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "required": ["data"], "properties": {"data": {"$ref": "#/components/schemas/PlanBookingContext"}}}]}
     document["paths"][path] = {"post": item}
 
+    add_r4_completion(document, operation)
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     count = sum(len(item) for item in document["paths"].values())
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

@@ -1,5 +1,7 @@
 # 独立公开星级 API（R4b2b1）
 
+> 2026-10-13：新增当前公开星级报价排序，实时复用本契约来源资格/授权，无样本null，见[R4完整契约](R4_COMPLETION.md)。
+
 2026-10-13。完整规格见[设计](../superpowers/specs/2026-10-13-r4b2b1-public-ratings-design.md)。所有接口有效车主身份、no-store、单层ApiResponse，数据库未配置/失败503且不泄露底层错误。
 
 ## 本人授权

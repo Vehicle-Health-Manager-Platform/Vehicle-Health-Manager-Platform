@@ -20,7 +20,7 @@ public record ArchiveInput(long vehicleId, int archiveType, LocalDate recordedDa
         body.fieldNames().forEachRemaining(field -> { if (!allowed.contains(field)) throw invalid(); });
         long vehicleId = id(body.path("vehicle_id"));
         JsonNode type = body.path("archive_type");
-        if (!type.isIntegralNumber() || !type.canConvertToInt() || type.intValue() < 1 || type.intValue() > 7) throw invalid();
+        if (!type.isIntegralNumber() || !type.canConvertToInt() || type.intValue() < 1 || type.intValue() > 10) throw invalid();
         JsonNode source = body.path("input_type");
         int inputType = source.isMissingNode() ? 3 : source.isIntegralNumber() && source.canConvertToInt() ? source.intValue() : 0;
         if (inputType != 1 && inputType != 3) throw invalid();

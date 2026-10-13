@@ -43,6 +43,7 @@ blank()
   <view class="reservation-page">
     <text class="reservation-title">标准库维护</text>
     <button v-if="operatorSession.canCatalog" @tap="uni.navigateTo({url:'/pages/operator/project-applicability'})">维护项目—车型适用性规则</button>
+    <button v-if="operatorSession.canCatalog" @tap="uni.navigateTo({url:'/pages/operator/health-policies'})">维护精确车型健康来源规则</button>
     <text class="reservation-copy">仅具有目录权限的运营账号可维护。新建默认未发布，停用影响新选择，历史订单和车辆引用保留。</text>
     <text v-if="!operatorSession.canCatalog">当前账号未配置目录权限，请由管理员授权。</text>
     <picker :range="labels" :disabled="state.writing" @change="switchKind"><view class="reservation-panel">{{config.label}} · 切换目录 ›</view></picker>

@@ -33,7 +33,7 @@ public class ArchiveShareService {
                 Integer count = jdbc.queryForObject("SELECT COUNT(*) FROM archive_report_share WHERE vehicle_id=? AND owner_id=? "
                     + "AND revoked_at IS NULL AND expires_at>UTC_TIMESTAMP() AND is_deleted=0", Integer.class, vehicle, owner.id());
                 if (count >= 20) throw new ResponseStatusException(HttpStatus.CONFLICT, "有效分享已达 20 条，请先撤销旧分享");
-                var report = reports.load(owner, input.filter());
+                var report = reports.loadShared(owner, input.filter());
                 String publicId = UUID.randomUUID().toString();
                 jdbc.update("INSERT INTO archive_report_share(public_id,token_hash,owner_id,vehicle_id,summary,expires_at) "
                     + "VALUES (?,?,?,?,?,DATE_ADD(UTC_TIMESTAMP(),INTERVAL ? HOUR))", publicId, ArchiveShareTokens.hash(tokens.derive(publicId)),
