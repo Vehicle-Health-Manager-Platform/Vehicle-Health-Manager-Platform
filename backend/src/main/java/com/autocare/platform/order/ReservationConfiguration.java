@@ -22,6 +22,7 @@ public class ReservationConfiguration {
     @Bean OrderDisputes orderDisputes(ReservationStore db){return new OrderDisputes(db);}
     @Bean OrderReviews orderReviews(ReservationStore db){return new OrderReviews(db);}
     @Bean PublicRatings publicRatings(ReservationStore db){return new PublicRatings(db);}
+    @Bean ReviewSummaries reviewSummaries(ReservationStore db,com.autocare.platform.ai.DeepSeekClient client,@org.springframework.beans.factory.annotation.Value("${REVIEW_SUMMARY_ENABLED:false}")boolean summary,@org.springframework.beans.factory.annotation.Value("${REVIEW_TEXT_PUBLICATION_ENABLED:false}")boolean text){return new ReviewSummaries(db,client,summary,text);}
     @Bean PublicReviewTexts publicReviewTexts(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators,@org.springframework.beans.factory.annotation.Value("${REVIEW_TEXT_PUBLICATION_ENABLED:false}")boolean enabled){return new PublicReviewTexts(db,operators,enabled);}
     @Bean ServiceArchiveJobs serviceArchiveJobs(ReservationStore db,@org.springframework.beans.factory.annotation.Value("${SERVICE_ARCHIVE_ENABLED:false}")boolean enabled,@org.springframework.beans.factory.annotation.Value("${EXPERIENCE_CARD_ENABLED:false}")boolean cardsEnabled){return new ServiceArchiveJobs(db,enabled,cardsEnabled);}
     @Bean ExperienceCards experienceCards(ReservationStore db){return new ExperienceCards(db);}

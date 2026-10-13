@@ -15375,6 +15375,289 @@
         "x-implementation-status": "public-review-text-implemented",
         "description": "no-store；独立文本授权与星级分开；规则预览不覆盖所有语义隐私，人工can_review审核必需；真实非测试来源实时复核。REVIEW_TEXT_PUBLICATION_ENABLED默认false；关闭可本人读取/撤销但不投稿/审核/公开。详见PUBLIC_REVIEW_TEXTS.md。"
       }
+    },
+    "/api/order/{id}/review-summary-consent": {
+      "get": {
+        "summary": "本人第三方AI用途授权状态",
+        "operationId": "get_api_order_id_review_summary_consent",
+        "tags": [
+          "order"
+        ],
+        "x-feature-ids": [
+          "F06"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ReviewSummaryConsent"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人订单评价或门店不可用"
+          },
+          "409": {
+            "description": "用途授权/当前批准文本版本已变化"
+          },
+          "503": {
+            "description": "数据库未配置或不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "source-checked-review-extracts-implemented",
+        "description": "no-store，无query；REVIEW_SUMMARY_ENABLED与REVIEW_TEXT_PUBLICATION_ENABLED默认关闭；原文字/星级授权不推断第三方AI用途，绑定当前批准版本，改稿需重新授权。最多最近20条/3条完整原句，明确原文降级，生成后重检来源，不持久化结果。详见REVIEW_SUMMARIES.md。"
+      },
+      "put": {
+        "summary": "本人授予或撤销当前批准文字AI用途",
+        "operationId": "put_api_order_id_review_summary_consent",
+        "tags": [
+          "order"
+        ],
+        "x-feature-ids": [
+          "F06"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ReviewSummaryConsent"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人订单评价或门店不可用"
+          },
+          "409": {
+            "description": "用途授权/当前批准文本版本已变化"
+          },
+          "503": {
+            "description": "数据库未配置或不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "source-checked-review-extracts-implemented",
+        "description": "no-store，无query；REVIEW_SUMMARY_ENABLED与REVIEW_TEXT_PUBLICATION_ENABLED默认关闭；原文字/星级授权不推断第三方AI用途，绑定当前批准版本，改稿需重新授权。最多最近20条/3条完整原句，明确原文降级，生成后重检来源，不持久化结果。详见REVIEW_SUMMARIES.md。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewSummaryConsentInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/merchant/{id}/review-summary": {
+      "post": {
+        "summary": "主动生成可核对来源的评价原句要点",
+        "operationId": "post_api_service_merchant_id_review_summary",
+        "tags": [
+          "service"
+        ],
+        "x-feature-ids": [
+          "F06"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ReviewSummary"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人订单评价或门店不可用"
+          },
+          "409": {
+            "description": "用途授权/当前批准文本版本已变化"
+          },
+          "503": {
+            "description": "数据库未配置或不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {}
+              }
+            }
+          }
+        },
+        "x-roles": "OWNER",
+        "x-implementation-status": "source-checked-review-extracts-implemented",
+        "description": "no-store，无query；REVIEW_SUMMARY_ENABLED与REVIEW_TEXT_PUBLICATION_ENABLED默认关闭；原文字/星级授权不推断第三方AI用途，绑定当前批准版本，改稿需重新授权。最多最近20条/3条完整原句，明确原文降级，生成后重检来源，不持久化结果。详见REVIEW_SUMMARIES.md。",
+        "x-read-only": true
+      }
     }
   },
   "components": {
@@ -20700,6 +20983,174 @@
           "items": {
             "type": "array",
             "maxItems": 50,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "public_id",
+                "public_text",
+                "published_date"
+              ],
+              "properties": {
+                "public_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "public_text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
+                },
+                "published_date": {
+                  "type": "string",
+                  "format": "date"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ReviewSummaryConsent": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order_id",
+          "version",
+          "text_version",
+          "consented",
+          "effective",
+          "can_consent"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "text_version": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "consented": {
+            "type": "boolean"
+          },
+          "effective": {
+            "type": "boolean"
+          },
+          "can_consent": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ReviewSummaryConsentInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "consented",
+          "expected_version",
+          "expected_text_version",
+          "consent_version"
+        ],
+        "properties": {
+          "consented": {
+            "type": "boolean"
+          },
+          "expected_version": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "expected_text_version": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "consent_version": {
+            "type": "string",
+            "const": "R4B2_SUMMARY_V1"
+          }
+        }
+      },
+      "ReviewSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "merchant_id",
+          "status",
+          "method",
+          "sample_count",
+          "eligible_count",
+          "highlights",
+          "sources"
+        ],
+        "properties": {
+          "merchant_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "AI_READY",
+              "FALLBACK",
+              "EMPTY",
+              "DISABLED",
+              "SOURCE_CHANGED"
+            ]
+          },
+          "method": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "AI_EXTRACTIVE_V1",
+              "EXACT_EXTRACT_V1",
+              null
+            ]
+          },
+          "sample_count": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 20
+          },
+          "eligible_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "highlights": {
+            "type": "array",
+            "maxItems": 3,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "public_id",
+                "quote"
+              ],
+              "properties": {
+                "public_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "quote": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
+                }
+              }
+            }
+          },
+          "sources": {
+            "type": "array",
+            "maxItems": 3,
             "items": {
               "type": "object",
               "additionalProperties": false,

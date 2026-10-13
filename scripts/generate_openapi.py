@@ -1374,6 +1374,31 @@ def main():
         item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "required": ["data"], "properties": {"data": {"$ref": f"#/components/schemas/{result}"}}}]}
         document["paths"].setdefault(path, {})[method] = item
 
+    schemas["ReviewSummaryConsent"] = strict({"order_id": identifier, "version": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "text_version": {"type": "integer", "minimum": 0, "maximum": 9007199254740991}, "consented": {"type": "boolean"}, "effective": {"type": "boolean"}, "can_consent": {"type": "boolean"}})
+    schemas["ReviewSummaryConsentInput"] = strict({"consented": {"type": "boolean"}, "expected_version": text_version, "expected_text_version": text_version,
+        "consent_version": {"type": "string", "const": "R4B2_SUMMARY_V1"}})
+    schemas["ReviewSummary"] = strict({"merchant_id": identifier,
+        "status": {"type": "string", "enum": ["AI_READY", "FALLBACK", "EMPTY", "DISABLED", "SOURCE_CHANGED"]},
+        "method": {"type": ["string", "null"], "enum": ["AI_EXTRACTIVE_V1", "EXACT_EXTRACT_V1", None]},
+        "sample_count": {"type": "integer", "minimum": 0, "maximum": 20}, "eligible_count": {"type": "integer", "minimum": 0},
+        "highlights": {"type": "array", "maxItems": 3, "items": strict({"public_id": {"type": "string", "format": "uuid"}, "quote": {"type": "string", "minLength": 1, "maxLength": 300}})},
+        "sources": {"type": "array", "maxItems": 3, "items": strict({"public_id": {"type": "string", "format": "uuid"}, "public_text": review_text, "published_date": {"type": "string", "format": "date"}})}})
+    for method, path, summary, body, result in (
+        ("get", "/api/order/{id}/review-summary-consent", "本人第三方AI用途授权状态", None, "ReviewSummaryConsent"),
+        ("put", "/api/order/{id}/review-summary-consent", "本人授予或撤销当前批准文字AI用途", {"$ref": "#/components/schemas/ReviewSummaryConsentInput"}, "ReviewSummaryConsent"),
+        ("post", "/api/service/merchant/{id}/review-summary", "主动生成可核对来源的评价原句要点", strict({}), "ReviewSummary"),
+    ):
+        item = operation(method, path, summary, "F06"); item["x-roles"] = "OWNER"; item["x-implementation-status"] = "source-checked-review-extracts-implemented"
+        item["parameters"][0]["schema"] = identifier
+        item["description"] = "no-store，无query；REVIEW_SUMMARY_ENABLED与REVIEW_TEXT_PUBLICATION_ENABLED默认关闭；原文字/星级授权不推断第三方AI用途，绑定当前批准版本，改稿需重新授权。最多最近20条/3条完整原句，明确原文降级，生成后重检来源，不持久化结果。详见REVIEW_SUMMARIES.md。"
+        if method == "post": item["parameters"] = [p for p in item["parameters"] if p["in"] != "header"]; item["x-read-only"] = True
+        if method == "put": item["parameters"].append({"name": "Idempotency-Key", "in": "header", "required": True, "schema": {"type": "string", "format": "uuid"}})
+        if body is not None: item["requestBody"] = {"required": True, "content": {"application/json": {"schema": body}}}
+        item["responses"].update({"404": {"description": "本人订单评价或门店不可用"}, "409": {"description": "用途授权/当前批准文本版本已变化"}, "503": {"description": "数据库未配置或不可用"}})
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "required": ["data"], "properties": {"data": {"$ref": f"#/components/schemas/{result}"}}}]}
+        document["paths"].setdefault(path, {})[method] = item
+
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     count = sum(len(item) for item in document["paths"].values())
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

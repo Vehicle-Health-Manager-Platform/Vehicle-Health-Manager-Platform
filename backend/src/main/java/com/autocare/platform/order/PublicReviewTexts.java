@@ -55,11 +55,14 @@ public class PublicReviewTexts {
                 }
                 var after=text(review,false);return new Change("PUBLIC_REVIEW_TEXT_MODERATE","order_review",review,projection(t),projection(after),Map.of("review_id",review,"version",after.get("version"),"status",after.get("status")),changed);
             });}
+    static String approvedFrom(){
+        return PublicRatings.SOURCE+" JOIN public_review_text t ON t.review_id=r.id JOIN public_review_text_moderation a ON a.review_id=t.review_id AND a.request_version+1=t.version AND a.decision='APPROVE' AND a.public_id=t.public_id AND a.text_hash=t.text_hash WHERE t.status='APPROVED' AND t.consent_version='R4B2_TEXT_V1' AND t.text_hash=SHA2(t.public_text,256) AND t.published_at IS NOT NULL AND "+PublicRatings.VALID;
+    }
     public Map<String,Object> list(VehicleOwner owner,long merchant,int page,int size){ServiceCatalog.validateId(merchant);page(page,size);return db.reads.execute(tx->{db.owner(owner,false);db.one("SELECT id FROM merchant WHERE id=? AND status=1 AND is_deleted=0",merchant);
         if(!enabled)return Map.of("merchant_id",merchant,"items",List.of(),"total",0L,"page",page,"page_size",size);
-        String from=PublicRatings.SOURCE+" JOIN public_review_text t ON t.review_id=r.id JOIN public_review_text_moderation a ON a.review_id=t.review_id AND a.request_version+1=t.version AND a.decision='APPROVE' AND a.public_id=t.public_id AND a.text_hash=t.text_hash WHERE o.merchant_id=? AND t.status='APPROVED' AND t.consent_version=? AND t.text_hash=SHA2(t.public_text,256) AND t.published_at IS NOT NULL AND "+PublicRatings.VALID;
-        long total=db.jdbc.queryForObject("SELECT COUNT(*)"+from,Long.class,merchant,PublicReviewTextInput.CONSENT);
-        var items=db.jdbc.query("SELECT t.public_id,t.public_text,DATE_FORMAT(t.published_at,'%Y-%m-%d') AS published_date"+from+" ORDER BY t.submitted_at DESC,r.id DESC LIMIT ? OFFSET ?",(rs,n)->Map.of("public_id",rs.getString("public_id"),"public_text",rs.getString("public_text"),"published_date",rs.getString("published_date")),merchant,PublicReviewTextInput.CONSENT,size,(page-1)*size);
+        String from=approvedFrom()+" AND o.merchant_id=?";
+        long total=db.jdbc.queryForObject("SELECT COUNT(*)"+from,Long.class,merchant);
+        var items=db.jdbc.query("SELECT t.public_id,t.public_text,DATE_FORMAT(t.published_at,'%Y-%m-%d') AS published_date"+from+" ORDER BY t.submitted_at DESC,r.id DESC LIMIT ? OFFSET ?",(rs,n)->Map.of("public_id",rs.getString("public_id"),"public_text",rs.getString("public_text"),"published_date",rs.getString("published_date")),merchant,size,(page-1)*size);
         return Map.of("merchant_id",merchant,"items",items,"total",total,"page",page,"page_size",size);
     });}
 }

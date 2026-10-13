@@ -22,6 +22,7 @@ watch(() => ownerSession.accessToken, () => { flow.reset(); if (visible) flow.lo
     <view v-if="state.value" class="reservation-panel">
       <text>审核状态：{{ TEXT_STATUS[state.value.status] }}</text>
       <text>当前公开：{{ state.value.visible ? '正在展示获批文字' : '未公开' }}</text>
+      <button :disabled="state.busy" @tap="uni.navigateTo({url:`/pages/order/review-summary-consent?id=${order}`})">管理独立AI用途授权</button>
       <text v-if="state.value.reason_code">驳回理由：{{ TEXT_REASONS[state.value.reason_code] }}</text>
       <text v-if="!state.value.can_submit">{{ state.value.unavailable_reason === 'DISABLED' ? '公开文本投稿与审核尚未开启。' : '当前履约或资金来源不满足公开条件。' }}已授权文字仍可撤销。</text>
       <template v-if="state.value.can_submit">
