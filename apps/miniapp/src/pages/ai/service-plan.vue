@@ -7,6 +7,7 @@ import VehicleList from '../../components/VehicleList.vue'
 import { createVehicleEvidenceFlow, initialVehicleEvidenceState, applicabilityLabels } from '../../services/vehicle-plan-evidence.js'
 import { healthLabels, observationStatus, unitLabels } from '../../services/health-observations.js'
 import { selectOwnerVehicle } from '../../services/owner-vehicle-selection.js'
+import { planBookingHandoff } from '../../services/plan-booking-handoff.js'
 const state = reactive(initialAiServicePlanState())
 const vehicle = ref(null), evidence = reactive(initialVehicleEvidenceState())
 const evidenceFlow = createVehicleEvidenceFlow({ state: evidence, token: () => ownerSession.accessToken, selection: () => ({ vehicle: vehicle.value?.vehicle_id || 0, projects: state.value?.items.map(x => x.project_id) || [] }) })
@@ -17,7 +18,7 @@ let visible = false
 const flow = createAiServicePlanFlow({ state, token: () => ownerSession.accessToken,
   confirm: text => new Promise(resolve => uni.showModal({ title: '确认结构化项目建议用途', content: `同意将此问题及公开项目目录发送至第三方DeepSeek以匹配推荐/可选项目。请勿填写姓名、地址、联系方式或车辆标识。本次不读取车辆档案：\n${text}`, success: r => resolve(!!r.confirm), fail: () => resolve(false) })) })
 function login() { flow.reset(); clearOwnerSession(); uni.navigateTo({ url: '/pages/owner/index' }) }
-function choose(row) { if (!evidenceFlow.canChoose(row.project_id)) return; const route = flow.projectRoute(row); if (route) uni.navigateTo({ url: route }) }
+function choose(row) { if (!evidenceFlow.canChoose(row.project_id) || !flow.projectRoute(row)) return; const route = vehicle.value ? planBookingHandoff.route(row.project_id, vehicle.value.vehicle_id) : flow.projectRoute(row); if (!vehicle.value) planBookingHandoff.clear(); if (route) uni.navigateTo({ url: route }) }
 onShow(() => { visible = true; flow.load() })
 onHide(() => { visible = false; flow.reset(); clearEvidence() })
 onUnload(() => { visible = false; flow.reset(); clearEvidence() })
@@ -76,7 +77,7 @@ watch(() => ownerSession.accessToken, () => { flow.reset(); clearEvidence(); if 
             <text v-if="a.source_reference">来源：{{ a.source_reference }} · 规则版本 {{ a.rule_version }}（来源真实性尚未核验）</text>
           </view>
         </template>
-        <button :disabled="state.busy || !evidenceFlow.canChoose(row.project_id)" @tap="choose(row)">核对当前项目与商家报价</button>
+        <button :disabled="state.busy || !evidenceFlow.canChoose(row.project_id)" @tap="choose(row)">{{vehicle ? '按本车核对报价与时段' : '核对当前项目与商家报价'}}</button>
       </view>
       <text>服务详情会重新读取项目与报价，预约页继续核对最新报价和可用时段；AI结果不冻结价格或名额。</text>
     </view>

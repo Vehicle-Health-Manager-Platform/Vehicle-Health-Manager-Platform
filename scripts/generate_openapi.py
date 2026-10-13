@@ -1452,6 +1452,22 @@ def main():
         item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "required": ["data"], "properties": {"data": {"$ref": f"#/components/schemas/{result}"}}}]}
         document["paths"].setdefault(path, {})[method] = item
 
+    schemas["PlanBookingContextInput"] = strict({"merchant_project_id": identifier, "standard_project_id": identifier, "vehicle_id": identifier,
+        "date": {"type": "string", "format": "date", "description": "北京时间当天到30天内"}, "page": {"type": "integer", "minimum": 1, "maximum": 1000000},
+        "selected_slot_id": {"anyOf": [identifier, {"type": "null"}]}})
+    schemas["PlanBookingContext"] = strict({"quote": {"$ref": "#/components/schemas/ReservationQuote"}, "evidence": {"$ref": "#/components/schemas/VehiclePlanEvidence"},
+        "slots": strict({"items": {"type": "array", "maxItems": 20, "items": {"$ref": "#/components/schemas/ReservationSlot"}}, "total": {"type": "integer", "minimum": 0},
+            "page": {"type": "integer", "minimum": 1, "maximum": 1000000}, "page_size": {"const": 20}}),
+        "selected_slot": {"anyOf": [{"$ref": "#/components/schemas/ReservationSlot"}, {"type": "null"}]}})
+    path = "/api/order/plan-booking-context"
+    item = operation("post", path, "本人方案当前报价/车辆证据/时段同快照复核", "F05,F06")
+    item["parameters"] = []; item["x-roles"] = "OWNER"; item["x-read-only"] = True; item["x-implementation-status"] = "plan-booking-context-implemented"
+    item["description"] = "no-store，无query/写幂等键/审计或第三方调用。严格六字段；当前报价必须匹配标准项目；本人有效车辆，日期当天至30天，20条可用时段分页。selected_slot跨页独立复核商家/项目/日期/未来/容量，无效null。规则为来源提示；原创建接口继续原子复核最新报价/时段容量。未知创建结果仅原body/key重试。无迁移，77表，详见PLAN_BOOKING.md。"
+    item["requestBody"] = {"required": True, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/PlanBookingContextInput"}}}}
+    item["responses"].update({"404": {"description": "报价/项目映射/本人车辆或有效目录不可用"}, "503": {"description": "数据库未配置/不可用"}})
+    item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "required": ["data"], "properties": {"data": {"$ref": "#/components/schemas/PlanBookingContext"}}}]}
+    document["paths"][path] = {"post": item}
+
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     count = sum(len(item) for item in document["paths"].values())
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

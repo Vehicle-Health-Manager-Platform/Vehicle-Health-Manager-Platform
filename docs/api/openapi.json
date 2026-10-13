@@ -16095,6 +16095,88 @@
           }
         }
       }
+    },
+    "/api/order/plan-booking-context": {
+      "post": {
+        "summary": "本人方案当前报价/车辆证据/时段同快照复核",
+        "operationId": "post_api_order_plan_booking_context",
+        "tags": [
+          "order"
+        ],
+        "x-feature-ids": [
+          "F05",
+          "F06"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/PlanBookingContext"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "报价/项目映射/本人车辆或有效目录不可用"
+          },
+          "503": {
+            "description": "数据库未配置/不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlanBookingContextInput"
+              }
+            }
+          }
+        },
+        "x-roles": "OWNER",
+        "x-read-only": true,
+        "x-implementation-status": "plan-booking-context-implemented",
+        "description": "no-store，无query/写幂等键/审计或第三方调用。严格六字段；当前报价必须匹配标准项目；本人有效车辆，日期当天至30天，20条可用时段分页。selected_slot跨页独立复核商家/项目/日期/未来/容量，无效null。规则为来源提示；原创建接口继续原子复核最新报价/时段容量。未知创建结果仅原body/key重试。无迁移，77表，详见PLAN_BOOKING.md。"
+      }
     }
   },
   "components": {
@@ -22138,6 +22220,116 @@
                 }
               }
             }
+          }
+        }
+      },
+      "PlanBookingContextInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "merchant_project_id",
+          "standard_project_id",
+          "vehicle_id",
+          "date",
+          "page",
+          "selected_slot_id"
+        ],
+        "properties": {
+          "merchant_project_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "standard_project_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "vehicle_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "北京时间当天到30天内"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "selected_slot_id": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "PlanBookingContext": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "quote",
+          "evidence",
+          "slots",
+          "selected_slot"
+        ],
+        "properties": {
+          "quote": {
+            "$ref": "#/components/schemas/ReservationQuote"
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/VehiclePlanEvidence"
+          },
+          "slots": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "items",
+              "total",
+              "page",
+              "page_size"
+            ],
+            "properties": {
+              "items": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {
+                  "$ref": "#/components/schemas/ReservationSlot"
+                }
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "page": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1000000
+              },
+              "page_size": {
+                "const": 20
+              }
+            }
+          },
+          "selected_slot": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReservationSlot"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         }
       }
