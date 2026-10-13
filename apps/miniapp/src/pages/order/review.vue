@@ -40,7 +40,7 @@ onUnload(() => { visible = false; clear() })
 <template>
   <view class="reservation-page">
     <text class="reservation-title">本人订单评价</text>
-    <text class="reservation-copy">订单 #{{ order }} · 评价仅本人可查看</text>
+    <text class="reservation-copy">订单 #{{ order }} · 正文和照片仅本人可查看</text>
     <button v-if="!ownerSession.accessToken" @tap="login">前往车主登录</button>
     <text v-if="read.busy">正在核对评价资格…</text>
     <view v-if="read.message" class="reservation-panel"><text role="status">{{ read.message }}</text><button v-if="['unauthorized','forbidden'].includes(read.failureKind)" @tap="login">重新登录</button><button v-else :disabled="write.busy || photos.busy" @tap="loader.load">刷新本人评价</button></view>
@@ -50,7 +50,8 @@ onUnload(() => { visible = false; clear() })
         <text class="reservation-heading" data-testid="review-saved">本人评价已保存 · {{ result.rating }} / 5 分</text>
         <text class="review-content">{{ result.content }}</text>
         <text>提交时间 {{ displayTime(result.submitted_at) }}</text>
-        <text>提交后不可修改。目前仅本人可查看。</text>
+        <text>提交后不可修改。正文和照片仅本人可查看，星级公开需单独授权。</text>
+        <button @tap="uni.navigateTo({url:`/pages/order/review-publication?id=${order}`})">管理独立公开星级授权</button>
         <button v-for="(file,index) in result.photo_file_ids" :key="file" @tap="previewSaved(file)">查看评价图片 {{ index + 1 }}</button>
       </template>
       <template v-else-if="read.value.can_submit">

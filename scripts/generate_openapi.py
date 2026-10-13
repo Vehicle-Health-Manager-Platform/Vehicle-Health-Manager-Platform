@@ -1309,6 +1309,35 @@ def main():
         item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "required": ["data"], "properties": {"data": {"$ref": f"#/components/schemas/{result}"}}}]}
         document["paths"].setdefault(path, {})[method] = item
 
+    schemas["ReviewPublicationState"] = strict({"order_id": identifier, "version": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "consented": {"type": "boolean"}, "visible": {"type": "boolean"}, "can_publish": {"type": "boolean"},
+        "unavailable_reason": {"type": ["string", "null"], "enum": ["TEST_ORDER", "PUBLIC_SOURCE_UNVERIFIED", None]}})
+    schemas["PublicRating"] = strict({"rating": {"type": "integer", "minimum": 1, "maximum": 5}, "submitted_date": {"type": "string", "format": "date"}})
+    schemas["PublicRatingSummary"] = strict({"count": {"type": "integer", "minimum": 0}, "rating_sum": {"type": "integer", "minimum": 0},
+        "average_rating": {"type": ["string", "null"], "pattern": r"^[1-5]\.[0-9]{2}$", "description": "全有效样本星级平均，四舍五入两位；零样本null"}})
+    schemas["PublicRatingPage"] = strict({"merchant_id": identifier, "page": {"type": "integer", "minimum": 1, "maximum": 1000000},
+        "page_size": {"type": "integer", "minimum": 1, "maximum": 50}, "summary": {"$ref": "#/components/schemas/PublicRatingSummary"},
+        "items": {"type": "array", "maxItems": 50, "items": {"$ref": "#/components/schemas/PublicRating"}}})
+    for method, path, summary, result in (
+        ("get", "/api/order/{id}/review-publication", "本人独立公开星级授权状态", "ReviewPublicationState"),
+        ("put", "/api/order/{id}/review-publication", "本人授权或撤销公开星级", "ReviewPublicationState"),
+        ("get", "/api/service/merchant/{id}/ratings", "车主查看匿名公开星级与汇总", "PublicRatingPage"),
+    ):
+        item = operation(method, path, summary, "F06")
+        item["x-roles"] = "OWNER"; item["x-implementation-status"] = "rating-consent-implemented"
+        item["parameters"][0]["schema"] = identifier
+        item["description"] = "no-store；有效本人会话；独立可撤销授权，历史私有评价不迁移。只公开评分和UTC日期，无正文/照片/身份/订单标识；实时真实WECHAT履约资格过滤与可复算平均，测试评价不公开。详见PUBLIC_RATINGS.md。"
+        if method == "put":
+            item["parameters"].append({"name": "Idempotency-Key", "in": "header", "required": True, "schema": {"type": "string", "format": "uuid"}})
+            item["requestBody"] = {"required": True, "content": {"application/json": {"schema": strict({"publish": {"type": "boolean"}, "expected_version": {"type": "integer", "minimum": 0, "maximum": 9007199254740991}})}}}
+            item["description"] += " 不接受query；旧版本409，重放重新授权且不重复变更；客户端写后GET刷新，历史响应不是当前可见状态。"
+        elif "ratings" in path:
+            item["parameters"].extend([{"name": "page", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 1000000, "default": 1}},
+                {"name": "page_size", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 50, "default": 20}}])
+        item["responses"].update({"404": {"description": "本人评价/订单或公开门店不可用"}, "409": {"description": "公开资格或版本已变化"}, "503": {"description": "数据库未配置或不可用"}})
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "required": ["data"], "properties": {"data": {"$ref": f"#/components/schemas/{result}"}}}]}
+        document["paths"].setdefault(path, {})[method] = item
+
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     count = sum(len(item) for item in document["paths"].values())
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

@@ -73,3 +73,7 @@ V005 在 V004 之后新增 `vehicle_archive_file`，以 `(archive_id,position)` 
 ## R2c V026 佣金台账增量
 
 V026重复迁移后共66表，新增`order_commission_snapshot`（订单唯一、下单政策冻结）、`merchant_commission_entry`（订单事件唯一/退款ID唯一、追加应计/冲销/未知金额）。`merchant_commission_policy`新增rule_version/source_application_id，仅唯一可信入驻批准可补默认3%/3自然月免佣；不把merchant.created_at当审批时间。核销/退款与台账/审计同事务，旧单无下单快照WAIT_LEGACY，金额null；不存在真实资金结算字段。详见[佣金契约](../api/COMMISSIONS.md)。已有库需按序手动迁移至V026，Compose init只作用新卷。
+
+## V033 公开星级授权
+
+`review_publication`：review_id主键（每评价唯一），consented布尔授权、version单调版本、updated_at变更时间；历史评价不回填。V033后73表。授权不含正文图片，不等于资格持续有效，公开查询重新校验真实非测试履约；撤销保留版本。

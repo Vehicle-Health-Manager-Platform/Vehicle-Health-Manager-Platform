@@ -14461,6 +14461,310 @@
         "description": "no-store；严格正文且不接受查询参数。旧坐标不推断；只使用店长明确确认的GCJ02位置，不代表平台现场核实。详见MERCHANT_LOCATION.md。 只读POST，不持久化车主位置、不写业务审计；位置仅在正文，不进入URL。",
         "x-read-only": true
       }
+    },
+    "/api/order/{id}/review-publication": {
+      "get": {
+        "summary": "本人独立公开星级授权状态",
+        "operationId": "get_api_order_id_review_publication",
+        "tags": [
+          "order"
+        ],
+        "x-feature-ids": [
+          "F06"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ReviewPublicationState"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人评价/订单或公开门店不可用"
+          },
+          "409": {
+            "description": "公开资格或版本已变化"
+          },
+          "503": {
+            "description": "数据库未配置或不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "rating-consent-implemented",
+        "description": "no-store；有效本人会话；独立可撤销授权，历史私有评价不迁移。只公开评分和UTC日期，无正文/照片/身份/订单标识；实时真实WECHAT履约资格过滤与可复算平均，测试评价不公开。详见PUBLIC_RATINGS.md。"
+      },
+      "put": {
+        "summary": "本人授权或撤销公开星级",
+        "operationId": "put_api_order_id_review_publication",
+        "tags": [
+          "order"
+        ],
+        "x-feature-ids": [
+          "F06"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ReviewPublicationState"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人评价/订单或公开门店不可用"
+          },
+          "409": {
+            "description": "公开资格或版本已变化"
+          },
+          "503": {
+            "description": "数据库未配置或不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "rating-consent-implemented",
+        "description": "no-store；有效本人会话；独立可撤销授权，历史私有评价不迁移。只公开评分和UTC日期，无正文/照片/身份/订单标识；实时真实WECHAT履约资格过滤与可复算平均，测试评价不公开。详见PUBLIC_RATINGS.md。 不接受query；旧版本409，重放重新授权且不重复变更；客户端写后GET刷新，历史响应不是当前可见状态。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "publish",
+                  "expected_version"
+                ],
+                "properties": {
+                  "publish": {
+                    "type": "boolean"
+                  },
+                  "expected_version": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/merchant/{id}/ratings": {
+      "get": {
+        "summary": "车主查看匿名公开星级与汇总",
+        "operationId": "get_api_service_merchant_id_ratings",
+        "tags": [
+          "service"
+        ],
+        "x-feature-ids": [
+          "F06"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/PublicRatingPage"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人评价/订单或公开门店不可用"
+          },
+          "409": {
+            "description": "公开资格或版本已变化"
+          },
+          "503": {
+            "description": "数据库未配置或不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "rating-consent-implemented",
+        "description": "no-store；有效本人会话；独立可撤销授权，历史私有评价不迁移。只公开评分和UTC日期，无正文/照片/身份/订单标识；实时真实WECHAT履约资格过滤与可复算平均，测试评价不公开。详见PUBLIC_RATINGS.md。"
+      }
     }
   },
   "components": {
@@ -19335,6 +19639,134 @@
             }
           }
         ]
+      },
+      "ReviewPublicationState": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order_id",
+          "version",
+          "consented",
+          "visible",
+          "can_publish",
+          "unavailable_reason"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "consented": {
+            "type": "boolean"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "can_publish": {
+            "type": "boolean"
+          },
+          "unavailable_reason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "TEST_ORDER",
+              "PUBLIC_SOURCE_UNVERIFIED",
+              null
+            ]
+          }
+        }
+      },
+      "PublicRating": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "rating",
+          "submitted_date"
+        ],
+        "properties": {
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "submitted_date": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "PublicRatingSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "count",
+          "rating_sum",
+          "average_rating"
+        ],
+        "properties": {
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "rating_sum": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "average_rating": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[1-5]\\.[0-9]{2}$",
+            "description": "全有效样本星级平均，四舍五入两位；零样本null"
+          }
+        }
+      },
+      "PublicRatingPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "merchant_id",
+          "page",
+          "page_size",
+          "summary",
+          "items"
+        ],
+        "properties": {
+          "merchant_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "summary": {
+            "$ref": "#/components/schemas/PublicRatingSummary"
+          },
+          "items": {
+            "type": "array",
+            "maxItems": 50,
+            "items": {
+              "$ref": "#/components/schemas/PublicRating"
+            }
+          }
+        }
       }
     }
   }
