@@ -14765,6 +14765,616 @@
         "x-implementation-status": "rating-consent-implemented",
         "description": "no-store；有效本人会话；独立可撤销授权，历史私有评价不迁移。只公开评分和UTC日期，无正文/照片/身份/订单标识；实时真实WECHAT履约资格过滤与可复算平均，测试评价不公开。详见PUBLIC_RATINGS.md。"
       }
+    },
+    "/api/order/{id}/public-review-text": {
+      "get": {
+        "summary": "本人独立公开文本状态",
+        "operationId": "get_api_order_id_public_review_text",
+        "tags": [
+          "order"
+        ],
+        "x-feature-ids": [
+          "F06"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/PublicReviewTextState"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人评价或门店不存在/不可用"
+          },
+          "409": {
+            "description": "资格、版本或授权已变化"
+          },
+          "422": {
+            "description": "文本尚未规范脱敏，请重做预览和授权"
+          },
+          "503": {
+            "description": "开关关闭或数据库不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "public-review-text-implemented",
+        "description": "no-store；独立文本授权与星级分开；规则预览不覆盖所有语义隐私，人工can_review审核必需；真实非测试来源实时复核。REVIEW_TEXT_PUBLICATION_ENABLED默认false；关闭可本人读取/撤销但不投稿/审核/公开。详见PUBLIC_REVIEW_TEXTS.md。"
+      },
+      "put": {
+        "summary": "本人提交或撤销公开文本授权",
+        "operationId": "put_api_order_id_public_review_text",
+        "tags": [
+          "order"
+        ],
+        "x-feature-ids": [
+          "F06"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/PublicReviewTextState"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人评价或门店不存在/不可用"
+          },
+          "409": {
+            "description": "资格、版本或授权已变化"
+          },
+          "422": {
+            "description": "文本尚未规范脱敏，请重做预览和授权"
+          },
+          "503": {
+            "description": "开关关闭或数据库不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "public-review-text-implemented",
+        "description": "no-store；独立文本授权与星级分开；规则预览不覆盖所有语义隐私，人工can_review审核必需；真实非测试来源实时复核。REVIEW_TEXT_PUBLICATION_ENABLED默认false；关闭可本人读取/撤销但不投稿/审核/公开。详见PUBLIC_REVIEW_TEXTS.md。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublicReviewTextInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/order/{id}/public-review-text/preview": {
+      "post": {
+        "summary": "本人独立文本只读脱敏预览",
+        "operationId": "post_api_order_id_public_review_text_preview",
+        "tags": [
+          "order"
+        ],
+        "x-feature-ids": [
+          "F06"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/PublicReviewTextPreview"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人评价或门店不存在/不可用"
+          },
+          "409": {
+            "description": "资格、版本或授权已变化"
+          },
+          "422": {
+            "description": "文本尚未规范脱敏，请重做预览和授权"
+          },
+          "503": {
+            "description": "开关关闭或数据库不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "public_text"
+                ],
+                "properties": {
+                  "public_text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 300
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-roles": "OWNER",
+        "x-implementation-status": "public-review-text-implemented",
+        "description": "no-store；独立文本授权与星级分开；规则预览不覆盖所有语义隐私，人工can_review审核必需；真实非测试来源实时复核。REVIEW_TEXT_PUBLICATION_ENABLED默认false；关闭可本人读取/撤销但不投稿/审核/公开。详见PUBLIC_REVIEW_TEXTS.md。 只读POST，无幂等键，不持久化原文或写业务审计。",
+        "x-read-only": true
+      }
+    },
+    "/api/admin/review-texts": {
+      "get": {
+        "summary": "运营待审独立公开文本",
+        "operationId": "get_api_admin_review_texts",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F06"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/PublicReviewTextQueue"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人评价或门店不存在/不可用"
+          },
+          "409": {
+            "description": "资格、版本或授权已变化"
+          },
+          "422": {
+            "description": "文本尚未规范脱敏，请重做预览和授权"
+          },
+          "503": {
+            "description": "开关关闭或数据库不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR can_review",
+        "x-implementation-status": "public-review-text-implemented",
+        "description": "no-store；独立文本授权与星级分开；规则预览不覆盖所有语义隐私，人工can_review审核必需；真实非测试来源实时复核。REVIEW_TEXT_PUBLICATION_ENABLED默认false；关闭可本人读取/撤销但不投稿/审核/公开。详见PUBLIC_REVIEW_TEXTS.md。"
+      }
+    },
+    "/api/admin/review-texts/{id}/moderate": {
+      "post": {
+        "summary": "运营审核确切授权文本",
+        "operationId": "post_api_admin_review_texts_id_moderate",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F06"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/PublicReviewTextModerationResult"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人评价或门店不存在/不可用"
+          },
+          "409": {
+            "description": "资格、版本或授权已变化"
+          },
+          "422": {
+            "description": "文本尚未规范脱敏，请重做预览和授权"
+          },
+          "503": {
+            "description": "开关关闭或数据库不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublicReviewTextModerationInput"
+              }
+            }
+          }
+        },
+        "x-roles": "OPERATOR can_review",
+        "x-implementation-status": "public-review-text-implemented",
+        "description": "no-store；独立文本授权与星级分开；规则预览不覆盖所有语义隐私，人工can_review审核必需；真实非测试来源实时复核。REVIEW_TEXT_PUBLICATION_ENABLED默认false；关闭可本人读取/撤销但不投稿/审核/公开。详见PUBLIC_REVIEW_TEXTS.md。"
+      }
+    },
+    "/api/service/merchant/{id}/review-texts": {
+      "get": {
+        "summary": "门店获批公开文本列表",
+        "operationId": "get_api_service_merchant_id_review_texts",
+        "tags": [
+          "service"
+        ],
+        "x-feature-ids": [
+          "F06"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/PublicReviewTextPage"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人评价或门店不存在/不可用"
+          },
+          "409": {
+            "description": "资格、版本或授权已变化"
+          },
+          "422": {
+            "description": "文本尚未规范脱敏，请重做预览和授权"
+          },
+          "503": {
+            "description": "开关关闭或数据库不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "public-review-text-implemented",
+        "description": "no-store；独立文本授权与星级分开；规则预览不覆盖所有语义隐私，人工can_review审核必需；真实非测试来源实时复核。REVIEW_TEXT_PUBLICATION_ENABLED默认false；关闭可本人读取/撤销但不投稿/审核/公开。详见PUBLIC_REVIEW_TEXTS.md。"
+      }
     }
   },
   "components": {
@@ -19764,6 +20374,355 @@
             "maxItems": 50,
             "items": {
               "$ref": "#/components/schemas/PublicRating"
+            }
+          }
+        }
+      },
+      "PublicReviewTextState": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order_id",
+          "version",
+          "status",
+          "public_text",
+          "reason_code",
+          "visible",
+          "can_submit",
+          "unavailable_reason"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "PENDING",
+              "APPROVED",
+              "REJECTED",
+              "WITHDRAWN"
+            ]
+          },
+          "public_text": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 300
+          },
+          "reason_code": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "PRIVACY",
+              "ABUSE",
+              "OFF_TOPIC",
+              "UNVERIFIABLE",
+              null
+            ]
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "can_submit": {
+            "type": "boolean"
+          },
+          "unavailable_reason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "DISABLED",
+              "PUBLIC_SOURCE_UNVERIFIED",
+              null
+            ]
+          }
+        }
+      },
+      "PublicReviewTextPreview": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "public_text",
+          "redaction_version"
+        ],
+        "properties": {
+          "public_text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "redaction_version": {
+            "type": "string",
+            "const": "TEXT_REDACTION_V1"
+          }
+        }
+      },
+      "PublicReviewTextInput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "action",
+              "expected_version",
+              "public_text",
+              "consent_version"
+            ],
+            "properties": {
+              "action": {
+                "type": "string",
+                "const": "SUBMIT"
+              },
+              "expected_version": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "public_text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              },
+              "consent_version": {
+                "type": "string",
+                "const": "R4B2_TEXT_V1"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "action",
+              "expected_version"
+            ],
+            "properties": {
+              "action": {
+                "type": "string",
+                "const": "WITHDRAW"
+              },
+              "expected_version": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            }
+          }
+        ]
+      },
+      "PublicReviewTextModerationInput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "expected_version",
+              "decision",
+              "reason_code"
+            ],
+            "properties": {
+              "expected_version": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "decision": {
+                "type": "string",
+                "const": "APPROVE"
+              },
+              "reason_code": {
+                "type": "null"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "expected_version",
+              "decision",
+              "reason_code"
+            ],
+            "properties": {
+              "expected_version": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "decision": {
+                "type": "string",
+                "const": "REJECT"
+              },
+              "reason_code": {
+                "type": "string",
+                "enum": [
+                  "PRIVACY",
+                  "ABUSE",
+                  "OFF_TOPIC",
+                  "UNVERIFIABLE"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "PublicReviewTextModerationResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "review_id",
+          "version",
+          "status"
+        ],
+        "properties": {
+          "review_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "APPROVED",
+              "REJECTED"
+            ]
+          }
+        }
+      },
+      "PublicReviewTextQueue": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "page",
+          "page_size",
+          "total",
+          "items"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "items": {
+            "type": "array",
+            "maxItems": 50,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "review_id",
+                "version",
+                "public_text",
+                "can_approve"
+              ],
+              "properties": {
+                "review_id": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "version": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "public_text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
+                },
+                "can_approve": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "PublicReviewTextPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "page",
+          "page_size",
+          "total",
+          "merchant_id",
+          "items"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "merchant_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "items": {
+            "type": "array",
+            "maxItems": 50,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "public_id",
+                "public_text",
+                "published_date"
+              ],
+              "properties": {
+                "public_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "public_text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
+                },
+                "published_date": {
+                  "type": "string",
+                  "format": "date"
+                }
+              }
             }
           }
         }

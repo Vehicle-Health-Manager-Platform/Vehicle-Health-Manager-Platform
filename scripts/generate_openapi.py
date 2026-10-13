@@ -1338,6 +1338,42 @@ def main():
         item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "required": ["data"], "properties": {"data": {"$ref": f"#/components/schemas/{result}"}}}]}
         document["paths"].setdefault(path, {})[method] = item
 
+    review_text = {"type": "string", "minLength": 1, "maxLength": 300}
+    text_version = {"type": "integer", "minimum": 0, "maximum": 9007199254740991}
+    text_reason = {"type": ["string", "null"], "enum": ["PRIVACY", "ABUSE", "OFF_TOPIC", "UNVERIFIABLE", None]}
+    schemas["PublicReviewTextState"] = strict({"order_id": identifier, "version": text_version,
+        "status": {"type": "string", "enum": ["NONE", "PENDING", "APPROVED", "REJECTED", "WITHDRAWN"]},
+        "public_text": {"type": ["string", "null"], "maxLength": 300}, "reason_code": text_reason,
+        "visible": {"type": "boolean"}, "can_submit": {"type": "boolean"}, "unavailable_reason": {"type": ["string", "null"], "enum": ["DISABLED", "PUBLIC_SOURCE_UNVERIFIED", None]}})
+    schemas["PublicReviewTextPreview"] = strict({"public_text": review_text, "redaction_version": {"type": "string", "const": "TEXT_REDACTION_V1"}})
+    schemas["PublicReviewTextInput"] = {"oneOf": [strict({"action": {"type": "string", "const": "SUBMIT"}, "expected_version": text_version, "public_text": review_text, "consent_version": {"type": "string", "const": "R4B2_TEXT_V1"}}), strict({"action": {"type": "string", "const": "WITHDRAW"}, "expected_version": text_version})]}
+    schemas["PublicReviewTextModerationInput"] = {"oneOf": [strict({"expected_version": text_version, "decision": {"type": "string", "const": "APPROVE"}, "reason_code": {"type": "null"}}), strict({"expected_version": text_version, "decision": {"type": "string", "const": "REJECT"}, "reason_code": {"type": "string", "enum": ["PRIVACY", "ABUSE", "OFF_TOPIC", "UNVERIFIABLE"]}})]}
+    schemas["PublicReviewTextModerationResult"] = strict({"review_id": identifier, "version": identifier, "status": {"type": "string", "enum": ["APPROVED", "REJECTED"]}})
+    text_page_fields = {"page": {"type": "integer", "minimum": 1, "maximum": 1000000}, "page_size": {"type": "integer", "minimum": 1, "maximum": 50}, "total": {"type": "integer", "minimum": 0}}
+    schemas["PublicReviewTextQueue"] = strict({**text_page_fields, "items": {"type": "array", "maxItems": 50, "items": strict({"review_id": identifier, "version": identifier, "public_text": review_text, "can_approve": {"type": "boolean"}})}})
+    schemas["PublicReviewTextPage"] = strict({**text_page_fields, "merchant_id": identifier, "items": {"type": "array", "maxItems": 50, "items": strict({"public_id": {"type": "string", "format": "uuid"}, "public_text": review_text, "published_date": {"type": "string", "format": "date"}})}})
+    for method, path, summary, role, body, result in (
+        ("get", "/api/order/{id}/public-review-text", "本人独立公开文本状态", "OWNER", None, "PublicReviewTextState"),
+        ("post", "/api/order/{id}/public-review-text/preview", "本人独立文本只读脱敏预览", "OWNER", strict({"public_text": review_text}), "PublicReviewTextPreview"),
+        ("put", "/api/order/{id}/public-review-text", "本人提交或撤销公开文本授权", "OWNER", {"$ref": "#/components/schemas/PublicReviewTextInput"}, "PublicReviewTextState"),
+        ("get", "/api/admin/review-texts", "运营待审独立公开文本", "OPERATOR can_review", None, "PublicReviewTextQueue"),
+        ("post", "/api/admin/review-texts/{id}/moderate", "运营审核确切授权文本", "OPERATOR can_review", {"$ref": "#/components/schemas/PublicReviewTextModerationInput"}, "PublicReviewTextModerationResult"),
+        ("get", "/api/service/merchant/{id}/review-texts", "门店获批公开文本列表", "OWNER", None, "PublicReviewTextPage"),
+    ):
+        item = operation(method, path, summary, "F06"); item["x-roles"] = role; item["x-implementation-status"] = "public-review-text-implemented"
+        item["description"] = "no-store；独立文本授权与星级分开；规则预览不覆盖所有语义隐私，人工can_review审核必需；真实非测试来源实时复核。REVIEW_TEXT_PUBLICATION_ENABLED默认false；关闭可本人读取/撤销但不投稿/审核/公开。详见PUBLIC_REVIEW_TEXTS.md。"
+        if "{id}" in path: item["parameters"][0]["schema"] = identifier
+        if "preview" in path:
+            item["parameters"] = [p for p in item["parameters"] if p["in"] != "header"]; item["x-read-only"] = True
+            item["description"] += " 只读POST，无幂等键，不持久化原文或写业务审计。"
+        if method == "put": item["parameters"].append({"name": "Idempotency-Key", "in": "header", "required": True, "schema": {"type": "string", "format": "uuid"}})
+        if path in ("/api/admin/review-texts", "/api/service/merchant/{id}/review-texts"):
+            item["parameters"].extend([{"name": "page", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 1000000, "default": 1}}, {"name": "page_size", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 50, "default": 20}}])
+        if body is not None: item["requestBody"] = {"required": True, "content": {"application/json": {"schema": body}}}
+        item["responses"].update({"404": {"description": "本人评价或门店不存在/不可用"}, "409": {"description": "资格、版本或授权已变化"}, "422": {"description": "文本尚未规范脱敏，请重做预览和授权"}, "503": {"description": "开关关闭或数据库不可用"}})
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "required": ["data"], "properties": {"data": {"$ref": f"#/components/schemas/{result}"}}}]}
+        document["paths"].setdefault(path, {})[method] = item
+
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     count = sum(len(item) for item in document["paths"].values())
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

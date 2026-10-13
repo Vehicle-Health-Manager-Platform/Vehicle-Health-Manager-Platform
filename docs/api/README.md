@@ -1,5 +1,8 @@
 # API 文档
 
+> R4b2b2 独立公开评价文本、脱敏预览、人工审核及撤销见[PUBLIC_REVIEW_TEXTS.md](PUBLIC_REVIEW_TEXTS.md)。
+
+
 > R4b2b1 独立公开星级授权、匿名列表与汇总见 [PUBLIC_RATINGS.md](PUBLIC_RATINGS.md)。公开正文尚未实现。
 
 
