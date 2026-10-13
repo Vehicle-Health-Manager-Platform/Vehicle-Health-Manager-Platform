@@ -6,14 +6,18 @@ import { merchantDiscoveryApi } from '../../services/merchant-discovery.js'
 import { createStorefrontFlow,initialStorefrontState } from '../../services/merchant-discovery-flow.js'
 import { serviceCategories } from '../../services/service-catalog.js'
 import { merchantTypeLabel } from '../../services/merchant-profile.js'
+import { createDistanceFlow, initialDistanceState, distanceLabel } from '../../services/nearby-merchants.js'
 const state=reactive(initialStorefrontState())
 const flow=createStorefrontFlow({state,api:merchantDiscoveryApi,token:()=>ownerSession.accessToken})
+const distance=reactive(initialDistanceState())
+const distanceFlow=createDistanceFlow({state:distance,token:()=>ownerSession.accessToken,merchant:()=>state.merchant?.merchant_id,invalidate:()=>flow.reset()})
 let visible=false
 onLoad(q=>flow.route(Number(q?.id),Number(q?.project_id??0)))
 onShow(()=>{visible=true;flow.resume()})
-onHide(()=>{visible=false;flow.suspend()})
-onUnload(()=>{visible=false;flow.suspend()})
-watch(()=>ownerSession.accessToken,()=>{flow.reset();if(visible)flow.resume()},{flush:'sync'})
+onHide(()=>{visible=false;flow.suspend();distanceFlow.reset()})
+onUnload(()=>{visible=false;flow.suspend();distanceFlow.reset()})
+watch(()=>ownerSession.accessToken,()=>{flow.reset();distanceFlow.reset();if(visible)flow.resume()},{flush:'sync'})
+watch(()=>state.merchant,()=>distanceFlow.reset(),{flush:'sync'})
 function login(){flow.reset();clearOwnerSession();uni.navigateTo({url:'/pages/owner/index'})}
 function book(row){if(state.merchant&&!state.busy&&ownerSession.accessToken)uni.navigateTo({url:`/pages/order/book?id=${row.merchant_project_id}`})}
 </script>
@@ -26,7 +30,12 @@ function book(row){if(state.merchant&&!state.busy&&ownerSession.accessToken)uni.
       <text class="copy">{{ merchantTypeLabel(state.merchant.merchant_type) }}</text>
       <text class="copy">服务地址：{{ state.merchant.address }}</text>
       <text class="copy">{{ state.merchant.region_code?'门店已维护所属区域':'门店尚未维护所属区域，可按地址核对' }}</text>
-      <text class="hint">营业时间、距离和公开评价暂未提供，请勿据此推断。</text>
+      <!-- #ifdef MP-WEIXIN -->
+      <button class="action" :disabled="distance.busy || state.busy" @tap="distanceFlow.load">{{ distance.busy ? '正在查询直线距离…' : '查看与我的直线距离' }}</button>
+      <!-- #endif -->
+      <text v-if="distance.result" class="copy">{{ distanceLabel(distance.result) }}</text>
+      <text v-if="distance.message" class="error">{{ distance.message }}</text>
+      <text class="hint">距离基于本次定位和店长确认的位置，仅为直线距离。营业时间和公开评价暂未提供。</text>
     </view>
     <view v-if="state.loaded" class="panel">
       <text class="heading">{{ state.projectId?'所选服务的当前报价':'本店在售服务' }}</text>

@@ -33,6 +33,7 @@ function openStaff() { uni.navigateTo({ url: '/pages/merchant/staff' }) }
     </view>
     <template v-else>
       <button @tap="openStaff">返回本店员工</button>
+      <button @tap="uni.navigateTo({ url: '/pages/merchant/location' })">维护用于直线距离的门店位置</button>
       <text v-if="state.busy" class="copy" role="status">正在加载门店资料…</text>
       <view v-if="state.message" class="panel" role="status">
         <text class="error" data-testid="profile-message">{{ state.message }}</text>
@@ -58,6 +59,7 @@ function openStaff() { uni.navigateTo({ url: '/pages/merchant/staff' }) }
           <text class="label">联系电话</text>
           <input v-model="state.contactPhone" class="field" :disabled="!editable()" type="number" maxlength="11" placeholder="可接收短信的手机号" />
           <text class="label">经度（可留空）</text>
+          <text class="copy">以下为旧资料坐标。用于车主距离的位置请进入上方“门店位置”单独核对并确认 GCJ02 坐标。</text>
           <input v-model="state.lng" class="field" :disabled="!editable()" placeholder="例如 113.2644" />
           <text class="label">纬度（可留空）</text>
           <input v-model="state.lat" class="field" :disabled="!editable()" placeholder="例如 23.1291" />

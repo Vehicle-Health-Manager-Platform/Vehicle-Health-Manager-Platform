@@ -1,26 +1,38 @@
 import { initialQuoteListState,createQuoteListFlow } from './quote-flow.js'
 import { nativeRegion } from './merchant-discovery.js'
 import { serviceFailure } from './service-catalog.js'
+import { nearbyApi as defaultNearbyApi, requestNativeLocation } from './nearby-merchants.js'
 
-export const initialRegionalQuoteState=()=>({...initialQuoteListState(),regionCode:null,regionNames:[]})
-export function createRegionalQuoteFlow({state,api,token,project}){
+export const initialRegionalQuoteState=()=>({...initialQuoteListState(),regionCode:null,regionNames:[],position:null,locating:false,locationMessage:''})
+export function createRegionalQuoteFlow({state,api,token,project,nearbyApi=defaultNearbyApi,locate=requestNativeLocation}){
   let visible=false,generation=0,opened=null
   const list=createQuoteListFlow({state,token,fetchPage:async(owner,page,sort)=>{
     const current=generation
-    try{return await api.ownerList(owner,project(),sort,page,state.regionCode)}
+    try{return state.position ? await nearbyApi.list(owner,project(),state.position,sort,page,state.regionCode) : await api.ownerList(owner,project(),sort,page,state.regionCode)}
     catch(e){
       if(visible&&current===generation&&owner===token()&&['unauthorized','forbidden','missing'].includes(e.kind)){
-        state.items=[];state.page=0;state.total=0;state.loaded=false
+        state.items=[];state.page=0;state.total=0;state.loaded=false;state.position=null;state.locating=false
       }
       throw e
     }
   }})
-  function clear(){generation++;opened=null;list.reset()}
+  function clear(){generation++;opened=null;list.reset();state.locating=false}
+  async function nearby(){
+    if(!visible||!token()||state.locating)return
+    clear();state.position=null;state.locationMessage='';state.locating=true
+    const current=generation,owner=token()
+    try{
+      const point=await locate()
+      if(!visible||current!==generation||owner!==token())return
+      state.position=point;state.sort='distance_asc';state.locating=false;return list.load()
+    }catch(e){if(visible&&current===generation&&owner===token()){state.locationMessage=e.kind==='location'?e.message:'未取得位置，可选择省市区或按价格查看门店';state.locating=false;return list.load()}}
+  }
   return {
     show(){visible=true},
     load(more=false){if(visible)return list.load(more)},
     retry(){if(visible)return list.retry()},
-    sort(value){if(visible&&['price_asc','price_desc'].includes(value)){generation++;opened=null;return list.sort(value)}},
+    nearby,
+    sort(value){if(visible&&(['price_asc','price_desc'].includes(value)||value==='distance_asc'&&state.position)){clear();state.sort=value;return list.load()}},
     beginRegion(){if(visible&&token())opened={generation,owner:token()}},
     selectRegion(detail){
       const selection=opened;opened=null
@@ -29,9 +41,9 @@ export function createRegionalQuoteFlow({state,api,token,project}){
       catch(e){state.message=e.message;state.failureKind=e.kind||'invalid'}
     },
     cancelRegion(){opened=null},
-    allRegions(){if(!visible)return;const sort=state.sort;clear();state.sort=sort;state.regionCode=null;state.regionNames=[];return list.load()},
-    suspend(){visible=false;clear()},
-    reset(){clear();state.regionCode=null;state.regionNames=[]},
+    allRegions(){if(!visible)return;const sort=state.sort==='distance_asc'?'price_asc':state.sort;clear();state.sort=sort;state.regionCode=null;state.regionNames=[];state.position=null;state.locationMessage='';return list.load()},
+    suspend(){visible=false;clear();state.position=null;state.locationMessage=''},
+    reset(){clear();state.regionCode=null;state.regionNames=[];state.position=null;state.locationMessage=''},
   }
 }
 

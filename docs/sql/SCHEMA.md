@@ -1,5 +1,9 @@
 # S0 数据模型与字段字典
 
+## R4b2a 增量 V032
+
+`V032__merchant_location.sql` 新增 `merchant_location`，按 merchant_id 唯一。lng/lat 为 DECIMAL(10,7)，坐标系 GCJ02、来源 MERCHANT_CONFIRMED，version、actor_staff_id 与 updated_at 记录维护。坐标/坐标系/来源必须同时有效或同时为空；清除保留版本。明确确认的位置用于直线距离，旧 merchant.lng/lat 不自动迁移。基线44表，应用至V032共72表，迁移可重复执行。验收口径见 [位置契约](../api/MERCHANT_LOCATION.md)。
+
 > 2026-10-02。`init.sql` 和 `migrations/V001__baseline.sql` 由 `python scripts/build_init_sql.py` 按恢复的原始交付文档 v1.0 生成。16 张表取自 §7.2，缺失的公共字段及 23 张扩展表按 [决策记录](../DECISIONS.md) G01–G03 补齐。
 
 `migrations/V002__staff_wechat_identity.sql` 是独立版本化迁移，不改变上述生成的 V001 基线。它为技师添加按 AppID 区分的微信绑定历史；同一 AppID 下一个微信身份和一个员工账号各只能有一条有效绑定。解除绑定保留历史记录。应用层仍需校验员工角色、账号状态和商家状态；唯一索引不能代替授权。

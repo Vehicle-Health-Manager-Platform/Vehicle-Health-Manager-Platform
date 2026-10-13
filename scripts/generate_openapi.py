@@ -1268,6 +1268,47 @@ def main():
             "allOf":[{"$ref":"#/components/schemas/ApiResponse"},{"type":"object","properties":{"data":{"type":"object","additionalProperties":False,"required":["matches"],"properties":{"matches":{"type":"array","maxItems":20,"items":match_row}}}}}]}}}},
             "400":{"description":"body/query无效"},"401":{"description":"会话失效"},"403":{"description":"非车主身份"},"409":{"description":"本人旧记录过多需核对"},"503":{"description":"数据库未配置或不可用"}}}}
 
+    point_fields = {"lng": {"type": "number", "minimum": -180, "maximum": 180},
+                    "lat": {"type": "number", "minimum": -90, "maximum": 90},
+                    "coordinate_system": {"type": "string", "const": "GCJ02"}}
+    source_field = {"type": ["string", "null"], "enum": ["MERCHANT_CONFIRMED", None]}
+    distance_fields = {"distance_meters": {"type": ["integer", "null"], "minimum": 0, "maximum": 20015115}, "location_source": source_field}
+    schemas["NearbyMerchantQuote"] = strict({**schemas["MerchantQuote"]["properties"], **distance_fields})
+    schemas["NearbyMerchantPage"] = strict({"items": {"type": "array", "maxItems": 100, "items": {"$ref": "#/components/schemas/NearbyMerchantQuote"}},
+        "total": {"type": "integer", "minimum": 0}, "page": {"type": "integer", "minimum": 1, "maximum": 1000000}, "page_size": {"type": "integer", "minimum": 1, "maximum": 100}})
+    schemas["MerchantDistance"] = strict({"merchant_id": identifier, **distance_fields})
+    location_fields = {"lng": {"type": "string", "pattern": r"^-?(0|[1-9][0-9]{0,2})(\.[0-9]{1,7})?$", "description": "经度范围 -180..180"},
+        "lat": {"type": "string", "pattern": r"^-?(0|[1-9][0-9]{0,2})(\.[0-9]{1,7})?$", "description": "纬度范围 -90..90"},
+        "coordinate_system": {"type": "string", "const": "GCJ02"}, "source": {"type": "string", "const": "MERCHANT_CONFIRMED"}}
+    schemas["MerchantLocation"] = strict({**location_fields, "version": identifier})
+    nullable_location = {"anyOf": [{"$ref": "#/components/schemas/MerchantLocation"}, {"type": "null"}]}
+    schemas["MerchantLocationRead"] = strict({"can_edit": {"type": "boolean"}, "location": nullable_location})
+    schemas["MerchantLocationSaved"] = strict({"location": nullable_location})
+    schemas["MerchantLocationInput"] = {"oneOf": [strict(location_fields), strict({k: {"type": "null"} for k in location_fields})]}
+    nearby_input = strict({**point_fields, "sort": {"type": "string", "enum": ["distance_asc", "price_asc", "price_desc"]},
+        "region_code": {"type": ["string", "null"], "pattern": "^[0-9]{6}$"}, "page": {"type": "integer", "minimum": 1, "maximum": 1000000}, "page_size": {"type": "integer", "minimum": 1, "maximum": 100}})
+    for method, path, summary, role, body, result in (
+        ("get", "/api/merchant/location", "本店已确认位置", "MERCHANT/STAFF", None, "MerchantLocationRead"),
+        ("put", "/api/merchant/location", "店长确认或清除 GCJ02 门店位置", "MERCHANT", {"$ref": "#/components/schemas/MerchantLocationInput"}, "MerchantLocationSaved"),
+        ("post", "/api/service/project/{id}/nearby-merchants", "车主附近报价与直线距离", "OWNER", nearby_input, "NearbyMerchantPage"),
+        ("post", "/api/service/merchant/{id}/distance", "车主与门店的直线距离", "OWNER", strict(point_fields), "MerchantDistance"),
+    ):
+        item = operation(method, path, summary, "F06")
+        item["x-roles"] = role; item["x-implementation-status"] = "implemented"
+        item["description"] = "no-store；严格正文且不接受查询参数。旧坐标不推断；只使用店长明确确认的GCJ02位置，不代表平台现场核实。详见MERCHANT_LOCATION.md。"
+        if method == "post":
+            item["parameters"] = [p for p in item["parameters"] if p["in"] != "header"]
+            item["x-read-only"] = True
+            item["description"] += " 只读POST，不持久化车主位置、不写业务审计；位置仅在正文，不进入URL。"
+        if method == "put":
+            item["parameters"].append({"name": "Idempotency-Key", "in": "header", "required": True, "schema": {"type": "string", "format": "uuid"}})
+            item["description"] += " MERCHANT_STAFF_ENABLED=true；同事务幂等和审计，清除保留版本。"
+        if body is not None: item["requestBody"] = {"required": True, "content": {"application/json": {"schema": body}}}
+        if "{id}" in path: item["parameters"][0]["schema"] = identifier
+        item["responses"].update({"404": {"description": "门店或标准项目已不可用"}, "503": {"description": "开关关闭、服务未配置或数据库失败"}})
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "required": ["data"], "properties": {"data": {"$ref": f"#/components/schemas/{result}"}}}]}
+        document["paths"].setdefault(path, {})[method] = item
+
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     count = sum(len(item) for item in document["paths"].values())
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

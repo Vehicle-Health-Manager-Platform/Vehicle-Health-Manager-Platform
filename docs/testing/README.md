@@ -1,5 +1,7 @@
 # 测试资料
 
+- [R4b2a 门店位置与距离验收](LOCAL_MERCHANT_LOCATION_ACCEPTANCE.md)：真实MySQL、HTTP边界、离线定位、迁移/构建与真机待验范围。
+
 - [R4a2 结构化档案验收](LOCAL_STRUCTURED_ARCHIVE_ACCEPTANCE.md)：后端定向8项、微信361项、新页面产物和未验收范围。
 
 

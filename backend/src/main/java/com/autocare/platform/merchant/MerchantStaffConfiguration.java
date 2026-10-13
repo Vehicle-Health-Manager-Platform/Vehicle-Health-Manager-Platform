@@ -14,6 +14,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 @ConditionalOnProperty("MYSQL_HOST")
 public class MerchantStaffConfiguration {
     @Bean
+    MerchantLocation merchantLocation(JdbcTemplate identityJdbc, WriteIntegrityService integrity, ObjectMapper mapper,
+        @Value("${MERCHANT_STAFF_ENABLED:false}") String enabled, PlatformTransactionManager manager) {
+        return new MerchantLocation(identityJdbc, integrity, mapper, MerchantStaffInput.enabled(enabled), manager);
+    }
+    @Bean
     MerchantStaff merchantStaff(JdbcTemplate identityJdbc, WriteIntegrityService integrity, ObjectMapper mapper,
                                 StaffCodeOperations codes, @Value("${WECHAT_APP_ID:}") String appId,
                                 @Value("${MERCHANT_STAFF_ENABLED:false}") String enabled,

@@ -14046,6 +14046,421 @@
           }
         }
       }
+    },
+    "/api/merchant/location": {
+      "get": {
+        "summary": "本店已确认位置",
+        "operationId": "get_api_merchant_location",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F06"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/MerchantLocationRead"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "门店或标准项目已不可用"
+          },
+          "503": {
+            "description": "开关关闭、服务未配置或数据库失败"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT/STAFF",
+        "x-implementation-status": "implemented",
+        "description": "no-store；严格正文且不接受查询参数。旧坐标不推断；只使用店长明确确认的GCJ02位置，不代表平台现场核实。详见MERCHANT_LOCATION.md。"
+      },
+      "put": {
+        "summary": "店长确认或清除 GCJ02 门店位置",
+        "operationId": "put_api_merchant_location",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F06"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/MerchantLocationSaved"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "门店或标准项目已不可用"
+          },
+          "503": {
+            "description": "开关关闭、服务未配置或数据库失败"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT",
+        "x-implementation-status": "implemented",
+        "description": "no-store；严格正文且不接受查询参数。旧坐标不推断；只使用店长明确确认的GCJ02位置，不代表平台现场核实。详见MERCHANT_LOCATION.md。 MERCHANT_STAFF_ENABLED=true；同事务幂等和审计，清除保留版本。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MerchantLocationInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/project/{id}/nearby-merchants": {
+      "post": {
+        "summary": "车主附近报价与直线距离",
+        "operationId": "post_api_service_project_id_nearby_merchants",
+        "tags": [
+          "service"
+        ],
+        "x-feature-ids": [
+          "F06"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/NearbyMerchantPage"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "门店或标准项目已不可用"
+          },
+          "503": {
+            "description": "开关关闭、服务未配置或数据库失败"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "lng",
+                  "lat",
+                  "coordinate_system",
+                  "sort",
+                  "region_code",
+                  "page",
+                  "page_size"
+                ],
+                "properties": {
+                  "lng": {
+                    "type": "number",
+                    "minimum": -180,
+                    "maximum": 180
+                  },
+                  "lat": {
+                    "type": "number",
+                    "minimum": -90,
+                    "maximum": 90
+                  },
+                  "coordinate_system": {
+                    "type": "string",
+                    "const": "GCJ02"
+                  },
+                  "sort": {
+                    "type": "string",
+                    "enum": [
+                      "distance_asc",
+                      "price_asc",
+                      "price_desc"
+                    ]
+                  },
+                  "region_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "pattern": "^[0-9]{6}$"
+                  },
+                  "page": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1000000
+                  },
+                  "page_size": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-roles": "OWNER",
+        "x-implementation-status": "implemented",
+        "description": "no-store；严格正文且不接受查询参数。旧坐标不推断；只使用店长明确确认的GCJ02位置，不代表平台现场核实。详见MERCHANT_LOCATION.md。 只读POST，不持久化车主位置、不写业务审计；位置仅在正文，不进入URL。",
+        "x-read-only": true
+      }
+    },
+    "/api/service/merchant/{id}/distance": {
+      "post": {
+        "summary": "车主与门店的直线距离",
+        "operationId": "post_api_service_merchant_id_distance",
+        "tags": [
+          "service"
+        ],
+        "x-feature-ids": [
+          "F06"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/MerchantDistance"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "门店或标准项目已不可用"
+          },
+          "503": {
+            "description": "开关关闭、服务未配置或数据库失败"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "lng",
+                  "lat",
+                  "coordinate_system"
+                ],
+                "properties": {
+                  "lng": {
+                    "type": "number",
+                    "minimum": -180,
+                    "maximum": 180
+                  },
+                  "lat": {
+                    "type": "number",
+                    "minimum": -90,
+                    "maximum": 90
+                  },
+                  "coordinate_system": {
+                    "type": "string",
+                    "const": "GCJ02"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-roles": "OWNER",
+        "x-implementation-status": "implemented",
+        "description": "no-store；严格正文且不接受查询参数。旧坐标不推断；只使用店长明确确认的GCJ02位置，不代表平台现场核实。详见MERCHANT_LOCATION.md。 只读POST，不持久化车主位置、不写业务审计；位置仅在正文，不进入URL。",
+        "x-read-only": true
+      }
     }
   },
   "components": {
@@ -18653,6 +19068,273 @@
             }
           }
         }
+      },
+      "NearbyMerchantQuote": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "merchant_project_id",
+          "version_id",
+          "version",
+          "price",
+          "merchant_id",
+          "merchant_name",
+          "address",
+          "distance_meters",
+          "location_source"
+        ],
+        "properties": {
+          "merchant_project_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "version_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "price": {
+            "type": "string",
+            "pattern": "^(?:0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+          },
+          "merchant_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "merchant_name": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "distance_meters": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 20015115
+          },
+          "location_source": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "MERCHANT_CONFIRMED",
+              null
+            ]
+          }
+        }
+      },
+      "NearbyMerchantPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/NearbyMerchantQuote"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        }
+      },
+      "MerchantDistance": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "merchant_id",
+          "distance_meters",
+          "location_source"
+        ],
+        "properties": {
+          "merchant_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "distance_meters": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 20015115
+          },
+          "location_source": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "MERCHANT_CONFIRMED",
+              null
+            ]
+          }
+        }
+      },
+      "MerchantLocation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "lng",
+          "lat",
+          "coordinate_system",
+          "source",
+          "version"
+        ],
+        "properties": {
+          "lng": {
+            "type": "string",
+            "pattern": "^-?(0|[1-9][0-9]{0,2})(\\.[0-9]{1,7})?$",
+            "description": "经度范围 -180..180"
+          },
+          "lat": {
+            "type": "string",
+            "pattern": "^-?(0|[1-9][0-9]{0,2})(\\.[0-9]{1,7})?$",
+            "description": "纬度范围 -90..90"
+          },
+          "coordinate_system": {
+            "type": "string",
+            "const": "GCJ02"
+          },
+          "source": {
+            "type": "string",
+            "const": "MERCHANT_CONFIRMED"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        }
+      },
+      "MerchantLocationRead": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "can_edit",
+          "location"
+        ],
+        "properties": {
+          "can_edit": {
+            "type": "boolean"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MerchantLocation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "MerchantLocationSaved": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "location"
+        ],
+        "properties": {
+          "location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MerchantLocation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "MerchantLocationInput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "lng",
+              "lat",
+              "coordinate_system",
+              "source"
+            ],
+            "properties": {
+              "lng": {
+                "type": "string",
+                "pattern": "^-?(0|[1-9][0-9]{0,2})(\\.[0-9]{1,7})?$",
+                "description": "经度范围 -180..180"
+              },
+              "lat": {
+                "type": "string",
+                "pattern": "^-?(0|[1-9][0-9]{0,2})(\\.[0-9]{1,7})?$",
+                "description": "纬度范围 -90..90"
+              },
+              "coordinate_system": {
+                "type": "string",
+                "const": "GCJ02"
+              },
+              "source": {
+                "type": "string",
+                "const": "MERCHANT_CONFIRMED"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "lng",
+              "lat",
+              "coordinate_system",
+              "source"
+            ],
+            "properties": {
+              "lng": {
+                "type": "null"
+              },
+              "lat": {
+                "type": "null"
+              },
+              "coordinate_system": {
+                "type": "null"
+              },
+              "source": {
+                "type": "null"
+              }
+            }
+          }
+        ]
       }
     }
   }

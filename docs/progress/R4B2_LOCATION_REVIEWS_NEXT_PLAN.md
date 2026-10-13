@@ -1,5 +1,7 @@
 # R4b2 位置距离与公开评价下一步
 
+> 2026-10-13：R4b2a 已编码，最终验证与上传状态见[执行记录](R4B2A_LOCATION_DISTANCE_EXECUTION.md)。下一阶段为下方 R4b2b 公开评价；最新规格/计划见[位置与距离](../superpowers/specs/2026-10-13-r4b2a-location-distance-design.md)。
+
 2026-10-12。承接R4b1商家详情/原生选区，不增加PC页面，所有README继续等待用户要求。
 
 ## R4b2a 先做位置与距离
