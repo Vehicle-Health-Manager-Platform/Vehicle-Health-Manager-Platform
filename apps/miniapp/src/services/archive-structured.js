@@ -1,12 +1,8 @@
 import { apiOrigin } from './api-config.js'
 import { apiRuntime } from './api-runtime.js'
 export class ArchiveStructuredError extends Error { constructor(kind,message) {super(message);this.kind=kind} }
-export const structuredTypes={1:'保养资料',3:'保险资料',7:'年检资料'}
-export const structuredFields={
-  1:[{key:'provider_name',label:'服务单位',kind:'text',max:100},{key:'service_items',label:'保养项目（每行一项）',kind:'items',max:1620},{key:'performed_mileage',label:'本次保养里程（公里）',kind:'number',max:10}],
-  3:[{key:'insurer_name',label:'保险公司',kind:'text',max:100},{key:'policy_number',label:'保单号（私有）',kind:'text',max:64},{key:'coverage_type',label:'险种',kind:'enum',values:['COMPULSORY','COMMERCIAL','COMBINED','OTHER'],labels:['交强险','商业险','交强险与商业险','其他']},{key:'coverage_start',label:'保障开始日',kind:'date'},{key:'coverage_end',label:'保障结束日',kind:'date'}],
-  7:[{key:'inspection_station',label:'检验机构',kind:'text',max:100},{key:'inspection_result',label:'资料所载检验结果',kind:'enum',values:['PASSED','FAILED','UNKNOWN'],labels:['通过（本人填写）','未通过（本人填写）','未知']},{key:'valid_until',label:'资料所载有效日期',kind:'date'}],
-}
+import { structuredTypes, structuredFields, confirmedKeys } from './archive-structured-fields.js'
+export { structuredTypes, structuredFields } from './archive-structured-fields.js'
 const id=v=>Number.isSafeInteger(v)&&v>0
 const revision=v=>Number.isInteger(v)&&v>=0&&v<=2147483647
 const exact=(r,names)=>r&&typeof r==='object'&&!Array.isArray(r)&&Object.keys(r).length===names.length&&names.every(n=>Object.hasOwn(r,n))
@@ -20,18 +16,26 @@ export function validStructuredFields(type,fields) {
     if(def.kind==='text'&&!text(value,def.max))return false
     if(def.kind==='date'&&!date(value))return false
     if(def.kind==='enum'&&!def.values.includes(value))return false
-    if(def.kind==='number'&&(!revision(value)))return false
+    if(def.kind==='number'&&(!revision(value)||value>def.maxValue))return false
+    if(def.kind==='boolean'&&typeof value!=='boolean')return false
+    if(def.kind==='money'&&(typeof value!=='string'||!/^(0|[1-9]\d{0,7})\.\d{2}$/.test(value)))return false
+    if(def.kind==='decimal'&&(typeof value!=='string'||!/^(0|[1-9]\d{0,8})(\.[0-9]{1,3})?$/.test(value)))return false
     if(def.kind==='items'&&(!Array.isArray(value)||!value.length||value.length>20||new Set(value).size!==value.length||value.some(v=>!text(v,80))))return false
   }
-  return !fields.coverage_start||!fields.coverage_end||fields.coverage_start<=fields.coverage_end
+  for(const [a,b] of [['coverage_start','coverage_end'],['valid_from','valid_until'],['birth_date','first_issue_date'],['first_issue_date','valid_from'],['register_date','issue_date'],['occurred_on','handled_on'],['observed_on','cleared_on'],['inspection_date','valid_until'],['service_date','next_due_date']])if(fields[a]&&fields[b]&&fields[a]>fields[b])return false
+  if(fields.validity_type==='LONG_TERM'&&fields.valid_until)return false
+  if(fields.owner_confirmed){if(![...confirmedKeys[type],'source_reference','source_checked_on'].every(k=>Object.hasOwn(fields,k)))return false
+    if(type===9&&fields.validity_type==='FINITE'&&!fields.valid_until||type===6&&fields.violation_status==='HANDLED'&&!fields.handled_on||type===10&&fields.fault_status==='RESOLVED'&&!fields.cleared_on)return false}
+  return true
 }
 export function structuredForm(context) {
-  return Object.fromEntries(structuredFields[context.archive_type].map(def=>[def.key,context.fields[def.key]===undefined?'':def.kind==='items'?context.fields[def.key].join('\n'):String(context.fields[def.key])]))
+  return Object.fromEntries(structuredFields[context.archive_type].map(def=>[def.key,def.kind==='boolean'?context.fields[def.key]===true:context.fields[def.key]===undefined?'':def.kind==='items'?context.fields[def.key].join('\n'):String(context.fields[def.key])]))
 }
 export function structuredBody(context,form,clear=false) {
   if(!context||!revision(context.revision)||context.revision>=2147483647||!structuredFields[context.archive_type])throw new ArchiveStructuredError('invalid','请刷新资料')
   const fields={}
   if(!clear) for(const def of structuredFields[context.archive_type]) {
+    if(def.kind==='boolean'){if(form[def.key]===true||Object.hasOwn(context.fields,def.key))fields[def.key]=form[def.key]===true;continue}
     const raw=String(form[def.key]??'').trim();if(!raw)continue
     if(def.kind==='number') {if(!/^\d+$/.test(raw))throw new ArchiveStructuredError('invalid','请填写整数里程');fields[def.key]=Number(raw)}
     else fields[def.key]=def.kind==='items'?raw.split('\n').map(s=>s.trim()).filter(Boolean):raw

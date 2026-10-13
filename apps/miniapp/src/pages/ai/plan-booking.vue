@@ -34,9 +34,11 @@ function login() { flow.reset(); selected.value = null; clearOwnerSession(); uni
           <text>选择商家后核对当前车型、项目与报价。</text>
           <button :disabled="state.busy" @tap="flow.loadQuotes(false,'price_asc')">当前报价从低到高</button>
           <button :disabled="state.busy" @tap="flow.loadQuotes(false,'price_desc')">当前报价从高到低</button>
+          <button :disabled="state.busy" @tap="flow.loadQuotes(false,'rating_desc')">按有效公开星级从高到低</button>
           <text v-if="state.loaded && !state.quotes.length">暂无在售报价，可手动选择其他服务。</text>
           <view v-for="q in state.quotes" :key="q.merchant_project_id" class="booking-row">
             <text>{{q.merchant_name}} · {{q.address}}</text><text>当前列表价 ¥{{q.price}}</text>
+            <text v-if="q.rating_summary">{{q.rating_summary.average_rating===null?'暂无有效公开星级':q.rating_summary.average_rating+' 星 · '+q.rating_summary.count+' 个有效公开样本'}}</text>
             <button :disabled="state.busy" @tap="flow.chooseQuote(q)">{{state.quoteId===q.merchant_project_id?'已选 · ':''}}读取本车适用性与当前时段</button>
           </view>
           <button v-if="state.loaded && state.quotes.length<state.total" :disabled="state.busy" @tap="flow.loadQuotes(true)">加载更多当前报价</button>

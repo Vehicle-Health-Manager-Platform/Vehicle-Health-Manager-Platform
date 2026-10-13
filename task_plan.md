@@ -5,10 +5,10 @@ User authorization: finish all remaining R4 locally, then upload ALL updated cod
 ## Phases
 
 1. complete — freeze complete R4 scope/design/contracts and local branch; audit existing archive/reminder/health APIs.
-2. in_progress — R4d1 exact-model source policies, confirmations, expiry/comparability trends, reproducible reference scoring and source-based required project suggestions.
-3. pending — R4d2 complete manually confirmed structured vehicle/driver documents, violation/fault and maintenance metadata with corrections.
-4. pending — R4d3 five source-based/advance reminder categories, dashboard/health/AI/booking integrations and operator pages.
-5. pending — full R4 local backend/MySQL/HTTP/frontend/build/schema/generated docs validation; close remaining requirements accurately.
+2. complete — R4d1 exact-model source policies, confirmations, expiry/comparability trends, reproducible reference scoring and source-based required project suggestions.
+3. complete — R4d2 complete manually confirmed structured vehicle/driver documents, violation/fault and maintenance metadata with corrections.
+4. complete — R4d3 five source-based/advance reminder categories, dashboard/health/AI/booking integrations and operator pages.
+5. in_progress — remaining R4b public-rating quote sorting and symptom→AI handoff, full R4 local backend/MySQL/HTTP/frontend/build/schema/generated docs validation; close remaining requirements accurately.
 6. pending — only after phases 1–5 complete commit/push ALL code+docs together, create PR based on #148, complete six CI checks.
 
 ## Decisions
@@ -20,4 +20,7 @@ User authorization: finish all remaining R4 locally, then upload ALL updated cod
 
 ## Errors
 
-None yet.
+- First health test compile lacked ObjectNode import; production compile passed. Added explicit test import; rerun targeted database/HTTP suite.
+- Full backend command: PowerShell split unquoted dotted Maven property; quote -Dupload.test.images.prebuilt=true. Local upload CI image tags absent, build both test images before retry.
+
+- DockerHub alpine metadata returned text/html. Verified cached MinIO/mc SHA256 against pinned Dockerfiles; rebuilt upload-init from cached image with current tracked initialize.sh, verified script SHA256, running full backend with quoted Maven property. No repository image/test relaxation.

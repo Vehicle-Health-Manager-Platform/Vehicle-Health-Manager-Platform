@@ -5,6 +5,7 @@ import { exact, safeId } from './experience-publication.js'
 import { validVehicleEvidence } from './vehicle-plan-evidence.js'
 import { quotesApi } from './merchant-quotes.js'
 import { reservationsApi, chinaDate } from './reservations.js'
+import { ratedQuotesApi } from './rated-quotes.js'
 const validDay = s => typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s) && Number.isFinite(Date.parse(s)) && new Date(s).toISOString().slice(0,10) === s
 const validInput = b => exact(b, ['merchant_project_id', 'standard_project_id', 'vehicle_id', 'date', 'page', 'selected_slot_id']) && [b.merchant_project_id, b.standard_project_id, b.vehicle_id].every(safeId) && validDay(b.date) && safeId(b.page) && b.page <= 1000000 && (b.selected_slot_id === null || safeId(b.selected_slot_id))
 const stamp = s => typeof s === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(s) && Number.isFinite(Date.parse(s))
@@ -31,7 +32,7 @@ export function createPlanBookingApi({ baseUrl, runtime }) {
 export const planBookingApi = createPlanBookingApi({ baseUrl: apiOrigin, runtime: () => apiRuntime })
 export const initialPlanBookingState = () => ({ busy: false, uncertain: false, saved: null, quotes: [], total: 0, page: 0, loaded: false, sort: 'price_asc', quoteId: 0, day: chinaDate(), context: null, slot: 0, confirmed: false, message: '', kind: '' })
 function signature(c) { const q = c.quote, v = c.evidence.vehicle, a = c.evidence.applicability[0]; return JSON.stringify([q.merchant_project_id, q.quote_version_id, q.version, q.merchant_id, q.standard_project_id, q.price, q.merchant_name, q.address, q.project_name, v.vehicle_id, v.model_id, v.model_name, v.power_type, a.verdict, a.rule_version, a.source_reference]) }
-export function createPlanBookingFlow({ state, token, selection, newKey, api = planBookingApi, quotes = quotesApi, create = reservationsApi.create }) {
+export function createPlanBookingFlow({ state, token, selection, newKey, api = planBookingApi, quotes = quotesApi, create = reservationsApi.create, ratedApi = ratedQuotesApi }) {
   let epoch = 0, pending = null
   const capture = () => { const g = ++epoch, actor = token(), selected = JSON.stringify(selection()); return { actor, valid: () => g === epoch && actor === token() && selected === JSON.stringify(selection()) } }
   function clearChoice() { state.context = null; state.slot = 0; state.confirmed = false }
@@ -43,7 +44,7 @@ export function createPlanBookingFlow({ state, token, selection, newKey, api = p
   async function loadQuotes(more = false, sort = state.sort) {
     if (blocked()) return; const task = capture(), s = selection(), page = more ? state.page + 1 : 1
     state.busy = true; state.message = ''; state.kind = ''; if (!more) { state.quotes = []; state.loaded = false; state.quoteId = 0; clearChoice(); state.sort = sort }
-    try { const r = await quotes.ownerList(task.actor, s.project, sort, page); if (!task.valid()) return; state.quotes = more ? [...state.quotes, ...r.items.filter(x => !state.quotes.some(y => y.merchant_project_id === x.merchant_project_id))] : r.items; state.total = r.total; state.page = page; state.loaded = true } catch (e) { if (task.valid()) failure(e) } finally { if (task.valid()) state.busy = false }
+    try { const r = sort==='rating_desc'?await ratedApi.list(task.actor,s.project,page):await quotes.ownerList(task.actor, s.project, sort, page); if (!task.valid()) return; state.quotes = more ? [...state.quotes, ...r.items.filter(x => !state.quotes.some(y => y.merchant_project_id === x.merchant_project_id))] : r.items; state.total = r.total; state.page = page; state.loaded = true } catch (e) { if (task.valid()) failure(e) } finally { if (task.valid()) state.busy = false }
   }
   async function loadContext(more = false) {
     if (blocked() || !state.quoteId) return; const task = capture(), old = state.context, page = more && old ? old.slots.page + 1 : 1

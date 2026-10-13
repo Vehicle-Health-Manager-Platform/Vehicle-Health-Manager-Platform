@@ -140,4 +140,7 @@ class JdbcArchiveShareTest {
         service.revoke(owner, id, key(), mapper.createObjectNode());
         assertTrue(create() > 0);
     }
+    @Test void newPrivateDocumentAndFaultTypesAreExcludedFromSharedReport() throws Exception {
+        for(int type:List.of(8,9,10))jdbc.update("INSERT INTO vehicle_archive(vehicle_id,archive_type,input_type,content,recorded_at) VALUES(101,?,3,?,UTC_TIMESTAMP())",type,"{\"title\":\"private-license-identifier\",\"notes\":\"private-holder-name\"}");long id=create();var summary=mapper.valueToTree(service.view(recipient,token(id))).path("summary");assertEquals(1,summary.path("entries").size());assertFalse(summary.toString().contains("private-license"));assertFalse(summary.toString().contains("private-holder"));
+    }
 }

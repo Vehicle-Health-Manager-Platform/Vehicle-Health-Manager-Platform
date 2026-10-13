@@ -31,10 +31,11 @@ public class ArchiveReportService {
     }
 
     public ArchiveReport load(VehicleOwner owner, ArchiveReportFilter filter) {
-        return snapshot.execute(status -> loadSnapshot(owner, filter));
+        return snapshot.execute(status -> loadSnapshot(owner, filter, true));
     }
+    public ArchiveReport loadShared(VehicleOwner owner,ArchiveReportFilter filter){return snapshot.execute(status->loadSnapshot(owner,filter,false));}
 
-    private ArchiveReport loadSnapshot(VehicleOwner owner, ArchiveReportFilter filter) {
+    private ArchiveReport loadSnapshot(VehicleOwner owner, ArchiveReportFilter filter,boolean privateKinds) {
         if (owner == null || filter == null || !Instant.now().isBefore(owner.expires())) throw expired();
         if (jdbc.query("SELECT id FROM auth_session WHERE id=? AND subject_type='user' AND subject_id=? "
                 + "AND role='OWNER' AND revoked_at IS NULL AND expires_at>UTC_TIMESTAMP()",
@@ -55,6 +56,7 @@ public class ArchiveReportService {
 
         String visibility = " AND (a.input_type IN (1,3) OR (a.input_type=4 "
             + "AND JSON_EXTRACT(a.content,'$.source.user_id')=?))";
+        if(!privateKinds)visibility+=" AND a.archive_type<=7";
         long undated = 0;
         if (filter.from() != null) {
             undated = jdbc.queryForObject("SELECT COUNT(*) FROM vehicle_archive a WHERE a.vehicle_id=? "
@@ -85,7 +87,7 @@ public class ArchiveReportService {
 
     private ArchiveReport.Entry parseEntry(int archiveType, int inputType, String rawContent,
                                             String rawDate, int photoCount, long ownerId) {
-        if (archiveType < 1 || archiveType > 7 || !List.of(1, 3, 4).contains(inputType) || photoCount < 0)
+        if (archiveType < 1 || archiveType > 10 || !List.of(1, 3, 4).contains(inputType) || photoCount < 0)
             throw unavailable();
         JsonNode content;
         try { content = mapper.readTree(rawContent); }

@@ -1,6 +1,6 @@
 <script setup>
-import { reactive, ref, watch } from 'vue'
-import { onShow, onHide, onUnload } from '@dcloudio/uni-app'
+import { reactive, ref, watch, computed } from 'vue'
+import { onLoad, onShow, onHide, onUnload } from '@dcloudio/uni-app'
 import { ownerSession, clearOwnerSession } from '../../services/owner-session.js'
 import { createAiServicePlanFlow, initialAiServicePlanState, PLAN_TIERS, PLAN_REASONS } from '../../services/ai-service-plan.js'
 import VehicleList from '../../components/VehicleList.vue'
@@ -8,21 +8,29 @@ import { createVehicleEvidenceFlow, initialVehicleEvidenceState, applicabilityLa
 import { healthLabels, observationStatus, unitLabels } from '../../services/health-observations.js'
 import { selectOwnerVehicle } from '../../services/owner-vehicle-selection.js'
 import { planBookingHandoff } from '../../services/plan-booking-handoff.js'
+import { createHealthDashboardFlow,initialHealthDashboardState } from '../../services/health-dashboard.js'
+import { symptomHandoff } from '../../services/symptom-handoff.js'
 const state = reactive(initialAiServicePlanState())
 const vehicle = ref(null), evidence = reactive(initialVehicleEvidenceState())
+const source=reactive(initialHealthDashboardState())
+const sourceFlow=createHealthDashboardFlow({state:source,token:()=>ownerSession.accessToken,vehicle:()=>vehicle.value?.vehicle_id||0})
+const otherCandidates=computed(()=>state.value?.items.filter(p=>!source.value?.required_projects.some(x=>x.project_id===p.project_id))||[])
 const evidenceFlow = createVehicleEvidenceFlow({ state: evidence, token: () => ownerSession.accessToken, selection: () => ({ vehicle: vehicle.value?.vehicle_id || 0, projects: state.value?.items.map(x => x.project_id) || [] }) })
-function clearEvidence() { evidenceFlow.reset(); vehicle.value = null }
+function clearEvidence() { evidenceFlow.reset();sourceFlow.reset(); vehicle.value = null }
+function loadEvidence(){return Promise.allSettled([evidenceFlow.load(),sourceFlow.load()])}
+function chooseRequired(row){if(state.busy||source.busy||!vehicle.value||source.value?.vehicle.vehicle_id!==vehicle.value.vehicle_id||!source.value.required_projects.includes(row))return;const route=planBookingHandoff.route(row.project_id,vehicle.value.vehicle_id);if(route)uni.navigateTo({url:route})}
 function moreExperiences() { if (!vehicle.value || !evidence.value) return; selectOwnerVehicle(vehicle.value); uni.navigateTo({url:'/pages/community/experiences'}) }
-watch(() => [vehicle.value?.vehicle_id, state.draft, state.requested, state.value], () => evidenceFlow.reset(), { flush: 'sync' })
-let visible = false
+watch(() => [vehicle.value?.vehicle_id, state.draft, state.requested, state.value], () => {evidenceFlow.reset();sourceFlow.reset()}, { flush: 'sync' })
+let visible = false,transferredQuestion=null
+onLoad(()=>{transferredQuestion=symptomHandoff.take()})
 const flow = createAiServicePlanFlow({ state, token: () => ownerSession.accessToken,
   confirm: text => new Promise(resolve => uni.showModal({ title: '确认结构化项目建议用途', content: `同意将此问题及公开项目目录发送至第三方DeepSeek以匹配推荐/可选项目。请勿填写姓名、地址、联系方式或车辆标识。本次不读取车辆档案：\n${text}`, success: r => resolve(!!r.confirm), fail: () => resolve(false) })) })
 function login() { flow.reset(); clearOwnerSession(); uni.navigateTo({ url: '/pages/owner/index' }) }
 function choose(row) { if (!evidenceFlow.canChoose(row.project_id) || !flow.projectRoute(row)) return; const route = vehicle.value ? planBookingHandoff.route(row.project_id, vehicle.value.vehicle_id) : flow.projectRoute(row); if (!vehicle.value) planBookingHandoff.clear(); if (route) uni.navigateTo({ url: route }) }
-onShow(() => { visible = true; flow.load() })
-onHide(() => { visible = false; flow.reset(); clearEvidence() })
-onUnload(() => { visible = false; flow.reset(); clearEvidence() })
-watch(() => ownerSession.accessToken, () => { flow.reset(); clearEvidence(); if (visible) flow.load() }, { flush: 'sync' })
+onShow(async() => { visible = true;const actor=ownerSession.accessToken;await flow.load();if(visible&&actor===ownerSession.accessToken&&state.catalog&&transferredQuestion){flow.edit(transferredQuestion);transferredQuestion=null} })
+onHide(() => { visible = false;transferredQuestion=null; flow.reset(); clearEvidence() })
+onUnload(() => { visible = false;transferredQuestion=null; flow.reset(); clearEvidence() })
+watch(() => ownerSession.accessToken, () => { transferredQuestion=null;flow.reset(); clearEvidence(); if (visible) flow.load() }, { flush: 'sync' })
 </script>
 <template>
   <view class="reservation-page">
@@ -33,10 +41,21 @@ watch(() => ownerSession.accessToken, () => { flow.reset(); clearEvidence(); if 
       <VehicleList :selected-id="vehicle?.vehicle_id || 0" @select="vehicle=$event" />
       <text>车辆与读数只在平台内展示，不发送至第三方AI。车型为本人登记，尚未经识别核验；同款经验不能证明本车故障或必做项目。</text>
       <button @tap="clearEvidence">仅按问题和公开目录选择</button>
-      <button :disabled="!vehicle || !state.value || evidence.busy || state.busy" @tap="evidenceFlow.load()">读取本车证据并核对本次项目</button>
+      <button :disabled="!vehicle || evidence.busy || source.busy || state.busy" @tap="loadEvidence()">读取本车来源规则、证据并核对本次项目</button>
       <text v-if="vehicle && !evidence.value">已选车辆，继续选择项目前请读取本车证据。</text>
       <text v-if="evidence.busy">正在读取当前车辆证据…</text>
       <text v-if="evidence.message" role="status">{{ evidence.message }}</text>
+      <text v-if="source.message" role="status">{{source.message}}</text>
+    </view>
+    <view v-if="source.value" class="reservation-panel">
+      <text class="reservation-heading">来源规则必做建议</text>
+      <text>仅使用当前有效精确车型规则、本人确认且同口径的读数、当前适用项目；不发送给第三方AI，仍需实际检查。</text>
+      <text v-if="!source.value.required_projects.length">当前没有满足全部来源条件的规则必做建议；未知不代表无需检查。</text>
+      <view v-for="p in source.value.required_projects" :key="p.project_id" class="plan-row">
+        <text class="reservation-heading">来源规则必做 · {{p.project_name}}</text>
+        <text v-for="e in p.evidence" :key="e.metric" class="evidence">{{healthLabels[e.metric]}}：{{e.value}} {{unitLabels[e.unit]}} · {{e.measured_on}}；规则 {{e.policy_version}} / 读数 {{e.observation_revision}} / 确认 {{e.confirmation_revision}} / 项目适用性 {{e.action_rule_version}}。来源：{{e.source_reference}}；项目来源：{{e.project_source_reference}}</text>
+        <button :disabled="source.busy || state.busy" @tap="chooseRequired(p)">按本车核对当前报价与时段</button>
+      </view>
     </view>
     <view v-if="evidence.value" class="reservation-panel">
       <text class="reservation-heading">{{ evidence.value.vehicle.model_name || '有效车型未知' }} · 本人登记未核验</text>
@@ -67,7 +86,7 @@ watch(() => ownerSession.accessToken, () => { flow.reset(); clearEvidence(); if 
       <text v-else-if="state.value.status==='SOURCE_CHANGED'">目录在生成期间变化，已丢弃旧方案，请刷新重新选择。</text>
       <text v-else>当前暂无有效候选项目。</text>
       <text class="evidence">本次规范问题：{{ state.value.question }}</text>
-      <view v-for="row in state.value.items" :key="row.project_id" class="plan-row">
+      <view v-for="row in otherCandidates" :key="row.project_id" class="plan-row">
         <text class="reservation-heading">{{ PLAN_TIERS[row.tier] }} · {{ row.project_name }}</text>
         <text>{{ PLAN_REASONS[row.reason_code] }}</text>
         <text class="evidence">依据问题：{{ row.evidence_quote }}</text>

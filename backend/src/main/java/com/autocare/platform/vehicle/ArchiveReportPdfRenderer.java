@@ -92,6 +92,9 @@ public class ArchiveReportPdfRenderer {
             case 5 -> "改装";
             case 6 -> "违章";
             case 7 -> "年检";
+            case 8 -> "行驶证资料";
+            case 9 -> "驾驶证资料";
+            case 10 -> "本人故障记录";
             default -> "车辆档案";
         };
     }

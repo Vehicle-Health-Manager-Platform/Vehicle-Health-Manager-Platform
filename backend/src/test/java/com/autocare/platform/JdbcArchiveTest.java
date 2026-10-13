@@ -121,7 +121,7 @@ class JdbcArchiveTest {
     }
 
     @Test void validatesInputAndPaginates() throws Exception {
-        for (String bad : List.of("{}", "{\"vehicle_id\":101,\"archive_type\":8,\"recorded_date\":\"2026-10-04\",\"title\":\"x\"}",
+        for (String bad : List.of("{}", "{\"vehicle_id\":101,\"archive_type\":11,\"recorded_date\":\"2026-10-04\",\"title\":\"x\"}",
             "{\"vehicle_id\":101,\"archive_type\":1,\"recorded_date\":\"2026-02-30\",\"title\":\"x\"}",
             "{\"vehicle_id\":101,\"archive_type\":1,\"recorded_date\":\"2026-10-04\",\"title\":\"x\",\"file_ids\":[11,11]}",
             "{\"vehicle_id\":101,\"archive_type\":1,\"recorded_date\":\"2026-10-04\",\"title\":\"x\",\"user_id\":1}"))

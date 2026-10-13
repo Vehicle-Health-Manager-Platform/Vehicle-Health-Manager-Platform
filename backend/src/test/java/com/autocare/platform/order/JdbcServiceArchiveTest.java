@@ -190,6 +190,7 @@ class JdbcServiceArchiveTest {
         jdbc.update("UPDATE vehicle_archive SET content=JSON_SET(content,'$.test_mode',CAST('false' AS JSON))");
         assertTrue(ai.forVehicle(owner,1).summary().contains("检查与清洁"));
     }
+    @Test void privateDocumentAndFaultTitlesNeverEnterThirdPartyAiContext(){var archives=new com.autocare.platform.vehicle.ArchiveService(jdbc,db.writes,db.mapper);for(int type:List.of(8,9,10))archives.add(owner,key(),new com.autocare.platform.vehicle.ArchiveInput(1,type,LocalDate.of(2026,10,8),12345,"private-document-identifier","private-holder-name",List.of(),3));var ai=new com.autocare.platform.ai.AiContextProvider(jdbc,db.mapper);assertFalse(ai.forVehicle(owner,1).summary().contains("private-document"));assertFalse(ai.forVehicle(owner,1).summary().contains("private-holder"));}
     @Test void concurrentConsumersCreateOneArchiveAndAudit() throws Exception {
         long id=submit(); var pool=Executors.newFixedThreadPool(2); var start=new CountDownLatch(1);
         try { var tasks=new ArrayList<Future<?>>(); for(int n=0;n<2;n++) tasks.add(pool.submit(()->{start.await();jobs.consume(id);return null;}));

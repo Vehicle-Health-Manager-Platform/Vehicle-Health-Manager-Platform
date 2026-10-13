@@ -70,9 +70,9 @@ public class ArchiveStructuredService {
     private Source source(long archive, boolean lock) {
         if (archive <= 0 || archive > 9007199254740991L) throw WriteIntegrityService.badRequest("档案参数无效");
         var rows = jdbc.query("SELECT vehicle_id,archive_type,DATE_FORMAT(recorded_at,'%Y-%m-%d') AS recorded_date FROM vehicle_archive "
-            + "WHERE id=? AND is_deleted=0 AND input_type IN (1,3) AND archive_type IN (1,3,7)" + (lock ? " FOR UPDATE" : ""),
+            + "WHERE id=? AND is_deleted=0 AND input_type IN (1,3) AND archive_type IN (1,2,3,6,7,8,9,10)" + (lock ? " FOR UPDATE" : ""),
             (rs, n) -> new Source(rs.getLong("vehicle_id"), rs.getInt("archive_type"), rs.getString("recorded_date")), archive);
-        if (rows.size() != 1) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "来源档案不可用，请选择本人保养、保险或年检记录");
+        if (rows.size() != 1) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "来源档案不可用，请选择本人可填写结构化资料的记录");
         return rows.get(0);
     }
     private void ownVehicle(VehicleOwner owner, long vehicle, boolean lock) {

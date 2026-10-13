@@ -16,6 +16,7 @@ onShow(()=>{visible=true;flow.resume()})
 onHide(()=>{visible=false;flow.suspend()})
 onUnload(()=>{visible=false;flow.reset()})
 watch(()=>ownerSession.accessToken,()=>{flow.reset();if(visible)flow.resume()},{flush:'sync'})
+watch(()=>JSON.stringify({...state.form,owner_confirmed:undefined}),()=>{if(!state.busy&&state.form.owner_confirmed)state.form.owner_confirmed=false},{flush:'sync'})
 function login(){flow.reset();clearOwnerSession();uni.navigateTo({url:'/pages/owner/index'})}
 function optionLabel(def){const index=def.values.indexOf(state.form[def.key]);return index<0?'未填写':def.labels[index]}
 </script>
@@ -23,14 +24,15 @@ function optionLabel(def){const index=def.values.indexOf(state.form[def.key]);re
 <template>
   <view class="page">
     <text class="title">{{ structuredTypes[state.context?.archive_type] || '本人档案资料' }}</text>
-    <text class="hint">本人填写，尚未核验。请按保单、检验资料或保养记录核对；未填写不会自动推断。</text>
+    <text class="hint">本人填写，尚非官方核验。请逐项核对原资料，确认关键字段和来源后勾选本人确认；修改字段后需再次确认。未填写不会推断。证件/身份字段仅本人可读，不进入公开分享或第三方AI。</text>
     <text v-if="state.busy" class="hint">正在处理…</text>
     <view v-if="state.context" class="card">
       <text class="heading">来源：{{ structuredTypes[state.context.archive_type] }} · {{ state.context.recorded_date || '日期未填写' }}</text>
       <text class="hint">{{ state.context.status === 'NOT_SET' ? '本条尚无结构化资料' : '现有资料为本人填写、未核验' }}</text>
       <view v-for="def in structuredFields[state.context.archive_type]" :key="def.key">
-        <text class="label">{{ def.label }}（可选）</text>
-        <template v-if="def.kind === 'date'">
+        <text class="label">{{ def.label }}{{def.kind==='boolean'?'':'（未确认资料可留空）'}}</text>
+        <template v-if="def.kind === 'boolean'"><switch :checked="state.form[def.key]===true" :disabled="state.busy" @change="state.form[def.key]=$event.detail.value" /></template>
+        <template v-else-if="def.kind === 'date'">
           <picker mode="date" :value="state.form[def.key]" :disabled="state.busy" @change="state.form[def.key]=$event.detail.value"><view class="input">{{ state.form[def.key] || '选择资料所载日期' }}</view></picker>
           <button v-if="state.form[def.key]" class="secondary" :disabled="state.busy" @tap="state.form[def.key]=''">清除该日期</button>
         </template>
@@ -41,7 +43,7 @@ function optionLabel(def){const index=def.values.indexOf(state.form[def.key]);re
         <textarea v-else-if="def.kind === 'items'" v-model="state.form[def.key]" class="input items" :maxlength="def.max" :disabled="state.busy" placeholder="每行一项，最多20项，每项80字符" />
         <input v-else v-model="state.form[def.key]" class="input" :type="def.kind === 'number' ? 'number' : 'text'" :maxlength="def.max" :disabled="state.busy" placeholder="按本人记录填写，可留空" />
       </view>
-      <text class="hint">保存修正只更新本条资料。登记里程、提醒目标和分享摘要不会自动变更。</text>
+      <text class="hint">本人确认的故障/违章状态用于首页提醒；修正或清空后重新计算。其他资料不自动改写登记里程、提醒目标或已有分享摘要。</text>
       <button :disabled="state.busy || state.kind === 'conflict'" :loading="state.busy" @tap="flow.save(false)">保存本人资料</button>
       <button v-if="Object.keys(state.context.fields).length" class="danger" :disabled="state.busy || state.kind === 'conflict'" @tap="flow.save(true)">清空本条结构化资料</button>
     </view>
