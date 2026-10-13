@@ -52,6 +52,7 @@ onUnload(() => { visible = false; clear() })
         <text>提交时间 {{ displayTime(result.submitted_at) }}</text>
         <text>提交后不可修改。正文和照片仅本人可查看，星级公开需单独授权。</text>
         <button @tap="uni.navigateTo({url:`/pages/order/review-publication?id=${order}`})">管理独立公开星级授权</button>
+        <button @tap="uni.navigateTo({url:`/pages/order/public-review-text?id=${order}`})">编写和管理独立公开文字</button>
         <button v-for="(file,index) in result.photo_file_ids" :key="file" @tap="previewSaved(file)">查看评价图片 {{ index + 1 }}</button>
       </template>
       <template v-else-if="read.value.can_submit">

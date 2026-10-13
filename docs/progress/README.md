@@ -1,5 +1,8 @@
 # 项目进度与下一步规划
 
+> 最新阶段：[R4b2b2独立公开文本执行记录](R4B2B2_PUBLIC_REVIEW_TEXTS_EXECUTION.md)，下一授权文本总结。
+
+
 > 最新阶段：[R4b2b1 公开星级执行记录](R4B2B1_PUBLIC_RATINGS_EXECUTION.md)。下一公开文本脱敏与审核。
 
 

@@ -77,3 +77,7 @@ V026重复迁移后共66表，新增`order_commission_snapshot`（订单唯一�
 ## V033 公开星级授权
 
 `review_publication`：review_id主键（每评价唯一），consented布尔授权、version单调版本、updated_at变更时间；历史评价不回填。V033后73表。授权不含正文图片，不等于资格持续有效，公开查询重新校验真实非测试履约；撤销保留版本。
+
+## V034 独立公开评价文本
+
+`public_review_text`：每评价唯一当前脱敏文字、SHA256文本哈希、consent_version、status/version、reason_code、公开号与时间；撤销清空文字/哈希/公开号。`public_review_text_moderation`：每(review_id,request_version)唯一决策、绑定哈希、理由/运营/时间/公开号，不保存正文副本。两表不回填私人评价，V034后75表。公开资格与当前批准版本/哈希逐次复核。

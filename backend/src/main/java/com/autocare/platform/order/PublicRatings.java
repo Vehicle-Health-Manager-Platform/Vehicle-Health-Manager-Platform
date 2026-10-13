@@ -12,12 +12,12 @@ import org.springframework.web.server.ResponseStatusException;
 /** Consent and read projection share the exact live source qualification. No private content is selected. */
 public class PublicRatings {
     private final ReservationStore db;
-    private static final String SOURCE = " FROM order_review r JOIN `order` o ON o.id=r.order_id AND o.user_id=r.user_id"
+    static final String SOURCE = " FROM order_review r JOIN `order` o ON o.id=r.order_id AND o.user_id=r.user_id"
         + " JOIN user u ON u.id=r.user_id JOIN merchant m ON m.id=o.merchant_id"
         + " JOIN order_redemption d ON d.id=r.redemption_id AND d.order_id=o.id AND d.merchant_id=o.merchant_id"
         + " JOIN staff_account s ON s.id=d.staff_id AND s.merchant_id=o.merchant_id AND s.role IN ('MERCHANT','STAFF')"
         + " JOIN payment p ON p.id=d.payment_id AND p.order_id=o.id";
-    private static final String VALID = " o.status='COMPLETED' AND o.is_deleted=0 AND u.status=1 AND u.is_deleted=0 AND m.status=1 AND m.is_deleted=0"
+    static final String VALID = " o.status='COMPLETED' AND o.is_deleted=0 AND u.status=1 AND u.is_deleted=0 AND m.status=1 AND m.is_deleted=0"
         + " AND r.test_mode=0 AND d.test_mode=0 AND d.redeemed_at IS NOT NULL AND r.rating BETWEEN 1 AND 5"
         + " AND p.channel='WECHAT' AND p.status='SUCCEEDED' AND p.is_deleted=0 AND p.currency='CNY' AND p.amount=o.pay_amount AND p.amount>0"
         + " AND TRIM(p.payment_no)<>'' AND TRIM(p.channel_payment_no)<>'' AND p.paid_at IS NOT NULL"
@@ -29,12 +29,12 @@ public class PublicRatings {
         + " AND NOT EXISTS(SELECT 1 FROM refund f WHERE f.order_id=o.id)";
     public PublicRatings(ReservationStore db) { this.db=db; }
     private static ResponseStatusException conflict(){return new ResponseStatusException(HttpStatus.CONFLICT,"公开资格或授权版本已变化，请刷新核对");}
-    private Map<String,Object> owned(VehicleOwner owner,long order,boolean lock) {
+    Map<String,Object> owned(VehicleOwner owner,long order,boolean lock) {
         ServiceCatalog.validateId(order);db.owner(owner,lock);
         db.one("SELECT id FROM `order` WHERE id=? AND user_id=? AND is_deleted=0"+(lock?" FOR UPDATE":""),order,owner.id());
         return db.one("SELECT id,test_mode FROM order_review WHERE order_id=? AND user_id=?"+(lock?" FOR UPDATE":""),order,owner.id());
     }
-    private boolean eligible(long review) {return db.jdbc.queryForObject("SELECT COUNT(*)"+SOURCE+" WHERE r.id=? AND "+VALID,Long.class,review)==1L;}
+    boolean eligible(long review) {return db.jdbc.queryForObject("SELECT COUNT(*)"+SOURCE+" WHERE r.id=? AND "+VALID,Long.class,review)==1L;}
     private Map<String,Object> state(long order,Map<String,Object> review) {
         long id=ReservationStore.number(review,"id");var grants=db.jdbc.queryForList("SELECT consented,version FROM review_publication WHERE review_id=?",id);
         boolean consented=!grants.isEmpty() && ReservationStore.number(grants.get(0),"consented")==1,can=eligible(id);
