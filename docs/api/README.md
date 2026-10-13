@@ -1,5 +1,8 @@
 # API 文档
 
+> R4c1有效目录结构化项目建议与现有报价入口见[AI_SERVICE_PLANS.md](AI_SERVICE_PLANS.md)。
+
+
 > R4b2b3独立第三方AI用途授权与来源可核对原文要点见[REVIEW_SUMMARIES.md](REVIEW_SUMMARIES.md)。
 
 

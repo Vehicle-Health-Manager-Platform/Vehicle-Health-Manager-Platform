@@ -1399,6 +1399,23 @@ def main():
         item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "required": ["data"], "properties": {"data": {"$ref": f"#/components/schemas/{result}"}}}]}
         document["paths"].setdefault(path, {})[method] = item
 
+    schemas["AiPlanProject"] = strict({"project_id": identifier, "project_name": {"type": "string"}, "category": {"type": "integer", "minimum": 1, "maximum": 6}, "service_content": {"type": "string"}})
+    schemas["AiPlanCatalog"] = strict({"items": {"type": "array", "maxItems": 40, "items": {"$ref": "#/components/schemas/AiPlanProject"}}, "total": {"type": "integer", "minimum": 0}, "limit": {"type": "integer", "const": 40}})
+    schemas["AiServicePlanInput"] = strict({"question": {"type": "string", "minLength": 1, "maxLength": 300}, "requested_project_ids": {"type": "array", "maxItems": 3, "uniqueItems": True, "items": identifier}, "consent_to_provider": {"type": "boolean", "const": True}})
+    schemas["AiServicePlan"] = strict({"status": {"type": "string", "enum": ["AI_READY", "MANUAL", "EMPTY", "SOURCE_CHANGED"]}, "question": {"type": "string", "minLength": 1, "maxLength": 300}, "candidate_count": {"type": "integer", "minimum": 0, "maximum": 40},
+        "items": {"type": "array", "maxItems": 8, "items": strict({"project_id": identifier, "project_name": {"type": "string"}, "category": {"type": "integer", "minimum": 1, "maximum": 6}, "tier": {"type": "string", "enum": ["REQUESTED", "RECOMMENDED", "OPTIONAL"]}, "reason_code": {"type": "string", "enum": ["OWNER_SELECTED", "MODEL_MATCH"]}, "evidence_quote": {"type": "string", "minLength": 1, "maxLength": 300}})}})
+    for method, path, summary, body, result in (
+        ("get", "/api/ai/service-plan/catalog", "结构化建议的有效限定目录", None, "AiPlanCatalog"),
+        ("post", "/api/ai/service-plan", "只读生成有效目录项目建议", {"$ref": "#/components/schemas/AiServicePlanInput"}, "AiServicePlan"),
+    ):
+        item = operation(method, path, summary, "F05,F06"); item["x-roles"] = "OWNER"; item["x-implementation-status"] = "catalog-based-service-plan-implemented"
+        item["description"] = "no-store、无query；AI_SERVICE_PLAN_ENABLED默认false，明确第三方问题用途确认，规范问题+公开目录最多40候选；车主指定独立REQUESTED，模型只推荐/可选，完整问题证据校验；返回后重核会话/目录，无价格或车辆档案。跳转当前服务详情/报价/预约，详见AI_SERVICE_PLANS.md。"
+        if method == "post": item["parameters"] = [p for p in item["parameters"] if p["in"] != "header"]; item["x-read-only"] = True
+        if body is not None: item["requestBody"] = {"required": True, "content": {"application/json": {"schema": body}}}
+        item["responses"].update({"404": {"description": "明确指定项目已停用/不可用"}, "503": {"description": "数据库未配置/不可用"}})
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "required": ["data"], "properties": {"data": {"$ref": f"#/components/schemas/{result}"}}}]}
+        document["paths"].setdefault(path, {})[method] = item
+
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     count = sum(len(item) for item in document["paths"].values())
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

@@ -15658,6 +15658,159 @@
         "description": "no-store，无query；REVIEW_SUMMARY_ENABLED与REVIEW_TEXT_PUBLICATION_ENABLED默认关闭；原文字/星级授权不推断第三方AI用途，绑定当前批准版本，改稿需重新授权。最多最近20条/3条完整原句，明确原文降级，生成后重检来源，不持久化结果。详见REVIEW_SUMMARIES.md。",
         "x-read-only": true
       }
+    },
+    "/api/ai/service-plan/catalog": {
+      "get": {
+        "summary": "结构化建议的有效限定目录",
+        "operationId": "get_api_ai_service_plan_catalog",
+        "tags": [
+          "ai"
+        ],
+        "x-feature-ids": [
+          "F05",
+          "F06"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/AiPlanCatalog"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "明确指定项目已停用/不可用"
+          },
+          "503": {
+            "description": "数据库未配置/不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "catalog-based-service-plan-implemented",
+        "description": "no-store、无query；AI_SERVICE_PLAN_ENABLED默认false，明确第三方问题用途确认，规范问题+公开目录最多40候选；车主指定独立REQUESTED，模型只推荐/可选，完整问题证据校验；返回后重核会话/目录，无价格或车辆档案。跳转当前服务详情/报价/预约，详见AI_SERVICE_PLANS.md。"
+      }
+    },
+    "/api/ai/service-plan": {
+      "post": {
+        "summary": "只读生成有效目录项目建议",
+        "operationId": "post_api_ai_service_plan",
+        "tags": [
+          "ai"
+        ],
+        "x-feature-ids": [
+          "F05",
+          "F06"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/AiServicePlan"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "明确指定项目已停用/不可用"
+          },
+          "503": {
+            "description": "数据库未配置/不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AiServicePlanInput"
+              }
+            }
+          }
+        },
+        "x-roles": "OWNER",
+        "x-implementation-status": "catalog-based-service-plan-implemented",
+        "description": "no-store、无query；AI_SERVICE_PLAN_ENABLED默认false，明确第三方问题用途确认，规范问题+公开目录最多40候选；车主指定独立REQUESTED，模型只推荐/可选，完整问题证据校验；返回后重核会话/目录，无价格或车辆档案。跳转当前服务详情/报价/预约，详见AI_SERVICE_PLANS.md。",
+        "x-read-only": true
+      }
     }
   },
   "components": {
@@ -21172,6 +21325,172 @@
                 "published_date": {
                   "type": "string",
                   "format": "date"
+                }
+              }
+            }
+          }
+        }
+      },
+      "AiPlanProject": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "project_id",
+          "project_name",
+          "category",
+          "service_content"
+        ],
+        "properties": {
+          "project_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "project_name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 6
+          },
+          "service_content": {
+            "type": "string"
+          }
+        }
+      },
+      "AiPlanCatalog": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "total",
+          "limit"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 40,
+            "items": {
+              "$ref": "#/components/schemas/AiPlanProject"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "limit": {
+            "type": "integer",
+            "const": 40
+          }
+        }
+      },
+      "AiServicePlanInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question",
+          "requested_project_ids",
+          "consent_to_provider"
+        ],
+        "properties": {
+          "question": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "requested_project_ids": {
+            "type": "array",
+            "maxItems": 3,
+            "uniqueItems": true,
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          "consent_to_provider": {
+            "type": "boolean",
+            "const": true
+          }
+        }
+      },
+      "AiServicePlan": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "status",
+          "question",
+          "candidate_count",
+          "items"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "AI_READY",
+              "MANUAL",
+              "EMPTY",
+              "SOURCE_CHANGED"
+            ]
+          },
+          "question": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "candidate_count": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 40
+          },
+          "items": {
+            "type": "array",
+            "maxItems": 8,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "project_id",
+                "project_name",
+                "category",
+                "tier",
+                "reason_code",
+                "evidence_quote"
+              ],
+              "properties": {
+                "project_id": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "project_name": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 6
+                },
+                "tier": {
+                  "type": "string",
+                  "enum": [
+                    "REQUESTED",
+                    "RECOMMENDED",
+                    "OPTIONAL"
+                  ]
+                },
+                "reason_code": {
+                  "type": "string",
+                  "enum": [
+                    "OWNER_SELECTED",
+                    "MODEL_MATCH"
+                  ]
+                },
+                "evidence_quote": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
                 }
               }
             }
