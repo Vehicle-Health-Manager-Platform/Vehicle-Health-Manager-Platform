@@ -22,6 +22,7 @@ public class ReservationConfiguration {
     @Bean OrderDisputes orderDisputes(ReservationStore db){return new OrderDisputes(db);}
     @Bean OrderReviews orderReviews(ReservationStore db){return new OrderReviews(db);}
     @Bean PublicRatings publicRatings(ReservationStore db){return new PublicRatings(db);}
+    @Bean VehiclePlanEvidence vehiclePlanEvidence(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators,com.autocare.platform.vehicle.HealthObservationService observations,ExperienceModeration experiences){return new VehiclePlanEvidence(db,operators,observations,experiences);}
     @Bean AiServicePlans aiServicePlans(ReservationStore db,com.autocare.platform.ai.DeepSeekClient client,@org.springframework.beans.factory.annotation.Value("${AI_SERVICE_PLAN_ENABLED:false}")boolean enabled){return new AiServicePlans(db,client,enabled);}
     @Bean ReviewSummaries reviewSummaries(ReservationStore db,com.autocare.platform.ai.DeepSeekClient client,@org.springframework.beans.factory.annotation.Value("${REVIEW_SUMMARY_ENABLED:false}")boolean summary,@org.springframework.beans.factory.annotation.Value("${REVIEW_TEXT_PUBLICATION_ENABLED:false}")boolean text){return new ReviewSummaries(db,client,summary,text);}
     @Bean PublicReviewTexts publicReviewTexts(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators,@org.springframework.beans.factory.annotation.Value("${REVIEW_TEXT_PUBLICATION_ENABLED:false}")boolean enabled){return new PublicReviewTexts(db,operators,enabled);}

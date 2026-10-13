@@ -1416,6 +1416,42 @@ def main():
         item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "required": ["data"], "properties": {"data": {"$ref": f"#/components/schemas/{result}"}}}]}
         document["paths"].setdefault(path, {})[method] = item
 
+    rule_source = {"type": "string", "minLength": 1, "maxLength": 256, "description": "规范来源引用，无控制/格式/孤立代理字符；运营声明，真实性未自动核验"}
+    applicability_rule = strict({"verdict": {"enum": ["APPLICABLE", "NOT_APPLICABLE"]}, "source_reference": rule_source})
+    schemas["ProjectModelApplicability"] = strict({"project_id": identifier, "model_id": identifier,
+        "version": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "rule": {"anyOf": [applicability_rule, {"type": "null"}]}})
+    schemas["ProjectModelApplicabilityInput"] = strict({"verdict": {"enum": ["APPLICABLE", "NOT_APPLICABLE", "WITHDRAW"]},
+        "source_reference": {"anyOf": [rule_source, {"type": "null"}]}, "expected_version": {"type": "integer", "minimum": 0, "maximum": 9007199254740990}})
+    schemas["ProjectModelApplicabilityInput"]["allOf"] = [{"if": {"properties": {"verdict": {"const": "WITHDRAW"}}}, "then": {"properties": {"source_reference": {"type": "null"}}}, "else": {"properties": {"source_reference": rule_source}}}]
+    schemas["VehiclePlanEvidenceInput"] = strict({"vehicle_id": identifier,
+        "project_ids": {"type": "array", "maxItems": 8, "uniqueItems": True, "items": identifier}})
+    schemas["VehiclePlanEvidence"] = strict({
+        "vehicle": strict({"vehicle_id": identifier, "model_id": {"anyOf": [identifier, {"type": "null"}]},
+            "model_name": {"type": ["string", "null"]}, "model_source": {"const": "OWNER_REGISTERED"}, "power_type": {"type": ["string", "null"]}}),
+        "observations": strict({"vehicle_id": identifier, "today": {"type": "string", "format": "date"},
+            "list": {"type": "array", "minItems": 6, "maxItems": 6, "items": strict({
+                "metric": {"enum": ["OIL", "BRAKE_PAD", "TIRE", "TRACTION_BATTERY", "COOLANT", "AUX_BATTERY"]},
+                "revision": {"type": "integer", "minimum": 0}, "archive_id": {"anyOf": [identifier, {"type": "null"}]},
+                "recorded_date": {"type": ["string", "null"], "format": "date"}, "measurement": {"type": "object", "description": "复用HEALTH_OBSERVATIONS协议；未知/来源失效为空对象"},
+                "status": {"enum": ["NOT_SET", "RECORDED_UNVERIFIED", "SOURCE_UNAVAILABLE"]}})}}),
+        "experiences": strict({"items": {"type": "array", "maxItems": 20, "items": {"$ref": "#/components/schemas/PublicExperience"}}, "next_cursor": {"anyOf": [identifier, {"type": "null"}]}}),
+        "applicability": {"type": "array", "maxItems": 8, "items": strict({"project_id": identifier,
+            "verdict": {"enum": ["APPLICABLE", "NOT_APPLICABLE", "UNKNOWN"]}, "rule_version": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+            "source_reference": {"anyOf": [rule_source, {"type": "null"}]}})}})
+    for method, path, summary, body, result, roles in (
+        ("post", "/api/ai/service-plan/vehicle-evidence", "主动读取本人车辆本地方案证据", "VehiclePlanEvidenceInput", "VehiclePlanEvidence", "OWNER"),
+        ("get", "/api/admin/project-applicability/{project}/{model}", "目录运营读取精确车型适用性规则", None, "ProjectModelApplicability", "OPERATOR(can_catalog)"),
+        ("put", "/api/admin/project-applicability/{project}/{model}", "目录运营发布或撤销精确车型适用性规则", "ProjectModelApplicabilityInput", "ProjectModelApplicability", "OPERATOR(can_catalog)")):
+        item = operation(method, path, summary, "F05,F06"); item["x-roles"] = roles; item["x-implementation-status"] = "vehicle-plan-evidence-implemented"
+        item["description"] = "no-store、无query；V036无规则回填。仅当前有效精确车型/项目；撤销保留版本，未配置显示UNKNOWN。不按动力类型推断，不证明技术必做。车辆/读数/获批同款摘要仅本地，不发第三方；写入复核权限/目录、版本与审计原子，历史成功后客户端GET，详见VEHICLE_PLAN_EVIDENCE.md。"
+        if method == "post": item["parameters"] = [p for p in item["parameters"] if p["in"] != "header"]; item["x-read-only"] = True
+        if method == "put": item["parameters"].append({"name": "Idempotency-Key", "in": "header", "required": True, "schema": {"type": "string", "format": "uuid"}})
+        if body: item["requestBody"] = {"required": True, "content": {"application/json": {"schema": {"$ref": f"#/components/schemas/{body}"}}}}
+        item["responses"].update({"404": {"description": "本人车辆或有效目录不可用"}, "409": {"description": "目录或规则版本已变化"}, "503": {"description": "数据库/写入暂不可用"}})
+        item["responses"]["200"]["content"]["application/json"]["schema"] = {"allOf": [{"$ref": "#/components/schemas/ApiResponse"}, {"type": "object", "required": ["data"], "properties": {"data": {"$ref": f"#/components/schemas/{result}"}}}]}
+        document["paths"].setdefault(path, {})[method] = item
+
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     count = sum(len(item) for item in document["paths"].values())
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")
