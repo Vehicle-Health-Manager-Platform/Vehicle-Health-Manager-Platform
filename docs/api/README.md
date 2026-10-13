@@ -1,5 +1,7 @@
 # API 文档
 
+> R4c2本人本地证据与精确车型适用性见[VEHICLE_PLAN_EVIDENCE.md](VEHICLE_PLAN_EVIDENCE.md)。
+
 > R4c1有效目录结构化项目建议与现有报价入口见[AI_SERVICE_PLANS.md](AI_SERVICE_PLANS.md)。
 
 

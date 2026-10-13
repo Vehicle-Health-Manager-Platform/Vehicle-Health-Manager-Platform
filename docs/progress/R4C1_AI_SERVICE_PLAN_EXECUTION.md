@@ -1,5 +1,7 @@
 # R4c1 结构化项目建议执行
 
+> 收口补记：2026-10-13，[PR #146](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/146) 已上传，d341173 / CI run38378123798六项成功；完整后端696无跳过、小程序451。未合并/发布。下一R4c2执行见[新阶段](R4C2_VEHICLE_PLAN_EVIDENCE_EXECUTION.md)，更细报价/时段衔接拆为R4c3。
+
 2026-10-13，分支`codex/r4c1-ai-service-plan`，依赖#145（六项CI通过、未合并）。[规格](../superpowers/specs/2026-10-13-r4c1-ai-service-plan-design.md)、[计划](../superpowers/plans/2026-10-13-r4c1-ai-service-plan-plan.md)、[API](../api/AI_SERVICE_PLANS.md)、[验收](../testing/LOCAL_AI_SERVICE_PLAN_ACCEPTANCE.md)。
 
 已实现当前最多40候选、最多3个车主指定/5个模型推荐可选、规范问题+第三方用途确认、严格ID/证据/等级校验、固定理由/明确降级、事务外IO及生成后会话/目录复核。独立页面与AI入口、编辑/账号/隐藏隔离、标准项目详情→现有报价/预约入口。默认关闭配置，无新增迁移/持久化问题，76表保持不变。

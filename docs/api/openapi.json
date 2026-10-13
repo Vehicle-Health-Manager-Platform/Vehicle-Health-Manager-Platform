@@ -15811,6 +15811,290 @@
         "description": "no-store、无query；AI_SERVICE_PLAN_ENABLED默认false，明确第三方问题用途确认，规范问题+公开目录最多40候选；车主指定独立REQUESTED，模型只推荐/可选，完整问题证据校验；返回后重核会话/目录，无价格或车辆档案。跳转当前服务详情/报价/预约，详见AI_SERVICE_PLANS.md。",
         "x-read-only": true
       }
+    },
+    "/api/ai/service-plan/vehicle-evidence": {
+      "post": {
+        "summary": "主动读取本人车辆本地方案证据",
+        "operationId": "post_api_ai_service_plan_vehicle_evidence",
+        "tags": [
+          "ai"
+        ],
+        "x-feature-ids": [
+          "F05",
+          "F06"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/VehiclePlanEvidence"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人车辆或有效目录不可用"
+          },
+          "409": {
+            "description": "目录或规则版本已变化"
+          },
+          "503": {
+            "description": "数据库/写入暂不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VehiclePlanEvidenceInput"
+              }
+            }
+          }
+        },
+        "x-roles": "OWNER",
+        "x-implementation-status": "vehicle-plan-evidence-implemented",
+        "description": "no-store、无query；V036无规则回填。仅当前有效精确车型/项目；撤销保留版本，未配置显示UNKNOWN。不按动力类型推断，不证明技术必做。车辆/读数/获批同款摘要仅本地，不发第三方；写入复核权限/目录、版本与审计原子，历史成功后客户端GET，详见VEHICLE_PLAN_EVIDENCE.md。",
+        "x-read-only": true
+      }
+    },
+    "/api/admin/project-applicability/{project}/{model}": {
+      "get": {
+        "summary": "目录运营读取精确车型适用性规则",
+        "operationId": "get_api_admin_project_applicability_project_model",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F05",
+          "F06"
+        ],
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "model",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ProjectModelApplicability"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人车辆或有效目录不可用"
+          },
+          "409": {
+            "description": "目录或规则版本已变化"
+          },
+          "503": {
+            "description": "数据库/写入暂不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR(can_catalog)",
+        "x-implementation-status": "vehicle-plan-evidence-implemented",
+        "description": "no-store、无query；V036无规则回填。仅当前有效精确车型/项目；撤销保留版本，未配置显示UNKNOWN。不按动力类型推断，不证明技术必做。车辆/读数/获批同款摘要仅本地，不发第三方；写入复核权限/目录、版本与审计原子，历史成功后客户端GET，详见VEHICLE_PLAN_EVIDENCE.md。"
+      },
+      "put": {
+        "summary": "目录运营发布或撤销精确车型适用性规则",
+        "operationId": "put_api_admin_project_applicability_project_model",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F05",
+          "F06"
+        ],
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "model",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ProjectModelApplicability"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人车辆或有效目录不可用"
+          },
+          "409": {
+            "description": "目录或规则版本已变化"
+          },
+          "503": {
+            "description": "数据库/写入暂不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR(can_catalog)",
+        "x-implementation-status": "vehicle-plan-evidence-implemented",
+        "description": "no-store、无query；V036无规则回填。仅当前有效精确车型/项目；撤销保留版本，未配置显示UNKNOWN。不按动力类型推断，不证明技术必做。车辆/读数/获批同款摘要仅本地，不发第三方；写入复核权限/目录、版本与审计原子，历史成功后客户端GET，详见VEHICLE_PLAN_EVIDENCE.md。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectModelApplicabilityInput"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -21491,6 +21775,366 @@
                   "type": "string",
                   "minLength": 1,
                   "maxLength": 300
+                }
+              }
+            }
+          }
+        }
+      },
+      "ProjectModelApplicability": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "project_id",
+          "model_id",
+          "version",
+          "rule"
+        ],
+        "properties": {
+          "project_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "model_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "rule": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "verdict",
+                  "source_reference"
+                ],
+                "properties": {
+                  "verdict": {
+                    "enum": [
+                      "APPLICABLE",
+                      "NOT_APPLICABLE"
+                    ]
+                  },
+                  "source_reference": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256,
+                    "description": "规范来源引用，无控制/格式/孤立代理字符；运营声明，真实性未自动核验"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "ProjectModelApplicabilityInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "verdict",
+          "source_reference",
+          "expected_version"
+        ],
+        "properties": {
+          "verdict": {
+            "enum": [
+              "APPLICABLE",
+              "NOT_APPLICABLE",
+              "WITHDRAW"
+            ]
+          },
+          "source_reference": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256,
+                "description": "规范来源引用，无控制/格式/孤立代理字符；运营声明，真实性未自动核验"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expected_version": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740990
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "verdict": {
+                  "const": "WITHDRAW"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "source_reference": {
+                  "type": "null"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "source_reference": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256,
+                  "description": "规范来源引用，无控制/格式/孤立代理字符；运营声明，真实性未自动核验"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "VehiclePlanEvidenceInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "vehicle_id",
+          "project_ids"
+        ],
+        "properties": {
+          "vehicle_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "project_ids": {
+            "type": "array",
+            "maxItems": 8,
+            "uniqueItems": true,
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        }
+      },
+      "VehiclePlanEvidence": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "vehicle",
+          "observations",
+          "experiences",
+          "applicability"
+        ],
+        "properties": {
+          "vehicle": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "vehicle_id",
+              "model_id",
+              "model_name",
+              "model_source",
+              "power_type"
+            ],
+            "properties": {
+              "vehicle_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "model_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "model_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "model_source": {
+                "const": "OWNER_REGISTERED"
+              },
+              "power_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "observations": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "vehicle_id",
+              "today",
+              "list"
+            ],
+            "properties": {
+              "vehicle_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "today": {
+                "type": "string",
+                "format": "date"
+              },
+              "list": {
+                "type": "array",
+                "minItems": 6,
+                "maxItems": 6,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "metric",
+                    "revision",
+                    "archive_id",
+                    "recorded_date",
+                    "measurement",
+                    "status"
+                  ],
+                  "properties": {
+                    "metric": {
+                      "enum": [
+                        "OIL",
+                        "BRAKE_PAD",
+                        "TIRE",
+                        "TRACTION_BATTERY",
+                        "COOLANT",
+                        "AUX_BATTERY"
+                      ]
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "archive_id": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "recorded_date": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date"
+                    },
+                    "measurement": {
+                      "type": "object",
+                      "description": "复用HEALTH_OBSERVATIONS协议；未知/来源失效为空对象"
+                    },
+                    "status": {
+                      "enum": [
+                        "NOT_SET",
+                        "RECORDED_UNVERIFIED",
+                        "SOURCE_UNAVAILABLE"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "experiences": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "items",
+              "next_cursor"
+            ],
+            "properties": {
+              "items": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {
+                  "$ref": "#/components/schemas/PublicExperience"
+                }
+              },
+              "next_cursor": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          },
+          "applicability": {
+            "type": "array",
+            "maxItems": 8,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "project_id",
+                "verdict",
+                "rule_version",
+                "source_reference"
+              ],
+              "properties": {
+                "project_id": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "verdict": {
+                  "enum": [
+                    "APPLICABLE",
+                    "NOT_APPLICABLE",
+                    "UNKNOWN"
+                  ]
+                },
+                "rule_version": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "source_reference": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256,
+                      "description": "规范来源引用，无控制/格式/孤立代理字符；运营声明，真实性未自动核验"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
                 }
               }
             }

@@ -326,6 +326,15 @@ class JdbcServiceArchiveTest {
         cards().change(owner,id,key(),db.mapper.createObjectNode(),false);assertEquals(0,((List<?>)service.experiences(other,2,null).get("items")).size());
         assertEquals(1,count("vehicle_archive"));assertEquals(1,count("order_review"));
     }
+    @Test void vehiclePlanEvidenceReusesLiveApprovedSameModelSources() {
+        models();for(String table:List.of("brand","series","model"))jdbc.update("UPDATE `"+table+"` SET status=1");long id=awaiting();var ops=operator();var feed=moderation(true);
+        var manager=new DataSourceTransactionManager(jdbc.getDataSource());var identity=new com.autocare.platform.gateway.identity.OperatorIdentity(jdbc,null,manager);
+        var observations=new com.autocare.platform.vehicle.HealthObservationService(jdbc,db.writes,db.mapper,manager,java.time.Clock.systemUTC());
+        var evidence=new VehiclePlanEvidence(db,identity,observations,feed);var input=new VehiclePlanEvidence.Request(2,List.of());
+        assertEquals(0,db.mapper.valueToTree(evidence.evidence(other,input)).path("experiences").path("items").size());
+        feed.moderate(ops,id,key(),decision(1,true));assertEquals(1,db.mapper.valueToTree(evidence.evidence(other,input)).path("experiences").path("items").size());
+        cards().change(owner,id,key(),db.mapper.createObjectNode(),false);assertEquals(0,db.mapper.valueToTree(evidence.evidence(other,input)).path("experiences").path("items").size());
+    }
     @Test void missingModelCannotApproveButCanRejectAndOwnerReauthorize() {
         long id=awaiting();var ops=operator();var service=moderation(true);
         assertEquals(45004,((FulfillmentConflict)assertThrows(ResponseStatusException.class,()->service.moderate(ops,id,key(),decision(1,true)))).code);
