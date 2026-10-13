@@ -7,6 +7,7 @@ import { serviceCatalogApi, serviceCategories } from '../../services/service-cat
 import { initialServiceDetailState, createServiceDetailFlow } from '../../services/service-catalog-flow.js'
 import { quotesApi } from '../../services/merchant-quotes.js'
 import { initialRegionalQuoteState,createRegionalQuoteFlow } from '../../services/merchant-discovery-flow.js'
+import { distanceLabel } from '../../services/nearby-merchants.js'
 const state = reactive(initialServiceDetailState())
 const flow = createServiceDetailFlow({ state, api: serviceCatalogApi, token: () => ownerSession.accessToken })
 const quotes=reactive(initialRegionalQuoteState())
@@ -36,14 +37,19 @@ function back() { uni.switchTab({ url: '/pages/service/index' }) }
         <!-- #ifdef MP-WEIXIN -->
         <picker mode="region" :value="quotes.regionNames" @tap="quoteFlow.beginRegion" @change="quoteFlow.selectRegion($event.detail)" @cancel="quoteFlow.cancelRegion"><view class="region-action">选择省市区</view></picker>
         <!-- #endif -->
-        <button v-if="quotes.regionCode" class="action" @tap="quoteFlow.allRegions">恢复全部区域报价</button>
-        <text class="copy">仅按所选区域筛选已上线门店；未提供距离或公开评分。没有匹配时可更换区域或查看全部。</text>
+        <button v-if="quotes.regionCode || quotes.position" class="action" @tap="quoteFlow.allRegions">恢复全部区域报价</button>
+        <!-- #ifdef MP-WEIXIN -->
+        <button class="action" :disabled="quotes.locating" @tap="quoteFlow.nearby">{{ quotes.locating ? '正在定位…' : '按我的位置查看附近门店' }}</button>
+        <!-- #endif -->
+        <text v-if="quotes.locationMessage" class="copy" role="status">{{ quotes.locationMessage }}</text>
+        <button v-if="quotes.position" class="action" :disabled="quotes.busy" @tap="quoteFlow.sort('distance_asc')">按直线距离从近到远</button>
+        <text class="copy">{{ quotes.position ? '距离基于本次定位和店长确认的位置，仅为直线距离；按距离排序时，未知距离排在已知距离之后。' : '可手选区域或按价格查看门店。' }} 暂无公开评分，没有匹配时可更换区域或查看全部。</text>
         <view><button class="action" :disabled="quotes.busy" @tap="quoteFlow.sort('price_asc')">价格从低到高</button><button class="action" :disabled="quotes.busy" @tap="quoteFlow.sort('price_desc')">价格从高到低</button></view>
         <text v-if="quotes.busy" class="copy" role="status">正在加载商家报价…</text>
         <text v-if="quotes.loaded && !quotes.items.length && !quotes.busy" class="copy">暂无在售商家报价。</text>
         <view v-if="quotes.message"><text class="error">{{ quotes.message }}</text><button v-if="['unauthorized','forbidden'].includes(quotes.failureKind)" class="action" @tap="login">重新登录</button><button v-else class="action" :disabled="quotes.busy" @tap="quoteFlow.retry">重试商家报价</button></view>
         <view v-for="row in quotes.items" :key="row.merchant_project_id" class="quote" :data-testid="`owner-quote-${row.merchant_id}`">
-          <text class="name">{{ row.merchant_name }}</text><text class="copy">{{ row.address }}</text><text class="price">商家报价 ¥{{ row.price }}</text><button class="action" @tap="uni.navigateTo({url:`/pages/service/merchant?id=${row.merchant_id}&project_id=${id}`})">查看商家详情</button><button class="action" @tap="uni.navigateTo({url:`/pages/order/book?id=${row.merchant_project_id}`})">预约此服务</button>
+          <text class="name">{{ row.merchant_name }}</text><text class="copy">{{ row.address }}</text><text v-if="quotes.position" class="copy">{{ distanceLabel(row) }}</text><text class="price">商家报价 ¥{{ row.price }}</text><button class="action" @tap="uni.navigateTo({url:`/pages/service/merchant?id=${row.merchant_id}&project_id=${id}`})">查看商家详情</button><button class="action" @tap="uni.navigateTo({url:`/pages/order/book?id=${row.merchant_project_id}`})">预约此服务</button>
         </view>
         <button v-if="quotes.items.length<quotes.total" class="action" :disabled="quotes.busy" @tap="quoteFlow.load(true)">加载更多商家报价</button>
       </view>

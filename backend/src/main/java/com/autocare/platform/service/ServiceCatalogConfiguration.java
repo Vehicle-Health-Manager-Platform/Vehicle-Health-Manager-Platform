@@ -9,6 +9,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 @ConditionalOnProperty("MYSQL_HOST")
 public class ServiceCatalogConfiguration {
+    @Bean NearbyMerchants nearbyMerchants(JdbcTemplate jdbc,ServiceCatalog catalog,PlatformTransactionManager manager){
+        return new NearbyMerchants(jdbc,catalog,manager);
+    }
     @Bean MerchantDiscovery merchantDiscovery(JdbcTemplate jdbc,ServiceCatalog catalog,PlatformTransactionManager manager){
         return new MerchantDiscovery(jdbc,catalog,manager);
     }
