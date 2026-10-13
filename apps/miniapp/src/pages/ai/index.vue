@@ -41,6 +41,7 @@ function ask(text) { draft.value = text; return send() }
 <template>
   <OwnerTabShell label="AI" title="和 AI 管家聊聊" description="结合爱车档案了解问题与服务方案。" next-action="AI 管家正在接入。" business-ready>
     <template #content>
+      <button class="action" @tap="uni.navigateTo({url:'/pages/ai/service-plan'})">结构化项目建议与报价入口</button>
       <view class="context">
         <text v-if="currentVehicle" class="context-title" data-testid="ai-vehicle">当前爱车：{{ currentVehicle }}</text>
         <text v-else class="context-title">尚未选择爱车</text>

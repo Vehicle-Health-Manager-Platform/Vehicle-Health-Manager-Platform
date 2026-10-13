@@ -1,5 +1,8 @@
 # 项目进度与下一步规划
 
+> 最新：[R4c1结构化项目建议执行](R4C1_AI_SERVICE_PLAN_EXECUTION.md)，下一R4c2车辆证据与适用性。
+
+
 > 最新阶段：[R4b2b3授权评价要点执行](R4B2B3_REVIEW_SUMMARIES_EXECUTION.md)，下一R4c方案到预约。
 
 
