@@ -8,7 +8,7 @@
 - 小程序全量499/499，通过健康来源/分数复算、未知状态、趋势、权限/异步陈旧响应、确认重试、提前偏好、完整档案、搜索/症状、星级报价及预约排序测试。
 - 微信构建、原生样式校验、测试身份隔离检查通过；H5兼容构建通过。微信组件曲线使用uni原生canvas，并使用当前组件作用域；日期间隔和参考分环形长度取实际数据。
 - 真实MySQL完整迁移重复重放通过，80表；规则与确认均无种子回填。真实健康数据库响应经严格前端投影校验通过（总分、来源版本与MUST证据）。
-- 全量后端与GitHub最终六项CI结果在[执行记录](../progress/R4_COMPLETION_EXECUTION.md)及统一PR正文更新。
+- 本地完整后端748项覆盖通过（全量命令中的741项 + 环境修复后真实上传7/7）；健康证据目录复核1/1通过且不重复计数。初轮全量命令742项、Errors=1，失败为整组容器初始化，不将该命令标成BUILD SUCCESS。日志`r4-upload-host-alias.log`记录修复后7/7、BUILD SUCCESS。GitHub最终单次完整运行和六项CI结果在[执行记录](../progress/R4_COMPLETION_EXECUTION.md)及统一PR正文更新。
 
 本地完整日志保存于忽略目录`.cache/r4-health-tests-2.log`、`r4-integrated-tests.log`、`r4-completion-remaining-tests.log`、`r4-miniapp-final.log`、`r4-wechat-final.log`、`r4-h5-final.log`、`r4-schema-final.log`、`r4-backend-full-2.log`。日志不提交令牌/本机配置；可提交证据以测试代码和最终CI为准。
 
@@ -29,7 +29,7 @@
 
 小程序沿用`apps/miniapp/package.json`的test/build:mp-weixin/build:h5命令。MySQL重放沿用`scripts/verify_mysql_schema.sh`，OpenAPI沿用`scripts/generate_openapi.py`。后端使用Java17/Maven3.9与Testcontainers真实MySQL/MinIO，不把MockMvc授权测试宣称为真实HTTP端到端。
 
-本机全量命令的首轮在测试前失败：PowerShell拆分未加引号的Maven点号属性，随后DockerHub的alpine元数据返回text/html。已给Maven属性加引号；本机使用缓存MinIO和mc，其SHA256与仓库Dockerfile锁定值逐字一致（MinIO eef6581f6509f43ece007a6f2eb4c5e3ce41498c8956e919a7ac7b4b170fa431；mc 01f866e9c5f9b87c2b09116fa5d7c06695b106242d829a8bb32990c00312e891），并覆盖当前initialize.sh（SHA256 f1339ddc1e7d84b3cae08e9866e6a33b5ca80accc013bd509a27bdc96768762a）后执行完整测试；未修改仓库镜像定义或测试断言。
+本机全量命令的首轮在测试前失败：PowerShell拆分未加引号的Maven点号属性，随后DockerHub的alpine元数据返回text/html。已给Maven属性加引号；本机使用缓存MinIO和mc，其SHA256与仓库Dockerfile锁定值逐字一致（MinIO eef6581f6509f43ece007a6f2eb4c5e3ce41498c8956e919a7ac7b4b170fa431；mc 01f866e9c5f9b87c2b09116fa5d7c06695b106242d829a8bb32990c00312e891），并覆盖当前initialize.sh（SHA256 f1339ddc1e7d84b3cae08e9866e6a33b5ca80accc013bd509a27bdc96768762a）后执行完整测试；未修改仓库镜像定义或测试断言。随后ClamAV镜像清单异常阻止真实上传组初始化；验证官方直连缓存`registry-1.docker.io/clamav/clamav:1.4.3_base`（digest sha256:629a3050df6a706aedb31859fbb8139e9aaf8f56b0ffefbf251b8358a7c9e76c，实际clamd --version=1.4.3）后恢复本机同版本标签。Maven桥接容器的host.docker.internal不符合HTTP公开端点回环限制，Desktop共享主机网络也不可用；最终仅在一次性Maven容器内将localhost测试别名映射同一宿主机发布端口，七项真实扫描/匿名拒绝/签名过期/持久HTTP/初始化权限测试全部通过。宿主机hosts、项目生产地址校验及测试断言均未改变。
 
 ## 验收范围
 

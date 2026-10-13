@@ -18,3 +18,5 @@
 - Full F06 re-audit found rating sorting missing (quote flow price/distance only; service detail stale "no public ratings" copy) and symptom search handoff missing (catalog category only). Add source-qualified rating quote feed and symptom→explicit AI purpose flow before declaring R4 complete. Reuse exact PublicRatings.SOURCE/VALID qualification.
 
 Local DockerHub metadata failure is environmental; cached MinIO and mc exactly match pinned digests. Cached upload-init script differed from tracked current source and was replaced before full test, verified F1339DDC1E7D84B3CAE08E9866E6A33B5CA80ACCC013BD509A27BDC96768762A. Production rules remain absent by design; UNKNOWN is user-approved.
+
+Full suite revealed local clamav tag descriptor corruption and Docker Desktop runner address incompatibility. Verified official direct-cache digest/version1.4.3, restored local tag, and isolated runner-only localhost alias to same host published ports; repository production loopback policy remains strict. Real upload7/7 passed, no assertions skipped or relaxed.

@@ -8,8 +8,8 @@ User authorization: finish all remaining R4 locally, then upload ALL updated cod
 2. complete — R4d1 exact-model source policies, confirmations, expiry/comparability trends, reproducible reference scoring and source-based required project suggestions.
 3. complete — R4d2 complete manually confirmed structured vehicle/driver documents, violation/fault and maintenance metadata with corrections.
 4. complete — R4d3 five source-based/advance reminder categories, dashboard/health/AI/booking integrations and operator pages.
-5. in_progress — remaining R4b public-rating quote sorting and symptom→AI handoff, full R4 local backend/MySQL/HTTP/frontend/build/schema/generated docs validation; close remaining requirements accurately.
-6. pending — only after phases 1–5 complete commit/push ALL code+docs together, create PR based on #148, complete six CI checks.
+5. complete — remaining R4b public-rating quote sorting and symptom→AI handoff, full R4 local backend/MySQL/HTTP/frontend/build/schema/generated docs validation; close remaining requirements accurately.
+6. upload-ready — only after phases 1–5 complete commit/push ALL code+docs together, create PR based on #148, complete six CI checks.
 
 ## Decisions
 
@@ -24,3 +24,7 @@ User authorization: finish all remaining R4 locally, then upload ALL updated cod
 - Full backend command: PowerShell split unquoted dotted Maven property; quote -Dupload.test.images.prebuilt=true. Local upload CI image tags absent, build both test images before retry.
 
 - DockerHub alpine metadata returned text/html. Verified cached MinIO/mc SHA256 against pinned Dockerfiles; rebuilt upload-init from cached image with current tracked initialize.sh, verified script SHA256, running full backend with quoted Maven property. No repository image/test relaxation.
+
+## Final local snapshot before unified upload
+
+All R4 functions/docs complete. Full backend first run742/741 passed, one class initialization error from local ClamAV descriptor; same official1.4.3 cached image restored. Public HTTP endpoint localhost policy retained; isolated Maven runner maps logical localhost to same Docker Desktop host published ports. Recovered real upload7/7 and fresh health export1/1 passed; complete unique backend coverage748. Miniapp499, finalWX/H5 builds, schema80, generated185 operations/141 rows/unchanged44 baseline, docs links and real JSON-schema response passed. Phase6 final upload/remote verification proof is recorded in the unified PR body after this snapshot; no intermediate push.

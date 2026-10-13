@@ -4,7 +4,7 @@
 
 ## 权限与通用边界
 
-全部接口使用现有 Bearer 身份、统一信封、`Cache-Control: no-store`。车主只操作本人当前有效车辆；规则读写仅 `ADMIN.can_catalog`。禁止额外/重复 query；只有星级报价接口接受下述分页/区域 query。所有 PUT 要求 UUID `Idempotency-Key`，同键同规范 body 可重试，异 body 拒绝；当前权限与必要来源复核仍执行。旧回执不会恢复已撤销确认或规则。版本变更与审计同事务，冲突 409 后重新读取，网络失败仅原 body/key 重试。
+全部接口使用现有 Bearer 身份、统一信封、`Cache-Control: no-store`。车主只操作本人当前有效车辆；规则读写仅 `OPERATOR(can_catalog)`。禁止额外/重复 query；只有星级报价接口接受下述分页/区域 query。所有 PUT 要求 UUID `Idempotency-Key`，同键同规范 body 可重试，异 body 拒绝；当前权限与必要来源复核仍执行。旧回执不会恢复已撤销确认或规则。版本变更与审计同事务，冲突 409 后重新读取，网络失败仅原 body/key 重试。
 
 正整数 ID 不超过 9007199254740991。规则版本 0..9007199254740991，写 expected_version 上限减一；读数/确认/偏好 revision 0..2147483647，写 expected_revision 上限减一。错误 400 参数、401 会话、403 权限、404 当前归属/有效目录不可用、409 版本或来源冲突、503 数据库/审计不可用。响应不回传内部异常。
 

@@ -12,7 +12,7 @@
 
 ## 验证与上传
 
-本地小程序499/499、微信与H5构建、80表重放及真实健康响应→前端校验均通过。定向真实数据库/HTTP验证见[验收](../testing/LOCAL_R4_COMPLETION_ACCEPTANCE.md)。全量后端正在收口，最终结果与GitHub六项CI以统一PR正文的确切head SHA为准。统一PR建立前不标记“已上传”，CI完成前不标记最终远端验证通过。
+本地小程序499/499、微信与H5构建、80表重放及真实健康响应→前端校验均通过。定向真实数据库/HTTP验证见[验收](../testing/LOCAL_R4_COMPLETION_ACCEPTANCE.md)。本地覆盖完整748项后端用例：全量命令742项中741项通过、真实上传组因ClamAV镜像清单异常在初始化阶段报错；修复后真实上传7/7通过。新健康证据输出复核1/1通过（重叠不相加）。完整远端单次运行与六项CI以统一PR正文的确切head SHA为准。此文档为统一上传前快照；全部实现/本地验证/文档收口完成。[统一代码与文档分支](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/tree/codex/r4-completion)上传后可复核；最终PR正文记录确切head SHA和六项CI证据，上传不等于合并或部署。
 
 ## 需求闭环与下一步
 

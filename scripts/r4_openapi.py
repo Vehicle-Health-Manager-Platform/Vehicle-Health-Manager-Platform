@@ -98,8 +98,8 @@ def add_r4_completion(document, operation):
         'total': {'type': 'integer', 'minimum': 0}, 'page': integer(1, 1000000), 'page_size': {'const': 20}})
     routes = [
         ('get', '/api/vehicle/{vehicle}/health-dashboard', '本车来源健康分、趋势、五类提醒', None, 'HealthDashboard', 'OWNER'),
-        ('get', '/api/admin/health-policies/{model}/{metric}', '读取精确车型指标来源规则', None, 'HealthPolicy', 'ADMIN.can_catalog'),
-        ('put', '/api/admin/health-policies/{model}/{metric}', '版本化发布或撤回来源规则', 'HealthPolicyInput', 'HealthPolicy', 'ADMIN.can_catalog'),
+        ('get', '/api/admin/health-policies/{model}/{metric}', '读取精确车型指标来源规则', None, 'HealthPolicy', 'OPERATOR(can_catalog)'),
+        ('put', '/api/admin/health-policies/{model}/{metric}', '版本化发布或撤回来源规则', 'HealthPolicyInput', 'HealthPolicy', 'OPERATOR(can_catalog)'),
         ('put', '/api/vehicle/{vehicle}/health/{metric}/confirmation', '确认或撤回当前规则与读数用途', 'HealthConfirmationInput', 'HealthConfirmationReceipt', 'OWNER'),
         ('put', '/api/vehicle/{vehicle}/reminder-preference', '配置本人提前范围与保养项目', 'ReminderPreferenceInput', 'ReminderPreference', 'OWNER'),
         ('get', '/api/service/project/{id}/rating-quotes', '按实时获授权公开星级排序报价', None, 'RatedQuotePage', 'OWNER'),
