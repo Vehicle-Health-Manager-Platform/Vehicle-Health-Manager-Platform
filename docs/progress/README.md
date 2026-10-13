@@ -1,5 +1,7 @@
 # 项目进度与下一步规划
 
+> 最新：[R4c3本车方案预约执行](R4C3_PLAN_BOOKING_EXECUTION.md)，下一R4d有来源规则/读数有效期与可比趋势。
+
 > 最新：[R4c2本地车辆方案证据与适用性执行](R4C2_VEHICLE_PLAN_EVIDENCE_EXECUTION.md)，下一R4c3更细报价/时段衔接。
 
 > 最新：[R4c1结构化项目建议执行](R4C1_AI_SERVICE_PLAN_EXECUTION.md)，下一R4c2车辆证据与适用性。

@@ -15,6 +15,7 @@ public class ReservationConfiguration {
     @Bean ReservationExpiry reservationExpiry(ReservationStore db){return new ReservationExpiry(db);}
     @Bean ReservationSlots reservationSlots(ReservationStore db){return new ReservationSlots(db);}
     @Bean ReservationOrders reservationOrders(ReservationStore db,ReservationExpiry expiry){return new ReservationOrders(db,expiry);}
+    @Bean PlanBookingContext planBookingContext(ReservationStore db,ReservationOrders orders,ReservationSlots slots,VehiclePlanEvidence evidence){return new PlanBookingContext(db,orders,slots,evidence);}
     @Bean MerchantOrders merchantOrders(ReservationStore db){return new MerchantOrders(db);}
     @Bean OrderFulfillment orderFulfillment(ReservationStore db,MerchantOrders orders){return new OrderFulfillment(db,orders);}
     @Bean PickupInspection pickupInspection(ReservationStore db){return new PickupInspection(db);}
