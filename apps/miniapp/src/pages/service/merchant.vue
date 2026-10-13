@@ -38,6 +38,7 @@ function book(row){if(state.merchant&&!state.busy&&ownerSession.accessToken)uni.
       <text class="hint">距离基于本次定位和店长确认的位置，仅为直线距离。营业时间暂未提供。</text>
       <button class="action" :disabled="state.busy" @tap="uni.navigateTo({url:`/pages/service/ratings?id=${state.merchant.merchant_id}`})">查看公开星级与平均评分</button>
       <button class="action" :disabled="state.busy" @tap="uni.navigateTo({url:`/pages/service/review-texts?id=${state.merchant.merchant_id}`})">查看获批公开评价文字</button>
+      <button class="action" :disabled="state.busy" @tap="uni.navigateTo({url:`/pages/service/review-summary?id=${state.merchant.merchant_id}`})">生成可核对来源的评价要点</button>
     </view>
     <view v-if="state.loaded" class="panel">
       <text class="heading">{{ state.projectId?'所选服务的当前报价':'本店在售服务' }}</text>

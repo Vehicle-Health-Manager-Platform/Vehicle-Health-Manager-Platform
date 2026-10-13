@@ -1,5 +1,8 @@
 # API 文档
 
+> R4b2b3独立第三方AI用途授权与来源可核对原文要点见[REVIEW_SUMMARIES.md](REVIEW_SUMMARIES.md)。
+
+
 > R4b2b2 独立公开评价文本、脱敏预览、人工审核及撤销见[PUBLIC_REVIEW_TEXTS.md](PUBLIC_REVIEW_TEXTS.md)。
 
 

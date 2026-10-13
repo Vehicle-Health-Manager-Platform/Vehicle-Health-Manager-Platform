@@ -1,5 +1,8 @@
 # 项目进度与下一步规划
 
+> 最新阶段：[R4b2b3授权评价要点执行](R4B2B3_REVIEW_SUMMARIES_EXECUTION.md)，下一R4c方案到预约。
+
+
 > 最新阶段：[R4b2b2独立公开文本执行记录](R4B2B2_PUBLIC_REVIEW_TEXTS_EXECUTION.md)，下一授权文本总结。
 
 

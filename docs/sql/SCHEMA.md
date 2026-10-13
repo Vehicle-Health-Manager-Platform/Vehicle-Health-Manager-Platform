@@ -81,3 +81,7 @@ V026重复迁移后共66表，新增`order_commission_snapshot`（订单唯一�
 ## V034 独立公开评价文本
 
 `public_review_text`：每评价唯一当前脱敏文字、SHA256文本哈希、consent_version、status/version、reason_code、公开号与时间；撤销清空文字/哈希/公开号。`public_review_text_moderation`：每(review_id,request_version)唯一决策、绑定哈希、理由/运营/时间/公开号，不保存正文副本。两表不回填私人评价，V034后75表。公开资格与当前批准版本/哈希逐次复核。
+
+## V035评价总结用途授权
+
+`review_summary_consent`：review_id主键、consented、version、text_version（绑定当前获批文字）、consent_version=R4B2_SUMMARY_V1；历史文字不推断授权。改稿/重批版本变化后旧用途失效，撤销独立于文字与星级；审计仅授权元数据。V035后76表，无总结缓存表。
