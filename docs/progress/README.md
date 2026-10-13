@@ -1,5 +1,8 @@
 # 项目进度与下一步规划
 
+> 最新阶段：[R4b2b1 公开星级执行记录](R4B2B1_PUBLIC_RATINGS_EXECUTION.md)。下一公开文本脱敏与审核。
+
+
 - [R4b2a 位置与距离执行](R4B2A_LOCATION_DISTANCE_EXECUTION.md)：明确门店坐标来源、主动定位、距离排序与隐私边界，V032及测试证据。
 
 - [剩余功能与阶段交付计划（2026-10-12）](REMAINING_DELIVERY_PLAN_2026-10-12.md)：以已合并 R4b1 为起点，列出 F01–F20 缺口、R4b2–R9 顺序、验收门槛及逐阶段文档/GitHub 交付要求。

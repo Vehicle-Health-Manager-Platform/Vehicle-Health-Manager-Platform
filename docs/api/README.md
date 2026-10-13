@@ -1,5 +1,8 @@
 # API 文档
 
+> R4b2b1 独立公开星级授权、匿名列表与汇总见 [PUBLIC_RATINGS.md](PUBLIC_RATINGS.md)。公开正文尚未实现。
+
+
 - [R4b2a 门店位置与直线距离](MERCHANT_LOCATION.md)：店长确认 GCJ02 位置、只读附近报价/详情距离、隐私与未知距离规则。
 
 - [R4a2 本人结构化档案](ARCHIVE_STRUCTURED.md)：类型字段、修正/清空、个人来源和兼容边界。
