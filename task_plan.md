@@ -1,4 +1,15 @@
-# R5a coupon inventory and claiming implementation
+# R5b coupon transactions and standalone redemption
+
+## Active R5b phases
+
+1. [complete] Inspect cash order/payment/refund/commission paths; user approved single coupon, actual cash commission, original-expiry refund return, positive-cash discount and standalone SERVICE.
+2. [in progress] V039 contracts/events; strict preview and atomic coupon booking; original four-field booking preserved.
+3. [pending] Atomic paid consumption, unpaid release, refund-confirmed return, persistent recovery and trusted cash commission.
+4. [pending] Owner authorization, merchant service redemption/receipt and explicit zero-commission facts.
+5. [pending] Owner/merchant pages, ordinary/AI booking links, immutable retry and stale-response guards.
+6. [pending] Entire R5 verification, documentation/closure; upload all code/docs only after R5 complete. No intermediate GitHub push.
+
+## Previous R5a source-preparation snapshot
 
 ## Active implementation phases
 
