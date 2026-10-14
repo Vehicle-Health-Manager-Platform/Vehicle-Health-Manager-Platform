@@ -5,7 +5,7 @@
 1. [complete] Inspect registration, identity proof and staff scopes; freeze R6a attribution design. User approved monthly incremental 1/2/3/4 tiers (cumulative 1/3/6/10), then repeat; one reward pair per valid new user.
 2. [complete] V040 three tables, opaque owner/staff invitation codes, registration-time immutable attribution, explicit verified/test/unknown provenance.
 3. [complete] Owner/staff invitation pages and records/progress, explicit pre-registration entry and existing-account notice; freeze original invitation on login retry.
-4. [complete] 66 distinct backend cases passed (65 full targeted +33 final session/phone cases deduplicated); frontend553, final WeChat/H5 builds,91-table replay and docs/OpenAPI/routes checks passed. Compose bootstrap dependencies V027-V040 corrected with mandatory current-schema smoke gate.
+4. [complete] 101 distinct backend cases passed (66 invitation/identity/inventory cases plus35 prior coupon transactions); frontend553, final WeChat/H5 builds including anonymous invite entry,91-table replay and docs/OpenAPI/routes checks passed. Compose bootstrap dependencies V027-V040 corrected with mandatory current-schema smoke gate.
 5. [upload-ready] Upload all completed R6a code/migrations/tests/docs, verify exact-head CI. Final remote status is recorded in the PR body. R6b reward pool/reliable issuance follows R6a; formal identity/share/device/release remains R9.
 
 ## R6a inspection findings / errors
@@ -21,6 +21,8 @@
 - R6a OpenAPI206,73 pages, original first page pages/merchant/commissions preserved; original141 traceability rows/44 baseline tables/root README unchanged.
 - Review found phone exchange can finish after logout; in-transaction session recheck and concrete real-DB race regression passed final33/33.
 - Compose initialization previously mounted only V001-V026. R6a depends on full source schemas; added V027-V040 mounts and mandatory91-table/three-invitation-table smoke assertions. Existing volumes still require explicit migration after backup.
+- First remote run38569849756: miniapp/schema-and-ocr/schema-mysql/web success; backend failed solely because previous JdbcCouponTransactionsTest @BeforeAll still expected88 tables after loading every migration, actual91. Updated exact current expectation to91; full35-case class revalidation running, then push correction and rerun allCI. Do not count that failed run as full acceptance.
+- Coupon transaction class35/35 passed; total101 distinct backend cases now locally verified. Found unauthenticated Mine content slot hid invite-entry button; added public anonymous-action slot for explicit invitation before first login, without exposing private content. Rebuild final two frontend targets before pushing correction.
 - Docker API 1.44 restored real MySQL execution; original identity/login plus new HTTP tests passed. New DB fixtures omitted required merchant.address; fixed synthetic fixture without relaxing schema.
 
 ## Previous R5b plan

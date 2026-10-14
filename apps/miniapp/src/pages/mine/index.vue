@@ -8,6 +8,9 @@ function openAccount() {
 
 <template>
   <OwnerTabShell label="我的" title="我的汽车生活" description="查看本人预约订单、券与有效期，管理登录账号。" next-action="积分和车友圈入口将在对应业务接口接入后开放。" :business-ready="true">
+    <template #anonymous-action>
+      <button class="account-button" @tap="uni.navigateTo({url:'/pages/welfare/invite-entry'})">有好友邀请码，先填写再登录</button>
+    </template>
     <template #content>
     <button class="account-button" @tap="uni.navigateTo({url:'/pages/order/list'})">我的订单</button>
     <button class="account-button" @tap="uni.navigateTo({url:'/pages/coupon/mine'})">我的券与截止日期</button>
