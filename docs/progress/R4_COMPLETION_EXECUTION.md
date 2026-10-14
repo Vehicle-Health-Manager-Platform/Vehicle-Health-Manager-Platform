@@ -1,5 +1,7 @@
 # R4 全阶段统一交付执行记录
 
+> **2026-10-14合并状态复核**：#141–#149已全部直接合入main1796f29，完整代码和文档文件树与bd8d43e一致，合并后[CI38416348637](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/38416348637)六项均成功。R4收口完成，下一R5券；下文保留上传前快照。
+
 日期：2026-10-13。用户明确：上传包括代码与文档，全部R4完成后才上传。用户确认：先实现可配置来源规则，未配置显示未知。分支`codex/r4-completion`依赖尚未合并的[#148](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/148)，本轮没有中间阶段上传。
 
 ## 交付内容

@@ -1,5 +1,7 @@
 # 项目进度与下一步规划
 
+> 2026-10-14：R4已合并且main六项CI通过；当前缺口与下一阶段见[清点](DELIVERY_GAP_AUDIT_2026-10-14.md)、[规划](REMAINING_DELIVERY_PLAN_2026-10-14.md)、[R5启动计划](R5_COUPONS_NEXT_PLAN_2026-10-14.md)。
+
 > R4完整交付见[执行](R4_COMPLETION_EXECUTION.md)与[需求闭环](R4_REQUIREMENT_CLOSURE.md)；下一R5券。
 
 > 最新：[R4c3本车方案预约执行](R4C3_PLAN_BOOKING_EXECUTION.md)，下一R4d有来源规则/读数有效期与可比趋势。

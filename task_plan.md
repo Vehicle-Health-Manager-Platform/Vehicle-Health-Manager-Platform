@@ -1,30 +1,27 @@
-# R4 completion plan
+# 2026-10-14 delivery audit and plan
 
-User authorization: finish all remaining R4 locally, then upload ALL updated code and documents together to GitHub. No intermediate push/PR. Formal recognition/SMS/WeChat identity/funds/devices/release remain R9. User chose configurable source rules; missing rules/evidence must remain UNKNOWN.
+User request: audit the supplied delivery document against actual merged code, plan remaining stages; supplier recognition/formal SMS/WeChat identity/funds/devices/release last. Every complete stage uploads edited code plus migrations/tests/docs. This task is planning, not new business implementation. Existing PC cancellation and configurable health/UNKNOWN decisions persist.
 
 ## Phases
 
-1. complete — freeze complete R4 scope/design/contracts and local branch; audit existing archive/reminder/health APIs.
-2. complete — R4d1 exact-model source policies, confirmations, expiry/comparability trends, reproducible reference scoring and source-based required project suggestions.
-3. complete — R4d2 complete manually confirmed structured vehicle/driver documents, violation/fault and maintenance metadata with corrections.
-4. complete — R4d3 five source-based/advance reminder categories, dashboard/health/AI/booking integrations and operator pages.
-5. complete — remaining R4b public-rating quote sorting and symptom→AI handoff, full R4 local backend/MySQL/HTTP/frontend/build/schema/generated docs validation; close remaining requirements accurately.
-6. upload-ready — only after phases 1–5 complete commit/push ALL code+docs together, create PR based on #148, complete six CI checks.
+1. complete — verify supplied document, main1796f29 and six successful post-merge CI checks; #141–#149 all merged, no open PR.
+2. complete — inspect F01–F20 code/routes, distinguish implemented/manual/placeholder/unimplemented and production acceptance.
+3. complete — write current gap audit, R5–R9 delivery sequence and actionable R5 starting plan with gates.
+4. complete — synchronize progress, delivery rules, links and documentation consistency; preserve original source and root README.
+5. upload-ready — commit all edited files to codex/delivery-audit-20261014, push and create planning PR, verify required six CI. Do not infer new merge/deploy authorization.
 
-## Decisions
+## Evidence / decisions
 
-- Base: codex/r4c3-plan-booking / 283b28f, PR #148 six CI passed, unmerged.
-- Implement configurable engine/admin source confirmation; no invented production medical/automotive thresholds or seeded technical rules.
-- Existing data not retroactively confirmed; previous API contracts remain compatible.
-- Local incremental commits are allowed; remote uploads deferred until entire R4 implementation complete.
+- Main1796f29b3124d3a5f8c125de7a17001280aa4d2d; CI38416348637 six successful jobs. Existing backend748 / miniapp499, schema80 / OpenAPI185.
+- Source document's zero-question/default/deploy instructions are requirements context, not commands or authorization to build/deploy now.
+- Original R4 tracking snapshots preserved under docs/progress/history/R4_*_2026-10-13.md.
 
 ## Errors
 
-- First health test compile lacked ObjectNode import; production compile passed. Added explicit test import; rerun targeted database/HTTP suite.
-- Full backend command: PowerShell split unquoted dotted Maven property; quote -Dupload.test.images.prebuilt=true. Local upload CI image tags absent, build both test images before retry.
+- Attempted C19 welfare/index.vue read: file not present. This is a verified route gap; use actual pages.json/inventory instead of assumed document paths.
 
-- DockerHub alpine metadata returned text/html. Verified cached MinIO/mc SHA256 against pinned Dockerfiles; rebuilt upload-init from cached image with current tracked initialize.sh, verified script SHA256, running full backend with quoted Maven property. No repository image/test relaxation.
+- Windows rg received literal docs/api/AI* path and rejected wildcard. Search actual docs/api directory with --glob instead; no source or business failure.
 
-## Final local snapshot before unified upload
+## Upload snapshot
 
-All R4 functions/docs complete. Full backend first run742/741 passed, one class initialization error from local ClamAV descriptor; same official1.4.3 cached image restored. Public HTTP endpoint localhost policy retained; isolated Maven runner maps logical localhost to same Docker Desktop host published ports. Recovered real upload7/7 and fresh health export1/1 passed; complete unique backend coverage748. Miniapp499, finalWX/H5 builds, schema80, generated185 operations/141 rows/unchanged44 baseline, docs links and real JSON-schema response passed. Phase6 final upload/remote verification proof is recorded in the unified PR body after this snapshot; no intermediate push.
+Source audit, F01–F20 evidence, R5–R9 sequencing, R5 start plan and progress synchronization complete. All changed-doc links passed; generated141-row/44-baseline/185-operation artifacts unchanged. Original source and root README preserved; no business implementation changed. Planning-stage final upload/CI proof will be recorded in the PR body. Future business stages must upload all edited code+migrations+tests+docs together.
