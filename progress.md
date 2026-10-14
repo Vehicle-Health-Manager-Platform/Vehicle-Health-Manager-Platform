@@ -12,3 +12,9 @@ All17 documentation deliverables validated; no business/API/SQL/runtime changes.
 # R5a implementation — 2026-10-14
 
 Design committed locally before implementation; no partial-stage push. V038 and nine backend operations plus independent operator permission, four miniapp pages/navigation/expiry preview, strict APIs/retry/stale guards and documentation complete. Initial backend31/32 (one fixture query for reserved order identifier), repaired then targeted60/60 including15realMySQL coupon,5HTTP and2strict-time/unconfigured-database cases. Frontend514/514. WeChat/H5 builds passed. Source141/44 baseline unchanged, generated OpenAPI192. V038 repeats in test schema; full schema/complete backend and six remote CI jobs to verify on PR. PR150 remains open, R5a will target its planning branch; upload includes code and documents, no automatic merge or deployment.
+# R6a start (2026-10-14)
+
+- R5 final upload verified: PR151 OPEN, head37a2f5a, backend811/811/frontend535/535 and six successful CI jobs.
+- User authorized plan and implementation of next stage. Inspected remaining plan, supplied source, baseline growth tables and actual registration repository/controller.
+- User confirmed cumulative four-tier monthly loop 1/3/6/10; preparing R6a complete attribution substage before R6b reward issuance.
+

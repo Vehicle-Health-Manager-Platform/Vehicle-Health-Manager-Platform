@@ -1,4 +1,21 @@
-# R5b coupon transactions and standalone redemption
+# R6 invitation attribution and growth
+
+## Active R6a phases
+
+1. [in_progress] Inspect registration, identity proof and staff scopes; freeze R6a attribution design. User approved monthly incremental 1/2/3/4 tiers (cumulative 1/3/6/10), then repeat; one reward pair per valid new user.
+2. [pending] Versioned migration, opaque owner/staff invitation codes, registration-time immutable attribution, explicit verified/test/unknown provenance.
+3. [pending] Owner/staff invitation pages and records/progress; preserve invitation through login and phone binding without allowing old users to claim new-user status.
+4. [pending] Real MySQL, strict HTTP, concurrent attribution and frontend verification; update API, operations, acceptance and stage documents.
+5. [pending] Upload all completed R6a code/migrations/tests/docs, verify exact-head CI. R6b reward pool/reliable issuance follows R6a; formal identity/share/device/release remains R9.
+
+## R6a inspection findings / errors
+
+- No invitation business implementation found; baseline invite_record and user.inviter_id cannot establish registration provenance. Do not promote legacy rows.
+- Original source is D:/python/汽车健康管家平台全栈开发/汽车健康管家平台全栈开发交付文档.md, not repository root.
+- Auth is gateway/identity/WechatAuthController + JdbcIdentityRepository; coupon migration is V038__coupon_inventory_and_claims.sql. Initial guessed paths failed; subsequent discovery uses rg --files.
+- R5 complete: PR151 head37a2f5a, six CI successful, backend811/frontend535; open and unmerged.
+
+## Previous R5b plan
 
 ## Active R5b phases
 
