@@ -85,6 +85,7 @@ onMounted(() => {
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="uni.navigateTo({url:'/pages/merchant/coupon-redeem'})">服务券独立核销与记录</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantOrders">查看本店订单</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantStaff">本店员工与员工码</button>
+      <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="uni.navigateTo({url:'/pages/merchant/invite'})">我的推广码与新客归因</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantProfile">门店资料</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantCommissions">本店佣金账单（店长）</button>
       <button v-if="role === 'technician' && accessToken" class="login-button" :disabled="busy" @tap="openTechnicianOrders">我的工单</button>

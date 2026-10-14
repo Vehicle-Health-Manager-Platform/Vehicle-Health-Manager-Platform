@@ -1,5 +1,7 @@
 # 项目进度与下一步规划
 
+> R6a 邀请资格与不可变归因阶段设计见[设计](R6A_INVITATION_DESIGN_2026-10-14.md)，实施与下一 R6b 见[执行](R6A_INVITATIONS_EXECUTION.md)。
+
 > 2026-10-14 R5a+R5b完整券阶段已实施，见[R5闭环](R5_REQUIREMENT_CLOSURE.md)、[R5b执行](R5B_COUPONS_EXECUTION.md)。按用户要求整R5收口后统一上传全部代码和文档，下一R6邀请；下方为历史记录。
 
 > 2026-10-14 R5a已实施：券库存/发行、独立运营池、领取/本人券/截止提醒，见[执行](R5A_COUPONS_EXECUTION.md)。下一步R5b交易用券与核销；原R4/清点记录保留如下。

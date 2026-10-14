@@ -1,5 +1,9 @@
 # 当前进度
 
+> **R6a 最新实施**：首次注册不可变 owner/staff/merchant 归因、随机推广码、同 app 服务端手机号资格证据和北京时间月度累计1/3/6/10循环已实现；V040共91表、73页、9项增长接口。见[执行与下一R6b](R6A_INVITATIONS_EXECUTION.md)、[验收](../testing/LOCAL_R6A_INVITATIONS_ACCEPTANCE.md)。正式新客开关默认关闭，UNKNOWN/TEST不计数，奖励/海报/解锁接续R6b，正式渠道和真机发布仍R9。整阶段代码/迁移/测试/文档完成后同批上传，最终GitHub证据以阶段PR正文为准。
+
+> **R5 远程最终验收**：[PR151](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/151)已统一上传全部代码与文档，head37a2f5a；[CI38524736378](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/38524736378)六项成功，后端811/811、前端535/535。OPEN未合并；下方保留源码准备历史。
+
 > **R5最新收口**：R5a发行/领取与R5b单券现金预约、原子冻结/消费/释放/全退返原券、独立SERVICE授权/核销/免佣、持久恢复均已实施；V039共88表，小程序70页，OpenAPI199操作中R5实际16项。见[R5闭环](R5_REQUIREMENT_CLOSURE.md)和[R5b执行](R5B_COUPONS_EXECUTION.md)，本地验收/最终上传CI分列。下一R6邀请；正式供应商/身份资金/真机发布仍最后R9。
 
 > **2026-10-14 R5a最新实施**：新增券发行库存/原子领取/独立运营池/本人券与真实截止提醒，67页、V038共84表、9项实际券接口；本地后端62项不同用例与前端514项通过，微信/H5构建通过。见[执行](R5A_COUPONS_EXECUTION.md)与[本地验收](../testing/LOCAL_R5A_COUPONS_ACCEPTANCE.md)，远程上传/CI最终head记录在PR正文。下一R5b订单用券/冻结释放/返券/独立核销，正式外部接入仍R9。下方保留历史核对。

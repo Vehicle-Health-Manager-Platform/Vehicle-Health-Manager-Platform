@@ -11,6 +11,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 @ConditionalOnProperty("MYSQL_HOST")
 @EnableScheduling
 public class ReservationConfiguration {
+    @Bean InvitationRegistration invitationRegistration(ReservationStore db){return new InvitationRegistration(db);}
+    @Bean Invitations invitations(ReservationStore db,@org.springframework.beans.factory.annotation.Value("${INVITE_VERIFIED_IDENTITY_ENABLED:false}")boolean verified){return new Invitations(db,verified);}
     @Bean CouponInventory couponInventory(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators){return new CouponInventory(db,operators);}
     @Bean CouponTransactions couponTransactions(ReservationStore db){return new CouponTransactions(db);}
     @Bean CouponServiceRedemption couponServiceRedemption(ReservationStore db){return new CouponServiceRedemption(db);}

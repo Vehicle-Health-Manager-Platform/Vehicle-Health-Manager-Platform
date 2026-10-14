@@ -33,6 +33,8 @@ public class CloudRunAuthController {
     private final ObjectProvider<IdentityRepository> repositories;
     private final AuthTokens tokens;
     private final String appId;
+    @org.springframework.beans.factory.annotation.Autowired(required=false)
+    private com.autocare.platform.order.InvitationRegistration invitations;
 
     public CloudRunAuthController(ObjectProvider<IdentityRepository> repositories, AuthTokens tokens,
                                   @Value("${WECHAT_APP_ID:}") String appId) {
@@ -41,14 +43,13 @@ public class CloudRunAuthController {
         this.appId = appId;
     }
 
-    public record RoleRequest(String role) {}
 
     @PostMapping("/cloud-login")
     public ApiResponse<Map<String, Object>> login(
             @RequestHeader(name = SOURCE_HEADER, required = false) String source,
             @RequestHeader(name = APP_ID_HEADER, required = false) String callerAppId,
             @RequestHeader(name = OPEN_ID_HEADER, required = false) String openid,
-            @RequestBody(required = false) RoleRequest request) {
+            @RequestBody(required = false) String raw) {
         // 仅微信网关转发会带上 X-WX-SOURCE；能否伪造取决于服务是否可被公网直连。
         if (blank(source)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "调用来源无效");
@@ -59,17 +60,23 @@ public class CloudRunAuthController {
         if (blank(openid)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "微信身份缺失");
         }
-        String role = request == null ? null : request.role();
+        var body=com.autocare.platform.order.InvitationInput.login(raw,true);
+        String role = body.path("role").textValue();
         if (!("owner".equals(role) || "technician".equals(role))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "不支持的登录角色");
         }
         IdentityRepository repository = requiredRepository();
         if ("owner".equals(role)) {
-            var owner = repository.createOwnerOrRead(openid);
+            String invite=com.autocare.platform.order.InvitationInput.code(body.get("invite_code"));
+            if(invite!=null&&invitations==null)throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"邀请数据库尚未配置");
+            var registration=invitations==null?null:invitations.registerForLogin(openid,invite,"UNKNOWN",appId);
+            var owner = registration==null?repository.createOwnerOrRead(openid):repository.ownerById(registration.ownerId()).orElseThrow();
             if (owner.status() != 1 || owner.deleted()) {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "账号不可用");
             }
-            return ApiResponse.success(tokens.owner(owner, appId));
+            var data=new java.util.LinkedHashMap<String,Object>(tokens.owner(owner,appId));
+            if(invite!=null)data.put("invitation_result",registration.invitationResult());
+            return ApiResponse.success(data);
         }
         var technician = repository.technicianByOpenid(appId, openid);
         if (technician.isEmpty()) {

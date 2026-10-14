@@ -1,5 +1,7 @@
 # API 文档
 
+> R6a 首次注册不可变归因、车主/员工推广码及月度 1/3/6/10 循环见[邀请协议](INVITATIONS.md)。双向发券接续 R6b，正式渠道仍 R9。
+
 > R5已接入单券现金预约、消费/释放/全退返券及非现金服务券授权/预览/核销，见[交易协议](COUPON_TRANSACTIONS.md)。
 
 > R5a 券库存、发行、运营池和领取契约见[COUPON_INVENTORY.md](COUPON_INVENTORY.md)，交易/核销属于R5b。

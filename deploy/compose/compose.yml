@@ -37,6 +37,20 @@ services:
       - ../../docs/sql/migrations/V024__payment_query_recovery.sql:/docker-entrypoint-initdb.d/024-payment-query-recovery.sql:ro
       - ../../docs/sql/migrations/V025__order_refunds.sql:/docker-entrypoint-initdb.d/025-order-refunds.sql:ro
       - ../../docs/sql/migrations/V026__commission_ledger.sql:/docker-entrypoint-initdb.d/026-commission-ledger.sql:ro
+      - ../../docs/sql/migrations/V027__archive_report_shares.sql:/docker-entrypoint-initdb.d/027-archive-report-shares.sql:ro
+      - ../../docs/sql/migrations/V028__archive_reminders.sql:/docker-entrypoint-initdb.d/028-archive-reminders.sql:ro
+      - ../../docs/sql/migrations/V029__archive_structured_details.sql:/docker-entrypoint-initdb.d/029-archive-structured-details.sql:ro
+      - ../../docs/sql/migrations/V030__vehicle_health_observations.sql:/docker-entrypoint-initdb.d/030-vehicle-health-observations.sql:ro
+      - ../../docs/sql/migrations/V031__vehicle_health_observation_history.sql:/docker-entrypoint-initdb.d/031-vehicle-health-observation-history.sql:ro
+      - ../../docs/sql/migrations/V032__merchant_location.sql:/docker-entrypoint-initdb.d/032-merchant-location.sql:ro
+      - ../../docs/sql/migrations/V033__review_publication.sql:/docker-entrypoint-initdb.d/033-review-publication.sql:ro
+      - ../../docs/sql/migrations/V034__public_review_text.sql:/docker-entrypoint-initdb.d/034-public-review-text.sql:ro
+      - ../../docs/sql/migrations/V035__review_summary_consent.sql:/docker-entrypoint-initdb.d/035-review-summary-consent.sql:ro
+      - ../../docs/sql/migrations/V036__project_model_applicability.sql:/docker-entrypoint-initdb.d/036-project-model-applicability.sql:ro
+      - ../../docs/sql/migrations/V037__health_policies_and_confirmations.sql:/docker-entrypoint-initdb.d/037-health-policies-and-confirmations.sql:ro
+      - ../../docs/sql/migrations/V038__coupon_inventory_and_claims.sql:/docker-entrypoint-initdb.d/038-coupon-inventory-and-claims.sql:ro
+      - ../../docs/sql/migrations/V039__coupon_transactions.sql:/docker-entrypoint-initdb.d/039-coupon-transactions.sql:ro
+      - ../../docs/sql/migrations/V040__invitation_attribution.sql:/docker-entrypoint-initdb.d/040-invitation-attribution.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent"]
       interval: 10s
@@ -142,6 +156,7 @@ services:
       SERVICE_ARCHIVE_ENABLED: ${SERVICE_ARCHIVE_ENABLED:-false}
       EXPERIENCE_CARD_ENABLED: ${EXPERIENCE_CARD_ENABLED:-false}
       EXPERIENCE_PUBLICATION_ENABLED: ${EXPERIENCE_PUBLICATION_ENABLED:-false}
+      INVITE_VERIFIED_IDENTITY_ENABLED: ${INVITE_VERIFIED_IDENTITY_ENABLED:-false}
       REVIEW_TEXT_PUBLICATION_ENABLED: ${REVIEW_TEXT_PUBLICATION_ENABLED:-false}
       REVIEW_SUMMARY_ENABLED: ${REVIEW_SUMMARY_ENABLED:-false}
       AI_SERVICE_PLAN_ENABLED: ${AI_SERVICE_PLAN_ENABLED:-false}

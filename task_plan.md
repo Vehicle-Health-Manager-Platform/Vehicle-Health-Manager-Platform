@@ -2,11 +2,11 @@
 
 ## Active R6a phases
 
-1. [in_progress] Inspect registration, identity proof and staff scopes; freeze R6a attribution design. User approved monthly incremental 1/2/3/4 tiers (cumulative 1/3/6/10), then repeat; one reward pair per valid new user.
-2. [pending] Versioned migration, opaque owner/staff invitation codes, registration-time immutable attribution, explicit verified/test/unknown provenance.
-3. [pending] Owner/staff invitation pages and records/progress; preserve invitation through login and phone binding without allowing old users to claim new-user status.
-4. [pending] Real MySQL, strict HTTP, concurrent attribution and frontend verification; update API, operations, acceptance and stage documents.
-5. [pending] Upload all completed R6a code/migrations/tests/docs, verify exact-head CI. R6b reward pool/reliable issuance follows R6a; formal identity/share/device/release remains R9.
+1. [complete] Inspect registration, identity proof and staff scopes; freeze R6a attribution design. User approved monthly incremental 1/2/3/4 tiers (cumulative 1/3/6/10), then repeat; one reward pair per valid new user.
+2. [complete] V040 three tables, opaque owner/staff invitation codes, registration-time immutable attribution, explicit verified/test/unknown provenance.
+3. [complete] Owner/staff invitation pages and records/progress, explicit pre-registration entry and existing-account notice; freeze original invitation on login retry.
+4. [complete] 66 distinct backend cases passed (65 full targeted +33 final session/phone cases deduplicated); frontend553, final WeChat/H5 builds,91-table replay and docs/OpenAPI/routes checks passed. Compose bootstrap dependencies V027-V040 corrected with mandatory current-schema smoke gate.
+5. [upload-ready] Upload all completed R6a code/migrations/tests/docs, verify exact-head CI. Final remote status is recorded in the PR body. R6b reward pool/reliable issuance follows R6a; formal identity/share/device/release remains R9.
 
 ## R6a inspection findings / errors
 
@@ -14,6 +14,14 @@
 - Original source is D:/python/汽车健康管家平台全栈开发/汽车健康管家平台全栈开发交付文档.md, not repository root.
 - Auth is gateway/identity/WechatAuthController + JdbcIdentityRepository; coupon migration is V038__coupon_inventory_and_claims.sql. Initial guessed paths failed; subsequent discovery uses rg --files.
 - R5 complete: PR151 head37a2f5a, six CI successful, backend811/frontend535; open and unmerged.
+- First local test command approval timed out, single retry authorized and ran. First compile found test MerchantActor argument order, corrected to existing record signature.
+- Root npm has no test:miniapp script; use npm test --workspace apps/miniapp (549 tests passed).
+- Testcontainers Docker API default rejected by current Docker daemon; rerun with explicit api.version/DOCKER_API_VERSION=1.44. Do not count skipped database tests as acceptance.
+- Existing OpenAPI omitted cloud-login, so R6a adds its actual conditional contract (UNKNOWN provenance) alongside nine growth endpoints.
+- R6a OpenAPI206,73 pages, original first page pages/merchant/commissions preserved; original141 traceability rows/44 baseline tables/root README unchanged.
+- Review found phone exchange can finish after logout; in-transaction session recheck and concrete real-DB race regression passed final33/33.
+- Compose initialization previously mounted only V001-V026. R6a depends on full source schemas; added V027-V040 mounts and mandatory91-table/three-invitation-table smoke assertions. Existing volumes still require explicit migration after backup.
+- Docker API 1.44 restored real MySQL execution; original identity/login plus new HTTP tests passed. New DB fixtures omitted required merchant.address; fixed synthetic fixture without relaxing schema.
 
 ## Previous R5b plan
 

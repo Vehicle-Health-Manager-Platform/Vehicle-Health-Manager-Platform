@@ -12,6 +12,8 @@ function openAccount() {
     <button class="account-button" @tap="uni.navigateTo({url:'/pages/order/list'})">我的订单</button>
     <button class="account-button" @tap="uni.navigateTo({url:'/pages/coupon/mine'})">我的券与截止日期</button>
     <button class="account-button" @tap="uni.navigateTo({url:'/pages/coupon/offers'})">领取运营精选券</button>
+    <button class="account-button" @tap="uni.navigateTo({url:'/pages/welfare/invite'})">邀请记录与月度进度</button>
+    <button class="account-button" @tap="uni.navigateTo({url:'/pages/welfare/invite-entry'})">输入好友邀请码</button>
     <button class="account-button" @tap="uni.navigateTo({url:'/pages/owner/onboarding'})">商家入驻申请</button>
     <button class="account-button" @tap="openAccount">账号与退出登录</button>
     </template>

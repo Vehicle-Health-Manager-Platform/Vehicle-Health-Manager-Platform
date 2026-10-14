@@ -12,6 +12,11 @@ Supplied document text equals tracked DELIVERY_V1 after newline/BOM normalizatio
 Existing coupon/user_coupon rows had no trusted issuance source. V038 adds four evidence tables and independent can_coupon (default0); no legacy promotion, policy seed or implicit grant. Published rights frozen, single issuing merchant/project, lifetime one claim per template. Merchant/owner/operator mutations follow current auth, ordered source locks, canonical WriteIntegrityService, atomic audit and receipt. Network ambiguity preserves exact payload/UUID; successful write followed by failed GET closes merchant draft to prevent accidental recreation. UI selects/displays Beijing validity; UTC only on wire. 62 distinct backend targeted tests and 514 frontend tests passed; no R5b trading behavior added.
 # R6a findings (2026-10-14)
 
+- Implemented V040 (91 total tables), nine growth routes, opaque registration record UUIDs and private source-scoped reads; strict login/phone payloads and source flags cannot be client supplied.
+- Official evidence gate defaults false, cloud source UNKNOWN; server official endpoint plus same-app verified phone required for formal qualification. Source/phone/month/audit facts atomic, earlier unknown/test evidence never promoted.
+- R6b staff rewards need real owner beneficiary provenance; never treat staff_id as user_id. No automatic human-diagnosis unlock without configured source/rule.
+- Final focused session gate33/33 passed;66 distinct backend cases in total,553 frontend. Compose bootstrap missing V027-V039 dependencies was identified and corrected alongside V040; remote smoke verifies91 actual tables.
+
 - R6 next after uploaded R5. R6a must reject existing/self/duplicate attribution and freeze owner or staff source at first registration; R6b uses R5 coupon issuance with recoverable reward events.
 - User approved each Beijing calendar month incremental 1/2/3/4 targets, cumulative 1/3/6/10, repeated after 10; each qualified new user produces one reward pair rather than tier payouts.
 - Current createOwnerOrRead inserts or reads owner by unique openid but records neither new-registration evidence nor invitation context. Legacy inviter_id/invite_record are not reliable proof.

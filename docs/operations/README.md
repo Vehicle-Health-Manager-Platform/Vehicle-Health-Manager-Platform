@@ -1,5 +1,7 @@
 # 部署与运维文档
 
+> R6a V040 邀请资格证据、默认关闭正式计数及手机号历史排查见[邀请运维](INVITATIONS_RUNBOOK.md)。
+
 > 券V038/V039升级、独立权限、永久创建编号与支付/退款/券恢复见[R5运维](COUPON_TRANSACTIONS_RUNBOOK.md)。正式发布仍最后R9。
 
 按交付文档 §10，记录环境变量、Compose/Nginx、监控告警、发布与回滚步骤。仓库已有 Compose 与 Nginx 配置并通过 CI 冒烟；这只验证临时容器能够启动，真实 HTTPS 环境、已有数据库 V002/V003 迁移、对象存储、告警以及发布/回滚演练尚未验收。当前外部条件见[依赖清单](../progress/S0_DEPENDENCIES.md)，M0 验收顺序见[下一步规划](../progress/NEXT_STEPS.md)。

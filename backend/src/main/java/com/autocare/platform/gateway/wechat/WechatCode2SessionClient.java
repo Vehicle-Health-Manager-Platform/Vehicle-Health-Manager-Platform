@@ -97,6 +97,8 @@ public class WechatCode2SessionClient {
         }
     }
 
+    public boolean officialEndpoint() { return OFFICIAL_ENDPOINT.equals(endpoint); }
+
     private static String encode(String value) {
         return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }

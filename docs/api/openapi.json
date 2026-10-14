@@ -69,13 +69,23 @@
                 ],
                 "properties": {
                   "code": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 512
                   },
                   "role": {
-                    "type": "string"
+                    "enum": [
+                      "owner",
+                      "technician"
+                    ]
+                  },
+                  "invite_code": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{32}$"
                   }
                 },
-                "additionalProperties": false
+                "additionalProperties": false,
+                "description": "invite_code仅车主可提交，只在首次注册记录，不允许事后补填。严格重复字段/尾随JSON拒绝。"
               }
             }
           }
@@ -2162,7 +2172,7 @@
     },
     "/api/invite/qrcode": {
       "get": {
-        "summary": "邀请码",
+        "summary": "读取本人推广码（不创建）",
         "operationId": "get_api_invite_qrcode",
         "tags": [
           "invite"
@@ -2177,7 +2187,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InviteCodeView"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -2197,18 +2222,24 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "503": {
+            "description": "数据库暂不可用；写入保留原键重试"
           }
         },
         "security": [
           {
             "bearerAuth": []
           }
-        ]
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "r6a-invitation-attribution-implemented",
+        "description": "no-store；当前本人身份及门店复核。仅首次注册固定归因，客户端不能提交新客/验证状态。有效资格为同app服务端注册与手机号证据，UNKNOWN/TEST不计正式人数。每月新增1/2/3/4，累计1/3/6/10后重复；非正式渠道默认关闭。双向奖励在R6b接入，真实身份/原生分享R9验收。见INVITATIONS.md。"
       }
     },
     "/api/invite/records": {
       "get": {
-        "summary": "邀请记录",
+        "summary": "本人邀请记录分页",
         "operationId": "get_api_invite_records",
         "tags": [
           "invite"
@@ -2216,14 +2247,46 @@
         "x-feature-ids": [
           "F10"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "统一成功响应",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InviteRecordPage"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -2243,18 +2306,24 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "503": {
+            "description": "数据库暂不可用；写入保留原键重试"
           }
         },
         "security": [
           {
             "bearerAuth": []
           }
-        ]
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "r6a-invitation-attribution-implemented",
+        "description": "no-store；当前本人身份及门店复核。仅首次注册固定归因，客户端不能提交新客/验证状态。有效资格为同app服务端注册与手机号证据，UNKNOWN/TEST不计正式人数。每月新增1/2/3/4，累计1/3/6/10后重复；非正式渠道默认关闭。双向奖励在R6b接入，真实身份/原生分享R9验收。见INVITATIONS.md。"
       }
     },
     "/api/invite/progress": {
       "get": {
-        "summary": "本月进度",
+        "summary": "北京时间四档月度循环",
         "operationId": "get_api_invite_progress",
         "tags": [
           "invite"
@@ -2269,7 +2338,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InviteProgress"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -2289,13 +2373,19 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "503": {
+            "description": "数据库暂不可用；写入保留原键重试"
           }
         },
         "security": [
           {
             "bearerAuth": []
           }
-        ]
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "r6a-invitation-attribution-implemented",
+        "description": "no-store；当前本人身份及门店复核。仅首次注册固定归因，客户端不能提交新客/验证状态。有效资格为同app服务端注册与手机号证据，UNKNOWN/TEST不计正式人数。每月新增1/2/3/4，累计1/3/6/10后重复；非正式渠道默认关闭。双向奖励在R6b接入，真实身份/原生分享R9验收。见INVITATIONS.md。"
       }
     },
     "/api/point/exchange": {
@@ -18838,6 +18928,529 @@
         "x-implementation-status": "r5b-coupon-transactions-implemented",
         "description": "no-store，严格正文/查询及当前角色。用户确认单券不叠加、发行店项目限定，DISCOUNT实付>=0.01按实际现金冻结既有佣金政策；SERVICE独立非现金核销免佣。支付PAID消费、未付关闭释放、全额退款SUCCEEDED返原券不续期；V039不提升旧券/WAIT_COUPON。生成码只存摘要，码仅本人私有回执；核销先核对本店/项目/授权，错误码持久限流，交易/审计/回执原子，恢复依据真实唯一付款/退款事实。预览不消费券，服务码预览错误尝试可能更新安全计数。见COUPON_TRANSACTIONS.md。"
       }
+    },
+    "/api/invite/code": {
+      "post": {
+        "summary": "幂等生成本人推广码",
+        "operationId": "post_api_invite_code",
+        "tags": [
+          "invite"
+        ],
+        "x-feature-ids": [
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InviteCodeCreated"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "503": {
+            "description": "数据库暂不可用；写入保留原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InviteCodeInput"
+              }
+            }
+          }
+        },
+        "x-roles": "OWNER",
+        "x-implementation-status": "r6a-invitation-attribution-implemented",
+        "description": "no-store；当前本人身份及门店复核。仅首次注册固定归因，客户端不能提交新客/验证状态。有效资格为同app服务端注册与手机号证据，UNKNOWN/TEST不计正式人数。每月新增1/2/3/4，累计1/3/6/10后重复；非正式渠道默认关闭。双向奖励在R6b接入，真实身份/原生分享R9验收。见INVITATIONS.md。"
+      }
+    },
+    "/api/merchant/invite/code": {
+      "get": {
+        "summary": "读取本人推广码（不创建）",
+        "operationId": "get_api_merchant_invite_code",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F10"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InviteCodeView"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "503": {
+            "description": "数据库暂不可用；写入保留原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT,STAFF",
+        "x-implementation-status": "r6a-invitation-attribution-implemented",
+        "description": "no-store；当前本人身份及门店复核。仅首次注册固定归因，客户端不能提交新客/验证状态。有效资格为同app服务端注册与手机号证据，UNKNOWN/TEST不计正式人数。每月新增1/2/3/4，累计1/3/6/10后重复；非正式渠道默认关闭。双向奖励在R6b接入，真实身份/原生分享R9验收。见INVITATIONS.md。"
+      },
+      "post": {
+        "summary": "幂等生成本人推广码",
+        "operationId": "post_api_merchant_invite_code",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InviteCodeCreated"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "503": {
+            "description": "数据库暂不可用；写入保留原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InviteCodeInput"
+              }
+            }
+          }
+        },
+        "x-roles": "MERCHANT,STAFF",
+        "x-implementation-status": "r6a-invitation-attribution-implemented",
+        "description": "no-store；当前本人身份及门店复核。仅首次注册固定归因，客户端不能提交新客/验证状态。有效资格为同app服务端注册与手机号证据，UNKNOWN/TEST不计正式人数。每月新增1/2/3/4，累计1/3/6/10后重复；非正式渠道默认关闭。双向奖励在R6b接入，真实身份/原生分享R9验收。见INVITATIONS.md。"
+      }
+    },
+    "/api/merchant/invite/records": {
+      "get": {
+        "summary": "本人邀请记录分页",
+        "operationId": "get_api_merchant_invite_records",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InviteRecordPage"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "503": {
+            "description": "数据库暂不可用；写入保留原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT,STAFF",
+        "x-implementation-status": "r6a-invitation-attribution-implemented",
+        "description": "no-store；当前本人身份及门店复核。仅首次注册固定归因，客户端不能提交新客/验证状态。有效资格为同app服务端注册与手机号证据，UNKNOWN/TEST不计正式人数。每月新增1/2/3/4，累计1/3/6/10后重复；非正式渠道默认关闭。双向奖励在R6b接入，真实身份/原生分享R9验收。见INVITATIONS.md。"
+      }
+    },
+    "/api/merchant/invite/progress": {
+      "get": {
+        "summary": "北京时间四档月度循环",
+        "operationId": "get_api_merchant_invite_progress",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F10"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InviteProgress"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "503": {
+            "description": "数据库暂不可用；写入保留原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT,STAFF",
+        "x-implementation-status": "r6a-invitation-attribution-implemented",
+        "description": "no-store；当前本人身份及门店复核。仅首次注册固定归因，客户端不能提交新客/验证状态。有效资格为同app服务端注册与手机号证据，UNKNOWN/TEST不计正式人数。每月新增1/2/3/4，累计1/3/6/10后重复；非正式渠道默认关闭。双向奖励在R6b接入，真实身份/原生分享R9验收。见INVITATIONS.md。"
+      }
+    },
+    "/api/invite/registration": {
+      "get": {
+        "summary": "本人首次注册资格与归因",
+        "operationId": "get_api_invite_registration",
+        "tags": [
+          "invite"
+        ],
+        "x-feature-ids": [
+          "F10"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InviteRegistrationView"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "r6a-invitation-attribution-implemented"
+      }
+    },
+    "/api/auth/cloud-login": {
+      "post": {
+        "summary": "显式启用的云托管登录与未知来源归因",
+        "operationId": "post_api_auth_cloud_login",
+        "tags": [
+          "auth"
+        ],
+        "x-feature-ids": [
+          "F01",
+          "F10"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "role"
+                ],
+                "properties": {
+                  "role": {
+                    "enum": [
+                      "owner",
+                      "technician"
+                    ]
+                  },
+                  "invite_code": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{32}$"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "WECHAT_CLOUD_RUN_ENABLED默认关闭。云托管新注册邀请身份证据为UNKNOWN，不计正式新客；网关边界实际验证后在R9接入。invite_code仅车主。"
+      }
     }
   },
   "components": {
@@ -27436,6 +28049,315 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 100
+          }
+        }
+      },
+      "InviteCode": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "source_type",
+          "created_at",
+          "landing_path",
+          "rule_version"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{32}$"
+          },
+          "source_type": {
+            "enum": [
+              "OWNER",
+              "STAFF"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "landing_path": {
+            "type": "string",
+            "pattern": "^/pages/welfare/invite-entry\\?code=[0-9a-f]{32}$"
+          },
+          "rule_version": {
+            "const": "R6A_INVITE_V1"
+          }
+        }
+      },
+      "InviteCodeView": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InviteCode"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "InviteCodeCreated": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/InviteCode"
+          }
+        }
+      },
+      "InviteCodeInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {}
+      },
+      "InviteRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "record_id",
+          "source_type",
+          "identity_source",
+          "attribution_result",
+          "qualification_status",
+          "qualification_reason",
+          "registered_at",
+          "qualified_at",
+          "reward_month",
+          "rule_version"
+        ],
+        "properties": {
+          "record_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "source_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "OWNER",
+                  "STAFF"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "identity_source": {
+            "enum": [
+              "VERIFIED_WECHAT",
+              "UNKNOWN",
+              "TEST"
+            ]
+          },
+          "attribution_result": {
+            "enum": [
+              "ATTRIBUTED",
+              "NO_CODE",
+              "INVALID_CODE",
+              "SELF",
+              "SOURCE_UNAVAILABLE"
+            ]
+          },
+          "qualification_status": {
+            "enum": [
+              "PENDING",
+              "UNKNOWN",
+              "TEST",
+              "QUALIFIED",
+              "REJECTED"
+            ]
+          },
+          "qualification_reason": {
+            "anyOf": [
+              {
+                "enum": [
+                  "PHONE_SEEN",
+                  "SOURCE_UNAVAILABLE"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "registered_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "qualified_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reward_month": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rule_version": {
+            "const": "R6A_INVITE_V1"
+          }
+        }
+      },
+      "InviteRecordPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "$ref": "#/components/schemas/InviteRecord"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "page_size": {
+            "const": 20
+          }
+        }
+      },
+      "InviteRegistrationView": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "registration"
+        ],
+        "properties": {
+          "registration": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InviteRecord"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "InviteProgress": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "qualified_count",
+          "completed_cycles",
+          "tier",
+          "tier_count",
+          "tier_target",
+          "next_threshold",
+          "month",
+          "timezone",
+          "verified_identity_enabled",
+          "rule_version",
+          "pending_total",
+          "unknown_total",
+          "test_total",
+          "rejected_total"
+        ],
+        "properties": {
+          "qualified_count": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "completed_cycles": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "tier": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4
+          },
+          "tier_count": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "tier_target": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4
+          },
+          "next_threshold": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "month": {
+            "type": "string",
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+          },
+          "timezone": {
+            "const": "Asia/Shanghai"
+          },
+          "verified_identity_enabled": {
+            "type": "boolean"
+          },
+          "rule_version": {
+            "const": "R6A_INVITE_V1"
+          },
+          "pending_total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "unknown_total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "test_total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "rejected_total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
           }
         }
       }

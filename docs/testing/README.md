@@ -1,5 +1,7 @@
 # 测试资料
 
+> R6a 注册/归因/手机号证据、并发与月度循环见[邀请验收](LOCAL_R6A_INVITATIONS_ACCEPTANCE.md)，正式身份与真机分享不算本地通过。
+
 > 整R5交易/服务核销/恢复与库存兼容验证见[R5b验收](LOCAL_R5B_COUPONS_ACCEPTANCE.md)，远程完整套件证据以最终PR正文为准。
 
 > 券库存/领取R5a真实MySQL并发、回滚、权限与前端/构建验证见[验收](LOCAL_R5A_COUPONS_ACCEPTANCE.md)。
