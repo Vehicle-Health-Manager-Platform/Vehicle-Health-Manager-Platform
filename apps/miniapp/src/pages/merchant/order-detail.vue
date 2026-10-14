@@ -1,5 +1,6 @@
 <script setup>
 import { reactive, watch, computed } from 'vue'
+import CouponOrderSummary from '../../components/CouponOrderSummary.vue'
 import { onLoad, onShow, onHide, onUnload } from '@dcloudio/uni-app'
 import { merchantSession, clearMerchantSession } from '../../services/merchant-session.js'
 import { merchantOrdersApi } from '../../services/merchant-orders.js'
@@ -51,6 +52,7 @@ onUnload(() => { visible = false; flow.reset(); apply.reset() })
       <button v-else :disabled="state.busy" @tap="flow.load">重试订单详情</button>
     </view>
     <view v-if="state.value" class="reservation-panel" data-testid="merchant-order-detail">
+      <CouponOrderSummary v-if="state.value.coupon_summary" :summary="state.value.coupon_summary"/>
       <text class="reservation-heading">{{ state.value.project_snapshot?.project_name || '历史订单' }}</text>
       <text>{{ state.value.project_snapshot?.service_content || '服务内容未提供' }}</text>
       <text>{{ state.value.merchant_snapshot?.merchant_name || '历史商家信息未提供' }}</text>

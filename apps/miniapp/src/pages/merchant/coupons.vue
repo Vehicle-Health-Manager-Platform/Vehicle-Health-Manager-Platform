@@ -27,7 +27,7 @@ function login(){reset();clearMerchantSession();uni.navigateTo({url:'/pages/merc
 </script>
 <template><view class="reservation-page"><text class="reservation-title">本店券库存与发行</text>
  <view v-if="!token()"><text>请先登录门店店长账号。</text><button @tap="uni.navigateTo({url:'/pages/merchant/index'})">门店登录</button></view>
- <template v-else><text>限本店指定在售项目；发布后条款冻结，已领券不因停止领取而撤回。</text><button :disabled="state.busy||state.retryWrite" @tap="start()">创建券草稿</button>
+ <template v-else><text>限本店指定在售项目；发布后条款冻结，已领券不因停止领取而撤回。</text><button @tap="uni.navigateTo({url:'/pages/merchant/coupon-redeem'})">服务券独立核销与记录</button><button :disabled="state.busy||state.retryWrite" @tap="start()">创建券草稿</button>
  <view v-if="editing" class="reservation-panel">
   <text class="reservation-heading">{{ current?'修改草稿':'新券草稿' }}</text>
   <input v-model="form.name" :disabled="state.busy||state.retryWrite" placeholder="券名称" maxlength="128"/>

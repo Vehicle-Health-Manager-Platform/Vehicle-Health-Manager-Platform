@@ -131,12 +131,14 @@ run_sql_file docs/sql/migrations/V037__health_policies_and_confirmations.sql
 run_sql_file docs/sql/migrations/V037__health_policies_and_confirmations.sql
 run_sql_file docs/sql/migrations/V038__coupon_inventory_and_claims.sql
 run_sql_file docs/sql/migrations/V038__coupon_inventory_and_claims.sql
+run_sql_file docs/sql/migrations/V039__coupon_transactions.sql
+run_sql_file docs/sql/migrations/V039__coupon_transactions.sql
 [[ "$(query "SELECT COUNT(*) FROM review_summary_consent")" == 0 ]] || { echo "AI consent was inferred" >&2; exit 1; }
 [[ "$(query "SELECT COUNT(*) FROM public_review_text")" == 0 ]] || { echo "Private review texts were backfilled" >&2; exit 1; }
 [[ "$(query "SELECT COUNT(*) FROM review_publication")" == 0 ]] || { echo "Legacy reviews were published" >&2; exit 1; }
 
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
-[[ "$tables" == 84 ]] || { echo "Expected 84 tables after V038, got $tables" >&2; exit 1; }
+[[ "$tables" == 88 ]] || { echo "Expected 88 tables after V039, got $tables" >&2; exit 1; }
 [[ "$(query "SELECT COUNT(*) FROM merchant_location")" == 0 ]] || { echo 'V032 must not infer legacy coordinates' >&2; exit 1; }
 catalog_columns=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND ((table_name IN ('brand','series','model','standard_project') AND column_name IN ('sort_order','source_note','revision')) OR (table_name IN ('brand','series','model') AND column_name='status') OR (table_name='operator_account' AND column_name='can_catalog'))")
 [[ "$catalog_columns" == 16 ]] || { echo "V022 catalogue fields incomplete: $catalog_columns/16" >&2; exit 1; }
@@ -240,4 +242,11 @@ for entry in coupon_issue:uk_coupon_issue_owner coupon_stock_event:uk_coupon_sto
   table="${entry%%:*}"; index="${entry##*:}"
   [[ "$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema='$database' AND table_name='$table' AND index_name='$index' AND non_unique=0")" == 1 ]] || { echo 'Coupon uniqueness missing' >&2; exit 1; }
 done
-echo "MySQL 8.0 schema: 84 tables after V038; repeat migration and synthetic seed passed"
+for table in order_coupon_allocation coupon_transaction_event coupon_service_authorization coupon_service_redemption; do
+  [[ "$(query "SELECT COUNT(*) FROM $table")" == 0 ]] || { echo 'V039 must not promote legacy coupon transactions' >&2; exit 1; }
+done
+for entry in order_coupon_allocation:uk_coupon_active_allocation order_coupon_allocation:uk_coupon_creation_intent coupon_transaction_event:uk_coupon_transaction_event coupon_service_redemption:uk_coupon_service_redemption; do
+  table="${entry%%:*}"; index="${entry##*:}"
+  [[ "$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema='$database' AND table_name='$table' AND index_name='$index' AND non_unique=0")" == 1 ]] || { echo 'V039 coupon uniqueness missing' >&2; exit 1; }
+done
+echo "MySQL 8.0 schema: 88 tables after V039; repeat migration and synthetic seed passed"

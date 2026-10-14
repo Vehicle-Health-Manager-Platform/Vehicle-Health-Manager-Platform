@@ -18151,6 +18151,693 @@
         "x-implementation-status": "r5a-inventory-claim-implemented",
         "description": "no-store；严格正文/query，当前身份权限/来源复核。V038不提升历史券，不预置生产权益。写入UUID、锁、版本/限领/审计/库存/回执原子；成功重放后GET。池选择仅曝光，已领权益不因停止/移池改变。UTC传输，北京时间界面；交易抵扣/核销属R5b，见COUPON_INVENTORY.md。"
       }
+    },
+    "/api/order/coupon-preview": {
+      "post": {
+        "summary": "当前报价/本人车/时段用券资格预览",
+        "operationId": "post_api_order_coupon_preview",
+        "tags": [
+          "order"
+        ],
+        "x-feature-ids": [
+          "F07",
+          "F09",
+          "F18"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CouponTransactionPreview"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人/本店资源不可用"
+          },
+          "409": {
+            "description": "报价/券/名额/冻结事实改变"
+          },
+          "422": {
+            "description": "服务码错误或版本已更新"
+          },
+          "429": {
+            "description": "服务码尝试受限，Retry-After秒"
+          },
+          "503": {
+            "description": "暂不可用，写入保留原body/key重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CouponPreviewInput"
+              }
+            }
+          }
+        },
+        "x-roles": "OWNER",
+        "x-implementation-status": "r5b-coupon-transactions-implemented",
+        "description": "no-store，严格正文/查询及当前角色。用户确认单券不叠加、发行店项目限定，DISCOUNT实付>=0.01按实际现金冻结既有佣金政策；SERVICE独立非现金核销免佣。支付PAID消费、未付关闭释放、全额退款SUCCEEDED返原券不续期；V039不提升旧券/WAIT_COUPON。生成码只存摘要，码仅本人私有回执；核销先核对本店/项目/授权，错误码持久限流，交易/审计/回执原子，恢复依据真实唯一付款/退款事实。预览不消费券，服务码预览错误尝试可能更新安全计数。见COUPON_TRANSACTIONS.md。"
+      }
+    },
+    "/api/order/coupon-create": {
+      "post": {
+        "summary": "订单/时段/单券原子冻结创建",
+        "operationId": "post_api_order_coupon_create",
+        "tags": [
+          "order"
+        ],
+        "x-feature-ids": [
+          "F07",
+          "F09",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CouponBookingReceipt"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人/本店资源不可用"
+          },
+          "409": {
+            "description": "报价/券/名额/冻结事实改变"
+          },
+          "422": {
+            "description": "服务码错误或版本已更新"
+          },
+          "429": {
+            "description": "服务码尝试受限，Retry-After秒"
+          },
+          "503": {
+            "description": "暂不可用，写入保留原body/key重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CouponBookingInput"
+              }
+            }
+          }
+        },
+        "x-roles": "OWNER",
+        "x-implementation-status": "r5b-coupon-transactions-implemented",
+        "description": "no-store，严格正文/查询及当前角色。用户确认单券不叠加、发行店项目限定，DISCOUNT实付>=0.01按实际现金冻结既有佣金政策；SERVICE独立非现金核销免佣。支付PAID消费、未付关闭释放、全额退款SUCCEEDED返原券不续期；V039不提升旧券/WAIT_COUPON。生成码只存摘要，码仅本人私有回执；核销先核对本店/项目/授权，错误码持久限流，交易/审计/回执原子，恢复依据真实唯一付款/退款事实。预览不消费券，服务码预览错误尝试可能更新安全计数。见COUPON_TRANSACTIONS.md。"
+      }
+    },
+    "/api/coupon/{id}/service-redemption": {
+      "get": {
+        "summary": "本人服务券授权版本和核销记录",
+        "operationId": "get_api_coupon_id_service_redemption",
+        "tags": [
+          "coupon"
+        ],
+        "x-feature-ids": [
+          "F07",
+          "F09",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceCouponView"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人/本店资源不可用"
+          },
+          "409": {
+            "description": "报价/券/名额/冻结事实改变"
+          },
+          "422": {
+            "description": "服务码错误或版本已更新"
+          },
+          "429": {
+            "description": "服务码尝试受限，Retry-After秒"
+          },
+          "503": {
+            "description": "暂不可用，写入保留原body/key重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "r5b-coupon-transactions-implemented",
+        "description": "no-store，严格正文/查询及当前角色。用户确认单券不叠加、发行店项目限定，DISCOUNT实付>=0.01按实际现金冻结既有佣金政策；SERVICE独立非现金核销免佣。支付PAID消费、未付关闭释放、全额退款SUCCEEDED返原券不续期；V039不提升旧券/WAIT_COUPON。生成码只存摘要，码仅本人私有回执；核销先核对本店/项目/授权，错误码持久限流，交易/审计/回执原子，恢复依据真实唯一付款/退款事实。预览不消费券，服务码预览错误尝试可能更新安全计数。见COUPON_TRANSACTIONS.md。"
+      }
+    },
+    "/api/coupon/{id}/service-authorization": {
+      "post": {
+        "summary": "本人生成短期服务券授权码",
+        "operationId": "post_api_coupon_id_service_authorization",
+        "tags": [
+          "coupon"
+        ],
+        "x-feature-ids": [
+          "F07",
+          "F09",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceCouponAuthorization"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人/本店资源不可用"
+          },
+          "409": {
+            "description": "报价/券/名额/冻结事实改变"
+          },
+          "422": {
+            "description": "服务码错误或版本已更新"
+          },
+          "429": {
+            "description": "服务码尝试受限，Retry-After秒"
+          },
+          "503": {
+            "description": "暂不可用，写入保留原body/key重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceCouponAuthorizationInput"
+              }
+            }
+          }
+        },
+        "x-roles": "OWNER",
+        "x-implementation-status": "r5b-coupon-transactions-implemented",
+        "description": "no-store，严格正文/查询及当前角色。用户确认单券不叠加、发行店项目限定，DISCOUNT实付>=0.01按实际现金冻结既有佣金政策；SERVICE独立非现金核销免佣。支付PAID消费、未付关闭释放、全额退款SUCCEEDED返原券不续期；V039不提升旧券/WAIT_COUPON。生成码只存摘要，码仅本人私有回执；核销先核对本店/项目/授权，错误码持久限流，交易/审计/回执原子，恢复依据真实唯一付款/退款事实。预览不消费券，服务码预览错误尝试可能更新安全计数。见COUPON_TRANSACTIONS.md。"
+      }
+    },
+    "/api/merchant/coupons/service-preview": {
+      "post": {
+        "summary": "本店核对服务券项目和车主授权",
+        "operationId": "post_api_merchant_coupons_service_preview",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F07",
+          "F09",
+          "F18"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceCouponMerchantPreview"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人/本店资源不可用"
+          },
+          "409": {
+            "description": "报价/券/名额/冻结事实改变"
+          },
+          "422": {
+            "description": "服务码错误或版本已更新"
+          },
+          "429": {
+            "description": "服务码尝试受限，Retry-After秒"
+          },
+          "503": {
+            "description": "暂不可用，写入保留原body/key重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceCouponRedeemInput"
+              }
+            }
+          }
+        },
+        "x-roles": "MERCHANT,STAFF",
+        "x-implementation-status": "r5b-coupon-transactions-implemented",
+        "description": "no-store，严格正文/查询及当前角色。用户确认单券不叠加、发行店项目限定，DISCOUNT实付>=0.01按实际现金冻结既有佣金政策；SERVICE独立非现金核销免佣。支付PAID消费、未付关闭释放、全额退款SUCCEEDED返原券不续期；V039不提升旧券/WAIT_COUPON。生成码只存摘要，码仅本人私有回执；核销先核对本店/项目/授权，错误码持久限流，交易/审计/回执原子，恢复依据真实唯一付款/退款事实。预览不消费券，服务码预览错误尝试可能更新安全计数。见COUPON_TRANSACTIONS.md。"
+      }
+    },
+    "/api/merchant/coupons/service-redeem": {
+      "post": {
+        "summary": "本店独立消费服务券并记录免佣事实",
+        "operationId": "post_api_merchant_coupons_service_redeem",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F07",
+          "F09",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceCouponReceipt"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人/本店资源不可用"
+          },
+          "409": {
+            "description": "报价/券/名额/冻结事实改变"
+          },
+          "422": {
+            "description": "服务码错误或版本已更新"
+          },
+          "429": {
+            "description": "服务码尝试受限，Retry-After秒"
+          },
+          "503": {
+            "description": "暂不可用，写入保留原body/key重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceCouponRedeemInput"
+              }
+            }
+          }
+        },
+        "x-roles": "MERCHANT,STAFF",
+        "x-implementation-status": "r5b-coupon-transactions-implemented",
+        "description": "no-store，严格正文/查询及当前角色。用户确认单券不叠加、发行店项目限定，DISCOUNT实付>=0.01按实际现金冻结既有佣金政策；SERVICE独立非现金核销免佣。支付PAID消费、未付关闭释放、全额退款SUCCEEDED返原券不续期；V039不提升旧券/WAIT_COUPON。生成码只存摘要，码仅本人私有回执；核销先核对本店/项目/授权，错误码持久限流，交易/审计/回执原子，恢复依据真实唯一付款/退款事实。预览不消费券，服务码预览错误尝试可能更新安全计数。见COUPON_TRANSACTIONS.md。"
+      }
+    },
+    "/api/merchant/coupons/service-redemptions": {
+      "get": {
+        "summary": "本店服务券核销记录分页",
+        "operationId": "get_api_merchant_coupons_service_redemptions",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F07",
+          "F09",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceCouponReceiptPage"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "本人/本店资源不可用"
+          },
+          "409": {
+            "description": "报价/券/名额/冻结事实改变"
+          },
+          "422": {
+            "description": "服务码错误或版本已更新"
+          },
+          "429": {
+            "description": "服务码尝试受限，Retry-After秒"
+          },
+          "503": {
+            "description": "暂不可用，写入保留原body/key重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT,STAFF",
+        "x-implementation-status": "r5b-coupon-transactions-implemented",
+        "description": "no-store，严格正文/查询及当前角色。用户确认单券不叠加、发行店项目限定，DISCOUNT实付>=0.01按实际现金冻结既有佣金政策；SERVICE独立非现金核销免佣。支付PAID消费、未付关闭释放、全额退款SUCCEEDED返原券不续期；V039不提升旧券/WAIT_COUPON。生成码只存摘要，码仅本人私有回执；核销先核对本店/项目/授权，错误码持久限流，交易/审计/回执原子，恢复依据真实唯一付款/退款事实。预览不消费券，服务码预览错误尝试可能更新安全计数。见COUPON_TRANSACTIONS.md。"
+      }
     }
   },
   "components": {
@@ -18840,6 +19527,9 @@
             "type": "string",
             "pattern": "^[0-9]{6}$",
             "description": "仅本人PAID详情返回；商家投影永不包含"
+          },
+          "coupon_summary": {
+            "$ref": "#/components/schemas/CouponOrderSummary"
           }
         }
       },
@@ -18939,6 +19629,9 @@
                 "type": "null"
               }
             ]
+          },
+          "coupon_summary": {
+            "$ref": "#/components/schemas/CouponOrderSummary"
           }
         }
       },
@@ -19440,6 +20133,9 @@
                 }
               }
             }
+          },
+          "coupon_summary": {
+            "$ref": "#/components/schemas/CouponOrderSummary"
           }
         }
       },
@@ -19658,6 +20354,9 @@
                 "type": "null"
               }
             ]
+          },
+          "coupon_summary": {
+            "$ref": "#/components/schemas/CouponOrderSummary"
           }
         }
       },
@@ -19935,6 +20634,9 @@
           "changed": {
             "type": "boolean",
             "description": "false 表示该动作此前已生效，本次为幂等重放，不产生新的状态迁移审计"
+          },
+          "coupon_summary": {
+            "$ref": "#/components/schemas/CouponOrderSummary"
           }
         }
       },
@@ -26033,6 +26735,707 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 9007199254740991
+          }
+        }
+      },
+      "CouponBookingInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "merchant_project_id",
+          "quote_version_id",
+          "vehicle_id",
+          "slot_id",
+          "user_coupon_id",
+          "publication_revision",
+          "rule_version"
+        ],
+        "properties": {
+          "merchant_project_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "quote_version_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "vehicle_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "slot_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "user_coupon_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "publication_revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "rule_version": {
+            "const": "R5B_CASH_V1"
+          }
+        }
+      },
+      "CouponPreviewInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "merchant_project_id",
+          "quote_version_id",
+          "vehicle_id",
+          "slot_id",
+          "selected_user_coupon_id",
+          "page"
+        ],
+        "properties": {
+          "merchant_project_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "quote_version_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "vehicle_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "slot_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "selected_user_coupon_id": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          }
+        }
+      },
+      "CouponCashCandidate": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "user_coupon_id",
+          "coupon_id",
+          "source_known",
+          "merchant_id",
+          "publication_revision",
+          "terms",
+          "eligibility",
+          "discount_amount",
+          "cash_amount"
+        ],
+        "properties": {
+          "user_coupon_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "coupon_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "source_known": {
+            "type": "boolean"
+          },
+          "merchant_id": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "publication_revision": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "terms": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CouponTerms"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "eligibility": {
+            "enum": [
+              "ELIGIBLE",
+              "SOURCE_UNKNOWN",
+              "SERVICE_ONLY",
+              "DISCOUNT_ONLY",
+              "NOT_AVAILABLE",
+              "NOT_STARTED",
+              "EXPIRED",
+              "WRONG_SCOPE",
+              "ISSUER_UNAVAILABLE",
+              "PROJECT_UNAVAILABLE",
+              "BELOW_MINIMUM",
+              "ZERO_CASH"
+            ]
+          },
+          "discount_amount": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cash_amount": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "CouponCashCandidatePage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "$ref": "#/components/schemas/CouponCashCandidate"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "page_size": {
+            "const": 20
+          }
+        }
+      },
+      "CouponTransactionPreview": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "quote",
+          "vehicle_id",
+          "slot",
+          "coupons",
+          "selected",
+          "can_create",
+          "rule_version"
+        ],
+        "properties": {
+          "quote": {
+            "$ref": "#/components/schemas/ReservationQuote"
+          },
+          "vehicle_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "slot": {
+            "$ref": "#/components/schemas/ReservationSlot"
+          },
+          "coupons": {
+            "$ref": "#/components/schemas/CouponCashCandidatePage"
+          },
+          "selected": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CouponCashCandidate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "can_create": {
+            "type": "boolean"
+          },
+          "rule_version": {
+            "const": "R5B_CASH_V1"
+          }
+        }
+      },
+      "CouponBookingReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order_id",
+          "order_no",
+          "amount_due",
+          "status",
+          "expires_at"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "order_no": {
+            "type": "string"
+          },
+          "amount_due": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+          },
+          "status": {
+            "const": "PENDING_PAYMENT"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CouponOrderSummary": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "state",
+              "source_known"
+            ],
+            "properties": {
+              "state": {
+                "const": "UNKNOWN"
+              },
+              "source_known": {
+                "const": false
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "state",
+              "source_known",
+              "user_coupon_id",
+              "coupon_id",
+              "name",
+              "original_amount",
+              "discount_amount",
+              "cash_amount",
+              "rule_version",
+              "valid_to"
+            ],
+            "properties": {
+              "state": {
+                "enum": [
+                  "RESERVED",
+                  "CONSUMED",
+                  "RELEASED",
+                  "RETURNED"
+                ]
+              },
+              "source_known": {
+                "const": true
+              },
+              "user_coupon_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "coupon_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "name": {
+                "type": "string"
+              },
+              "original_amount": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+              },
+              "discount_amount": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+              },
+              "cash_amount": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]{0,7})\\.[0-9]{2}$"
+              },
+              "rule_version": {
+                "const": "R5B_CASH_V1"
+              },
+              "valid_to": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        ]
+      },
+      "ServiceCouponReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "redemption_id",
+          "user_coupon_id",
+          "coupon_id",
+          "merchant_id",
+          "project_id",
+          "terms",
+          "redeemed_at",
+          "commission_amount",
+          "rule_version"
+        ],
+        "properties": {
+          "redemption_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "user_coupon_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "coupon_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "merchant_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "project_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "terms": {
+            "$ref": "#/components/schemas/CouponTerms"
+          },
+          "redeemed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "commission_amount": {
+            "const": "0.00"
+          },
+          "rule_version": {
+            "const": "R5B_SERVICE_V1"
+          }
+        }
+      },
+      "ServiceCouponView": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "user_coupon_id",
+          "merchant_id",
+          "terms",
+          "source_known",
+          "eligibility",
+          "authorization_revision",
+          "authorization_expires_at",
+          "redemption"
+        ],
+        "properties": {
+          "user_coupon_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "merchant_id": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "terms": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CouponTerms"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "source_known": {
+            "type": "boolean"
+          },
+          "eligibility": {
+            "enum": [
+              "ELIGIBLE",
+              "SOURCE_UNKNOWN",
+              "SERVICE_ONLY",
+              "DISCOUNT_ONLY",
+              "NOT_AVAILABLE",
+              "NOT_STARTED",
+              "EXPIRED",
+              "WRONG_SCOPE",
+              "ISSUER_UNAVAILABLE",
+              "PROJECT_UNAVAILABLE",
+              "BELOW_MINIMUM",
+              "ZERO_CASH"
+            ]
+          },
+          "authorization_revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740990
+          },
+          "authorization_expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "redemption": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ServiceCouponReceipt"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "ServiceCouponAuthorizationInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "expected_revision"
+        ],
+        "properties": {
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740990
+          }
+        }
+      },
+      "ServiceCouponAuthorization": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "user_coupon_id",
+          "authorization_revision",
+          "expires_at",
+          "code",
+          "rule_version"
+        ],
+        "properties": {
+          "user_coupon_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "authorization_revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{32}$"
+          },
+          "rule_version": {
+            "const": "R5B_SERVICE_V1"
+          }
+        }
+      },
+      "ServiceCouponRedeemInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "user_coupon_id",
+          "authorization_revision",
+          "code"
+        ],
+        "properties": {
+          "user_coupon_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "authorization_revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{32}$"
+          }
+        }
+      },
+      "ServiceCouponMerchantPreview": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "user_coupon_id",
+          "merchant_id",
+          "project_id",
+          "project_name",
+          "terms",
+          "authorization_revision",
+          "authorization_expires_at",
+          "redemption",
+          "can_redeem"
+        ],
+        "properties": {
+          "user_coupon_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "merchant_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "project_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "project_name": {
+            "type": "string"
+          },
+          "terms": {
+            "$ref": "#/components/schemas/CouponTerms"
+          },
+          "authorization_revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "authorization_expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "redemption": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ServiceCouponReceipt"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "can_redeem": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ServiceCouponReceiptPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/ServiceCouponReceipt"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
           }
         }
       }

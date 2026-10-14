@@ -2,6 +2,7 @@ import { apiOrigin } from './api-config.js'
 import { apiRuntime } from './api-runtime.js'
 import { ServiceError, serviceFailure } from './service-catalog.js'
 import { validPaymentSummary } from './payment-contract.js'
+import { validCouponSummary } from './coupon-transactions.js'
 import { ORDER_ACTIONS, ORDER_STATES, allowedActions } from './order-status.js'
 
 const id = n => Number.isSafeInteger(n) && n > 0
@@ -15,6 +16,7 @@ const row = value => id(value?.order_id) && typeof value.order_no === 'string' &
   && snapshot(value.project_snapshot, ['standard_project_id', 'project_name', 'service_content'])
   && snapshot(value.merchant_snapshot, ['merchant_id', 'merchant_name', 'address'])
   && snapshot(value.appointment_snapshot, ['slot_id', 'starts_at', 'ends_at'])
+  && (value.coupon_summary===undefined||validCouponSummary(value.coupon_summary))
   && !['user_id', 'vehicle_id', 'phone', 'plate_no', 'vin'].some(key => key in value)
 const page = (value, n) => Array.isArray(value?.items) && value.items.length <= 20 && value.items.every(row)
   && value.page === n && value.page_size === 20 && Number.isSafeInteger(value.total) && value.total >= value.items.length

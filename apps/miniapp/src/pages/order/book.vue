@@ -1,5 +1,5 @@
 <script setup>
-import {reactive,ref,watch} from 'vue'
+import {reactive,ref,watch,computed} from 'vue'
 import {onLoad,onShow,onHide,onUnload} from '@dcloudio/uni-app'
 import {ownerSession,clearOwnerSession} from '../../services/owner-session.js'
 import {vehicleApi} from '../../services/vehicles.js'
@@ -8,6 +8,7 @@ import {initialQuoteListState,createQuoteListFlow} from '../../services/quote-fl
 import {reservationsApi as api,ReservationError,initialReservationWriteState,createReservationWriteFlow,initialReservationReadState,createReservationReadFlow,chinaDate,displayTime} from '../../services/reservations.js'
 const quote=reactive(initialReservationReadState()),vehicles=reactive(initialQuoteListState()),slots=reactive(initialQuoteListState()),write=reactive(initialReservationWriteState())
 const day=ref(chinaDate()),vehicle=ref(0),slot=ref(0),confirmed=ref(false)
+const uncertain=computed(()=>['network','unavailable','server','protocol'].includes(write.failureKind))
 let id=0,visible=false;const token=()=>ownerSession.accessToken
 const prices=createReservationReadFlow({state:quote,token,request:t=>api.quote(t,id)})
 const cars=createQuoteListFlow({state:vehicles,token,fetchPage:async(t,n)=>{try{const r=await vehicleApi.list(t,n);return {...r,items:r.list}}catch(e){throw new ReservationError(e.kind||'network',e.message)}}})
@@ -20,6 +21,7 @@ onLoad(q=>{id=Number(q?.id)||0});onShow(()=>{visible=true;if(token())load()});on
 watch(()=>write.saved,result=>{if(result&&visible)uni.redirectTo({url:`/pages/order/detail?id=${result.order_id}`})})
 function changeDay(event){day.value=event.detail.value;slot.value=0;times.reset();if(quote.value)times.load()}
 function login(){clearOwnerSession();uni.navigateTo({url:'/pages/owner/index'})}
+function couponBooking(){if(uncertain.value||write.busy||write.saved)return;uni.navigateTo({url:`/pages/order/coupon-book?id=${id}${vehicle.value?`&vehicle_id=${vehicle.value}`:''}${slot.value?`&slot_id=${slot.value}`:''}`})}
 </script>
 <template><view class="reservation-page">
   <text class="reservation-title">预约服务</text><text class="reservation-copy">选择车辆与时段，订单创建后为待支付。</text>
@@ -37,6 +39,7 @@ function login(){clearOwnerSession();uni.navigateTo({url:'/pages/owner/index'})}
       <button v-for="row in slots.items" :key="row.slot_id" :disabled="write.busy" :data-testid="`booking-slot-${row.slot_id}`" @tap="slot=row.slot_id">{{slot===row.slot_id?'✓ ':''}}{{displayTime(row.starts_at)}} 至 {{displayTime(row.ends_at)}} · 剩余 {{row.capacity_left}}</button>
       <text v-if="slots.message">{{slots.message}}</text><button v-if="slots.message" @tap="times.retry">重试预约时段</button><button v-if="slots.items.length<slots.total" @tap="times.load(true)">加载更多时段</button>
     </view>
-    <view class="reservation-panel"><text>最迟在创建后15分钟或时段开始时关闭未支付订单。支付功能尚未接入。</text><text v-if="write.message" role="status">{{write.message}}</text><button class="reservation-primary" :loading="write.busy" :disabled="write.busy||!!write.saved" @tap="submit.save">创建待支付预约</button></view>
+    <button v-if="quote.value" :disabled="write.busy||!!write.saved||uncertain" @tap="couponBooking">改用金额券预约并核对优惠</button>
+    <view class="reservation-panel"><text>最迟在创建后15分钟或时段开始时关闭未支付订单。创建后在订单详情查看支付状态。</text><text v-if="write.message" role="status">{{write.message}}</text><text v-if="uncertain">创建结果尚未确定，请用原请求重试，或先核对我的订单。</text><button class="reservation-primary" :loading="write.busy" :disabled="write.busy||!!write.saved" @tap="submit.save">创建待支付预约</button></view>
   </template>
 </view></template>

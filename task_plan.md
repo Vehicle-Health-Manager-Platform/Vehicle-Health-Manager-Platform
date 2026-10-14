@@ -3,11 +3,12 @@
 ## Active R5b phases
 
 1. [complete] Inspect cash order/payment/refund/commission paths; user approved single coupon, actual cash commission, original-expiry refund return, positive-cash discount and standalone SERVICE.
-2. [in progress] V039 contracts/events; strict preview and atomic coupon booking; original four-field booking preserved.
-3. [pending] Atomic paid consumption, unpaid release, refund-confirmed return, persistent recovery and trusted cash commission.
-4. [pending] Owner authorization, merchant service redemption/receipt and explicit zero-commission facts.
-5. [pending] Owner/merchant pages, ordinary/AI booking links, immutable retry and stale-response guards.
-6. [pending] Entire R5 verification, documentation/closure; upload all code/docs only after R5 complete. No intermediate GitHub push.
+2. [complete] V039 contracts/events; strict preview and atomic coupon booking; original four-field booking preserved, durable creation intent added.
+3. [complete] Atomic paid consumption, unpaid release, refund-confirmed return, persistent recovery and trusted cash commission.
+4. [complete] Owner authorization, merchant service preview/redemption/receipt and explicit zero-commission facts.
+5. [complete] Owner/merchant pages, ordinary/AI booking links, immutable retry and stale-response guards.
+6. [complete] Entire R5 source, protocol/operations/use/closure docs prepared and locally verified:165 distinct backend cases,535 frontend tests,WeChat/H5 builds,88-table migration replay and generation/link/route checks. No intermediate GitHub push.
+7. [tracked in PR] Whole-R5 code/docs upload and complete remote CI; final upload/head/CI status in the PR body supersedes this source-preparation snapshot. No automatic merge/deployment.
 
 ## Previous R5a source-preparation snapshot
 

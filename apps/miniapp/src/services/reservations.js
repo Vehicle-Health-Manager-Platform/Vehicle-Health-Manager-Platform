@@ -3,13 +3,14 @@ import { apiRuntime } from './api-runtime.js'
 import { ServiceError,serviceFailure } from './service-catalog.js'
 import {validPaymentSummary} from './payment-contract.js'
 import {ORDER_STATES} from './order-status.js'
+import {validCouponSummary} from './coupon-transactions.js'
 const id=value=>Number.isSafeInteger(value)&&value>0
 const date=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value)
 const stamp=value=>typeof value==='string'&&!Number.isNaN(Date.parse(value))
 const money=value=>typeof value==='string'&&/^(0|[1-9]\d{0,7})\.\d{2}$/.test(value)&&Number(value)>0
 const page=(value,n,row)=>value?.page===n&&value.page_size===20&&Number.isSafeInteger(value.total)&&value.total>=value.items?.length&&Array.isArray(value.items)&&value.items.length<=20&&value.items.every(row)
 const slot=row=>id(row?.slot_id)&&id(row.standard_project_id)&&stamp(row.starts_at)&&stamp(row.ends_at)&&Number.isSafeInteger(row.capacity)&&row.capacity>0&&Number.isSafeInteger(row.capacity_left)&&row.capacity_left>=0&&row.capacity_left<=row.capacity&&typeof row.open==='boolean'
-const order=row=>id(row?.order_id)&&typeof row.order_no==='string'&&typeof row.status==='string'&&money(row.amount_due)&&(row.payment_summary===undefined||validPaymentSummary(row.payment_summary))
+const order=row=>id(row?.order_id)&&typeof row.order_no==='string'&&typeof row.status==='string'&&money(row.amount_due)&&(row.payment_summary===undefined||validPaymentSummary(row.payment_summary))&&(row.coupon_summary===undefined||validCouponSummary(row.coupon_summary))
 export class ReservationError extends ServiceError{constructor(kind,message,code){super(kind,message);this.code=code}}
 export function createReservationsApi({baseUrl,runtime}){
   const endpoint=(baseUrl||'').replace(/\/$/,'')

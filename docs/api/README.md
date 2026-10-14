@@ -1,5 +1,7 @@
 # API 文档
 
+> R5已接入单券现金预约、消费/释放/全退返券及非现金服务券授权/预览/核销，见[交易协议](COUPON_TRANSACTIONS.md)。
+
 > R5a 券库存、发行、运营池和领取契约见[COUPON_INVENTORY.md](COUPON_INVENTORY.md)，交易/核销属于R5b。
 
 > R4完整健康/人工档案/提醒、星级报价与搜索契约见[R4_COMPLETION.md](R4_COMPLETION.md)。

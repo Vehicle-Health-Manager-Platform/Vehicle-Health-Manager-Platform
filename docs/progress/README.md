@@ -1,5 +1,7 @@
 # 项目进度与下一步规划
 
+> 2026-10-14 R5a+R5b完整券阶段已实施，见[R5闭环](R5_REQUIREMENT_CLOSURE.md)、[R5b执行](R5B_COUPONS_EXECUTION.md)。按用户要求整R5收口后统一上传全部代码和文档，下一R6邀请；下方为历史记录。
+
 > 2026-10-14 R5a已实施：券库存/发行、独立运营池、领取/本人券/截止提醒，见[执行](R5A_COUPONS_EXECUTION.md)。下一步R5b交易用券与核销；原R4/清点记录保留如下。
 
 > 2026-10-14：R4已合并且main六项CI通过；当前缺口与下一阶段见[清点](DELIVERY_GAP_AUDIT_2026-10-14.md)、[规划](REMAINING_DELIVERY_PLAN_2026-10-14.md)、[R5启动计划](R5_COUPONS_NEXT_PLAN_2026-10-14.md)。

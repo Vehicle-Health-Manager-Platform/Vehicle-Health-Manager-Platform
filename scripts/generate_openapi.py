@@ -6,6 +6,7 @@ import re
 from pathlib import Path
 from r4_openapi import add_r4_completion
 from r5a_openapi import add_r5a
+from r5b_openapi import add_r5b
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -1472,6 +1473,7 @@ def main():
 
     add_r4_completion(document, operation)
     add_r5a(document, operation)
+    add_r5b(document, operation)
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     count = sum(len(item) for item in document["paths"].values())
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

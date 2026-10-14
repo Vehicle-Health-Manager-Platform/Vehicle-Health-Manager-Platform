@@ -14,10 +14,17 @@ public class ReservationOrders {
     public ReservationOrders(ReservationStore db,ReservationExpiry expiry){this.db=db;this.expiry=expiry;}
     public Map<String,Object> quote(VehicleOwner owner,long id){ServiceCatalog.validateId(id);return db.reads.execute(tx->{db.owner(owner,false);return db.quoteResult(db.quote(id,false));});}
     public JsonNode create(VehicleOwner owner,String key,ReservationInput.Booking input){
+        return createWithCoupon(owner,key,input,null);
+    }
+    public JsonNode createCoupon(VehicleOwner owner,String key,CouponOrderInput.Booking input){
+        return createWithCoupon(owner,key,input.booking(),input);
+    }
+    private JsonNode createWithCoupon(VehicleOwner owner,String key,ReservationInput.Booking input,CouponOrderInput.Booking coupon){
         var body=Map.of("merchant_project_id",input.quote(),"quote_version_id",input.version(),"vehicle_id",input.vehicle(),"slot_id",input.slot());
-        return db.writes.execute(new Actor("user",owner.id()),"POST","/api/order/create",key,db.mapper.valueToTree(body),()->db.owner(owner,true),()->{
+        return db.writes.execute(new Actor("user",owner.id()),"POST",coupon==null?"/api/order/create":"/api/order/coupon-create",key,coupon==null?db.mapper.valueToTree(body):coupon.body(),()->db.owner(owner,true),()->{
             // Availability is checked only for a new write; a cached creation
             // receipt remains replayable after a shop changes its offering.
+            if(coupon!=null){var replay=CouponTransactions.creationReplay(db,owner.id(),key,coupon);if(replay!=null)return replay;}
             var q=db.quote(input.quote(),true);
             // Shop before vehicle agrees with pickup submission's lock order.
             db.one("SELECT id FROM vehicle WHERE id=? AND user_id=? AND is_deleted=0 FOR UPDATE",input.vehicle(),owner.id());
@@ -27,16 +34,20 @@ public class ReservationOrders {
             expiry.expireSlot(input.slot(),now);long occupied=db.occupied(input.slot(),now);
             if(occupied>=ReservationStore.number(slot,"capacity"))throw new ReservationConflict(40903,"预约名额不足，请重新选择");
             Instant start=ReservationStore.instant(slot.get("starts_at")),deadline=now.plusSeconds(900);if(start.isBefore(deadline))deadline=start;
+            var selected=coupon==null?null:CouponTransactions.prepare(db,owner.id(),coupon,q);
+            if(selected!=null&&selected.validTo().isBefore(deadline))deadline=selected.validTo();
+            var cash=selected==null?q.get("price"):selected.cash();
             String orderNo="R"+UUID.randomUUID().toString().replace("-","").substring(0,30);
             var project=Map.of("standard_project_id",q.get("project_id"),"project_name",q.get("project_name"),"service_content",q.get("service_content"));
             var merchant=Map.of("merchant_id",q.get("merchant_id"),"merchant_name",q.get("name"),"address",q.get("address"));
             var price=Map.of("merchant_project_id",input.quote(),"quote_version_id",input.version(),"version",q.get("version"),"price",q.get("price").toString());
             var appointment=Map.of("slot_id",input.slot(),"starts_at",start.toString(),"ends_at",ReservationStore.iso(slot.get("ends_at")));
-            long id=db.insert("INSERT INTO `order`(order_no,user_id,vehicle_id,merchant_id,project_id,amount,pay_amount,status,appointment_at,project_snapshot,merchant_snapshot,price_snapshot,slot_id,expires_at,merchant_project_id,quote_version_id,appointment_snapshot,created_at) VALUES(?,?,?,?,?,?,?,'PENDING_PAYMENT',?,?,?,?,?,?,?,?,?,?)",orderNo,owner.id(),input.vehicle(),q.get("merchant_id"),q.get("project_id"),q.get("price"),q.get("price"),ReservationStore.time(start),db.json(project),db.json(merchant),db.json(price),input.slot(),ReservationStore.time(deadline),input.quote(),input.version(),db.json(appointment),ReservationStore.time(now));
+            long id=db.insert("INSERT INTO `order`(order_no,user_id,vehicle_id,merchant_id,project_id,amount,pay_amount,status,appointment_at,project_snapshot,merchant_snapshot,price_snapshot,slot_id,expires_at,merchant_project_id,quote_version_id,appointment_snapshot,created_at) VALUES(?,?,?,?,?,?,?,'PENDING_PAYMENT',?,?,?,?,?,?,?,?,?,?)",orderNo,owner.id(),input.vehicle(),q.get("merchant_id"),q.get("project_id"),q.get("price"),cash,ReservationStore.time(start),db.json(project),db.json(merchant),db.json(price),input.slot(),ReservationStore.time(deadline),input.quote(),input.version(),db.json(appointment),ReservationStore.time(now));
+            if(selected!=null)CouponTransactions.reserve(db,id,owner.id(),selected,deadline,key,coupon);
             CommissionLedger.booking(db,id);
             db.jdbc.update("UPDATE `order` SET verify_code=? WHERE id=?",AppointmentCodes.create(),id);
             db.jdbc.update("UPDATE appointment_slot SET reserved_count=? WHERE id=?",occupied+1,input.slot());
-            var result=Map.<String,Object>of("order_id",id,"order_no",orderNo,"amount_due",q.get("price").toString(),"status","PENDING_PAYMENT","expires_at",deadline.toString());return new Change("ORDER_CREATE","order",id,Map.of(),db.orderRow(db.one("SELECT * FROM `order` WHERE id=? FOR UPDATE",id),true),result);
+            var result=Map.<String,Object>of("order_id",id,"order_no",orderNo,"amount_due",cash.toString(),"status","PENDING_PAYMENT","expires_at",deadline.toString());return new Change("ORDER_CREATE","order",id,Map.of(),db.orderRow(db.one("SELECT * FROM `order` WHERE id=? FOR UPDATE",id),true),result);
         });
     }
     public Map<String,Object> list(VehicleOwner owner,String status,int page,int size){

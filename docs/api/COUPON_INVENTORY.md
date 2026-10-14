@@ -1,5 +1,7 @@
 # R5a 券库存与领取协议
 
+> 最新：R5b交易/独立核销已实施，见[交易协议](COUPON_TRANSACTIONS.md)。本文保留库存领取基础契约。
+
 实现：[Controller](../../backend/src/main/java/com/autocare/platform/order/CouponController.java)、[Inventory](../../backend/src/main/java/com/autocare/platform/order/CouponInventory.java)、[严格输入](../../backend/src/main/java/com/autocare/platform/order/CouponInput.java)，[V038迁移](../sql/migrations/V038__coupon_inventory_and_claims.sql)。统一 ApiResponse、所有结果 no-store。仅当前角色会话，本人数据不能通过 user_id 查询；未知/重复 query、重复 JSON 字段、尾随 JSON、非整数 ID/版本、浮点金额拒绝。
 
 ## GET
@@ -31,4 +33,4 @@ V038为所有既有账号新增`can_coupon=0`，不隐式授权。离线operator
 
 ## 范围
 
-订单抵扣/冻结、零金额订单、释放/返券、核销及免佣属于R5b；现在没有使用/核销按钮，不修改支付资金事实。供应商、正式身份资金、真机发布最后R9。
+订单抵扣/冻结、释放/返券、独立核销及免佣现见R5b协议。用户确认金额券须正现金实付、SERVICE独立非现金核销；没有伪造0元微信付款。供应商、正式身份资金、真机发布最后R9。

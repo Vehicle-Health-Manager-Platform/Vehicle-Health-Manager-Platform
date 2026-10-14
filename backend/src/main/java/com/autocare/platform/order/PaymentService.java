@@ -62,6 +62,7 @@ public class PaymentService {
                 audit(reason==null?"PAYMENT_SUCCEEDED":"PAYMENT_REVIEW",n.paymentId(),before,row(db.one("SELECT * FROM payment WHERE id=? FOR UPDATE",n.paymentId())));
             }
             db.jdbc.update("INSERT INTO payment_event(channel,event_id,payment_id,event_hash,outcome) VALUES('LOCAL_TEST',?,?,?,?)",n.eventId(),n.paymentId(),n.hash(),outcome);
+            if("PAID".equals(outcome))CouponTransactions.consume(db,orderId,n.paymentId());
         });}catch(ResponseStatusException error){throw error;}catch(org.springframework.dao.DuplicateKeyException error){throw conflict();}catch(RuntimeException error){throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"支付通知暂不可用，请重试");}
     }
     void audit(String action,long id,Map<String,Object> before,Map<String,Object> after){auditResource(action,"payment",id,before,after);}

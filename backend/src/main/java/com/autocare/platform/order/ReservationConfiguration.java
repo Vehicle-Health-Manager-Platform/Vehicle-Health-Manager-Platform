@@ -12,6 +12,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 @EnableScheduling
 public class ReservationConfiguration {
     @Bean CouponInventory couponInventory(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators){return new CouponInventory(db,operators);}
+    @Bean CouponTransactions couponTransactions(ReservationStore db){return new CouponTransactions(db);}
+    @Bean CouponServiceRedemption couponServiceRedemption(ReservationStore db){return new CouponServiceRedemption(db);}
+    @Bean CouponRecovery couponRecovery(ReservationStore db){return new CouponRecovery(db);}
     @Bean ReservationStore reservationStore(JdbcTemplate jdbc,ObjectMapper mapper,WriteIntegrityService writes,PlatformTransactionManager manager){return new ReservationStore(jdbc,mapper,writes,Clock.systemUTC(),manager);}
     @Bean ReservationExpiry reservationExpiry(ReservationStore db){return new ReservationExpiry(db);}
     @Bean ReservationSlots reservationSlots(ReservationStore db){return new ReservationSlots(db);}

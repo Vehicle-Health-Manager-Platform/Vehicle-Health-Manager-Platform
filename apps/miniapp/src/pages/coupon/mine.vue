@@ -13,7 +13,7 @@ onShow(()=>{visible=true;if(token())flow.load(1)});onHide(()=>{visible=false;flo
 <template><view class="reservation-page"><text class="reservation-title">我的券与有效期</text>
  <view v-if="!token()"><text>请先登录车主账号。</text><button @tap="uni.navigateTo({url:'/pages/owner/index'})">车主登录</button></view>
  <template v-else><button @tap="uni.navigateTo({url:'/pages/coupon/offers'})">查看可领券</button><text v-if="state.busy">正在加载…</text><text v-else-if="state.loaded&&!state.rows.length">还没有领取券。</text>
- <view v-for="row in state.rows" :key="row.user_coupon_id" class="reservation-panel"><CouponTerms :row="row" mine/></view>
+ <view v-for="row in state.rows" :key="row.user_coupon_id" class="reservation-panel"><CouponTerms :row="row" mine/><button v-if="row.source_known&&row.terms.type==='SERVICE'" @tap="uni.navigateTo({url:`/pages/coupon/service?id=${row.user_coupon_id}`})">服务券授权 / 核销记录</button><button v-if="row.source_known&&row.terms.type==='DISCOUNT'&&row.status==='AVAILABLE'&&row.availability==='AVAILABLE'" @tap="uni.navigateTo({url:`/pages/service/merchant?id=${row.merchant_id}&project_id=${row.terms.project_id}`})">查看适用门店并用券预约</button></view>
  <text v-if="state.message" role="status">{{ state.message }}</text><button v-if="state.kind==='unauthorized'" @tap="login">重新登录车主账号</button><button :disabled="state.busy" @tap="flow.load(1)">刷新我的券</button>
  <button v-if="state.page>1" :disabled="state.busy" @tap="flow.load(state.page-1)">上一页</button><button v-if="state.page*20<state.total" :disabled="state.busy" @tap="flow.load(state.page+1)">下一页</button></template>
 </view></template>

@@ -48,6 +48,7 @@ public class RefundRecovery {
             if("SUCCEEDED".equals(r.get("status")))outcome="SUCCEEDED".equals(n.status())?"DUPLICATE":"IGNORED";
             else{var before=refunds.view(o,r);db.jdbc.update("UPDATE refund SET status=?,channel_refund_no=?,refunded_at=? WHERE id=?",n.status(),n.transaction(),"SUCCEEDED".equals(n.status())?ReservationStore.time(n.occurred()):null,n.refundId());if("SUCCEEDED".equals(n.status()))CommissionLedger.refunded(db,o,p,refunds.refund(ReservationStore.number(o,"id"),true));var after=refunds.view(o,refunds.refund(ReservationStore.number(o,"id"),true));db.jdbc.update("INSERT INTO audit_log(actor_type,actor_id,action,resource_type,resource_id,before_state,after_state,request_id) VALUES('system',0,?,'refund',?,?,?,?)","REFUND_"+n.status(),n.refundId(),db.json(before),db.json(after),UUID.randomUUID().toString());outcome=n.status();}
             db.jdbc.update("INSERT INTO refund_event(channel,event_id,refund_id,event_hash,outcome) VALUES('LOCAL_TEST',?,?,?,?)",n.eventId(),n.refundId(),n.hash(),outcome);
+            if("SUCCEEDED".equals(outcome))CouponTransactions.returned(db,ReservationStore.number(o,"id"),n.refundId());
         });}catch(ResponseStatusException error){throw error;}catch(org.springframework.dao.DuplicateKeyException error){throw OrderRefunds.conflict();}catch(RuntimeException error){throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"退款通知暂不可用，请重试");}
     }
     @Scheduled(fixedDelayString="${REFUND_RECOVERY_INTERVAL_MS:60000}") public void sweep(){
