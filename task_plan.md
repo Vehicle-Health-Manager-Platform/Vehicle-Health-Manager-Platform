@@ -1,4 +1,14 @@
-# 2026-10-14 delivery audit and plan
+# R5a coupon inventory and claiming implementation
+
+## Active implementation phases
+
+1. [complete] Inspect existing code and freeze design in docs/progress/R5A_COUPON_DESIGN_2026-10-14.md.
+2. [in progress] V038 provenance/inventory migration; independent operator capability; strict backend contracts and atomic writes.
+3. [pending] Owner, merchant and operator pages, navigation, protocol and stale-response guards.
+4. [pending] Real MySQL/HTTP/frontend verification, migration replay, builds and documentation.
+5. [pending] Upload all R5a code and docs together and verify GitHub CI. No partial-stage upload.
+
+## Previous audit record
 
 User request: audit the supplied delivery document against actual merged code, plan remaining stages; supplier recognition/formal SMS/WeChat identity/funds/devices/release last. Every complete stage uploads edited code plus migrations/tests/docs. This task is planning, not new business implementation. Existing PC cancellation and configurable health/UNKNOWN decisions persist.
 
