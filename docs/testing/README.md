@@ -1,5 +1,7 @@
 # 测试资料
 
+> 券库存/领取R5a真实MySQL并发、回滚、权限与前端/构建验证见[验收](LOCAL_R5A_COUPONS_ACCEPTANCE.md)。
+
 > R4完整收口的真实数据库、HTTP、499项小程序/构建与schema验证见[验收](LOCAL_R4_COMPLETION_ACCEPTANCE.md)。
 
 > R4c3验收见[LOCAL_PLAN_BOOKING_ACCEPTANCE.md](LOCAL_PLAN_BOOKING_ACCEPTANCE.md)。

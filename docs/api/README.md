@@ -1,5 +1,7 @@
 # API 文档
 
+> R5a 券库存、发行、运营池和领取契约见[COUPON_INVENTORY.md](COUPON_INVENTORY.md)，交易/核销属于R5b。
+
 > R4完整健康/人工档案/提醒、星级报价与搜索契约见[R4_COMPLETION.md](R4_COMPLETION.md)。
 
 > R4c3同快照方案预约复核见[PLAN_BOOKING.md](PLAN_BOOKING.md)。

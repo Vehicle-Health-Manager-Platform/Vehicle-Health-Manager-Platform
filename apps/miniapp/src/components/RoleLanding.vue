@@ -81,6 +81,7 @@ onMounted(() => {
       <button v-if="role === 'owner' && accessToken && discoveryReturnAvailable()" class="login-button" :disabled="busy" @tap="returnToShare">返回商家与预约</button>
       <button v-if="role === 'owner' && accessToken && healthReturnAvailable()" class="login-button" :disabled="busy" @tap="returnToShare">返回本人读数</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantProjects">管理本店服务</button>
+      <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="uni.navigateTo({url:'/pages/merchant/coupons'})">管理本店券库存与发行</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantOrders">查看本店订单</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantStaff">本店员工与员工码</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantProfile">门店资料</button>

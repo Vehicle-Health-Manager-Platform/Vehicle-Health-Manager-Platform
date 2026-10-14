@@ -11,6 +11,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @ConditionalOnProperty("MYSQL_HOST")
 @EnableScheduling
 public class ReservationConfiguration {
+    @Bean CouponInventory couponInventory(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators){return new CouponInventory(db,operators);}
     @Bean ReservationStore reservationStore(JdbcTemplate jdbc,ObjectMapper mapper,WriteIntegrityService writes,PlatformTransactionManager manager){return new ReservationStore(jdbc,mapper,writes,Clock.systemUTC(),manager);}
     @Bean ReservationExpiry reservationExpiry(ReservationStore db){return new ReservationExpiry(db);}
     @Bean ReservationSlots reservationSlots(ReservationStore db){return new ReservationSlots(db);}

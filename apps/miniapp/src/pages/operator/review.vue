@@ -31,6 +31,7 @@ onHide(() => { visible = false; clear() }); onUnload(() => { visible = false; cl
     <text class="reservation-title">经验卡片审核</text>
     <button v-if="operatorSession.canReview" @tap="uni.navigateTo({url:'/pages/operator/review-texts'})">公开评价文字审核</button>
     <button v-if="operatorSession.canCatalog" @tap="uni.navigateTo({url:'/pages/operator/catalog'})">标准项目与车型库维护</button>
+    <button v-if="operatorSession.canCoupon" @tap="uni.navigateTo({url:'/pages/operator/coupons'})">管理运营精选券池</button>
     <text class="reservation-copy">仅查看车主已明确授权的正式施工摘要。批准前会复核车型和来源；车主撤回后停止展示。</text>
     <text v-if="!operatorSession.canReview">当前账号未配置审核权限。</text>
     <text v-if="state.busy" role="status">正在加载待审摘要…</text>

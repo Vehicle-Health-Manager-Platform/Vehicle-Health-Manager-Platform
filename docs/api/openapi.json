@@ -1975,7 +1975,7 @@
     },
     "/api/coupon/receive": {
       "post": {
-        "summary": "领券",
+        "summary": "原子扣库存并发放本人券",
         "operationId": "post_api_coupon_receive",
         "tags": [
           "coupon"
@@ -2000,7 +2000,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CouponClaimReceipt"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -2020,6 +2035,15 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "券或发行门店/项目不可用"
+          },
+          "409": {
+            "description": "状态/版本/库存/限领冲突"
+          },
+          "503": {
+            "description": "暂不可用，保留同body/key重试"
           }
         },
         "security": [
@@ -2032,17 +2056,19 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "additionalProperties": true
+                "$ref": "#/components/schemas/CouponClaimInput"
               }
             }
           }
-        }
+        },
+        "x-roles": "OWNER",
+        "x-implementation-status": "r5a-inventory-claim-implemented",
+        "description": "no-store；严格正文/query，当前身份权限/来源复核。V038不提升历史券，不预置生产权益。写入UUID、锁、版本/限领/审计/库存/回执原子；成功重放后GET。池选择仅曝光，已领权益不因停止/移池改变。UTC传输，北京时间界面；交易抵扣/核销属R5b，见COUPON_INVENTORY.md。"
       }
     },
     "/api/coupon/mine": {
       "get": {
-        "summary": "我的券",
+        "summary": "本人券冻结权益与实际到期状态",
         "operationId": "get_api_coupon_mine",
         "tags": [
           "coupon"
@@ -2050,14 +2076,50 @@
         "x-feature-ids": [
           "F09"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "统一成功响应",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/MyCouponPage"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -2077,13 +2139,25 @@
           },
           "403": {
             "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "券或发行门店/项目不可用"
+          },
+          "409": {
+            "description": "状态/版本/库存/限领冲突"
+          },
+          "503": {
+            "description": "暂不可用，保留同body/key重试"
           }
         },
         "security": [
           {
             "bearerAuth": []
           }
-        ]
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "r5a-inventory-claim-implemented",
+        "description": "no-store；严格正文/query，当前身份权限/来源复核。V038不提升历史券，不预置生产权益。写入UUID、锁、版本/限领/审计/库存/回执原子；成功重放后GET。池选择仅曝光，已领权益不因停止/移池改变。UTC传输，北京时间界面；交易抵扣/核销属R5b，见COUPON_INVENTORY.md。"
       }
     },
     "/api/invite/qrcode": {
@@ -17384,6 +17458,699 @@
         "description": "no-store；严格字段/有效身份与当前来源复核；规则不回填，未知不算正常。详见R4_COMPLETION.md。",
         "x-read-only": true
       }
+    },
+    "/api/merchant/coupons": {
+      "get": {
+        "summary": "本店来源券库存列表",
+        "operationId": "get_api_merchant_coupons",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F09"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CouponInventoryPage"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "券或发行门店/项目不可用"
+          },
+          "409": {
+            "description": "状态/版本/库存/限领冲突"
+          },
+          "503": {
+            "description": "暂不可用，保留同body/key重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT(manager)",
+        "x-implementation-status": "r5a-inventory-claim-implemented",
+        "description": "no-store；严格正文/query，当前身份权限/来源复核。V038不提升历史券，不预置生产权益。写入UUID、锁、版本/限领/审计/库存/回执原子；成功重放后GET。池选择仅曝光，已领权益不因停止/移池改变。UTC传输，北京时间界面；交易抵扣/核销属R5b，见COUPON_INVENTORY.md。"
+      },
+      "post": {
+        "summary": "本店创建券草稿",
+        "operationId": "post_api_merchant_coupons",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F09"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CouponInventory"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "券或发行门店/项目不可用"
+          },
+          "409": {
+            "description": "状态/版本/库存/限领冲突"
+          },
+          "503": {
+            "description": "暂不可用，保留同body/key重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CouponDraftInput"
+              }
+            }
+          }
+        },
+        "x-roles": "MERCHANT(manager)",
+        "x-implementation-status": "r5a-inventory-claim-implemented",
+        "description": "no-store；严格正文/query，当前身份权限/来源复核。V038不提升历史券，不预置生产权益。写入UUID、锁、版本/限领/审计/库存/回执原子；成功重放后GET。池选择仅曝光，已领权益不因停止/移池改变。UTC传输，北京时间界面；交易抵扣/核销属R5b，见COUPON_INVENTORY.md。"
+      }
+    },
+    "/api/merchant/coupons/{id}": {
+      "put": {
+        "summary": "版本化修改未发布草稿",
+        "operationId": "put_api_merchant_coupons_id",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F09"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CouponInventory"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "券或发行门店/项目不可用"
+          },
+          "409": {
+            "description": "状态/版本/库存/限领冲突"
+          },
+          "503": {
+            "description": "暂不可用，保留同body/key重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT(manager)",
+        "x-implementation-status": "r5a-inventory-claim-implemented",
+        "description": "no-store；严格正文/query，当前身份权限/来源复核。V038不提升历史券，不预置生产权益。写入UUID、锁、版本/限领/审计/库存/回执原子；成功重放后GET。池选择仅曝光，已领权益不因停止/移池改变。UTC传输，北京时间界面；交易抵扣/核销属R5b，见COUPON_INVENTORY.md。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CouponUpdateInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/merchant/coupons/{id}/status": {
+      "put": {
+        "summary": "发布冻结或停止领取",
+        "operationId": "put_api_merchant_coupons_id_status",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F09"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CouponInventory"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "券或发行门店/项目不可用"
+          },
+          "409": {
+            "description": "状态/版本/库存/限领冲突"
+          },
+          "503": {
+            "description": "暂不可用，保留同body/key重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT(manager)",
+        "x-implementation-status": "r5a-inventory-claim-implemented",
+        "description": "no-store；严格正文/query，当前身份权限/来源复核。V038不提升历史券，不预置生产权益。写入UUID、锁、版本/限领/审计/库存/回执原子；成功重放后GET。池选择仅曝光，已领权益不因停止/移池改变。UTC传输，北京时间界面；交易抵扣/核销属R5b，见COUPON_INVENTORY.md。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CouponStatusInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/coupons": {
+      "get": {
+        "summary": "受限运营已发布券列表",
+        "operationId": "get_api_admin_coupons",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F09"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CouponInventoryPage"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "券或发行门店/项目不可用"
+          },
+          "409": {
+            "description": "状态/版本/库存/限领冲突"
+          },
+          "503": {
+            "description": "暂不可用，保留同body/key重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR(can_coupon)",
+        "x-implementation-status": "r5a-inventory-claim-implemented",
+        "description": "no-store；严格正文/query，当前身份权限/来源复核。V038不提升历史券，不预置生产权益。写入UUID、锁、版本/限领/审计/库存/回执原子；成功重放后GET。池选择仅曝光，已领权益不因停止/移池改变。UTC传输，北京时间界面；交易抵扣/核销属R5b，见COUPON_INVENTORY.md。"
+      }
+    },
+    "/api/admin/coupons/{id}/pool": {
+      "put": {
+        "summary": "版本化选择精选券池",
+        "operationId": "put_api_admin_coupons_id_pool",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F09"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CouponInventory"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "券或发行门店/项目不可用"
+          },
+          "409": {
+            "description": "状态/版本/库存/限领冲突"
+          },
+          "503": {
+            "description": "暂不可用，保留同body/key重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR(can_coupon)",
+        "x-implementation-status": "r5a-inventory-claim-implemented",
+        "description": "no-store；严格正文/query，当前身份权限/来源复核。V038不提升历史券，不预置生产权益。写入UUID、锁、版本/限领/审计/库存/回执原子；成功重放后GET。池选择仅曝光，已领权益不因停止/移池改变。UTC传输，北京时间界面；交易抵扣/核销属R5b，见COUPON_INVENTORY.md。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CouponPoolInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/coupon/offers": {
+      "get": {
+        "summary": "当前车主可领门店券或精选券",
+        "operationId": "get_api_coupon_offers",
+        "tags": [
+          "coupon"
+        ],
+        "x-feature-ids": [
+          "F09"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "merchant_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "description": "省略时精选池，指定时本店当前可领取券"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CouponInventoryPage"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "券或发行门店/项目不可用"
+          },
+          "409": {
+            "description": "状态/版本/库存/限领冲突"
+          },
+          "503": {
+            "description": "暂不可用，保留同body/key重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "r5a-inventory-claim-implemented",
+        "description": "no-store；严格正文/query，当前身份权限/来源复核。V038不提升历史券，不预置生产权益。写入UUID、锁、版本/限领/审计/库存/回执原子；成功重放后GET。池选择仅曝光，已领权益不因停止/移池改变。UTC传输，北京时间界面；交易抵扣/核销属R5b，见COUPON_INVENTORY.md。"
+      }
     }
   },
   "components": {
@@ -24885,6 +25652,387 @@
           },
           "page_size": {
             "const": 20
+          }
+        }
+      },
+      "CouponTerms": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "type",
+          "project_id",
+          "amount",
+          "min_spend",
+          "total_quantity",
+          "valid_from",
+          "valid_to"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "type": {
+            "enum": [
+              "DISCOUNT",
+              "SERVICE"
+            ]
+          },
+          "project_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,5})\\.[0-9]{2}$"
+          },
+          "min_spend": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,5})\\.[0-9]{2}$"
+          },
+          "total_quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^[1-9][0-9]{3}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+          },
+          "valid_to": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^[1-9][0-9]{3}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+          }
+        },
+        "description": "发行门店指定在售标准项目；DISCOUNT金额>0且门槛>=金额，SERVICE金额/门槛0.00；截止晚于生效且创建/发布截止须未来。发布冻结条款、总库存；终身每模板每人一次。"
+      },
+      "CouponInventory": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "coupon_id",
+          "merchant_id",
+          "terms",
+          "revision",
+          "status",
+          "stock_left",
+          "publication_revision",
+          "pool_selected",
+          "pool_revision"
+        ],
+        "properties": {
+          "coupon_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "merchant_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "terms": {
+            "$ref": "#/components/schemas/CouponTerms"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "status": {
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "STOPPED"
+            ]
+          },
+          "stock_left": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "publication_revision": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pool_selected": {
+            "type": "boolean"
+          },
+          "pool_revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740990
+          }
+        }
+      },
+      "MyCoupon": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "user_coupon_id",
+          "coupon_id",
+          "merchant_id",
+          "source_known",
+          "terms",
+          "status",
+          "availability",
+          "publication_revision"
+        ],
+        "properties": {
+          "user_coupon_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "coupon_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "merchant_id": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "source_known": {
+            "type": "boolean"
+          },
+          "terms": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CouponTerms"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "availability": {
+            "enum": [
+              "AVAILABLE",
+              "NOT_STARTED",
+              "EXPIRED",
+              "ISSUER_UNAVAILABLE",
+              "UNKNOWN"
+            ]
+          },
+          "publication_revision": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "CouponInventoryPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/CouponInventory"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        }
+      },
+      "MyCouponPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/MyCoupon"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        }
+      },
+      "CouponDraftInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "terms"
+        ],
+        "properties": {
+          "terms": {
+            "$ref": "#/components/schemas/CouponTerms"
+          }
+        }
+      },
+      "CouponUpdateInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "expected_revision",
+          "terms"
+        ],
+        "properties": {
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740990
+          },
+          "terms": {
+            "$ref": "#/components/schemas/CouponTerms"
+          }
+        }
+      },
+      "CouponStatusInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "expected_revision",
+          "status"
+        ],
+        "properties": {
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740990
+          },
+          "status": {
+            "enum": [
+              "PUBLISHED",
+              "STOPPED"
+            ]
+          }
+        }
+      },
+      "CouponPoolInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "expected_pool_revision",
+          "selected"
+        ],
+        "properties": {
+          "expected_pool_revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740990
+          },
+          "selected": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CouponClaimInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "coupon_id",
+          "publication_revision"
+        ],
+        "properties": {
+          "coupon_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "publication_revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        }
+      },
+      "CouponClaimReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "user_coupon_id",
+          "coupon_id",
+          "publication_revision"
+        ],
+        "properties": {
+          "user_coupon_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "coupon_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "publication_revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
           }
         }
       }

@@ -3,10 +3,10 @@
 ## Active implementation phases
 
 1. [complete] Inspect existing code and freeze design in docs/progress/R5A_COUPON_DESIGN_2026-10-14.md.
-2. [in progress] V038 provenance/inventory migration; independent operator capability; strict backend contracts and atomic writes.
-3. [pending] Owner, merchant and operator pages, navigation, protocol and stale-response guards.
-4. [pending] Real MySQL/HTTP/frontend verification, migration replay, builds and documentation.
-5. [pending] Upload all R5a code and docs together and verify GitHub CI. No partial-stage upload.
+2. [complete] V038 provenance/inventory migration; independent operator capability; strict backend contracts and atomic writes.
+3. [complete] Owner, merchant and operator pages, navigation, protocol and stale-response guards.
+4. [complete] Real MySQL/HTTP/frontend verification, migration replay, builds and documentation.
+5. [tracked in PR] Upload all R5a code and docs together and verify GitHub CI. No partial-stage upload. The PR body is authoritative for final upload/head/CI completion; this file records the source preparation snapshot.
 
 ## Previous audit record
 

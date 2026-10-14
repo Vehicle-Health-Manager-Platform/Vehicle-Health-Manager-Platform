@@ -1,5 +1,7 @@
 # 运营认证与审核账号
 
+> V038新增独立券池权限can_coupon，默认0，不随目录/审核权限授予。显式环境`OPERATOR_CAN_COUPON=true|false`，使用既有无HTTP的operator-admin流程，参数`--operator.action=coupon-permission --operator.id=...`；变更会审计并撤销现有会话，重新登录后才能管理精选池。协议见[券接口](../api/COUPON_INVENTORY.md)。
+
 日期2026-10-09，V019先迁移；2026-10-10 起 V020 增加 `operator_account.can_onboard`（入驻审核权限，与经验审核 `can_review` 互不交叉，默认0）。本阶段运营入口在微信小程序，账号密码+短信二次校验、独立短会话；不是车主/商家身份。默认无账号与审核授权，无HTTP注册/提权。
 
 ## 离线管理
