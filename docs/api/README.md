@@ -1,5 +1,9 @@
 # API 文档
 
+> 整 R6 当前交付范围见[需求销项](../progress/R6_REQUIREMENT_CLOSURE.md)，统一上传与最终六项 CI 以 PR152 正文为准；下方保留各阶段说明。
+
+> R6b1 本地奖励政策配置、独立权限与发布来源见[政策协议](INVITE_REWARD_POLICIES.md)；整R6完成后上传，不代表已发奖励。
+
 > R6a 首次注册不可变归因、车主/员工推广码及月度 1/3/6/10 循环见[邀请协议](INVITATIONS.md)。双向发券接续 R6b，正式渠道仍 R9。
 
 > R5已接入单券现金预约、消费/释放/全退返券及非现金服务券授权/预览/核销，见[交易协议](COUPON_TRANSACTIONS.md)。
@@ -77,3 +81,7 @@ PR #14 实现[本人车辆列表、有效车型查询与手动添加](VEHICLE_MA
 
 - [A7.1 核销验码与审计](ORDER_REDEMPTION.md)：本店六位码核销、可信付款、共享防猜及本人核销记录。
 - [A7.2b 施工档案自动回写](SERVICE_ARCHIVES.md)：评价后可靠任务、唯一档案、恢复、本人施工图片与测试来源隔离。
+
+- [R6b2 邀请奖励与只读记录](INVITATION_REWARDS.md)：本地阶段，整R6完成后统一上传。
+
+- [R6b3 当月邀请诊断资格](INVITE_DIAGNOSIS_ELIGIBILITY.md)：代码/文档本地保存，整R6验收后统一上传。

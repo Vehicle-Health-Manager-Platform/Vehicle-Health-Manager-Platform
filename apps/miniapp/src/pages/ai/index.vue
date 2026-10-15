@@ -3,6 +3,7 @@ import { reactive, ref, computed, watch } from 'vue'
 import { onHide, onUnload } from '@dcloudio/uni-app'
 import OwnerTabShell from '../../components/OwnerTabShell.vue'
 import VehicleList from '../../components/VehicleList.vue'
+import InviteDiagnosisEligibility from '../../components/InviteDiagnosisEligibility.vue'
 import { ownerSession, clearOwnerSession } from '../../services/owner-session.js'
 import { selectedOwnerVehicle, selectOwnerVehicle } from '../../services/owner-vehicle-selection.js'
 import { aiChatApi, MAX_QUESTION_CHARS } from '../../services/ai-chat.js'
@@ -42,6 +43,7 @@ function ask(text) { draft.value = text; return send() }
   <OwnerTabShell label="AI" title="和 AI 管家聊聊" description="结合爱车档案了解问题与服务方案。" next-action="AI 管家正在接入。" business-ready>
     <template #content>
       <button class="action" @tap="uni.navigateTo({url:'/pages/ai/service-plan'})">结构化项目建议与报价入口</button>
+      <InviteDiagnosisEligibility />
       <view class="context">
         <text v-if="currentVehicle" class="context-title" data-testid="ai-vehicle">当前爱车：{{ currentVehicle }}</text>
         <text v-else class="context-title">尚未选择爱车</text>

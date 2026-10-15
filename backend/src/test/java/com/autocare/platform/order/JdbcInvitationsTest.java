@@ -44,6 +44,23 @@ import static org.junit.jupiter.api.Assertions.*;
  @Test void clockRegressionCannotCreateQualificationBeforeRegistration(){long id=register("new-a",code(),"VERIFIED_WECHAT");clock.value=clock.value.minusSeconds(1);assertEquals(503,assertThrows(ResponseStatusException.class,()->registration.bindPhone(id,"13800138012","test-app",true)).getStatusCode().value());assertEquals("PENDING",state(id));assertEquals(0,count("invite_phone_evidence"));assertNull(jdbc.queryForObject("SELECT phone FROM user WHERE id=?",String.class,id));}
  @Test void logoutDuringPhoneExchangeBlocksPhoneAndQualificationCommit(){long id=register("new-a",code(),"VERIFIED_WECHAT");var a=new VehicleOwner(id,session(id,"user","OWNER","test-app",null),Instant.now().plusSeconds(3600));jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id=?",a.session());assertEquals(401,assertThrows(ResponseStatusException.class,()->registration.bindPhone(a,"13800138013","test-app",true)).getStatusCode().value());assertEquals("PENDING",state(id));assertEquals(0,count("invite_phone_evidence"));assertNull(jdbc.queryForObject("SELECT phone FROM user WHERE id=?",String.class,id));}
  @Test void beijingMonthUsesQualificationNotRegistrationAndHistoryPersists(){clock.value=Instant.parse("2026-10-31T15:59:59Z");long id=register("new-a",code(),"VERIFIED_WECHAT");clock.value=Instant.parse("2026-10-31T16:00:00Z");registration.bindPhone(id,"13800138008","test-app",true);assertEquals("2026-11",invitations.progress(owner).get("month"));assertEquals(1,qualified());clock.value=Instant.parse("2026-11-30T16:00:00Z");assertEquals(0,qualified());assertEquals(1L,invitations.records(owner,1).get("total"));}
+ @Test void qualificationMonthAndTimestampStayConsistentWhenClockCrossesMonthBoundary(){
+  clock.value=Instant.parse("2026-10-31T15:59:56Z");
+  long id=register("month-boundary",code(),"VERIFIED_WECHAT");
+  var movingClock=new Time(){
+   int reads;
+   @Override public Instant instant(){return Instant.parse("2026-10-31T15:59:57Z").plusSeconds(reads++);}
+  };
+  var manager=new DataSourceTransactionManager(jdbc.getDataSource());
+  var movingDb=new ReservationStore(jdbc,json,new WriteIntegrityService(jdbc,json,manager),movingClock,manager);
+  new InvitationRegistration(movingDb).bindPhone(id,"13800138014","test-app",true);
+  var stored=jdbc.queryForMap("SELECT qualified_at,reward_month FROM invite_registration WHERE user_id=?",id);
+  clock.value=ReservationStore.instant(stored.get("qualified_at"));
+  String actualMonth=clock.value.atZone(ZoneId.of("Asia/Shanghai")).toLocalDate().toString().substring(0,7);
+  assertEquals(actualMonth,stored.get("reward_month"));
+  assertEquals(1,qualified());
+  assertEquals(1L,new InviteDiagnosisPolicies(db,null).current(owner).get("qualified_count"));
+ }
  @Test void cyclesHaveIncrementalTargetsAndRepeatAfterTen(){for(long n=0;n<=25;n++){var c=Invitations.cycle(n);assertEquals(n/10,c.get("completed_cycles"));assertTrue(((Number)c.get("next_threshold")).longValue()>n);assertTrue(((Number)c.get("tier_count")).longValue()<((Number)c.get("tier_target")).longValue());}assertEquals(3,Invitations.cycle(3).get("tier"));assertEquals(10L,Invitations.cycle(6).get("next_threshold"));assertEquals(1,Invitations.cycle(10).get("tier"));assertEquals(11L,Invitations.cycle(10).get("next_threshold"));}
  @Test void staffAttributionIsScopedToCurrentEmployeeAndShop(){String c=invitations.create(staff,key(),json.createObjectNode()).path("data").path("code").path("value").textValue();long id=register("new-a",c,"VERIFIED_WECHAT");registration.bindPhone(id,"13800138009","test-app",true);assertEquals(1L,invitations.records(staff,1).get("total"));assertEquals(0L,invitations.records(peer,1).get("total"));assertEquals(0L,invitations.records(owner,1).get("total"));var row=((List<?>)invitations.records(staff,1).get("items")).get(0);String view=json.valueToTree(row).toString();assertFalse(view.contains("138001"));assertFalse(view.contains("new-a"));assertFalse(view.contains("user_id"));assertEquals(1L,jdbc.queryForObject("SELECT merchant_id FROM invite_registration WHERE user_id=?",Long.class,id));}
  @Test void staffTransferAndRevocationDisableOldCodes(){String c=invitations.create(staff,key(),json.createObjectNode()).path("data").path("code").path("value").textValue();jdbc.update("UPDATE staff_account SET merchant_id=2 WHERE id=1");long id=register("new-a",c,"VERIFIED_WECHAT");assertEquals("REJECTED",state(id));assertThrows(ResponseStatusException.class,()->invitations.code(staff));}

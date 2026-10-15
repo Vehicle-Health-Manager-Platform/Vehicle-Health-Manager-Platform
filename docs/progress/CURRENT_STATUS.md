@@ -1,5 +1,11 @@
 # 当前进度
 
+> **2026-10-15 整R6源码收口**：R6a与R6b1/b2/b3的约定业务已实现，最后修复资格跨月时点、海报预览/相册临时图生命周期和运营草稿连续保存。见[整R6销项](R6_REQUIREMENT_CLOSURE.md)、[统一验收](../testing/LOCAL_R6_COMPLETION_ACCEPTANCE.md)。585前端、微信/H5、四兼容Web及95表迁移通过；后端其余全套运行中，真实上传镜像与Compose受本地Docker Hub连接阻断，最终六项远程CI须在同批上传后核验。所有代码、迁移、测试和文档统一交付，最终提交/上传/CI以PR152正文为准。下一R7a车主施工证据，实际留言R7c、考核R8，正式接入/真机发布R9。下方保留阶段历史。
+
+> **2026-10-15 R6b2/R6b3 本地收口**：资格时点冻结政策、事件/受益人唯一发券、公共限领兼容、原子库存/审计与恢复、双方记录；当月诊断解锁配置、首页进度/实际奖励提示、AI资格和本地海报已实现。用户已确认阈值/政策窗口/来源说明及停用跨月重验。87个不同后端用例、582前端、95表迁移与微信/H5构建通过，含真实锁等待跨原券截止回归。见[R6b3执行](R6B3_IMPLEMENTATION_PLAN.md)、[验收](../testing/LOCAL_R6B3_ACCEPTANCE.md)。**下一步整R6全量验收与统一上传**；当前所有代码和文档保留本地，尚未推送。正式渠道/官方分享/资金/真机仍R9，实际留言服务R7。
+
+> **2026-10-15 R6b1 本地实施**：独立邀请运营权限、OWNER双方/STAFF新客奖励配置、真实精选券来源、草稿/发布冻结/停止与唯一发布政策、受限配置页已完成；36个不同后端用例、561前端、92表迁移重放及微信/H5构建通过。见[R6b计划](R6B_NEXT_PLAN_2026-10-15.md)、[配置执行](R6B1_REWARD_POLICY_EXECUTION.md)。按用户新要求，后续所有代码和文档留本地，整R6完成后统一上传。下一R6b2可靠发奖，再R6b3海报/解锁；正式渠道/资金/真机发布仍R9。
+
 > **R6a 最新实施**：首次注册不可变 owner/staff/merchant 归因、随机推广码、同 app 服务端手机号资格证据和北京时间月度累计1/3/6/10循环已实现；V040共91表、73页、9项增长接口。见[执行与下一R6b](R6A_INVITATIONS_EXECUTION.md)、[验收](../testing/LOCAL_R6A_INVITATIONS_ACCEPTANCE.md)。正式新客开关默认关闭，UNKNOWN/TEST不计数，奖励/海报/解锁接续R6b，正式渠道和真机发布仍R9。整阶段代码/迁移/测试/文档完成后同批上传，最终GitHub证据以阶段PR正文为准。
 
 > **R5 远程最终验收**：[PR151](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/151)已统一上传全部代码与文档，head37a2f5a；[CI38524736378](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/38524736378)六项成功，后端811/811、前端535/535。OPEN未合并；下方保留源码准备历史。

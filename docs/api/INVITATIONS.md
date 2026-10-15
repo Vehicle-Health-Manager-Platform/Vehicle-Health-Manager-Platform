@@ -1,6 +1,6 @@
 # R6a 邀请归因与资格协议
 
-版本 `R6A_INVITE_V1`，迁移 V040。九个增长接口已实现；登录携码与手机号资格联动已实现，双向奖励到账属于下一 R6b，正式渠道/原生分享属于 R9。
+版本 `R6A_INVITE_V1`，迁移 V040。九个增长接口已实现；登录携码与手机号资格联动已实现，R6b 奖励与资格已实现，见[奖励政策](INVITE_REWARD_POLICIES.md)、[发放记录](INVITATION_REWARDS.md)与[诊断资格](INVITE_DIAGNOSIS_ELIGIBILITY.md)；正式渠道/原生分享属于 R9。
 
 ## 来源与资格
 
@@ -31,7 +31,7 @@
 
 InviteCode：value/source_type/created_at/landing_path/rule_version。OWNER 或 STAFF，落地路径严格 `/pages/welfare/invite-entry?code=<value>`；不得改为外部链接。
 
-InviteRecord：record_id（不透明 UUID）、source_type、identity_source、attribution_result、qualification_status、qualification_reason、registered_at、qualified_at、reward_month、rule_version。初始来源与 attribution_result 不变；资格确认失败另写 qualification_reason，不覆盖归因。UNKNOWN/TEST/PENDING/REJECTED 的 qualified_at/reward_month 为 null。QUALIFIED 有唯一资格发生时间及北京时间月份。
+InviteRecord：record_id（不透明 UUID）、source_type、identity_source、attribution_result、qualification_status、qualification_reason、registered_at、qualified_at、reward_month、rule_version。初始来源与 attribution_result 不变；资格确认失败另写 qualification_reason，不覆盖归因。UNKNOWN/TEST/PENDING/REJECTED 的 qualified_at/reward_month 为 null。QUALIFIED 有唯一资格发生时间及北京时间月份；服务端只捕获一次 qualified_at，并用同一时点计算 reward_month，避免资格确认跨月时两字段不一致。
 
 InviteProgress：qualified_count（本月）、completed_cycles、tier、tier_count、tier_target、next_threshold、month、timezone=Asia/Shanghai、verified_identity_enabled、rule_version；pending_total/unknown_total/test_total/rejected_total 为该源全部历史数量，页面明确标注。
 
@@ -39,6 +39,6 @@ InviteProgress：qualified_count（本月）、completed_cycles、tier、tier_co
 
 ## 客户端
 
-车主 `/pages/welfare/invite`、落地 `/pages/welfare/invite-entry`、店员 `/pages/merchant/invite`。显式采用邀请码后保留在内存，首次登录尝试冻结，重试沿用原码；登录成功/退出清理，刷新应用不恢复旧上下文。已登录账号不能输入码补归因。未知写入保留原 key；隐藏/账号切换清除私有显示和迟到响应，读失败不保留旧进度。无奖励到账或官方分享成功提示。
+车主 `/pages/welfare/invite`、落地 `/pages/welfare/invite-entry`、店员 `/pages/merchant/invite`。显式采用邀请码后保留在内存，首次登录尝试冻结，重试沿用原码；登录成功/退出清理，刷新应用不恢复旧上下文。已登录账号不能输入码补归因。未知写入保留原 key；隐藏/账号切换清除私有显示和迟到响应，读失败不保留旧进度。奖励到账仅按[真实奖励记录](INVITATION_REWARDS.md)展示；本地海报只含随机码与输入说明，不提示官方分享成功。
 
 设计见[R6a设计](../progress/R6A_INVITATION_DESIGN_2026-10-14.md)，升级见[运维](../operations/INVITATIONS_RUNBOOK.md)，验证见[本地验收](../testing/LOCAL_R6A_INVITATIONS_ACCEPTANCE.md)。

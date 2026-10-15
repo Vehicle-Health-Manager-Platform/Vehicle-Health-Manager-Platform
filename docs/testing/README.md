@@ -1,5 +1,9 @@
 # 测试资料
 
+> 整 R6 的最终本地结果、环境限制及远程六项门禁见[统一验收](LOCAL_R6_COMPLETION_ACCEPTANCE.md)。阶段局部结果不替代最终 CI。
+
+> R6b1本地奖励配置与独立权限验收见[记录](LOCAL_R6B1_REWARD_POLICY_ACCEPTANCE.md)，整R6完成前不上传中间更新。
+
 > R6a 注册/归因/手机号证据、并发与月度循环见[邀请验收](LOCAL_R6A_INVITATIONS_ACCEPTANCE.md)，正式身份与真机分享不算本地通过。
 
 > 整R5交易/服务核销/恢复与库存兼容验证见[R5b验收](LOCAL_R5B_COUPONS_ACCEPTANCE.md)，远程完整套件证据以最终PR正文为准。
@@ -67,3 +71,7 @@
 （旧基础库自动回退 `chooseImage`），区分用户取消与权限被拒，并在开发者工具中如实降级为相册。
 `apps/miniapp/test/api-runtime.test.js` 用**真实装配**做契约测试，防止同类漏方法再次发生。
 真机验收见[真机相机拍照验收](REAL_CAMERA_ACCEPTANCE.md)，**尚未在真机执行**。
+
+- [R6b2 本地奖励验收](LOCAL_R6B2_REWARD_ACCEPTANCE.md)：本地阶段，整R6完成后统一上传。
+
+- [R6b3 本地验收](LOCAL_R6B3_ACCEPTANCE.md)：代码/文档本地保存，整R6验收后统一上传。

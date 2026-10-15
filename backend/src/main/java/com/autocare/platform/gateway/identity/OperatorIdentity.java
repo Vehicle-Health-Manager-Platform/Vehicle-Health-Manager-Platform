@@ -16,7 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 public class OperatorIdentity {
     /** Fixed, non-overlapping operator permissions. A missing column value is always denied. */
-    public enum Permission { NONE, REVIEW, ONBOARD, CATALOG, COUPON }
+    public enum Permission { NONE, REVIEW, ONBOARD, CATALOG, COUPON, INVITE }
     private final JdbcTemplate jdbc; private final JwtEncoder encoder; private final TransactionTemplate tx;
     private final BCryptPasswordEncoder passwords=new BCryptPasswordEncoder();
     private final String dummy=passwords.encode("not-an-operator-password"); private final SecureRandom random=new SecureRandom();
@@ -49,7 +49,7 @@ public class OperatorIdentity {
             var claims=JwtClaimsSet.builder().issuer(SecurityConfig.issuer()).subject(Long.toString(id)).id(session).issuedAt(now).expiresAt(now.plusSeconds(900))
                 .claim("subject_type","operator_account").claim("role","OPERATOR").claim("app_id",OperatorActor.APP).build();
             String access=encoder.encode(JwtEncoderParameters.from(JwsHeader.with(MacAlgorithm.HS256).build(),claims)).getTokenValue();
-            return Map.of("access_token",access,"token_type","Bearer","expires_in",900,"user",Map.of("id",id,"role","operator","can_review",number(row,"can_review")==1,"can_onboard",number(row,"can_onboard")==1,"can_catalog",number(row,"can_catalog")==1,"can_coupon",number(row,"can_coupon")==1));
+            return Map.of("access_token",access,"token_type","Bearer","expires_in",900,"user",Map.of("id",id,"role","operator","can_review",number(row,"can_review")==1,"can_onboard",number(row,"can_onboard")==1,"can_catalog",number(row,"can_catalog")==1,"can_coupon",number(row,"can_coupon")==1,"can_invite",number(row,"can_invite")==1));
         });
     }
     public void authorize(OperatorActor a,boolean review,boolean lock) {
@@ -59,11 +59,12 @@ public class OperatorIdentity {
         String tail=lock?" FOR UPDATE":"";
         // Account management and login also lock the account before sessions.
         if(lock)jdbc.queryForList("SELECT id FROM operator_account WHERE id=? FOR UPDATE",a.id());
-        var rows=jdbc.queryForList("SELECT o.can_review,o.can_onboard,o.can_catalog,o.can_coupon FROM auth_session s JOIN operator_account o ON o.id=s.subject_id WHERE s.id=? AND s.subject_type='operator_account' AND s.subject_id=? AND s.role='OPERATOR' AND s.app_id=? AND s.binding_id IS NULL AND s.merchant_id IS NULL AND s.revoked_at IS NULL AND s.expires_at>UTC_TIMESTAMP() AND o.status='ACTIVE'"+tail,a.session(),a.id(),OperatorActor.APP);
+        var rows=jdbc.queryForList("SELECT o.can_review,o.can_onboard,o.can_catalog,o.can_coupon,o.can_invite FROM auth_session s JOIN operator_account o ON o.id=s.subject_id WHERE s.id=? AND s.subject_type='operator_account' AND s.subject_id=? AND s.role='OPERATOR' AND s.app_id=? AND s.binding_id IS NULL AND s.merchant_id IS NULL AND s.revoked_at IS NULL AND s.expires_at>UTC_TIMESTAMP() AND o.status='ACTIVE'"+tail,a.session(),a.id(),OperatorActor.APP);
         if(rows.isEmpty() || !Instant.now().isBefore(a.expires()))throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"运营会话已失效，请重新登录");
         if(permission==Permission.REVIEW && number(rows.get(0),"can_review")!=1)throw new ResponseStatusException(HttpStatus.FORBIDDEN,"当前运营账号没有经验审核权限");
         if(permission==Permission.ONBOARD && number(rows.get(0),"can_onboard")!=1)throw new ResponseStatusException(HttpStatus.FORBIDDEN,"当前运营账号没有入驻审核权限");
         if(permission==Permission.CATALOG && number(rows.get(0),"can_catalog")!=1)throw new ResponseStatusException(HttpStatus.FORBIDDEN,"当前运营账号没有目录维护权限");
+        if(permission==Permission.INVITE && number(rows.get(0),"can_invite")!=1)throw new ResponseStatusException(HttpStatus.FORBIDDEN,"当前运营账号没有邀请规则权限");
         if(permission==Permission.COUPON && number(rows.get(0),"can_coupon")!=1)throw new ResponseStatusException(HttpStatus.FORBIDDEN,"当前运营账号没有券池管理权限");
     }
     public boolean valid(Jwt jwt) { try{authorize(OperatorActor.from(jwt),false,false);return true;}catch(RuntimeException e){return false;} }

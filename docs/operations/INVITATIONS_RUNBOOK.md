@@ -1,8 +1,8 @@
 # R6a 邀请升级与排查
 
-先完成 V001–V039，再应用 `docs/sql/migrations/V040__invitation_attribution.sql`。新增 invite_code/invite_registration/invite_phone_evidence，共 91 表；CREATE IF NOT EXISTS 可重复执行，无旧邀请回填、无生产奖励种子。不得将旧 invite_record/user.inviter_id 直接标成 QUALIFIED。
+先完成 V001–V039，再应用 `docs/sql/migrations/V040__invitation_attribution.sql`。新增 invite_code/invite_registration/invite_phone_evidence，R6a 时共 91 表（当前整 R6 至 V043 共 95 表）；CREATE IF NOT EXISTS 可重复执行，无旧邀请回填、无生产奖励种子。不得将旧 invite_record/user.inviter_id 直接标成 QUALIFIED。
 
-本阶段发现 Compose 新卷初始化只挂载到 V026，补齐依赖 V027–V040，冒烟改为核验完整91表及三个邀请表。MySQL initdb 挂载只作用于空数据卷；已有卷必须备份后显式应用缺失迁移，不能通过删除生产卷升级。
+本阶段发现 Compose 新卷初始化只挂载到 V026，补齐依赖 V027–V040，R6a 当时冒烟核验完整91表及三个邀请表。当前新卷已挂载至 V043，冒烟核验95表及四个奖励/资格政策表；升级顺序见[奖励运行记录](INVITATION_REWARD_RUNBOOK.md)和[海报/解锁](INVITATION_POSTER_AND_UNLOCK.md)。MySQL initdb 挂载只作用于空数据卷；已有卷必须备份后显式应用缺失迁移，不能通过删除生产卷升级。
 
 `INVITE_VERIFIED_IDENTITY_ENABLED` 默认 false。保持关闭至 R9 验证真实 app、官方换码、手机号、已有历史身份迁移边界。云托管新注册始终 UNKNOWN，本阶段不扩大可信网关声明。关闭开关阻止新正式身份证据，但不删除已有历史资格；记录 UNKNOWN/TEST 不可自动升格。
 
@@ -17,6 +17,6 @@
 
 ## 回滚与下一阶段
 
-先停流量并关闭资格开关，回滚应用前核对已生成的邀请落地请求兼容。保留三表及审计，勿删除正式资格或手机号唯一历史。应用回滚不意味着撤销已确认新客。当前没有邀请奖励发券任务，R6b 将依赖 QUALIFIED 的唯一注册事实；不可直接补写旧 invite_record 或重复发券。
+先停流量并关闭资格开关，回滚应用前核对已生成的邀请落地请求兼容。保留三表及审计，勿删除正式资格或手机号唯一历史。应用回滚不意味着撤销已确认新客。当前已有默认关闭的奖励后台，依赖 QUALIFIED 唯一注册事实和资格时点冻结政策；回滚前同时关闭 INVITE_REWARD_ENABLED，保留批次、明细、发行凭证和库存流水。不可直接补写旧 invite_record 或重复发券，具体恢复见[奖励运行记录](INVITATION_REWARD_RUNBOOK.md)。
 
 阶段代码、迁移、测试与文档同批上传；最终远程 CI 以阶段 PR 精确 head 为准。此运维说明不代表已上线/正式身份已验收。

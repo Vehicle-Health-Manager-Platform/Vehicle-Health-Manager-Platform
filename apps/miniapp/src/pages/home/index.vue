@@ -10,6 +10,7 @@ import { createHomeSummaryFlow, initialHomeSummaryState } from '../../services/h
 import { archiveInputTypeName } from '../../services/archive-entry-mode.js'
 import HealthOverview from '../../components/HealthOverview.vue'
 import CouponExpiryOverview from '../../components/CouponExpiryOverview.vue'
+import InvitationOverview from '../../components/InvitationOverview.vue'
 
 const state = reactive(initialHomeSummaryState())
 const flow = createHomeSummaryFlow({ state, api: archiveApi, token: () => ownerSession.accessToken })
@@ -30,6 +31,7 @@ function archive() { uni.switchTab({ url: '/pages/archive/index' }) }
     <template #content>
       <VehicleList :selected-id="selectedOwnerVehicle?.vehicle_id || 0" @select="select" />
       <CouponExpiryOverview />
+      <InvitationOverview />
       <HealthOverview v-if="selectedOwnerVehicle" :vehicle-id="selectedOwnerVehicle.vehicle_id" />
       <button v-if="selectedOwnerVehicle" class="secondary" @tap="uni.navigateTo({url:'/pages/community/experiences'})">查看同款施工经验</button>
       <view v-if="state.vehicle" class="summary" data-testid="home-archive-summary">

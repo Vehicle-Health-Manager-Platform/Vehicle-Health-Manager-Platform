@@ -1,5 +1,9 @@
 # 项目进度与下一步规划
 
+> 2026-10-15 整 R6 源码收口见[需求销项](R6_REQUIREMENT_CLOSURE.md)与[统一验收](../testing/LOCAL_R6_COMPLETION_ACCEPTANCE.md)；所有代码、迁移、测试及文档同批上传，最终远程结果以 PR152 正文为准。下一步见[R7a车主施工证据计划](R7A_OWNER_EVIDENCE_NEXT_PLAN.md)。下方保留阶段历史。
+
+> 2026-10-15 R6b按[R6b分步计划](R6B_NEXT_PLAN_2026-10-15.md)继续，本地[R6b1配置](R6B1_REWARD_POLICY_EXECUTION.md)后接可靠发奖与海报/解锁；整R6完成前不上传中间更新。
+
 > R6a 邀请资格与不可变归因阶段设计见[设计](R6A_INVITATION_DESIGN_2026-10-14.md)，实施与下一 R6b 见[执行](R6A_INVITATIONS_EXECUTION.md)。
 
 > 2026-10-14 R5a+R5b完整券阶段已实施，见[R5闭环](R5_REQUIREMENT_CLOSURE.md)、[R5b执行](R5B_COUPONS_EXECUTION.md)。按用户要求整R5收口后统一上传全部代码和文档，下一R6邀请；下方为历史记录。
@@ -67,3 +71,7 @@
 - [登录联调验收](../operations/AUTH_INTEGRATION_RUNBOOK.md)：真实微信、本机数据库、手机号、短信和真机的逐项核验。
 
 每次完成一项任务或改变阶段时，更新上述文件的日期、状态和依据；阶段任务仍以[分阶段开发计划](../../汽车健康管家平台分阶段开发计划.md)为准，功能与验收要求以[Spec](../SPEC.md)和[交付文档](../reference/DELIVERY_V1.md)为准。
+
+- [R6b2 资格快照与原子奖励](R6B2_REWARD_EXECUTION.md)：本地阶段，整R6完成后统一上传。
+
+- [R6b3 分步实施](R6B3_IMPLEMENTATION_PLAN.md)：代码/文档本地保存，整R6验收后统一上传。

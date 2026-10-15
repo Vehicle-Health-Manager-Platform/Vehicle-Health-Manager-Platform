@@ -10,7 +10,9 @@ import org.springframework.web.server.ResponseStatusException;
 public class InvitationRegistration {
     public static final String RULE = "R6A_INVITE_V1";
     private final ReservationStore db;
-    public InvitationRegistration(ReservationStore db) { this.db = db; }
+    private final InvitationRewards rewards;
+    public InvitationRegistration(ReservationStore db) { this(db,null); }
+    public InvitationRegistration(ReservationStore db,InvitationRewards rewards) { this.db = db; this.rewards=rewards; }
     public record LoginResult(long ownerId,String invitationResult) {}
 
     public long register(String openid, String code, String source, String appId) {
@@ -75,9 +77,11 @@ public class InvitationRegistration {
             if(first==0) { reject(owner,"PHONE_SEEN"); return; }
             var codes=db.jdbc.queryForList("SELECT * FROM invite_code WHERE id=?",r.get("invite_code_id"));
             if(codes.isEmpty() || !active(codes.get(0),true)) { reject(owner,"SOURCE_UNAVAILABLE"); return; }
-            String month=db.now().atZone(ZoneId.of("Asia/Shanghai")).toLocalDate().toString().substring(0,7);
-            db.jdbc.update("UPDATE invite_registration SET qualification_status='QUALIFIED',qualified_at=?,reward_month=? WHERE user_id=? AND qualification_status='PENDING'",ReservationStore.time(db.now()),month,owner);
+            var qualifiedAt=db.now();
+            String month=qualifiedAt.atZone(ZoneId.of("Asia/Shanghai")).toLocalDate().toString().substring(0,7);
+            db.jdbc.update("UPDATE invite_registration SET qualification_status='QUALIFIED',qualified_at=?,reward_month=? WHERE user_id=? AND qualification_status='PENDING'",ReservationStore.time(qualifiedAt),month,owner);
             audit(owner,"INVITE_QUALIFY",Map.of("reward_month",month,"rule_version",RULE));
+            if(rewards!=null)rewards.freeze(owner);
         });
     }
 

@@ -51,6 +51,9 @@ services:
       - ../../docs/sql/migrations/V038__coupon_inventory_and_claims.sql:/docker-entrypoint-initdb.d/038-coupon-inventory-and-claims.sql:ro
       - ../../docs/sql/migrations/V039__coupon_transactions.sql:/docker-entrypoint-initdb.d/039-coupon-transactions.sql:ro
       - ../../docs/sql/migrations/V040__invitation_attribution.sql:/docker-entrypoint-initdb.d/040-invitation-attribution.sql:ro
+      - ../../docs/sql/migrations/V041__invitation_reward_policies.sql:/docker-entrypoint-initdb.d/041-invitation-reward-policies.sql:ro
+      - ../../docs/sql/migrations/V042__invitation_reward_delivery.sql:/docker-entrypoint-initdb.d/042-invitation-reward-delivery.sql:ro
+      - ../../docs/sql/migrations/V043__invitation_diagnosis_unlock.sql:/docker-entrypoint-initdb.d/043-invitation-diagnosis-unlock.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent"]
       interval: 10s
@@ -157,6 +160,7 @@ services:
       EXPERIENCE_CARD_ENABLED: ${EXPERIENCE_CARD_ENABLED:-false}
       EXPERIENCE_PUBLICATION_ENABLED: ${EXPERIENCE_PUBLICATION_ENABLED:-false}
       INVITE_VERIFIED_IDENTITY_ENABLED: ${INVITE_VERIFIED_IDENTITY_ENABLED:-false}
+      INVITE_REWARD_ENABLED: ${INVITE_REWARD_ENABLED:-false}
       REVIEW_TEXT_PUBLICATION_ENABLED: ${REVIEW_TEXT_PUBLICATION_ENABLED:-false}
       REVIEW_SUMMARY_ENABLED: ${REVIEW_SUMMARY_ENABLED:-false}
       AI_SERVICE_PLAN_ENABLED: ${AI_SERVICE_PLAN_ENABLED:-false}

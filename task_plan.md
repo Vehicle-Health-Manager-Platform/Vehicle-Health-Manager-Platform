@@ -1,5 +1,16 @@
 # R6 invitation attribution and growth
 
+## Active R6b sequence (2026-10-15)
+
+- User now requires all R6 complete before any further GitHub upload. No intermediate push/PR edit; code/tests/docs kept local until whole-R6 gate passes. Existing R6a PR152 remains its already-uploaded historical state.
+- Confirmed rewards: each valid owner invitation yields one coupon per side; same template may reward distinct invitation events, public claim remains once per user/template. Staff promotion rewards the invitee only and contributes staff assessment; no staff_id-as-user_id issuance.
+1. [complete] R6b1: independently authorized reward policies, source/version/status/UNKNOWN, six APIs and operator page.36 distinct backend cases,561 frontend,92-table replay and final builds passed; local docs prepared, no upload.
+2. [complete] R6b2: freeze policy at qualification, reliable unique reward intents, repeatable reward issuance without relaxing public-claim limit, atomic stock/evidence/audit and durable recovery.
+3. [complete] R6b3: owner reward records/home hints, native local poster/share carrier, configurable diagnosis unlock provenance; real identity/native share/device proof remains R9. Final50 backend plus37 independent coupon transaction cases,582 frontend,95-table replay and both builds passed.
+4. [tracked in PR] Whole-R6 implementation/source/doc closure complete; 585 frontend, native/H5/four compatibility builds and 95-table replay pass. R6 real-DB attribution21/policy24/rewards41/diagnosis48 suites pass (inherited cases not added as distinct). Remaining full local backend execution and unavailable real-upload/Compose environment are recorded in the final acceptance snapshot. Upload all completed R6 source/migrations/tests/docs together; final upload/head and all six unmodified remote CI results are tracked in PR152, including full real-upload/Compose. No merge/deploy.
+
+## Prior completed R6a snapshot
+
 ## Active R6a phases
 
 1. [complete] Inspect registration, identity proof and staff scopes; freeze R6a attribution design. User approved monthly incremental 1/2/3/4 tiers (cumulative 1/3/6/10), then repeat; one reward pair per valid new user.

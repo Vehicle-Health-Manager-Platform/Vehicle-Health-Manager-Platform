@@ -1,5 +1,9 @@
 # 部署与运维文档
 
+> 整 R6 当前交付范围见[需求销项](../progress/R6_REQUIREMENT_CLOSURE.md)，统一上传与最终六项 CI 以 PR152 正文为准；下方保留各阶段说明。
+
+> R6b1 V041/独立 can_invite 默认关闭和离线授权说明见[配置协议](../api/INVITE_REWARD_POLICIES.md)。本地实施，整R6完成后上传；已有卷需备份后显式迁移。
+
 > R6a V040 邀请资格证据、默认关闭正式计数及手机号历史排查见[邀请运维](INVITATIONS_RUNBOOK.md)。
 
 > 券V038/V039升级、独立权限、永久创建编号与支付/退款/券恢复见[R5运维](COUPON_TRANSACTIONS_RUNBOOK.md)。正式发布仍最后R9。
@@ -19,3 +23,7 @@
 - [门店账号、员工与员工码运维](STORE_ACCOUNTS.md)：`MERCHANT_STAFF_ENABLED` 灰度顺序、店长/店员/技师账号发放、员工码签发轮换撤销、停用即时生效与故障处置对照。
 
 2026-10-06 已核对本机环境与微信官方网络要求，形成[可信 HTTPS 部署与真机验收方案](../superpowers/specs/2026-10-06-https-device-design.md)。推荐复用现有接口部署自建 HTTPS；服务器、备案域名、证书和设备尚未确认，方案待复核，不代表已开通公网入口。
+
+- [R6b2 奖励后台与迁移恢复](INVITATION_REWARD_RUNBOOK.md)：本地阶段，整R6完成后统一上传。
+
+- [R6b3 本地海报与解锁使用](INVITATION_POSTER_AND_UNLOCK.md)：代码/文档本地保存，整R6验收后统一上传。

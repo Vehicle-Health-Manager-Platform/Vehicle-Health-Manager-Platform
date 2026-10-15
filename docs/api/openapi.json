@@ -19451,6 +19451,1165 @@
         },
         "description": "WECHAT_CLOUD_RUN_ENABLED默认关闭。云托管新注册邀请身份证据为UNKNOWN，不计正式新客；网关边界实际验证后在R9接入。invite_code仅车主。"
       }
+    },
+    "/api/admin/invite/reward-policies": {
+      "get": {
+        "summary": "邀请奖励政策配置与来源读取",
+        "operationId": "get_api_admin_invite_reward_policies",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InviteRewardPolicyPage"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "409": {
+            "description": "规则版本/来源改变或同类型已存在发布政策"
+          },
+          "503": {
+            "description": "事务暂不可用，原正文/键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR(can_invite)",
+        "x-implementation-status": "r6b1-reward-policy-implemented",
+        "description": "no-store，独立can_invite默认关闭，当前权限重验。OWNER两项/STAFF仅新客，真实已发布精选券来源与有效期；发布冻结版本、同类型唯一PUBLISHED、停止不重开。配置不发券/不占库存，缺配置UNKNOWN；可靠发券见R6b2内部任务和奖励记录，解锁另在后续实现。"
+      },
+      "post": {
+        "summary": "邀请奖励政策配置与来源读取",
+        "operationId": "post_api_admin_invite_reward_policies",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InviteRewardPolicy"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "409": {
+            "description": "规则版本/来源改变或同类型已存在发布政策"
+          },
+          "503": {
+            "description": "事务暂不可用，原正文/键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvitePolicyInput"
+              }
+            }
+          }
+        },
+        "x-roles": "OPERATOR(can_invite)",
+        "x-implementation-status": "r6b1-reward-policy-implemented",
+        "description": "no-store，独立can_invite默认关闭，当前权限重验。OWNER两项/STAFF仅新客，真实已发布精选券来源与有效期；发布冻结版本、同类型唯一PUBLISHED、停止不重开。配置不发券/不占库存，缺配置UNKNOWN；可靠发券见R6b2内部任务和奖励记录，解锁另在后续实现。"
+      }
+    },
+    "/api/admin/invite/reward-coupons": {
+      "get": {
+        "summary": "邀请奖励政策配置与来源读取",
+        "operationId": "get_api_admin_invite_reward_coupons",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CouponInventoryPage"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "409": {
+            "description": "规则版本/来源改变或同类型已存在发布政策"
+          },
+          "503": {
+            "description": "事务暂不可用，原正文/键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR(can_invite)",
+        "x-implementation-status": "r6b1-reward-policy-implemented",
+        "description": "no-store，独立can_invite默认关闭，当前权限重验。OWNER两项/STAFF仅新客，真实已发布精选券来源与有效期；发布冻结版本、同类型唯一PUBLISHED、停止不重开。配置不发券/不占库存，缺配置UNKNOWN；可靠发券见R6b2内部任务和奖励记录，解锁另在后续实现。"
+      }
+    },
+    "/api/admin/invite/reward-policies/{id}": {
+      "put": {
+        "summary": "邀请奖励政策配置与来源读取",
+        "operationId": "put_api_admin_invite_reward_policies_id",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InviteRewardPolicy"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "409": {
+            "description": "规则版本/来源改变或同类型已存在发布政策"
+          },
+          "503": {
+            "description": "事务暂不可用，原正文/键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR(can_invite)",
+        "x-implementation-status": "r6b1-reward-policy-implemented",
+        "description": "no-store，独立can_invite默认关闭，当前权限重验。OWNER两项/STAFF仅新客，真实已发布精选券来源与有效期；发布冻结版本、同类型唯一PUBLISHED、停止不重开。配置不发券/不占库存，缺配置UNKNOWN；可靠发券见R6b2内部任务和奖励记录，解锁另在后续实现。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvitePolicyUpdateInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/invite/reward-policies/{id}/status": {
+      "put": {
+        "summary": "邀请奖励政策配置与来源读取",
+        "operationId": "put_api_admin_invite_reward_policies_id_status",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InviteRewardPolicy"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "409": {
+            "description": "规则版本/来源改变或同类型已存在发布政策"
+          },
+          "503": {
+            "description": "事务暂不可用，原正文/键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR(can_invite)",
+        "x-implementation-status": "r6b1-reward-policy-implemented",
+        "description": "no-store，独立can_invite默认关闭，当前权限重验。OWNER两项/STAFF仅新客，真实已发布精选券来源与有效期；发布冻结版本、同类型唯一PUBLISHED、停止不重开。配置不发券/不占库存，缺配置UNKNOWN；可靠发券见R6b2内部任务和奖励记录，解锁另在后续实现。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvitePolicyStatusInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/invite/reward-policy": {
+      "get": {
+        "summary": "邀请奖励政策配置与来源读取",
+        "operationId": "get_api_invite_reward_policy",
+        "tags": [
+          "invite"
+        ],
+        "x-feature-ids": [
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "scope",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "enum": [
+                "OWNER",
+                "STAFF"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InviteRewardPolicyCurrent"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "409": {
+            "description": "规则版本/来源改变或同类型已存在发布政策"
+          },
+          "503": {
+            "description": "事务暂不可用，原正文/键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "r6b1-reward-policy-implemented",
+        "description": "no-store，独立can_invite默认关闭，当前权限重验。OWNER两项/STAFF仅新客，真实已发布精选券来源与有效期；发布冻结版本、同类型唯一PUBLISHED、停止不重开。配置不发券/不占库存，缺配置UNKNOWN；可靠发券见R6b2内部任务和奖励记录，解锁另在后续实现。"
+      }
+    },
+    "/api/invite/rewards": {
+      "get": {
+        "summary": "本人邀请奖励/员工推广新客奖励记录",
+        "operationId": "get_api_invite_rewards",
+        "tags": [
+          "invite"
+        ],
+        "x-feature-ids": [
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InvitationRewardPage"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "503": {
+            "description": "数据库未配置/暂不可用，不发券"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-read-only": true,
+        "x-implementation-status": "r6b2-reward-delivery-implemented",
+        "description": "no-store。只读限定本人新客或本人邀请事件，员工限定本人及原推广门店；不泄露对方身份/持券编号。资格事务冻结政策，后台双方原子发券、同事件角色唯一、重复模板不影响PUBLIC一次限制。未配置/历史无快照UNKNOWN_POLICY，不追溯后来政策。缺源/账号/库存持久重试，原有效期不延长，GET不执行发券。INVITE_REWARD_ENABLED默认false。"
+      }
+    },
+    "/api/merchant/invite/rewards": {
+      "get": {
+        "summary": "本人邀请奖励/员工推广新客奖励记录",
+        "operationId": "get_api_merchant_invite_rewards",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InvitationRewardPage"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "503": {
+            "description": "数据库未配置/暂不可用，不发券"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT,STAFF",
+        "x-read-only": true,
+        "x-implementation-status": "r6b2-reward-delivery-implemented",
+        "description": "no-store。只读限定本人新客或本人邀请事件，员工限定本人及原推广门店；不泄露对方身份/持券编号。资格事务冻结政策，后台双方原子发券、同事件角色唯一、重复模板不影响PUBLIC一次限制。未配置/历史无快照UNKNOWN_POLICY，不追溯后来政策。缺源/账号/库存持久重试，原有效期不延长，GET不执行发券。INVITE_REWARD_ENABLED默认false。"
+      }
+    },
+    "/api/invite/diagnosis-eligibility": {
+      "get": {
+        "summary": "当月邀请来源配置与非实时诊断资格",
+        "operationId": "get_api_invite_diagnosis_eligibility",
+        "tags": [
+          "invite"
+        ],
+        "x-feature-ids": [
+          "F10"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InviteDiagnosisEligibility"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "409": {
+            "description": "政策状态、版本或唯一发布规则冲突"
+          },
+          "503": {
+            "description": "数据库未配置/事务暂不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-implementation-status": "r6b3-diagnosis-eligibility-implemented",
+        "description": "no-store。独立can_invite默认关闭，草稿/发布/停止、CAS与幂等审计，同一时刻至多一条PUBLISHED。OWNER当前北京时间月份，仅服务端可信QUALIFIED且新客账号当前有效的本人邀请计数，员工推广不算本人邀请。未配置UNKNOWN。达到阈值后截止取政策到期与下月起点较早者，停用/跨月/账号失效立即重新核对。service_available固定false，留言服务R7另行接入，真正提交时重验，GET不创建授权或奖励。"
+      }
+    },
+    "/api/admin/invite/diagnosis-policies": {
+      "get": {
+        "summary": "当月邀请来源配置与非实时诊断资格",
+        "operationId": "get_api_admin_invite_diagnosis_policies",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InviteDiagnosisPage"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "409": {
+            "description": "政策状态、版本或唯一发布规则冲突"
+          },
+          "503": {
+            "description": "数据库未配置/事务暂不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR(can_invite)",
+        "x-implementation-status": "r6b3-diagnosis-eligibility-implemented",
+        "description": "no-store。独立can_invite默认关闭，草稿/发布/停止、CAS与幂等审计，同一时刻至多一条PUBLISHED。OWNER当前北京时间月份，仅服务端可信QUALIFIED且新客账号当前有效的本人邀请计数，员工推广不算本人邀请。未配置UNKNOWN。达到阈值后截止取政策到期与下月起点较早者，停用/跨月/账号失效立即重新核对。service_available固定false，留言服务R7另行接入，真正提交时重验，GET不创建授权或奖励。"
+      },
+      "post": {
+        "summary": "当月邀请来源配置与非实时诊断资格",
+        "operationId": "post_api_admin_invite_diagnosis_policies",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InviteDiagnosisPolicy"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "409": {
+            "description": "政策状态、版本或唯一发布规则冲突"
+          },
+          "503": {
+            "description": "数据库未配置/事务暂不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InviteDiagnosisInput"
+              }
+            }
+          }
+        },
+        "x-roles": "OPERATOR(can_invite)",
+        "x-implementation-status": "r6b3-diagnosis-eligibility-implemented",
+        "description": "no-store。独立can_invite默认关闭，草稿/发布/停止、CAS与幂等审计，同一时刻至多一条PUBLISHED。OWNER当前北京时间月份，仅服务端可信QUALIFIED且新客账号当前有效的本人邀请计数，员工推广不算本人邀请。未配置UNKNOWN。达到阈值后截止取政策到期与下月起点较早者，停用/跨月/账号失效立即重新核对。service_available固定false，留言服务R7另行接入，真正提交时重验，GET不创建授权或奖励。"
+      }
+    },
+    "/api/admin/invite/diagnosis-policies/{id}": {
+      "put": {
+        "summary": "当月邀请来源配置与非实时诊断资格",
+        "operationId": "put_api_admin_invite_diagnosis_policies_id",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InviteDiagnosisPolicy"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "409": {
+            "description": "政策状态、版本或唯一发布规则冲突"
+          },
+          "503": {
+            "description": "数据库未配置/事务暂不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR(can_invite)",
+        "x-implementation-status": "r6b3-diagnosis-eligibility-implemented",
+        "description": "no-store。独立can_invite默认关闭，草稿/发布/停止、CAS与幂等审计，同一时刻至多一条PUBLISHED。OWNER当前北京时间月份，仅服务端可信QUALIFIED且新客账号当前有效的本人邀请计数，员工推广不算本人邀请。未配置UNKNOWN。达到阈值后截止取政策到期与下月起点较早者，停用/跨月/账号失效立即重新核对。service_available固定false，留言服务R7另行接入，真正提交时重验，GET不创建授权或奖励。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InviteDiagnosisUpdate"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/invite/diagnosis-policies/{id}/status": {
+      "put": {
+        "summary": "当月邀请来源配置与非实时诊断资格",
+        "operationId": "put_api_admin_invite_diagnosis_policies_id_status",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InviteDiagnosisPolicy"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "409": {
+            "description": "政策状态、版本或唯一发布规则冲突"
+          },
+          "503": {
+            "description": "数据库未配置/事务暂不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR(can_invite)",
+        "x-implementation-status": "r6b3-diagnosis-eligibility-implemented",
+        "description": "no-store。独立can_invite默认关闭，草稿/发布/停止、CAS与幂等审计，同一时刻至多一条PUBLISHED。OWNER当前北京时间月份，仅服务端可信QUALIFIED且新客账号当前有效的本人邀请计数，员工推广不算本人邀请。未配置UNKNOWN。达到阈值后截止取政策到期与下月起点较早者，停用/跨月/账号失效立即重新核对。service_available固定false，留言服务R7另行接入，真正提交时重验，GET不创建授权或奖励。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvitePolicyStatusInput"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -28358,6 +29517,873 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
+          }
+        }
+      },
+      "InvitePolicyInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "scope",
+          "source_note",
+          "valid_from",
+          "valid_to",
+          "inviter_coupon_id",
+          "inviter_publication_revision",
+          "invitee_coupon_id",
+          "invitee_publication_revision"
+        ],
+        "properties": {
+          "scope": {
+            "enum": [
+              "OWNER",
+              "STAFF"
+            ]
+          },
+          "source_note": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 256
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "valid_to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "inviter_coupon_id": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "inviter_publication_revision": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "invitee_coupon_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "invitee_publication_revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        }
+      },
+      "InvitePolicyUpdateInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "scope",
+          "source_note",
+          "valid_from",
+          "valid_to",
+          "inviter_coupon_id",
+          "inviter_publication_revision",
+          "invitee_coupon_id",
+          "invitee_publication_revision",
+          "expected_revision"
+        ],
+        "properties": {
+          "scope": {
+            "enum": [
+              "OWNER",
+              "STAFF"
+            ]
+          },
+          "source_note": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 256
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "valid_to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "inviter_coupon_id": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "inviter_publication_revision": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "invitee_coupon_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "invitee_publication_revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740990
+          }
+        }
+      },
+      "InvitePolicyStatusInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "expected_revision",
+          "status"
+        ],
+        "properties": {
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740990
+          },
+          "status": {
+            "enum": [
+              "PUBLISHED",
+              "STOPPED"
+            ]
+          }
+        }
+      },
+      "InviteRewardPolicy": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "scope",
+          "source_note",
+          "valid_from",
+          "valid_to",
+          "inviter_coupon_id",
+          "inviter_publication_revision",
+          "invitee_coupon_id",
+          "invitee_publication_revision",
+          "id",
+          "revision",
+          "status",
+          "rule_version",
+          "created_at",
+          "published_at",
+          "inviter_terms",
+          "invitee_terms"
+        ],
+        "properties": {
+          "scope": {
+            "enum": [
+              "OWNER",
+              "STAFF"
+            ]
+          },
+          "source_note": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 256
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "valid_to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "inviter_coupon_id": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "inviter_publication_revision": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "invitee_coupon_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "invitee_publication_revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "status": {
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "STOPPED"
+            ]
+          },
+          "rule_version": {
+            "const": "R6B_REWARD_V1"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "inviter_terms": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CouponTerms"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "invitee_terms": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CouponTerms"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "InviteRewardPolicyPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "page",
+          "page_size",
+          "total"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "$ref": "#/components/schemas/InviteRewardPolicy"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "page_size": {
+            "const": 20
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "InviteRewardPolicyPublic": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "scope",
+          "valid_from",
+          "valid_to",
+          "inviter_coupon_id",
+          "inviter_publication_revision",
+          "invitee_coupon_id",
+          "invitee_publication_revision",
+          "id",
+          "revision",
+          "status",
+          "rule_version",
+          "created_at",
+          "published_at",
+          "inviter_terms",
+          "invitee_terms"
+        ],
+        "properties": {
+          "scope": {
+            "enum": [
+              "OWNER",
+              "STAFF"
+            ]
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "valid_to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "inviter_coupon_id": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "inviter_publication_revision": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "invitee_coupon_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "invitee_publication_revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "status": {
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "STOPPED"
+            ]
+          },
+          "rule_version": {
+            "const": "R6B_REWARD_V1"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "inviter_terms": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CouponTerms"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "invitee_terms": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CouponTerms"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "InviteRewardPolicyCurrent": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "scope",
+          "state",
+          "policy"
+        ],
+        "properties": {
+          "scope": {
+            "enum": [
+              "OWNER",
+              "STAFF"
+            ]
+          },
+          "state": {
+            "enum": [
+              "UNKNOWN",
+              "NOT_STARTED",
+              "EXPIRED",
+              "CONFIGURED",
+              "SOURCE_UNAVAILABLE"
+            ]
+          },
+          "policy": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InviteRewardPolicyPublic"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "InvitationRewardItem": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "role",
+          "own",
+          "terms",
+          "user_coupon_id"
+        ],
+        "properties": {
+          "role": {
+            "enum": [
+              "INVITER",
+              "INVITEE"
+            ]
+          },
+          "own": {
+            "type": "boolean"
+          },
+          "terms": {
+            "$ref": "#/components/schemas/CouponTerms"
+          },
+          "user_coupon_id": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "InvitationRewardRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "record_id",
+          "source_type",
+          "state",
+          "qualified_at",
+          "completed_at",
+          "policy_revision",
+          "rule_version",
+          "worker_enabled",
+          "rewards"
+        ],
+        "properties": {
+          "record_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "source_type": {
+            "enum": [
+              "OWNER",
+              "STAFF"
+            ]
+          },
+          "state": {
+            "enum": [
+              "READY",
+              "WAIT_STOCK",
+              "WAIT_SOURCE",
+              "WAIT_ACCOUNT",
+              "UNKNOWN_POLICY",
+              "EXPIRED",
+              "INVALID_EVIDENCE",
+              "COMPLETE"
+            ]
+          },
+          "qualified_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "policy_revision": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rule_version": {
+            "const": "R6B_REWARD_V1"
+          },
+          "worker_enabled": {
+            "type": "boolean"
+          },
+          "rewards": {
+            "type": "array",
+            "maxItems": 2,
+            "items": {
+              "$ref": "#/components/schemas/InvitationRewardItem"
+            }
+          }
+        }
+      },
+      "InvitationRewardPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "page",
+          "page_size",
+          "total"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "$ref": "#/components/schemas/InvitationRewardRecord"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "page_size": {
+            "const": 20
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "InviteDiagnosisInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "required_count",
+          "source_note",
+          "valid_from",
+          "valid_to"
+        ],
+        "properties": {
+          "required_count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "source_note": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 256
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "valid_to": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "InviteDiagnosisUpdate": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "required_count",
+          "source_note",
+          "valid_from",
+          "valid_to",
+          "expected_revision"
+        ],
+        "properties": {
+          "required_count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "source_note": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 256
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "valid_to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740990
+          }
+        }
+      },
+      "InviteDiagnosisPolicy": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "required_count",
+          "source_note",
+          "valid_from",
+          "valid_to",
+          "id",
+          "revision",
+          "status",
+          "created_at",
+          "published_at",
+          "rule_version"
+        ],
+        "properties": {
+          "required_count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "source_note": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 256
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "valid_to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "status": {
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "STOPPED"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rule_version": {
+            "const": "R6B_DIAGNOSIS_V1"
+          }
+        }
+      },
+      "InviteDiagnosisPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "page",
+          "page_size",
+          "total"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "$ref": "#/components/schemas/InviteDiagnosisPolicy"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "page_size": {
+            "const": 20
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "InviteDiagnosisEligibility": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "month",
+          "timezone",
+          "qualified_count",
+          "state",
+          "policy",
+          "usable_until",
+          "service_available",
+          "rule_version"
+        ],
+        "properties": {
+          "month": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+          },
+          "timezone": {
+            "const": "Asia/Shanghai"
+          },
+          "qualified_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "state": {
+            "enum": [
+              "UNKNOWN",
+              "NOT_STARTED",
+              "EXPIRED",
+              "LOCKED",
+              "ELIGIBLE"
+            ]
+          },
+          "policy": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InviteDiagnosisPolicy"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "usable_until": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "service_available": {
+            "const": false
+          },
+          "rule_version": {
+            "const": "R6B_DIAGNOSIS_V1"
           }
         }
       }
