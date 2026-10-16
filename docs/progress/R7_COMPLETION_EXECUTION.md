@@ -16,7 +16,7 @@
 
 小程序664、微信/H5、四兼容Web、104表实际迁移重放、Compose配置及生成门禁已通过。其余完整后端仍运行；真实上传镜像受Docker Hub网络阻断，实际Compose烟测需要最终远程CI，详见[统一验收](../testing/LOCAL_R7_COMPLETION_ACCEPTANCE.md)。
 
-所有R7子阶段未做中间push；全部功能、补缺和文档已齐备，本地其余完整后端继续运行。因真实上传/Compose需要本机不可达的Docker Hub，统一上传完整R7交由原有六项CI执行最终完整门禁；不等待不可运行的本地网络门禁，也不将缺项写为通过。提交/上传与远程结果以PR正文为准，当前未合并或发布。R6 PR152仍OPEN，R7保持以其分支为基线的独立堆叠PR，不改写R6或main。
+所有R7子阶段未做中间push；全部功能、补缺和文档已齐备，本地其余完整后端继续运行。因真实上传/Compose需要本机不可达的Docker Hub，统一上传完整R7交由原有六项CI执行最终完整门禁；不等待不可运行的本地网络门禁，也不将缺项写为通过。提交/上传与远程结果以PR正文为准，已统一上传[PR153](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/153)，业务提交c856eb9；最终六项CI及完整测试数量以PR当前head正文记录为准，未合并或发布。R6 PR152仍OPEN，R7保持以其分支为基线的独立堆叠PR，不改写R6或main。
 
 ## 下一步
 

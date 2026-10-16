@@ -1,5 +1,7 @@
 # R7 全阶段分步规划
 
+> 执行更新：整R7a/b/c及收尾均已实现并统一上传[PR153](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/153)；[销项](R7_REQUIREMENT_CLOSURE.md)、[恢复](R7_RECOVERY_MATRIX.md)、[统一验收](../testing/LOCAL_R7_COMPLETION_ACCEPTANCE.md)。最终六项CI以PR当前head正文为准，未合并或发布。下方阶段文字保留当时计划与本地快照。
+
 用户要求：整个R7完成后才统一上传，包括代码、迁移、测试和文档；各子阶段完成时只整理本地成果。起点为R6提交956758d，PR152六项CI成功（后端967、前端585）。R7不修改既有R6远程内容。
 
 ## R7a：本人订单施工证据与进度（先实施）

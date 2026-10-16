@@ -1,5 +1,7 @@
 # 测试资料
 
+> 整R7已同批上传[PR153](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/153)，[统一验收](LOCAL_R7_COMPLETION_ACCEPTANCE.md)保留本地实测和网络限制，最终完整CI结果以PR当前head正文为准。
+
 > 整R7：[最终统一验收](LOCAL_R7_COMPLETION_ACCEPTANCE.md)，664前端和构建/104表通过；完整其余后端运行中，真实上传镜像/Compose实际烟测受本地网络阻断，最终远程六项不得提前写成功。
 
 > R7c3 第三步：[诊断消息验收](LOCAL_R7C3_DIAGNOSIS_NOTIFICATIONS_ACCEPTANCE.md)，127不同后端覆盖、648前端、微信/H5及V048/104表通过；整R7门禁仍待执行。

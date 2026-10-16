@@ -1,5 +1,7 @@
 # 项目进度与下一步规划
 
+> 整R7全部代码/迁移/测试/文档已同批上传[PR153](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/153)，完整六项CI以最终head及PR正文为准；未合并或发布。下一[R8积分先行](R8_IMPLEMENTATION_PLAN.md)。
+
 > 整R7收尾：[需求销项](R7_REQUIREMENT_CLOSURE.md)、[执行](R7_COMPLETION_EXECUTION.md)、[恢复说明](R7_RECOVERY_MATRIX.md)、[统一验收](../testing/LOCAL_R7_COMPLETION_ACCEPTANCE.md)；后端门禁完成后同批上传全部源码和文档，下一[R8](R8_IMPLEMENTATION_PLAN.md)。
 
 > R7c3 第三步：[诊断专属消息执行](R7C3_DIAGNOSIS_NOTIFICATIONS_EXECUTION.md)；下一[整R7销项与统一门禁](R7_COMPLETION_NEXT_PLAN.md)。整R7通过后统一上传全部代码及文档。
