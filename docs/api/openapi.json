@@ -20233,7 +20233,7 @@
         ],
         "x-roles": "OWNER",
         "x-implementation-status": "r6b3-diagnosis-eligibility-implemented",
-        "description": "no-store。独立can_invite默认关闭，草稿/发布/停止、CAS与幂等审计，同一时刻至多一条PUBLISHED。OWNER当前北京时间月份，仅服务端可信QUALIFIED且新客账号当前有效的本人邀请计数，员工推广不算本人邀请。未配置UNKNOWN。达到阈值后截止取政策到期与下月起点较早者，停用/跨月/账号失效立即重新核对。service_available固定false，留言服务R7另行接入，真正提交时重验，GET不创建授权或奖励。"
+        "description": "no-store。独立can_invite默认关闭，草稿/发布/停止、CAS与幂等审计，同一时刻至多一条PUBLISHED。OWNER当前北京时间月份，仅服务端可信QUALIFIED且新客账号当前有效的本人邀请计数，员工推广不算本人邀请。未配置UNKNOWN。达到阈值后截止取政策到期与下月起点较早者，停用/跨月/账号失效立即重新核对。R7c2已接入受理配置；service_available仅在资格达标且配置允许时true，新提交/追加仍在事务中重验，GET不创建授权或奖励。"
       }
     },
     "/api/admin/invite/diagnosis-policies": {
@@ -20605,6 +20605,3778 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/InvitePolicyStatusInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/order/{id}/work": {
+      "get": {
+        "summary": "本人订单施工证据/受控图片读取",
+        "operationId": "get_api_order_id_work",
+        "tags": [
+          "order"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/OwnerServiceEvidence"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非当前本人订单或文件来源/安全状态不可用"
+          },
+          "503": {
+            "description": "数据库/私有对象存储不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-read-only": true,
+        "x-implementation-status": "r7a-owner-evidence-implemented",
+        "description": "no-store，拒绝全部query。当前车主会话与订单归属复核；固定六组、缺失MISSING/来源不完整UNKNOWN，安全文件单独available。不输出员工身份/对象key。签名存储IO后再次复核当前来源，已发URL仍可能在既有最长300秒有效期内访问。GET不改变施工或订单状态，无新增表，详见OWNER_SERVICE_EVIDENCE.md。"
+      }
+    },
+    "/api/order/{id}/work/files/{file}/access": {
+      "get": {
+        "summary": "本人订单施工证据/受控图片读取",
+        "operationId": "get_api_order_id_work_files_file_access",
+        "tags": [
+          "order"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "file",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/OwnerEvidenceAccess"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非当前本人订单或文件来源/安全状态不可用"
+          },
+          "503": {
+            "description": "数据库/私有对象存储不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-read-only": true,
+        "x-implementation-status": "r7a-owner-evidence-implemented",
+        "description": "no-store，拒绝全部query。当前车主会话与订单归属复核；固定六组、缺失MISSING/来源不完整UNKNOWN，安全文件单独available。不输出员工身份/对象key。签名存储IO后再次复核当前来源，已发URL仍可能在既有最长300秒有效期内访问。GET不改变施工或订单状态，无新增表，详见OWNER_SERVICE_EVIDENCE.md。"
+      }
+    },
+    "/api/order/{id}/archive-grants": {
+      "get": {
+        "summary": "当前任务工作台/本单最小资料/逐条档案授权",
+        "operationId": "get_api_order_id_archive_grants",
+        "tags": [
+          "order"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ArchiveGrantCandidates"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非当前有效本单/档案/文件或来源不可用"
+          },
+          "409": {
+            "description": "源记录或授权版本变化"
+          },
+          "503": {
+            "description": "数据库/私有存储不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-read-only": true,
+        "x-implementation-status": "r7b-service-workspace-implemented",
+        "description": "no-store。拒绝未知/重复query；写入和文件访问无query。当前订单/本店/本人已接派工复核；仅1/2/10类历史档案由当前车主逐条授权，绑定源指纹/CAS版本。改动需重确认，撤销/失效/解绑拒绝新读取；无默认授权。签名IO前后复核，已发URL最长300秒残余有效。V044共96表，无回填。详见SERVICE_WORKSPACE.md。"
+      }
+    },
+    "/api/order/{id}/archive-grants/{archive}": {
+      "put": {
+        "summary": "当前任务工作台/本单最小资料/逐条档案授权",
+        "operationId": "put_api_order_id_archive_grants_archive",
+        "tags": [
+          "order"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "archive",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ArchiveGrantReceipt"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非当前有效本单/档案/文件或来源不可用"
+          },
+          "409": {
+            "description": "源记录或授权版本变化"
+          },
+          "503": {
+            "description": "数据库/私有存储不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-read-only": false,
+        "x-implementation-status": "r7b-service-workspace-implemented",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArchiveGrantInput"
+              }
+            }
+          }
+        },
+        "description": "no-store。拒绝未知/重复query；写入和文件访问无query。当前订单/本店/本人已接派工复核；仅1/2/10类历史档案由当前车主逐条授权，绑定源指纹/CAS版本。改动需重确认，撤销/失效/解绑拒绝新读取；无默认授权。签名IO前后复核，已发URL最长300秒残余有效。V044共96表，无回填。详见SERVICE_WORKSPACE.md。"
+      }
+    },
+    "/api/order/{id}/archive-grants/{archive}/files/{file}/preview": {
+      "get": {
+        "summary": "当前任务工作台/本单最小资料/逐条档案授权",
+        "operationId": "get_api_order_id_archive_grants_archive_files_file_preview",
+        "tags": [
+          "order"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "archive",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "file",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/OwnerEvidenceAccess"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非当前有效本单/档案/文件或来源不可用"
+          },
+          "409": {
+            "description": "源记录或授权版本变化"
+          },
+          "503": {
+            "description": "数据库/私有存储不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-read-only": true,
+        "x-implementation-status": "r7b-service-workspace-implemented",
+        "description": "no-store。拒绝未知/重复query；写入和文件访问无query。当前订单/本店/本人已接派工复核；仅1/2/10类历史档案由当前车主逐条授权，绑定源指纹/CAS版本。改动需重确认，撤销/失效/解绑拒绝新读取；无默认授权。签名IO前后复核，已发URL最长300秒残余有效。V044共96表，无回填。详见SERVICE_WORKSPACE.md。"
+      }
+    },
+    "/api/merchant/workbench": {
+      "get": {
+        "summary": "当前任务工作台/本单最小资料/逐条档案授权",
+        "operationId": "get_api_merchant_workbench",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          },
+          {
+            "name": "bucket",
+            "in": "query",
+            "schema": {
+              "enum": [
+                "RECEIVE",
+                "CONFIRM",
+                "DISPUTE",
+                "ASSIGN",
+                "WAIT_ACCEPT",
+                "SERVICE",
+                "VERIFY",
+                "REVIEW_SOURCE"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceWorkbench"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非当前有效本单/档案/文件或来源不可用"
+          },
+          "409": {
+            "description": "源记录或授权版本变化"
+          },
+          "503": {
+            "description": "数据库/私有存储不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT",
+        "x-read-only": true,
+        "x-implementation-status": "r7b-service-workspace-implemented",
+        "description": "no-store。拒绝未知/重复query；写入和文件访问无query。当前订单/本店/本人已接派工复核；仅1/2/10类历史档案由当前车主逐条授权，绑定源指纹/CAS版本。改动需重确认，撤销/失效/解绑拒绝新读取；无默认授权。签名IO前后复核，已发URL最长300秒残余有效。V044共96表，无回填。详见SERVICE_WORKSPACE.md。"
+      }
+    },
+    "/api/merchant/orders/{id}/service-context": {
+      "get": {
+        "summary": "当前任务工作台/本单最小资料/逐条档案授权",
+        "operationId": "get_api_merchant_orders_id_service_context",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceTaskContext"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非当前有效本单/档案/文件或来源不可用"
+          },
+          "409": {
+            "description": "源记录或授权版本变化"
+          },
+          "503": {
+            "description": "数据库/私有存储不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT",
+        "x-read-only": true,
+        "x-implementation-status": "r7b-service-workspace-implemented",
+        "description": "no-store。拒绝未知/重复query；写入和文件访问无query。当前订单/本店/本人已接派工复核；仅1/2/10类历史档案由当前车主逐条授权，绑定源指纹/CAS版本。改动需重确认，撤销/失效/解绑拒绝新读取；无默认授权。签名IO前后复核，已发URL最长300秒残余有效。V044共96表，无回填。详见SERVICE_WORKSPACE.md。"
+      }
+    },
+    "/api/merchant/orders/{id}/service-context/archives/{archive}/files/{file}/access": {
+      "get": {
+        "summary": "当前任务工作台/本单最小资料/逐条档案授权",
+        "operationId": "get_api_merchant_orders_id_service_context_archives_archive_files_file_access",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "archive",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "file",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/OwnerEvidenceAccess"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非当前有效本单/档案/文件或来源不可用"
+          },
+          "409": {
+            "description": "源记录或授权版本变化"
+          },
+          "503": {
+            "description": "数据库/私有存储不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT",
+        "x-read-only": true,
+        "x-implementation-status": "r7b-service-workspace-implemented",
+        "description": "no-store。拒绝未知/重复query；写入和文件访问无query。当前订单/本店/本人已接派工复核；仅1/2/10类历史档案由当前车主逐条授权，绑定源指纹/CAS版本。改动需重确认，撤销/失效/解绑拒绝新读取；无默认授权。签名IO前后复核，已发URL最长300秒残余有效。V044共96表，无回填。详见SERVICE_WORKSPACE.md。"
+      }
+    },
+    "/api/tech/workbench": {
+      "get": {
+        "summary": "当前任务工作台/本单最小资料/逐条档案授权",
+        "operationId": "get_api_tech_workbench",
+        "tags": [
+          "tech"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          },
+          {
+            "name": "bucket",
+            "in": "query",
+            "schema": {
+              "enum": [
+                "RECEIVE",
+                "CONFIRM",
+                "DISPUTE",
+                "ASSIGN",
+                "WAIT_ACCEPT",
+                "SERVICE",
+                "VERIFY",
+                "REVIEW_SOURCE"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceWorkbench"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非当前有效本单/档案/文件或来源不可用"
+          },
+          "409": {
+            "description": "源记录或授权版本变化"
+          },
+          "503": {
+            "description": "数据库/私有存储不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "TECHNICIAN",
+        "x-read-only": true,
+        "x-implementation-status": "r7b-service-workspace-implemented",
+        "description": "no-store。拒绝未知/重复query；写入和文件访问无query。当前订单/本店/本人已接派工复核；仅1/2/10类历史档案由当前车主逐条授权，绑定源指纹/CAS版本。改动需重确认，撤销/失效/解绑拒绝新读取；无默认授权。签名IO前后复核，已发URL最长300秒残余有效。V044共96表，无回填。详见SERVICE_WORKSPACE.md。"
+      }
+    },
+    "/api/tech/orders/{id}/service-context": {
+      "get": {
+        "summary": "当前任务工作台/本单最小资料/逐条档案授权",
+        "operationId": "get_api_tech_orders_id_service_context",
+        "tags": [
+          "tech"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceTaskContext"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非当前有效本单/档案/文件或来源不可用"
+          },
+          "409": {
+            "description": "源记录或授权版本变化"
+          },
+          "503": {
+            "description": "数据库/私有存储不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "TECHNICIAN",
+        "x-read-only": true,
+        "x-implementation-status": "r7b-service-workspace-implemented",
+        "description": "no-store。拒绝未知/重复query；写入和文件访问无query。当前订单/本店/本人已接派工复核；仅1/2/10类历史档案由当前车主逐条授权，绑定源指纹/CAS版本。改动需重确认，撤销/失效/解绑拒绝新读取；无默认授权。签名IO前后复核，已发URL最长300秒残余有效。V044共96表，无回填。详见SERVICE_WORKSPACE.md。"
+      }
+    },
+    "/api/tech/orders/{id}/service-context/archives/{archive}/files/{file}/access": {
+      "get": {
+        "summary": "当前任务工作台/本单最小资料/逐条档案授权",
+        "operationId": "get_api_tech_orders_id_service_context_archives_archive_files_file_access",
+        "tags": [
+          "tech"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "archive",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "file",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/OwnerEvidenceAccess"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非当前有效本单/档案/文件或来源不可用"
+          },
+          "409": {
+            "description": "源记录或授权版本变化"
+          },
+          "503": {
+            "description": "数据库/私有存储不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "TECHNICIAN",
+        "x-read-only": true,
+        "x-implementation-status": "r7b-service-workspace-implemented",
+        "description": "no-store。拒绝未知/重复query；写入和文件访问无query。当前订单/本店/本人已接派工复核；仅1/2/10类历史档案由当前车主逐条授权，绑定源指纹/CAS版本。改动需重确认，撤销/失效/解绑拒绝新读取；无默认授权。签名IO前后复核，已发URL最长300秒残余有效。V044共96表，无回填。详见SERVICE_WORKSPACE.md。"
+      }
+    },
+    "/api/owner/notifications": {
+      "get": {
+        "summary": "当前身份订单事件收件箱/单条已读",
+        "operationId": "get_api_owner_notifications",
+        "tags": [
+          "owner"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceInbox"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "消息不属于当前范围或来源不可用"
+          },
+          "503": {
+            "description": "通知数据库/写入服务不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-read-only": true,
+        "x-implementation-status": "r7c3-order-events-implemented",
+        "description": "no-store。十七类订单事实同业务事务落outbox（退款受理与渠道成功分开），独立去重投递；无历史回填。每次读取/已读重验会话及当前订单车主/门店/派工归属；失权不计入列表或未读数，不给后来接手者回填旧事件。仅固定提示和最小订单事实，无正文/照片/联系方式/金额。退款仅车主和门店；其他事件含当时技师。多轮退款按版本、异议按追加记录区分，渠道结果重复不重发。门店账号共享本店已读。拒绝未知/重复query，读不制造事件。详见SERVICE_NOTIFICATIONS.md。"
+      }
+    },
+    "/api/owner/notifications/{id}/read": {
+      "put": {
+        "summary": "当前身份订单事件收件箱/单条已读",
+        "operationId": "put_api_owner_notifications_id_read",
+        "tags": [
+          "owner"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceNotificationRead"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "消息不属于当前范围或来源不可用"
+          },
+          "503": {
+            "description": "通知数据库/写入服务不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-read-only": false,
+        "x-implementation-status": "r7c3-order-events-implemented",
+        "description": "no-store。十七类订单事实同业务事务落outbox（退款受理与渠道成功分开），独立去重投递；无历史回填。每次读取/已读重验会话及当前订单车主/门店/派工归属；失权不计入列表或未读数，不给后来接手者回填旧事件。仅固定提示和最小订单事实，无正文/照片/联系方式/金额。退款仅车主和门店；其他事件含当时技师。多轮退款按版本、异议按追加记录区分，渠道结果重复不重发。门店账号共享本店已读。拒绝未知/重复query，读不制造事件。详见SERVICE_NOTIFICATIONS.md。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/merchant/notifications": {
+      "get": {
+        "summary": "当前身份订单事件收件箱/单条已读",
+        "operationId": "get_api_merchant_notifications",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceInbox"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "消息不属于当前范围或来源不可用"
+          },
+          "503": {
+            "description": "通知数据库/写入服务不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT,STAFF",
+        "x-read-only": true,
+        "x-implementation-status": "r7c3-order-events-implemented",
+        "description": "no-store。十七类订单事实同业务事务落outbox（退款受理与渠道成功分开），独立去重投递；无历史回填。每次读取/已读重验会话及当前订单车主/门店/派工归属；失权不计入列表或未读数，不给后来接手者回填旧事件。仅固定提示和最小订单事实，无正文/照片/联系方式/金额。退款仅车主和门店；其他事件含当时技师。多轮退款按版本、异议按追加记录区分，渠道结果重复不重发。门店账号共享本店已读。拒绝未知/重复query，读不制造事件。详见SERVICE_NOTIFICATIONS.md。"
+      }
+    },
+    "/api/merchant/notifications/{id}/read": {
+      "put": {
+        "summary": "当前身份订单事件收件箱/单条已读",
+        "operationId": "put_api_merchant_notifications_id_read",
+        "tags": [
+          "merchant"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceNotificationRead"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "消息不属于当前范围或来源不可用"
+          },
+          "503": {
+            "description": "通知数据库/写入服务不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "MERCHANT,STAFF",
+        "x-read-only": false,
+        "x-implementation-status": "r7c3-order-events-implemented",
+        "description": "no-store。十七类订单事实同业务事务落outbox（退款受理与渠道成功分开），独立去重投递；无历史回填。每次读取/已读重验会话及当前订单车主/门店/派工归属；失权不计入列表或未读数，不给后来接手者回填旧事件。仅固定提示和最小订单事实，无正文/照片/联系方式/金额。退款仅车主和门店；其他事件含当时技师。多轮退款按版本、异议按追加记录区分，渠道结果重复不重发。门店账号共享本店已读。拒绝未知/重复query，读不制造事件。详见SERVICE_NOTIFICATIONS.md。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tech/notifications": {
+      "get": {
+        "summary": "当前身份订单事件收件箱/单条已读",
+        "operationId": "get_api_tech_notifications",
+        "tags": [
+          "tech"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceInbox"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "消息不属于当前范围或来源不可用"
+          },
+          "503": {
+            "description": "通知数据库/写入服务不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "TECHNICIAN",
+        "x-read-only": true,
+        "x-implementation-status": "r7c3-order-events-implemented",
+        "description": "no-store。十七类订单事实同业务事务落outbox（退款受理与渠道成功分开），独立去重投递；无历史回填。每次读取/已读重验会话及当前订单车主/门店/派工归属；失权不计入列表或未读数，不给后来接手者回填旧事件。仅固定提示和最小订单事实，无正文/照片/联系方式/金额。退款仅车主和门店；其他事件含当时技师。多轮退款按版本、异议按追加记录区分，渠道结果重复不重发。门店账号共享本店已读。拒绝未知/重复query，读不制造事件。详见SERVICE_NOTIFICATIONS.md。"
+      }
+    },
+    "/api/tech/notifications/{id}/read": {
+      "put": {
+        "summary": "当前身份订单事件收件箱/单条已读",
+        "operationId": "put_api_tech_notifications_id_read",
+        "tags": [
+          "tech"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceNotificationRead"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "消息不属于当前范围或来源不可用"
+          },
+          "503": {
+            "description": "通知数据库/写入服务不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "TECHNICIAN",
+        "x-read-only": false,
+        "x-implementation-status": "r7c3-order-events-implemented",
+        "description": "no-store。十七类订单事实同业务事务落outbox（退款受理与渠道成功分开），独立去重投递；无历史回填。每次读取/已读重验会话及当前订单车主/门店/派工归属；失权不计入列表或未读数，不给后来接手者回填旧事件。仅固定提示和最小订单事实，无正文/照片/联系方式/金额。退款仅车主和门店；其他事件含当时技师。多轮退款按版本、异议按追加记录区分，渠道结果重复不重发。门店账号共享本店已读。拒绝未知/重复query，读不制造事件。详见SERVICE_NOTIFICATIONS.md。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/owner/diagnosis/context": {
+      "get": {
+        "summary": "非实时人工诊断受理/留言/分配与答复",
+        "operationId": "get_api_owner_diagnosis_context",
+        "tags": [
+          "owner"
+        ],
+        "x-feature-ids": [
+          "F09",
+          "F10"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/DiagnosisAdmissionContext"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非本人车辆/会话/当前分配或处理人员不可用"
+          },
+          "409": {
+            "description": "当前配置/资格/会话版本或状态变化"
+          },
+          "503": {
+            "description": "数据库/审计暂不可用，原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-read-only": true,
+        "x-implementation-status": "r7c2-async-diagnosis-implemented",
+        "description": "no-store。拒绝未知/重复query及额外正文。独立管理与处理权限默认关闭，管理队列不含正文，处理人员须当前获派。可受理/离线留言均非实时，暂停拒绝新留言；当前R6资格与配置在提交/追加事务锁等待后重验。仅主动文字与车型，无历史档案/图片默认共享。消息/状态事件/审计原子，CAS/幂等，创建有长期意图去重，切号/隐藏清理。V046共102表，见ASYNC_DIAGNOSIS.md。"
+      }
+    },
+    "/api/owner/diagnosis/cases": {
+      "get": {
+        "summary": "非实时人工诊断受理/留言/分配与答复",
+        "operationId": "get_api_owner_diagnosis_cases",
+        "tags": [
+          "owner"
+        ],
+        "x-feature-ids": [
+          "F09",
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/DiagnosisCasePage"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非本人车辆/会话/当前分配或处理人员不可用"
+          },
+          "409": {
+            "description": "当前配置/资格/会话版本或状态变化"
+          },
+          "503": {
+            "description": "数据库/审计暂不可用，原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-read-only": true,
+        "x-implementation-status": "r7c2-async-diagnosis-implemented",
+        "description": "no-store。拒绝未知/重复query及额外正文。独立管理与处理权限默认关闭，管理队列不含正文，处理人员须当前获派。可受理/离线留言均非实时，暂停拒绝新留言；当前R6资格与配置在提交/追加事务锁等待后重验。仅主动文字与车型，无历史档案/图片默认共享。消息/状态事件/审计原子，CAS/幂等，创建有长期意图去重，切号/隐藏清理。V046共102表，见ASYNC_DIAGNOSIS.md。"
+      },
+      "post": {
+        "summary": "非实时人工诊断受理/留言/分配与答复",
+        "operationId": "post_api_owner_diagnosis_cases",
+        "tags": [
+          "owner"
+        ],
+        "x-feature-ids": [
+          "F09",
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/DiagnosisReceipt"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非本人车辆/会话/当前分配或处理人员不可用"
+          },
+          "409": {
+            "description": "当前配置/资格/会话版本或状态变化"
+          },
+          "503": {
+            "description": "数据库/审计暂不可用，原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiagnosisCreateInput"
+              }
+            }
+          }
+        },
+        "x-roles": "OWNER",
+        "x-read-only": false,
+        "x-implementation-status": "r7c2-async-diagnosis-implemented",
+        "description": "no-store。拒绝未知/重复query及额外正文。独立管理与处理权限默认关闭，管理队列不含正文，处理人员须当前获派。可受理/离线留言均非实时，暂停拒绝新留言；当前R6资格与配置在提交/追加事务锁等待后重验。仅主动文字与车型，无历史档案/图片默认共享。消息/状态事件/审计原子，CAS/幂等，创建有长期意图去重，切号/隐藏清理。V046共102表，见ASYNC_DIAGNOSIS.md。"
+      }
+    },
+    "/api/owner/diagnosis/cases/{id}": {
+      "get": {
+        "summary": "非实时人工诊断受理/留言/分配与答复",
+        "operationId": "get_api_owner_diagnosis_cases_id",
+        "tags": [
+          "owner"
+        ],
+        "x-feature-ids": [
+          "F09",
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/DiagnosisCaseDetail"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非本人车辆/会话/当前分配或处理人员不可用"
+          },
+          "409": {
+            "description": "当前配置/资格/会话版本或状态变化"
+          },
+          "503": {
+            "description": "数据库/审计暂不可用，原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-read-only": true,
+        "x-implementation-status": "r7c2-async-diagnosis-implemented",
+        "description": "no-store。拒绝未知/重复query及额外正文。独立管理与处理权限默认关闭，管理队列不含正文，处理人员须当前获派。可受理/离线留言均非实时，暂停拒绝新留言；当前R6资格与配置在提交/追加事务锁等待后重验。仅主动文字与车型，无历史档案/图片默认共享。消息/状态事件/审计原子，CAS/幂等，创建有长期意图去重，切号/隐藏清理。V046共102表，见ASYNC_DIAGNOSIS.md。"
+      }
+    },
+    "/api/owner/diagnosis/cases/{id}/message": {
+      "post": {
+        "summary": "非实时人工诊断受理/留言/分配与答复",
+        "operationId": "post_api_owner_diagnosis_cases_id_message",
+        "tags": [
+          "owner"
+        ],
+        "x-feature-ids": [
+          "F09",
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/DiagnosisReceipt"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非本人车辆/会话/当前分配或处理人员不可用"
+          },
+          "409": {
+            "description": "当前配置/资格/会话版本或状态变化"
+          },
+          "503": {
+            "description": "数据库/审计暂不可用，原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiagnosisMessageInput"
+              }
+            }
+          }
+        },
+        "x-roles": "OWNER",
+        "x-read-only": false,
+        "x-implementation-status": "r7c2-async-diagnosis-implemented",
+        "description": "no-store。拒绝未知/重复query及额外正文。独立管理与处理权限默认关闭，管理队列不含正文，处理人员须当前获派。可受理/离线留言均非实时，暂停拒绝新留言；当前R6资格与配置在提交/追加事务锁等待后重验。仅主动文字与车型，无历史档案/图片默认共享。消息/状态事件/审计原子，CAS/幂等，创建有长期意图去重，切号/隐藏清理。V046共102表，见ASYNC_DIAGNOSIS.md。"
+      }
+    },
+    "/api/owner/diagnosis/cases/{id}/close": {
+      "post": {
+        "summary": "非实时人工诊断受理/留言/分配与答复",
+        "operationId": "post_api_owner_diagnosis_cases_id_close",
+        "tags": [
+          "owner"
+        ],
+        "x-feature-ids": [
+          "F09",
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/DiagnosisReceipt"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非本人车辆/会话/当前分配或处理人员不可用"
+          },
+          "409": {
+            "description": "当前配置/资格/会话版本或状态变化"
+          },
+          "503": {
+            "description": "数据库/审计暂不可用，原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiagnosisCloseInput"
+              }
+            }
+          }
+        },
+        "x-roles": "OWNER",
+        "x-read-only": false,
+        "x-implementation-status": "r7c2-async-diagnosis-implemented",
+        "description": "no-store。拒绝未知/重复query及额外正文。独立管理与处理权限默认关闭，管理队列不含正文，处理人员须当前获派。可受理/离线留言均非实时，暂停拒绝新留言；当前R6资格与配置在提交/追加事务锁等待后重验。仅主动文字与车型，无历史档案/图片默认共享。消息/状态事件/审计原子，CAS/幂等，创建有长期意图去重，切号/隐藏清理。V046共102表，见ASYNC_DIAGNOSIS.md。"
+      }
+    },
+    "/api/admin/diagnosis/policies": {
+      "get": {
+        "summary": "非实时人工诊断受理/留言/分配与答复",
+        "operationId": "get_api_admin_diagnosis_policies",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F09",
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/DiagnosisServicePage"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非本人车辆/会话/当前分配或处理人员不可用"
+          },
+          "409": {
+            "description": "当前配置/资格/会话版本或状态变化"
+          },
+          "503": {
+            "description": "数据库/审计暂不可用，原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR(can_diagnose_manage)",
+        "x-read-only": true,
+        "x-implementation-status": "r7c2-async-diagnosis-implemented",
+        "description": "no-store。拒绝未知/重复query及额外正文。独立管理与处理权限默认关闭，管理队列不含正文，处理人员须当前获派。可受理/离线留言均非实时，暂停拒绝新留言；当前R6资格与配置在提交/追加事务锁等待后重验。仅主动文字与车型，无历史档案/图片默认共享。消息/状态事件/审计原子，CAS/幂等，创建有长期意图去重，切号/隐藏清理。V046共102表，见ASYNC_DIAGNOSIS.md。"
+      },
+      "post": {
+        "summary": "非实时人工诊断受理/留言/分配与答复",
+        "operationId": "post_api_admin_diagnosis_policies",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F09",
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/DiagnosisServicePolicy"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非本人车辆/会话/当前分配或处理人员不可用"
+          },
+          "409": {
+            "description": "当前配置/资格/会话版本或状态变化"
+          },
+          "503": {
+            "description": "数据库/审计暂不可用，原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiagnosisServiceInput"
+              }
+            }
+          }
+        },
+        "x-roles": "OPERATOR(can_diagnose_manage)",
+        "x-read-only": false,
+        "x-implementation-status": "r7c2-async-diagnosis-implemented",
+        "description": "no-store。拒绝未知/重复query及额外正文。独立管理与处理权限默认关闭，管理队列不含正文，处理人员须当前获派。可受理/离线留言均非实时，暂停拒绝新留言；当前R6资格与配置在提交/追加事务锁等待后重验。仅主动文字与车型，无历史档案/图片默认共享。消息/状态事件/审计原子，CAS/幂等，创建有长期意图去重，切号/隐藏清理。V046共102表，见ASYNC_DIAGNOSIS.md。"
+      }
+    },
+    "/api/admin/diagnosis/policies/{id}": {
+      "put": {
+        "summary": "非实时人工诊断受理/留言/分配与答复",
+        "operationId": "put_api_admin_diagnosis_policies_id",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F09",
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/DiagnosisServicePolicy"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非本人车辆/会话/当前分配或处理人员不可用"
+          },
+          "409": {
+            "description": "当前配置/资格/会话版本或状态变化"
+          },
+          "503": {
+            "description": "数据库/审计暂不可用，原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR(can_diagnose_manage)",
+        "x-read-only": false,
+        "x-implementation-status": "r7c2-async-diagnosis-implemented",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiagnosisServiceUpdate"
+              }
+            }
+          }
+        },
+        "description": "no-store。拒绝未知/重复query及额外正文。独立管理与处理权限默认关闭，管理队列不含正文，处理人员须当前获派。可受理/离线留言均非实时，暂停拒绝新留言；当前R6资格与配置在提交/追加事务锁等待后重验。仅主动文字与车型，无历史档案/图片默认共享。消息/状态事件/审计原子，CAS/幂等，创建有长期意图去重，切号/隐藏清理。V046共102表，见ASYNC_DIAGNOSIS.md。"
+      }
+    },
+    "/api/admin/diagnosis/policies/{id}/status": {
+      "put": {
+        "summary": "非实时人工诊断受理/留言/分配与答复",
+        "operationId": "put_api_admin_diagnosis_policies_id_status",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F09",
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/DiagnosisServicePolicy"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非本人车辆/会话/当前分配或处理人员不可用"
+          },
+          "409": {
+            "description": "当前配置/资格/会话版本或状态变化"
+          },
+          "503": {
+            "description": "数据库/审计暂不可用，原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR(can_diagnose_manage)",
+        "x-read-only": false,
+        "x-implementation-status": "r7c2-async-diagnosis-implemented",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvitePolicyStatusInput"
+              }
+            }
+          }
+        },
+        "description": "no-store。拒绝未知/重复query及额外正文。独立管理与处理权限默认关闭，管理队列不含正文，处理人员须当前获派。可受理/离线留言均非实时，暂停拒绝新留言；当前R6资格与配置在提交/追加事务锁等待后重验。仅主动文字与车型，无历史档案/图片默认共享。消息/状态事件/审计原子，CAS/幂等，创建有长期意图去重，切号/隐藏清理。V046共102表，见ASYNC_DIAGNOSIS.md。"
+      }
+    },
+    "/api/admin/diagnosis/handlers": {
+      "get": {
+        "summary": "非实时人工诊断受理/留言/分配与答复",
+        "operationId": "get_api_admin_diagnosis_handlers",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F09",
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/DiagnosisHandlerPage"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非本人车辆/会话/当前分配或处理人员不可用"
+          },
+          "409": {
+            "description": "当前配置/资格/会话版本或状态变化"
+          },
+          "503": {
+            "description": "数据库/审计暂不可用，原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR(can_diagnose_manage)",
+        "x-read-only": true,
+        "x-implementation-status": "r7c2-async-diagnosis-implemented",
+        "description": "no-store。拒绝未知/重复query及额外正文。独立管理与处理权限默认关闭，管理队列不含正文，处理人员须当前获派。可受理/离线留言均非实时，暂停拒绝新留言；当前R6资格与配置在提交/追加事务锁等待后重验。仅主动文字与车型，无历史档案/图片默认共享。消息/状态事件/审计原子，CAS/幂等，创建有长期意图去重，切号/隐藏清理。V046共102表，见ASYNC_DIAGNOSIS.md。"
+      }
+    },
+    "/api/admin/diagnosis/cases": {
+      "get": {
+        "summary": "非实时人工诊断受理/留言/分配与答复",
+        "operationId": "get_api_admin_diagnosis_cases",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F09",
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "schema": {
+              "enum": [
+                "mine",
+                "queue"
+              ],
+              "default": "mine"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "anyOf": [
+                            {
+                              "$ref": "#/components/schemas/DiagnosisCasePage"
+                            },
+                            {
+                              "$ref": "#/components/schemas/DiagnosisQueuePage"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非本人车辆/会话/当前分配或处理人员不可用"
+          },
+          "409": {
+            "description": "当前配置/资格/会话版本或状态变化"
+          },
+          "503": {
+            "description": "数据库/审计暂不可用，原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR(can_diagnose or can_diagnose_manage)",
+        "x-read-only": true,
+        "x-implementation-status": "r7c2-async-diagnosis-implemented",
+        "description": "no-store。拒绝未知/重复query及额外正文。独立管理与处理权限默认关闭，管理队列不含正文，处理人员须当前获派。可受理/离线留言均非实时，暂停拒绝新留言；当前R6资格与配置在提交/追加事务锁等待后重验。仅主动文字与车型，无历史档案/图片默认共享。消息/状态事件/审计原子，CAS/幂等，创建有长期意图去重，切号/隐藏清理。V046共102表，见ASYNC_DIAGNOSIS.md。"
+      }
+    },
+    "/api/admin/diagnosis/cases/{id}": {
+      "get": {
+        "summary": "非实时人工诊断受理/留言/分配与答复",
+        "operationId": "get_api_admin_diagnosis_cases_id",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F09",
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/DiagnosisCaseDetail"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非本人车辆/会话/当前分配或处理人员不可用"
+          },
+          "409": {
+            "description": "当前配置/资格/会话版本或状态变化"
+          },
+          "503": {
+            "description": "数据库/审计暂不可用，原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR(can_diagnose + assigned)",
+        "x-read-only": true,
+        "x-implementation-status": "r7c2-async-diagnosis-implemented",
+        "description": "no-store。拒绝未知/重复query及额外正文。独立管理与处理权限默认关闭，管理队列不含正文，处理人员须当前获派。可受理/离线留言均非实时，暂停拒绝新留言；当前R6资格与配置在提交/追加事务锁等待后重验。仅主动文字与车型，无历史档案/图片默认共享。消息/状态事件/审计原子，CAS/幂等，创建有长期意图去重，切号/隐藏清理。V046共102表，见ASYNC_DIAGNOSIS.md。"
+      }
+    },
+    "/api/admin/diagnosis/cases/{id}/assignment": {
+      "put": {
+        "summary": "非实时人工诊断受理/留言/分配与答复",
+        "operationId": "put_api_admin_diagnosis_cases_id_assignment",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F09",
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/DiagnosisReceipt"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非本人车辆/会话/当前分配或处理人员不可用"
+          },
+          "409": {
+            "description": "当前配置/资格/会话版本或状态变化"
+          },
+          "503": {
+            "description": "数据库/审计暂不可用，原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR(can_diagnose_manage)",
+        "x-read-only": false,
+        "x-implementation-status": "r7c2-async-diagnosis-implemented",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiagnosisAssignInput"
+              }
+            }
+          }
+        },
+        "description": "no-store。拒绝未知/重复query及额外正文。独立管理与处理权限默认关闭，管理队列不含正文，处理人员须当前获派。可受理/离线留言均非实时，暂停拒绝新留言；当前R6资格与配置在提交/追加事务锁等待后重验。仅主动文字与车型，无历史档案/图片默认共享。消息/状态事件/审计原子，CAS/幂等，创建有长期意图去重，切号/隐藏清理。V046共102表，见ASYNC_DIAGNOSIS.md。"
+      }
+    },
+    "/api/admin/diagnosis/cases/{id}/reply": {
+      "post": {
+        "summary": "非实时人工诊断受理/留言/分配与答复",
+        "operationId": "post_api_admin_diagnosis_cases_id_reply",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F09",
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/DiagnosisReceipt"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非本人车辆/会话/当前分配或处理人员不可用"
+          },
+          "409": {
+            "description": "当前配置/资格/会话版本或状态变化"
+          },
+          "503": {
+            "description": "数据库/审计暂不可用，原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiagnosisReplyInput"
+              }
+            }
+          }
+        },
+        "x-roles": "OPERATOR(can_diagnose + assigned)",
+        "x-read-only": false,
+        "x-implementation-status": "r7c2-async-diagnosis-implemented",
+        "description": "no-store。拒绝未知/重复query及额外正文。独立管理与处理权限默认关闭，管理队列不含正文，处理人员须当前获派。可受理/离线留言均非实时，暂停拒绝新留言；当前R6资格与配置在提交/追加事务锁等待后重验。仅主动文字与车型，无历史档案/图片默认共享。消息/状态事件/审计原子，CAS/幂等，创建有长期意图去重，切号/隐藏清理。V046共102表，见ASYNC_DIAGNOSIS.md。"
+      }
+    },
+    "/api/admin/diagnosis/cases/{id}/close": {
+      "post": {
+        "summary": "非实时人工诊断受理/留言/分配与答复",
+        "operationId": "post_api_admin_diagnosis_cases_id_close",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F09",
+          "F10"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/DiagnosisReceipt"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "非本人车辆/会话/当前分配或处理人员不可用"
+          },
+          "409": {
+            "description": "当前配置/资格/会话版本或状态变化"
+          },
+          "503": {
+            "description": "数据库/审计暂不可用，原键重试"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiagnosisCloseInput"
+              }
+            }
+          }
+        },
+        "x-roles": "OPERATOR(manage or assigned handler)",
+        "x-read-only": false,
+        "x-implementation-status": "r7c2-async-diagnosis-implemented",
+        "description": "no-store。拒绝未知/重复query及额外正文。独立管理与处理权限默认关闭，管理队列不含正文，处理人员须当前获派。可受理/离线留言均非实时，暂停拒绝新留言；当前R6资格与配置在提交/追加事务锁等待后重验。仅主动文字与车型，无历史档案/图片默认共享。消息/状态事件/审计原子，CAS/幂等，创建有长期意图去重，切号/隐藏清理。V046共102表，见ASYNC_DIAGNOSIS.md。"
+      }
+    },
+    "/api/owner/diagnosis/notifications": {
+      "get": {
+        "summary": "本人/独立运营诊断消息与原键已读",
+        "operationId": "get_api_owner_diagnosis_notifications",
+        "tags": [
+          "owner"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/DiagnosisOwnerInbox"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无当前诊断权限/身份错误"
+          },
+          "404": {
+            "description": "不在当时与当前用途交集"
+          },
+          "503": {
+            "description": "数据库或原子写入暂不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-read-only": true,
+        "x-implementation-status": "r7c3-diagnosis-notifications-implemented",
+        "description": "no-store。五类诊断事实同业务事务捕获来源与用途，独立去重投递，无历史回填。列表/计数/原键已读重验当前身份与业务用途：本人CASE；当时获派且当前仍获派并有处理权限的人员CASE；当时管理接收人且当前仍有管理权限者仅QUEUE。双权限账号同事件一条；旧管理用途不会因后来获派提升为CASE。不含正文/车型/身份/档案/私有地址。已读不重复审计或改变时点。详见DIAGNOSIS_NOTIFICATIONS.md。"
+      }
+    },
+    "/api/owner/diagnosis/notifications/{id}/read": {
+      "put": {
+        "summary": "本人/独立运营诊断消息与原键已读",
+        "operationId": "put_api_owner_diagnosis_notifications_id_read",
+        "tags": [
+          "owner"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceNotificationRead"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无当前诊断权限/身份错误"
+          },
+          "404": {
+            "description": "不在当时与当前用途交集"
+          },
+          "503": {
+            "description": "数据库或原子写入暂不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "x-read-only": false,
+        "x-implementation-status": "r7c3-diagnosis-notifications-implemented",
+        "description": "no-store。五类诊断事实同业务事务捕获来源与用途，独立去重投递，无历史回填。列表/计数/原键已读重验当前身份与业务用途：本人CASE；当时获派且当前仍获派并有处理权限的人员CASE；当时管理接收人且当前仍有管理权限者仅QUEUE。双权限账号同事件一条；旧管理用途不会因后来获派提升为CASE。不含正文/车型/身份/档案/私有地址。已读不重复审计或改变时点。详见DIAGNOSIS_NOTIFICATIONS.md。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/diagnosis/notifications": {
+      "get": {
+        "summary": "本人/独立运营诊断消息与原键已读",
+        "operationId": "get_api_admin_diagnosis_notifications",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "const": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/DiagnosisInbox"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无当前诊断权限/身份错误"
+          },
+          "404": {
+            "description": "不在当时与当前用途交集"
+          },
+          "503": {
+            "description": "数据库或原子写入暂不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR with current diagnose or diagnose-manage privilege",
+        "x-read-only": true,
+        "x-implementation-status": "r7c3-diagnosis-notifications-implemented",
+        "description": "no-store。五类诊断事实同业务事务捕获来源与用途，独立去重投递，无历史回填。列表/计数/原键已读重验当前身份与业务用途：本人CASE；当时获派且当前仍获派并有处理权限的人员CASE；当时管理接收人且当前仍有管理权限者仅QUEUE。双权限账号同事件一条；旧管理用途不会因后来获派提升为CASE。不含正文/车型/身份/档案/私有地址。已读不重复审计或改变时点。详见DIAGNOSIS_NOTIFICATIONS.md。"
+      }
+    },
+    "/api/admin/diagnosis/notifications/{id}/read": {
+      "put": {
+        "summary": "本人/独立运营诊断消息与原键已读",
+        "operationId": "put_api_admin_diagnosis_notifications_id_read",
+        "tags": [
+          "admin"
+        ],
+        "x-feature-ids": [
+          "F08",
+          "F15",
+          "F18"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ServiceNotificationRead"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或业务状态错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无当前诊断权限/身份错误"
+          },
+          "404": {
+            "description": "不在当时与当前用途交集"
+          },
+          "503": {
+            "description": "数据库或原子写入暂不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OPERATOR with current diagnose or diagnose-manage privilege",
+        "x-read-only": false,
+        "x-implementation-status": "r7c3-diagnosis-notifications-implemented",
+        "description": "no-store。五类诊断事实同业务事务捕获来源与用途，独立去重投递，无历史回填。列表/计数/原键已读重验当前身份与业务用途：本人CASE；当时获派且当前仍获派并有处理权限的人员CASE；当时管理接收人且当前仍有管理权限者仅QUEUE。双权限账号同事件一条；旧管理用途不会因后来获派提升为CASE。不含正文/车型/身份/档案/私有地址。已读不重复审计或改变时点。详见DIAGNOSIS_NOTIFICATIONS.md。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [],
+                "properties": {}
               }
             }
           }
@@ -30380,10 +34152,2202 @@
             ]
           },
           "service_available": {
-            "const": false
+            "type": "boolean",
+            "description": "资格ELIGIBLE且受理配置允许并有有效处理人员时true，不表示实时在线。提交仍重新核对。"
           },
           "rule_version": {
             "const": "R6B_DIAGNOSIS_V1"
+          }
+        }
+      },
+      "OwnerEvidencePhoto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "file_id",
+          "slot",
+          "available"
+        ],
+        "properties": {
+          "file_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "slot": {
+            "enum": [
+              "",
+              "FRONT",
+              "REAR",
+              "LEFT",
+              "RIGHT",
+              "ROOF",
+              "DASHBOARD",
+              "INTERIOR",
+              "FUEL"
+            ]
+          },
+          "available": {
+            "type": "boolean"
+          }
+        }
+      },
+      "OwnerEvidenceGroup": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "state",
+          "photos"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "PICKUP",
+              "PROTECTION",
+              "PROCESS",
+              "FAULT",
+              "FINISH",
+              "SIGNATURE"
+            ]
+          },
+          "state": {
+            "enum": [
+              "MISSING",
+              "UNKNOWN",
+              "RECORDED"
+            ]
+          },
+          "photos": {
+            "type": "array",
+            "maxItems": 9,
+            "items": {
+              "$ref": "#/components/schemas/OwnerEvidencePhoto"
+            }
+          }
+        }
+      },
+      "OwnerEvidenceReport": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "repair_plan",
+          "fault_analysis",
+          "parts_used",
+          "no_parts",
+          "no_fault_parts",
+          "work_minutes",
+          "submitted_at",
+          "signed_at"
+        ],
+        "properties": {
+          "repair_plan": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "fault_analysis": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "parts_used": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "model",
+                "brand",
+                "quantity"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "model": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "brand": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "quantity": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 999
+                }
+              }
+            }
+          },
+          "no_parts": {
+            "type": "boolean"
+          },
+          "no_fault_parts": {
+            "type": "boolean"
+          },
+          "work_minutes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1440
+          },
+          "submitted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "signed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "OwnerServiceEvidence": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order_id",
+          "order_status",
+          "timeline",
+          "groups",
+          "report_state",
+          "report"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "order_status": {
+            "enum": [
+              "PENDING_PAYMENT",
+              "PAID",
+              "RECEIVED",
+              "IN_SERVICE",
+              "PENDING_VERIFY",
+              "COMPLETED",
+              "CLOSED",
+              "DISPUTED"
+            ]
+          },
+          "timeline": {
+            "type": "array",
+            "maxItems": 10,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "event",
+                "occurred_at"
+              ],
+              "properties": {
+                "event": {
+                  "enum": [
+                    "CREATED",
+                    "CHECKED_IN",
+                    "OWNER_CONFIRMED",
+                    "ASSIGNED",
+                    "PROTECTED",
+                    "REPORTED",
+                    "QUALITY_SIGNED",
+                    "REDEEMED",
+                    "CLOSED"
+                  ]
+                },
+                "occurred_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "groups": {
+            "type": "array",
+            "minItems": 6,
+            "maxItems": 6,
+            "items": {
+              "$ref": "#/components/schemas/OwnerEvidenceGroup"
+            }
+          },
+          "report_state": {
+            "enum": [
+              "MISSING",
+              "UNKNOWN",
+              "SUBMITTED",
+              "SIGNED"
+            ]
+          },
+          "report": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OwnerEvidenceReport"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "OwnerEvidenceAccess": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "url",
+          "expires_at"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ServiceArchiveRecord": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "archive_id",
+              "recorded_date",
+              "title",
+              "notes",
+              "mileage",
+              "files",
+              "archive_type",
+              "fields"
+            ],
+            "properties": {
+              "archive_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "recorded_date": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "title": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "notes": {
+                "type": "string",
+                "maxLength": 5000
+              },
+              "mileage": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "files": {
+                "type": "array",
+                "maxItems": 30,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "file_id",
+                    "available"
+                  ],
+                  "properties": {
+                    "file_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "available": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              },
+              "archive_type": {
+                "const": 1
+              },
+              "fields": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "service_items": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 20,
+                    "uniqueItems": true,
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80
+                    }
+                  },
+                  "performed_mileage": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "service_date": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "oil_spec": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "parts_used": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 20,
+                    "uniqueItems": true,
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80
+                    }
+                  },
+                  "next_due_date": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "next_due_mileage": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "archive_id",
+              "recorded_date",
+              "title",
+              "notes",
+              "mileage",
+              "files",
+              "archive_type",
+              "fields"
+            ],
+            "properties": {
+              "archive_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "recorded_date": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "title": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "notes": {
+                "type": "string",
+                "maxLength": 5000
+              },
+              "mileage": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "files": {
+                "type": "array",
+                "maxItems": 30,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "file_id",
+                    "available"
+                  ],
+                  "properties": {
+                    "file_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "available": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              },
+              "archive_type": {
+                "const": 2
+              },
+              "fields": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "repair_items": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 20,
+                    "uniqueItems": true,
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80
+                    }
+                  },
+                  "performed_mileage": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "repair_date": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "problem_description": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "parts_used": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 20,
+                    "uniqueItems": true,
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80
+                    }
+                  },
+                  "result_notes": {
+                    "type": "string",
+                    "maxLength": 200
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "archive_id",
+              "recorded_date",
+              "title",
+              "notes",
+              "mileage",
+              "files",
+              "archive_type",
+              "fields"
+            ],
+            "properties": {
+              "archive_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "recorded_date": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "title": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "notes": {
+                "type": "string",
+                "maxLength": 5000
+              },
+              "mileage": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "files": {
+                "type": "array",
+                "maxItems": 30,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "file_id",
+                    "available"
+                  ],
+                  "properties": {
+                    "file_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "available": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              },
+              "archive_type": {
+                "const": 10
+              },
+              "fields": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "fault_code": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "fault_description": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "observed_on": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "fault_status": {
+                    "enum": [
+                      "ACTIVE",
+                      "RESOLVED",
+                      "UNKNOWN"
+                    ]
+                  },
+                  "cleared_on": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "attention_level": {
+                    "enum": [
+                      "NORMAL",
+                      "URGENT"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ArchiveGrantCandidates": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order_id",
+          "service_active",
+          "records"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "service_active": {
+            "type": "boolean"
+          },
+          "records": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "items",
+              "total",
+              "page",
+              "page_size"
+            ],
+            "properties": {
+              "items": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "record",
+                    "source_version",
+                    "grant_revision",
+                    "grant_state"
+                  ],
+                  "properties": {
+                    "record": {
+                      "$ref": "#/components/schemas/ServiceArchiveRecord"
+                    },
+                    "source_version": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{64}$"
+                    },
+                    "grant_revision": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "grant_state": {
+                      "enum": [
+                        "NONE",
+                        "ACTIVE",
+                        "REVOKED",
+                        "SOURCE_CHANGED"
+                      ]
+                    }
+                  }
+                }
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "page": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1000000
+              },
+              "page_size": {
+                "const": 20
+              }
+            }
+          }
+        }
+      },
+      "ArchiveGrantInput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "status",
+              "expected_revision",
+              "source_version"
+            ],
+            "properties": {
+              "status": {
+                "const": "ACTIVE"
+              },
+              "expected_revision": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "source_version": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "status",
+              "expected_revision"
+            ],
+            "properties": {
+              "status": {
+                "const": "REVOKED"
+              },
+              "expected_revision": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            }
+          }
+        ]
+      },
+      "ArchiveGrantReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order_id",
+          "archive_id",
+          "grant_revision",
+          "grant_state"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "archive_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "grant_revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "grant_state": {
+            "enum": [
+              "ACTIVE",
+              "REVOKED"
+            ]
+          }
+        }
+      },
+      "ServiceTaskContext": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order_id",
+          "order_status",
+          "vehicle",
+          "project",
+          "arrival_mileage",
+          "archives"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "order_status": {
+            "enum": [
+              "RECEIVED",
+              "IN_SERVICE",
+              "PENDING_VERIFY"
+            ]
+          },
+          "vehicle": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "brand",
+              "series",
+              "year",
+              "config_name"
+            ],
+            "properties": {
+              "brand": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "series": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "year": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "config_name": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          },
+          "project": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "standard_project_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "project_name": {
+                    "type": "string"
+                  },
+                  "service_content": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "arrival_mileage": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "archives": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "items",
+              "total",
+              "page",
+              "page_size"
+            ],
+            "properties": {
+              "items": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "archive_id",
+                        "state",
+                        "record"
+                      ],
+                      "properties": {
+                        "archive_id": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        },
+                        "state": {
+                          "const": "ACTIVE"
+                        },
+                        "record": {
+                          "$ref": "#/components/schemas/ServiceArchiveRecord"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "archive_id",
+                        "state",
+                        "record"
+                      ],
+                      "properties": {
+                        "archive_id": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        },
+                        "state": {
+                          "const": "SOURCE_UNAVAILABLE"
+                        },
+                        "record": {
+                          "type": "null"
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "page": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1000000
+              },
+              "page_size": {
+                "const": 20
+              }
+            }
+          }
+        }
+      },
+      "ServiceWorkbench": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "counts",
+          "tasks"
+        ],
+        "properties": {
+          "counts": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "RECEIVE",
+              "CONFIRM",
+              "DISPUTE",
+              "ASSIGN",
+              "WAIT_ACCEPT",
+              "SERVICE",
+              "VERIFY",
+              "REVIEW_SOURCE"
+            ],
+            "properties": {
+              "RECEIVE": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "CONFIRM": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "DISPUTE": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "ASSIGN": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "WAIT_ACCEPT": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "SERVICE": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "VERIFY": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "REVIEW_SOURCE": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            }
+          },
+          "tasks": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "items",
+              "total",
+              "page",
+              "page_size"
+            ],
+            "properties": {
+              "items": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "order_id",
+                    "order_status",
+                    "bucket",
+                    "project_name",
+                    "starts_at"
+                  ],
+                  "properties": {
+                    "order_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "order_status": {
+                      "enum": [
+                        "PAID",
+                        "RECEIVED",
+                        "DISPUTED",
+                        "IN_SERVICE",
+                        "PENDING_VERIFY"
+                      ]
+                    },
+                    "bucket": {
+                      "enum": [
+                        "RECEIVE",
+                        "CONFIRM",
+                        "DISPUTE",
+                        "ASSIGN",
+                        "WAIT_ACCEPT",
+                        "SERVICE",
+                        "VERIFY",
+                        "REVIEW_SOURCE"
+                      ]
+                    },
+                    "project_name": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "starts_at": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "page": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1000000
+              },
+              "page_size": {
+                "const": 20
+              }
+            }
+          }
+        }
+      },
+      "ServiceNotification": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "notification_id",
+          "kind",
+          "order_id",
+          "order_no",
+          "order_status",
+          "occurred_at",
+          "read_at"
+        ],
+        "properties": {
+          "notification_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "kind": {
+            "enum": [
+              "ORDER_PAID",
+              "ORDER_CHECK_IN",
+              "ORDER_ASSIGN",
+              "ORDER_TECH_ACCEPT",
+              "ORDER_SERVICE_FINISH",
+              "ORDER_COMPLETE",
+              "ORDER_CLOSED",
+              "REFUND_REQUESTED",
+              "REFUND_WITHDRAWN",
+              "REFUND_REJECTED",
+              "REFUND_ACCEPTED",
+              "REFUND_SUCCEEDED",
+              "REFUND_FAILED",
+              "DISPUTE_OPENED",
+              "DISPUTE_HANDLED",
+              "DISPUTE_REJECTED",
+              "DISPUTE_RESOLVED"
+            ]
+          },
+          "order_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "order_no": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "order_status": {
+            "enum": [
+              "PENDING_PAYMENT",
+              "PAID",
+              "RECEIVED",
+              "IN_SERVICE",
+              "PENDING_VERIFY",
+              "COMPLETED",
+              "CLOSED",
+              "DISPUTED"
+            ]
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "read_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "ServiceInbox": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "unread_count",
+          "notifications"
+        ],
+        "properties": {
+          "unread_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "notifications": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "items",
+              "total",
+              "page",
+              "page_size"
+            ],
+            "properties": {
+              "items": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {
+                  "$ref": "#/components/schemas/ServiceNotification"
+                }
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "page": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1000000
+              },
+              "page_size": {
+                "const": 20
+              }
+            }
+          }
+        }
+      },
+      "ServiceNotificationRead": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "notification_id",
+          "read_at"
+        ],
+        "properties": {
+          "notification_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "read_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DiagnosisServiceInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "mode",
+          "source_note",
+          "valid_from",
+          "valid_to"
+        ],
+        "properties": {
+          "mode": {
+            "enum": [
+              "AVAILABLE",
+              "LEAVE_MESSAGE",
+              "PAUSED"
+            ]
+          },
+          "source_note": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 256
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "valid_to": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DiagnosisServiceUpdate": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "mode",
+          "source_note",
+          "valid_from",
+          "valid_to",
+          "expected_revision"
+        ],
+        "properties": {
+          "mode": {
+            "enum": [
+              "AVAILABLE",
+              "LEAVE_MESSAGE",
+              "PAUSED"
+            ]
+          },
+          "source_note": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 256
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "valid_to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740990
+          }
+        }
+      },
+      "DiagnosisServicePolicy": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "mode",
+          "source_note",
+          "valid_from",
+          "valid_to",
+          "id",
+          "revision",
+          "status",
+          "created_at",
+          "published_at"
+        ],
+        "properties": {
+          "mode": {
+            "enum": [
+              "AVAILABLE",
+              "LEAVE_MESSAGE",
+              "PAUSED"
+            ]
+          },
+          "source_note": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 256
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "valid_to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "status": {
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "STOPPED"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "DiagnosisServiceAvailability": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "state",
+          "accepting",
+          "policy"
+        ],
+        "properties": {
+          "state": {
+            "enum": [
+              "UNKNOWN",
+              "NOT_STARTED",
+              "EXPIRED",
+              "SOURCE_UNAVAILABLE",
+              "AVAILABLE",
+              "LEAVE_MESSAGE",
+              "PAUSED"
+            ]
+          },
+          "accepting": {
+            "type": "boolean"
+          },
+          "policy": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DiagnosisServicePolicy"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "DiagnosisServicePage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "$ref": "#/components/schemas/DiagnosisServicePolicy"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "page_size": {
+            "const": 20
+          }
+        }
+      },
+      "DiagnosisHandlerPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "label"
+              ],
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "label": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "page_size": {
+            "const": 20
+          }
+        }
+      },
+      "DiagnosisAdmissionContext": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "service",
+          "eligibility"
+        ],
+        "properties": {
+          "service": {
+            "$ref": "#/components/schemas/DiagnosisServiceAvailability"
+          },
+          "eligibility": {
+            "$ref": "#/components/schemas/InviteDiagnosisEligibility"
+          }
+        }
+      },
+      "DiagnosisCase": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "case_id",
+          "revision",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "case_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "status": {
+            "enum": [
+              "WAITING",
+              "PROCESSING",
+              "REPLIED",
+              "CLOSED"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DiagnosisQueueCase": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "case_id",
+          "revision",
+          "status",
+          "created_at",
+          "updated_at",
+          "assigned_operator_id"
+        ],
+        "properties": {
+          "case_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "status": {
+            "enum": [
+              "WAITING",
+              "PROCESSING",
+              "REPLIED",
+              "CLOSED"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "assigned_operator_id": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "DiagnosisCasePage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "$ref": "#/components/schemas/DiagnosisCase"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "page_size": {
+            "const": 20
+          }
+        }
+      },
+      "DiagnosisQueuePage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "$ref": "#/components/schemas/DiagnosisQueueCase"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "page_size": {
+            "const": 20
+          }
+        }
+      },
+      "DiagnosisCaseDetail": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "case",
+          "vehicle",
+          "messages"
+        ],
+        "properties": {
+          "case": {
+            "$ref": "#/components/schemas/DiagnosisCase"
+          },
+          "vehicle": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "brand",
+              "series",
+              "year",
+              "config_name"
+            ],
+            "properties": {
+              "brand": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "series": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "year": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "config_name": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          },
+          "messages": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "items",
+              "total",
+              "page",
+              "page_size"
+            ],
+            "properties": {
+              "items": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "message_id",
+                    "sender",
+                    "body",
+                    "created_at"
+                  ],
+                  "properties": {
+                    "message_id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "sender": {
+                      "enum": [
+                        "OWNER",
+                        "OPERATOR"
+                      ]
+                    },
+                    "body": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "description": "Unicode字符计数；允许内部换行，拒绝首尾空白及其他控制字符。"
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "page": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1000000
+              },
+              "page_size": {
+                "const": 20
+              }
+            }
+          }
+        }
+      },
+      "DiagnosisCreateInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "vehicle_id",
+          "policy_id",
+          "policy_revision",
+          "message",
+          "consent"
+        ],
+        "properties": {
+          "vehicle_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "policy_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "policy_revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000,
+            "description": "Unicode字符计数；允许内部换行，拒绝首尾空白及其他控制字符。"
+          },
+          "consent": {
+            "const": true
+          }
+        }
+      },
+      "DiagnosisMessageInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "expected_revision",
+          "policy_id",
+          "policy_revision",
+          "message",
+          "consent"
+        ],
+        "properties": {
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740990
+          },
+          "policy_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "policy_revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000,
+            "description": "Unicode字符计数；允许内部换行，拒绝首尾空白及其他控制字符。"
+          },
+          "consent": {
+            "const": true
+          }
+        }
+      },
+      "DiagnosisReplyInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "expected_revision",
+          "message"
+        ],
+        "properties": {
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740990
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000,
+            "description": "Unicode字符计数；允许内部换行，拒绝首尾空白及其他控制字符。"
+          }
+        }
+      },
+      "DiagnosisAssignInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "expected_revision",
+          "operator_id"
+        ],
+        "properties": {
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740990
+          },
+          "operator_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        }
+      },
+      "DiagnosisCloseInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "expected_revision"
+        ],
+        "properties": {
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740990
+          }
+        }
+      },
+      "DiagnosisReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "case_id",
+          "revision",
+          "status"
+        ],
+        "properties": {
+          "case_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "status": {
+            "enum": [
+              "WAITING",
+              "PROCESSING",
+              "REPLIED",
+              "CLOSED"
+            ]
+          }
+        }
+      },
+      "DiagnosisNotification": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "notification_id",
+          "kind",
+          "case_id",
+          "case_status",
+          "target",
+          "occurred_at",
+          "read_at"
+        ],
+        "properties": {
+          "notification_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "kind": {
+            "enum": [
+              "DIAGNOSIS_CREATED",
+              "DIAGNOSIS_MESSAGE",
+              "DIAGNOSIS_ASSIGNED",
+              "DIAGNOSIS_REPLIED",
+              "DIAGNOSIS_CLOSED"
+            ]
+          },
+          "case_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "case_status": {
+            "enum": [
+              "WAITING",
+              "PROCESSING",
+              "REPLIED",
+              "CLOSED"
+            ]
+          },
+          "target": {
+            "enum": [
+              "CASE",
+              "QUEUE"
+            ]
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "read_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "DiagnosisInbox": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "unread_count",
+          "notifications"
+        ],
+        "properties": {
+          "unread_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "notifications": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "items",
+              "total",
+              "page",
+              "page_size"
+            ],
+            "properties": {
+              "items": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {
+                  "$ref": "#/components/schemas/DiagnosisNotification"
+                }
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "page": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1000000
+              },
+              "page_size": {
+                "const": 20
+              }
+            }
+          }
+        }
+      },
+      "DiagnosisOwnerNotification": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "notification_id",
+          "kind",
+          "case_id",
+          "case_status",
+          "target",
+          "occurred_at",
+          "read_at"
+        ],
+        "properties": {
+          "notification_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "kind": {
+            "enum": [
+              "DIAGNOSIS_CREATED",
+              "DIAGNOSIS_MESSAGE",
+              "DIAGNOSIS_ASSIGNED",
+              "DIAGNOSIS_REPLIED",
+              "DIAGNOSIS_CLOSED"
+            ]
+          },
+          "case_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "case_status": {
+            "enum": [
+              "WAITING",
+              "PROCESSING",
+              "REPLIED",
+              "CLOSED"
+            ]
+          },
+          "target": {
+            "const": "CASE"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "read_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "DiagnosisOwnerInbox": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "unread_count",
+          "notifications"
+        ],
+        "properties": {
+          "unread_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "notifications": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "items",
+              "total",
+              "page",
+              "page_size"
+            ],
+            "properties": {
+              "items": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {
+                  "$ref": "#/components/schemas/DiagnosisOwnerNotification"
+                }
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "page": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1000000
+              },
+              "page_size": {
+                "const": 20
+              }
+            }
           }
         }
       }

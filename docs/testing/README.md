@@ -1,5 +1,15 @@
 # 测试资料
 
+> 整R7：[最终统一验收](LOCAL_R7_COMPLETION_ACCEPTANCE.md)，664前端和构建/104表通过；完整其余后端运行中，真实上传镜像/Compose实际烟测受本地网络阻断，最终远程六项不得提前写成功。
+
+> R7c3 第三步：[诊断消息验收](LOCAL_R7C3_DIAGNOSIS_NOTIFICATIONS_ACCEPTANCE.md)，127不同后端覆盖、648前端、微信/H5及V048/104表通过；整R7门禁仍待执行。
+
+> R7c3 第二步：[补充订单消息验收](LOCAL_R7C3_ORDER_NOTIFICATIONS_ACCEPTANCE.md)，182相关后端覆盖、642前端、微信/H5和V047/102表通过。
+
+> R7c3 第一步：[本机诊断草稿/恢复验收](LOCAL_R7C3_RECOVERY_ACCEPTANCE.md)，641 前端及微信/H5通过，整 R7 门禁待后续。
+
+> 当前R7本地实施：[R7a本地阶段验收](LOCAL_R7A_OWNER_EVIDENCE_ACCEPTANCE.md)；整个R7完成后才统一上传全部代码和文档。
+
 > 整 R6 的最终本地结果、环境限制及远程六项门禁见[统一验收](LOCAL_R6_COMPLETION_ACCEPTANCE.md)。阶段局部结果不替代最终 CI。
 
 > R6b1本地奖励配置与独立权限验收见[记录](LOCAL_R6B1_REWARD_POLICY_ACCEPTANCE.md)，整R6完成前不上传中间更新。
@@ -75,3 +85,9 @@
 - [R6b2 本地奖励验收](LOCAL_R6B2_REWARD_ACCEPTANCE.md)：本地阶段，整R6完成后统一上传。
 
 - [R6b3 本地验收](LOCAL_R6B3_ACCEPTANCE.md)：代码/文档本地保存，整R6验收后统一上传。
+
+- [R7b 本地验收](LOCAL_R7B_WORKSPACE_ACCEPTANCE.md)：本地完成，整R7完成后代码与文档统一上传。
+
+- [R7c1 本地验收](LOCAL_R7C1_NOTIFICATIONS_ACCEPTANCE.md)：本地阶段，整R7完成后代码与文档统一上传。
+
+- [R7c2 本地验收](LOCAL_R7C2_DIAGNOSIS_ACCEPTANCE.md)：本地完成，整R7完成后代码与文档统一上传。

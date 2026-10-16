@@ -43,18 +43,19 @@ public class OrderRefunds {
         Map<String,Object> result=null;if(r!=null){result=new LinkedHashMap<>();for(String k:List.of("refund_no","payment_id","amount","currency","status","revision","from_status","reason","decision_note"))result.put(k,k.equals("amount")?r.get(k).toString():r.get(k));result.put("refund_id",r.get("id"));for(String k:List.of("owner_consented_at","merchant_consented_at","refunded_at"))result.put(k,ReservationStore.iso(r.get(k)));var p=db.one("SELECT channel FROM payment WHERE id=?",r.get("payment_id"));result.put("test_mode","LOCAL_TEST".equals(p.get("channel")));}
         out.put("refund",result);return out;
     }
+    private void notice(long order,String kind){var r=refund(order,true);ServiceNotifications.enqueue(db,order,kind,"refund:"+r.get("id")+":"+r.get("revision"));}
     public JsonNode request(VehicleOwner owner,String key,long id,String reason){
         String note=text(reason);return db.writes.execute(new Actor("user",owner.id()),"POST","/api/order/"+id+"/refund",key,db.mapper.valueToTree(Map.of("reason",note)),()->lock(owner,null,id),()->{
             var o=db.one("SELECT * FROM `order` WHERE id=? FOR UPDATE",id);var p=payment(o);var r=refund(id,true);var before=view(o,r);
             if(r!=null&&(!Set.of("REJECTED","WITHDRAWN").contains(r.get("status"))||!Objects.equals(r.get("payment_id"),p.get("id"))))throw conflict();
             if(r==null)db.insert("INSERT INTO refund(order_id,payment_id,refund_no,amount,currency,status,revision,from_status,reason,owner_consented_at,requested_by) VALUES(?,?,?,?,'CNY','REQUESTED',1,?,?,?,?)",id,p.get("id"),"R"+UUID.randomUUID().toString().replace("-",""),p.get("amount"),o.get("status"),note,ReservationStore.time(db.now()),owner.id());
             else db.jdbc.update("UPDATE refund SET status='REQUESTED',revision=revision+1,from_status=?,reason=?,owner_consented_at=?,requested_by=?,merchant_consented_at=NULL,merchant_actor=NULL,decision_note=NULL WHERE id=?",o.get("status"),note,ReservationStore.time(db.now()),owner.id(),r.get("id"));
-            var after=view(o,refund(id,true));return new Change("REFUND_REQUEST","refund",ReservationStore.number(refund(id,true),"id"),before,after,after);
+            notice(id,"REFUND_REQUESTED");var after=view(o,refund(id,true));return new Change("REFUND_REQUEST","refund",ReservationStore.number(refund(id,true),"id"),before,after,after);
         });
     }
     public JsonNode withdraw(VehicleOwner owner,String key,long id,long revision){return db.writes.execute(new Actor("user",owner.id()),"POST","/api/order/"+id+"/refund/withdraw",key,db.mapper.valueToTree(Map.of("revision",revision)),()->lock(owner,null,id),()->{
         var o=db.one("SELECT * FROM `order` WHERE id=? FOR UPDATE",id);var r=refund(id,true);if(r==null||!"REQUESTED".equals(r.get("status"))||ReservationStore.number(r,"revision")!=revision)throw conflict();var before=view(o,r);
-        db.jdbc.update("UPDATE refund SET status='WITHDRAWN',revision=revision+1 WHERE id=?",r.get("id"));var after=view(o,refund(id,true));return new Change("REFUND_WITHDRAW","refund",ReservationStore.number(r,"id"),before,after,after);
+        db.jdbc.update("UPDATE refund SET status='WITHDRAWN',revision=revision+1 WHERE id=?",r.get("id"));notice(id,"REFUND_WITHDRAWN");var after=view(o,refund(id,true));return new Change("REFUND_WITHDRAW","refund",ReservationStore.number(r,"id"),before,after,after);
     });}
     public JsonNode decide(MerchantActor actor,String key,long id,long revision,String decision,String note){
         manager(actor);if(decision==null||!Set.of("ACCEPT","REJECT").contains(decision))throw ReservationInput.bad();String text=note==null?null:text(note);if("REJECT".equals(decision)&&text==null)throw ReservationInput.bad();
@@ -71,6 +72,7 @@ public class OrderRefunds {
                 db.jdbc.update("UPDATE appointment_slot SET reserved_count=? WHERE id=?",db.occupied(ReservationStore.number(o,"slot_id"),db.now()),o.get("slot_id"));
                 db.jdbc.update("INSERT INTO order_status_transition(order_id,merchant_id,from_status,to_status,action,actor_type,actor_id,note,occurred_at) VALUES(?,?,?,'CLOSED','ORDER_REFUND_CANCEL','staff_account',?,?,?)",id,actor.merchantId(),o.get("status"),actor.staffId(),text,now);
             }
+            notice(id,"ACCEPT".equals(decision)?"REFUND_ACCEPTED":"REFUND_REJECTED");if("ACCEPT".equals(decision))ServiceNotifications.enqueue(db,id,"ORDER_CLOSED");
             var after=view(db.one("SELECT * FROM `order` WHERE id=?",id),refund(id,true));return new Change("ACCEPT".equals(decision)?"REFUND_APPROVE":"REFUND_REJECT","refund",ReservationStore.number(r,"id"),before,after,after);
         });
     }

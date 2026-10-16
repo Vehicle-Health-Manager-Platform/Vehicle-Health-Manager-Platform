@@ -7,6 +7,7 @@ import { canReturnToDiscovery } from '../services/merchant-discovery.js'
 import { canReturnToHealth } from '../services/health-observations.js'
 import { canReturnToStructured } from '../services/archive-structured.js'
 import { canReturnToReminder } from '../services/archive-reminders.js'
+import { serviceLoginReturn } from '../services/service-login-return.js'
 
 const props = defineProps({
   role: { type: String, required: true },
@@ -22,6 +23,7 @@ const stateLabel = computed(() => ({ idle: '登录提示', loading: '正在处�
 const codeValid = computed(() => /^\d{6}$/.test(smsCode.value.trim()))
 
 function openOwnerTabs() { uni.switchTab({ url: '/pages/home/index' }) }
+function serviceReturnAvailable() { return serviceLoginReturn(typeof getCurrentPages==='function'?getCurrentPages():[], props.role) }
 function shareReturnAvailable() { return canReturnToArchiveShare(getCurrentPages()) }
 function returnToShare() { uni.navigateBack() }
 function discoveryReturnAvailable() { return canReturnToDiscovery(typeof getCurrentPages === 'function' ? getCurrentPages() : []) }
@@ -83,14 +85,17 @@ onMounted(() => {
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantProjects">管理本店服务</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="uni.navigateTo({url:'/pages/merchant/coupons'})">管理本店券库存与发行</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="uni.navigateTo({url:'/pages/merchant/coupon-redeem'})">服务券独立核销与记录</button>
-      <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantOrders">查看本店订单</button>
+      <button v-if="role === 'merchant' && accessToken" class="login-button" @tap="uni.navigateTo({url:'/pages/workspace/tasks?role=merchant'})">本店服务工作台</button><button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantOrders">查看本店订单</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantStaff">本店员工与员工码</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="uni.navigateTo({url:'/pages/merchant/invite'})">我的推广码与新客归因</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantProfile">门店资料</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantCommissions">本店佣金账单（店长）</button>
-      <button v-if="role === 'technician' && accessToken" class="login-button" :disabled="busy" @tap="openTechnicianOrders">我的工单</button>
+      <button v-if="role === 'technician' && accessToken" class="login-button" @tap="uni.navigateTo({url:'/pages/workspace/tasks?role=tech'})">我的技师工作台</button><button v-if="role === 'technician' && accessToken" class="login-button" :disabled="busy" @tap="openTechnicianOrders">我的工单</button>
+      <button v-if="accessToken" class="login-button" @tap="uni.navigateTo({url:`/pages/workspace/notifications?role=${role==='technician'?'tech':role}`})">站内消息</button>
+      <button v-if="role === 'owner' && accessToken" class="login-button" :disabled="busy" @tap="uni.navigateTo({url:'/pages/diagnosis/notifications?role=owner'})">诊断站内消息</button>
       <view v-if="accessToken" class="signed-in">
-        <text class="hint">已登录。车辆、订单等业务内容待接入。</text>
+        <button v-if="serviceReturnAvailable()" class="login-button" :disabled="busy" @tap="returnToShare">返回本次服务页面</button>
+        <text class="hint">已登录。业务页面会重新核对当前账号权限。</text>
         <button class="logout-button" :loading="operation === 'logout'" :disabled="busy" @tap="tryLogout">退出登录</button>
       </view>
       <view v-if="role === 'technician' && bindingToken && !accessToken" class="binding">

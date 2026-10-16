@@ -1,5 +1,9 @@
 # API 文档
 
+> R7c3 第三步：[诊断专属站内消息](DIAGNOSIS_NOTIFICATIONS.md)。
+
+> 当前R7本地实施：[R7a本人订单施工证据](OWNER_SERVICE_EVIDENCE.md)；整个R7完成后才统一上传全部代码和文档。
+
 > 整 R6 当前交付范围见[需求销项](../progress/R6_REQUIREMENT_CLOSURE.md)，统一上传与最终六项 CI 以 PR152 正文为准；下方保留各阶段说明。
 
 > R6b1 本地奖励政策配置、独立权限与发布来源见[政策协议](INVITE_REWARD_POLICIES.md)；整R6完成后上传，不代表已发奖励。
@@ -85,3 +89,9 @@ PR #14 实现[本人车辆列表、有效车型查询与手动添加](VEHICLE_MA
 - [R6b2 邀请奖励与只读记录](INVITATION_REWARDS.md)：本地阶段，整R6完成后统一上传。
 
 - [R6b3 当月邀请诊断资格](INVITE_DIAGNOSIS_ELIGIBILITY.md)：代码/文档本地保存，整R6验收后统一上传。
+
+- [R7b 当前任务与逐条授权](SERVICE_WORKSPACE.md)：本地完成，整R7完成后代码与文档统一上传。
+
+- [R7c1 站内通知协议](SERVICE_NOTIFICATIONS.md)：本地阶段，整R7完成后代码与文档统一上传。
+
+- [R7c2 非实时人工诊断](ASYNC_DIAGNOSIS.md)：本地完成，整R7完成后代码与文档统一上传。

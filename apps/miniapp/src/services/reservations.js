@@ -37,21 +37,27 @@ export function createReservationsApi({baseUrl,runtime}){
   }
 }
 export const reservationsApi=createReservationsApi({baseUrl:apiOrigin,runtime:()=>apiRuntime})
-export const initialReservationWriteState=()=>({busy:false,saved:null,message:'',failureKind:'',code:0})
+export const initialReservationWriteState=()=>({busy:false,saved:null,message:'',failureKind:'',code:0,retry:false})
 export function createReservationWriteFlow({state,token,body,request,newKey,onConflict=()=>{}}){
   let generation=0,pending=null
   function suspend(){generation++;state.busy=false}
   function reset(){suspend();pending=null;Object.assign(state,initialReservationWriteState())}
   async function save(){
     if(state.busy||state.saved)return
-    let value;try{value=body()}catch(error){state.message=error.message;state.failureKind='invalid';return}
-    const canonical=JSON.stringify(value);if(!pending||pending.canonical!==canonical)pending={canonical,body:value,key:newKey()}
+    let canonical;try{canonical=JSON.stringify(body());JSON.parse(canonical)}catch(error){state.message=error.message;state.failureKind='invalid';return}
+    if(pending&&pending.canonical!==canonical){state.message='原请求结果尚未确认，不能用修改后的内容另起请求。请重试原请求或重新读取服务器记录。';state.failureKind='pending';state.retry=true;return}
+    if(!pending)pending={canonical,key:newKey(),actor:token()}
+    await retry()
+  }
+  async function retry(){
+    if(state.busy||state.saved||!pending)return
+    if(pending.actor!==token()){reset();state.failureKind='unauthorized';state.message='账号已变化，请重新读取业务记录';return}
     const current=++generation,actor=token();state.busy=true;state.message='';state.failureKind='';state.code=0
-    try{const result=await request(actor,pending.body,pending.key);if(current!==generation||actor!==token())return;state.saved=result;state.message='操作已保存'}
-    catch(error){if(current!==generation||actor!==token())return;const safe=error instanceof ServiceError?error:serviceFailure();state.message=safe.message;state.failureKind=safe.kind;state.code=safe.code||0;if(safe.kind==='conflict'){pending=null;await onConflict(safe.code)}}
+    try{const result=await request(actor,JSON.parse(pending.canonical),pending.key);if(current!==generation||actor!==token())return;state.saved=result;state.retry=false;pending=null;state.message='操作已保存'}
+    catch(error){if(current!==generation||actor!==token())return;const safe=error instanceof ServiceError?error:serviceFailure();state.message=safe.message;state.failureKind=safe.kind;state.code=safe.code||0;state.retry=true;if(['invalid','rejected','conflict','unauthorized','forbidden','missing'].includes(safe.kind)){pending=null;state.retry=false}if(safe.kind==='conflict')await onConflict(safe.code)}
     finally{if(current===generation)state.busy=false}
   }
-  return{save,reset,suspend}
+  return{save,retry,reset,suspend}
 }
 export const chinaDate=(value=new Date())=>new Date(value.getTime()+8*3600000).toISOString().slice(0,10)
 export const displayTime=value=>value?new Date(Date.parse(value)+8*3600000).toISOString().slice(0,16).replace('T',' ')+'（北京时间）':'未提供'

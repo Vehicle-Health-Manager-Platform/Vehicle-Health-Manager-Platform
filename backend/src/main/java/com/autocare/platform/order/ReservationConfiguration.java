@@ -11,6 +11,14 @@ import org.springframework.transaction.PlatformTransactionManager;
 @ConditionalOnProperty("MYSQL_HOST")
 @EnableScheduling
 public class ReservationConfiguration {
+    @Bean DiagnosisServicePolicies diagnosisServicePolicies(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators){return new DiagnosisServicePolicies(db,operators);}
+    @Bean DiagnosisNotifications diagnosisNotifications(ReservationStore db,DiagnosisServicePolicies policies){return new DiagnosisNotifications(db,policies);}
+    @Bean DiagnosisCases diagnosisCases(ReservationStore db,DiagnosisServicePolicies policies,InviteDiagnosisPolicies eligibility){return new DiagnosisCases(db,policies,eligibility);}
+    @Bean ServiceNotifications serviceNotifications(ReservationStore db,@org.springframework.beans.factory.annotation.Value("${WECHAT_APP_ID:}")String appId){return new ServiceNotifications(db,appId);}
+    @Bean ServiceTaskScope serviceTaskScope(ReservationStore db,TechnicianAssignments assignments,@org.springframework.beans.factory.annotation.Value("${WECHAT_APP_ID:}")String appId){return new ServiceTaskScope(db,assignments,appId);}
+    @Bean ServiceWorkbench serviceWorkbench(ServiceTaskScope scope){return new ServiceWorkbench(scope);}
+    @Bean OrderArchiveGrants orderArchiveGrants(ServiceTaskScope scope){return new OrderArchiveGrants(scope);}
+    @Bean OwnerServiceEvidence ownerServiceEvidence(ReservationStore db){return new OwnerServiceEvidence(db);}
     @Bean InviteDiagnosisPolicies inviteDiagnosisPolicies(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators){return new InviteDiagnosisPolicies(db,operators);}
     @Bean InviteRewardPolicies inviteRewardPolicies(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators,CouponInventory coupons){return new InviteRewardPolicies(db,operators,coupons);}
     @Bean InvitationRewards invitationRewards(ReservationStore db,CouponInventory coupons,@org.springframework.beans.factory.annotation.Value("${INVITE_REWARD_ENABLED:false}")boolean enabled){return new InvitationRewards(db,coupons,enabled);}

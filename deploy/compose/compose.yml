@@ -54,6 +54,11 @@ services:
       - ../../docs/sql/migrations/V041__invitation_reward_policies.sql:/docker-entrypoint-initdb.d/041-invitation-reward-policies.sql:ro
       - ../../docs/sql/migrations/V042__invitation_reward_delivery.sql:/docker-entrypoint-initdb.d/042-invitation-reward-delivery.sql:ro
       - ../../docs/sql/migrations/V043__invitation_diagnosis_unlock.sql:/docker-entrypoint-initdb.d/043-invitation-diagnosis-unlock.sql:ro
+      - ../../docs/sql/migrations/V044__order_archive_grants.sql:/docker-entrypoint-initdb.d/044-order-archive-grants.sql:ro
+      - ../../docs/sql/migrations/V045__service_notification_outbox.sql:/docker-entrypoint-initdb.d/045-service-notification-outbox.sql:ro
+      - ../../docs/sql/migrations/V046__async_diagnosis.sql:/docker-entrypoint-initdb.d/046-async-diagnosis.sql:ro
+      - ../../docs/sql/migrations/V047__order_notification_sources.sql:/docker-entrypoint-initdb.d/047-order-notification-sources.sql:ro
+      - ../../docs/sql/migrations/V048__diagnosis_notifications.sql:/docker-entrypoint-initdb.d/048-diagnosis-notifications.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent"]
       interval: 10s
@@ -165,6 +170,7 @@ services:
       REVIEW_SUMMARY_ENABLED: ${REVIEW_SUMMARY_ENABLED:-false}
       AI_SERVICE_PLAN_ENABLED: ${AI_SERVICE_PLAN_ENABLED:-false}
       SERVICE_ARCHIVE_INTERVAL_MS: ${SERVICE_ARCHIVE_INTERVAL_MS:-60000}
+      SERVICE_NOTIFICATION_DELAY_MS: ${SERVICE_NOTIFICATION_DELAY_MS:-5000}
       PAYMENT_QUERY_RECOVERY_ENABLED: ${PAYMENT_QUERY_RECOVERY_ENABLED:-false}
       PAYMENT_QUERY_RECOVERY_INTERVAL_MS: ${PAYMENT_QUERY_RECOVERY_INTERVAL_MS:-60000}
       PAYMENT_LOCAL_TEST_QUERY_URL: ${PAYMENT_LOCAL_TEST_QUERY_URL:-}

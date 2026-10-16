@@ -1,0 +1,15 @@
+<script setup>
+import {reactive,ref,watch} from 'vue'
+import {onLoad,onShow,onHide,onUnload} from '@dcloudio/uni-app'
+import {ownerSession,clearOwnerSession} from '../../services/owner-session.js'
+import {initialWorkspaceState,createWorkspaceFlow,GRANT_LABELS} from '../../services/service-workspace.js'
+import {imageRequestKey} from '../../services/private-images.js'
+import ServiceArchiveRecord from '../../components/ServiceArchiveRecord.vue'
+import WorkspaceImagePreview from '../../components/WorkspaceImagePreview.vue'
+const order=ref(0),state=reactive(initialWorkspaceState()),token=()=>ownerSession.accessToken
+const flow=createWorkspaceFlow({state,kind:'grants',token,order:()=>order.value,newKey:imageRequestKey,confirm:(status)=>new Promise(resolve=>uni.showModal({title:status==='ACTIVE'?'授权本单读取此条记录':'撤销此条记录授权',content:status==='ACTIVE'?'请先核对本条内容与图片。仅本单门店和当前已接单技师可读取这一版本；记录改动需重新确认。撤销或工单失效后拒绝新读取，已发图片链接最多300秒到期。':'撤销后拒绝新的读取；已经发出的图片链接最多300秒到期。',success:r=>resolve(r.confirm),fail:()=>resolve(false)}))});let visible=false
+function login(){clearOwnerSession();uni.navigateTo({url:'/pages/owner/index'})}
+watch(()=>[token(),order.value],()=>{flow.reset();if(visible&&token())flow.load()},{flush:'sync'})
+onLoad(q=>{order.value=/^[1-9]\d*$/.test(String(q?.id||''))?Number(q.id):0});onShow(()=>{visible=true;if(token())flow.load()});onHide(()=>{visible=false;flow.reset()});onUnload(()=>{visible=false;flow.reset()})
+</script>
+<template><view class="reservation-page"><text class="reservation-title">本单历史档案授权</text><text>逐条核对后授权，不会共享整车全部档案。可选保养、维修、故障记录；证件、保险、违章不在此共享。</text><button v-if="!token()" @tap="login">车主登录</button><text v-if="state.busy">正在处理…</text><text v-if="state.message">{{state.message}}</text><button v-if="['unauthorized','forbidden'].includes(state.kind)" @tap="login">重新登录</button><button v-if="state.retry" :disabled="state.busy" @tap="flow.retry">重试原授权操作</button><button :disabled="state.busy" @tap="flow.load(state.page)">刷新授权记录</button><template v-if="state.data"><text v-if="!state.data.service_active">本单当前不在服务阶段，可撤销已有授权；不能新增授权。</text><text v-if="!state.data.records.items.length">暂无可用于本单授权的保养、维修或故障记录。</text><view v-for="r in state.data.records.items" :key="r.record.archive_id" class="reservation-panel"><ServiceArchiveRecord :record="r.record" :busy="state.photoBusy" @preview="file=>flow.preview(r.record.archive_id,file)"/><text>{{GRANT_LABELS[r.grant_state]}}</text><button v-if="r.grant_state!=='ACTIVE'" :disabled="state.busy||state.retry||!state.data.service_active" @tap="flow.set(r,'ACTIVE')">{{r.grant_state==='SOURCE_CHANGED'?'重新确认并授权此版本':'授权本单读取此条'}}</button><button v-if="['ACTIVE','SOURCE_CHANGED'].includes(r.grant_state)" :disabled="state.busy||state.retry" @tap="flow.set(r,'REVOKED')">撤销此条授权</button></view><button v-if="state.page>1" :disabled="state.busy" @tap="flow.load(state.page-1)">上一页</button><button v-if="state.page*20<state.data.records.total" :disabled="state.busy" @tap="flow.load(state.page+1)">下一页</button></template><WorkspaceImagePreview :preview="state.preview" @close="flow.closePreview"/></view></template>

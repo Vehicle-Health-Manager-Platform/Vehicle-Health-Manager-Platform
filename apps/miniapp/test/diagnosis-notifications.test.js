@@ -1,0 +1,27 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import {validDiagnosisNotifications,createDiagnosisNotificationApi,diagnosisNotificationUrl} from '../src/services/diagnosis-notifications.js'
+import {initialNotificationState,createNotificationFlow} from '../src/services/notifications.js'
+const key='00000000-0000-4000-8000-000000000001',at='2026-10-15T08:00:00Z'
+const data=(target='CASE')=>({unread_count:1,notifications:{items:[{notification_id:1,kind:'DIAGNOSIS_ASSIGNED',case_id:9,case_status:'PROCESSING',target,occurred_at:at,read_at:null}],total:1,page:1,page_size:20}})
+const apiOf=value=>createDiagnosisNotificationApi({runtime:()=>({request:r=>r.success({statusCode:200,data:{code:0,data:value}})})})
+test('diagnosis protocol rejects order masquerading, private bodies and owner queue targets',()=>{
+ assert.ok(validDiagnosisNotifications(data()));assert.ok(validDiagnosisNotifications(data('QUEUE'),1,'admin'));assert.equal(validDiagnosisNotifications(data('QUEUE'),1,'owner'),false)
+ for(const edit of [n=>n.notifications.items[0].order_id=9,n=>n.notifications.items[0].body='private',n=>n.notifications.items[0].operator_id=1,n=>n.notifications.items[0].kind='ORDER_PAID',n=>n.notifications.items[0].case_status='PAID',n=>n.notifications.items[0].target='https://invalid',n=>n.notifications.items.push(n.notifications.items[0]),n=>n.unread_count=2,n=>n.notifications.items[0].occurred_at='2026-02-30T08:00:00Z']){const n=data();edit(n);assert.equal(validDiagnosisNotifications(n),false)}
+})
+test('both identities use dedicated read-only GET and empty original-key PUT',async()=>{
+ for(const role of ['owner','admin']){let request;const api=createDiagnosisNotificationApi({runtime:()=>({request:r=>{request=r;r.success({statusCode:200,data:{code:0,data:r.method==='GET'?data():{notification_id:1,read_at:at}}})}})});await api.list('t',role);assert.equal(request.method,'GET');assert.ok(request.url.includes(`/api/${role}/diagnosis/notifications?page=1&page_size=20`));assert.equal(request.header.Authorization,'Bearer t');await api.read('t',role,1,key);assert.equal(request.method,'PUT');assert.deepEqual(request.data,{});assert.equal(request.header['Idempotency-Key'],key)}
+ assert.throws(()=>apiOf(data()).list('t','merchant'));assert.throws(()=>apiOf(data()).list('','owner'));assert.throws(()=>apiOf(data()).read('t','admin',1,'bad'));await assert.rejects(apiOf({notification_id:2,read_at:at}).read('t','admin',1,key),e=>e.kind==='protocol');await assert.rejects(apiOf(data('QUEUE')).list('t','owner'),e=>e.kind==='protocol')
+})
+test('queue destination never creates a body URL and invalid navigation is rejected',()=>{
+ assert.equal(diagnosisNotificationUrl({case_id:9,target:'QUEUE'},'admin'),'/pages/operator/diagnosis-cases?scope=queue');assert.equal(diagnosisNotificationUrl({case_id:9,target:'CASE'},'admin'),'/pages/diagnosis/detail?role=admin&id=9');assert.equal(diagnosisNotificationUrl({case_id:9,target:'CASE'},'owner'),'/pages/diagnosis/detail?role=owner&id=9');for(const [n,r] of [[{case_id:9,target:'QUEUE'},'owner'],[{case_id:9,target:'CASE'},'merchant'],[{case_id:'https://invalid',target:'CASE'},'admin'],[{case_id:9,target:'ALL'},'admin']])assert.equal(diagnosisNotificationUrl(n,r),'')
+})
+test('late diagnosis responses after account, role, permission loss or hiding never refill page',async()=>{
+ for(const change of ['account','role','permission','hide']){let t='a',role='admin',request;const api=createDiagnosisNotificationApi({runtime:()=>({request:r=>request=r})}),state=initialNotificationState(),flow=createNotificationFlow({state,token:()=>t,role:()=>role,api,newKey:()=>key});const work=flow.load();if(change==='account')t='b';if(change==='role')role='owner';if(change==='permission')t='';flow.reset();request.success({statusCode:200,data:{code:0,data:data()}});await work;assert.equal(state.data,null);assert.equal(state.busy,false)}
+})
+test('unknown read retries original key while refreshed purpose can only navigate to queue',async()=>{
+ let target='CASE',first=true;const writes=[],api=createDiagnosisNotificationApi({runtime:()=>({request:r=>{if(r.method==='GET')return r.success({statusCode:200,data:{code:0,data:data(target)}});writes.push({url:r.url,data:r.data,key:r.header['Idempotency-Key']});if(first){first=false;r.fail();return}r.success({statusCode:200,data:{code:0,data:{notification_id:1,read_at:at}}})}})}),state=initialNotificationState(),flow=createNotificationFlow({state,token:()=> 'admin',role:()=> 'admin',api,newKey:()=>key});await flow.load();await flow.read(1);assert.equal(state.retry,true);flow.reset();target='QUEUE';await flow.load();await flow.retry();assert.deepEqual(writes[0],writes[1]);assert.equal(state.retry,false);assert.equal(diagnosisNotificationUrl(state.data.notifications.items[0],'admin'),'/pages/operator/diagnosis-cases?scope=queue')
+})
+test('scope rejection clears diagnosis inbox and pending read without leaking response details',async()=>{
+ let denied=false;const api=createDiagnosisNotificationApi({runtime:()=>({request:r=>r.success(denied?{statusCode:403,data:{code:40300,message:'private-sql'}}:{statusCode:200,data:{code:0,data:data()}})})}),state=initialNotificationState(),flow=createNotificationFlow({state,token:()=> 'admin',role:()=> 'admin',api,newKey:()=>key});await flow.load();denied=true;await flow.read(1);assert.equal(state.data,null);assert.equal(state.retry,false);assert.equal(state.kind,'forbidden');assert.ok(!state.message.includes('private-sql'))
+})

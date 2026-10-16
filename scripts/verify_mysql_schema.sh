@@ -145,8 +145,18 @@ run_sql_file docs/sql/migrations/V042__invitation_reward_delivery.sql
 run_sql_file docs/sql/migrations/V042__invitation_reward_delivery.sql
 run_sql_file docs/sql/migrations/V043__invitation_diagnosis_unlock.sql
 run_sql_file docs/sql/migrations/V043__invitation_diagnosis_unlock.sql
+run_sql_file docs/sql/migrations/V044__order_archive_grants.sql
+run_sql_file docs/sql/migrations/V044__order_archive_grants.sql
+run_sql_file docs/sql/migrations/V045__service_notification_outbox.sql
+run_sql_file docs/sql/migrations/V045__service_notification_outbox.sql
+run_sql_file docs/sql/migrations/V046__async_diagnosis.sql
+run_sql_file docs/sql/migrations/V046__async_diagnosis.sql
+run_sql_file docs/sql/migrations/V047__order_notification_sources.sql
+run_sql_file docs/sql/migrations/V047__order_notification_sources.sql
+run_sql_file docs/sql/migrations/V048__diagnosis_notifications.sql
+run_sql_file docs/sql/migrations/V048__diagnosis_notifications.sql
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
-[[ "$tables" == 95 ]] || { echo "Expected 95 tables after V043, got $tables" >&2; exit 1; }
+[[ "$tables" == 104 ]] || { echo "Expected 104 tables after V048, got $tables" >&2; exit 1; }
 [[ "$(query "SELECT COUNT(*) FROM merchant_location")" == 0 ]] || { echo 'V032 must not infer legacy coordinates' >&2; exit 1; }
 catalog_columns=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND ((table_name IN ('brand','series','model','standard_project') AND column_name IN ('sort_order','source_note','revision')) OR (table_name IN ('brand','series','model') AND column_name='status') OR (table_name='operator_account' AND column_name='can_catalog'))")
 [[ "$catalog_columns" == 16 ]] || { echo "V022 catalogue fields incomplete: $catalog_columns/16" >&2; exit 1; }
@@ -264,7 +274,7 @@ for entry in invite_code:uk_invite_code invite_code:uk_invite_actor invite_regis
   table="${entry%%:*}"; index="${entry##*:}"
   [[ "$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema='$database' AND table_name='$table' AND index_name='$index' AND non_unique=0")" == 1 ]] || { echo 'V040 invitation uniqueness missing' >&2; exit 1; }
 done
-echo "MySQL 8.0 schema: 95 tables after V043; repeat migration and synthetic seed passed"
+echo "MySQL 8.0 schema: 104 tables after V048; repeat migration and synthetic seed passed"
 
 [[ "$(query "SELECT COUNT(*) FROM invite_reward_policy")" == 0 ]] || { echo "Reward policies must not be seeded" >&2; exit 1; }
 [[ "$(query "SELECT COUNT(*) FROM operator_account WHERE can_invite<>0")" == 0 ]] || { echo "Invitation permission must default off" >&2; exit 1; }
@@ -277,4 +287,18 @@ done
 for entry in coupon_issue:uk_coupon_issue_reward invite_reward_batch:uk_invite_reward_event invite_reward_batch:uk_invite_reward_new_user invite_reward_item:uk_invite_reward_role invite_reward_item:uk_invite_reward_coupon; do
   table="${entry%%:*}"; index="${entry##*:}"
   [[ "$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema='$database' AND table_name='$table' AND index_name='$index' AND non_unique=0")" == 1 ]] || { echo 'V042 reward uniqueness missing' >&2; exit 1; }
+done
+
+[[ "$(query "SELECT COUNT(*) FROM order_archive_grant")" == 0 ]] || { echo "Must not seed service archive consent" >&2; exit 1; }
+[[ "$(query "SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema='$database' AND table_name='order_archive_grant' AND index_name='uk_order_archive_grant' AND non_unique=0")" == 2 ]] || { echo "Per-order record consent uniqueness missing" >&2; exit 1; }
+
+[[ "$(query "SELECT COUNT(*) FROM service_notification_outbox")" == 0 ]] || { echo "Must not manufacture historical notification events" >&2; exit 1; }
+
+[[ "$(query "SELECT COUNT(*) FROM diagnosis_service_policy")" == 0 ]] || { echo "Must not seed diagnosis service policy" >&2; exit 1; }
+[[ "$(query "SELECT COUNT(*) FROM operator_account WHERE can_diagnose<>0 OR can_diagnose_manage<>0")" == 0 ]] || { echo "Diagnosis privileges must default off" >&2; exit 1; }
+
+[[ "$(query "SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema='$database' AND table_name='service_notification_outbox' AND index_name='uk_service_notification_source' AND non_unique=0")" == 3 ]] || { echo "V047 event source uniqueness missing" >&2; exit 1; }
+
+for table in diagnosis_notification_outbox diagnosis_notification_target; do
+  [[ "$(query "SELECT COUNT(*) FROM $table")" == 0 ]] || { echo "Must not backfill historical diagnosis notices" >&2; exit 1; }
 done

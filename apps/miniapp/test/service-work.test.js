@@ -74,8 +74,8 @@ test('每类最多九张，防护仅一张；忙时不能重复选择',async()=>
 test('施工拒绝 WEBP，签名只接受 PNG，不把已上传的其他格式当成就绪',async()=>{
   const f=fixture({upload:async()=>({file_id:101,content_type:'image/webp'})});await f.flow.choose('PROCESS');assert.equal(f.state.files[0].fileId,0);assert.match(f.state.message,/JPEG/);f.api.upload=async()=>({file_id:105,content_type:'image/jpeg'});await f.flow.signature({path:'sig.png',size:100});assert.equal(f.state.files.find(p=>p.kind==='SIGNATURE').fileId,0);assert.match(f.state.message,/PNG/)
 })
-test('网络重试报工保持请求键，改工时后换键；切账号丢弃旧结果',async()=>{
-  const f=form(),state=initialReservationWriteState();let actor='tech',calls=[],counter=0,resolve;const flow=createReservationWriteFlow({state,token:()=>actor,newKey:()=>String(++counter),body:()=>reportBody(1,f,photos()),request:(t,b,k)=>{calls.push({t,b,k});return Promise.reject(new WorkError('unavailable','重试'))}});await flow.save();await flow.save();assert.deepEqual(calls[0],calls[1]);f.minutes='60';await flow.save();assert.notEqual(calls[1].k,calls[2].k)
+test('网络未知报工冻结原正文与键，改工时不得另起请求；切账号丢弃旧结果',async()=>{
+  const f=form(),state=initialReservationWriteState();let actor='tech',calls=[],counter=0,resolve;const flow=createReservationWriteFlow({state,token:()=>actor,newKey:()=>String(++counter),body:()=>reportBody(1,f,photos()),request:(t,b,k)=>{calls.push({t,b,k});return Promise.reject(new WorkError('unavailable','重试'))}});await flow.save();await flow.save();assert.deepEqual(calls[0],calls[1]);f.minutes='60';await flow.save();assert.equal(calls.length,2);await flow.retry();assert.deepEqual(calls[1],calls[2])
   const delayed=createReservationWriteFlow({state:initialReservationWriteState(),token:()=>actor,newKey:()=>key,body:()=>reportBody(1,f,photos()),request:()=>new Promise(r=>{resolve=r})});const task=delayed.save();actor='new-tech';delayed.reset();resolve(view());await task
 })
 test('签名板拒绝空白、单点与无效坐标，实际笔画可导出并清空',()=>{

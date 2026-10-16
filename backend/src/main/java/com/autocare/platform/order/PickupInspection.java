@@ -83,6 +83,7 @@ public class PickupInspection {
         for(var photo:input.photos().entrySet())db.jdbc.update("INSERT INTO pickup_check_file(pickup_check_id,file_id,photo_slot) VALUES (?,?,?)",check,photo.getValue(),photo.getKey());
         db.jdbc.update("UPDATE `order` SET status='RECEIVED',check_in_completed_at=? WHERE id=? AND status='PAID'",ReservationStore.time(now),id);
         db.jdbc.update("INSERT INTO order_status_transition(order_id,merchant_id,from_status,to_status,action,actor_type,actor_id,occurred_at) VALUES(?,?,'PAID','RECEIVED','ORDER_CHECK_IN','staff_account',?,?)",id,actor.merchantId(),actor.staffId(),ReservationStore.time(now));
+        ServiceNotifications.enqueue(db,id,"ORDER_CHECK_IN");
         var result=projection(db.one("SELECT * FROM pickup_check WHERE id=?",check));
         return new Change("ORDER_CHECK_IN","order",id,db.orderRow(o,true),result,result);
     }
@@ -122,6 +123,7 @@ public class PickupInspection {
                 // 没有争议单，恢复一律拒绝（fail-closed），由人工处理，不猜历史。
                 db.jdbc.update("INSERT INTO order_dispute(order_id,merchant_id,pickup_check_id,reason,from_status,status,opened_by,opened_at) VALUES(?,?,?,?,?,'OPEN',?,?)",
                     id,order.get("merchant_id"),sheet.get("id"),note,String.valueOf(order.get("status")),owner.id(),ReservationStore.time(now));
+                long dispute=db.jdbc.queryForObject("SELECT id FROM order_dispute WHERE order_id=?",Long.class,id);ServiceNotifications.enqueue(db,id,"DISPUTE_OPENED","dispute:"+dispute);
             }else db.jdbc.update("UPDATE `order` SET owner_confirmed_at=? WHERE id=? AND status='RECEIVED'",ReservationStore.time(now),id);
             var after=projection(db.one("SELECT * FROM pickup_check WHERE id=?",sheet.get("id")));
             return new Change(action,"pickup_check",ReservationStore.number(sheet,"id"),before,after,after);

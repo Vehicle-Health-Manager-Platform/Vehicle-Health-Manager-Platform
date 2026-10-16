@@ -39,7 +39,7 @@ onHide(() => { visible = false; generation++; modal.value = false; photoFlow.sus
 onUnload(() => { visible = false; clear() })
 </script>
 <template>
-  <view class="reservation-page">
+  <view class="reservation-page"><button v-if="write.retry" :disabled="write.busy" @tap="save.retry">重试原防护提交请求（不使用当前编辑内容）</button>
     <text class="reservation-title">施工防护</text>
     <button v-if="!merchantSession.accessToken" @tap="login">前往门店登录</button>
     <text v-if="read.busy">正在加载施工记录…</text>

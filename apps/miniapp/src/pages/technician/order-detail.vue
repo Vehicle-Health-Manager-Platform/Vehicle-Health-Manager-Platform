@@ -44,7 +44,7 @@ onHide(() => { visible = false; flow.suspend(); accept.suspend() })
 onUnload(() => { visible = false; flow.reset(); accept.reset() })
 </script>
 <template>
-  <view class="reservation-page">
+  <view class="reservation-page"><button v-if="write.retry" :disabled="write.busy" @tap="accept.retry">重试原接单请求（不使用当前编辑内容）</button>
     <text class="reservation-title">工单详情</text>
     <button v-if="!technicianSession.accessToken" @tap="login">前往技师登录</button>
     <text v-if="state.busy" role="status">正在加载工单…</text>
@@ -56,7 +56,7 @@ onUnload(() => { visible = false; flow.reset(); accept.reset() })
       <button v-if="['unauthorized', 'forbidden'].includes(state.failureKind)" @tap="login">重新绑定员工码</button>
       <button v-else :disabled="state.busy" @tap="flow.load">重试工单详情</button>
     </view>
-    <view v-if="state.value" class="reservation-panel" data-testid="technician-order-detail">
+    <button v-if="state.value&&state.value.assignment_status==='ACCEPTED'&&['IN_SERVICE','PENDING_VERIFY'].includes(state.value.order_status)" @tap="uni.navigateTo({url:`/pages/workspace/context?role=tech&id=${orderId}`})">本单必要资料与已授权档案</button><view v-if="state.value" class="reservation-panel" data-testid="technician-order-detail">
       <text class="reservation-heading">{{ state.value.project_snapshot?.project_name || '历史订单' }}</text>
       <text>{{ state.value.project_snapshot?.service_content || '服务内容未提供' }}</text>
       <text>工单号 {{ state.value.order_no }}</text>

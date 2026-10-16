@@ -43,6 +43,14 @@ public class OperatorAdminCli implements ApplicationRunner {
                 else if("catalog-permission".equals(action)){String value=env.getRequiredProperty("OPERATOR_CAN_CATALOG");if(!value.equals("true")&&!value.equals("false"))throw new IllegalArgumentException("Explicit catalog permission required");boolean permission=Boolean.parseBoolean(value);jdbc.update("UPDATE operator_account SET can_catalog=? WHERE id=?",permission,id);after=Map.of("can_catalog",permission);}
                 else if("invite-permission".equals(action)){String value=env.getRequiredProperty("OPERATOR_CAN_INVITE");if(!value.equals("true")&&!value.equals("false"))throw new IllegalArgumentException("Explicit invite permission required");boolean permission=Boolean.parseBoolean(value);jdbc.update("UPDATE operator_account SET can_invite=? WHERE id=?",permission,id);after=Map.of("can_invite",permission);}
                 else if("coupon-permission".equals(action)){String value=env.getRequiredProperty("OPERATOR_CAN_COUPON");if(!value.equals("true")&&!value.equals("false"))throw new IllegalArgumentException("Explicit coupon permission required");boolean permission=Boolean.parseBoolean(value);jdbc.update("UPDATE operator_account SET can_coupon=? WHERE id=?",permission,id);after=Map.of("can_coupon",permission);}
+                else if("diagnose-permission".equals(action)||"diagnose-manage-permission".equals(action)){
+                    boolean management="diagnose-manage-permission".equals(action);
+                    String column=management?"can_diagnose_manage":"can_diagnose";
+                    String value=env.getRequiredProperty(management?"OPERATOR_CAN_DIAGNOSE_MANAGE":"OPERATOR_CAN_DIAGNOSE");
+                    if(!value.equals("true")&&!value.equals("false"))throw new IllegalArgumentException("Explicit diagnosis permission required");
+                    boolean permission=Boolean.parseBoolean(value);
+                    jdbc.update("UPDATE operator_account SET "+column+"=? WHERE id=?",permission,id);after=Map.of(column,permission);
+                }
                 else throw new IllegalArgumentException("Unsupported operator action");
                 jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE subject_type='operator_account' AND subject_id=? AND revoked_at IS NULL",id);
             }

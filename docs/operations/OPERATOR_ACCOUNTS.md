@@ -1,5 +1,7 @@
 # 运营认证与审核账号
 
+> V046新增独立诊断处理/管理权限can_diagnose和can_diagnose_manage，均默认0，旧权限不会继承。离线动作`diagnose-permission`/`diagnose-manage-permission`分别要求显式环境`OPERATOR_CAN_DIAGNOSE=true|false`/`OPERATOR_CAN_DIAGNOSE_MANAGE=true|false`及`--operator.id=...`；沿operator-admin且无HTTP的既有流程运行。权限变更/审计/撤销所有会话同事务，重新登录后生效；管理权不自动授予正文读取，仍须有处理权和当前分配。见[诊断运维](ASYNC_DIAGNOSIS.md)。
+
 > V038新增独立券池权限can_coupon，默认0，不随目录/审核权限授予。显式环境`OPERATOR_CAN_COUPON=true|false`，使用既有无HTTP的operator-admin流程，参数`--operator.action=coupon-permission --operator.id=...`；变更会审计并撤销现有会话，重新登录后才能管理精选池。协议见[券接口](../api/COUPON_INVENTORY.md)。
 
 日期2026-10-09，V019先迁移；2026-10-10 起 V020 增加 `operator_account.can_onboard`（入驻审核权限，与经验审核 `can_review` 互不交叉，默认0）。本阶段运营入口在微信小程序，账号密码+短信二次校验、独立短会话；不是车主/商家身份。默认无账号与审核授权，无HTTP注册/提权。
@@ -19,6 +21,6 @@
 
 POST `/api/auth/operator/code`：严格 `{account,password}`。POST `/api/auth/operator/login`：另加6位字符串sms_code。POST `/api/auth/operator/logout`：运营Bearer，严格 `{}`。未知/重复/尾随字段与query均拒绝，全部no-store。账号ASCII 3–64字符，大小写统一，密码不截断。
 
-验证码bcrypt保存、5分钟有效、一次消费、用途绑定运营ID。发码60秒1次/每天5次，登录IP30次/15分钟、账号10次/15分钟。登录事务复核账号、消费验证码、创建15分钟JWT/数据库会话及最小审计；不发refresh，过期需再次两步认证。`can_review` 与 `can_onboard` 只供界面决定入口提示，服务端每次请求都实时复核数据库权限列。退出即时撤销。登录响应含 `user.can_review` 与 `user.can_onboard` 两个布尔位；客户端做严格字段校验，新增或缺失字段都会被判为协议错误，改动登录响应必须同步消费端。
+验证码bcrypt保存、5分钟有效、一次消费、用途绑定运营ID。发码60秒1次/每天5次，登录IP30次/15分钟、账号10次/15分钟。登录事务复核账号、消费验证码、创建15分钟JWT/数据库会话及最小审计；不发refresh，过期需再次两步认证。`can_review` 与 `can_onboard` 只供界面决定入口提示，服务端每次请求都实时复核数据库权限列。退出即时撤销。当前登录响应含 `user.can_review/can_onboard/can_catalog/can_coupon/can_invite/can_diagnose/can_diagnose_manage` 七个布尔位；客户端严格校验并兼容已知旧版本形状，不接受任意权限字段。新增权限时须同步消费端；仅有诊断权限的账号登录后进入相应诊断工作区。
 
 需配置正式 `OperatorSmsSender` 供应商适配器。当前未配置会返回503，不返回验证码，不使用固定代码或绕过；供应商失败回滚已发验证码状态。隔离测试可用合成供应商/验证码夹具，不能代替正式短信验收。车主/商家/技师接口不能使用运营身份。

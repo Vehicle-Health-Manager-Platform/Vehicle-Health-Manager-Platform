@@ -1,5 +1,15 @@
 # 项目进度与下一步规划
 
+> 整R7收尾：[需求销项](R7_REQUIREMENT_CLOSURE.md)、[执行](R7_COMPLETION_EXECUTION.md)、[恢复说明](R7_RECOVERY_MATRIX.md)、[统一验收](../testing/LOCAL_R7_COMPLETION_ACCEPTANCE.md)；后端门禁完成后同批上传全部源码和文档，下一[R8](R8_IMPLEMENTATION_PLAN.md)。
+
+> R7c3 第三步：[诊断专属消息执行](R7C3_DIAGNOSIS_NOTIFICATIONS_EXECUTION.md)；下一[整R7销项与统一门禁](R7_COMPLETION_NEXT_PLAN.md)。整R7通过后统一上传全部代码及文档。
+
+> R7c3 第二步：[关单/退款/异议消息执行](R7C3_ORDER_NOTIFICATIONS_EXECUTION.md)，下一[诊断专属消息](R7C3_DIAGNOSIS_NOTIFICATIONS_NEXT_PLAN.md)；整R7完成前无上传。
+
+> R7c3 第一步：[草稿与原键恢复执行](R7C3_RECOVERY_EXECUTION.md)；下一步补充可靠消息，再整 R7 验收与统一上传。
+
+> 当前R7本地实施：[R7全阶段分步规划](R7_IMPLEMENTATION_PLAN.md)；整个R7完成后才统一上传全部代码和文档。
+
 > 2026-10-15 整 R6 源码收口见[需求销项](R6_REQUIREMENT_CLOSURE.md)与[统一验收](../testing/LOCAL_R6_COMPLETION_ACCEPTANCE.md)；所有代码、迁移、测试及文档同批上传，最终远程结果以 PR152 正文为准。下一步见[R7a车主施工证据计划](R7A_OWNER_EVIDENCE_NEXT_PLAN.md)。下方保留阶段历史。
 
 > 2026-10-15 R6b按[R6b分步计划](R6B_NEXT_PLAN_2026-10-15.md)继续，本地[R6b1配置](R6B1_REWARD_POLICY_EXECUTION.md)后接可靠发奖与海报/解锁；整R6完成前不上传中间更新。
@@ -75,3 +85,11 @@
 - [R6b2 资格快照与原子奖励](R6B2_REWARD_EXECUTION.md)：本地阶段，整R6完成后统一上传。
 
 - [R6b3 分步实施](R6B3_IMPLEMENTATION_PLAN.md)：代码/文档本地保存，整R6验收后统一上传。
+
+- [R7b 工作台执行](R7B_WORKSPACE_EXECUTION.md)：本地完成，整R7完成后代码与文档统一上传。
+
+- [R7c1 站内通知执行](R7C1_NOTIFICATIONS_EXECUTION.md)：本地阶段，整R7完成后代码与文档统一上传。
+
+- [R7c2 已确认诊断方案](R7C2_DIAGNOSIS_NEXT_PLAN.md)：本地阶段，整R7完成后代码与文档统一上传。
+
+- [R7c2 本地实施](R7C2_DIAGNOSIS_EXECUTION.md)：本地完成，整R7完成后代码与文档统一上传。

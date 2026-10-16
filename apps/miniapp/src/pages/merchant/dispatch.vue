@@ -31,11 +31,11 @@ const assign = createReservationWriteFlow({
 
 function login() { clearMerchantSession(); uni.navigateTo({ url: '/pages/merchant/index' }) }
 function refresh() { orderFlow.load(); assignmentFlow.load() }
-function pick(row) { if (!write.busy && !write.saved) selected.value = row.technician_id }
+function pick(row) { if (!write.busy && !write.saved && !write.retry) selected.value = row.technician_id }
 function labelOf(technicianId) { return candidates.items.find(row => row.technician_id === technicianId)?.label || `#${technicianId}` }
 
 function confirmAssign() {
-  if (write.busy || write.saved || !selected.value) return
+  if (write.busy || write.saved || write.retry || !selected.value) return
   // 幂等键绑定调用者与目标。换人后必须重新开一次流程，否则旧键会撞上旧正文。
   if (submitted.technicianId !== selected.value) { assign.reset(); submitted.technicianId = selected.value }
   // 模态是异步的：期间可能切账号、离开页面或换人，回调必须校验当时的身份与目标。
@@ -71,7 +71,7 @@ onUnload(() => {
 })
 </script>
 <template>
-  <view class="reservation-page">
+  <view class="reservation-page"><button v-if="write.retry" :disabled="write.busy" @tap="assign.retry">重试原派工请求（不使用当前编辑内容）</button>
     <text class="reservation-title">派工</text>
     <button v-if="!merchantSession.accessToken" @tap="login">前往门店登录</button>
     <template v-else>

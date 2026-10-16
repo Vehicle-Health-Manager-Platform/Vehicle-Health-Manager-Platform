@@ -29,6 +29,7 @@ function run(entry) {
     content: `确认把本订单标记为「${stateLabel(entry.to_status)}」？操作会写入审计记录。`,
     success: result => {
       if (!result.confirm) return
+      if(write.retry){write.message='请先核对或重试原履约请求，再执行其他动作';return}
       if (acting.orderId !== orderId || acting.action !== entry.action) apply.reset()
       acting.orderId = orderId; acting.action = entry.action
       apply.save()
@@ -43,7 +44,7 @@ onHide(() => { visible = false; flow.suspend(); apply.suspend() })
 onUnload(() => { visible = false; flow.reset(); apply.reset() })
 </script>
 <template>
-  <view class="reservation-page">
+  <view class="reservation-page"><button v-if="write.retry" :disabled="write.busy" @tap="apply.retry">重试原核销请求（不使用当前编辑内容）</button>
     <text class="reservation-title">本店订单详情</text>
     <button v-if="!merchantSession.accessToken" @tap="login">前往门店登录</button>
     <text v-if="state.busy" role="status">正在加载订单…</text>
@@ -51,7 +52,7 @@ onUnload(() => { visible = false; flow.reset(); apply.reset() })
       <button v-if="['unauthorized', 'forbidden'].includes(state.failureKind)" @tap="login">重新登录</button>
       <button v-else :disabled="state.busy" @tap="flow.load">重试订单详情</button>
     </view>
-    <view v-if="state.value" class="reservation-panel" data-testid="merchant-order-detail">
+    <button v-if="state.value&&['RECEIVED','IN_SERVICE','PENDING_VERIFY'].includes(state.value.status)" @tap="uni.navigateTo({url:`/pages/workspace/context?role=merchant&id=${orderId}`})">本单必要资料与已授权档案</button><view v-if="state.value" class="reservation-panel" data-testid="merchant-order-detail">
       <CouponOrderSummary v-if="state.value.coupon_summary" :summary="state.value.coupon_summary"/>
       <text class="reservation-heading">{{ state.value.project_snapshot?.project_name || '历史订单' }}</text>
       <text>{{ state.value.project_snapshot?.service_content || '服务内容未提供' }}</text>

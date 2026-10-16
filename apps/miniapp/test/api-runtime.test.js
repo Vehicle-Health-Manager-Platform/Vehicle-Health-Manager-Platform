@@ -20,6 +20,15 @@ function withUni(fake, run) {
 
 const REQUIRED = ['scanCode', 'chooseMedia', 'chooseImage', 'uploadFile', 'previewImage', 'openSetting', 'downloadFile', 'openDocument', 'request', 'login']
 
+test('同步存储透传所有参数、返回值和异常，不经过网络传输',()=>{
+ const disk=new Map()
+ withUni({getStorageSync:k=>disk.get(k),setStorageSync:(k,v)=>disk.set(k,v),removeStorageSync:k=>disk.delete(k)},()=>{
+  apiRuntime.setStorageSync('draft',{body:'本机文字'});assert.deepEqual(apiRuntime.getStorageSync('draft'),{body:'本机文字'});apiRuntime.removeStorageSync('draft');assert.equal(apiRuntime.getStorageSync('draft'),undefined)
+ })
+ withUni({},()=>assert.throws(()=>apiRuntime.setStorageSync('draft','text'),/不支持/))
+ withUni({setStorageSync:()=>{throw new Error('quota')}},()=>assert.throws(()=>apiRuntime.setStorageSync('draft','text'),/quota/))
+})
+
 test('运行时暴露取图、文件与请求所需的全部方法', () => {
   for (const name of REQUIRED) assert.equal(typeof apiRuntime[name], 'function', `运行时缺少 ${name}`)
   for (const name of ['initCloud', 'supports', 'environment', 'getFileSystemManager', 'userDataPath'])

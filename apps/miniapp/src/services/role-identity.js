@@ -44,9 +44,9 @@ export function useRoleIdentity(role, api = authApi) {
 
   function session(result) {
     requiresLogin.value = false
-    accessToken.value = result.access_token
     if (role === 'owner') setOwnerSession(result)
     else if (role === 'technician') setTechnicianSession(result)
+    else accessToken.value = result.access_token
   }
 
   function invalid(text) {

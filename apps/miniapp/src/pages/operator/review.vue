@@ -31,6 +31,8 @@ onHide(() => { visible = false; clear() }); onUnload(() => { visible = false; cl
     <text class="reservation-title">经验卡片审核</text>
     <button v-if="operatorSession.canReview" @tap="uni.navigateTo({url:'/pages/operator/review-texts'})">公开评价文字审核</button>
     <button v-if="operatorSession.canCatalog" @tap="uni.navigateTo({url:'/pages/operator/catalog'})">标准项目与车型库维护</button>
+    <button v-if="operatorSession.canDiagnoseManage" @tap="uni.navigateTo({url:'/pages/operator/diagnosis-service'})">诊断受理配置与分配</button>
+    <button v-if="operatorSession.canDiagnose||operatorSession.canDiagnoseManage" @tap="uni.navigateTo({url:'/pages/operator/diagnosis-cases'})">诊断处理工作区</button>
     <button v-if="operatorSession.canInvite" @tap="uni.navigateTo({url:'/pages/operator/invite-policies'})">邀请奖励规则配置</button>
     <button v-if="operatorSession.canInvite" @tap="uni.navigateTo({url:'/pages/operator/diagnosis-policies'})">人工诊断邀请条件</button>
     <button v-if="operatorSession.canCoupon" @tap="uni.navigateTo({url:'/pages/operator/coupons'})">管理运营精选券池</button>

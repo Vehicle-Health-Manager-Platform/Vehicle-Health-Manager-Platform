@@ -87,6 +87,7 @@ public class OrderRedemption {
             db.jdbc.update("INSERT INTO order_status_transition(order_id,merchant_id,from_status,to_status,action,actor_type,actor_id,occurred_at) VALUES(?,?,'PENDING_VERIFY','COMPLETED','ORDER_COMPLETE','staff_account',?,?)",id,actor.merchantId(),actor.staffId(),now);
             CommissionLedger.completed(db,id);
             ServiceArchiveJobs.enqueueCompletion(db,id);
+            ServiceNotifications.enqueue(db,id,"ORDER_COMPLETE");
             var after=result(id,receipt(id),true);return new Change("ORDER_COMPLETE","order",id,Map.of("order_id",id,"order_status",OrderStatus.PENDING_VERIFY),after,after);
         });
     }

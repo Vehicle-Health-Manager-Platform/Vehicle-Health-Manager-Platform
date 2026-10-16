@@ -128,8 +128,14 @@ export function createApiRuntime({ origin, cloud, runtime, cloudApi }) {
   }
 
   const forwarded = Object.fromEntries(FORWARDED.map(name => [name, forward(name)]))
+  // 同步存储必须返回原值并传播失败；写入不可用时调用方必须阻止业务提交。
+  const storage = Object.fromEntries(['getStorageSync', 'setStorageSync', 'removeStorageSync'].map(name => [name, (...args) => {
+    const target = runtime()
+    if (typeof target?.[name] !== 'function') throw new Error('当前设备不支持本机恢复存储')
+    return target[name](...args)
+  }]))
 
-  return { initCloud, request, login, supports, environment, getFileSystemManager, userDataPath, ...forwarded }
+  return { initCloud, request, login, supports, environment, getFileSystemManager, userDataPath, ...forwarded, ...storage }
 }
 
 export const apiRuntime = createApiRuntime({

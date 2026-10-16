@@ -1,5 +1,11 @@
 # 部署与运维文档
 
+> 整R7：[恢复/登录/配置安全窗口](../progress/R7_RECOVERY_MATRIX.md)，[统一验收与本地环境限制](../testing/LOCAL_R7_COMPLETION_ACCEPTANCE.md)。已有卷V044–V048升级先备份再顺序显式迁移，初始化挂载不替代升级。
+
+> R7c3 第三步：[诊断消息使用和恢复](DIAGNOSIS_NOTIFICATIONS.md)。
+
+> 当前R7本地实施：[R7a施工证据使用与权限](OWNER_SERVICE_EVIDENCE.md)；整个R7完成后才统一上传全部代码和文档。
+
 > 整 R6 当前交付范围见[需求销项](../progress/R6_REQUIREMENT_CLOSURE.md)，统一上传与最终六项 CI 以 PR152 正文为准；下方保留各阶段说明。
 
 > R6b1 V041/独立 can_invite 默认关闭和离线授权说明见[配置协议](../api/INVITE_REWARD_POLICIES.md)。本地实施，整R6完成后上传；已有卷需备份后显式迁移。
@@ -27,3 +33,9 @@
 - [R6b2 奖励后台与迁移恢复](INVITATION_REWARD_RUNBOOK.md)：本地阶段，整R6完成后统一上传。
 
 - [R6b3 本地海报与解锁使用](INVITATION_POSTER_AND_UNLOCK.md)：代码/文档本地保存，整R6验收后统一上传。
+
+- [R7b 使用与运维](SERVICE_WORKSPACE.md)：本地完成，整R7完成后代码与文档统一上传。
+
+- [R7c1 使用与投递恢复](SERVICE_NOTIFICATIONS.md)：本地阶段，整R7完成后代码与文档统一上传。
+
+- [R7c2 诊断配置、处理与恢复](ASYNC_DIAGNOSIS.md)：本地完成，整R7完成后代码与文档统一上传。

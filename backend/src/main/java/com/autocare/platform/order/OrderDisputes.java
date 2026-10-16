@@ -96,6 +96,7 @@ public class OrderDisputes {
         long record=db.insert("INSERT INTO order_dispute_record(dispute_id,order_id,action,actor_type,actor_id,note,created_at) VALUES(?,?,?,'staff_account',?,?,?)",
             dispute.get("id"),id,HANDLE,actor.staffId(),note,ReservationStore.time(now));
         var after=view(order,dispute,ownerConfirm(current),true);
+        ServiceNotifications.enqueue(db,id,"DISPUTE_HANDLED","record:"+record);
         return new Change("ORDER_DISPUTE_HANDLE","order_dispute_record",record,before,after,after);
     }
 
@@ -133,6 +134,7 @@ public class OrderDisputes {
             dispute.get("id"),id,decision,owner.id(),note,ReservationStore.time(now));
         if(REJECT.equals(decision)){
             var after=view(order,dispute,current.get("owner_confirm"),true);
+            ServiceNotifications.enqueue(db,id,"DISPUTE_REJECTED","record:"+record);
             return new Change("ORDER_DISPUTE_REJECT","order_dispute_record",record,before,after,after);
         }
         db.jdbc.update("UPDATE order_dispute SET status=?,resolved_at=?,resolved_by=? WHERE id=? AND status='OPEN'",RESOLVED,ReservationStore.time(now),owner.id(),dispute.get("id"));
@@ -141,6 +143,7 @@ public class OrderDisputes {
         db.jdbc.update("INSERT INTO order_status_transition(order_id,merchant_id,from_status,to_status,action,actor_type,actor_id,note,occurred_at) VALUES(?,?,'DISPUTED',?,?,'user',?,?,?)",
             id,order.get("merchant_id"),target,OrderStatus.DISPUTE_RESOLVE,owner.id(),note,ReservationStore.time(now));
         var after=view(db.one("SELECT * FROM `order` WHERE id=? FOR UPDATE",id),dispute(id,true),PickupInspection.OWNER_RESOLVED,true);
+        ServiceNotifications.enqueue(db,id,"DISPUTE_RESOLVED","record:"+record);
         return new Change(OrderStatus.DISPUTE_RESOLVE,"order",id,before,after,after);
     }
 }
