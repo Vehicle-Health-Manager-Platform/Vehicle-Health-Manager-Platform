@@ -68,8 +68,8 @@ services:
       - ../../docs/sql/migrations/V055__business_dashboard_permission.sql:/docker-entrypoint-initdb.d/055-business-dashboard-permission.sql:ro
       - ../../docs/sql/migrations/V056__price_monitor_policies.sql:/docker-entrypoint-initdb.d/056-price-monitor-policies.sql:ro
       - ../../docs/sql/migrations/V057__curated_experiences.sql:/docker-entrypoint-initdb.d/057-curated-experiences.sql:ro
-      - ../../docs/sql/migrations/V058__private_community_questions.sql:/docker-entrypoint-initdb.d/057-curated-experiences.sql:ro
-      - ../../docs/sql/migrations/V059__public_community_questions.sql:/docker-entrypoint-initdb.d/057-curated-experiences.sql:ro
+      - ../../docs/sql/migrations/V058__private_community_questions.sql:/docker-entrypoint-initdb.d/058-private-community-questions.sql:ro
+      - ../../docs/sql/migrations/V059__public_community_questions.sql:/docker-entrypoint-initdb.d/059-public-community-questions.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent"]
       interval: 10s

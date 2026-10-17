@@ -3,6 +3,8 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
+python3 scripts/verify_compose_migrations.py
+
 compose=(docker compose --env-file .env.example -f deploy/compose/compose.yml \
   -f deploy/compose/ci.override.yml -p s0smoke)
 cleanup() {
