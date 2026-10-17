@@ -6,88 +6,78 @@
 
 ## 当前进度
 
-更新日期：**2026-10-12（Asia/Shanghai）**。
+更新日期：**2026-10-17（Asia/Shanghai）**。
 
-- 今天的规划及业务 PR **#121–#139 已按依赖顺序合并到 main**，业务推进至 **R4b1 商家详情与区域选择**；每支堆叠 PR 均在前序合并后将 base 改回 main，再以合并提交保留依赖历史。
-- 已确认的三张微信开发者工具模拟器截图随 **[#120](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/120)** 合并，图集见下方。
-- 最新 R4b1 收口 **[#139](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/139)** 六项 CI 全绿：后端 **633/633**、小程序 **388/388**；微信 mp-weixin 与 H5 兼容构建通过。[CI 证据](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/38245718489)。这是已完成阶段的测试基线；后续 main 和文档更新的检查结果以 GitHub Actions 当前运行记录为准。
-- 下一单元为 **R4b2a 位置与距离**，随后 R4b2b 公开评价。真实短信、微信身份、资金、识别供应商与真机验收安排在最终接入阶段。
+- **R4、R5、R6、R7 与当前已完成的 R8 更新均已进入 main**，包含代码、数据库迁移、测试、配置示例和阶段文档。汇总合并记录为 [PR #154](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/154)，合并提交 `c578f1d`。
+- **R8 部分完成**：积分闭环、门店经营与考核、运营精选、私有问答及公开问答后端已实现；公开问答页面、图片公开授权和有许可来源资料检索仍待实施。
+- 汇总 PR 最终六项 CI 全部通过：后端 **2,008/2,008**、小程序 **840/840**，微信 mp-weixin 与 H5 构建、实际 MySQL 迁移和 Compose 集成检查成功。[完整 CI 证据](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/39028173826)。这些结果对应已合并的业务提交，后续提交以其各自 Actions 记录为准。
+- 下一步为 [R8c1b3b 公开问答页面与恢复](docs/progress/R8C1B3B_PUBLIC_QA_UI_NEXT_PLAN.md)，之后推进图片、许可资料检索和整 R8 销项。供应商识别、正式短信/微信身份/资金、真机及发布交付最后在 R9 实施。
 
-合并、CI、生产部署与真机验收分别记录；本次合并没有发布生产服务。历史阶段记录中的“待合并”和“README 未更新”描述反映当时状态，当前状态以本节及[合并记录](docs/progress/MERGE_README_2026-10-12.md)为准。
+R5–R7 的历史串联 PR #151–#153 已在确认全部提交进入 main 后关闭，实际汇总合并记录为 #154。上传与代码合并不代表生产部署或真机验收。历史阶段文档中的“仅本地”“等待整 R8 后上传”等描述保留为当时记录，由最新上传授权及[汇总交付说明](docs/progress/R8_PARTIAL_UPLOAD_MERGE_2026_10_17.md)覆盖。
 
 ## 三端功能与权限
 
 | 使用者 | 已实现的微信小程序能力 | 权限边界 |
 | --- | --- | --- |
-| 车主 | 本人车辆与录车入口；手动档案和私有图片；结构化保养/保险/年检；六类当前读数与历史；目标提醒；本人 PDF 与限时摘要分享；标准服务、区域筛选、商家报价与预约；订单、接车确认/异议、支付核对、取消退款、本人评价和经验卡片。 | 仅本人车辆、档案和订单；公开经验另行授权审核；分享接收须有效车主登录，不公开私有标识或文件。 |
-| 门店店长 | 门店入驻与资料；员工启停和员工码；选品报价与预约时段；本店订单、接车检查/扫码、派工、防护、报工和核销；异议与取消退款处理；只读佣金账单。 | 仅本店；员工、员工码、资料修改和定价管理限店长；账单区分测试与真实渠道，不代表已结算。 |
-| 门店店员 | 共用门店登录入口，协助本店接车、订单与履约。 | 员工管理、员工码、资料修改、定价及佣金账单等店长能力不开放。 |
-| 技师 | 员工码绑定；查看派给本人的工单、接受/拒绝任务、施工报工、故障件与完工证据、质检和签字。 | 有效绑定与本人任务授权；解绑、停用即时复核，不开放车主全档案。 |
-| 受限运营 | 入驻审核与区域/品类配额；标准项目、品牌和车型治理；经验内容审核。 | 使用独立权限的小程序入口；不建设 PC 运营后台。 |
+| 车主 | 本人车辆、结构化档案、六类健康读数与来源规则、历史趋势、五类提醒；本人 PDF/限时摘要分享；服务发现、方案预约、订单、接车确认、施工证据、支付核对与退款；优惠券、邀请奖励、积分与兑换；诊断留言、运营精选和私有同款问答。 | 仅本人资源；健康来源不足显示未知；历史档案逐订单逐条授权；公开内容另行授权审核。 |
+| 门店店长 | 入驻、资料与员工管理；选品报价/时段、订单、接车、派工、施工与核销；券发行和服务券核销；佣金账单、月结成绩、经营看板与最小客户服务关系。 | 仅本店；客户页不显示电话、车牌、VIN 或跨店记录；经营净额不代表已结算资金。 |
+| 门店店员 | 本店接车、订单与履约；员工推广归因和本人考核明细。 | 不开放店长的员工管理、定价、账单及客户管理权限。 |
+| 技师 | 员工码绑定、本人派工接单/拒绝、施工报工、故障件与完工证据、质检签字和任务工作台。 | 有效绑定及本人任务范围；仅已接单且本单获授权时读取指定历史档案，撤销或工单失效后拒绝新读取。 |
+| 受限运营 | 入驻/内容审核、标准目录与车型治理、来源健康规则、券池、邀请/积分/考核政策、经营/价格数据、运营精选及私有问答管理。 | 小程序独立权限入口；私有问答只限原提问者与当前获派人员；公开问答审核页面尚未实现。 |
 
-后端按有效会话、角色、资源归属和业务状态复核每次操作；本地演示身份不等于正式微信身份验收。
+后端按当前会话、角色、资源归属和业务状态复核操作。新增权限和关键业务开关默认关闭；本地测试身份不能作为正式微信身份验收。
 
 ## 已合并业务阶段
 
 | 阶段 | 已实现内容 | 说明与文档 |
 | --- | --- | --- |
-| 核心履约 A 系列 | 服务目录、报价/时段预约、订单；接车检查与车主确认/异议；派工与技师确认；施工防护/报工/质检签字；核销、本人评价和归档。 | [履约接口](docs/api/ORDER_FULFILLMENT.md) · [施工报工](docs/api/SERVICE_WORK.md) |
-| R1a–R1b | 入驻申请/审核、区域品类配额、员工维护/启停、员工码、门店资料和履约角色隔离。 | [入驻](docs/api/MERCHANT_ONBOARDING.md) · [员工与资料](docs/api/MERCHANT_STAFF.md) |
-| R1c | 标准项目、品牌、车型治理；发布/停用、排序和历史引用保护。 | [标准目录](docs/api/CATALOG_GOVERNANCE.md) |
-| R2a | 核销同事务生成可靠归档事件，无评价也可生成本人施工档案；迟到评价不改写冻结快照。 | [服务档案](docs/api/SERVICE_ARCHIVES.md) |
-| R2b1–R2b2 | 支付核对与持久恢复；双方同意取消后全额退款，暂不开放部分退款；退款通知/查询/重试恢复。 | [支付恢复](docs/api/PAYMENT_RECOVERY.md) · [取消退款](docs/api/ORDER_REFUNDS.md)；订单关闭与资金成功分别展示。 |
-| R2c | 3% 佣金规则、可信批准后三自然月免佣、冻结快照、核销应计、成功退款冲销、本店只读账单。 | [佣金](docs/api/COMMISSIONS.md)；未知政策/旧单/未接入券单保留待核对，暂无真实扣佣结算。 |
-| R3a1 | 录车四入口、本人车牌匹配、VIN 格式检查与手动确认回退。 | [录车](docs/api/VEHICLE_ENTRY.md)；真实 VIN/行驶证 OCR 供应商未接入。 |
-| R3c1 | 车主接车二维码、本店授权扫码、接车八图和独立油表照片。 | [接车检查](docs/api/PICKUP_INSPECTION.md)；旧七图记录兼容读取，不补造证据。 |
-| R3c2 | 本人档案 PDF、日期区间、HTTP/云托管传输、原生下载/打开与临时文件清理。 | [验收记录](docs/testing/LOCAL_ARCHIVE_REPORT_ACCEPTANCE.md)；真实微信 PDF 阅读器另验收。 |
-| R3c3 | 登录车主持链接查看固定脱敏摘要；1 小时/24 小时（默认）/7 天有效期、撤销、过期和访问审计。 | [分享契约](docs/api/ARCHIVE_SHARES.md)；不含车牌/VIN、备注、照片、签字或 PDF；转发后其他已登录车主也可持链接查看。 |
-| R4a1 | 本人保养日期/里程、保险/年检日期目标；到达提醒、来源替换/停用、提醒列表与首页摘要。 | [提醒契约](docs/api/ARCHIVE_REMINDERS.md)；不预设保养周期或推断法定年检日期，提前提醒后补。 |
-| R4a2 | 本人保养、保险、年检结构化资料；修正与确认清空、来源和未核验状态。 | [结构化资料](docs/api/ARCHIVE_STRUCTURED.md)；兼容旧档案/报告/分享，不自动修改提醒或登记里程。 |
-| R4a3 | 机油、刹车片、轮胎、动力电池、冷却液、低压电瓶六类当前原始读数；值/单位/日期/方法/来源、修正和清空。 | [读数契约](docs/api/HEALTH_OBSERVATIONS.md)；动力电池与低压电瓶分开，未录入或失效显示未知，没有健康评分。 |
-| R4a4 | 本人不可变读数历史、新测量与修正链、原值保留、清空保留履历、版本游标分页和来源失效脱敏。 | [历史契约](docs/api/HEALTH_OBSERVATION_HISTORY.md)；旧数据只迁移当前快照，不编造过去记录；原车主历史不随车辆转移公开。 |
-| R4b1 | 原生省市区选择、区域报价过滤/恢复全部、最小商家详情、有效在售项目和最新报价分页、衔接既有预约。 | [商家发现](docs/api/MERCHANT_DISCOVERY.md)；预约重新取最新报价/时段并核验版本与容量；暂无距离或公开评分。 |
+| 核心履约与 R1 | 目录、报价/时段预约、订单、接车与异议、派工、施工证据、质检签字、核销与本人评价；门店入驻、员工管理、区域品类配额和目录治理。 | [履约](docs/api/ORDER_FULFILLMENT.md) · [施工](docs/api/SERVICE_WORK.md) · [入驻](docs/api/MERCHANT_ONBOARDING.md) · [目录治理](docs/api/CATALOG_GOVERNANCE.md) |
+| R2 | 可靠施工归档；支付核对与持久恢复、取消后全额退款；来源佣金政策、冻结快照、核销应计与退款冲销。 | [档案](docs/api/SERVICE_ARCHIVES.md) · [支付恢复](docs/api/PAYMENT_RECOVERY.md) · [退款](docs/api/ORDER_REFUNDS.md) · [佣金](docs/api/COMMISSIONS.md)；无正式资金结算。 |
+| R3 | 录车入口与手动回退、接车八图及油表照片、本人档案 PDF、限时脱敏摘要分享与撤销。 | [录车](docs/api/VEHICLE_ENTRY.md) · [接车](docs/api/PICKUP_INSPECTION.md) · [分享](docs/api/ARCHIVE_SHARES.md)；识别供应商和真机另验收。 |
+| R4 | 结构化人工档案、六指标读数与不可变历史、精确车型来源规则、参考评分/趋势、有来源技术必做、五类与提前提醒；区域/位置/距离、公开评价及授权 AI 总结、车型适用证据、AI 方案到当前报价/时段预约。 | [R4 收口](docs/api/R4_COMPLETION.md) · [位置](docs/api/MERCHANT_LOCATION.md) · [公开评价](docs/api/PUBLIC_RATINGS.md) · [方案预约](docs/api/PLAN_BOOKING.md)；未配置或证据不足显示未知，不预置技术阈值。 |
+| R5 | 门店券模板、库存与有效期、运营券池、本人领券；现金订单抵扣/占用/消费/释放/退款返券、独立服务券核销与佣金联动、持久恢复。 | [券库存与领取](docs/api/COUPON_INVENTORY.md) · [券交易](docs/api/COUPON_TRANSACTIONS.md)；每单一券，金额券保持正实付，服务券独立核销。 |
+| R6 | 车主邀请、海报和员工推广；有效新客归因、每月累计 1/3/6/10 人循环、双方配置奖励、员工考核归因、有来源当月人工诊断资格。 | [邀请](docs/api/INVITATIONS.md) · [奖励](docs/api/INVITATION_REWARDS.md) · [诊断资格](docs/api/INVITE_DIAGNOSIS_ELIGIBILITY.md)；不虚构有效新客或正式发券证据。 |
+| R7 | 车主施工进度与证据对照、门店/技师任务工作台、逐单逐条档案授权；持久站内通知、非实时诊断留言/分配/答复、确认及账号隔离恢复。 | [车主证据](docs/api/OWNER_SERVICE_EVIDENCE.md) · [工作台](docs/api/SERVICE_WORKSPACE.md) · [通知](docs/api/SERVICE_NOTIFICATIONS.md) · [诊断](docs/api/ASYNC_DIAGNOSIS.md) |
+| R8a | 有来源任务配置、每日签到/首次完整人工档案/首次成功 AI 对话的可信事件与积分账本、原子扣分兑券、本人目录/确认/恢复。 | [积分账本](docs/api/POINT_LEDGER.md) · [兑换](docs/api/POINT_EXCHANGES.md) · [本人兑换](docs/api/OWNER_POINT_EXCHANGES.md)；未配置显示未知，不补发历史或测试行为。 |
+| R8b | 来源月度考核、40%/40%/20% 规则、不可变月结快照和修订；经营看板、本店最小客户关系、具体报价版本的来源价格区间与只读比较。 | [月结](docs/api/ASSESSMENT_SNAPSHOTS.md) · [经营](docs/api/BUSINESS_DASHBOARD.md) · [客户](docs/api/CUSTOMER_RELATIONS.md) · [价格](docs/api/PRICE_COMPARISONS.md)；偏离只标记需核对。 |
+| R8c 已完成增量 | 受控同款经验详情与引用、有来源运营精选；独立私有问答后端及四实际页面；选中消息预览、独立授权、审核/撤回及同款读取的公开问答后端。 | [精选](docs/api/CURATED_EXPERIENCES.md) · [私有问答](docs/api/PRIVATE_COMMUNITY_QUESTIONS.md) · [公开问答后端](docs/api/PUBLIC_COMMUNITY_QUESTIONS.md)；公开页面尚未接通，整个 R8 未销项。 |
 
-阶段执行与验收：[当前进度](docs/progress/CURRENT_STATUS.md) · [下一步](docs/progress/NEXT_STEPS.md) · [三端缺口](docs/progress/ROLE_GAP_ANALYSIS.md) · [测试目录](docs/testing/README.md) · [API 目录](docs/api/README.md)。
+阶段记录与索引：[当前进度](docs/progress/CURRENT_STATUS.md) · [R8 总计划](docs/progress/R8_IMPLEMENTATION_PLAN.md) · [测试目录](docs/testing/README.md) · [API 目录](docs/api/README.md)。
 
 ## 未完成事项与后续顺序
 
-| 顺序 | 阶段 | 需要补齐的功能 |
-| --- | --- | --- |
-| 1 | R4b2a 位置与距离 | 门店坐标来源/坐标系、车主主动定位、拒绝后手选区域、可信坐标的直线距离与稳定排序；未知坐标不猜距离。 |
-| 2 | R4b2b 公开评价 | 完成订单评价公开资格、授权/撤销/脱敏、测试评价隔离、只读评价列表与可核对汇总；AI 总结另按授权来源实施。 |
-| 3 | R4c AI 方案到预约 | 结构化必做/推荐/可选方案，映射有效标准项目、门店报价与时段预约；失败可回退手动选服务。 |
-| 4 | R5 券 | 门店券模板/库存/有效期、券池与领券、我的券；订单占用/消费/取消释放/退款返券、独立核销及佣金联动。 |
-| 5 | R6 邀请 | 车主邀请与海报、店员推广码、新用户有效归因、月度循环与双方奖励、失败恢复。 |
-| 6 | R7 三端体验 | 车主施工进度/取车证据对照；门店/技师必要关联档案与工作台；站内事件通知、人工留言、草稿/弱网/登录回跳。 |
-| 7 | R8 积分/经营/社区 | 积分任务与兑换；可复算考核、门店经营/客户与价格数据；授权审核的同款经验和问答补齐。 |
-| 最后 | R9 正式接入与交付 | OCR/VIN/里程与照片语音识别；短信、真实微信身份/手机号/员工绑定与门店激活；真实支付退款、对账结算、订阅；性能、设备、部署、提审发布。 |
+1. **R8c1b3b 公开问答页面**：公开授权/审核/撤回、完整确认与本机恢复、同款公开问答和受控引用入口，之后整理 b3/c1b 销项。[下一步计划](docs/progress/R8C1B3B_PUBLIC_QA_UI_NEXT_PLAN.md)。
+2. **R8c2 图片公开治理**：逐项授权、脱敏、审核和撤回；已有私有图片不能直接视为可公开内容。
+3. **R8c3 有许可来源资料**：专业资料治理、检索和引用追踪。
+4. **整 R8 验收与销项**：完成剩余需求、统一门禁及文档整理；当前合并不代表 R8 全部完成。
+5. **最后 R9 正式接入与交付**：供应商 OCR/VIN/里程/照片语音识别，正式短信、微信身份/手机号/员工绑定和门店激活，真实支付退款、对账结算、订阅消息，性能、安全备份、真机、部署及提审发布。
 
-此外，**可信测量来源、车型适用性与有效期、健康算法/评分与曲线、完整驾驶证/违章资料、五类与提前提醒**仍有缺口，不因读数录入或提醒页面完成而销项。供应商尚未开通时继续可独立实施的业务，真实身份和资金安排最后接入。R7a/R7b 可在前序等待外部条件时提前推进。
-
-详细拆分：[R4b2 位置与评价](docs/progress/R4B2_LOCATION_REVIEWS_NEXT_PLAN.md) · [三端总规划](docs/progress/THREE_ROLE_BUSINESS_PLAN_2026-10-12.md) · [原始交付差异审计](docs/progress/DELIVERY_GAP_AUDIT_2026-10-12.md)。差异审计保留审计时点，最新实现状态请结合当前进度阅读。
+详细范围见[本次汇总交付与剩余事项](docs/progress/R8_PARTIAL_UPLOAD_MERGE_2026_10_17.md)。完整驾驶证/违章资料及可信来源仍需按原始交付需求逐项复核；已实现提醒框架不代表正式数据供应商接入。
 
 ### 仍需独立验收
 
-- 真实相机、扫码、私有图片直连预览/证书、系统选择器与 PDF 阅读器，以及原生分享和区域弹窗；模拟器辅助结果与离线测试不能替代真机操作证据。
-- 正式微信主体/权限、HTTPS 与通讯域名、数据库/对象存储/扫描设施；真实短信、身份、资金和供应商识别。
-- 性能目标、安全与备份恢复、发布回滚、监控和真实微信提审上线。
+- 真机相机、扫码、私有图片、证书、系统选择器、PDF 阅读器及原生分享；开发者工具截图和离线测试不能替代真机证据。
+- 正式微信主体、权限、HTTPS/通讯域名、数据库/对象存储/扫描设施及真实短信、身份和资金。
+- 性能、安全与备份恢复、发布回滚、监控和真实微信提审上线。
 
-本期不实施 PC 运营后台、部分退款、第二次异议与超时自动处理。其余边界以三端规划和具体规格为准。
+本期不实施 PC 运营后台、部分退款、第二次异议与超时自动处理。其余边界以具体阶段规格为准。
 
 ## 测试与数据库基线
 
-| 检查 | 最新已完成阶段结果 | 覆盖内容 |
+以下为 PR #154 最终业务提交的[完整 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/39028173826)结果：
+
+| 检查 | 结果 | 覆盖内容 |
 | --- | --- | --- |
-| backend | 633/633，CI SUCCESS | Java 测试、真实 MySQL/上传容器与相关 HTTP 权限/事务边界；各阶段替身与真实链路证据分别记录。 |
-| miniapp | 388/388，CI SUCCESS | 状态流、契约、账号隔离与迟到请求等离线用例；mp-weixin 与 H5 构建。 |
-| web | CI SUCCESS | 历史 Vue/Vite 项目兼容构建。 |
-| schema-and-ocr | CI SUCCESS | 追踪表、SQL/OpenAPI 生成一致性和 OCR Python 语法；不代表真实 OCR 识别效果。 |
-| schema-mysql | CI SUCCESS | MySQL 8.0 初始化、迁移重放及合成种子数据；V031 后 71 表。 |
-| compose-smoke | CI SUCCESS | CI 隔离 Compose 启动与连通性，不代表生产部署。 |
+| backend | 2,008/2,008，零失败/错误/跳过 | Java、真实 MySQL/上传容器、HTTP 权限与事务边界；CI 任务上限为 45 分钟。 |
+| miniapp | 840/840 | 状态流、确认恢复、账号隔离、迟到请求与实际页面脚本；微信和 H5 构建。 |
+| web | SUCCESS | 历史 Vue/Vite 项目兼容构建。 |
+| schema-and-ocr | SUCCESS | 追踪/SQL/OpenAPI 生成一致性、OCR Python 语法及原始 Compose 迁移挂载检查；不代表真实识别效果。 |
+| schema-mysql | SUCCESS | MySQL 8.0 初始化与迁移重放，保留旧业务凭证。 |
+| compose-smoke | SUCCESS | 实际隔离 Compose 初始化、业务表和服务连通性。 |
 
-数据库基线 **44 表**，顺序应用至 **V031 后共 71 表**；OpenAPI **156 个操作**。R4b1 无新增迁移。已有数据卷需按版本升级；V031 历史迁移只保存可信当前快照，不能恢复不存在的历史数据。
+原始数据库基线 **44 表**；顺序应用到 **V059 后共 124 表**。当前 OpenAPI **331 个操作**、小程序 **104 个页面**，Compose **59 份 SQL 挂载（初始化与 V002–V059）**。迁移源和目标须唯一、编号对应且按序；可运行 `python scripts/verify_compose_migrations.py` 检查。
 
-最新阶段验收：[分享](docs/testing/LOCAL_ARCHIVE_SHARE_ACCEPTANCE.md) · [提醒](docs/testing/LOCAL_ARCHIVE_REMINDERS_ACCEPTANCE.md) · [结构化档案](docs/testing/LOCAL_STRUCTURED_ARCHIVE_ACCEPTANCE.md) · [当前读数](docs/testing/LOCAL_HEALTH_OBSERVATIONS_ACCEPTANCE.md) · [读数历史](docs/testing/LOCAL_HEALTH_HISTORY_ACCEPTANCE.md) · [商家发现](docs/testing/LOCAL_MERCHANT_DISCOVERY_ACCEPTANCE.md)。
+已有数据库卷须备份后按版本升级，不会自动执行新增初始化脚本；不得通过重新初始化生产数据库替代迁移。测试、合并、生产部署和真机验收分别记录。
 
 ## 微信小程序界面演示
 
@@ -218,10 +208,10 @@ docker compose --env-file .env -f deploy/compose/compose.yml up --build -d
 
 ## 贡献与交付约定
 
-- 一个阶段完成后同步规格、接口、进度和测试文档，再将该阶段推送为独立 GitHub PR。
-- 堆叠 PR 按依赖顺序合并；合并时先把当前 PR 的 base 调整到 main，确认变更范围与检查结果后再合并。
+- 每个阶段整理规格、接口、进度和验收文档；按用户确认的批次，将全部代码、迁移、测试与文档一起上传。
+- 合并前核对目标分支、提交包含关系和当前检查结果；汇总 PR 覆盖的历史串联 PR 须标注实际交付记录，避免重复待处理。
 - 记录测试时区分离线替身、真实后端/数据库、开发者工具和真实微信设备证据；不得用前者替代后者。
 - 变更 API、数据库或权限时补充正反向测试，覆盖本人/跨用户、本店/跨店、重复提交、状态竞争和失败回滚等实际边界。
 - PR 中不提交个人交付文档、密钥、数据库口令、真实用户数据、临时构建产物或测试凭据。
 
-欢迎从 [当前进度](docs/progress/CURRENT_STATUS.md) 和 [下一步规划](docs/progress/NEXT_STEPS.md) 开始了解项目。
+欢迎从 [当前进度](docs/progress/CURRENT_STATUS.md)、[R8 计划](docs/progress/R8_IMPLEMENTATION_PLAN.md) 和 [下一步公开问答页面](docs/progress/R8C1B3B_PUBLIC_QA_UI_NEXT_PLAN.md) 开始了解项目。
