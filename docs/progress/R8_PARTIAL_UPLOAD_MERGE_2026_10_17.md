@@ -23,6 +23,8 @@
 
 汇总PR须重新通过全部六项CI：web、miniapp、backend、schema-and-ocr、schema-mysql、compose-smoke。远程检查及合并提交在PR中记录，不以历史阶段通过代替本次全量检查。
 
+首次汇总PR #154运行39012783817：web、miniapp、schema-and-ocr、schema-mysql通过；后端130个已完成测试类共1253项零失败/错误/跳过，但仍在继续执行时触及原20分钟任务上限而取消，compose-smoke随依赖跳过，因此不视为全量通过。仅将后端任务上限调整为45分钟，保留原全量Maven测试和全部断言，重新运行完整CI。
+
 ## 保留的后续工作
 
 1. 按[R8c1b3b计划](R8C1B3B_PUBLIC_QA_UI_NEXT_PLAN.md)实现公开授权/审核/撤回页面、确认恢复、同款公开问答及受控引用，之后整理b3/c1b销项。
