@@ -21,7 +21,7 @@
 
 POST `/api/auth/operator/code`：严格 `{account,password}`。POST `/api/auth/operator/login`：另加6位字符串sms_code。POST `/api/auth/operator/logout`：运营Bearer，严格 `{}`。未知/重复/尾随字段与query均拒绝，全部no-store。账号ASCII 3–64字符，大小写统一，密码不截断。
 
-验证码bcrypt保存、5分钟有效、一次消费、用途绑定运营ID。发码60秒1次/每天5次，登录IP30次/15分钟、账号10次/15分钟。登录事务复核账号、消费验证码、创建15分钟JWT/数据库会话及最小审计；不发refresh，过期需再次两步认证。`can_review` 与 `can_onboard` 只供界面决定入口提示，服务端每次请求都实时复核数据库权限列。退出即时撤销。当前登录响应含 `user.can_review/can_onboard/can_catalog/can_coupon/can_invite/can_diagnose/can_diagnose_manage/can_points/can_assessment/can_analytics/can_price_monitor/can_community_curate/can_community_answer/can_community_manage` 十四个布尔位，另有id/role；客户端严格校验并兼容已知旧版本形状，不接受任意权限字段。新增权限时须同步消费端；仅有诊断、积分、考核、价格、精选或经营权限的账号登录后进入相应工作区。
+验证码bcrypt保存、5分钟有效、一次消费、用途绑定运营ID。发码60秒1次/每天5次，登录IP30次/15分钟、账号10次/15分钟。登录事务复核账号、消费验证码、创建15分钟JWT/数据库会话及最小审计；不发refresh，过期需再次两步认证。`can_review` 与 `can_onboard` 只供界面决定入口提示，服务端每次请求都实时复核数据库权限列。退出即时撤销。当前登录响应含 `user.can_review/can_onboard/can_catalog/can_coupon/can_invite/can_diagnose/can_diagnose_manage/can_points/can_assessment/can_analytics/can_price_monitor/can_community_curate/can_community_answer/can_community_manage/can_knowledge` 十五个布尔位，另有id/role；客户端严格校验并兼容已知旧版本形状，不接受任意权限字段。新增权限时须同步消费端；仅有诊断、积分、考核、价格、精选或经营权限的账号登录后进入相应工作区。
 
 需配置正式 `OperatorSmsSender` 供应商适配器。当前未配置会返回503，不返回验证码，不使用固定代码或绕过；供应商失败回滚已发验证码状态。隔离测试可用合成供应商/验证码夹具，不能代替正式短信验收。车主/商家/技师接口不能使用运营身份。
 
@@ -39,3 +39,7 @@ R8c1b1/V057新增独立`can_community_curate`（默认0），离线动作`commun
 R8c1b2a/V058新增独立`can_community_answer`和`can_community_manage`（均默认0），当前登录id/role及十四布尔位共16字段。离线动作`community-answer-permission`/`community-manage-permission`分别要求显式`OPERATOR_CAN_COMMUNITY_ANSWER=true|false`/`OPERATOR_CAN_COMMUNITY_MANAGE=true|false`；保持无HTTPoperator-admin流程，权限/审计/旧会话撤销同事务。管理队列不授予正文，处理须当前获派，旧精选/诊断权限不能替代。见[私有问答操作](PRIVATE_COMMUNITY_QUESTIONS.md)。b2a后端和b2b问答页面/精确登录落点已实现，只有管理或处理权限的账号分别进入问答受理或获派工作区；上文13/14字段是对应阶段历史快照。
 
 R8c1b3a使用现有独立`can_review`仅审核车主另外确认提交的公开问答预览，不授予b2私有详情；`can_community_manage/answer/curate`不能替代。没有新增运营位，当前登录仍16字段。独立`COMMUNITY_PUBLICATION_ENABLED=false`默认关闭，见[公开问答操作](PUBLIC_COMMUNITY_QUESTIONS.md)。
+
+## R8c3许可资料独立权限
+
+V061增加can_knowledge，默认0，当前登录id/role及15布尔位共17字段。无HTTP离线动作knowledge-permission要求显式OPERATOR_CAN_KNOWLEDGE=true|false，变更、审计与原会话撤销原子；不继承目录、精选、问答或审核权限。仅此权限的账号进入/pages/operator/knowledge。客户端兼容明确旧16字段并将缺失权限清为false。上文16字段是V058/V059时点记录。操作见[公开图片与许可资料](PUBLIC_IMAGES_AND_KNOWLEDGE.md)。

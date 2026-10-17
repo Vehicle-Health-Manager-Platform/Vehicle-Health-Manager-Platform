@@ -1,0 +1,9 @@
+package com.autocare.platform.gateway.identity;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+class JdbcOperatorAdminKnowledgeTest extends JdbcOperatorAdminCommunityTest {
+ @Test void knowledgeGrantIsIndependentAndRevokesCurrentSessions(){String old=session();run(env("knowledge-permission").withProperty("OPERATOR_CAN_KNOWLEDGE","true"));assertEquals(1,jdbc.queryForObject("SELECT can_knowledge FROM operator_account WHERE id=1",Integer.class));assertEquals(0,jdbc.queryForObject("SELECT can_community_manage+can_community_answer+can_community_curate+can_catalog FROM operator_account WHERE id=1",Integer.class));assertNotNull(jdbc.queryForObject("SELECT revoked_at FROM auth_session WHERE id=?",java.sql.Timestamp.class,old));assertThrows(Exception.class,()->run(env("knowledge-permission").withProperty("OPERATOR_CAN_KNOWLEDGE","TRUE")));}
+ @Test void newLoginHasSeventeenExactFieldsAndDoesNotGrantOtherScopes(){jdbc.update("UPDATE operator_account SET can_knowledge=1 WHERE id=1");code();var user=(java.util.Map<?,?>)operators.login("synthetic-operator",password,"123456").get("user");assertEquals(17,user.size());assertEquals(true,user.get("can_knowledge"));assertEquals(false,user.get("can_catalog"));assertEquals(false,user.get("can_community_manage"));assertEquals(false,user.get("can_community_answer"));}
+ @Test void knowledgeAuditFailureRollsBackGrantAndRevocation(){String old=session();jdbc.execute("CREATE TRIGGER reject_operator_audit BEFORE INSERT ON audit_log FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='synthetic failure'");assertThrows(Exception.class,()->run(env("knowledge-permission").withProperty("OPERATOR_CAN_KNOWLEDGE","true")));assertEquals(0,jdbc.queryForObject("SELECT can_knowledge FROM operator_account WHERE id=1",Integer.class));assertNull(jdbc.queryForObject("SELECT revoked_at FROM auth_session WHERE id=?",java.sql.Timestamp.class,old));}
+}

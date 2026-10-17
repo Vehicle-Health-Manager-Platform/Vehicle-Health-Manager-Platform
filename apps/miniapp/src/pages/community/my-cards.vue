@@ -25,7 +25,7 @@ onUnload(() => { visible = false; clear() })
 </script>
 
 <template>
-  <view class="reservation-page">
+  <view class="reservation-page"><button @tap="uni.navigateTo({url:'/pages/community/public-images?mode=owner'})">我的独立图片授权与撤回</button>
     <text class="reservation-title">我的经验卡片</text>
     <text class="reservation-copy">卡片默认私有。明确授权且审核通过后才展示同款摘要；撤回后停止展示，原档案和评价保留。</text>
     <button v-if="!ownerSession.accessToken" @tap="login">前往车主登录</button>

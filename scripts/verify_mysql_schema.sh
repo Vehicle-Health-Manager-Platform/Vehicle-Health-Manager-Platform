@@ -186,10 +186,18 @@ run_sql_file docs/sql/migrations/V059__public_community_questions.sql
 run_sql_file docs/sql/migrations/V057__curated_experiences.sql
 run_sql_file docs/sql/migrations/V058__private_community_questions.sql
 run_sql_file docs/sql/migrations/V059__public_community_questions.sql
+run_sql_file docs/sql/migrations/V060__public_image_copies.sql
+run_sql_file docs/sql/migrations/V060__public_image_copies.sql
+run_sql_file docs/sql/migrations/V061__licensed_knowledge.sql
+run_sql_file docs/sql/migrations/V061__licensed_knowledge.sql
+[[ "$(query "SELECT COUNT(*) FROM public_image_application")" == 0 ]] || { echo "V060 must not seed public image consent" >&2; exit 1; }
+[[ "$(query "SELECT COUNT(*) FROM knowledge_document")" == 0 ]] || { echo "V061 must not seed unlicensed knowledge" >&2; exit 1; }
+[[ "$(query "SELECT COUNT(*) FROM operator_account WHERE can_knowledge<>0")" == 0 ]] || { echo "Knowledge permission must default off" >&2; exit 1; }
+
 [[ "$(query "SELECT COUNT(*) FROM assessment_policy")" == 0 ]] || { echo "V053 must not seed assessment rules" >&2; exit 1; }
 [[ "$(query "SELECT COUNT(*) FROM operator_account WHERE can_assessment<>0")" == 0 ]] || { echo "Assessment permission must default off" >&2; exit 1; }
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
-[[ "$tables" == 124 ]] || { echo "Expected 124 tables after V059, got $tables" >&2; exit 1; }
+[[ "$tables" == 130 ]] || { echo "Expected 130 tables after V061, got $tables" >&2; exit 1; }
 [[ "$(query "SELECT COUNT(*) FROM merchant_location")" == 0 ]] || { echo 'V032 must not infer legacy coordinates' >&2; exit 1; }
 catalog_columns=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND ((table_name IN ('brand','series','model','standard_project') AND column_name IN ('sort_order','source_note','revision')) OR (table_name IN ('brand','series','model') AND column_name='status') OR (table_name='operator_account' AND column_name='can_catalog'))")
 [[ "$catalog_columns" == 16 ]] || { echo "V022 catalogue fields incomplete: $catalog_columns/16" >&2; exit 1; }
@@ -307,7 +315,7 @@ for entry in invite_code:uk_invite_code invite_code:uk_invite_actor invite_regis
   table="${entry%%:*}"; index="${entry##*:}"
   [[ "$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema='$database' AND table_name='$table' AND index_name='$index' AND non_unique=0")" == 1 ]] || { echo 'V040 invitation uniqueness missing' >&2; exit 1; }
 done
-echo "MySQL 8.0 schema: 124 tables after V059; repeat migration and synthetic seed passed"
+echo "MySQL 8.0 schema: 130 tables after V061; repeat migration and synthetic seed passed"
 
 [[ "$(query "SELECT COUNT(*) FROM invite_reward_policy")" == 0 ]] || { echo "Reward policies must not be seeded" >&2; exit 1; }
 [[ "$(query "SELECT COUNT(*) FROM operator_account WHERE can_invite<>0")" == 0 ]] || { echo "Invitation permission must default off" >&2; exit 1; }

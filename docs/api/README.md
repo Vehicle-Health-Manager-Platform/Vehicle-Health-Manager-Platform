@@ -1,5 +1,7 @@
 # API 文档
 
+> 2026-10-17当前：[R8图片公开](PUBLIC_IMAGES.md) · [许可资料与检索/AI引用](LICENSED_KNOWLEDGE.md)；实际公开问答页面与恢复已接通，独立权限/17字段、V061/130表，后续历史条目按当时状态保留。
+
 > [R8c1b3a独立公开问答后端](PUBLIC_COMMUNITY_QUESTIONS.md)：原消息指纹/身份来源、明确预览与公开授权、最小审核/撤回、当前本人同款读取；公开页面及恢复下一b3b。
 
 > [R8c1b2私有结构化问答](PRIVATE_COMMUNITY_QUESTIONS.md)：b2a后端与b2b四页面、完整确认/独立原请求恢复及精确登录返回已接通；公开授权审核另行b3。
