@@ -6,23 +6,27 @@ import { dispatchApi, confirmStillHolds } from '../../services/technician-dispat
 import { PHOTO_GROUPS, PHOTO_LABELS, reportBody, workApi, WorkError } from '../../services/service-work.js'
 import { createWorkImageFlow, initialWorkImageState } from '../../services/work-image-flow.js'
 import { technicianImageApi as images, imageRequestKey } from '../../services/private-images.js'
-import { createReservationReadFlow, createReservationWriteFlow, initialReservationReadState, initialReservationWriteState, displayTime } from '../../services/reservations.js'
+import {displayTime} from '../../services/reservations.js'
+import {initialDiagnosisState,createAsyncDiagnosisFlow} from '../../services/async-diagnosis.js'
+import {createWorkRecovery} from '../../services/work-recovery.js'
 import { stateLabel } from '../../services/order-status.js'
 import WorkPhotos from '../../components/WorkPhotos.vue'
 import SignaturePad from '../../components/SignaturePad.vue'
 const fresh = () => ({ plan: '', analysis: '', minutes: '', noFaultParts: false, noParts: false, parts: [] })
-const form = reactive(fresh()), read = reactive(initialReservationReadState()), reportWrite = reactive(initialReservationWriteState()), signWrite = reactive(initialReservationWriteState()), photos = reactive(initialWorkImageState())
-const visible = ref(false), epoch = ref(0), modal = ref(false), signatureBusy = ref(false)
-let order = 0
-const token = () => technicianSession.accessToken
-const flow = createReservationReadFlow({ state: read, token, request: async actor => {
-  const [work, job] = await Promise.all([workApi.detail(actor, 'tech', order), dispatchApi.order(actor, order)])
-  return { work, job }
-} })
+const form=reactive(fresh()), recoveryState=reactive(initialDiagnosisState()),photos=reactive(initialWorkImageState())
+const visible=ref(false),epoch=ref(0),modal=ref(false),signatureBusy=ref(false)
+let order=0
+const token=()=>technicianSession.accessToken
+const recovery=createWorkRecovery({actor:()=>technicianSession.actorId,order:()=>order})
+const flow=createAsyncDiagnosisFlow({state:recoveryState,token,scope:()=>`tech:${order}`,recovery,allowed:()=>technicianSession.actorId>0&&order>0,confirm:async()=>true,newKey:imageRequestKey,
+ load:async actor=>{const staff=technicianSession.actorId,target=order;const [work,job]=await Promise.all([workApi.detail(actor,'tech',target),dispatchApi.order(actor,target)]);if(job.assignment_status!=='ACCEPTED')throw new WorkError('forbidden','请先核对本人当前接单');if(job.order_id!==target||work.order_id!==target||job.order_status!==work.order_status)throw new WorkError('conflict','工单快照正在变化，请重新读取后核对原请求');const value={work,job};if(visible.value&&token()===actor&&technicianSession.actorId===staff&&order===target)recovery.reconcile(value);return value},
+ write:(actor,action,id,body,key)=>action==='report'?workApi.submit(actor,body,key):workApi.sign(actor,id,body.signature_file_id,key),onWritten:()=>{Object.assign(form,fresh());photoFlow.reset();photoFlow.resume()}})
+const read=reactive({get value(){return recoveryState.data},get busy(){return recoveryState.busy},get message(){return recoveryState.message},get failureKind(){return recoveryState.kind}})
+const reportWrite=reactive({get busy(){return recoveryState.busy},get saved(){return recoveryState.data?.work.report||null},get failureKind(){return recoveryState.kind}}),signWrite=reactive({get busy(){return recoveryState.busy},get saved(){return recoveryState.data?.work.report?.status==='SIGNED'},get failureKind(){return recoveryState.kind}})
 const work = computed(() => read.value?.work), job = computed(() => read.value?.job)
 const canWork = computed(() => job.value?.assignment_status === 'ACCEPTED' && work.value?.order_status === 'IN_SERVICE' && job.value.order_status === work.value.order_status)
-const locked = computed(() => photos.busy || reportWrite.busy || signWrite.busy || modal.value || signatureBusy.value || !canWork.value)
-const photoFlow = createWorkImageFlow({ state: photos, api: images, token, disabled: () => reportWrite.busy || signWrite.busy || modal.value || !!signWrite.saved || !canWork.value })
+const locked = computed(() => photos.busy || reportWrite.busy || signWrite.busy || modal.value || signatureBusy.value || recoveryState.retry || recoveryState.kind==='storage' || !canWork.value)
+const photoFlow = createWorkImageFlow({ state: photos, api: images, token, disabled: () => reportWrite.busy || signWrite.busy || modal.value || !!signWrite.saved || recoveryState.retry || recoveryState.kind==='storage' || !canWork.value })
 const group = kind => photos.files.filter(f => f.kind === kind)
 const fields = { PROCESS: 'process_photos', FAULT: 'fault_part_photos', FINISH: 'finish_photos' }
 const signBody = () => {
@@ -30,23 +34,22 @@ const signBody = () => {
   if (!Number.isSafeInteger(file) || file <= 0) throw new WorkError('invalid', '请手写本人签名并完成签名图片上传')
   return { order_id: order, signature_file_id: file }
 }
-const reportSave = createReservationWriteFlow({ state: reportWrite, token, newKey: imageRequestKey, body: () => reportBody(order, form, photos.files), request: (actor, b, key) => workApi.submit(actor, b, key), onConflict: () => flow.load() })
-const signSave = createReservationWriteFlow({ state: signWrite, token, newKey: imageRequestKey, body: signBody, request: (actor, b, key) => workApi.sign(actor, b.order_id, b.signature_file_id, key), onConflict: () => flow.load() })
-function clear() { epoch.value++; modal.value = false; signatureBusy.value = false; Object.assign(form, fresh()); photoFlow.reset(); flow.reset(); reportSave.reset(); signSave.reset() }
+function clear(){epoch.value++;modal.value=false;signatureBusy.value=false;Object.assign(form,fresh());photoFlow.reset();flow.reset()}
+function restoreDraft(){const saved=flow.restoreDraft();if(saved&&canWork.value&&!work.value?.report){Object.assign(form,saved);photoFlow.reset();photoFlow.resume()}}
 function login() { clearTechnicianSession(); uni.navigateTo({ url: '/pages/technician/index' }) }
 function addPart() { if (!locked.value && !form.noParts && form.parts.length < 20) form.parts.push({ name: '', model: '', brand: '', quantity: '' }) }
 function confirm(action) {
   if (locked.value || (action === 'report' ? work.value?.report || reportWrite.saved : work.value?.report?.status !== 'SUBMITTED' || signWrite.saved)) return
   const body = action === 'report' ? () => reportBody(order, form, photos.files) : signBody
-  const write = action === 'report' ? reportWrite : signWrite, save = action === 'report' ? reportSave : signSave
+  const write = recoveryState
   let opened; try { opened = { actor: token(), target: JSON.stringify(body()) } } catch (error) { write.message = error.message; return }
   const version = epoch.value; modal.value = true
   uni.showModal({ title: action === 'report' ? '提交完整施工报工' : '质检签字并送核销',
-    content: action === 'report' ? '确认照片、方案、故障分析、配件与工时符合实际施工？提交后不可修改，随后需质检签字。' : '确认已完成质检并由本人签名？提交后不可修改，订单将进入待核销。',
+    content: action === 'report' ? '确认照片、方案、故障分析、配件与工时符合实际施工？提交后不可修改，随后需质检签字。原请求会先保存在本机用于断线恢复。' : '确认已完成质检并由本人签名？提交后不可修改，订单将进入待核销。仅原请求和文件编号保存在本机用于断线恢复，不恢复可编辑签名。',
     success: result => {
       if (!result.confirm || version !== epoch.value || !canWork.value || (action === 'report' ? work.value?.report : work.value?.report?.status !== 'SUBMITTED')) return
       let target; try { target = JSON.stringify(body()) } catch { return }
-      if (confirmStillHolds(opened, { visible: visible.value, token: token(), target })) save.save()
+      if (confirmStillHolds(opened, { visible: visible.value, token: token(), target })) flow.save(action,order,JSON.parse(target))
     }, complete: () => { if (version === epoch.value) modal.value = false },
   })
 }
@@ -54,18 +57,17 @@ function signed(file, version) { if (version === epoch.value && visible.value &&
 function signingBusy(busy, version) { if (version === epoch.value) signatureBusy.value = busy }
 function clearSignature(version) { if (version === epoch.value) { const entry = group('SIGNATURE')[0]; if (entry) photoFlow.remove(entry) } }
 const preview = file => photoFlow.preview(file, actor => workApi.access(actor, 'tech', order, file))
-watch(() => reportWrite.saved, value => { if (value && visible.value) flow.load() })
-watch(() => signWrite.saved, value => { if (value && visible.value) flow.load() })
+watch(()=>recoveryState.kind,k=>{if(['unauthorized','forbidden','missing'].includes(k)){Object.assign(form,fresh());photoFlow.reset()}})
 watch(token, () => { clear(); if (visible.value && token()) { photoFlow.resume(); flow.load() } }, { flush: 'sync' })
 onLoad(q => { order = Number(q?.id) || 0 })
 onShow(() => { visible.value = true; photoFlow.resume(); if (token()) flow.load() })
-onHide(() => { visible.value = false; epoch.value++; modal.value = false; signatureBusy.value = false; photoFlow.suspend(); flow.suspend(); reportSave.suspend(); signSave.suspend() })
+onHide(() => { visible.value = false; epoch.value++; modal.value = false; signatureBusy.value = false; photoFlow.suspend(); flow.reset() })
 onUnload(() => { visible.value = false; clear() })
 </script>
 <template>
   <view class="reservation-page">
     <text class="reservation-title">施工报工与质检</text>
-    <button v-if="!technicianSession.accessToken" @tap="login">前往技师登录</button>
+    <button v-if="!technicianSession.accessToken||!technicianSession.actorId" @tap="login">前往技师登录</button>
     <text v-if="read.busy">正在加载本人工单…</text>
     <view v-if="read.message" class="reservation-panel"><text role="status">{{ read.message }}</text><text v-if="['unauthorized','forbidden'].includes(read.failureKind)" data-testid="technician-session-action">账号可能已被店长停用，或微信绑定已被撤销。请向店长索取新的员工码，然后重新绑定。</text><button v-if="['unauthorized','forbidden'].includes(read.failureKind)" @tap="login">重新绑定员工码</button><button v-else @tap="flow.load">重试加载</button></view>
     <view v-if="work && job" class="reservation-panel">
@@ -75,6 +77,7 @@ onUnload(() => { visible.value = false; clear() })
       <view v-if="work.protection"><text>施工防护已提交 · {{ displayTime(work.protection.uploaded_at) }}</text><button :disabled="photos.busy" @tap="preview(work.protection.photo_file_id)">核对防护照片</button></view>
       <text v-else>请先由商家完成施工防护拍照。无防护照片不能报工。</text>
       <template v-if="!work.report && work.protection && canWork">
+        <text>文字、配件和工时草稿仅保存在当前设备；照片与签名需重新选择。共享设备用后请清除。</text><button :disabled="locked" @tap="flow.saveDraft(JSON.parse(JSON.stringify(form)))">保存本机施工草稿</button><button v-if="recoveryState.hasDraft" :disabled="locked" @tap="restoreDraft">恢复本机施工草稿</button><button v-if="recoveryState.hasDraft" :disabled="recoveryState.busy" @tap="flow.clearDraft">清除本机施工草稿</button>
         <WorkPhotos v-for="kind in PHOTO_GROUPS.filter(k=>k!=='FAULT'||!form.noFaultParts)" :key="kind" :files="group(kind)" :kind="kind" :label="PHOTO_LABELS[kind]" :disabled="locked || !!reportWrite.saved" @choose="photoFlow.choose" @remove="photoFlow.remove" @retry="photoFlow.upload" @preview="photoFlow.preview" />
         <text>施工照、完工照各至少一张，完工照应包含施工部位与车牌；有故障件时上传故障件照。每类最多 9 张。</text>
         <checkbox-group @change="form.noFaultParts=$event.detail.value.includes('none')"><label><checkbox value="none" :checked="form.noFaultParts" :disabled="locked||!!reportWrite.saved||group('FAULT').length>0" />本次无故障件（如已有照片，请先移除再声明）</label></checkbox-group>
@@ -105,7 +108,7 @@ onUnload(() => { visible.value = false; clear() })
         <template v-else-if="work.report.status==='SIGNED'"><text>已完成质检签字 · {{ displayTime(work.report.signed_at) }}</text><button :disabled="photos.busy" @tap="preview(work.report.signature_file_id)">查看本人质检签名</button><text>施工记录已锁定，当前订单状态为 {{ stateLabel(work.order_status) }}。</text></template>
       </template>
       <text v-if="photos.message" role="status">{{ photos.message }}</text><button v-if="photos.failureKind==='permission'" @tap="images.authorize">开启相机权限</button>
-      <text v-if="reportWrite.message" role="status">{{ reportWrite.message }}</text><text v-if="signWrite.message" role="status">{{ signWrite.message }}</text>
+      <button v-if="recoveryState.retry" :disabled="recoveryState.busy" @tap="flow.retry">核对后重试原施工请求</button>
       <button v-if="[reportWrite.failureKind,signWrite.failureKind].some(k=>['unauthorized','forbidden'].includes(k))" @tap="login">重新绑定员工码</button>
       <button :disabled="photos.busy||reportWrite.busy||signWrite.busy||modal" @tap="flow.load">刷新施工记录</button>
     </view>

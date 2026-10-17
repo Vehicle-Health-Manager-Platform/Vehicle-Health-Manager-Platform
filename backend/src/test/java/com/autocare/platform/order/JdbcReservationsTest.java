@@ -30,6 +30,7 @@ class JdbcReservationsTest {
         try(var c=ds.getConnection();var paths=java.nio.file.Files.list(Path.of("..","docs","sql","migrations"))){for(var file:paths.filter(p->p.toString().endsWith(".sql")).sorted().toList())ScriptUtils.executeSqlScript(c,new FileSystemResource(file));ScriptUtils.executeSqlScript(c,new FileSystemResource(Path.of("..","docs","sql","migrations","V007__reservation_orders.sql")));}
     }
     @BeforeEach void setup(){
+        jdbc.update("DELETE FROM notification");jdbc.update("DELETE FROM service_notification_outbox");
         jdbc.update("DELETE FROM merchant_commission_entry");jdbc.update("DELETE FROM order_commission_snapshot");jdbc.update("DELETE FROM merchant_commission_policy");
 
         jdbc.execute("DROP TRIGGER IF EXISTS reject_reservation_audit");
@@ -45,6 +46,12 @@ class JdbcReservationsTest {
     void session(String id,String type,long subject,String role,String app,long merchant){jdbc.update("INSERT INTO auth_session(id,subject_type,subject_id,role,app_id,merchant_id,refresh_hash,expires_at) VALUES(?,?,?,?,?,?,?,DATE_ADD(UTC_TIMESTAMP(),INTERVAL 1 HOUR))",id,type,subject,role,app,merchant,UUID.randomUUID().toString());}
     VehicleOwner owner(long id){var o=new VehicleOwner(id,UUID.randomUUID().toString(),Instant.now().plusSeconds(3600));session(o.session(),"user",id,"OWNER","test",0);return o;}
     String key(){return UUID.randomUUID().toString();}
+    @Test void cancelAndScheduledExpiryPublishOneClosedFactEach(){
+        long slot=slot(2),one=order(a,slot),two=order(b,slot);String k=key();orders.cancel(a,k,one);orders.cancel(a,k,one);orders.cancel(a,key(),one);clock.value=clock.value.plusSeconds(901);expiry.sweep();expiry.sweep();assertEquals("CLOSED",orders.detail(b,two).get("status"));assertEquals(2,jdbc.queryForObject("SELECT COUNT(*) FROM service_notification_outbox WHERE kind='ORDER_CLOSED'",Integer.class));var notices=new ServiceNotifications(db,"test-app");notices.recover();assertEquals(1,db.mapper.valueToTree(notices.list(a,1)).path("unread_count").asInt());assertEquals(1,db.mapper.valueToTree(notices.list(b,1)).path("unread_count").asInt());
+    }
+    @Test void failedCloseNotificationKeepsCapacityAndOrderUntilOriginalKeyRetry(){
+        long slot=slot(1),id=order(a,slot);String k=key();jdbc.execute("CREATE TRIGGER reject_reservation_audit BEFORE INSERT ON service_notification_outbox FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='synthetic failure'");try{assertThrows(ResponseStatusException.class,()->orders.cancel(a,k,id));assertEquals("PENDING_PAYMENT",orders.detail(a,id).get("status"));assertEquals(1,jdbc.queryForObject("SELECT reserved_count FROM appointment_slot WHERE id=?",Integer.class,slot));}finally{jdbc.execute("DROP TRIGGER reject_reservation_audit");}orders.cancel(a,k,id);assertEquals("CLOSED",orders.detail(a,id).get("status"));assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM service_notification_outbox WHERE kind='ORDER_CLOSED'",Integer.class));
+    }
     long slot(int capacity){Instant start=clock.value.atZone(ReservationInput.ZONE).toLocalDate().plusDays(1).atTime(10,0).atZone(ReservationInput.ZONE).toInstant();return slots.publish(shop,key(),new ReservationInput.Slot(1,start,start.plusSeconds(3600),capacity)).path("data").path("slot_id").asLong();}
     ReservationInput.Booking booking(VehicleOwner o,long slot){return new ReservationInput.Booking(1,1,o.id(),slot);}
     long order(VehicleOwner o,long slot){return orders.create(o,key(),booking(o,slot)).path("data").path("order_id").asLong();}

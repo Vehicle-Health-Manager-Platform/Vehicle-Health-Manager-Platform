@@ -38,6 +38,7 @@ class JdbcOrderDisputesTest {
             ScriptUtils.executeSqlScript(c,new FileSystemResource(Path.of("..","docs","sql","migrations","V013__dispute_resolution.sql")));}
     }
     @BeforeEach void setup(){
+        jdbc.update("DELETE FROM notification");jdbc.update("DELETE FROM service_notification_outbox");
         for(String trigger:List.of("reject_dispute_audit","reject_dispute_cache"))jdbc.execute("DROP TRIGGER IF EXISTS "+trigger);
         for(String table:List.of("order_dispute_record","order_dispute","technician_assignment","pickup_check","order_status_transition","audit_log","idempotency_record","auth_session","staff_wechat_identity","order","appointment_slot","staff_account","merchant","user"))
             jdbc.update("DELETE FROM `"+table+"`");
@@ -76,6 +77,10 @@ class JdbcOrderDisputesTest {
         return start<0?"":report.substring(start,Math.min(report.length(),start+240));
     }
 
+    @Test void eachHandlingAndOwnerReviewHasItsOwnMinimalNotificationSource(){
+        String k=key();service.handle(shop,k,1,"第一条合成处理");service.handle(shop,k,1,"第一条合成处理");service.review(owner,key(),1,OrderDisputes.REJECT,"继续核对");service.handle(shop,key(),1,"第二条合成处理");service.review(owner,key(),1,OrderDisputes.ACCEPT,null);
+        assertEquals(4,count("service_notification_outbox"));assertEquals(2,countWhere("SELECT COUNT(*) FROM service_notification_outbox WHERE kind='DISPUTE_HANDLED'"));var notices=new ServiceNotifications(db,"test-app");notices.recover();var n=db.mapper.valueToTree(notices.list(owner,1));assertEquals(4,n.path("unread_count").asInt());assertFalse(n.toString().contains("合成处理"));assertEquals(0,db.mapper.valueToTree(notices.list(foreign,1)).path("unread_count").asInt());
+    }
     @Test void merchantHandlingAppendsTimelineAndReplaysTheSameKey(){
         String first=key();var handled=data(service.handle(shop,first,1,"已核对接车照片，同意补拍左后门"));
         assertEquals(OrderDisputes.OPEN,handled.get("dispute_status"));assertEquals("DISPUTED",handled.get("order_status"));

@@ -32,6 +32,8 @@ public class AuthTokens {
     private final ObjectProvider<IdentityRepository> identities;
     private final ObjectProvider<MerchantIdentityRepository> merchants;
     private final String currentAppId;
+    @org.springframework.beans.factory.annotation.Autowired(required=false)
+    private com.autocare.platform.order.PointLedger points;
     private final SecureRandom random = new SecureRandom();
 
     public AuthTokens(JwtEncoder encoder, ObjectProvider<AuthSessionRepository> sessions,
@@ -46,8 +48,13 @@ public class AuthTokens {
     }
 
     public Map<String, Object> owner(IdentityRepository.Owner owner, String appId) {
-        return issue(new AuthSessionRepository.Session(UUID.randomUUID().toString(), "user", owner.id(),
-            "OWNER", appId, null, null), ownerUser(owner));
+        return owner(owner,appId,false);
+    }
+    public Map<String,Object> owner(IdentityRepository.Owner owner,String appId,boolean verified) {
+        var session=new AuthSessionRepository.Session(UUID.randomUUID().toString(),"user",owner.id(),"OWNER",appId,null,null);
+        var result=issue(session,ownerUser(owner));
+        if(points!=null)points.recordIdentity(session.id(),owner.id(),appId,verified);
+        return result;
     }
 
     public Map<String, Object> technician(IdentityRepository.Technician technician, String appId) {

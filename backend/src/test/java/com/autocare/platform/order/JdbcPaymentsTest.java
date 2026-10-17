@@ -30,6 +30,7 @@ class JdbcPaymentsTest {
         try(var c=ds.getConnection();var paths=java.nio.file.Files.list(Path.of("..","docs","sql","migrations"))){for(var file:paths.filter(p->p.toString().endsWith(".sql")).sorted().toList())ScriptUtils.executeSqlScript(c,new FileSystemResource(file));ScriptUtils.executeSqlScript(c,new FileSystemResource(Path.of("..","docs","sql","migrations","V024__payment_query_recovery.sql")));}
     }
     @BeforeEach void setup(){
+        jdbc.update("DELETE FROM notification");jdbc.update("DELETE FROM service_notification_outbox");
         jdbc.update("DELETE FROM merchant_commission_entry");jdbc.update("DELETE FROM order_commission_snapshot");jdbc.update("DELETE FROM merchant_commission_policy");
 
         jdbc.execute("DROP TRIGGER IF EXISTS reject_reservation_audit");
@@ -200,5 +201,12 @@ class JdbcPaymentsTest {
         jdbc.update("UPDATE `order` SET appointment_at=? WHERE id=?",java.sql.Timestamp.from(Instant.parse("2026-10-07T16:00:00Z")),second);
         assertEquals(1L,reader.list(shop,null,"2026-10-07",1,20).get("total"));
         assertEquals(1L,reader.list(shop,null,"2026-10-08",1,20).get("total"));
+    }
+
+    @Test void paidEventFailureRollsBackPaymentAndRetryEmitsOnce(){
+        jdbc.update("DELETE FROM service_notification_outbox");long o=order(a,slot(1)),p=pay(o);var receipt=notice(p,"SUCCEEDED",key(),"synthetic-r7c");
+        jdbc.execute("CREATE TRIGGER reject_r7c_payment BEFORE INSERT ON service_notification_outbox FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='synthetic failure'");
+        try{assertEquals(503,assertThrows(ResponseStatusException.class,()->payments.notify(receipt)).getStatusCode().value());assertEquals("PENDING_PAYMENT",orders.detail(a,o).get("status"));assertEquals(0,jdbc.queryForObject("SELECT COUNT(*) FROM service_notification_outbox",Integer.class));}finally{jdbc.execute("DROP TRIGGER reject_r7c_payment");}
+        payments.notify(receipt);payments.notify(receipt);assertEquals("PAID",orders.detail(a,o).get("status"));assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM service_notification_outbox WHERE kind='ORDER_PAID' AND order_id=?",Integer.class,o));
     }
 }

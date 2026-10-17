@@ -145,4 +145,10 @@ class JdbcOrderRedemptionTest {
         ready();jdbc.update("INSERT INTO staff_account(id,merchant_id,role,account,status) VALUES(3,1,'MERCHANT','shop-peer','ACTIVE')");var peerShop=merchant(3,1);int audits=count("audit_log"),transitions=count("order_status_transition");var start=new CountDownLatch(1);var pool=Executors.newFixedThreadPool(2);
         try{var jobs=new ArrayList<Future<Boolean>>();for(var actor:List.of(shop,peerShop))jobs.add(pool.submit(()->{start.await();return redemption.redeem(actor,key(),1,redeemBody()).path("data").path("changed").asBoolean();}));start.countDown();int changed=0;for(var job:jobs)if(job.get(30,TimeUnit.SECONDS))changed++;assertEquals(1,changed);assertEquals(1,count("order_redemption"));assertEquals(audits+2,count("audit_log"));assertEquals(transitions+1,count("order_status_transition"));}finally{pool.shutdownNow();}
     }
+
+    @Test void completionEventFailureRollsBackReceiptAndRetryEmitsOnce(){
+        ready();jdbc.update("DELETE FROM service_notification_outbox");String k=key();jdbc.execute("CREATE TRIGGER reject_r7c_completion BEFORE INSERT ON service_notification_outbox FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='synthetic failure'");
+        try{assertEquals(503,assertThrows(ResponseStatusException.class,()->redeem(k)).getStatusCode().value());assertEquals("PENDING_VERIFY",state());assertEquals(0,count("order_redemption"));}finally{jdbc.execute("DROP TRIGGER reject_r7c_completion");}
+        redeem(k);redeem(k);assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM service_notification_outbox WHERE kind='ORDER_COMPLETE' AND order_id=1",Integer.class));
+    }
 }

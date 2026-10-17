@@ -25,9 +25,13 @@ class JdbcPickupInspectionTest {
     static JdbcTemplate jdbc;final ObjectMapper mapper=new ObjectMapper();ReservationStore db;PickupInspection service;MerchantActor shop,other;VehicleOwner owner,foreign;
     @BeforeAll static void schema()throws Exception{
         var source=new DriverManagerDataSource(mysql.getJdbcUrl(),mysql.getUsername(),mysql.getPassword());jdbc=new JdbcTemplate(source);
-        try(var c=source.getConnection()){for(String file:List.of("V001__baseline.sql","V003__auth_lifecycle.sql","V004__upload_http.sql","V007__reservation_orders.sql","V008__payment_foundation.sql","V009__order_fulfillment_states.sql","V010__pickup_inspection.sql","V010__pickup_inspection.sql","V011__pickup_owner_decision.sql","V011__pickup_owner_decision.sql","V013__dispute_resolution.sql","V013__dispute_resolution.sql"))ScriptUtils.executeSqlScript(c,new FileSystemResource(Path.of("..","docs","sql","migrations",file)));}
+        try(var c=source.getConnection();var paths=java.nio.file.Files.list(Path.of("..","docs","sql","migrations"))){
+            for(var file:paths.filter(p->p.toString().endsWith(".sql")).sorted().toList())ScriptUtils.executeSqlScript(c,new FileSystemResource(file));
+            for(String file:List.of("V010__pickup_inspection.sql","V011__pickup_owner_decision.sql","V013__dispute_resolution.sql"))ScriptUtils.executeSqlScript(c,new FileSystemResource(Path.of("..","docs","sql","migrations",file)));
+        }
     }
     @BeforeEach void setup(){
+        jdbc.update("DELETE FROM notification");jdbc.update("DELETE FROM service_notification_outbox");
         for(String trigger:List.of("reject_pickup_audit","reject_pickup_cache"))jdbc.execute("DROP TRIGGER IF EXISTS "+trigger);
         for(String table:List.of("order_dispute_record","order_dispute","pickup_check_file","pickup_check","order_status_transition","audit_log","idempotency_record","auth_rate_limit","auth_session","file_object","vehicle_archive","order","appointment_slot","staff_account","merchant","vehicle","user"))jdbc.update("DELETE FROM `"+table+"`");
         var manager=new DataSourceTransactionManager(jdbc.getDataSource());db=new ReservationStore(jdbc,mapper,new WriteIntegrityService(jdbc,mapper,manager),Clock.systemUTC(),manager);service=new PickupInspection(db);
@@ -174,5 +178,11 @@ class JdbcPickupInspectionTest {
     @Test void concurrentDistinctKeysOnlyCommitOnePickup()throws Exception{
         var pool=Executors.newFixedThreadPool(2);var gate=new CountDownLatch(1);
         try{var jobs=new ArrayList<Future<Integer>>();for(int i=0;i<2;i++)jobs.add(pool.submit(()->{gate.await();try{submit(key(),body());return 200;}catch(ResponseStatusException e){return e.getStatusCode().value();}}));gate.countDown();var outcomes=new HashSet<Integer>();for(var job:jobs)outcomes.add(job.get(20,TimeUnit.SECONDS));assertEquals(Set.of(200,409),outcomes);assertEquals(1,count("pickup_check"));assertEquals(7,count("pickup_check_file"));assertEquals(1,count("audit_log"));}finally{pool.shutdownNow();}
+    }
+
+    @Test void pickupEventFailureRollsBackEvidenceAndRetryEmitsOnce(){
+        jdbc.update("DELETE FROM service_notification_outbox");String k=key();jdbc.execute("CREATE TRIGGER reject_r7c_pickup BEFORE INSERT ON service_notification_outbox FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='synthetic failure'");
+        try{assertEquals(503,assertThrows(ResponseStatusException.class,()->submit(k,body())).getStatusCode().value());assertEquals("PAID",state());assertEquals(0,count("pickup_check"));}finally{jdbc.execute("DROP TRIGGER reject_r7c_pickup");}
+        submit(k,body());submit(k,body());assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM service_notification_outbox WHERE kind='ORDER_CHECK_IN' AND order_id=1",Integer.class));
     }
 }

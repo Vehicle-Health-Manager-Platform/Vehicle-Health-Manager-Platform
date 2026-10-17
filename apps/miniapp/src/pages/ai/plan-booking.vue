@@ -17,6 +17,7 @@ onUnload(() => { visible = false; flow.reset(); selected.value = null })
 watch(() => ownerSession.accessToken, () => { flow.reset(); selected.value = null }, { flush: 'sync' })
 watch(() => state.saved, r => { if (visible && r) uni.redirectTo({ url: `/pages/order/detail?id=${r.order_id}` }) })
 function login() { flow.reset(); selected.value = null; clearOwnerSession(); uni.navigateTo({url:'/pages/owner/index'}) }
+function couponBooking(){if(state.busy||state.uncertain||!state.confirmed||!state.slot||!selected.value||!state.context||state.context.evidence.applicability[0].verdict==='NOT_APPLICABLE')return;uni.navigateTo({url:`/pages/order/coupon-book?id=${state.quoteId}&vehicle_id=${selected.value.vehicle}&slot_id=${state.slot}`})}
 </script>
 <template>
   <view class="reservation-page">
@@ -56,6 +57,7 @@ function login() { flow.reset(); selected.value = null; clearOwnerSession(); uni
           <button v-if="state.context.slots.items.length<state.context.slots.total" :disabled="state.busy" @tap="flow.loadContext(true)">加载更多时段</button>
           <button :disabled="state.busy || state.context.evidence.applicability[0].verdict==='NOT_APPLICABLE'" @tap="flow.confirm()">{{state.confirmed?'已确认 · ':''}}核对本车适用性提示并确认当前报价</button>
           <button :disabled="state.busy || !state.confirmed || !state.slot || state.context.evidence.applicability[0].verdict==='NOT_APPLICABLE'" @tap="flow.save()">复核并创建待支付预约</button>
+          <button :disabled="state.busy || state.uncertain || !state.confirmed || !state.slot || state.context.evidence.applicability[0].verdict==='NOT_APPLICABLE'" @tap="couponBooking">使用金额券并核对优惠实付</button>
         </view>
         <button v-if="state.quoteId" :disabled="state.busy" @tap="flow.loadContext()">刷新本车、报价与时段</button>
       </template>

@@ -36,6 +36,7 @@ export function validWorkView(n) {
   return true
 }
 export class WorkError extends ServiceError { constructor(kind, message, code = 0) { super(kind, message); this.code = code } }
+export const validReportRequest=n=>exact(n,['order_id',...REPORT_FIELDS])&&id(n.order_id)&&reportFields(n)
 const invalid = message => new WorkError('invalid', message)
 export function protectionBody(order, selectedItems, fileId) {
   if (!id(order) || !items(selectedItems) || !id(fileId)) throw invalid('请勾选座椅套与方向盘套，并完成防护照片上传')

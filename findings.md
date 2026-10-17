@@ -1,22 +1,242 @@
-# R4 findings
+# 2026-10-14 findings
 
-- Previous R4b2a/b/c1–c3 functionality uploaded with code and docs (#142–#148). #148 backend717/frontend475, all six CI passed.
-- Remaining R4: exact-model six-metric applicability/validity/comparable trends/source-based reference score; source-based MUST suggestions; full vehicle/driver document, violations/faults/maintenance fields; five categories fault/maintenance/insurance/inspection/violation with advance reminders and dashboard integration.
-- Original mock health87 and advance15/30 days are UI examples, not production rules. User selected configurable policies with unknown defaults.
-- Existing raw health reads/history in HealthObservationService, structure in ArchiveStructuredService/Input, three arrival-only categories in ArchiveReminderService.
-- User changed upload cadence: finish ALL R4 before push. Update delivery docs to make this current rule explicit.
-- User explicitly selected configurable source rules/UNKNOWN. Build full configurable engine/admin source publication and owner evidence confirmation; no seeded production thresholds.
-- Original five reminders are FAULT / MAINTENANCE / INSURANCE / INSPECTION / VIOLATION. Existing three reminder targets are per-vehicle (types1,3,7), owner-entered, source validity checked.
-- Raw archive currently types1..7 only. Need additive8 registration document,9 driver licence,10 fault record; update all validators/filter/labels/report compatibility, preserve private fields out of shared reports.
-- History API supports50 rows/page, corrected markers and invalid-source hiding. Trend should use recent consecutive comparable uncorrected/source-valid observations, cut at clear/method/name/unit/provenance changes, no fake historical percentages.
-- Chosen additive archive8/9/10 path, with owner report validators extended and new private types excluded from public share projection. Structured JSON existing table extended, owner confirmation explicit inside fields; source fields remain private.
-- New governance/evidence-confirmation/advance-preference tables V037 =>80 tables; existing three reminder API remains unchanged, new dashboard computes five categories and early status.
-- ShareService now uses ArchiveReportService.loadShared with type<=7 visibility for both records/undated counters; private owner report accepts1..10 and PDF labels extend. Defense-in-depth share projection also omits>7.
-- Existing AI chat context queried raw archives; explicitly limited outbound context to archive_type<=7 so new identity document/fault raw titles/notes cannot be sent. Structured private fields were never queried for AI and remain excluded.
-- Verified installed uni-h5 runtime createCanvasContext accepts componentInstance; native chart components pass Vue instance proxy for scoped canvas. Score ring now proportional to actual reference score and gray for unknown.
-- Five reminder records bounded to200 per category, latest invalid source suppresses older same-code/case records; dashboard provides limited marker, homepage shows first5 with full-archive link.
-- Full F06 re-audit found rating sorting missing (quote flow price/distance only; service detail stale "no public ratings" copy) and symptom search handoff missing (catalog category only). Add source-qualified rating quote feed and symptom→explicit AI purpose flow before declaring R4 complete. Reuse exact PublicRatings.SOURCE/VALID qualification.
+> 当前R8a2本地完成：54不同后端/679前端/微信H5/V050共109表，下一R8a3兑换；整R8完成前不上传。
 
-Local DockerHub metadata failure is environmental; cached MinIO and mc exactly match pinned digests. Cached upload-init script differed from tracked current source and was replaced before full test, verified F1339DDC1E7D84B3CAE08E9866E6A33B5CA80ACCC013BD509A27BDC96768762A. Production rules remain absent by design; UNKNOWN is user-approved.
+> 当前R8a1已本地完成，46不同后端/671前端/微信H5/105表通过；下一R8a2事件与账本。用户要求整个R8完成后才统一上传，当前不得push/更新PR。
 
-Full suite revealed local clamav tag descriptor corruption and Docker Desktop runner address incompatibility. Verified official direct-cache digest/version1.4.3, restored local tag, and isolated runner-only localhost alias to same host published ports; repository production loopback policy remains strict. Real upload7/7 passed, no assertions skipped or relaxed.
+## R5b final findings
+
+User approved one coupon/issuing store/project, cash-paid commission with existing waiver, full-refund original-expiry return, >=0.01 cash DISCOUNT and standalone noncash SERVICE. V039 adds four tables and permanent creation intent: generic24-hour receipts cannot recreate closed coupon orders. Payment/close/refund convert coupons atomically; persistent recovery rejects contradictory paid/closed facts and defers bad rows. Service code stores digest only, previews actual project, uses current merchant/staff, unique noncash receipt/0 commission, no fake payment or work archive. R5 is a+b; invitation/points rewards are laterR6/R8. Local165 distinct backend/535 frontend cases, builds and88-table replay passed; upload only after wholeR5 closure.
+
+R4 is merged and final main CI is green. Do not repeat historical health/ratings/AI gaps as unimplemented. Coupon/invite/points/assessment/notification base tables exist, but current business Java contains no corresponding complete services. ReservationInput.Booking accepts exactly quote/version/vehicle/slot; no coupon flow. CommissionLedger leaves coupon orders WAIT_COUPON, not implemented coupon exemption. Mine page explicitly postpones welfare/points/community entries; no welfare/index.vue exists. Owner order detail exposes status/pickup/refund/redemption, not full construction evidence or before/after comparison.
+
+Supplied document text equals tracked DELIVERY_V1 after newline/BOM normalization; raw SHA differs only encoding/newlines.63 actual registered pages, no welfare/coupon/invite/point/assessment/notification routes. Existing private order review accepts up to3 photos; only public photo projection is missing. Professional knowledge retrieval/vector/source corpus not present in inspected business code; current AI uses limited SQL context/catalog, so evidence cannot imply complete external RAG. Original cash-discount coupon commission behavior unspecified; plan separates explicit no-fee coupon redemption from cash-order commission policy to freeze beforeR5b.
+# R5a implementation findings — 2026-10-14
+
+Existing coupon/user_coupon rows had no trusted issuance source. V038 adds four evidence tables and independent can_coupon (default0); no legacy promotion, policy seed or implicit grant. Published rights frozen, single issuing merchant/project, lifetime one claim per template. Merchant/owner/operator mutations follow current auth, ordered source locks, canonical WriteIntegrityService, atomic audit and receipt. Network ambiguity preserves exact payload/UUID; successful write followed by failed GET closes merchant draft to prevent accidental recreation. UI selects/displays Beijing validity; UTC only on wire. 62 distinct backend targeted tests and 514 frontend tests passed; no R5b trading behavior added.
+# R6a findings (2026-10-14)
+
+## R6b 2026-10-15
+
+- Completed local R6b1 configuration, global shop/project lock ordering for multi-coupon publication and generated active-scope uniqueness. Reward issuance remains R6b2; public claim UNIQUE(coupon_id,user_id) unchanged.
+- Docker engine initially stopped; desktop CLI started local engine29.6.2, real MySQL tests completed, no skipped database acceptance. Final evidence36 distinct backend/561 frontend/92 tables/74 pages/212 actual/draft OpenAPI operations.
+
+- R6a PR152 exacthead1b2161e, remote six CI successful, backend842/frontend553. User now forbids intermediate upload until all R6 complete.
+- R5 coupon_issue has UNIQUE(coupon_id,user_id), so repeat reward issuance requires a separately constrained issuance origin in R6b2; do not silently remove public-claim uniqueness in R6b1.
+- User approved owner two-sided reward per valid invite and staff invitee-only reward. Reward config references current published, operator-selected coupon sources; no production seed or fabricated staff beneficiary.
+
+- Remote first full run isolated stale coupon @BeforeAll total-schema assertion; updated88 to91 and35/35 passed. Public Mine invitation action now renders outside private signed-in content gate, preserving first-registration attribution entry. Local total101 backend cases,553 frontend, final builds passed.
+
+- Implemented V040 (91 total tables), nine growth routes, opaque registration record UUIDs and private source-scoped reads; strict login/phone payloads and source flags cannot be client supplied.
+- Official evidence gate defaults false, cloud source UNKNOWN; server official endpoint plus same-app verified phone required for formal qualification. Source/phone/month/audit facts atomic, earlier unknown/test evidence never promoted.
+- R6b staff rewards need real owner beneficiary provenance; never treat staff_id as user_id. No automatic human-diagnosis unlock without configured source/rule.
+- Final focused session gate33/33 passed;66 distinct backend cases in total,553 frontend. Compose bootstrap missing V027-V039 dependencies was identified and corrected alongside V040; remote smoke verifies91 actual tables.
+
+- R6 next after uploaded R5. R6a must reject existing/self/duplicate attribution and freeze owner or staff source at first registration; R6b uses R5 coupon issuance with recoverable reward events.
+- User approved each Beijing calendar month incremental 1/2/3/4 targets, cumulative 1/3/6/10, repeated after 10; each qualified new user produces one reward pair rather than tier payouts.
+- Current createOwnerOrRead inserts or reads owner by unique openid but records neither new-registration evidence nor invitation context. Legacy inviter_id/invite_record are not reliable proof.
+- Actual formal WeChat identity and native share remain R9. Test identities must be explicit and excluded from formal progress/rewards; never infer verification from client flags or timestamps.
+
+
+- R6b2 V042 public_user_id keeps PUBLIC unique per template/user; INVITE uses unique reward_item_id and batch/role. Qualification snapshots published policy inside original phone transaction; legacy/no-policy event remains UNKNOWN_POLICY. GET is read-only and other-party coupon IDs are null.
+- R6b2 fixed published quotas have no top-up API: WAIT_STOCK persists without a partial pair; no automatic replacement/expiry extension. Original issuer/account can recover through durable retries. Formal reward scheduler defaults off.
+
+- R6b2 lock-expiry test failed because its fixed observation budget included worker startup/pre-lock reads; failure snapshots showed both actual LOCK WAIT and not-yet-at-lock states. Added an observed JdbcTemplate checkpoint and reused monitoring connection, keeping the actual database wait assertion. R6b3 accepted monthly eligibility excludes currently disabled invitees and never exposes an operational message endpoint.
+
+- Final review: qualification month and qualified_at previously used separate clock reads and could disagree across Beijing month boundary; one snapshot plus moving-clock DB regression added. Native preview could hide/unmount and unlink its image; use in-page preview, retire in-use album files until completion. Operator forms retained stale CAS revision after confirmed writes; reset on confirmed receipt, including retry and refresh failure.
+- Local whole-R6 integration environment: only Maven/MySQL/ClamAV images available after interruption; Docker Hub auth resolution/connect fails for alpine:3.21. Explicit local exclusion of RealUploadAdaptersTest and failed Compose startup are documented; repository six-job CI remains unmodified and mandatory on final uploaded head.
+
+# R7 start
+
+- User authorized full R7 planning and stepwise implementation; no upload until all R7 complete. Start R7a using already reviewed next-plan. ServiceWork currently accepts only merchant/technician scope; existing report/evidence relationships and short-lived signing can support an independently projected owner read.
+
+- R7a first checks exposed numeric JDBC wrapper comparison in safe-file owner/is_deleted checks (replaced Object equality with Number value checks) and frontend predicate returning null for absent signed report (now explicit boolean). HTTP3 and existing work HTTP7 passed; first DB20 had17 pass/1 failure/2 errors, frontend593 had592 pass/1 failure. Failure runs retained; revalidate after fixes.
+
+- R7a private URL boundary: existing storage signer returns fractional Java Instant and maximum300 seconds. Client must accept fractional UTC expiry, reauthorize each open, and isolate preview-request generation from page generation so stale expiry callbacks cannot clear a newer photo. Signed URLs already delivered remain usable until original expiry; no instant revocation claim. Protection lacks frozen uploader field, so require unique relation plus current original-shop merchant/staff uploader; report photos match historical technician_id.
+
+# R7b start
+
+- Existing merchant/technician lists are separate order screens, not aggregated workbenches. TechnicianAssignments.own rechecks current assignment; accepted-only is needed for private archives. Current schema has no order-scoped private archive consent, so user explicitly approved per-record grants/revocation with no default sharing. Archive types1/2/10 are maintenance/repair/fault; structured detail is separate owner/version table. New V044 grant table will default empty; source fingerprint prevents changed records from inheriting prior consent.
+
+## R7b本地收口
+
+用户确认逐单逐条授权，已实现工作台、车型/本单资料最小投影及档案源指纹/CAS/撤销；自动归档来源和签名IO前后复核。最终47后端、606前端、微信H5、96表重放通过，79页/230操作；原141追踪/44基线/根README和首路由保留。文档见docs/progress/R7B_WORKSPACE_EXECUTION.md。下一R7c，整个R7完成前不上传。
+
+## R7c1进行中
+
+按已授权整R7计划推进六项履约事实的事务事件、去重投递与三身份最小收件箱/已读；设计见docs/progress/R7C1_NOTIFICATION_DESIGN.md。现有notification仅基线表，无实际收件箱。无历史回填，诊断权限及持久恢复后续，整个R7完成前不上传。
+
+## R7c2规则已确认
+
+用户采用独立授权运营诊断方案、可受理/离线留言/暂停受理三态及来源说明，提交事务重验当月资格，仅共享主动文字与车型，历史档案另行授权。下一步契约见docs/progress/R7C2_DIAGNOSIS_NEXT_PLAN.md；先完成R7c1兼容回归，不提前上传。
+
+### R7c1兼容夹具修复
+
+最终相关回归中JdbcPickupInspectionTest仅加载到V013，事件埋点需要的V012派工/V045事件表均未加载，导致1失败/12错误。已定位缺表SQL异常，将该夹具改为完整排序迁移并保留V010/V011/V013重复执行，后续仅重跑受影响接车组；生产代码不跳过事件写入。支付35、核销17、券事务37已通过。
+
+## R7c1最终本地验收
+
+相关140项后端覆盖通过：通知31/HTTP4/支付35/接车16/核销17/券事务37。扩展首跑接车缺V012/V045表导致1失败12错误，改完整迁移保留原重复检查后16/16重跑BUILD SUCCESS（2026-10-15T12:14:13Z）；其余124首跑通过。614前端、微信H5、97表重放、236 OpenAPI/80路由及引用链接通过。Compose V045挂载复制时目标重名已在差异复核修正，init+V002至V045共45唯一有序目标验证通过，config --quiet通过，未宣称整栈Compose运行。R7c2规则已获确认且计划已写，尚待实现；所有R7代码/文档留本地。
+
+## R7c2开始实施
+
+用户已确认运营诊断方案，契约见docs/progress/R7C2_DIAGNOSIS_DESIGN.md。按独立权限/配置、车主留言/分配回复、页面/验收推进；管理队列无正文，只有当前获派且有处理权限者可读正文；所有成果保留本地至整R7完成。
+
+## R7c2本地完成
+
+独立权限/来源三态受理、当前R6资格与车辆复核、车主文字/当前获派处理、分配/追加/答复/关闭、专用事件/审计/长期提交意图、16API及4页面已实现。首次59初始化错误为合成车牌过长，修正夹具后首轮72通过；补当前读取/控制锁次序/真实锁等待和并发发布后最终111/111（61诊断含48继承+13新增、HTTP5、运营身份8、券事务37），626前端及微信H5、V046/102表迁移通过。84路由/252操作，原基线保留，阶段API/运维/验收已整理。下一R7c3持久恢复和诊断/补充业务消息；所有代码和文档仅本地，整个R7完成后再上传。
+
+### R7c2最终授权入口与收口复核
+
+现有离线operator-admin补齐诊断处理/管理独立授予撤销，必须显式环境布尔、无HTTP，变更与审计/会话撤销原子。新增3项定向真实MySQL测试通过，未重复计入其8继承测试；加主组111，合计114不同后端用例覆盖。诊断专属账号登录落点已修正，最终微信/H5构建通过；626前端、102表重放，252操作/全部引用、84路由/首路由、文档链接、46有序唯一SQL挂载/Compose config、141追踪/44基线/README不变通过。所有成果仍仅本地。
+
+R7c3 检查：诊断流程原 pending 只在闭包内，隐藏保留但页面重建/重启丢失；车主和运营登录响应均有服务器账号 ID，但内存会话未保留。手机号绑定 setOwnerSession 调用无 ID，需保留同令牌已有 ID。
+
+## R7c3 第一步完成
+诊断显式草稿、稳定账号 ID、服务器复核后原请求持久恢复及多页冲突保护已实现。初次638项1失败定位运行时同步存储漏透传，补正确透传与装配回归，最终641/641、微信/H5通过。新14恢复/身份+1运行时断言；无后端或迁移改动，无R7上传。下一步补诊断/退款/异议消息，再统一门禁。详见docs/progress/R7C3_RECOVERY_EXECUTION.md。
+
+R7c3 第二步发现：原(kind,order_id)唯一会吞掉重复退款申请和多轮异议处理。V047 新增 source_key（旧事件ONCE），退款用ID/revision、异议用追加记录、渠道结果用ID/结果去重。所有埋点位于真实业务事务，不扫描状态回填。读取脚本时猜测了不存在的V042文件名和JdbcRefundsTest，已改用实际JdbcOrderRefundsTest及文件清单，未改业务阈值。
+
+R7c3 第二步数据库新测试发现：已生成9条事件但固定业务时钟下只投递2条；next_attempt_at原由MySQL默认墙钟生成，与恢复扫描db.now不是同一时源。改为入队显式使用业务db.now（不放宽9条断言），避免跨主机时钟偏移造成延迟。同时来源捕获用当前锁定读取，避免先前RR读视图取旧接收人，新增真实双连接回归。最终定向重跑覆盖这些修复及新补关单/旧结构升级测试。
+
+诊断已有五类 case_event，但无投递接收人。现有 notification 支持 VARCHAR24 recipient_type，能复用 user/operator_account；用独立来源/用途表区分当时处理/管理接收人，同账号去重。读写统一 control 锁避免运营已读锁账号后等待病例、病例写反向等待账号形成死锁。
+
+R7c3 诊断消息首轮127项126通过、1失败：新已读测试将不同幂等键的新请求 request_id 也要求相同，业务 data/read_at 实际一致。修正为同键比较完整回执、新键仅比较业务data，仍严格验证首次审计一次及审计失败回滚，定向重跑该方法。无生产权限或事务逻辑放宽。前端648、微信/H5、V048/104表重放已过。额外给车主角色页直接入口，已有答复不依赖邀请资格接口成功才能进入。
+
+## R7c3 第三步本地完成
+五类诊断事务消息、V048独立来源/捕获用途、四API、车主/运营消息页及队列导航已实现。首轮127中126通过，1项新键request_id比较错误已纠正，同键完整回执/新键业务事实/仅一次审计/审计失败回滚定向1/1通过，合并去重127不同用例全部通过；648前端、最终微信/H5、104表重放、85路由/首路由、256操作/全部引用、48有序唯一SQL挂载/Compose config通过。下一按R7_COMPLETION_NEXT_PLAN.md核对恢复/登录回跳等销项和统一门禁，通过后再同批上传全部代码/文档。当前无上传、合并或发布。
+
+整R7本地上传镜像再次构建失败：auth.docker.io连接超时，原Dockerfile/校验未放宽。启动除RealUploadAdaptersTest外全部后端，其余验证继续；真实上传/完整Compose需可达镜像或最终远程CI验证，不冒称本地全套通过。
+
+
+## 整R7收口补缺与统一门禁进展
+登录回跳、技师原请求/显式草稿、身份ID先于token发布、诊断配置23小时安全窗口及比较清理、共享履约未知请求冻结均已实施。664前端、微信/H5、四兼容Web、104表真实迁移重复验证和Compose config通过；完整其余后端运行中。销项、恢复说明、验收、执行及R8计划已整理，暂未上传。
+过程记录：旧共享写测试曾期望未知后改正文换新键，首轮两项失败，已按防重复要求修正生产行为及原键断言；UI批量插入遇额外root属性断言，改精确匹配后构建通过。静态挂载检查误把init.sql当V001漏报，按真实001-init+V002–V048校验；身份帮助器直接运行不能导入scripts包，改python -m unittest scripts.test_check_auth_readiness，6项通过。PowerShell通配符路径及猜测文件名读取失败，改rg实际文件后读取，无业务修改。真实上传基础镜像认证超时未放宽镜像/校验；全后端只排除RealUploadAdaptersTest。
+
+整R7全部功能、收尾及文档已齐备。因本机Docker Hub阻断真实上传/Compose，调整最终门禁为完整R7一次性上传后在原有六项CI执行，本地其余全套后端继续；无中间子阶段push。AST确认26个变更Vue内24处重试绑定有效（最初简单正则漏掉逗号声明，改编译器绑定检查）。47份变更文档本地链接通过，85路由/256操作及832引用、48挂载和原基线保留通过。
+
+## R8开始（2026-10-16）
+用户要求整个R8完成后才统一上传，分支codex/r8a-points-policies基于d4c7763。R8a1先积分任务来源配置，再a2账本/a3兑换、b经营考核、c社区来源检索和整阶段门禁。已确认三任务频率及分值/兑换来源可配置、未知/不补历史/TEST隔离。原基线仅有point_balance/point_flow/point_exchange表，无积分业务。首个rg无AGENTS文件返回1正常无匹配；宽point搜索误匹配appointment输出过多，后续使用精确积分/文件路径读取。所有成果保留本地。
+
+R8a1过程记录：Windows rg文件通配路径再次报123，改目录+--glob；共享Change的before/after/data均要求Map，永久创建回执JsonNode导致两次编译失败，读取实际record签名后使用TypeReference<Map<String,Object>>恢复，未放宽回执/审计断言。最终重跑日志r8a1-backend-verified.log。
+
+R8a1首轮业务回归发现新权限测试断言错误：生成测试时广泛替换把独立权限求和里的can_diagnose+can_diagnose_manage也替换成can_points，授予后误期待0。已纠正为仅比较其他四权限，追加真实登录can_points契约。新controller进一步先验证query/正文再解析可用服务，避免无数据库时将坏输入报503，追加无库验证。最终仅复验受影响组，不重复累计。
+
+## R8a1本地完成
+独立积分权限、三任务来源/分值/时间配置、版本/CAS/发布冻结/停止、永久创建意图与当前只读任务（earning_available=false），受限页面/精确新权限登录和账号隔离原请求恢复已完成。首轮43中42通过1断言修复；最终7/7定向（权限+登录2、HTTP3、无库2），合并去重46不同后端全过。671前端、最终微信/H5、V049/105表重放、86路由/首路由、261操作/852引用、49SQL挂载/Compose config、141/44/README不变通过。文档协议/运维/执行/验收及R8a2计划已整理，无积分/券发放、无旧余额导入、无R8上传/PR更新/合并/发布。
+
+## R8a2开始
+用户确认人工保养/维修/故障任一完整本人确认记录作为终身一次来源。采用新可信账本保留旧余额不导入，源事务冻结事件+可靠恢复。需新增会话来源、官方AI成功后重验，开关默认false不当正式接入。先后端事件/账本/API，再本人页面；整R8完成前不得push/更新PR。设计R8A2_POINTS_LEDGER_DESIGN.md。
+
+R8a2审查：签到需在所有锁等待后冻结一个业务时点，用于规则窗口、北京日期、事件时间和首次恢复时间，避免午夜多次取时不一致；AI任务READY还需当前官方端点可用，不能只看功能开关。已据此收紧，新增真实政策锁等待边界回归。一次猜测vehicle包下测试文件不存在，已通过rg文件清单定位实际测试，不改变业务数据。
+
+R8a2首轮43中42通过、1新测试错误：使用未配置JavaTime模块的测试mapper序列化原始JDBC时间列做隐私断言失败。改为对完整行字符串检查无答复正文并保留冻结/去重断言，不改生产逻辑；最终重跑账本组同时覆盖单时点锁等待修复。
+
+R8a2最终审查按既有InvitationRewards对齐：后台到账审计actor_type=system/actor_id=0，受益用户明确在after及事件来源，避免误记为用户直接执行。新增系统主体断言并定向复验4项捕获/到账/回滚，不重复计数。
+
+R8a2收尾修正概览已登记任务的规则展示：PENDING/CREDITED使用该事件冻结的政策快照并标“登记时规则”，避免停用/换版后拿当前规则暗示旧奖励分值；未登记任务仍用当前政策。定向验证原规则停用后快照仍在及停用账号恢复，保留同一个用例不累加。
+
+## R8a2本地完成
+三任务可信事件、来源会话、源事务/AI成功后复核、可靠冻结事件/已核验账本、系统到账审计、永久原日期签到、本人积分页/原请求恢复已完成。首轮43中42通过1隐私测试的裸mapper时间列序列化错误已修正；最终主组38+原登录/AI14+身份钩子2，合并去重54不同后端全过；再定向系统审计4/4、冻结政策展示1/1通过，不重计。679前端、最终微信/H5、V050/109表重放、87路由/263操作/863引用、50有序SQL挂载/Compose config及原README/141/44基线保留通过。协议、运维、执行、验收、当前状态和下一R8a3计划已更新；所有R8代码/迁移/测试/文档仅本地，无push/PR更新/合并/发布。
+
+R8a3a：CouponInventory.source既有门店→项目→券锁序，可供只读来源复核；PUBLIC领取不能嵌套调用（独立事务且公共限领语义不同）。当前point_verified_entry为正数收入账，扣分留下一子步显式迁移。初读误用缺platform的Java路径及不存在login-return/openapi路径，已改rg定位，未修改文件。
+
+R8a3a：真实来源复用CouponInventory门店→项目→券锁序，目录发布按源锁后目录锁并最终复核时点；停止不依赖仍有效来源。独立can_points读取来源不扩大can_coupon。已完成31后端/686前端。首次并行构建微信输出目录EPERM，独立重跑通过；默认Git Bash安装路径不在C盘，Get-Command定位D:/Dinstall/Git/bin/bash.exe后迁移成功；静态SQL正则漏算init导致断言，改检查51个全初始化挂载；基线README字节比对受CRLF影响，改规范化文本比对，不修改基线内容。OpenAPI生成器首次来源schema名误用CouponInventoryItem，校正真实CouponInventory后884引用全解析。
+
+R8a3b：V042存在ck_coupon_issue_origin只允许PUBLIC/INVITE，须V052原子扩CHECK并加独立POINTS凭证，不可仅插新origin。V050收入delta无符号且event必填，须幂等显式迁移为严格双来源统一账本并同步前端，不能只扣账户隐藏支出。初查ServiceCouponRedemption.java路径不存在，已改rg文件定位，不影响代码。
+
+R8a3b首轮并发末券用例失败：[200,503]而非[200,409]，其余46事务/兼容用例通过。未放宽断言；正在从InnoDB死锁记录确认锁序，重点检查在公共券源锁前缺失永久意图查询的间隙锁。
+
+锁诊断定向运行先被新增R5兼容测试编译错误挡住：OrderRefunds没有notify(Notice)方法。改用既有RefundRecovery查询回调入口，未改生产退款代码。
+
+真实InnoDB诊断确认：trx5623持point_exchange_record.uk_point_exchange_submission缺失键间隙锁等待merchant.PRIMARY，trx5622持merchant锁等待该索引插入意向锁，形成死锁。本人/运营账号行已在authorize回调锁定，同账号永久提交天然串行、已成功回执不可变，故移除缺失回执FOR UPDATE；同时修复R8任务配置、目录配置、签到同类写法，不修改来源/库存/余额锁。增加不同运营创建草稿、不同车主签到获分的真实并发回归。
+
+最终组的R5兼容类在BeforeAll被既有R7表数硬编码104挡住，实际V001–V052为111（迁移门禁已证明）。仅把现有表数断言更新为111；未删除断言或改券业务规则，随后定向重跑该类全部40用例。
+
+事务最终复核补充：源引用初读必须已为PUBLISHED且修订匹配，再锁券来源，锁后仍重验当前目录。避免恶意猜测草稿发布版本在锁等待期间变为发布，导致首次快照指向可变券项目；重放已成功回执仍优先，不受前置检查影响。针对新前置检查再定向验证草稿拒绝、源码期限锁等待、末券和原回执恢复。
+
+R5兼容40中39通过1在setup连接MySQL时Connection refused，未进入业务断言；其余三项新兑换使用/退款用例均通过。无生产代码变更、不加吞错或自动重试；定向重跑该既有邀请服务券用例，并复验最新发布前置检查及三项兑换R5兼容。
+
+最终定向9/9通过；R8a3b合并去重98不同后端：50核心/原账本/原库存+40R5+4HTTP+1无库+3原HTTP。新增草稿前置1及初始连接失败1经复验计入，其他重跑不累计。689前端、微信/H5、111表初始化/重放/正收入及公共邀请凭证保留、269操作/893引用、52挂载和Compose config通过。阶段文档完备，下一R8a3c，R8整体完成前无上传。
+
+R8a3c：R8a3b已提供永久成功回执和本人历史，实际提交只接受catalog_id/catalog_revision。现有generic异步流程支持服务器刷新后原请求恢复和epoch保护，可复用；新增OWNER目录快照与独立存储键，获分开关不得当成兑换资格。券入口确认为/pages/coupon/mine。本机未发现仓库AGENTS.md，沿用用户提供gstack浏览约束，无网页浏览。
+
+R8a3c前端首轮701中700通过1登录回跳断言失败：静态新兑换页允许任意options。收紧新路由只接受空查询，不允许user_id等选择器；保留已有积分页返回行为，未放宽测试。
+
+R8a3c最终62/62后端、701/701前端通过，新增各12，原继承50不重复计数；最终微信/H5及111表重放/旧凭证保留、89页面/270操作/900引用/52挂载与Compose config通过。原文F19权重为拉新40%/券40%/过程20%，后续需核对分母/阈值/等级，不自动制造正式标准；R8b1计划已落文。当前R8a完成，R8b/c及全阶段门禁仍待实施，无上传。
+
+R8b1盘点：assessment只有默认0字段且无实现，原文F19仅40/40/20，无阈值。R6invite_registration具有身份/时点/员工门店归因；R5核销与R7接车/防护/报工/质检有证据。新增can_assessment会令OperatorIdentity.login的user超过Map.of十对上限，须显式Map构造；不移除既有权限。
+
+R8b1最终：独立can_assessment/V053、来源政策/真实门店/未来完整月、发布冻结及永久规范化嵌套JSON创建恢复完成。43不同后端通过（新18/原25），最终精确登录字段断言源码晚于首轮class，已单独重编译1/1通过，不重复累计。709前端、微信/H5、112表重放、90路由/276操作/927引用/53挂载及Compose config通过。OpenAPI此前运营登录为通用ApiResponse，补精确OperatorLoginResult/OperatorAuthenticatedUser，user.role实际小写operator，JWT角色仍大写；不以类型名推断值。无旧成绩导入/假分数。下一R8b2仍需来源去重、退款跨月及结算细则，全R8完成前无上传。
+
+R8b2a：用户已确认次月结算、金额券完成单/服务券独立凭证各一次、成功全退原使用月剔除、正式完成过程分母、缺项不齐全/无来源未知以及修订留旧。服务券原表无test_mode，不能把无支付直接当正式，采用R6永久服务器身份区分TEST/VERIFIED_WECHAT/未知；未核验不猜。政策无stopped_at，V054只记录新停止，不给旧STOPPED猜日期；完成工单无通用completed_at，用order_redemption及ORDER_COMPLETE流转时点，不能用updated_at猜月。初读几处旧猜测文件名（V011退款/OrderLifecycle等）不存在，已rg --files定位实际V025退款和OrderRedemption。
+
+首轮39后端37通过2比对断言失败，实际70.00及退款新旧快照业务数值正确；原因数据库解析IntNode与valueToTree(Map<Long>)生成LongNode的equals类型差异。按JSON序列化解析后做完整结构语义比较，保留总分、全部旧快照及同包复算断言，不放宽业务检查。最终代码补齐完整完成流转/原发行门店/正式退款证据及四类过程文件的回归，整组重编译验证中。
+
+R8b2a最终47/47后端全过（14新源事务+3计算+2HTTP+1无库+25原政策/券+2原权限），709前端回归、115表重放/旧凭证保留、280操作/948引用/90页不变/54挂载/Compose config通过。沙箱内Git Bash-n曾因Windows命名对象权限失败，允许环境下相同只读检查通过，未改脚本业务规避。一次最终进度apply_patch因progress.md段落与task_plan不同而未匹配，检查确认整次未应用，随后按各文件实际尾部追加。原README/141追踪/44表基线内容保留，R8未上传。下一b2b实际月结页面/本店范围及恢复，不把后端阶段算全R8或页面交付。
+
+R8b2b：policy(shop,month)原取数带FOR UPDATE不能用于只读上下文，新增显式lock=false分支；写入仍保持原锁序。当前版本从月份头/最新记录同一事务核对，前端多读响应检测版本/事实数量；失效原门店允许独立运营历史读取但上下文404，客户端仅对此缺失降级以恢复永久回执，401/403不降级。MerchantSession只存token，故先服务端本人归因接口确认角色，不猜本机角色。
+
+首轮51中50通过1测试Long对MySQL无符号BigInteger编号比较失败，值相同，改Number.longValue后保留所有范围断言定向1/1通过，不把重复算52。前端初次补强脚本在miniapp cwd误用仓库前缀，未编辑任何文件，随后在根目录修正并最终728测试通过。首次rg仍曾把merchant*放位置参数，改目录定位；不影响实现。最终微信/H5、115表、287操作/975引用、92页/54挂载与原README/141追踪/44表基线保持通过。无新迁移，下一R8b3；所有R8尚未上传。
+
+R8b3a：成功退款来源不能只用未完成取消动作的OrderRefunds.ELIGIBLE，否则R8b2已支持的有原完成凭证的退款会被错误显示未知。看板只读另核对COMPLETED来源的原order_redemption/ORDER_COMPLETE；无原凭证或不支持来源保持未知，不改变退款动作/状态机。首轮65中3失败，修复后完整定向3/3通过，不把复跑累计为68。前端745与最终双构建、V055/115表重放通过。静态检查首次错误期待迁移挂载V001，实际init.sql为V001；修正为init+V002–55共55有序唯一挂载后通过，未改初始化约定。起初一次Get-Content路径漏src、少量rg通配位置参数失败均只是读取失败，后使用实际路径/目录定位。下一客户关系用途/字段盘点，不继承看板权限扩大历史档案授权。
+
+R8b3b盘点：原文179行仅列商家客户管理；687行要求手机号/车牌/VIN脱敏，1285行权限不清拒绝。R7 ServiceTaskScope.serviceActive仅RECEIVED/IN_SERVICE/PENDING_VERIFY且无OPEN异议，OrderArchiveGrants已绑定车主/车辆/单条源版本；context逐次复核，技师须当前已接单。客户关系入口可复用该能力，不需要复制档案或扩大经营运营权限。首次猜测ServiceWorkspace.java/V045档案迁移文件名不存在，已定位实际ServiceWorkbench.java/ServiceTaskScope.java及V044__order_archive_grants.sql。
+
+R8b3b已实现两GET与两实际小程序页。客户关系只为同店付后/完成状态订单记录，不将身份来源当支付核验或有效新客；R6永久身份TEST/UNKNOWN明确标记。按当前有效账号/车辆归属过滤，用当前最小本店订单锚点，非锚点/跨店404。核验接车时间需接车行与同店同人同时间ORDER_CHECK_IN合法PAID→RECEIVED，不能从预约或更新时间猜；最终补强同方法重编译复验中。首轮43全部通过（新8源读取+2HTTP+1无库，继承R7 32）；757前端/最终微信H5/真实Vue绑定、292操作1009引用/96路由55挂载/Compose config及原基线通过。无新迁移，旧115表重放沿R8b3a记录，本步JDBC测试也从V001–55全部初始化，不冒称重新跑过整迁移脚本。R7原车主订单授权与撤销入口已核对，不新增长期档案或联系用途。
+
+R8b3b最终接车合法原状态补强定向1/1重编译通过，完整同方法含破损from_status未知及跨店接车拒绝。43不同后端、757前端/微信H5/292操作1009引用与96路由通过，执行/验收和全部相关索引已同步，下一来源价格监控；R8全部仍本地，无上传。
+
+R8b3c盘点：原文有价格监控但无阈值；merchant_project_version只有价格/上架/员工与时间，无单位/车型结构化适用信息，迁移旧版本actor_staff_id为NULL。用户确认按具体报价版本绑定来源，项目内容或适用来源变更未知，不跨店混比。新增独立can_price_monitor，来源须核对原保存审计与当前最新版本；标准项目现有参考区间不直接作限价。最初rg apps/web-*位置通配读取失败，改apps目录检索。
+
+R8b3c1首轮44中3失败为子类夹具污染：为所有继承券方法多生成一次真实报价保存审计，使原3变4；另有他店上架报价导致新用例错误预期单一来源。仅针对新价格方法生成报价证据并隔离额外报价后，完整该类26/26通过，合并44不同后端，不重复累计70。原成功审计/查询范围/断言不放宽。最终771前端及双构建包含遗留非正报价UNKNOWN兼容；V056/116表重放、298操作1034引用与97路由通过。新权限13字段同步旧经营/考核精确测试，c2规则已确认，无需重复询问。
+
+R8b3c2恢复盘点发现实际接口/页面/测试已部分实现，未覆盖前R8变更。初次42用例有1失败1夹具错误：删除最新报价版本后回退旧证据，已以最后保存审计阻断；分页夹具重复同店项目，拆为唯一标准项目后又漏原必填参考价，补base_price_low/high和唯一名称，未改生产范围/门禁。恢复时后台容器已结束、第二份日志因中断未写尾部，实际XML为36中35成功1夹具错误，不能算完成。
+
+独立只读审查补发现发布行回退同类缺口：停止rev3后恢复rev2旧发布行仍能匹配旧审计。已增加最后状态审计一致性和未软删除凭证要求，后续已删除状态仍阻断旧凭证回退；报价原保存凭证同步拒绝软删除。增加两项真实库反例。前端草稿不再误标“原冻结依据”。前端最终785通过；后端与最终构建、API/文档核对继续中，整R8仍无上传。
+
+R8b3c2最终（2026-10-17）：原43/43后端通过，最新证据保护重新编译完整JdbcPriceComparisonsTest 38/38通过（含新两项、无跳过）；合并45不同后端（新15/原30）不累计81。785前端、最终微信/H5、300操作1044引用/99唯一路由/56有序挂载/13字段登录、Compose config与原README/141追踪MD+CSV/44表init基线保持通过。无新DDL，不冒称重跑c1的迁移重放。R8b价格和整体销项/协议/操作/验收与下一R8c1a受控详情引用计划已整理，全部R8内容仍本地，无上传。
+
+下一R8c盘点：ExperienceModeration仅同model_id、审核ID倒序的五字段获批摘要列表，尚无单条公共详情/热门指标/问答；现有AiContextProvider为本人SQL档案上下文，不等于有许可资料检索。先共用授权/审核/源有效性做受控单条详情与引用回查，再集中明确热门依据/问答处理角色与公开方式。沿既有无独立社区Tab/无点赞评论/无自由编辑器；图片公开授权不得扩大R7订单授权，正式渠道与真机仍R9。
+
+R8c1a（2026-10-17）已按用户开始实施指令和现有计划完成设计记录。采用同款原五字段、共用列表/详情当前授权/审核/源判断，无新用途或迁移；补当前接收者及原来源车型/车系/品牌status有效性。新GET绑定本人vehicle_id与公开UUID，复制引用仅含UUID；同款现有页详情面板与AI方案引用接通，切号/换车车型/引用/隐藏清旧结果。新引用不携带原作者或接收车号，原列表/方案形状保持。最初猜测pages/vehicle/plan.vue与owner-login-return.js不存在，已用rg定位真实pages/ai/service-plan.vue，未因读取失败修改其他文件。后端真实库/HTTP和前端验证开始，整R8仍本地。
+
+R8c1a最终：54不同后端一次全过（JdbcExperienceDetailTest44=新7/原37、审核HTTP6=新2/原4、原无库1扩断言/方案HTTP3；去重54=新9/原45），最终796前端（新11）、最终微信/H5及原生样式/无测试身份桥通过。补齐精确车主登录返回和列表会话/车辆失效同步清详情、联合刷新后重跑前端，不重复计数。301操作1048引用/99路由/56有序挂载与原README/141追踪MD+CSV/44表基线保持通过。提前读取未创建H5日志仅读取失败，最终构建完成才记通过。无新迁移，重放及Compose沿前阶段，不冒称全R8验收。协议/操作/设计/执行/验收和R8c1b来源/处理角色/公开规则规划已整理；HEAD仍d4c7763，全部R8无上传。
+
+R8c1b1（2026-10-17）：用户两项规则已确认：有来源运营精选（明确标运营精选，无浏览热度），独立授权运营非实时答复、默认仅提问者和获派人员，公开另行授权审核，不复用R7诊断私有资料。先完整实现精选/引用导入，再b2问答。V057增加can_community_curate默认0和experience_curation一表，117表/14登录字段；源为当前获批五字段，来源说明仅运营，未来窗口/排序/发布冻结停止/永久创建回执，车主只读当前源与最新发布凭证复核，最多前20同款候选。锁序加入原作者user在order前，避免与车主撤回的user→order反向；并发撤回和双运营发布均列入真实库验证。前端初次811/811通过（新15），实际配置/持久恢复、车主精选与手动引用导入已接通。
+
+本轮生成脚本初次广替换V056后同时改到了旧迁移文件名，已及时恢复V056实际路径并单独补V057两次重放，没有保留不存在路径；复制权限测试后漏改grant列已在运行前修正。新页猜测write-key模块不存在，改实际private-images.imageRequestKey；.env.example没有离线CLI权限字段，断言中止后未添加无用运行时变量，离线参数将在操作文档明确。均未以失败读取/检查当通过。后端及schema验证进行中，整R8仍本地无上传。
+
+R8c1b1首轮73后端72通过1失败：已停止且来源撤回后重开先查来源得404，原断言409；已把状态/修订初检置于来源读取前、仍锁后复核，保留原断言/全部来源检查。当前完整54来源类重编译复验，其他权限/登录/HTTP/无库19项已过，不重复计数。811前端、最终微信/H5、V057/117表完整重放及旧凭证保留/默认0/无种子、307操作1076引用/100页/57挂载/14登录字段和Compose config/原基线保留已过。/hot原为占位，本轮替换并新增6操作，实际307而非308。执行/验收与b2已确认私有问答计划已整理，最终复验未结束前不标完成。
+
+R8c1b1最终：完整来源类54/54重新编译复验通过（无错误或跳过，06:01:14 UTC结束），与首轮其他19项合并为73不同后端（新18/原55），不累计127。811前端、最终微信/H5与117表重放通过；已同步阶段执行/验收/索引/当前进度及b2私有问答下一步计划。用户已确认来源精选与独立运营默认私有答复，无需重复询问。整R8门禁未执行，不声称全R8完成；HEAD仍d4c7763，全部代码和文档留本地，无上传。
+
+R8c1b2a开始：已有DiagnosisCases含邀请资格且使用R7私有表，故复用技术模式而独立社区业务/权限；受理来源默认关闭、私有按当前获派读取。拆为b2a后端和b2b页面以逐步验收。最初猜V045__diagnosis_cases.sql不存在，rg定位真实V046__async_diagnosis.sql，无失败读取当证据。沿现有永久创建回执与全局控制行避免跨身份锁反向。
+
+R8c1b2a实现：V058新增五张独立表122表、两权限默认0与16字段登录；管理队列无正文，原车主历史不随车转移，当前获派重验，政策/提问永久原创建回执与业务控制行串行。生成克隆预检发现新创建回执被通用文本替换误引用空old列表、私有文字校验误指不存在方法，均在首次编译前修正，保留具体回执写入/共用严格校验。PowerShell花括号路径语法导致一次读取命令解析失败，改目录rg；本机无.m2改用实际autocare-maven-cache卷。814前端通过，真实库/HTTP/迁移/构建进行中，无上传。
+
+R8c1b2a静态核对：323操作/1139引用、16实际私有HTTP/16登录字段、100页面及原首启动、init加V002–V058的58有序挂载、Compose config与原README/141追踪MD+CSV/44表init保持通过。微信/H5最终构建通过；代码独立性复核仅共用DiagnosisServicePolicies纯输入/文字校验，无R7数据/资格/通知依赖。Windows rg路径通配一次报123，改目录加--glob后完成核对，不算测试失败。真实库/HTTP组仍等待最终结束。
+
+R8c1b2a最终：38/38不同后端一次全过（16问答真实库、13权限含原身份8、四旧精确登录、HTTP4/无库1；去重新26/原12），无失败/错误/跳过，2026-10-17北京时间14:17:32结束。814前端、最终微信/H5及122表重复迁移/原凭证保留通过；323操作1139引用/16登录字段/100页面/58有序挂载/Compose config与原基线保持通过。已同步API/操作/设计/执行/验收及下一b2b页面/确认/本机恢复计划。仅b2a完成，不声称整个b2、公开问答或整R8门禁完成。全部R8源码/迁移/测试/文档保留本地，无GitHub操作。
+
+R8c1b2b开始：沿已确认独立运营默认私有方案，采用独立API与四页、独立账号/角色/问答未决请求，复用createAsyncDiagnosisFlow纯技术。现有车主车辆list返回list字段，不能复制诊断页面cars.items假定；已核对真实DTO。初次读取不存在diagnosis/cases.vue，真实页mine/detail；按实际文件继续。旧诊断队列允许管理关闭不适用于新问答，本次管理页仅分配，无正文/关闭。
+
+R8c1b2b页面接通：车主新建/历史、按角色详情、管理政策及最小队列/获派列表四页，完整确认与独立未决恢复。车辆API实际list已使用list字段；受理或车辆暂不可读以null明确区分，保留本人历史读取。脚本预设mine页面有根view但实际OwnerTabShell导致一次substring失败；已按真实content插槽补入口，后续队列/政策清理补丁顺序完成，不回滚前部成功修改。
+
+R8c1b2b首轮838前端中836通过/2失败：新增实际script setup执行夹具把返回的Vue ref当模板自动解包对象赋值，未实际设置choices.value和text.value，故分配/答复确认没有触发。已按真实ref.value修正夹具，保留确认及目标/撤权断言，未修改生产权限或放宽测试。恢复复核另采用授权读取快照和非观察peek，防错误后的自动清理擦掉其他页面新原请求；具体并发比较测试已覆盖。
+
+R8c1b2b最终：840/840前端（新26/原814）通过，含四实际script setup行为、原请求冻结/隔离/过期/并发清理和精确登录返回。最终mp-verified及h5-verified包含可滚动完整确认层与提问车主标签，微信全局原生样式/无测试身份桥和H5通过。323操作1139引用/104唯一路由/58有序挂载/16字段及原README/141追踪MD+CSV/44表init保持通过，109份Markdown的803相对链接及diff通过。无后端/DDL变化，沿b2a38及V058/122表，不重复累计或冒称重跑全量。设计/API/操作/执行/验收、私有b2销项与下一b3公开授权审核计划和索引已同步；整个c1b/R8尚未销项，HEAD仍d4c7763，所有R8源码/迁移/测试/文档仅本地，无上传。
+
+R8c1b3a开始：V058私有消息仅正文/受理证据，没有不可变身份或原文字审计哈希，不能回填为可公开来源。采用V059新消息指纹及现有PointLedger.verifiedIdentity服务器证据，原有记录UNKNOWN不可提升；独立公开默认关闭，完整消息先脱敏再截300字。审核仅本次公开预览，不取得私有详情。PowerShell rg误用了-TotalCount一次，已改普通rg并按实际PointLedger/WECHAT_APP_ID核对，不把读取错误当证据。
+
+R8c1b3a首轮编译失败：新previewView一处Java var复合声明不允许，拆为两个var声明，未执行任何测试即失败，不计通过。主体8API/独立默认关闭开关、消息指纹/最小审核投影/撤回防回退已接通；预检修正两处新测试括号，具体旧来源/错app测试不共用未知来源断言，验证继续。
+
+R8c1b3a首次可编译真实库运行发现批准被409拒绝：原审计JSON从数据库解析为IntNode，而JDBC Long转tree为LongNode，直接JsonNode.equals误判相同规范数值。已把所有源快照/预览/最后审计比较统一为规范JSON序列字符串（哈希已有相同规范化），保留原源码/授权/状态/软删除全部条件和原成功/拒绝断言；完整复验待首轮结束后顺序运行，未把409放入成功集合。
+
+R8c1b3a首轮49项实际40过/3失败6错误，其他19项（旧公开文本DB9/HTTP5、新HTTP4/无库1）全过。修复JSON数值比较后顺序复验完整30来源/私有类；生产compile阶段补强原跨车型用例为真实第二车型及接收车，再篡改发布行model_id，确保验证范围不是因原索引过滤偶然拒绝；测试编译阶段随后统一包含该夹具，未放宽断言。
+
+R8c1b3a规范JSON修复后完整来源类30中29过，1并发用例返回[200,503]而非[200,409]。同一控制行虽串行，等待前鉴权已建立RR快照，原active_case普通查询仍看不到刚提交的申请，触发唯一约束503。改有效申请及永久原意图查找为FOR UPDATE当前读，保留源/授权/唯一约束与[200,409]断言，添加具体并发阶段断言说明；完整30复验，不把503接受为成功。
+
+R8c1b3a最终：最新完整30/30来源及私有类重编译复验通过，无错误或跳过，2026-10-17北京时间14:58:27结束。合并首轮其余19项为49不同后端（新19/原30），不累计79/109。840前端、微信/H5、V059/124表完整/重复迁移及旧凭证保留、331操作1174引用/104页/59有序挂载/16登录字段、Compose config和原README/141追踪MD+CSV/44表init基线保持通过。阶段设计/API/操作/执行/验收、下一b3b公开页面与恢复、相关索引/当前进度已同步。整个b3/c1b/R8尚未销项；HEAD仍d4c7763，所有R8源码/迁移/测试/文档仅本地，无上传/合并/发布。
+
+R8c1b3a最终文档/测试凭证核对：115份变更或新增Markdown的835相对链接有效，五份最新XML合计49且无失败/错误/跳过，源码/前端/构建/124表迁移完成日志核对一致，diff通过。没有新增远程操作；下一b3b实施公开页面及恢复。

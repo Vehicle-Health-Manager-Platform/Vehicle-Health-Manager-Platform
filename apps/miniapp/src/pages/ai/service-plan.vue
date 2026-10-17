@@ -10,6 +10,7 @@ import { selectOwnerVehicle } from '../../services/owner-vehicle-selection.js'
 import { planBookingHandoff } from '../../services/plan-booking-handoff.js'
 import { createHealthDashboardFlow,initialHealthDashboardState } from '../../services/health-dashboard.js'
 import { symptomHandoff } from '../../services/symptom-handoff.js'
+import {experienceReferenceRoute} from '../../services/experience-detail.js'
 const state = reactive(initialAiServicePlanState())
 const vehicle = ref(null), evidence = reactive(initialVehicleEvidenceState())
 const source=reactive(initialHealthDashboardState())
@@ -20,6 +21,7 @@ function clearEvidence() { evidenceFlow.reset();sourceFlow.reset(); vehicle.valu
 function loadEvidence(){return Promise.allSettled([evidenceFlow.load(),sourceFlow.load()])}
 function chooseRequired(row){if(state.busy||source.busy||!vehicle.value||source.value?.vehicle.vehicle_id!==vehicle.value.vehicle_id||!source.value.required_projects.includes(row))return;const route=planBookingHandoff.route(row.project_id,vehicle.value.vehicle_id);if(route)uni.navigateTo({url:route})}
 function moreExperiences() { if (!vehicle.value || !evidence.value) return; selectOwnerVehicle(vehicle.value); uni.navigateTo({url:'/pages/community/experiences'}) }
+function openExperience(row){if(evidence.busy||!vehicle.value||!evidence.value?.experiences.items.includes(row))return;const url=experienceReferenceRoute(row.experience_id);if(url){selectOwnerVehicle(vehicle.value);uni.navigateTo({url})}}
 watch(() => [vehicle.value?.vehicle_id, state.draft, state.requested, state.value], () => {evidenceFlow.reset();sourceFlow.reset()}, { flush: 'sync' })
 let visible = false,transferredQuestion=null
 onLoad(()=>{transferredQuestion=symptomHandoff.take()})
@@ -68,7 +70,7 @@ watch(() => ownerSession.accessToken, () => { transferredQuestion=null;flow.rese
       </view>
       <text class="reservation-heading">同款获批施工经验（最多20条）</text>
       <text v-if="!evidence.value.experiences.items.length">暂无可展示经验；不据此推断适用性。</text>
-      <text v-for="x in evidence.value.experiences.items" :key="x.experience_id">{{ x.summary.recorded_month }} · 工时 {{ x.summary.work_minutes }} 分钟 · 配件类别 {{ x.summary.part_kinds }} 种</text>
+      <view v-for="x in evidence.value.experiences.items" :key="x.experience_id"><text>{{ x.summary.recorded_month }} · 工时 {{ x.summary.work_minutes }} 分钟 · 配件类别 {{ x.summary.part_kinds }} 种</text><button :disabled="evidence.busy" @tap="openExperience(x)">重新核验经验引用</button></view>
       <button v-if="evidence.value.experiences.next_cursor" @tap="moreExperiences">查看同款经验分页</button>
     </view>
     <view v-if="state.catalog" class="reservation-panel">

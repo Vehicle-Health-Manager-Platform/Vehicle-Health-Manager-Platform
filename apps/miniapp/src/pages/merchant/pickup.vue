@@ -48,7 +48,7 @@ function submit(){
 function sheet(){uni.redirectTo({url:`/pages/check/pickup-detail?id=${order}&role=merchant`})}
 </script>
 <template>
-  <view class="reservation-page" data-testid="pickup-form">
+  <view class="reservation-page" data-testid="pickup-form"><button v-if="write.retry" :disabled="write.busy" @tap="save.retry">重试原接车提交请求（不使用当前编辑内容）</button>
     <text class="reservation-title">接车检查</text>
     <button v-if="!merchantSession.accessToken" @tap="login">前往门店登录</button>
     <text v-if="read.busy">正在加载订单…</text>

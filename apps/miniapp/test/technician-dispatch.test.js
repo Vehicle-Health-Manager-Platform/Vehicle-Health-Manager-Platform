@@ -171,8 +171,8 @@ test('传输失败与未配置服务给出可区分的重试分类', async () =>
   assert.throws(() => unconfigured.orders(TECH, 1), error => error.kind === 'unconfigured')
 })
 
-// 断网重试必须沿用原幂等键；换人必须换新键，否则服务端会判成「同键异体」而拒绝。
-test('派工写流程失败后沿用原键，换人换新键并带上新目标', async () => {
+// 断网未知结果必须先核对原人/原键，不能换人后自动另起请求。
+test('派工未知结果只允许原人原键重试，修改目标不会自动再派一次', async () => {
   const state = initialReservationWriteState()
   const keys = ['11111111-1111-4111-8111-111111111111', '22222222-2222-4222-8222-222222222222']
   const seen = []
@@ -189,9 +189,10 @@ test('派工写流程失败后沿用原键，换人换新键并带上新目标',
   assert.equal(seen[0].key, seen[1].key)
   target = 4
   await flow.save()
-  assert.equal(seen.length, 3)
-  assert.notEqual(seen[2].key, seen[1].key)
-  assert.deepEqual(seen[2].body, { technician_id: 4 })
+  assert.equal(seen.length, 2)
+  await flow.retry()
+  assert.equal(seen[2].key, seen[1].key)
+  assert.deepEqual(seen[2].body, { technician_id: 3 })
 })
 
 test('提交期间重复点击不会再发一次请求，成功后也不再重复提交', async () => {

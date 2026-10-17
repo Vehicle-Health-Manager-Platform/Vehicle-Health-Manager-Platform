@@ -37,6 +37,39 @@ services:
       - ../../docs/sql/migrations/V024__payment_query_recovery.sql:/docker-entrypoint-initdb.d/024-payment-query-recovery.sql:ro
       - ../../docs/sql/migrations/V025__order_refunds.sql:/docker-entrypoint-initdb.d/025-order-refunds.sql:ro
       - ../../docs/sql/migrations/V026__commission_ledger.sql:/docker-entrypoint-initdb.d/026-commission-ledger.sql:ro
+      - ../../docs/sql/migrations/V027__archive_report_shares.sql:/docker-entrypoint-initdb.d/027-archive-report-shares.sql:ro
+      - ../../docs/sql/migrations/V028__archive_reminders.sql:/docker-entrypoint-initdb.d/028-archive-reminders.sql:ro
+      - ../../docs/sql/migrations/V029__archive_structured_details.sql:/docker-entrypoint-initdb.d/029-archive-structured-details.sql:ro
+      - ../../docs/sql/migrations/V030__vehicle_health_observations.sql:/docker-entrypoint-initdb.d/030-vehicle-health-observations.sql:ro
+      - ../../docs/sql/migrations/V031__vehicle_health_observation_history.sql:/docker-entrypoint-initdb.d/031-vehicle-health-observation-history.sql:ro
+      - ../../docs/sql/migrations/V032__merchant_location.sql:/docker-entrypoint-initdb.d/032-merchant-location.sql:ro
+      - ../../docs/sql/migrations/V033__review_publication.sql:/docker-entrypoint-initdb.d/033-review-publication.sql:ro
+      - ../../docs/sql/migrations/V034__public_review_text.sql:/docker-entrypoint-initdb.d/034-public-review-text.sql:ro
+      - ../../docs/sql/migrations/V035__review_summary_consent.sql:/docker-entrypoint-initdb.d/035-review-summary-consent.sql:ro
+      - ../../docs/sql/migrations/V036__project_model_applicability.sql:/docker-entrypoint-initdb.d/036-project-model-applicability.sql:ro
+      - ../../docs/sql/migrations/V037__health_policies_and_confirmations.sql:/docker-entrypoint-initdb.d/037-health-policies-and-confirmations.sql:ro
+      - ../../docs/sql/migrations/V038__coupon_inventory_and_claims.sql:/docker-entrypoint-initdb.d/038-coupon-inventory-and-claims.sql:ro
+      - ../../docs/sql/migrations/V039__coupon_transactions.sql:/docker-entrypoint-initdb.d/039-coupon-transactions.sql:ro
+      - ../../docs/sql/migrations/V040__invitation_attribution.sql:/docker-entrypoint-initdb.d/040-invitation-attribution.sql:ro
+      - ../../docs/sql/migrations/V041__invitation_reward_policies.sql:/docker-entrypoint-initdb.d/041-invitation-reward-policies.sql:ro
+      - ../../docs/sql/migrations/V042__invitation_reward_delivery.sql:/docker-entrypoint-initdb.d/042-invitation-reward-delivery.sql:ro
+      - ../../docs/sql/migrations/V043__invitation_diagnosis_unlock.sql:/docker-entrypoint-initdb.d/043-invitation-diagnosis-unlock.sql:ro
+      - ../../docs/sql/migrations/V044__order_archive_grants.sql:/docker-entrypoint-initdb.d/044-order-archive-grants.sql:ro
+      - ../../docs/sql/migrations/V045__service_notification_outbox.sql:/docker-entrypoint-initdb.d/045-service-notification-outbox.sql:ro
+      - ../../docs/sql/migrations/V046__async_diagnosis.sql:/docker-entrypoint-initdb.d/046-async-diagnosis.sql:ro
+      - ../../docs/sql/migrations/V047__order_notification_sources.sql:/docker-entrypoint-initdb.d/047-order-notification-sources.sql:ro
+      - ../../docs/sql/migrations/V048__diagnosis_notifications.sql:/docker-entrypoint-initdb.d/048-diagnosis-notifications.sql:ro
+      - ../../docs/sql/migrations/V049__point_task_policies.sql:/docker-entrypoint-initdb.d/049-point-task-policies.sql:ro
+      - ../../docs/sql/migrations/V050__verified_points_ledger.sql:/docker-entrypoint-initdb.d/050-verified-points-ledger.sql:ro
+      - ../../docs/sql/migrations/V051__point_exchange_catalog.sql:/docker-entrypoint-initdb.d/051-point-exchange-catalog.sql:ro
+      - ../../docs/sql/migrations/V052__atomic_point_exchange.sql:/docker-entrypoint-initdb.d/052-atomic-point-exchange.sql:ro
+      - ../../docs/sql/migrations/V053__assessment_policies.sql:/docker-entrypoint-initdb.d/053-assessment-policies.sql:ro
+      - ../../docs/sql/migrations/V054__assessment_monthly_snapshots.sql:/docker-entrypoint-initdb.d/054-assessment-monthly-snapshots.sql:ro
+      - ../../docs/sql/migrations/V055__business_dashboard_permission.sql:/docker-entrypoint-initdb.d/055-business-dashboard-permission.sql:ro
+      - ../../docs/sql/migrations/V056__price_monitor_policies.sql:/docker-entrypoint-initdb.d/056-price-monitor-policies.sql:ro
+      - ../../docs/sql/migrations/V057__curated_experiences.sql:/docker-entrypoint-initdb.d/057-curated-experiences.sql:ro
+      - ../../docs/sql/migrations/V058__private_community_questions.sql:/docker-entrypoint-initdb.d/058-private-community-questions.sql:ro
+      - ../../docs/sql/migrations/V059__public_community_questions.sql:/docker-entrypoint-initdb.d/059-public-community-questions.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent"]
       interval: 10s
@@ -142,10 +175,19 @@ services:
       SERVICE_ARCHIVE_ENABLED: ${SERVICE_ARCHIVE_ENABLED:-false}
       EXPERIENCE_CARD_ENABLED: ${EXPERIENCE_CARD_ENABLED:-false}
       EXPERIENCE_PUBLICATION_ENABLED: ${EXPERIENCE_PUBLICATION_ENABLED:-false}
+      COMMUNITY_PUBLICATION_ENABLED: ${COMMUNITY_PUBLICATION_ENABLED:-false}
+      INVITE_VERIFIED_IDENTITY_ENABLED: ${INVITE_VERIFIED_IDENTITY_ENABLED:-false}
+      INVITE_REWARD_ENABLED: ${INVITE_REWARD_ENABLED:-false}
+      POINTS_EXCHANGE_ENABLED: ${POINTS_EXCHANGE_ENABLED:-false}
+      POINTS_EARNING_ENABLED: ${POINTS_EARNING_ENABLED:-false}
+      POINTS_VERIFIED_IDENTITY_ENABLED: ${POINTS_VERIFIED_IDENTITY_ENABLED:-false}
+      POINTS_AI_VERIFIED_ENABLED: ${POINTS_AI_VERIFIED_ENABLED:-false}
+      POINTS_RECOVERY_DELAY_MS: ${POINTS_RECOVERY_DELAY_MS:-5000}
       REVIEW_TEXT_PUBLICATION_ENABLED: ${REVIEW_TEXT_PUBLICATION_ENABLED:-false}
       REVIEW_SUMMARY_ENABLED: ${REVIEW_SUMMARY_ENABLED:-false}
       AI_SERVICE_PLAN_ENABLED: ${AI_SERVICE_PLAN_ENABLED:-false}
       SERVICE_ARCHIVE_INTERVAL_MS: ${SERVICE_ARCHIVE_INTERVAL_MS:-60000}
+      SERVICE_NOTIFICATION_DELAY_MS: ${SERVICE_NOTIFICATION_DELAY_MS:-5000}
       PAYMENT_QUERY_RECOVERY_ENABLED: ${PAYMENT_QUERY_RECOVERY_ENABLED:-false}
       PAYMENT_QUERY_RECOVERY_INTERVAL_MS: ${PAYMENT_QUERY_RECOVERY_INTERVAL_MS:-60000}
       PAYMENT_LOCAL_TEST_QUERY_URL: ${PAYMENT_LOCAL_TEST_QUERY_URL:-}

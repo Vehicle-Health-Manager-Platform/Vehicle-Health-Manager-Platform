@@ -92,6 +92,7 @@ public class TechnicianAssignments {
             if(o.get("assigned_at")!=null)throw conflict();
             long created=db.insert("INSERT INTO technician_assignment(order_id,merchant_id,technician_id,status,assigned_by) VALUES(?,?,?,'ASSIGNED',?)",id,actor.merchantId(),technician,actor.staffId());
             db.jdbc.update("UPDATE `order` SET assigned_at=? WHERE id=?",ReservationStore.time(db.now()),id);
+            ServiceNotifications.enqueue(db,id,"ORDER_ASSIGN");
             o=db.one("SELECT * FROM `order` WHERE id=? FOR UPDATE",id);a=assignment(id,true);var after=result(o,a,true);
             return new Change("ORDER_ASSIGN","technician_assignment",created,Map.of("order_id",id),after,after);
         });
@@ -135,6 +136,7 @@ public class TechnicianAssignments {
             db.jdbc.update("UPDATE technician_assignment SET status='ACCEPTED',accepted_at=? WHERE id=?",now,a.get("id"));
             db.jdbc.update("UPDATE `order` SET status='IN_SERVICE' WHERE id=?",id);
             db.jdbc.update("INSERT INTO order_status_transition(order_id,merchant_id,from_status,to_status,action,actor_type,actor_id,occurred_at) VALUES(?,?,'RECEIVED','IN_SERVICE','ORDER_TECH_ACCEPT','staff_account',?,?)",id,actor.merchantId(),actor.staffId(),now);
+            ServiceNotifications.enqueue(db,id,"ORDER_TECH_ACCEPT");
             var after=result(db.one("SELECT * FROM `order` WHERE id=? FOR UPDATE",id),assignment(id,true),true);
             return new Change("ORDER_TECH_ACCEPT","order",id,before,after,after);
         });

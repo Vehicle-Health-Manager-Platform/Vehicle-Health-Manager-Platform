@@ -1,5 +1,6 @@
 import { apiOrigin, cloudRunEnabled } from './api-config.js'
 import { apiRuntime } from './api-runtime.js'
+import { validInvitationCode } from './invitation-context.js'
 
 export class AuthError extends Error {
   constructor(kind, message, status = 0, detail = '') {
@@ -86,15 +87,17 @@ export function createAuthApi({ baseUrl, runtime, cloud = false }) {
   }
 
   return {
-    requestWechatLogin(role) {
+    requestWechatLogin(role, inviteCode = null) {
       return new Promise((resolve, reject) => {
         if (!['owner', 'technician'].includes(role)) throw new AuthError('invalid', '当前角色不支持微信登录')
+        if (inviteCode !== null && (role !== 'owner' || !validInvitationCode(inviteCode))) throw new AuthError('invalid', '邀请码无效')
+        const invitation = inviteCode === null ? {} : { invite_code: inviteCode }
         configured()
-        const accepted = (result) => validSession(result, role) || (role === 'technician' &&
-          result?.status === 'BIND_REQUIRED' && tokenPresent(result.binding_token))
+        const accepted = (result) => (validSession(result, role) || (role === 'technician' &&
+          result?.status === 'BIND_REQUIRED' && tokenPresent(result.binding_token))) && (inviteCode===null || ['EXISTING_ACCOUNT','ATTRIBUTED','INVALID_CODE','SELF','SOURCE_UNAVAILABLE'].includes(result?.invitation_result))
         // 云托管下身份由微信网关注入请求头，无需 wx.login 取 code，也不存在 code 被重放的问题。
         if (cloud) {
-          request('/api/auth/cloud-login', { role }, undefined, accepted).then(resolve, reject)
+          request('/api/auth/cloud-login', { role, ...invitation }, undefined, accepted).then(resolve, reject)
           return
         }
         runtime().login({
@@ -102,7 +105,7 @@ export function createAuthApi({ baseUrl, runtime, cloud = false }) {
           timeout: 15000,
           success: ({ code }) => {
             if (!tokenPresent(code)) { reject(new AuthError('wechat', '微信登录未完成，请重新授权')); return }
-            request('/api/auth/wx-login', { code, role }, undefined, accepted).then(resolve, reject)
+            request('/api/auth/wx-login', { code, role, ...invitation }, undefined, accepted).then(resolve, reject)
           },
           fail: () => reject(new AuthError('wechat', '微信登录未完成，请重新授权')),
         })

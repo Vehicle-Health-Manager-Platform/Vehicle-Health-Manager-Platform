@@ -20,6 +20,8 @@ class ExperienceCardsNoDatabaseTest {
     @Test void unconfiguredDatabaseFailsClosedAndInvalidInputStillRejects() throws Exception {
         when(decoder.decode(anyString())).thenReturn(Jwt.withTokenValue("owner").header("alg","HS256").subject("1").claim("subject_type","user").claim("role","OWNER").claim("jti","session").expiresAt(Instant.now().plusSeconds(600)).build());
         mvc.perform(get("/api/experience-cards?vehicle_id=1").header("Authorization","Bearer owner")).andExpect(status().isServiceUnavailable()).andExpect(header().string("Cache-Control","no-store"));
+        mvc.perform(get("/api/community/experiences/"+UUID.randomUUID()+"?vehicle_id=1").header("Authorization","Bearer owner")).andExpect(status().isServiceUnavailable()).andExpect(header().string("Cache-Control","no-store"));
+        mvc.perform(get("/api/community/experiences/private?vehicle_id=1").header("Authorization","Bearer owner")).andExpect(status().isBadRequest());
         mvc.perform(post("/api/experience-cards/1/consent").header("Authorization","Bearer owner").header("Idempotency-Key",UUID.randomUUID().toString()).contentType(MediaType.APPLICATION_JSON).content("{}")).andExpect(status().isBadRequest());
         mvc.perform(post("/api/experience-cards/1/withdraw").header("Authorization","Bearer owner").header("Idempotency-Key",UUID.randomUUID().toString()).contentType(MediaType.APPLICATION_JSON).content("{}")).andExpect(status().isServiceUnavailable());
     }

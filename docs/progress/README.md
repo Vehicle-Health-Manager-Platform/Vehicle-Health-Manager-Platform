@@ -1,5 +1,65 @@
 # 项目进度与下一步规划
 
+> 2026-10-17：[R8c1b3a公开问答后端](R8C1B3A_PUBLIC_QA_EXECUTION.md)本地完成，49不同后端/840前端、微信/H5及V059/124表通过。下一[b3b实际页面与恢复](R8C1B3B_PUBLIC_QA_UI_NEXT_PLAN.md)，公开后端不等于整个b3/c1b完成；整R8完成前代码和文档留本地。
+
+> 2026-10-17：[R8c1b2b实际页面与恢复](R8C1B2B_PRIVATE_QA_UI_EXECUTION.md)及[私有b2销项](R8C1B2_PRIVATE_QA_COMPLETION.md)本地完成，840前端及最终微信/H5通过；后端沿b2a38，仍V058/122表。下一[b3独立公开问答授权审核](R8C1B3_PUBLIC_QA_NEXT_PLAN.md)，整个R8完成前代码和文档留本地。
+
+> 2026-10-17：[R8c1b2a私有问答后端](R8C1B2A_PRIVATE_QA_EXECUTION.md)本地完成，38不同后端/814前端、最终微信/H5与V058/122表通过。下一[b2b实际页面与本机恢复](R8C1B2B_PRIVATE_QA_UI_NEXT_PLAN.md)，沿已确认的独立运营非实时答复与默认私有；整R8完成前代码和文档留本地。
+
+> 2026-10-17：[R8c1b1运营精选及引用导入](R8C1B1_CURATED_EXPERIENCES_EXECUTION.md)本地完成，73不同后端/811前端、最终微信/H5和117表通过。下一[b2私有结构化问答](R8C1B2_PRIVATE_QA_NEXT_PLAN.md)，沿已确认的独立运营非实时答复、默认私有规则；全R8完成前全部代码和文档留本地。
+
+> 2026-10-17：[R8c1a受控同款详情与引用](R8C1A_EXPERIENCE_DETAIL_EXECUTION.md)本地完成，54后端/796前端、最终微信/H5通过。下一[R8c1b热门/结构化问答/应用内分享](R8C1B_COMMUNITY_NEXT_PLAN.md)，全R8完成前代码和文档留本地。
+
+> 2026-10-17：[R8b3c2只读价格比较执行](R8B3C2_PRICE_COMPARISON_EXECUTION.md)与[R8b销项](R8B_OPERATIONS_COMPLETION.md)本地完成，45不同后端/785前端、最终微信/H5通过；下一[R8c1a受控同款经验详情与引用](R8C1A_EXPERIENCE_DETAIL_NEXT_PLAN.md)。整R8完成前全部代码及文档留本地。
+
+> [R8b3c1价格来源执行](R8B3C1_PRICE_SOURCE_EXECUTION.md)：44后端/771前端、微信/H5及116表通过。下一[c2只读比较](R8B3C2_PRICE_COMPARISON_NEXT_PLAN.md)，整R8完成前不上传。
+
+> [R8b3b最小服务关系执行](R8B3B_CUSTOMER_RELATIONS_EXECUTION.md)：43后端/757前端、微信/H5通过。下一[来源价格监控](R8B3C_PRICE_MONITORING_NEXT_PLAN.md)，整R8完成前不上传。
+
+> [R8b3a经营看板执行](R8B3A_BUSINESS_DASHBOARD_EXECUTION.md)：65后端/745前端、微信/H5与V055/115表通过。下一[客户关系与主动授权](R8B3B_CUSTOMER_AUTHORIZATION_NEXT_PLAN.md)，整R8完成前不上传。
+
+> [R8b2b月结页面执行](R8B2B_MONTHLY_ASSESSMENT_UI_EXECUTION.md)、[考核闭环销项](R8B2_ASSESSMENT_COMPLETION.md)：51后端/728前端、微信/H5及115表通过。下一[R8b3](R8B3_BUSINESS_NEXT_PLAN.md)，整R8完成前不上传。
+
+> [R8b2a月结后端执行](R8B2A_MONTHLY_SNAPSHOT_EXECUTION.md)：47后端/709前端回归与115表通过；下一[R8b2b查看/确认与恢复](R8B2B_MONTHLY_ASSESSMENT_UI_NEXT_PLAN.md)，整R8完成前不上传。
+
+> [R8b1考核来源政策执行](R8B1_ASSESSMENT_POLICY_EXECUTION.md)：43后端/709前端、微信/H5与112表通过；下一[R8b2月份样本与计算](R8B2_ASSESSMENT_SAMPLES_NEXT_PLAN.md)，整R8完成前不上传。
+
+> [R8a3c本人兑换执行](R8A3C_OWNER_EXCHANGE_EXECUTION.md)、[R8a积分销项](R8A_POINTS_COMPLETION.md)本地完成；62后端/701前端及111表通过。下一[R8b1考核来源与配置](R8B1_ASSESSMENT_POLICY_NEXT_PLAN.md)，整R8完成前不上传。
+
+> [R8a3b原子兑换执行](R8A3B_ATOMIC_EXCHANGE_EXECUTION.md)，98不同后端/689前端及111表通过；下一[R8a3c本人兑换与恢复](R8A3C_OWNER_EXCHANGE_NEXT_PLAN.md)。整R8完成前不上传。
+
+> [R8a3a兑换目录执行与下一原子兑换](R8A3A_EXCHANGE_CATALOG_EXECUTION.md)；31后端/686前端及110表通过，整R8完成前全部保留本地。
+
+> [R8a2执行与下一兑换](R8A2_POINTS_LEDGER_EXECUTION.md)；整个R8完成前保留本地，不做中间上传。
+
+> [R8a1本地执行与下一步](R8A1_POINTS_POLICY_EXECUTION.md)，整个R8完成前无中间上传。
+
+> [R8全阶段分步计划](R8_IMPLEMENTATION_PLAN.md)；整个R8完成前不上传中间内容。
+
+> 整R7全部代码/迁移/测试/文档已同批上传[PR153](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/153)，完整六项CI以最终head及PR正文为准；未合并或发布。下一[R8积分先行](R8_IMPLEMENTATION_PLAN.md)。
+
+> 整R7收尾：[需求销项](R7_REQUIREMENT_CLOSURE.md)、[执行](R7_COMPLETION_EXECUTION.md)、[恢复说明](R7_RECOVERY_MATRIX.md)、[统一验收](../testing/LOCAL_R7_COMPLETION_ACCEPTANCE.md)；后端门禁完成后同批上传全部源码和文档，下一[R8](R8_IMPLEMENTATION_PLAN.md)。
+
+> R7c3 第三步：[诊断专属消息执行](R7C3_DIAGNOSIS_NOTIFICATIONS_EXECUTION.md)；下一[整R7销项与统一门禁](R7_COMPLETION_NEXT_PLAN.md)。整R7通过后统一上传全部代码及文档。
+
+> R7c3 第二步：[关单/退款/异议消息执行](R7C3_ORDER_NOTIFICATIONS_EXECUTION.md)，下一[诊断专属消息](R7C3_DIAGNOSIS_NOTIFICATIONS_NEXT_PLAN.md)；整R7完成前无上传。
+
+> R7c3 第一步：[草稿与原键恢复执行](R7C3_RECOVERY_EXECUTION.md)；下一步补充可靠消息，再整 R7 验收与统一上传。
+
+> 当前R7本地实施：[R7全阶段分步规划](R7_IMPLEMENTATION_PLAN.md)；整个R7完成后才统一上传全部代码和文档。
+
+> 2026-10-15 整 R6 源码收口见[需求销项](R6_REQUIREMENT_CLOSURE.md)与[统一验收](../testing/LOCAL_R6_COMPLETION_ACCEPTANCE.md)；所有代码、迁移、测试及文档同批上传，最终远程结果以 PR152 正文为准。下一步见[R7a车主施工证据计划](R7A_OWNER_EVIDENCE_NEXT_PLAN.md)。下方保留阶段历史。
+
+> 2026-10-15 R6b按[R6b分步计划](R6B_NEXT_PLAN_2026-10-15.md)继续，本地[R6b1配置](R6B1_REWARD_POLICY_EXECUTION.md)后接可靠发奖与海报/解锁；整R6完成前不上传中间更新。
+
+> R6a 邀请资格与不可变归因阶段设计见[设计](R6A_INVITATION_DESIGN_2026-10-14.md)，实施与下一 R6b 见[执行](R6A_INVITATIONS_EXECUTION.md)。
+
+> 2026-10-14 R5a+R5b完整券阶段已实施，见[R5闭环](R5_REQUIREMENT_CLOSURE.md)、[R5b执行](R5B_COUPONS_EXECUTION.md)。按用户要求整R5收口后统一上传全部代码和文档，下一R6邀请；下方为历史记录。
+
+> 2026-10-14 R5a已实施：券库存/发行、独立运营池、领取/本人券/截止提醒，见[执行](R5A_COUPONS_EXECUTION.md)。下一步R5b交易用券与核销；原R4/清点记录保留如下。
+
+> 2026-10-14：R4已合并且main六项CI通过；当前缺口与下一阶段见[清点](DELIVERY_GAP_AUDIT_2026-10-14.md)、[规划](REMAINING_DELIVERY_PLAN_2026-10-14.md)、[R5启动计划](R5_COUPONS_NEXT_PLAN_2026-10-14.md)。
+
 > R4完整交付见[执行](R4_COMPLETION_EXECUTION.md)与[需求闭环](R4_REQUIREMENT_CLOSURE.md)；下一R5券。
 
 > 最新：[R4c3本车方案预约执行](R4C3_PLAN_BOOKING_EXECUTION.md)，下一R4d有来源规则/读数有效期与可比趋势。
@@ -59,3 +119,15 @@
 - [登录联调验收](../operations/AUTH_INTEGRATION_RUNBOOK.md)：真实微信、本机数据库、手机号、短信和真机的逐项核验。
 
 每次完成一项任务或改变阶段时，更新上述文件的日期、状态和依据；阶段任务仍以[分阶段开发计划](../../汽车健康管家平台分阶段开发计划.md)为准，功能与验收要求以[Spec](../SPEC.md)和[交付文档](../reference/DELIVERY_V1.md)为准。
+
+- [R6b2 资格快照与原子奖励](R6B2_REWARD_EXECUTION.md)：本地阶段，整R6完成后统一上传。
+
+- [R6b3 分步实施](R6B3_IMPLEMENTATION_PLAN.md)：代码/文档本地保存，整R6验收后统一上传。
+
+- [R7b 工作台执行](R7B_WORKSPACE_EXECUTION.md)：本地完成，整R7完成后代码与文档统一上传。
+
+- [R7c1 站内通知执行](R7C1_NOTIFICATIONS_EXECUTION.md)：本地阶段，整R7完成后代码与文档统一上传。
+
+- [R7c2 已确认诊断方案](R7C2_DIAGNOSIS_NEXT_PLAN.md)：本地阶段，整R7完成后代码与文档统一上传。
+
+- [R7c2 本地实施](R7C2_DIAGNOSIS_EXECUTION.md)：本地完成，整R7完成后代码与文档统一上传。

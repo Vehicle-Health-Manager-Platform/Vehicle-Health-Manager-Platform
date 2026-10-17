@@ -29,6 +29,7 @@ function openLogin() {
       <text class="panel-title">请先验证车主身份</text>
       <text class="panel-copy">登录后才能查看与本人关联的车辆和服务信息。</text>
       <button class="action" @tap="openLogin">前往微信登录</button>
+      <slot name="anonymous-action" />
     </view>
     <view v-else-if="!businessReady" class="panel" role="status">
       <text class="panel-title">业务内容即将接入</text>

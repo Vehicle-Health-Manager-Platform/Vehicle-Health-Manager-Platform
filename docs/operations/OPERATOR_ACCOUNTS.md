@@ -1,5 +1,9 @@
 # 运营认证与审核账号
 
+> V046新增独立诊断处理/管理权限can_diagnose和can_diagnose_manage，均默认0，旧权限不会继承。离线动作`diagnose-permission`/`diagnose-manage-permission`分别要求显式环境`OPERATOR_CAN_DIAGNOSE=true|false`/`OPERATOR_CAN_DIAGNOSE_MANAGE=true|false`及`--operator.id=...`；沿operator-admin且无HTTP的既有流程运行。权限变更/审计/撤销所有会话同事务，重新登录后生效；管理权不自动授予正文读取，仍须有处理权和当前分配。见[诊断运维](ASYNC_DIAGNOSIS.md)。
+
+> V038新增独立券池权限can_coupon，默认0，不随目录/审核权限授予。显式环境`OPERATOR_CAN_COUPON=true|false`，使用既有无HTTP的operator-admin流程，参数`--operator.action=coupon-permission --operator.id=...`；变更会审计并撤销现有会话，重新登录后才能管理精选池。协议见[券接口](../api/COUPON_INVENTORY.md)。
+
 日期2026-10-09，V019先迁移；2026-10-10 起 V020 增加 `operator_account.can_onboard`（入驻审核权限，与经验审核 `can_review` 互不交叉，默认0）。本阶段运营入口在微信小程序，账号密码+短信二次校验、独立短会话；不是车主/商家身份。默认无账号与审核授权，无HTTP注册/提权。
 
 ## 离线管理
@@ -17,6 +21,21 @@
 
 POST `/api/auth/operator/code`：严格 `{account,password}`。POST `/api/auth/operator/login`：另加6位字符串sms_code。POST `/api/auth/operator/logout`：运营Bearer，严格 `{}`。未知/重复/尾随字段与query均拒绝，全部no-store。账号ASCII 3–64字符，大小写统一，密码不截断。
 
-验证码bcrypt保存、5分钟有效、一次消费、用途绑定运营ID。发码60秒1次/每天5次，登录IP30次/15分钟、账号10次/15分钟。登录事务复核账号、消费验证码、创建15分钟JWT/数据库会话及最小审计；不发refresh，过期需再次两步认证。`can_review` 与 `can_onboard` 只供界面决定入口提示，服务端每次请求都实时复核数据库权限列。退出即时撤销。登录响应含 `user.can_review` 与 `user.can_onboard` 两个布尔位；客户端做严格字段校验，新增或缺失字段都会被判为协议错误，改动登录响应必须同步消费端。
+验证码bcrypt保存、5分钟有效、一次消费、用途绑定运营ID。发码60秒1次/每天5次，登录IP30次/15分钟、账号10次/15分钟。登录事务复核账号、消费验证码、创建15分钟JWT/数据库会话及最小审计；不发refresh，过期需再次两步认证。`can_review` 与 `can_onboard` 只供界面决定入口提示，服务端每次请求都实时复核数据库权限列。退出即时撤销。当前登录响应含 `user.can_review/can_onboard/can_catalog/can_coupon/can_invite/can_diagnose/can_diagnose_manage/can_points/can_assessment/can_analytics/can_price_monitor/can_community_curate/can_community_answer/can_community_manage` 十四个布尔位，另有id/role；客户端严格校验并兼容已知旧版本形状，不接受任意权限字段。新增权限时须同步消费端；仅有诊断、积分、考核、价格、精选或经营权限的账号登录后进入相应工作区。
 
 需配置正式 `OperatorSmsSender` 供应商适配器。当前未配置会返回503，不返回验证码，不使用固定代码或绕过；供应商失败回滚已发验证码状态。隔离测试可用合成供应商/验证码夹具，不能代替正式短信验收。车主/商家/技师接口不能使用运营身份。
+
+
+R8a1新增独立`can_points`（默认0），离线动作`points-permission`和显式`OPERATOR_CAN_POINTS=true/false`，会话撤销及审计同事务。不得借邀请/券/诊断权限。见[积分配置操作](POINT_TASK_POLICIES.md)。
+
+R8b1/V053新增独立`can_assessment`（默认0），离线动作`assessment-permission`和显式`OPERATOR_CAN_ASSESSMENT=true/false`，会话撤销及审计同事务。创建账号不自动授予，其他权限不能替代，无HTTP提权。见[考核政策操作](ASSESSMENT_POLICIES.md)。
+
+R8b3a/V055新增独立`can_analytics`（默认0），离线动作`analytics-permission`和显式`OPERATOR_CAN_ANALYTICS=true/false`，会话撤销及审计同事务。创建账号不自动授予，其他权限不能替代，无HTTP提权。只读来源核验经营汇总，不代表已结资金，见[经营看板操作](BUSINESS_DASHBOARD.md)。
+
+R8b3c1/V056新增独立`can_price_monitor`（默认0），离线动作`price-monitor-permission`与显式`OPERATOR_CAN_PRICE_MONITOR=true/false`，会话撤销及审计同事务。登录id/role及十一布尔位共13字段；其他权限不能替代，无HTTP提权，创建账号不自动授予。见[价格来源配置](PRICE_MONITOR_SOURCES.md)。
+
+R8c1b1/V057新增独立`can_community_curate`（默认0），离线动作`community-curate-permission`与显式`OPERATOR_CAN_COMMUNITY_CURATE=true/false`，会话撤销及审计同事务；c1b1阶段登录id/role及十二布尔位共14字段。精选不授予审核、诊断或未来问答权限，无HTTP提权，来源说明仅运营可读，见[运营精选操作](CURATED_EXPERIENCES.md)。上文13字段为c1价格权限阶段历史快照。
+
+R8c1b2a/V058新增独立`can_community_answer`和`can_community_manage`（均默认0），当前登录id/role及十四布尔位共16字段。离线动作`community-answer-permission`/`community-manage-permission`分别要求显式`OPERATOR_CAN_COMMUNITY_ANSWER=true|false`/`OPERATOR_CAN_COMMUNITY_MANAGE=true|false`；保持无HTTPoperator-admin流程，权限/审计/旧会话撤销同事务。管理队列不授予正文，处理须当前获派，旧精选/诊断权限不能替代。见[私有问答操作](PRIVATE_COMMUNITY_QUESTIONS.md)。b2a后端和b2b问答页面/精确登录落点已实现，只有管理或处理权限的账号分别进入问答受理或获派工作区；上文13/14字段是对应阶段历史快照。
+
+R8c1b3a使用现有独立`can_review`仅审核车主另外确认提交的公开问答预览，不授予b2私有详情；`can_community_manage/answer/curate`不能替代。没有新增运营位，当前登录仍16字段。独立`COMMUNITY_PUBLICATION_ENABLED=false`默认关闭，见[公开问答操作](PUBLIC_COMMUNITY_QUESTIONS.md)。

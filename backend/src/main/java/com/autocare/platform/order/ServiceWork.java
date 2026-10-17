@@ -110,6 +110,7 @@ public class ServiceWork {
             if(!OrderStatus.can(OrderStatus.IN_SERVICE,OrderStatus.PENDING_VERIFY))throw conflict();var now=ReservationStore.time(db.now());
             db.jdbc.update("UPDATE technician_report SET status=1,signed_at=? WHERE id=?",now,r.get("id"));db.jdbc.update("UPDATE `order` SET status='PENDING_VERIFY',service_report_ready_at=? WHERE id=?",now,id);
             db.jdbc.update("INSERT INTO order_status_transition(order_id,merchant_id,from_status,to_status,action,actor_type,actor_id,occurred_at) VALUES(?,?,'IN_SERVICE','PENDING_VERIFY','ORDER_SERVICE_FINISH','staff_account',?,?)",id,tech.merchantId(),tech.staffId(),now);
+            ServiceNotifications.enqueue(db,id,"ORDER_SERVICE_FINISH");
             var after=view(id);return new Change("ORDER_SERVICE_FINISH","technician_report",ReservationStore.number(r,"id"),before,after,after);
         });
     }

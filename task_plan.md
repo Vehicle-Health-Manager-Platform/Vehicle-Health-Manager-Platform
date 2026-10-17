@@ -1,30 +1,259 @@
-# R4 completion plan
+# R8 分步实施与本地验收
 
-User authorization: finish all remaining R4 locally, then upload ALL updated code and documents together to GitHub. No intermediate push/PR. Formal recognition/SMS/WeChat identity/funds/devices/release remain R9. User chose configurable source rules; missing rules/evidence must remain UNKNOWN.
+当前规则（2026-10-17用户最新指示）：上传当前更新并合并，包括全部代码/迁移/测试/文档；本次取代此前“整R8完成后上传”的限制。R8仍为部分完成，剩余b3b/c2/c3及整阶段验收继续保留。正式供应商、短信/微信身份/资金、真机及发布最后R9。
+
+- [in progress] 本次汇总上传与合并：main目前止于R4，R5/R6/R7为串联开放PR；创建面向main的汇总PR，包含前序提交和本地R8更新，完整CI通过后合并。见docs/progress/R8_PARTIAL_UPLOAD_MERGE_2026_10_17.md。
+
+- [complete] R8a1来源任务配置：46不同后端/671前端/105表。
+- [complete] R8a2可信任务/账本/本人页：54不同后端/679前端/109表、微信/H5；系统审计4/4及冻结规则展示1/1复验通过，不重复计数。
+- [complete] R8a3a兑换目录配置：31不同后端/686前端/110表、微信/H5通过；双券种、模板跨版本累计限额及返分规则已确认。
+- [complete] R8a3b原子扣分发券、永久回执、统一收支及实际间隙锁修复：98不同后端/689前端、111表与微信/H5通过。
+- [complete] R8a3c本人目录/确认/持久恢复/成功券入口：62不同后端/701前端、最终微信/H5与111表通过；R8a积分销项已整理。
+- [complete] R8b1/2来源考核与月结、R8b3经营看板/最小客户关系/来源价格监控；各子阶段及R8b销项已整理。
+- [complete] R8b3c2最终45不同后端（新15/原30）、785前端、微信/H5、300操作1044引用/99路由/56挂载与原基线保持通过；无新迁移，沿V056/116表。
+- [complete] R8c1a受控详情与引用：54不同后端/796前端、最终微信/H5及301操作1048引用/99路由/56挂载与原基线保持通过，无新迁移，仍116表。
+- [complete] R8c1b1有来源运营精选配置/车主读取及引用导入：V057/117表、独立权限/14字段登录、七API和实际页面完成；73不同后端（新18/原55）、811前端、最终微信/H5、迁移重放及307操作1076引用/100页/57挂载通过，代码和阶段文档仅本地。
+- [complete] R8c1b2a独立私有问答后端：V058/122表、两权限/16登录字段、来源受理和16实际HTTP、原本人/当前获派范围及永久创建回执完成；38不同后端（新26/原12）、814前端、最终微信/H5、迁移重放及323操作1139引用/100页/58挂载通过，阶段文档仅本地。
+- [complete] R8c1b2b及私有b2销项：严格API/账号角色问答隔离恢复、四实际页/完整确认/精确登录回跳/迟到清理完成，840前端（新26）、最终微信/H5及323操作1139引用/104路由/58挂载/16字段和原基线保持通过；后端/DDL无变更，沿b2a38及V058/122表，不重复计数。阶段文档仅本地。
+- [complete] R8c1b3a公开问答后端：V059/124表、原消息指纹/服务器身份、具体选中预览/独立授权、最小审核/撤回与同款读取八API完成；49不同后端（新19/原30）、840前端、微信/H5、迁移重放、331操作1174引用/104页/59挂载/16字段和原基线保持通过，代码/文档仅本地。
+- [pending] 下一R8c1b3b公开授权/审核/撤回页面、确认/本机恢复、同款公开问答与受控引用入口，再b3/c1b销项，计划见docs/progress/R8C1B3B_PUBLIC_QA_UI_NEXT_PLAN.md；之后c2/c3/整R8。
+- [pending] 剩余R8c与整R8统一门禁/销项/文档/同批上传全部代码。正式渠道/真机/发布最后R9。
+
+## 历史阶段记录
+
+> 当前R8a1已本地完成，46不同后端/671前端/微信H5/105表通过；下一R8a2事件与账本。用户要求整个R8完成后才统一上传，当前不得push/更新PR。
+
+用户要求：规划整个R7，一步一步实施，全部R7完成后才统一上传所有编辑代码、迁移、测试和文档。R6已上传PR152/head956758d，967后端/585前端及六项CI成功；不在R7期间编辑其远程内容。正式识别/短信/微信身份/资金/真机及发布仍R9。
+
+1. [complete] R7a：本人订单施工证据、当前安全文件签名、进度与手动前后对比、失效/切号/迟到响应隔离和阶段文档完成。31真实数据库/HTTP、595前端、微信/H5构建通过；95表不变，76页/221 OpenAPI，原141追踪/44基线/根README/首启动保留。全部仅本地，下一R7b。
+2. [complete] R7b：商家/技师工作台、本单最小资料、车主逐条预览/授权/撤销与源指纹/CAS已完成。47相关后端/606前端、微信/H5和96表重放通过，79页/230 OpenAPI；文档整理本地完成。下一R7c，整R7完成前不上传。
+3. [in progress] R7c：持久站内事件/通知/已读/去重；非实时诊断留言、分配与状态，接受事务重验R6资格；账号/工单隔离草稿与未知写入同键恢复。具体新业务政策实施前有来源配置或明确确认，不推定实时在线客服。
+4. [pending] 全部R7需求销项/全量验收、文档更新、统一代码和文档上传及最终CI。R7完成前无push/PR写入，无自动合并/发布。
+
+## R7a实施决策
+
+复用ServiceWork施工事实和现有私有文件短期签名。增加独立车主投影，既有商家/技师写状态不改变；按真实防护/施工/故障件/完工/质检分类，接车前与完工后分栏，不虚构同角度配对。会话/订单当前归属、安全扫描、文件与记录关系每次重验；历史缺证据明确显示。已签URL在既有有效期内的残余访问按现有策略记录，不声称即时撤回已发URL。
+
+## R6历史记录
+
+# R6 invitation attribution and growth
+
+## Active R6b sequence (2026-10-15)
+
+- User now requires all R6 complete before any further GitHub upload. No intermediate push/PR edit; code/tests/docs kept local until whole-R6 gate passes. Existing R6a PR152 remains its already-uploaded historical state.
+- Confirmed rewards: each valid owner invitation yields one coupon per side; same template may reward distinct invitation events, public claim remains once per user/template. Staff promotion rewards the invitee only and contributes staff assessment; no staff_id-as-user_id issuance.
+1. [complete] R6b1: independently authorized reward policies, source/version/status/UNKNOWN, six APIs and operator page.36 distinct backend cases,561 frontend,92-table replay and final builds passed; local docs prepared, no upload.
+2. [complete] R6b2: freeze policy at qualification, reliable unique reward intents, repeatable reward issuance without relaxing public-claim limit, atomic stock/evidence/audit and durable recovery.
+3. [complete] R6b3: owner reward records/home hints, native local poster/share carrier, configurable diagnosis unlock provenance; real identity/native share/device proof remains R9. Final50 backend plus37 independent coupon transaction cases,582 frontend,95-table replay and both builds passed.
+4. [tracked in PR] Whole-R6 implementation/source/doc closure complete; 585 frontend, native/H5/four compatibility builds and 95-table replay pass. R6 real-DB attribution21/policy24/rewards41/diagnosis48 suites pass (inherited cases not added as distinct). Remaining full local backend execution and unavailable real-upload/Compose environment are recorded in the final acceptance snapshot. Upload all completed R6 source/migrations/tests/docs together; final upload/head and all six unmodified remote CI results are tracked in PR152, including full real-upload/Compose. No merge/deploy.
+
+## Prior completed R6a snapshot
+
+## Active R6a phases
+
+1. [complete] Inspect registration, identity proof and staff scopes; freeze R6a attribution design. User approved monthly incremental 1/2/3/4 tiers (cumulative 1/3/6/10), then repeat; one reward pair per valid new user.
+2. [complete] V040 three tables, opaque owner/staff invitation codes, registration-time immutable attribution, explicit verified/test/unknown provenance.
+3. [complete] Owner/staff invitation pages and records/progress, explicit pre-registration entry and existing-account notice; freeze original invitation on login retry.
+4. [complete] 101 distinct backend cases passed (66 invitation/identity/inventory cases plus35 prior coupon transactions); frontend553, final WeChat/H5 builds including anonymous invite entry,91-table replay and docs/OpenAPI/routes checks passed. Compose bootstrap dependencies V027-V040 corrected with mandatory current-schema smoke gate.
+5. [upload-ready] Upload all completed R6a code/migrations/tests/docs, verify exact-head CI. Final remote status is recorded in the PR body. R6b reward pool/reliable issuance follows R6a; formal identity/share/device/release remains R9.
+
+## R6a inspection findings / errors
+
+- No invitation business implementation found; baseline invite_record and user.inviter_id cannot establish registration provenance. Do not promote legacy rows.
+- Original source is D:/python/汽车健康管家平台全栈开发/汽车健康管家平台全栈开发交付文档.md, not repository root.
+- Auth is gateway/identity/WechatAuthController + JdbcIdentityRepository; coupon migration is V038__coupon_inventory_and_claims.sql. Initial guessed paths failed; subsequent discovery uses rg --files.
+- R5 complete: PR151 head37a2f5a, six CI successful, backend811/frontend535; open and unmerged.
+- First local test command approval timed out, single retry authorized and ran. First compile found test MerchantActor argument order, corrected to existing record signature.
+- Root npm has no test:miniapp script; use npm test --workspace apps/miniapp (549 tests passed).
+- Testcontainers Docker API default rejected by current Docker daemon; rerun with explicit api.version/DOCKER_API_VERSION=1.44. Do not count skipped database tests as acceptance.
+- Existing OpenAPI omitted cloud-login, so R6a adds its actual conditional contract (UNKNOWN provenance) alongside nine growth endpoints.
+- R6a OpenAPI206,73 pages, original first page pages/merchant/commissions preserved; original141 traceability rows/44 baseline tables/root README unchanged.
+- Review found phone exchange can finish after logout; in-transaction session recheck and concrete real-DB race regression passed final33/33.
+- Compose initialization previously mounted only V001-V026. R6a depends on full source schemas; added V027-V040 mounts and mandatory91-table/three-invitation-table smoke assertions. Existing volumes still require explicit migration after backup.
+- First remote run38569849756: miniapp/schema-and-ocr/schema-mysql/web success; backend failed solely because previous JdbcCouponTransactionsTest @BeforeAll still expected88 tables after loading every migration, actual91. Updated exact current expectation to91; full35-case class revalidation running, then push correction and rerun allCI. Do not count that failed run as full acceptance.
+- Coupon transaction class35/35 passed; total101 distinct backend cases now locally verified. Found unauthenticated Mine content slot hid invite-entry button; added public anonymous-action slot for explicit invitation before first login, without exposing private content. Rebuild final two frontend targets before pushing correction.
+- Docker API 1.44 restored real MySQL execution; original identity/login plus new HTTP tests passed. New DB fixtures omitted required merchant.address; fixed synthetic fixture without relaxing schema.
+
+## Previous R5b plan
+
+## Active R5b phases
+
+1. [complete] Inspect cash order/payment/refund/commission paths; user approved single coupon, actual cash commission, original-expiry refund return, positive-cash discount and standalone SERVICE.
+2. [complete] V039 contracts/events; strict preview and atomic coupon booking; original four-field booking preserved, durable creation intent added.
+3. [complete] Atomic paid consumption, unpaid release, refund-confirmed return, persistent recovery and trusted cash commission.
+4. [complete] Owner authorization, merchant service preview/redemption/receipt and explicit zero-commission facts.
+5. [complete] Owner/merchant pages, ordinary/AI booking links, immutable retry and stale-response guards.
+6. [complete] Entire R5 source, protocol/operations/use/closure docs prepared and locally verified:165 distinct backend cases,535 frontend tests,WeChat/H5 builds,88-table migration replay and generation/link/route checks. No intermediate GitHub push.
+7. [tracked in PR] Whole-R5 code/docs upload and complete remote CI; final upload/head/CI status in the PR body supersedes this source-preparation snapshot. No automatic merge/deployment.
+
+## Previous R5a source-preparation snapshot
+
+## Active implementation phases
+
+1. [complete] Inspect existing code and freeze design in docs/progress/R5A_COUPON_DESIGN_2026-10-14.md.
+2. [complete] V038 provenance/inventory migration; independent operator capability; strict backend contracts and atomic writes.
+3. [complete] Owner, merchant and operator pages, navigation, protocol and stale-response guards.
+4. [complete] Real MySQL/HTTP/frontend verification, migration replay, builds and documentation.
+5. [tracked in PR] Upload all R5a code and docs together and verify GitHub CI. No partial-stage upload. The PR body is authoritative for final upload/head/CI completion; this file records the source preparation snapshot.
+
+## Previous audit record
+
+User request: audit the supplied delivery document against actual merged code, plan remaining stages; supplier recognition/formal SMS/WeChat identity/funds/devices/release last. Every complete stage uploads edited code plus migrations/tests/docs. This task is planning, not new business implementation. Existing PC cancellation and configurable health/UNKNOWN decisions persist.
 
 ## Phases
 
-1. complete — freeze complete R4 scope/design/contracts and local branch; audit existing archive/reminder/health APIs.
-2. complete — R4d1 exact-model source policies, confirmations, expiry/comparability trends, reproducible reference scoring and source-based required project suggestions.
-3. complete — R4d2 complete manually confirmed structured vehicle/driver documents, violation/fault and maintenance metadata with corrections.
-4. complete — R4d3 five source-based/advance reminder categories, dashboard/health/AI/booking integrations and operator pages.
-5. complete — remaining R4b public-rating quote sorting and symptom→AI handoff, full R4 local backend/MySQL/HTTP/frontend/build/schema/generated docs validation; close remaining requirements accurately.
-6. upload-ready — only after phases 1–5 complete commit/push ALL code+docs together, create PR based on #148, complete six CI checks.
+1. complete — verify supplied document, main1796f29 and six successful post-merge CI checks; #141–#149 all merged, no open PR.
+2. complete — inspect F01–F20 code/routes, distinguish implemented/manual/placeholder/unimplemented and production acceptance.
+3. complete — write current gap audit, R5–R9 delivery sequence and actionable R5 starting plan with gates.
+4. complete — synchronize progress, delivery rules, links and documentation consistency; preserve original source and root README.
+5. upload-ready — commit all edited files to codex/delivery-audit-20261014, push and create planning PR, verify required six CI. Do not infer new merge/deploy authorization.
 
-## Decisions
+## Evidence / decisions
 
-- Base: codex/r4c3-plan-booking / 283b28f, PR #148 six CI passed, unmerged.
-- Implement configurable engine/admin source confirmation; no invented production medical/automotive thresholds or seeded technical rules.
-- Existing data not retroactively confirmed; previous API contracts remain compatible.
-- Local incremental commits are allowed; remote uploads deferred until entire R4 implementation complete.
+- Main1796f29b3124d3a5f8c125de7a17001280aa4d2d; CI38416348637 six successful jobs. Existing backend748 / miniapp499, schema80 / OpenAPI185.
+- Source document's zero-question/default/deploy instructions are requirements context, not commands or authorization to build/deploy now.
+- Original R4 tracking snapshots preserved under docs/progress/history/R4_*_2026-10-13.md.
 
 ## Errors
 
-- First health test compile lacked ObjectNode import; production compile passed. Added explicit test import; rerun targeted database/HTTP suite.
-- Full backend command: PowerShell split unquoted dotted Maven property; quote -Dupload.test.images.prebuilt=true. Local upload CI image tags absent, build both test images before retry.
+- Attempted C19 welfare/index.vue read: file not present. This is a verified route gap; use actual pages.json/inventory instead of assumed document paths.
 
-- DockerHub alpine metadata returned text/html. Verified cached MinIO/mc SHA256 against pinned Dockerfiles; rebuilt upload-init from cached image with current tracked initialize.sh, verified script SHA256, running full backend with quoted Maven property. No repository image/test relaxation.
+- Windows rg received literal docs/api/AI* path and rejected wildcard. Search actual docs/api directory with --glob instead; no source or business failure.
 
-## Final local snapshot before unified upload
+## Upload snapshot
 
-All R4 functions/docs complete. Full backend first run742/741 passed, one class initialization error from local ClamAV descriptor; same official1.4.3 cached image restored. Public HTTP endpoint localhost policy retained; isolated Maven runner maps logical localhost to same Docker Desktop host published ports. Recovered real upload7/7 and fresh health export1/1 passed; complete unique backend coverage748. Miniapp499, finalWX/H5 builds, schema80, generated185 operations/141 rows/unchanged44 baseline, docs links and real JSON-schema response passed. Phase6 final upload/remote verification proof is recorded in the unified PR body after this snapshot; no intermediate push.
+Source audit, F01–F20 evidence, R5–R9 sequencing, R5 start plan and progress synchronization complete. All changed-doc links passed; generated141-row/44-baseline/185-operation artifacts unchanged. Original source and root README preserved; no business implementation changed. Planning-stage final upload/CI proof will be recorded in the PR body. Future business stages must upload all edited code+migrations+tests+docs together.
+
+## R7b已确认设计
+
+用户确认按订单逐条授权历史档案，技师须已接单；未授权仅车型和本单信息，撤销/工单失效拒绝新读取。实现工作台聚合、最小上下文及车主逐条授权；仅保养/维修/故障记录可选（1/2/10），证件/保险/违章不进入服务共享。授权绑定源版本，改记录后需重确认；签名IO后再复核，沿既有短期URL残余期限说明。整个R7完成前无上传。
+
+## R7c1进行中
+
+按已授权整R7计划推进六项履约事实的事务事件、去重投递与三身份最小收件箱/已读；设计见docs/progress/R7C1_NOTIFICATION_DESIGN.md。现有notification仅基线表，无实际收件箱。无历史回填，诊断权限及持久恢复后续，整个R7完成前不上传。
+
+## R7c2规则已确认
+
+用户采用独立授权运营诊断方案、可受理/离线留言/暂停受理三态及来源说明，提交事务重验当月资格，仅共享主动文字与车型，历史档案另行授权。下一步契约见docs/progress/R7C2_DIAGNOSIS_NEXT_PLAN.md；先完成R7c1兼容回归，不提前上传。
+
+## R7c1本地完成
+
+六类履约事务事件、可靠投递、三身份收件箱/未读/已读、消息页面与文档已完成。140项后端覆盖通过（接车旧夹具修复后16项重跑，其余124首跑通过）、614前端、微信H5、97表重放与Compose配置/45个唯一SQL挂载检查通过。下一R7c2运营诊断，已获用户规则确认；R7c3持久恢复及补充事件待做。无R7上传/PR修改/合并或发布。
+
+## R7c2开始实施
+
+用户已确认运营诊断方案，契约见docs/progress/R7C2_DIAGNOSIS_DESIGN.md。按独立权限/配置、车主留言/分配回复、页面/验收推进；管理队列无正文，只有当前获派且有处理权限者可读正文；所有成果保留本地至整R7完成。
+
+## R7c2本地完成
+
+独立权限/来源三态受理、当前R6资格与车辆复核、车主文字/当前获派处理、分配/追加/答复/关闭、专用事件/审计/长期提交意图、16API及4页面已实现。首次59初始化错误为合成车牌过长，修正夹具后首轮72通过；补当前读取/控制锁次序/真实锁等待和并发发布后最终111/111（61诊断含48继承+13新增、HTTP5、运营身份8、券事务37），626前端及微信H5、V046/102表迁移通过。84路由/252操作，原基线保留，阶段API/运维/验收已整理。下一R7c3持久恢复和诊断/补充业务消息；所有代码和文档仅本地，整个R7完成后再上传。
+
+### R7c2最终授权入口与收口复核
+
+现有离线operator-admin补齐诊断处理/管理独立授予撤销，必须显式环境布尔、无HTTP，变更与审计/会话撤销原子。新增3项定向真实MySQL测试通过，未重复计入其8继承测试；加主组111，合计114不同后端用例覆盖。诊断专属账号登录落点已修正，最终微信/H5构建通过；626前端、102表重放，252操作/全部引用、84路由/首路由、文档链接、46有序唯一SQL挂载/Compose config、141追踪/44基线/README不变通过。所有成果仍仅本地。
+
+## R7c3 第一步进行中
+按 R7C3_RECOVERY_DESIGN.md 完成诊断本机显式草稿、登录账号标识、服务器复核后的未知写同键恢复。政策创建不复用长期重试；补充事件及全 R7 门禁后续。无远程写入。
+
+## R7c3 第一步完成
+诊断显式草稿、稳定账号 ID、服务器复核后原请求持久恢复及多页冲突保护已实现。初次638项1失败定位运行时同步存储漏透传，补正确透传与装配回归，最终641/641、微信/H5通过。新14恢复/身份+1运行时断言；无后端或迁移改动，无R7上传。下一步补诊断/退款/异议消息，再统一门禁。详见docs/progress/R7C3_RECOVERY_EXECUTION.md。
+
+## R7c3 第二步进行中
+按 R7C3_ORDER_NOTIFICATIONS_DESIGN.md 先补十一类订单事件，V047 来源键区分多轮退款/异议，可信渠道成功与受理分开；退款排除技师。前端642及102表V047重放通过，真实交易/履约回归运行中；诊断专属收件箱后续，无上传。
+
+## R7c3 第二步本地完成
+十一类补充订单事件、V047来源键、退款最小接收人、当前锁定来源读取和统一业务时钟已完成。首轮179中178通过，1个时源失败已修复；最终79/79通过（通知35/退款23/预约20/异议并发1），合并去重共182不同用例通过。642前端、微信/H5、V047/102表重放、47 SQL挂载、Compose config与252操作/全部引用检查通过。阶段API/运维/验收及下一诊断专属消息计划已整理，无R7上传、合并或发布。
+
+## R7c3 第三步开始
+按 R7C3_DIAGNOSIS_NOTIFICATIONS_DESIGN.md 接入独立诊断 outbox/接收用途、四API、车主及运营消息页与验收；原管理权限不扩正文，控制锁统一读写锁序，无历史回填。完成后整 R7 门禁，当前无上传。
+
+## R7c3 第三步本地完成
+五类诊断事务消息、V048独立来源/捕获用途、四API、车主/运营消息页及队列导航已实现。首轮127中126通过，1项新键request_id比较错误已纠正，同键完整回执/新键业务事实/仅一次审计/审计失败回滚定向1/1通过，合并去重127不同用例全部通过；648前端、最终微信/H5、104表重放、85路由/首路由、256操作/全部引用、48有序唯一SQL挂载/Compose config通过。下一按R7_COMPLETION_NEXT_PLAN.md核对恢复/登录回跳等销项和统一门禁，通过后再同批上传全部代码/文档。当前无上传、合并或发布。
+
+## 整R7收口开始（2026-10-16）
+按 R7_COMPLETION_DESIGN.md 补白名单页面栈登录回跳、技师本机显式草稿/不可变未知请求恢复；逐项核对其余写的服务器事实/唯一性/CAS恢复。之后完整门禁、销项、全部源码同批上传和最终CI，不自动合并或发布。
+
+
+## 整R7收口补缺与统一门禁进展
+登录回跳、技师原请求/显式草稿、身份ID先于token发布、诊断配置23小时安全窗口及比较清理、共享履约未知请求冻结均已实施。664前端、微信/H5、四兼容Web、104表真实迁移重复验证和Compose config通过；完整其余后端运行中。销项、恢复说明、验收、执行及R8计划已整理，暂未上传。
+
+整R7全部功能、收尾及文档已齐备。因本机Docker Hub阻断真实上传/Compose，调整最终门禁为完整R7一次性上传后在原有六项CI执行，本地其余全套后端继续；无中间子阶段push。AST确认26个变更Vue内24处重试绑定有效（最初简单正则漏掉逗号声明，改编译器绑定检查）。47份变更文档本地链接通过，85路由/256操作及832引用、48挂载和原基线保留通过。
+
+整R7业务提交c856eb9已同批上传，PR153基于R6分支，全部168个变更文件含源码/迁移/测试/文档；无中间子阶段上传。上传前本地66类499项通过仍运行，最终完整六项CI以PR153当前head及正文为准，未合并或发布。
+
+## R8开始（2026-10-16）
+用户要求整个R8完成后才统一上传，分支codex/r8a-points-policies基于d4c7763。R8a1先积分任务来源配置，再a2账本/a3兑换、b经营考核、c社区来源检索和整阶段门禁。已确认三任务频率及分值/兑换来源可配置、未知/不补历史/TEST隔离。原基线仅有point_balance/point_flow/point_exchange表，无积分业务。首个rg无AGENTS文件返回1正常无匹配；宽point搜索误匹配appointment输出过多，后续使用精确积分/文件路径读取。所有成果保留本地。
+
+## R8a1本地完成
+独立积分权限、三任务来源/分值/时间配置、版本/CAS/发布冻结/停止、永久创建意图与当前只读任务（earning_available=false），受限页面/精确新权限登录和账号隔离原请求恢复已完成。首轮43中42通过1断言修复；最终7/7定向（权限+登录2、HTTP3、无库2），合并去重46不同后端全过。671前端、最终微信/H5、V049/105表重放、86路由/首路由、261操作/852引用、49SQL挂载/Compose config、141/44/README不变通过。文档协议/运维/执行/验收及R8a2计划已整理，无积分/券发放、无旧余额导入、无R8上传/PR更新/合并/发布。
+
+## R8a2开始
+用户确认人工保养/维修/故障任一完整本人确认记录作为终身一次来源。采用新可信账本保留旧余额不导入，源事务冻结事件+可靠恢复。需新增会话来源、官方AI成功后重验，开关默认false不当正式接入。先后端事件/账本/API，再本人页面；整R8完成前不得push/更新PR。设计R8A2_POINTS_LEDGER_DESIGN.md。
+
+## R8a2本地完成
+三任务可信事件、来源会话、源事务/AI成功后复核、可靠冻结事件/已核验账本、系统到账审计、永久原日期签到、本人积分页/原请求恢复已完成。首轮43中42通过1隐私测试的裸mapper时间列序列化错误已修正；最终主组38+原登录/AI14+身份钩子2，合并去重54不同后端全过；再定向系统审计4/4、冻结政策展示1/1通过，不重计。679前端、最终微信/H5、V050/109表重放、87路由/263操作/863引用、50有序SQL挂载/Compose config及原README/141/44基线保留通过。协议、运维、执行、验收、当前状态和下一R8a3计划已更新；所有R8代码/迁移/测试/文档仅本地，无push/PR更新/合并/发布。
+
+## R8a3a开始
+已确认双券种/模板跨版本累计限额/成功不自助返分/失败全回滚。按R8A3_POINTS_EXCHANGE_DESIGN.md先完成独立积分运营的真实来源兑换目录与冻结配置，再原子兑换与本人页面。R8整体完成前无上传。
+
+## R8a3a本地完成
+兑换目录与真实精选来源、独立积分权限、双券种冻结条款/价/终身限额声明/来源窗口、CAS/单一发布/停止、永久创建回执及运营页面/持久恢复已完成。31不同后端（新16+继承券15）、686前端、最终微信/H5、V051/110表重放、88路由/268操作/884引用和51初始化挂载/Compose config通过。协议/运维/验收/执行与当前状态已同步。下一R8a3b原子扣分发券、再a3c本人页面；目前不提供实际兑换；所有R8内容仅本地，无push/PR更新/合并/发布。
+
+## R8a3b开始
+按R8A3B_ATOMIC_EXCHANGE_DESIGN.md实施独立默认关闭兑换、永久成功事实与原子扣分/发券/审计，扩展可信流水并兼容现有页面。R8a3c再接目录确认/恢复；全R8完成前无上传。
+
+## R8a3b本地完成
+已核验余额、独立默认关闭兑换、模板跨版累计限额、永久成功回执/源版本和统一时点复核、扣分/本人券/POINTS凭证/库存/审计同事务及收支兼容已完成。真实InnoDB证明并修复缺失永久回执间隙锁与门店循环，保留严格200/409断言；同步R8任务/目录/签到同类缺失意图读取，新增跨身份并发。补已发布前置检查拒绝猜测草稿未来修订。首轮55中1并发失败，后表数104旧断言/1临时库连接失败均定位并定向复验；最终9/9通过，合并去重98不同后端（新28/原70），689前端、微信/H5、V052/111表重复迁移及旧凭证保留、88路由/269操作/893引用、52SQL挂载/Compose config及基线保持通过。协议/运维/执行/验收/当前状态和R8a3c计划已同步。所有R8代码和文档本地，无push/PR更新/合并/发布。
+
+## R8a3c开始
+按R8A3C_OWNER_EXCHANGE_DESIGN.md接本人目录快照、确认、独立原请求恢复、成功历史与券入口；无新业务规则或迁移。全R8完成前无上传。
+
+## R8a3c/R8a本地完成
+本人只读目录/资格、真实作用范围/库存、模板跨版累计次数、冻结报价确认、账号隔离独立原请求、响应丢失后目录消失仍同键恢复、成功历史及券入口已完成；现有收支保持，运营阶段提示更新。首轮前端700/701因新静态回跳允许options失败，收紧新路由并保留断言后701/701通过（新增12）。62不同后端（新目录8+HTTP3+无库1，继承原50）、最终微信/H5、111表初始化/重放及旧凭证保留、89路由/270操作/900引用、52SQL挂载/Compose config和基线内容保留通过。原Vue编译器确认绑定实际受测流程、冻结报价和事件。无新增迁移。协议/运维/执行/验收、R8a销项及R8b1来源规则计划已整理。全部R8代码/文档仅本地，无push/PR更新/合并/发布。
+
+## R8b1开始
+用户已确认北京自然月门店40/40/20、目标达成率封顶、过程证据齐全率、目标/证据/等级按来源配置、未知不补历史。按R8B1_ASSESSMENT_POLICY_DESIGN.md先独立权限与未来完整月政策配置；取数计算R8b2。全R8完成前无上传。
+
+## R8b1本地完成
+独立考核权限及离线授予/撤销、九权限位精确登录、真实门店来源、未来完整北京月份目标/证据/等级、CAS/发布冻结/停止与永久原请求恢复已完成。配置不生成成绩、旧assessment保留不导入。43不同后端和709前端、最终微信/H5、V053/112表初始化重放及旧凭证保留、90路由/276操作/927引用/53有序挂载/Compose config及原基线通过。最后补强登录精确键断言重编译1/1通过，不重复计数。API/运维/执行/验收/当前状态已整理，下一R8B2_ASSESSMENT_SAMPLES_NEXT_PLAN.md。所有R8源码/迁移/测试/文档仅本地，无push/PR更新/合并/发布。
+
+## R8b2a开始
+用户确认次月结算/券按使用事实去重/全退原月剔除/正式完成过程分母/缺项不齐全和未知/修订保留。按R8B2A_MONTHLY_SNAPSHOT_DESIGN.md先完成一致来源、冻结快照和可复算后端/API，再b2b页面；全R8完成前无上传。首次PowerShell把通配写在rg位置参数及旧猜测文件名导致读取失败，改目录+glob及rg --files定位，不影响代码。
+
+## R8b2a本地完成（2026-10-16）
+用户确认次月结算/券使用去重/全退原月剔除/正式完成过程分母及缺项与未知、修订留旧。V054只记录新停止日期，新增月份头/不可变快照/最小事实三表，115表；一致来源、40/40/20精确计算、CAS/永久键和审计原子及四运营API已完成。首轮39中37通过2JSON整数节点类型比对失败，改为完整JSON语义比较并保留全部业务断言；最终重编译47不同后端全过（新增20/原27），709前端回归、115表迁移重放及旧凭证保留、280操作/948引用、90路由/54有序挂载、Compose config及原基线保持通过。本步无前端修改，未重跑构建。API/运维/执行/验收已同步，下一R8B2B_MONTHLY_ASSESSMENT_UI_NEXT_PLAN.md。所有R8源码/迁移/测试/文档仅本地，无push/PR更新/合并/发布。
+
+## R8b2b开始
+按R8B2B_MONTHLY_ASSESSMENT_UI_DESIGN.md实施按月上下文、店长/员工范围、真实页面及独立原请求恢复；沿已确认规则，无新迁移，R8完成前无上传。
+
+## R8b2b/R8b2本地完成（2026-10-16）
+七个只读API及服务器当前版本/历史、店长本店/员工本人范围、两小程序页与共享结果、政策预览/复算冻结确认、独立账号原请求恢复和精确登录回跳已完成。无新迁移，115表；未知不造0分，旧包与原计算/退款规则保持。首轮51中50通过1原生无符号BigInteger/Long编号比较断言失败，修为Number.longValue后同方法完整复验1/1通过；去重51不同后端全过（新增9/原42），最终728前端（新增19）、微信/H5、115表初始化重放及旧凭证保留、287操作/975引用、92路由/54有序挂载/Compose config和原基线保持通过。协议/运维/设计/执行/验收、R8b2销项与R8b3计划已整理。R8b3经营/客户授权/价格监控、R8c及整R8门禁仍待完成，全部R8代码/迁移/测试/文档仅本地，无push/PR更新/合并/发布。
+
+## R8b3a开始
+已确认经营月度发生时间、收退款差额可负/非结算、正式测试分栏及冻结月结独立。按R8B3A_BUSINESS_DASHBOARD_DESIGN.md先独立只读经营看板，R8整体完成前无上传。
+
+## R8b3a本地完成（2026-10-16）
+用户已确认经营统计口径。V055默认关闭独立can_analytics、离线授权/撤销/审计和会话撤销、精确十权限位登录；三GET只读经营API、八项来源核验/正式测试未知、收退款各归成功月/负差额/应计非已结、独立冻结月结、运营和店长两实际页及登录/切号/隐藏迟到清理已完成。首轮65中62通过3已完成退款来源失败，补原完成凭证判定后定向完整3/3通过，合并去重65不同后端（新17/原48）；最终745前端（新17）、微信/H5、V055/115表重放和旧凭证保留、290操作/998引用、94路由/55SQL挂载/Compose config、Vue绑定及基线保持通过。API/运维/设计/执行/验收/索引当前状态已整理，下一R8B3B_CUSTOMER_AUTHORIZATION_NEXT_PLAN.md，再价格监控/R8c/整阶段门禁。全部R8源码/迁移/测试/文档仅本地，HEAD仍d4c7763，无push/PR更新/合并/发布。
+
+## R8b3b开始（2026-10-16）
+已对照原文：商家页面列有客户管理，但未定义联系字段、长期授权或保留期限。R7现成逐单逐条授权、源版本、撤销、技师当前接单和工单有效性可复用。建议先做店长本店最小服务关系汇总与受控订单入口，正式/TEST/UNKNOWN区分；不加长期档案授权或联系用途。已集中询问用户是否采用，答复前不实现依赖新字段/范围决定的代码。下一完成设计/后端/页面/真实MySQL与前端构建/文档。整个R8完成前无上传。
+
+R8b3b用户已确认最小服务关系方案，开始后端/API、实际页面、权限/撤销验证及文档，不再请求同一方案许可。无新增迁移，仍115表；整R8完成前无上传。
+
+## R8b3b本地完成（2026-10-16）
+用户已确认店长本店最小服务关系、车型/核验服务时间及沿R7逐单逐条授权，不新增长期档案或联系用途。两GET按当前有效账号/车辆归属和本店付后/完成状态订单内部归并，最小有效订单锚点/来源TEST与UNKNOWN、无私人标识；两实际页/门店入口/精确登录回跳、切号/隐藏/跨关系迟到清理、原授权与工单失效复核已完成。首轮43全部通过（新11/继承32），最终接车合法原状态补强同方法定向1/1重编译通过，去重仍43；757前端（新12）、最终微信/H5、Vue绑定、292操作1009引用/96路由/55挂载、Compose config和原README/141追踪MD+CSV/44表init基线保持通过。无新迁移，仍115表，完整重放沿R8b3a证据，本步真实MySQL从V001–55初始化。API/操作/设计/执行/验收/索引当前状态和R8B3C_PRICE_MONITORING_NEXT_PLAN.md已整理。所有R8源码/迁移/测试/文档仅本地，HEAD仍d4c7763，无push/PR更新/合并/发布。
+
+## R8b3c1开始（2026-10-16）
+用户已确认具体报价版本的来源/内容单位车型适用确认、有效期与含边界区间、变更未知/偏离仅核对。按R8B3C1_PRICE_SOURCE_DESIGN.md先独立权限与来源配置，再c2比较。所有代码/迁移/测试/文档整R8完成前不上传。
+
+## R8b3c1本地完成（2026-10-16）
+用户确认具体门店报价版本、内容/单位/车型适用确认及来源/有效期/含边界区间，改版/失效未知，偏离仅需核对。先完成V056独立can_price_monitor及116表、13字段登录/离线授权、六API/真实当前报价版本与审计哈希、草稿CAS/发布冻结/停止/唯一发布、永久原创建键和审计回滚及实际配置/确认恢复页。首轮44中41通过3夹具污染失败（多生成审计、额外他店报价），隔离新测试夹具并保留原断言后完整26/26复验；合并去重44不同后端通过（新19/原25），最终771前端（新14）、微信/H5、实际Vue绑定、V056/116表重放/旧凭证保留/默认权限关闭、298操作1034引用/97路由/56SQL挂载/Compose config与原README/141追踪MD+CSV/44表init基线保持通过。遗留零/负价只可UNKNOWN不能确认，已补前端最终回归和双构建。API/操作/设计/执行/验收及索引当前状态已整理，下一R8B3C2_PRICE_COMPARISON_NEXT_PLAN.md沿已确认规则实施比较，当前comparison_available=false。全部R8源码/迁移/测试/文档仅本地，HEAD仍d4c7763，无push/PR更新/合并/发布。
+
+## R8b3c2开始（2026-10-16）
+沿已确认规则及R8B3C2_PRICE_COMPARISON_DESIGN.md，实施同一快照只读比较、未知原因/合法边界、原发布审计、列表详情及前端/后端验证；保持永久旧回执，当前能力标志兼容。无新迁移，仍116表，整R8完成前不上传。
+
+## R8b3c2及R8b本地完成（2026-10-17）
+最终完整真实库类38/38通过，合并原HTTP/无库去重45不同后端（新15/原30），最终785前端/微信/H5及300操作1044引用/99路由/56挂载/Compose config与原基线保持通过。原首轮2处失败及夹具修复、最后审计/软删除防回退均记录于验收；无新迁移，沿V056/116表。R8b3c及R8b销项已整理，下一R8C1A_EXPERIENCE_DETAIL_NEXT_PLAN.md。整R8完成前全部源码/迁移/测试/文档保留本地，HEAD仍d4c7763，无上传/PR更新/合并/发布。
+
+## R8c1a本地完成（2026-10-17）
+受控同款详情、共用来源/授权/审核和有效目录判断、只含公开UUID的应用内复制引用、AI摘要入口与精确登录返回、当前车辆车型和迟到/失效清理已实现。54不同后端（新9/原45）一次通过，最终796前端（新11）与微信/H5通过，301操作1048引用/99路由/56挂载和原基线保留通过；92份Markdown/707链接及diff检查通过。协议/操作/设计/执行/验收和R8C1B_COMMUNITY_NEXT_PLAN.md已整理，下一明确热度/问答处理角色/公开规则后实施；无新迁移，仍116表，全部R8本地无上传。

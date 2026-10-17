@@ -1,0 +1,16 @@
+package com.autocare.platform;
+import com.autocare.platform.gateway.identity.*;
+import com.autocare.platform.gateway.wechat.*;
+import com.autocare.platform.order.PointLedger;
+import java.time.Instant;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.security.oauth2.jwt.*;
+import org.springframework.test.util.ReflectionTestUtils;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+class PointIdentityHookTest {
+ @Test @SuppressWarnings("unchecked") void onlyServerFlagAndOfficialExchangeCanMarkANewLoginVerified(){var wx=mock(WechatCode2SessionClient.class);var repository=mock(IdentityRepository.class);var tokens=mock(AuthTokens.class);ObjectProvider<IdentityRepository> repositories=mock(ObjectProvider.class);when(repositories.getIfAvailable()).thenReturn(repository);var owner=new IdentityRepository.Owner(1,null,1,false);when(repository.createOwnerOrRead("openid")).thenReturn(owner);when(wx.exchange("code")).thenReturn(new WechatSession("openid",""));when(tokens.owner(owner,"test-app")).thenReturn(Map.of());when(tokens.owner(owner,"test-app",false)).thenReturn(Map.of());when(tokens.owner(owner,"test-app",true)).thenReturn(Map.of());var controller=new WechatAuthController(wx,mock(WechatPhoneClient.class),repositories,mock(ObjectProvider.class),tokens,"test-app");when(wx.officialEndpoint()).thenReturn(true);controller.login("{\"code\":\"code\",\"role\":\"owner\"}");verify(tokens).owner(owner,"test-app");ReflectionTestUtils.setField(controller,"pointsVerified",true);when(wx.officialEndpoint()).thenReturn(false);controller.login("{\"code\":\"code\",\"role\":\"owner\"}");verify(tokens).owner(owner,"test-app",false);when(wx.officialEndpoint()).thenReturn(true);controller.login("{\"code\":\"code\",\"role\":\"owner\"}");verify(tokens).owner(owner,"test-app",true);assertThrows(Exception.class,()->controller.login("{\"code\":\"code\",\"role\":\"owner\",\"verified\":true}"));}
+ @Test @SuppressWarnings("unchecked") void tokenIssuanceBindsEvidenceToFreshServerSessionWithoutChangingPublicResponse(){var encoder=mock(JwtEncoder.class);when(encoder.encode(any())).thenReturn(Jwt.withTokenValue("synthetic-token").header("alg","HS256").subject("1").expiresAt(Instant.now().plusSeconds(900)).build());var sessions=mock(AuthSessionRepository.class);ObjectProvider<AuthSessionRepository> provider=mock(ObjectProvider.class);when(provider.getIfAvailable()).thenReturn(sessions);var tokens=new AuthTokens(encoder,provider,mock(ObjectProvider.class),mock(ObjectProvider.class),"test-app");var points=mock(PointLedger.class);ReflectionTestUtils.setField(tokens,"points",points);var owner=new IdentityRepository.Owner(1,null,1,false);var normal=tokens.owner(owner,"test-app");var verified=tokens.owner(owner,"test-app",true);assertEquals(normal.keySet(),verified.keySet());var captor=org.mockito.ArgumentCaptor.forClass(AuthSessionRepository.Session.class);verify(sessions,times(2)).create(captor.capture(),anyString(),any());var created=captor.getAllValues();assertNotEquals(created.get(0).id(),created.get(1).id());verify(points).recordIdentity(created.get(0).id(),1,"test-app",false);verify(points).recordIdentity(created.get(1).id(),1,"test-app",true);}
+}

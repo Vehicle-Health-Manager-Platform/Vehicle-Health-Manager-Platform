@@ -31,7 +31,8 @@ jobs:
       - run: test -f apps/miniapp/dist/build/h5/index.html
   backend:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # Full real-MySQL regression suite now includes the R8 scenarios.
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -57,6 +58,7 @@ jobs:
       - run: python scripts/generate_traceability.py
       - run: python scripts/build_init_sql.py
       - run: python scripts/generate_openapi.py
+      - run: python scripts/verify_compose_migrations.py
       - run: git diff --exit-code -- docs/progress/S0_TRACEABILITY.csv docs/sql/init.sql docs/sql/migrations/V001__baseline.sql docs/api/openapi.json
       - run: python -m py_compile services/ocr/src/server.py
   schema-mysql:

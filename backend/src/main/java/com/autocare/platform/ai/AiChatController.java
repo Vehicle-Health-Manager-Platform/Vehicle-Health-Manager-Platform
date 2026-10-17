@@ -42,6 +42,8 @@ public class AiChatController {
         "5. 需要实际施工或检查时，建议车主在「服务」页选择合适的项目与商家。",
         "6. 回答控制在 400 字以内，避免堆砌无关内容。");
 
+    @org.springframework.beans.factory.annotation.Autowired(required=false)
+    private com.autocare.platform.order.PointLedger points;
     private final DeepSeekClient client;
     private final ObjectProvider<AiContextProvider> contexts;
 
@@ -76,6 +78,7 @@ public class AiChatController {
         }
         turns.add(new DeepSeekClient.Message("user", request.message()));
         DeepSeekClient.Completion completion = client.complete(system, turns, MAX_TOKENS);
+        if(points!=null&&(request.vehicleId()==null||vehicleId!=null))points.aiSucceeded(owner,completion.content(),completion.model(),client.officialEndpoint());
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("reply", completion.content());
         data.put("model", completion.model());

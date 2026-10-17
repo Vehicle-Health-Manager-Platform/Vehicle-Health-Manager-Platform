@@ -75,6 +75,7 @@ public class MerchantOrders {
         for(String key:List.of("project_snapshot","merchant_snapshot","appointment_snapshot"))result.put(key,snapshot((JsonNode)base.get(key),key));
         if(detail)result.put("price_snapshot",snapshot(db.parse(row.get("price_snapshot")),"price_snapshot"));
         result.put("has_payment_exception",hasException);
+        if(base.containsKey("coupon_summary"))result.put("coupon_summary",base.get("coupon_summary"));
         result.put("allowed_actions",actions(String.valueOf(base.get("status"))));
         return result;
     }

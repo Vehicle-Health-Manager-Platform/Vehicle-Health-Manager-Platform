@@ -74,6 +74,8 @@ public class WechatPhoneClient {
         return phone;
     }
 
+    public boolean officialEndpoints() { return TOKEN_ENDPOINT.equals(tokenEndpoint) && PHONE_ENDPOINT.equals(phoneEndpoint); }
+
     private synchronized String accessToken() {
         if (appId == null || appId.isBlank() || appSecret == null || appSecret.isBlank()
             || "unconfigured".equalsIgnoreCase(appSecret)) {

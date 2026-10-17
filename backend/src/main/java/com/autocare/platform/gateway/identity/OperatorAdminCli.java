@@ -41,6 +41,28 @@ public class OperatorAdminCli implements ApplicationRunner {
                 else if("review-permission".equals(action)){boolean permission=permission();jdbc.update("UPDATE operator_account SET can_review=? WHERE id=?",permission,id);after=Map.of("can_review",permission);}
                 else if("onboard-permission".equals(action)){boolean permission=onboardPermission(true);jdbc.update("UPDATE operator_account SET can_onboard=? WHERE id=?",permission,id);after=Map.of("can_onboard",permission);}
                 else if("catalog-permission".equals(action)){String value=env.getRequiredProperty("OPERATOR_CAN_CATALOG");if(!value.equals("true")&&!value.equals("false"))throw new IllegalArgumentException("Explicit catalog permission required");boolean permission=Boolean.parseBoolean(value);jdbc.update("UPDATE operator_account SET can_catalog=? WHERE id=?",permission,id);after=Map.of("can_catalog",permission);}
+                else if("invite-permission".equals(action)){String value=env.getRequiredProperty("OPERATOR_CAN_INVITE");if(!value.equals("true")&&!value.equals("false"))throw new IllegalArgumentException("Explicit invite permission required");boolean permission=Boolean.parseBoolean(value);jdbc.update("UPDATE operator_account SET can_invite=? WHERE id=?",permission,id);after=Map.of("can_invite",permission);}
+                else if("coupon-permission".equals(action)){String value=env.getRequiredProperty("OPERATOR_CAN_COUPON");if(!value.equals("true")&&!value.equals("false"))throw new IllegalArgumentException("Explicit coupon permission required");boolean permission=Boolean.parseBoolean(value);jdbc.update("UPDATE operator_account SET can_coupon=? WHERE id=?",permission,id);after=Map.of("can_coupon",permission);}
+                else if("community-answer-permission".equals(action)||"community-manage-permission".equals(action)){
+                    boolean management="community-manage-permission".equals(action);
+                    String column=management?"can_community_manage":"can_community_answer";
+                    String value=env.getRequiredProperty(management?"OPERATOR_CAN_COMMUNITY_MANAGE":"OPERATOR_CAN_COMMUNITY_ANSWER");
+                    if(!value.equals("true")&&!value.equals("false"))throw new IllegalArgumentException("Explicit community permission required");
+                    boolean permission=Boolean.parseBoolean(value);jdbc.update("UPDATE operator_account SET "+column+"=? WHERE id=?",permission,id);after=Map.of(column,permission);
+                }
+                else if("community-curate-permission".equals(action)){String value=env.getRequiredProperty("OPERATOR_CAN_COMMUNITY_CURATE");if(!value.equals("true")&&!value.equals("false"))throw new IllegalArgumentException("Explicit curation permission required");boolean permission=Boolean.parseBoolean(value);jdbc.update("UPDATE operator_account SET can_community_curate=? WHERE id=?",permission,id);after=Map.of("can_community_curate",permission);}
+                else if("price-monitor-permission".equals(action)){String value=env.getRequiredProperty("OPERATOR_CAN_PRICE_MONITOR");if(!value.equals("true")&&!value.equals("false"))throw new IllegalArgumentException("Explicit price monitor permission required");boolean permission=Boolean.parseBoolean(value);jdbc.update("UPDATE operator_account SET can_price_monitor=? WHERE id=?",permission,id);after=Map.of("can_price_monitor",permission);}
+                else if("analytics-permission".equals(action)){String value=env.getRequiredProperty("OPERATOR_CAN_ANALYTICS");if(!value.equals("true")&&!value.equals("false"))throw new IllegalArgumentException("Explicit analytics permission required");boolean permission=Boolean.parseBoolean(value);jdbc.update("UPDATE operator_account SET can_analytics=? WHERE id=?",permission,id);after=Map.of("can_analytics",permission);}
+                else if("assessment-permission".equals(action)){String value=env.getRequiredProperty("OPERATOR_CAN_ASSESSMENT");if(!value.equals("true")&&!value.equals("false"))throw new IllegalArgumentException("Explicit assessment permission required");boolean permission=Boolean.parseBoolean(value);jdbc.update("UPDATE operator_account SET can_assessment=? WHERE id=?",permission,id);after=Map.of("can_assessment",permission);}
+                else if("points-permission".equals(action)){String value=env.getRequiredProperty("OPERATOR_CAN_POINTS");if(!value.equals("true")&&!value.equals("false"))throw new IllegalArgumentException("Explicit points permission required");boolean permission=Boolean.parseBoolean(value);jdbc.update("UPDATE operator_account SET can_points=? WHERE id=?",permission,id);after=Map.of("can_points",permission);}
+                else if("diagnose-permission".equals(action)||"diagnose-manage-permission".equals(action)){
+                    boolean management="diagnose-manage-permission".equals(action);
+                    String column=management?"can_diagnose_manage":"can_diagnose";
+                    String value=env.getRequiredProperty(management?"OPERATOR_CAN_DIAGNOSE_MANAGE":"OPERATOR_CAN_DIAGNOSE");
+                    if(!value.equals("true")&&!value.equals("false"))throw new IllegalArgumentException("Explicit diagnosis permission required");
+                    boolean permission=Boolean.parseBoolean(value);
+                    jdbc.update("UPDATE operator_account SET "+column+"=? WHERE id=?",permission,id);after=Map.of(column,permission);
+                }
                 else throw new IllegalArgumentException("Unsupported operator action");
                 jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE subject_type='operator_account' AND subject_id=? AND revoked_at IS NULL",id);
             }

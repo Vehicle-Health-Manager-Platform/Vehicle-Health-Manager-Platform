@@ -1,0 +1,15 @@
+<script setup>
+import {reactive,ref,watch} from 'vue'
+import {onLoad,onShow,onHide,onUnload} from '@dcloudio/uni-app'
+import {merchantSession,clearMerchantSession} from '../../services/merchant-session.js'
+import {technicianSession,clearTechnicianSession} from '../../services/technician-session.js'
+import {initialWorkspaceState,createWorkspaceFlow} from '../../services/service-workspace.js'
+import ServiceArchiveRecord from '../../components/ServiceArchiveRecord.vue'
+import WorkspaceImagePreview from '../../components/WorkspaceImagePreview.vue'
+const role=ref(''),order=ref(0),state=reactive(initialWorkspaceState()),token=()=>role.value==='tech'?technicianSession.accessToken:role.value==='merchant'?merchantSession.accessToken:''
+const flow=createWorkspaceFlow({state,kind:'context',token,role:()=>role.value,order:()=>order.value});let visible=false
+function login(){if(role.value==='tech')clearTechnicianSession();else clearMerchantSession();uni.navigateTo({url:role.value==='tech'?'/pages/technician/index':'/pages/merchant/index'})}
+watch(()=>[token(),role.value,order.value],()=>{flow.reset();if(visible&&token())flow.load()},{flush:'sync'})
+onLoad(q=>{role.value=['merchant','tech'].includes(q?.role)?q.role:'';order.value=/^[1-9]\d*$/.test(String(q?.id||''))?Number(q.id):0});onShow(()=>{visible=true;if(token())flow.load()});onHide(()=>{visible=false;flow.reset()});onUnload(()=>{visible=false;flow.reset()})
+</script>
+<template><view class="reservation-page"><text class="reservation-title">本单必要服务资料</text><text>只查看本单资料及车主逐条授权的保养、维修、故障记录。技师须已接单；转派、撤销或工单失效后重新核对。</text><button v-if="!token()&&role" @tap="login">登录当前身份</button><text v-if="!role">服务资料入口身份无效。</text><text v-if="state.busy">正在核对本单权限…</text><text v-if="state.message">{{state.message}}</text><button v-if="['unauthorized','forbidden'].includes(state.kind)" @tap="login">重新登录</button><button :disabled="state.busy" @tap="flow.load(state.page)">刷新本单资料</button><template v-if="state.data"><view class="reservation-panel"><text>{{state.data.vehicle.brand||'品牌未知'}} · {{state.data.vehicle.series||'车系未知'}} · {{state.data.vehicle.year||'年款未知'}} {{state.data.vehicle.config_name||''}}</text><text>本单接车里程：{{state.data.arrival_mileage===null?'未知':state.data.arrival_mileage+' km'}}</text><text>{{state.data.project?.project_name||'项目名称未提供'}}</text><text>{{state.data.project?.service_content||''}}</text></view><text v-if="!state.data.archives.items.length">暂无本单已授权历史档案。车主可在订单详情逐条授权。</text><view v-for="r in state.data.archives.items" :key="r.archive_id" class="reservation-panel"><ServiceArchiveRecord v-if="r.record" :record="r.record" :busy="state.photoBusy" @preview="file=>flow.preview(r.archive_id,file)"/><text v-else>原授权记录已修改或来源失效，当前不可读取，需车主重新确认。</text></view><button v-if="state.page>1" :disabled="state.busy" @tap="flow.load(state.page-1)">上一页</button><button v-if="state.page*20<state.data.archives.total" :disabled="state.busy" @tap="flow.load(state.page+1)">下一页</button></template><WorkspaceImagePreview :preview="state.preview" @close="flow.closePreview"/></view></template>

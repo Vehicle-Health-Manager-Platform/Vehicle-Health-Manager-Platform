@@ -48,7 +48,7 @@ public class CommissionLedger {
     static void insertSnapshot(ReservationStore db,Map<String,Object> o,boolean legacy){
         var base=(BigDecimal)o.get("pay_amount");if(base==null||base.signum()<=0||o.get("created_at")==null)throw conflict();
         Instant booked=ReservationStore.instant(o.get("created_at"));var p=legacy?null:policy(db,ReservationStore.number(o,"merchant_id"),booked);
-        String state=legacy?"WAIT_LEGACY":o.get("coupon_id")!=null?"WAIT_COUPON":p==null?"WAIT_POLICY":"READY";
+        String state=legacy?"WAIT_LEGACY":o.get("coupon_id")!=null&&!CouponTransactions.trustedOrder(db,o)?"WAIT_COUPON":p==null?"WAIT_POLICY":"READY";
         boolean ready="READY".equals(state),waived=ready&&booked.isBefore(ReservationStore.instant(p.get("waived_until")));
         db.jdbc.update("INSERT INTO order_commission_snapshot(order_id,merchant_id,policy_id,booked_at,base_amount,rate_percent,waived_until,state,exemption,commission_amount,rule_version) VALUES(?,?,?,?,?,?,?,?,?,?,?)",o.get("id"),o.get("merchant_id"),ready?p.get("id"):null,o.get("created_at"),base,ready?RATE:null,ready?p.get("waived_until"):null,state,ready?(waived?"NEW_MERCHANT":"NONE"):state,ready?fee(base,waived):null,RULE);
     }
@@ -70,8 +70,9 @@ public class CommissionLedger {
         var r=db.one("SELECT * FROM order_redemption WHERE order_id=? FOR UPDATE",id);var p=payment(db,o,ReservationStore.number(r,"payment_id"));
         if(!Objects.equals(r.get("merchant_id"),o.get("merchant_id"))||ReservationStore.number(r,"test_mode")!=("LOCAL_TEST".equals(p.get("channel"))?1:0)||r.get("redeemed_at")==null)throw conflict();
         var s=snapshot(db,o);var prior=entry(db,id,"COMPLETION");if(prior!=null){sameSource(prior,o,p,s);if(prior.get("refund_id")!=null||prior.get("reference_entry_id")!=null)throw conflict();return;}
-        boolean ready="READY".equals(s.get("state"))&&o.get("coupon_id")==null;
-        append(db,o,p,s,"COMPLETION",ready?"ACCRUAL":"WAIT_REVIEW",null,null,ready?(BigDecimal)s.get("commission_amount"):null,o.get("coupon_id")!=null?"WAIT_COUPON":s.get("exemption").toString(),r.get("redeemed_at"));
+        boolean couponReady=CouponTransactions.commissionReady(db,o,p);
+        boolean ready="READY".equals(s.get("state"))&&couponReady;
+        append(db,o,p,s,"COMPLETION",ready?"ACCRUAL":"WAIT_REVIEW",null,null,ready?(BigDecimal)s.get("commission_amount"):null,!couponReady?"WAIT_COUPON":s.get("exemption").toString(),r.get("redeemed_at"));
     }
     static void refunded(ReservationStore db,Map<String,Object> o,Map<String,Object> supplied,Map<String,Object> r){
         transaction();if(!"SUCCEEDED".equals(r.get("status"))||!"CLOSED".equals(o.get("status"))||!"REFUND_CANCELLED".equals(o.get("close_reason"))||!Objects.equals(r.get("order_id"),o.get("id"))||!Objects.equals(r.get("payment_id"),supplied.get("id"))||r.get("refunded_at")==null||r.get("owner_consented_at")==null||r.get("merchant_consented_at")==null||((BigDecimal)r.get("amount")).compareTo((BigDecimal)o.get("pay_amount"))!=0)throw conflict();

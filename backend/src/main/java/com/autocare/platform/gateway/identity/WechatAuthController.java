@@ -24,6 +24,12 @@ public class WechatAuthController {
     private final ObjectProvider<AuthRateLimiter> limiters;
     private final AuthTokens tokens;
     private final String appId;
+    @org.springframework.beans.factory.annotation.Autowired(required=false)
+    private com.autocare.platform.order.InvitationRegistration invitations;
+    @Value("${INVITE_VERIFIED_IDENTITY_ENABLED:false}")
+    private boolean inviteVerified;
+    @Value("${POINTS_VERIFIED_IDENTITY_ENABLED:false}")
+    private boolean pointsVerified;
 
     public WechatAuthController(WechatCode2SessionClient wechat, WechatPhoneClient phone,
                                 ObjectProvider<IdentityRepository> repositories,
@@ -37,24 +43,26 @@ public class WechatAuthController {
         this.appId = appId;
     }
 
-    public record LoginRequest(String code, String role) {}
     public record BindRequest(String employee_code) {}
-    public record PhoneRequest(String code) {}
     public record RefreshRequest(String refresh_token) {}
 
     @PostMapping("/wx-login")
-    public ApiResponse<Map<String, Object>> login(@RequestBody LoginRequest request) {
-        if (request == null || !("owner".equals(request.role()) || "technician".equals(request.role()))) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "不支持的登录角色");
-        }
+    public ApiResponse<Map<String, Object>> login(@RequestBody String raw) {
+        var body=com.autocare.platform.order.InvitationInput.login(raw,false);
+        String role=body.path("role").textValue();
+        String invite=com.autocare.platform.order.InvitationInput.code(body.get("invite_code"));
         IdentityRepository repository = requiredRepository();
-        String openid = wechat.exchange(request.code()).openid();
-        if ("owner".equals(request.role())) {
-            var owner = repository.createOwnerOrRead(openid);
+        String openid = wechat.exchange(body.path("code").textValue()).openid();
+        if ("owner".equals(role)) {
+            if(invite!=null&&invitations==null)throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"邀请数据库尚未配置");
+            var registration=invitations==null?null:invitations.registerForLogin(openid,invite,inviteVerified&&wechat.officialEndpoint()?"VERIFIED_WECHAT":"UNKNOWN",appId);
+            var owner = registration==null?repository.createOwnerOrRead(openid):repository.ownerById(registration.ownerId()).orElseThrow();
             if (owner.status() != 1 || owner.deleted()) {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "账号不可用");
             }
-            return ApiResponse.success(tokens.owner(owner, appId));
+            var data=new java.util.LinkedHashMap<String,Object>(pointsVerified?tokens.owner(owner,appId,wechat.officialEndpoint()):tokens.owner(owner,appId));
+            if(invite!=null)data.put("invitation_result",registration.invitationResult());
+            return ApiResponse.success(data);
         }
         var technician = repository.technicianByOpenid(appId, openid);
         if (technician.isEmpty()) {
@@ -82,7 +90,8 @@ public class WechatAuthController {
 
     @PostMapping("/phone/bind")
     public ApiResponse<Map<String, Object>> bindPhone(@AuthenticationPrincipal Jwt jwt,
-                                                        @RequestBody PhoneRequest request) {
+                                                        @RequestBody String raw) {
+        String phoneCode=com.autocare.platform.order.InvitationInput.phone(raw);
         if (jwt == null || !"user".equals(jwt.getClaimAsString("subject_type"))
             || !"OWNER".equals(jwt.getClaimAsString("role"))) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "仅车主可绑定手机号");
@@ -92,8 +101,9 @@ public class WechatAuthController {
         String openid = repository.ownerOpenidById(ownerId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "账号不可用"));
         requiredLimiter().check("phone-owner", Long.toString(ownerId), 10, 3600);
-        String number = phone.exchange(request == null ? null : request.code(), openid);
-        repository.bindOwnerPhone(ownerId, number);
+        String number = phone.exchange(phoneCode, openid);
+        if(invitations==null)repository.bindOwnerPhone(ownerId, number);
+        else invitations.bindPhone(com.autocare.platform.vehicle.VehicleOwner.from(jwt),number,appId,inviteVerified&&phone.officialEndpoints());
         return ApiResponse.success(Map.of("phone_bound", true, "phone_masked", mask(number)));
     }
 

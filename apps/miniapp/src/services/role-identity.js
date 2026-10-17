@@ -3,6 +3,7 @@ import { AuthError, authApi } from './wechat-auth.js'
 import { ownerSession, clearOwnerSession, setOwnerSession } from './owner-session.js'
 import { merchantSession } from './merchant-session.js'
 import { clearTechnicianSession, setTechnicianSession, technicianSession } from './technician-session.js'
+import { beginInvitationLogin, clearInvitationContext } from './invitation-context.js'
 
 // 技师会话必须跨页面存活：绑定成功后要能直接打开「我的工单」和「工单详情」，
 // 用组件局部 ref 会在换页时丢失，看工单还得重新登录一次。
@@ -43,9 +44,9 @@ export function useRoleIdentity(role, api = authApi) {
 
   function session(result) {
     requiresLogin.value = false
-    accessToken.value = result.access_token
     if (role === 'owner') setOwnerSession(result)
     else if (role === 'technician') setTechnicianSession(result)
+    else accessToken.value = result.access_token
   }
 
   function invalid(text) {
@@ -84,15 +85,19 @@ export function useRoleIdentity(role, api = authApi) {
   }
 
   function tryLogin() {
+    if (busy.value) return
+    const inviteCode = role === 'owner' ? beginInvitationLogin() : null
     return run('login', '正在验证微信身份…', async () => {
-      const result = await api.requestWechatLogin(role)
+      const result = await api.requestWechatLogin(role, inviteCode)
       if (result.status === 'BIND_REQUIRED') {
         bindingToken.value = result.binding_token
         message.value = '微信身份已验证，请输入商家发放的员工码'
       } else {
         session(result)
+        if (role === 'owner') clearInvitationContext()
         bindingToken.value = ''
         message.value = role === 'owner' && !result.user.phone_bound ? '车主登录成功，可继续授权绑定手机号' : '身份验证成功'
+        if (role === 'owner' && inviteCode) message.value += ({EXISTING_ACCOUNT:'；该账号已注册，本次不增加邀请人数',ATTRIBUTED:'；邀请来源已保存，资格仍须确认',INVALID_CODE:'；邀请码无效，未形成归因',SELF:'；不能邀请自己',SOURCE_UNAVAILABLE:'；邀请来源已失效，未形成归因'})[result.invitation_result] || ''
       }
     }, tryLogin)
   }
@@ -125,6 +130,7 @@ export function useRoleIdentity(role, api = authApi) {
       await api.logoutWechat(accessToken.value)
       accessToken.value = ''
       clearRoleSession(role)
+      if (role === 'owner') clearInvitationContext()
       requiresLogin.value = false
       bindingToken.value = ''
       employeeCode.value = ''

@@ -1,5 +1,9 @@
 # S0 数据模型与字段字典
 
+## R6a 最新增量 V040
+
+V040 新增 invite_code、invite_registration、invite_phone_evidence，共 91 表。唯一推广源、首次注册归因及永久手机号摘要历史分离，UTC 时间保存、北京时间资格月份计算。旧 invite_record/user.inviter_id 不补标，不预置奖励。规范与资格边界见[邀请协议](../api/INVITATIONS.md)。下方保留历史结构说明。
+
 ## R4b2a 增量 V032
 
 `V032__merchant_location.sql` 新增 `merchant_location`，按 merchant_id 唯一。lng/lat 为 DECIMAL(10,7)，坐标系 GCJ02、来源 MERCHANT_CONFIRMED，version、actor_staff_id 与 updated_at 记录维护。坐标/坐标系/来源必须同时有效或同时为空；清除保留版本。明确确认的位置用于直线距离，旧 merchant.lng/lat 不自动迁移。基线44表，应用至V032共72表，迁移可重复执行。验收口径见 [位置契约](../api/MERCHANT_LOCATION.md)。
