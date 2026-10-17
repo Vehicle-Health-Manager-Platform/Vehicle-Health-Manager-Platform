@@ -1,5 +1,7 @@
 # 测试资料
 
+> 2026-10-17最新：[R8剩余统一验收](LOCAL_R8_COMPLETION_ACCEPTANCE.md)：180次相关后端、868前端及构建/130表重放记录；本地Compose外部网络失败单列，完整后端和Compose最终以对应PR CI为准。
+
 > [R8c1b3a公开问答后端验收](LOCAL_R8C1B3A_PUBLIC_QA_ACCEPTANCE.md)：原来源/审核撤回真实库复验、840前端/微信/H5及V059/124表记录；实际公开页面下一b3b。
 
 > [R8c1b2b页面与恢复验收](LOCAL_R8C1B2B_PRIVATE_QA_UI_ACCEPTANCE.md)：840前端（新26）含实际页面脚本/恢复/权限/确认测试、最终微信/H5；后端/DDL未改，沿b2a38及V058/122表。

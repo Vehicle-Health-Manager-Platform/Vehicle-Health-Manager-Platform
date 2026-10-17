@@ -1,5 +1,7 @@
 # 部署与运维文档
 
+> 2026-10-17当前：[R8公开图片与许可资料操作](PUBLIC_IMAGES_AND_KNOWLEDGE.md)：逐图独立授权、人工审核、来源失效拒绝新读取、许可范围及独立can_knowledge；新开关默认关闭。
+
 > [R8c1b3a公开问答后端操作](PUBLIC_COMMUNITY_QUESTIONS.md)：V059/124表、独立默认关闭公开开关；旧/测试消息不补正式来源，现有can_review仅审核公开预览，不读取私有详情。
 
 > [R8c1b2私有问答页面与恢复](PRIVATE_COMMUNITY_QUESTIONS.md)：车主/当前获派详情、最小队列/政策四页；独立权限落点、永久创建及非创建23小时原请求恢复，公开仍b3。

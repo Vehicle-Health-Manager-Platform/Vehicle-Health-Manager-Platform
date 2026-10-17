@@ -44,7 +44,8 @@ function ask(text) { draft.value = text; return send() }
     <template #content>
       <button class="action" @tap="uni.navigateTo({url:'/pages/ai/service-plan'})">结构化项目建议与报价入口</button>
       <InviteDiagnosisEligibility />
-      <view class="context">
+      <button @tap="uni.navigateTo({url:'/pages/community/knowledge'})">检索授权专业资料与参考引用</button>
+    <view class="context">
         <text v-if="currentVehicle" class="context-title" data-testid="ai-vehicle">当前爱车：{{ currentVehicle }}</text>
         <text v-else class="context-title">尚未选择爱车</text>
         <text class="context-copy">{{ currentVehicle ? '回答会参考这辆车的档案记录。' : '未选车时按通用用车知识回答，录入档案后建议会更贴合车辆。' }}</text>

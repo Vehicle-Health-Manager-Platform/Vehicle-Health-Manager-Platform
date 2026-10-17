@@ -36,6 +36,8 @@ onShow(() => { visible = true; start() }); onHide(hide); onUnload(hide)
 <template>
   <view class="reservation-page">
     <text class="reservation-title">同款施工经验</text>
+    <button @tap="uni.navigateTo({url:'/pages/community/knowledge'})">按车型检索授权专业资料</button>
+    <button @tap="uni.navigateTo({url:'/pages/community/public-questions?mode=public'})">同款公开问答与引用</button>
     <button @tap="uni.navigateTo({url:'/pages/community/questions'})">我的私有车辆问答（非实时）</button>
     <text class="reservation-copy">同一车型、车主授权且审核通过的施工摘要。只展示工时与配件种类，不含照片、施工原文和个人身份。</text>
     <button v-if="!ownerSession.accessToken" @tap="login">前往车主登录</button>
@@ -54,7 +56,7 @@ onShow(() => { visible = true; start() }); onHide(hide); onUnload(hide)
         <text>{{detail.data.experience.title}} · {{detail.data.experience.summary.recorded_month}}</text>
         <text>实际工时 {{detail.data.experience.summary.work_minutes}} 分钟 · 配件种类 {{detail.data.experience.summary.part_kinds}} · {{detail.data.experience.summary.no_parts?'未使用配件':'使用配件'}}</text>
         <text>获批时间 {{detail.data.experience.published_at.slice(0,10)}}；同款施工摘要不能证明本车故障或必做项目。</text>
-        <button :disabled="detail.busy" @tap="copyReference">复制应用内引用入口</button>
+        <button :disabled="detail.busy" @tap="copyReference">复制应用内引用入口</button><button @tap="uni.navigateTo({url:'/pages/community/public-images?mode=public&experience_id='+detail.data.experience.experience_id})">查看当前授权图片</button><button @tap="uni.navigateTo({url:'/pages/community/public-images?mode=owner&experience_id='+detail.data.experience.experience_id})">为本人经验管理逐张图片授权</button>
       </template>
       <button v-if="detailAllowed() && ownerSession.accessToken" :disabled="detail.busy" @tap="detailFlow.load()">重新核验此引用</button>
       <button v-if="['unauthorized','forbidden'].includes(detail.kind)" @tap="login">重新登录车主账号</button>

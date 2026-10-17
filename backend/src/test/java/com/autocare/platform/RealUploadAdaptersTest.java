@@ -100,6 +100,8 @@ class RealUploadAdaptersTest {
         var file = uploads.upload(PrivateUploadTest.OWNER, "image.png", new ByteArrayInputStream(PrivateUploadTest.PNG));
         assertEquals(1, jdbc.queryForObject("SELECT COUNT(*) FROM file_object", Integer.class));
         assertTrue(store.isPrivate()); String key = key(file.id());
+        assertArrayEquals(PrivateUploadTest.PNG, store.read(key, PrivateUploadTest.PNG.length));
+        assertThrows(UploadException.class, () -> store.read(key, PrivateUploadTest.PNG.length - 1));
         assertEquals(403, get(endpoint + "/" + bucket + "/" + key).statusCode());
         assertEquals(403, get(endpoint + "/" + bucket + "?list-type=2").statusCode());
         var access = new PrivateFileAccessService(uploads, store, 120).sign(PrivateUploadTest.OWNER, file.id());
@@ -125,6 +127,7 @@ class RealUploadAdaptersTest {
         admin.setBucketPolicy(SetBucketPolicyArgs.builder().bucket(bucket).config("{\"Version\":\"2012-10-17\",\"Statement\":["
             + "{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":[\"s3:GetObject\"],\"Resource\":[\"arn:aws:s3:::" + bucket + "/*\"]}]}" ).build());
         assertFalse(store.isPrivate()); assertEquals(200, get(endpoint + "/" + bucket + "/" + key(file.id())).statusCode());
+        assertThrows(UploadException.class, () -> store.read(key(file.id()), FileValidator.MAX_BYTES));
         assertThrows(UploadException.class, () -> new PrivateFileAccessService(uploads, store, 120).sign(PrivateUploadTest.OWNER, file.id()));
         assertThrows(UploadException.class, () -> uploads.upload(PrivateUploadTest.OWNER,"image.png",new ByteArrayInputStream(PrivateUploadTest.PNG)));
         assertEquals(1, jdbc.queryForObject("SELECT COUNT(*) FROM file_object", Integer.class));

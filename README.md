@@ -8,10 +8,10 @@
 
 更新日期：**2026-10-17（Asia/Shanghai）**。
 
-- **R4、R5、R6、R7 与当前已完成的 R8 更新均已进入 main**，包含代码、数据库迁移、测试、配置示例和阶段文档。汇总合并记录为 [PR #154](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/154)，合并提交 `c578f1d`。
-- **R8 部分完成**：积分闭环、门店经营与考核、运营精选、私有问答及公开问答后端已实现；公开问答页面、图片公开授权和有许可来源资料检索仍待实施。
-- 汇总 PR 最终六项 CI 全部通过：后端 **2,008/2,008**、小程序 **840/840**，微信 mp-weixin 与 H5 构建、实际 MySQL 迁移和 Compose 集成检查成功。[完整 CI 证据](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/39028173826)。这些结果对应已合并的业务提交，后续提交以其各自 Actions 记录为准。
-- 下一步为 [R8c1b3b 公开问答页面与恢复](docs/progress/R8C1B3B_PUBLIC_QA_UI_NEXT_PLAN.md)，之后推进图片、许可资料检索和整 R8 销项。供应商识别、正式短信/微信身份/资金、真机及发布交付最后在 R9 实施。
+- R4–R7 与此前 R8 增量已通过 [PR #154](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/154) 进入 main；本轮统一补齐 R8 剩余软件范围，代码、迁移、测试、配置与文档一起交付。
+- **R8 按已确认的软件范围完成**：公开问答实际页面与恢复、独立脱敏图片授权/审核/撤回、许可资料治理、车型关键词检索与可追溯 AI 参考均已实现。[整阶段销项](docs/progress/R8_SOFTWARE_COMPLETION.md)。
+- 本轮本地前端 **868/868**、集中相关后端 **180 次执行**及微信/H5/四 Web 构建、MySQL 迁移通过。全量后端和实际 Compose 以本次统一 PR 最终提交的六项 CI 为准；本地 Compose 因 Docker Hub 网络失败未完成。[本轮验收](docs/testing/LOCAL_R8_COMPLETION_ACCEPTANCE.md)。
+- 暂无正式授权资料与嵌入服务：已完成配置、KEYWORD 检索和引用闭环，**不声称 Milvus 向量效果或真实语料验收完成**。供应商识别、正式短信/微信身份/资金、真机及发布交付继续最后 R9。
 
 R5–R7 的历史串联 PR #151–#153 已在确认全部提交进入 main 后关闭，实际汇总合并记录为 #154。上传与代码合并不代表生产部署或真机验收。历史阶段文档中的“仅本地”“等待整 R8 后上传”等描述保留为当时记录，由最新上传授权及[汇总交付说明](docs/progress/R8_PARTIAL_UPLOAD_MERGE_2026_10_17.md)覆盖。
 
@@ -19,11 +19,11 @@ R5–R7 的历史串联 PR #151–#153 已在确认全部提交进入 main 后�
 
 | 使用者 | 已实现的微信小程序能力 | 权限边界 |
 | --- | --- | --- |
-| 车主 | 本人车辆、结构化档案、六类健康读数与来源规则、历史趋势、五类提醒；本人 PDF/限时摘要分享；服务发现、方案预约、订单、接车确认、施工证据、支付核对与退款；优惠券、邀请奖励、积分与兑换；诊断留言、运营精选和私有同款问答。 | 仅本人资源；健康来源不足显示未知；历史档案逐订单逐条授权；公开内容另行授权审核。 |
+| 车主 | 本人车辆、结构化档案、六类健康读数与来源规则、历史趋势、五类提醒；本人 PDF/限时摘要分享；服务发现、方案预约、订单、接车确认、施工证据、支付核对与退款；优惠券、邀请奖励、积分与兑换；诊断留言、运营精选、私有/另行授权公开问答、公开图片副本及许可专业资料检索。 | 仅本人资源；健康来源不足显示未知；历史档案逐订单逐条授权；公开内容另行授权审核。 |
 | 门店店长 | 入驻、资料与员工管理；选品报价/时段、订单、接车、派工、施工与核销；券发行和服务券核销；佣金账单、月结成绩、经营看板与最小客户服务关系。 | 仅本店；客户页不显示电话、车牌、VIN 或跨店记录；经营净额不代表已结算资金。 |
 | 门店店员 | 本店接车、订单与履约；员工推广归因和本人考核明细。 | 不开放店长的员工管理、定价、账单及客户管理权限。 |
 | 技师 | 员工码绑定、本人派工接单/拒绝、施工报工、故障件与完工证据、质检签字和任务工作台。 | 有效绑定及本人任务范围；仅已接单且本单获授权时读取指定历史档案，撤销或工单失效后拒绝新读取。 |
-| 受限运营 | 入驻/内容审核、标准目录与车型治理、来源健康规则、券池、邀请/积分/考核政策、经营/价格数据、运营精选及私有问答管理。 | 小程序独立权限入口；私有问答只限原提问者与当前获派人员；公开问答审核页面尚未实现。 |
+| 受限运营 | 入驻/内容审核、标准目录与车型治理、来源健康规则、券池、邀请/积分/考核政策、经营/价格数据、运营精选、问答和图片审核、独立许可资料管理。 | 小程序独立权限入口；私有问答只限原提问者与当前获派人员；公开审核仅访问另行授权内容，许可资料使用独立权限。 |
 
 后端按当前会话、角色、资源归属和业务状态复核操作。新增权限和关键业务开关默认关闭；本地测试身份不能作为正式微信身份验收。
 
@@ -40,19 +40,16 @@ R5–R7 的历史串联 PR #151–#153 已在确认全部提交进入 main 后�
 | R7 | 车主施工进度与证据对照、门店/技师任务工作台、逐单逐条档案授权；持久站内通知、非实时诊断留言/分配/答复、确认及账号隔离恢复。 | [车主证据](docs/api/OWNER_SERVICE_EVIDENCE.md) · [工作台](docs/api/SERVICE_WORKSPACE.md) · [通知](docs/api/SERVICE_NOTIFICATIONS.md) · [诊断](docs/api/ASYNC_DIAGNOSIS.md) |
 | R8a | 有来源任务配置、每日签到/首次完整人工档案/首次成功 AI 对话的可信事件与积分账本、原子扣分兑券、本人目录/确认/恢复。 | [积分账本](docs/api/POINT_LEDGER.md) · [兑换](docs/api/POINT_EXCHANGES.md) · [本人兑换](docs/api/OWNER_POINT_EXCHANGES.md)；未配置显示未知，不补发历史或测试行为。 |
 | R8b | 来源月度考核、40%/40%/20% 规则、不可变月结快照和修订；经营看板、本店最小客户关系、具体报价版本的来源价格区间与只读比较。 | [月结](docs/api/ASSESSMENT_SNAPSHOTS.md) · [经营](docs/api/BUSINESS_DASHBOARD.md) · [客户](docs/api/CUSTOMER_RELATIONS.md) · [价格](docs/api/PRICE_COMPARISONS.md)；偏离只标记需核对。 |
-| R8c 已完成增量 | 受控同款经验详情与引用、有来源运营精选；独立私有问答后端及四实际页面；选中消息预览、独立授权、审核/撤回及同款读取的公开问答后端。 | [精选](docs/api/CURATED_EXPERIENCES.md) · [私有问答](docs/api/PRIVATE_COMMUNITY_QUESTIONS.md) · [公开问答后端](docs/api/PUBLIC_COMMUNITY_QUESTIONS.md)；公开页面尚未接通，整个 R8 未销项。 |
+| R8c | 受控同款经验与来源精选、私有及另行授权公开问答的前后端；独立图片副本治理；许可来源、版本/车型/用途/有效期配置、关键词检索及调用后重验的 AI 参考。 | [公开问答](docs/api/PUBLIC_COMMUNITY_QUESTIONS.md) · [图片](docs/api/PUBLIC_IMAGES.md) · [专业资料](docs/api/LICENSED_KNOWLEDGE.md)；暂无正式语料或向量效果验收。 |
 
 阶段记录与索引：[当前进度](docs/progress/CURRENT_STATUS.md) · [R8 总计划](docs/progress/R8_IMPLEMENTATION_PLAN.md) · [测试目录](docs/testing/README.md) · [API 目录](docs/api/README.md)。
 
 ## 未完成事项与后续顺序
 
-1. **R8c1b3b 公开问答页面**：公开授权/审核/撤回、完整确认与本机恢复、同款公开问答和受控引用入口，之后整理 b3/c1b 销项。[下一步计划](docs/progress/R8C1B3B_PUBLIC_QA_UI_NEXT_PLAN.md)。
-2. **R8c2 图片公开治理**：逐项授权、脱敏、审核和撤回；已有私有图片不能直接视为可公开内容。
-3. **R8c3 有许可来源资料**：专业资料治理、检索和引用追踪。
-4. **整 R8 验收与销项**：完成剩余需求、统一门禁及文档整理；当前合并不代表 R8 全部完成。
-5. **最后 R9 正式接入与交付**：供应商 OCR/VIN/里程/照片语音识别，正式短信、微信身份/手机号/员工绑定和门店激活，真实支付退款、对账结算、订阅消息，性能、安全备份、真机、部署及提审发布。
+1. **正式授权资料与检索效果**：取得授权语料及嵌入服务后，再独立验收内容许可、Milvus 向量检索与真实资料效果；当前空目录显示未知，不补虚构内容。
+2. **R9 正式接入与交付**：供应商 OCR/VIN/里程/照片语音识别，正式短信、微信身份/手机号/员工绑定和门店激活，真实支付退款、对账结算、订阅消息，性能、安全备份、真机、部署及提审发布。
 
-详细范围见[本次汇总交付与剩余事项](docs/progress/R8_PARTIAL_UPLOAD_MERGE_2026_10_17.md)。完整驾驶证/违章资料及可信来源仍需按原始交付需求逐项复核；已实现提醒框架不代表正式数据供应商接入。
+当前范围见[R8 软件销项及外部条件](docs/progress/R8_SOFTWARE_COMPLETION.md)，此前上传记录见[PR154 汇总](docs/progress/R8_PARTIAL_UPLOAD_MERGE_2026_10_17.md)。完整驾驶证/违章资料及可信来源仍需按原始交付需求逐项复核；已实现提醒框架不代表正式数据供应商接入。
 
 ### 仍需独立验收
 
@@ -64,7 +61,7 @@ R5–R7 的历史串联 PR #151–#153 已在确认全部提交进入 main 后�
 
 ## 测试与数据库基线
 
-以下为 PR #154 最终业务提交的[完整 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/39028173826)结果：
+以下历史结果为 PR #154 最终业务提交的[完整 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/39028173826)结果，不是本轮新增代码的全量验收。本轮见[验收记录](docs/testing/LOCAL_R8_COMPLETION_ACCEPTANCE.md)及统一 PR 最终 CI：
 
 | 检查 | 结果 | 覆盖内容 |
 | --- | --- | --- |
@@ -75,7 +72,7 @@ R5–R7 的历史串联 PR #151–#153 已在确认全部提交进入 main 后�
 | schema-mysql | SUCCESS | MySQL 8.0 初始化与迁移重放，保留旧业务凭证。 |
 | compose-smoke | SUCCESS | 实际隔离 Compose 初始化、业务表和服务连通性。 |
 
-原始数据库基线 **44 表**；顺序应用到 **V059 后共 124 表**。当前 OpenAPI **331 个操作**、小程序 **104 个页面**，Compose **59 份 SQL 挂载（初始化与 V002–V059）**。迁移源和目标须唯一、编号对应且按序；可运行 `python scripts/verify_compose_migrations.py` 检查。
+原始数据库基线 **44 表**；顺序应用到 **V061 后共 130 表**。当前 OpenAPI **350 个操作**、小程序 **108 个页面**，Compose **61 份 SQL 挂载（初始化与 V002–V061）**。迁移源和目标须唯一、编号对应且按序；可运行 `python scripts/verify_compose_migrations.py` 检查。
 
 已有数据库卷须备份后按版本升级，不会自动执行新增初始化脚本；不得通过重新初始化生产数据库替代迁移。测试、合并、生产部署和真机验收分别记录。
 

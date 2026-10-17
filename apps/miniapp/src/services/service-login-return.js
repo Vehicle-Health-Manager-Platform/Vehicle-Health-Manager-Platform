@@ -1,5 +1,8 @@
 import {questionRoute,questionQueueRoute} from './community-questions.js'
 import {experienceReferenceOptions} from './experience-detail.js'
+import {publicQaRoute} from './public-community-questions.js'
+import {publicImageRoute} from './public-images.js'
+import {knowledgeRoute} from './licensed-knowledge.js'
 const id=n=>/^[1-9]\d*$/.test(String(n||''))&&Number.isSafeInteger(Number(n))
 // Only the immediately preceding registered business page can be resumed.
 export function serviceLoginReturn(pages,role,permissions={}) {
@@ -7,6 +10,10 @@ export function serviceLoginReturn(pages,role,permissions={}) {
  const p=pages[pages.length-2],route=p?.route,q=p?.options||p?.$page?.options||{}
  if(typeof route!=='string')return false
  const actual=role==='technician'?'tech':role
+ if(route==='pages/community/knowledge')return actual==='owner'&&knowledgeRoute(q)!==null
+ if(route==='pages/operator/knowledge')return actual==='admin'&&permissions.canKnowledge===true&&Object.keys(q).length===0
+ if(route==='pages/community/public-images'){const r=publicImageRoute(q);return Boolean(r&&(r.mode==='review'?actual==='admin'&&permissions.canReview===true:actual==='owner'))}
+ if(route==='pages/community/public-questions'){const r=publicQaRoute(q);return Boolean(r&&(r.mode==='review'?actual==='admin'&&permissions.canReview===true:actual==='owner'))}
  const owner=new Set(['pages/order/work-evidence','pages/order/archive-grants','pages/order/detail'])
  if(actual==='owner'&&route==='pages/community/questions')return Object.keys(q).length===0
  if(route==='pages/community/question'){const target=questionRoute(q);return Boolean(target&&target.role===actual&&(actual==='owner'||actual==='admin'&&permissions.canCommunityAnswer===true))}

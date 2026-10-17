@@ -29,6 +29,9 @@ onHide(() => { visible = false; clear() }); onUnload(() => { visible = false; cl
 <template>
   <view class="reservation-page">
     <text class="reservation-title">经验卡片审核</text>
+    <button v-if="operatorSession.canKnowledge" @tap="uni.navigateTo({url:'/pages/operator/knowledge'})">独立许可资料管理</button>
+    <button v-if="operatorSession.canReview" @tap="uni.navigateTo({url:'/pages/community/public-images?mode=review'})">独立脱敏图片审核</button>
+    <button v-if="operatorSession.canReview" @tap="uni.navigateTo({url:'/pages/community/public-questions?mode=review'})">公开问答脱敏摘要审核</button>
     <button v-if="operatorSession.canReview" @tap="uni.navigateTo({url:'/pages/operator/review-texts'})">公开评价文字审核</button>
     <button v-if="operatorSession.canCatalog" @tap="uni.navigateTo({url:'/pages/operator/catalog'})">标准项目与车型库维护</button>
     <button v-if="operatorSession.canDiagnoseManage" @tap="uni.navigateTo({url:'/pages/operator/diagnosis-service'})">诊断受理配置与分配</button>

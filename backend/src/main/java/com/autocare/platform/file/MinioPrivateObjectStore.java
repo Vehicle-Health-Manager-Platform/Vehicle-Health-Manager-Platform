@@ -62,6 +62,15 @@ public class MinioPrivateObjectStore implements SignedObjectStore {
             return new StoredObject(result.contentType(), result.size());
         } catch (Exception exception) { throw unavailable(); }
     }
+    @Override public byte[] read(String key, int maxBytes) {
+        key(key); requirePrivate();
+        if (maxBytes < 1 || maxBytes > FileValidator.MAX_BYTES) throw unavailable();
+        try (var input = internal.getObject(GetObjectArgs.builder().bucket(bucket).object(key).build())) {
+            byte[] bytes = input.readNBytes(maxBytes + 1);
+            if (bytes.length == 0 || bytes.length > maxBytes) throw unavailable();
+            return bytes;
+        } catch (Exception exception) { throw unavailable(); }
+    }
     @Override public String signGet(String key, int seconds) {
         key(key); requirePrivate();
         if (signer == null || seconds < 1 || seconds > 300) throw unavailable();

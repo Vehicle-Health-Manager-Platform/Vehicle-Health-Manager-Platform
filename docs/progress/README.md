@@ -1,5 +1,7 @@
 # 项目进度与下一步规划
 
+> 2026-10-17当前：[R8剩余统一计划](R8_REMAINING_COMPLETION_PLAN.md) · [问答销项](R8C1B_COMMUNITY_COMPLETION.md) · [图片执行](R8C2_PUBLIC_IMAGES_EXECUTION.md) · [资料执行](R8C3_LICENSED_KNOWLEDGE_EXECUTION.md)。b3b/c2/c3功能已接通，整阶段集中验收进行中，当前仍未统一上传。
+
 > 2026-10-17：[R8c1b3a公开问答后端](R8C1B3A_PUBLIC_QA_EXECUTION.md)本地完成，49不同后端/840前端、微信/H5及V059/124表通过。下一[b3b实际页面与恢复](R8C1B3B_PUBLIC_QA_UI_NEXT_PLAN.md)，公开后端不等于整个b3/c1b完成；整R8完成前代码和文档留本地。
 
 > 2026-10-17：[R8c1b2b实际页面与恢复](R8C1B2B_PRIVATE_QA_UI_EXECUTION.md)及[私有b2销项](R8C1B2_PRIVATE_QA_COMPLETION.md)本地完成，840前端及最终微信/H5通过；后端沿b2a38，仍V058/122表。下一[b3独立公开问答授权审核](R8C1B3_PUBLIC_QA_NEXT_PLAN.md)，整个R8完成前代码和文档留本地。
