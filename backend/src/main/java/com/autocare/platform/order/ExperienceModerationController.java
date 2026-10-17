@@ -27,6 +27,9 @@ import org.springframework.web.server.ResponseStatusException;
     @GetMapping("/api/community/experiences")
     public ResponseEntity<?> experiences(@AuthenticationPrincipal Jwt jwt,@RequestParam MultiValueMap<String,String> p){var owner=VehicleOwner.from(jwt);query(p,java.util.Set.of("vehicle_id","cursor"));if(!p.containsKey("vehicle_id"))throw ReservationInput.bad();
         try{long vehicle=Long.parseLong(p.getFirst("vehicle_id"));Long cursor=p.containsKey("cursor")?Long.parseLong(p.getFirst("cursor")):null;ServiceCatalog.validateId(vehicle);if(cursor!=null)ServiceCatalog.validateId(cursor);return ok(ApiResponse.success(service().experiences(owner,vehicle,cursor)));}catch(NumberFormatException e){throw ReservationInput.bad();}}
+    @GetMapping("/api/community/experiences/{id}")
+    public ResponseEntity<?> experience(@AuthenticationPrincipal Jwt jwt,@PathVariable String id,@RequestParam MultiValueMap<String,String> p){var owner=VehicleOwner.from(jwt);ExperienceModeration.publicId(id);query(p,java.util.Set.of("vehicle_id"));if(!p.containsKey("vehicle_id"))throw ReservationInput.bad();
+        try{long vehicle=Long.parseLong(p.getFirst("vehicle_id"));ServiceCatalog.validateId(vehicle);return ok(ApiResponse.success(service().experience(owner,vehicle,id)));}catch(NumberFormatException e){throw ReservationInput.bad();}}
     @ExceptionHandler(org.springframework.dao.DataAccessException.class)ResponseEntity<?> database(){return ResponseEntity.status(503).cacheControl(CacheControl.noStore()).body(ApiResponse.error(50300,"经验服务暂不可用，请使用原请求重试"));}
     @ExceptionHandler(ResponseStatusException.class)ResponseEntity<?> failure(ResponseStatusException e){int s=e.getStatusCode().value(),code=e instanceof FulfillmentConflict c?c.code:s==400?40001:s*100;return ResponseEntity.status(s).cacheControl(CacheControl.noStore()).body(ApiResponse.error(code,e.getReason()));}
 }

@@ -1,5 +1,39 @@
 # API 文档
 
+> [R8c1b3a独立公开问答后端](PUBLIC_COMMUNITY_QUESTIONS.md)：原消息指纹/身份来源、明确预览与公开授权、最小审核/撤回、当前本人同款读取；公开页面及恢复下一b3b。
+
+> [R8c1b2私有结构化问答](PRIVATE_COMMUNITY_QUESTIONS.md)：b2a后端与b2b四页面、完整确认/独立原请求恢复及精确登录返回已接通；公开授权审核另行b3。
+
+> [R8c1b2a私有结构化问答后端](PRIVATE_COMMUNITY_QUESTIONS.md)：两项独立权限、来源受理、原提问者/当前获派隔离、CAS与永久创建回执；页面及本机恢复下一b2b。
+
+> [R8c1b1有来源运营精选](CURATED_EXPERIENCES.md)：独立权限、当前获批来源与冻结版本、未来窗口及排序、永久回执；车主公开投影不含来源说明，引用导入仍当前重验。
+
+> [R8c1a受控同款经验详情](EXPERIENCE_DETAIL.md)：本人车辆/有效同款与当前授权/审核/来源重验，原公开摘要及UUID引用，无私有来源或图片。
+
+> [R8b3c2只读价格比较](PRICE_COMPARISONS.md)：独立权限、同一观察时点、最新报价/发布凭证、含边界区间及明确未知原因；当前能力 true，兼容 c1 原回执 false。
+
+> [R8b3c1报价版本的价格来源依据](PRICE_MONITOR_SOURCES.md)：独立权限、真实版本/保存审计/哈希、范围确认及冻结；当前只配置，比较下一c2。
+
+> [R8b3b本店最小服务关系](CUSTOMER_RELATIONS.md)：店长范围、最小本店订单锚点、车型与核验接车；原R7授权仍逐单逐条。
+
+> [R8b3a只读经营看板](BUSINESS_DASHBOARD.md)：独立权限、正式/测试/未知分栏、收退款各自成功月和独立冻结月结。
+
+> [R8b2b服务器当前月结版本、本店范围与本人归因读取](MONTHLY_ASSESSMENT_VIEWS.md)及实际页面；提交仍沿既有永久键/CAS快照协议。
+
+> [R8b2a门店月结/不可变修订与事实](ASSESSMENT_SNAPSHOTS.md)：独立运营四API，未知不造分；页面/本店读取后续R8b2b。
+
+> [R8b1门店月度考核来源政策](ASSESSMENT_POLICIES.md)：独立权限、来源目标/证据/等级与未来整月配置，当前不出分。
+
+> [R8a3c本人兑换目录、报价与原请求恢复](OWNER_POINT_EXCHANGES.md)；独立兑换开关默认关闭，实际提交仍原子重验。
+
+> [R8a3b本人原子兑换、成功历史及统一收支](POINT_EXCHANGES.md)，默认关闭兑换，车主确认恢复页面下一步。
+
+> [R8a3a兑换目录及真实券来源协议](POINT_EXCHANGE_CATALOG.md)；当前仅配置，扣分发券后续。
+
+> [R8a2本人积分与可信任务协议](POINT_LEDGER.md)；整个R8完成前保留本地，不做中间上传。
+
+> [R8a1积分任务配置协议](POINT_TASK_POLICIES.md)；整个R8完成前不上传中间内容。
+
 > R7c3 第三步：[诊断专属站内消息](DIAGNOSIS_NOTIFICATIONS.md)。
 
 > 当前R7本地实施：[R7a本人订单施工证据](OWNER_SERVICE_EVIDENCE.md)；整个R7完成后才统一上传全部代码和文档。

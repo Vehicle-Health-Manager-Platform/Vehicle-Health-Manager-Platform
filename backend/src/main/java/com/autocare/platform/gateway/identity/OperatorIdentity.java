@@ -16,7 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 public class OperatorIdentity {
     /** Fixed, non-overlapping operator permissions. A missing column value is always denied. */
-    public enum Permission { NONE, REVIEW, ONBOARD, CATALOG, COUPON, INVITE, DIAGNOSE, DIAGNOSE_MANAGE }
+    public enum Permission { NONE, REVIEW, ONBOARD, CATALOG, COUPON, INVITE, DIAGNOSE, DIAGNOSE_MANAGE, POINTS, ASSESSMENT, ANALYTICS, PRICE_MONITOR, COMMUNITY_CURATE, COMMUNITY_ANSWER, COMMUNITY_MANAGE }
     private final JdbcTemplate jdbc; private final JwtEncoder encoder; private final TransactionTemplate tx;
     private final BCryptPasswordEncoder passwords=new BCryptPasswordEncoder();
     private final String dummy=passwords.encode("not-an-operator-password"); private final SecureRandom random=new SecureRandom();
@@ -49,7 +49,8 @@ public class OperatorIdentity {
             var claims=JwtClaimsSet.builder().issuer(SecurityConfig.issuer()).subject(Long.toString(id)).id(session).issuedAt(now).expiresAt(now.plusSeconds(900))
                 .claim("subject_type","operator_account").claim("role","OPERATOR").claim("app_id",OperatorActor.APP).build();
             String access=encoder.encode(JwtEncoderParameters.from(JwsHeader.with(MacAlgorithm.HS256).build(),claims)).getTokenValue();
-            return Map.of("access_token",access,"token_type","Bearer","expires_in",900,"user",Map.of("id",id,"role","operator","can_review",number(row,"can_review")==1,"can_onboard",number(row,"can_onboard")==1,"can_catalog",number(row,"can_catalog")==1,"can_coupon",number(row,"can_coupon")==1,"can_invite",number(row,"can_invite")==1,"can_diagnose",number(row,"can_diagnose")==1,"can_diagnose_manage",number(row,"can_diagnose_manage")==1));
+            var user=new LinkedHashMap<String,Object>();user.put("id",id);user.put("role","operator");for(String k:List.of("can_review","can_onboard","can_catalog","can_coupon","can_invite","can_diagnose","can_diagnose_manage","can_points","can_assessment","can_analytics","can_price_monitor","can_community_curate","can_community_answer","can_community_manage"))user.put(k,number(row,k)==1);
+            return Map.of("access_token",access,"token_type","Bearer","expires_in",900,"user",user);
         });
     }
     public void authorize(OperatorActor a,boolean review,boolean lock) {
@@ -59,8 +60,15 @@ public class OperatorIdentity {
         String tail=lock?" FOR UPDATE":"";
         // Account management and login also lock the account before sessions.
         if(lock)jdbc.queryForList("SELECT id FROM operator_account WHERE id=? FOR UPDATE",a.id());
-        var rows=jdbc.queryForList("SELECT o.can_review,o.can_onboard,o.can_catalog,o.can_coupon,o.can_invite,o.can_diagnose,o.can_diagnose_manage FROM auth_session s JOIN operator_account o ON o.id=s.subject_id WHERE s.id=? AND s.subject_type='operator_account' AND s.subject_id=? AND s.role='OPERATOR' AND s.app_id=? AND s.binding_id IS NULL AND s.merchant_id IS NULL AND s.revoked_at IS NULL AND s.expires_at>UTC_TIMESTAMP() AND o.status='ACTIVE'"+tail,a.session(),a.id(),OperatorActor.APP);
+        var rows=jdbc.queryForList("SELECT o.can_review,o.can_onboard,o.can_catalog,o.can_coupon,o.can_invite,o.can_diagnose,o.can_diagnose_manage,o.can_points,o.can_assessment,o.can_analytics,o.can_price_monitor,o.can_community_curate,o.can_community_answer,o.can_community_manage FROM auth_session s JOIN operator_account o ON o.id=s.subject_id WHERE s.id=? AND s.subject_type='operator_account' AND s.subject_id=? AND s.role='OPERATOR' AND s.app_id=? AND s.binding_id IS NULL AND s.merchant_id IS NULL AND s.revoked_at IS NULL AND s.expires_at>UTC_TIMESTAMP() AND o.status='ACTIVE'"+tail,a.session(),a.id(),OperatorActor.APP);
         if(rows.isEmpty() || !Instant.now().isBefore(a.expires()))throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"运营会话已失效，请重新登录");
+        if(permission==Permission.COMMUNITY_ANSWER && number(rows.get(0),"can_community_answer")!=1)throw new ResponseStatusException(HttpStatus.FORBIDDEN,"当前账号没有私有问答处理权限");
+        if(permission==Permission.COMMUNITY_MANAGE && number(rows.get(0),"can_community_manage")!=1)throw new ResponseStatusException(HttpStatus.FORBIDDEN,"当前账号没有私有问答分配权限");
+        if(permission==Permission.COMMUNITY_CURATE && number(rows.get(0),"can_community_curate")!=1)throw new ResponseStatusException(HttpStatus.FORBIDDEN,"当前账号没有运营精选权限");
+        if(permission==Permission.PRICE_MONITOR && number(rows.get(0),"can_price_monitor")!=1)throw new ResponseStatusException(HttpStatus.FORBIDDEN,"当前账号没有价格监控权限");
+        if(permission==Permission.ANALYTICS && number(rows.get(0),"can_analytics")!=1)throw new ResponseStatusException(HttpStatus.FORBIDDEN,"当前账号没有经营看板权限");
+        if(permission==Permission.ASSESSMENT && number(rows.get(0),"can_assessment")!=1)throw new ResponseStatusException(HttpStatus.FORBIDDEN,"当前账号没有考核政策权限");
+        if(permission==Permission.POINTS && number(rows.get(0),"can_points")!=1)throw new ResponseStatusException(HttpStatus.FORBIDDEN,"当前账号没有积分规则权限");
         if(permission==Permission.DIAGNOSE && number(rows.get(0),"can_diagnose")!=1)throw new ResponseStatusException(HttpStatus.FORBIDDEN,"当前账号没有诊断处理权限");
         if(permission==Permission.DIAGNOSE_MANAGE && number(rows.get(0),"can_diagnose_manage")!=1)throw new ResponseStatusException(HttpStatus.FORBIDDEN,"当前账号没有诊断管理权限");
         if(permission==Permission.REVIEW && number(rows.get(0),"can_review")!=1)throw new ResponseStatusException(HttpStatus.FORBIDDEN,"当前运营账号没有经验审核权限");

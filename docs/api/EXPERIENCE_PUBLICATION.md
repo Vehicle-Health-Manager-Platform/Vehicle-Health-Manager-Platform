@@ -1,5 +1,7 @@
 # A7.2c2 微信小程序经验审核与同款展示接口
 
+> 2026-10-17扩展：[R8c1a受控详情与引用](EXPERIENCE_DETAIL.md)复用本协议五字段及当前授权/来源判断，列表/批准同步要求车型、车系、品牌启用。原列表和审核输入形状保持。
+
 先迁移V019、后端与新版微信小程序，再显式开启 EXPERIENCE_PUBLICATION_ENABLED（默认false）。独立运营身份/短信见[账号管理](../operations/OPERATOR_ACCOUNTS.md)。关闭展示不阻止本人撤回。
 
 | 方法 | 路径 | 身份与输入 |

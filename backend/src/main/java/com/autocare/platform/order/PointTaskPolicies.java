@@ -1,0 +1,37 @@
+package com.autocare.platform.order;
+
+import com.autocare.platform.common.write.WriteIntegrityService;
+import com.autocare.platform.common.write.WriteIntegrityService.*;
+import com.autocare.platform.gateway.identity.*;
+import com.autocare.platform.vehicle.VehicleOwner;
+import com.fasterxml.jackson.databind.JsonNode;
+import java.util.*;
+import static com.autocare.platform.order.ReservationStore.*;
+
+/** Versioned configuration. This component never awards or spends points. */
+public class PointTaskPolicies {
+ public static final List<String> TASKS=List.of("CHECK_IN","ARCHIVE_FIRST_COMPLETE","AI_FIRST_SUCCESS");
+ public static final String RULE="R8A_TASK_V1",PATH="/api/admin/point/task-policies";
+ private final ReservationStore db;private final OperatorIdentity operators;
+ public PointTaskPolicies(ReservationStore db,OperatorIdentity operators){this.db=db;this.operators=operators;}
+ static JsonNode input(String raw,boolean update){
+  var b=CouponInput.parse(raw);if(update)CouponInput.exact(b,"task_type","points","source_note","valid_from","valid_to","expected_revision");else CouponInput.exact(b,"task_type","points","source_note","valid_from","valid_to");
+  if(!b.path("task_type").isTextual()||!TASKS.contains(b.path("task_type").asText())||!b.path("points").isIntegralNumber()||!b.path("points").canConvertToInt()||b.path("points").intValue()<1||b.path("points").intValue()>1000000)throw ReservationInput.bad();
+  DiagnosisServicePolicies.text(b.get("source_note"),2,256);if(!CouponInput.time(b.get("valid_to")).isAfter(CouponInput.time(b.get("valid_from"))))throw ReservationInput.bad();if(update)CouponInput.version(b.get("expected_revision"));return b;
+ }
+ private static org.springframework.web.server.ResponseStatusException conflict(){return new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.CONFLICT,"积分任务规则或版本已变化，请重新读取");}
+ private void authorize(OperatorActor a,boolean lock){operators.authorize(a,OperatorIdentity.Permission.POINTS,lock);}
+ private void pageNumber(int p){if(p<1||p>1000000)throw ReservationInput.bad();}
+ private Map<String,Object> row(long id,boolean lock){return db.one("SELECT * FROM point_task_policy WHERE id=?"+(lock?" FOR UPDATE":""),id);}
+ Map<String,Object> view(Map<String,Object> r){var n=new LinkedHashMap<String,Object>();for(String k:List.of("id","task_type","points","source_note","revision","status","rule_version"))n.put(k,r.get(k));n.put("frequency","CHECK_IN".equals(r.get("task_type"))?"DAILY":"LIFETIME");n.put("timezone","Asia/Shanghai");for(String k:List.of("valid_from","valid_to","created_at","published_at"))n.put(k,iso(r.get(k)));return n;}
+ public Map<String,Object> list(OperatorActor a,int p){pageNumber(p);return db.reads.execute(tx->{authorize(a,false);long count=db.jdbc.queryForObject("SELECT COUNT(*) FROM point_task_policy",Long.class);return page(db.jdbc.queryForList("SELECT * FROM point_task_policy ORDER BY id DESC LIMIT 20 OFFSET ?",(p-1)*20L).stream().map(this::view).toList(),count,p,20);});}
+ private String hash(JsonNode b){var sorted=new TreeMap<String,JsonNode>();b.fields().forEachRemaining(e->sorted.put(e.getKey(),e.getValue()));return AuthTokens.sha256(db.json(sorted));}
+ public JsonNode create(OperatorActor a,String key,JsonNode b){String normalized=WriteIntegrityService.normalizeKey(key),hash=hash(b);return db.writes.execute(new Actor("operator_account",a.id()),"POST",PATH,key,b,()->authorize(a,true),()->{
+  var old=db.jdbc.queryForList("SELECT id,submission_hash,creation_result FROM point_task_policy WHERE created_by=? AND submission_key=?",a.id(),normalized);
+  if(!old.isEmpty()){var r=old.get(0);if(!hash.equals(r.get("submission_hash")))throw ReservationInput.bad();var saved=db.parse(r.get("creation_result"));if(!saved.isObject())throw new IllegalStateException("Point policy creation receipt missing");Map<String,Object> result=db.mapper.convertValue(saved,new com.fasterxml.jackson.core.type.TypeReference<Map<String,Object>>(){});return new Change("POINT_POLICY_CREATE","point_task_policy",number(r,"id"),Map.of(),Map.of(),result,false);}
+  if(!CouponInput.time(b.get("valid_to")).isAfter(db.now()))throw conflict();long id=db.insert("INSERT INTO point_task_policy(task_type,points,source_note,valid_from,valid_to,created_by,submission_key,submission_hash,created_at) VALUES(?,?,?,?,?,?,?,?,?)",b.path("task_type").asText(),b.path("points").intValue(),b.path("source_note").asText(),time(CouponInput.time(b.get("valid_from"))),time(CouponInput.time(b.get("valid_to"))),a.id(),normalized,hash,time(db.now()));var after=view(row(id,true));db.jdbc.update("UPDATE point_task_policy SET creation_result=? WHERE id=?",db.json(after),id);return new Change("POINT_POLICY_CREATE","point_task_policy",id,Map.of(),after,after);
+ });}
+ public JsonNode update(OperatorActor a,long id,String key,JsonNode b){com.autocare.platform.service.ServiceCatalog.validateId(id);return db.writes.execute(new Actor("operator_account",a.id()),"PUT",PATH+"/"+id,key,b,()->{authorize(a,true);row(id,true);},()->{var r=row(id,true);if(!"DRAFT".equals(r.get("status"))||number(r,"revision")!=b.path("expected_revision").asLong()||!CouponInput.time(b.get("valid_to")).isAfter(db.now()))throw conflict();var before=view(r);db.jdbc.update("UPDATE point_task_policy SET task_type=?,points=?,source_note=?,valid_from=?,valid_to=?,revision=revision+1 WHERE id=?",b.path("task_type").asText(),b.path("points").intValue(),b.path("source_note").asText(),time(CouponInput.time(b.get("valid_from"))),time(CouponInput.time(b.get("valid_to"))),id);var after=view(row(id,true));return new Change("POINT_POLICY_UPDATE","point_task_policy",id,before,after,after);});}
+ public JsonNode status(OperatorActor a,long id,String key,JsonNode b){com.autocare.platform.service.ServiceCatalog.validateId(id);return db.writes.execute(new Actor("operator_account",a.id()),"PUT",PATH+"/"+id+"/status",key,b,()->{authorize(a,true);row(id,true);},()->{var r=row(id,true);String target=b.path("status").asText();if(number(r,"revision")!=b.path("expected_revision").asLong()||!(target.equals("PUBLISHED")?"DRAFT".equals(r.get("status")):target.equals("STOPPED")&&"PUBLISHED".equals(r.get("status")))||target.equals("PUBLISHED")&&!instant(r.get("valid_to")).isAfter(db.now()))throw conflict();var before=view(r);try{db.jdbc.update("UPDATE point_task_policy SET status=?,revision=revision+1,published_at=? WHERE id=?",target,target.equals("PUBLISHED")?time(db.now()):r.get("published_at"),id);}catch(org.springframework.dao.DuplicateKeyException e){throw conflict();}var after=view(row(id,true));return new Change("POINT_POLICY_STATUS","point_task_policy",id,before,after,after);});}
+ public Map<String,Object> current(VehicleOwner a){return db.reads.execute(tx->{db.owner(a,false);var tasks=new ArrayList<Map<String,Object>>();for(String kind:TASKS){var rows=db.jdbc.queryForList("SELECT * FROM point_task_policy WHERE task_type=? AND status='PUBLISHED'",kind);var n=new LinkedHashMap<String,Object>();n.put("task_type",kind);n.put("frequency",kind.equals("CHECK_IN")?"DAILY":"LIFETIME");n.put("state","UNKNOWN");n.put("policy",null);if(rows.size()==1){var r=rows.get(0);n.put("policy",view(r));n.put("state",instant(r.get("valid_from")).isAfter(db.now())?"NOT_STARTED":!instant(r.get("valid_to")).isAfter(db.now())?"EXPIRED":"CONFIGURED");}tasks.add(n);}return Map.of("tasks",tasks,"earning_available",false,"timezone","Asia/Shanghai");});}
+}

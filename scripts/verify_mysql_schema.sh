@@ -155,8 +155,41 @@ run_sql_file docs/sql/migrations/V047__order_notification_sources.sql
 run_sql_file docs/sql/migrations/V047__order_notification_sources.sql
 run_sql_file docs/sql/migrations/V048__diagnosis_notifications.sql
 run_sql_file docs/sql/migrations/V048__diagnosis_notifications.sql
+run_sql_file docs/sql/migrations/V049__point_task_policies.sql
+run_sql_file docs/sql/migrations/V049__point_task_policies.sql
+run_sql_file docs/sql/migrations/V050__verified_points_ledger.sql
+run_sql_file docs/sql/migrations/V050__verified_points_ledger.sql
+run_sql_file docs/sql/migrations/V051__point_exchange_catalog.sql
+run_sql_file docs/sql/migrations/V051__point_exchange_catalog.sql
+[[ "$(query "SELECT COUNT(*) FROM point_exchange_catalog")" == 0 ]] || { echo "V051 must not seed exchange offers" >&2; exit 1; }
+# Synthetic pre-upgrade evidence verifies that signed-source DDL preserves old rows.
+query "INSERT INTO point_verified_entry(user_id,event_id,delta,balance_after,created_at) VALUES(9000001,9000001,7,7,'2026-10-16 00:00:00')" >/dev/null
+query "INSERT INTO coupon_issue(user_coupon_id,coupon_id,user_id,publication_revision,issued_at,origin,reward_item_id) VALUES(9000001,9000001,9000001,2,'2026-10-16 00:00:00','PUBLIC',NULL),(9000002,9000001,9000001,2,'2026-10-16 00:00:00','INVITE',9000001)" >/dev/null
+run_sql_file docs/sql/migrations/V052__atomic_point_exchange.sql
+run_sql_file docs/sql/migrations/V052__atomic_point_exchange.sql
+[[ "$(query "SELECT COUNT(*) FROM point_verified_entry WHERE user_id=9000001 AND event_id=9000001 AND delta=7 AND balance_after=7 AND exchange_id IS NULL")" == 1 ]] || { echo "V052 changed pre-upgrade point evidence" >&2; exit 1; }
+[[ "$(query "SELECT COUNT(*) FROM coupon_issue WHERE user_coupon_id IN (9000001,9000002) AND points_exchange_id IS NULL AND ((origin='PUBLIC' AND reward_item_id IS NULL AND public_user_id=9000001) OR (origin='INVITE' AND reward_item_id=9000001 AND public_user_id IS NULL))")" == 2 ]] || { echo "V052 changed PUBLIC/INVITE provenance" >&2; exit 1; }
+query "DELETE FROM point_verified_entry WHERE user_id=9000001" >/dev/null
+query "DELETE FROM coupon_issue WHERE user_coupon_id IN (9000001,9000002)" >/dev/null
+[[ "$(query "SELECT COUNT(*) FROM point_exchange_record")" == 0 ]] || { echo "V052 must not seed point exchanges" >&2; exit 1; }
+run_sql_file docs/sql/migrations/V053__assessment_policies.sql
+run_sql_file docs/sql/migrations/V053__assessment_policies.sql
+run_sql_file docs/sql/migrations/V054__assessment_monthly_snapshots.sql
+run_sql_file docs/sql/migrations/V054__assessment_monthly_snapshots.sql
+run_sql_file docs/sql/migrations/V055__business_dashboard_permission.sql
+run_sql_file docs/sql/migrations/V055__business_dashboard_permission.sql
+run_sql_file docs/sql/migrations/V056__price_monitor_policies.sql
+run_sql_file docs/sql/migrations/V056__price_monitor_policies.sql
+run_sql_file docs/sql/migrations/V057__curated_experiences.sql
+run_sql_file docs/sql/migrations/V058__private_community_questions.sql
+run_sql_file docs/sql/migrations/V059__public_community_questions.sql
+run_sql_file docs/sql/migrations/V057__curated_experiences.sql
+run_sql_file docs/sql/migrations/V058__private_community_questions.sql
+run_sql_file docs/sql/migrations/V059__public_community_questions.sql
+[[ "$(query "SELECT COUNT(*) FROM assessment_policy")" == 0 ]] || { echo "V053 must not seed assessment rules" >&2; exit 1; }
+[[ "$(query "SELECT COUNT(*) FROM operator_account WHERE can_assessment<>0")" == 0 ]] || { echo "Assessment permission must default off" >&2; exit 1; }
 tables=$(query "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$database' AND table_type = 'BASE TABLE'")
-[[ "$tables" == 104 ]] || { echo "Expected 104 tables after V048, got $tables" >&2; exit 1; }
+[[ "$tables" == 124 ]] || { echo "Expected 124 tables after V059, got $tables" >&2; exit 1; }
 [[ "$(query "SELECT COUNT(*) FROM merchant_location")" == 0 ]] || { echo 'V032 must not infer legacy coordinates' >&2; exit 1; }
 catalog_columns=$(query "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = '$database' AND ((table_name IN ('brand','series','model','standard_project') AND column_name IN ('sort_order','source_note','revision')) OR (table_name IN ('brand','series','model') AND column_name='status') OR (table_name='operator_account' AND column_name='can_catalog'))")
 [[ "$catalog_columns" == 16 ]] || { echo "V022 catalogue fields incomplete: $catalog_columns/16" >&2; exit 1; }
@@ -274,7 +307,7 @@ for entry in invite_code:uk_invite_code invite_code:uk_invite_actor invite_regis
   table="${entry%%:*}"; index="${entry##*:}"
   [[ "$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema='$database' AND table_name='$table' AND index_name='$index' AND non_unique=0")" == 1 ]] || { echo 'V040 invitation uniqueness missing' >&2; exit 1; }
 done
-echo "MySQL 8.0 schema: 104 tables after V048; repeat migration and synthetic seed passed"
+echo "MySQL 8.0 schema: 124 tables after V059; repeat migration and synthetic seed passed"
 
 [[ "$(query "SELECT COUNT(*) FROM invite_reward_policy")" == 0 ]] || { echo "Reward policies must not be seeded" >&2; exit 1; }
 [[ "$(query "SELECT COUNT(*) FROM operator_account WHERE can_invite<>0")" == 0 ]] || { echo "Invitation permission must default off" >&2; exit 1; }
@@ -301,4 +334,37 @@ done
 
 for table in diagnosis_notification_outbox diagnosis_notification_target; do
   [[ "$(query "SELECT COUNT(*) FROM $table")" == 0 ]] || { echo "Must not backfill historical diagnosis notices" >&2; exit 1; }
+done
+
+[[ "$(query 'SELECT COUNT(*) FROM point_task_policy')" == 0 ]] || { echo 'Must not seed point task policies' >&2; exit 1; }
+[[ "$(query 'SELECT COUNT(*) FROM operator_account WHERE can_points<>0')" == 0 ]] || { echo 'Points permission must default off' >&2; exit 1; }
+for index in uk_point_policy_submission uk_point_policy_published; do
+  [[ "$(query "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema='$database' AND table_name='point_task_policy' AND index_name='$index' AND non_unique=0")" == 1 ]] || { echo 'Point policy uniqueness missing' >&2; exit 1; }
+done
+
+for table in point_task_event point_verified_account point_verified_entry point_checkin_request; do
+  [[ "$(query "SELECT COUNT(*) FROM $table")" == 0 ]] || { echo 'Must not manufacture historical point rewards' >&2; exit 1; }
+done
+[[ "$(query "SELECT COUNT(*) FROM auth_session WHERE point_identity_source<>'UNKNOWN'")" == 0 ]] || { echo 'Must not promote legacy identity sources' >&2; exit 1; }
+
+for table in assessment_month assessment_snapshot assessment_snapshot_fact; do
+  [[ "$(query "SELECT COUNT(*) FROM $table")" == 0 ]] || { echo "Must not backfill historical assessment snapshots" >&2; exit 1; }
+done
+
+[[ "$(query 'SELECT COUNT(*) FROM operator_account WHERE can_analytics<>0')" == 0 ]] || { echo 'Analytics permission must default off' >&2; exit 1; }
+
+[[ "$(query 'SELECT COUNT(*) FROM price_monitor_policy')" == 0 ]] || { echo 'Must not seed price ranges' >&2; exit 1; }
+[[ "$(query 'SELECT COUNT(*) FROM operator_account WHERE can_price_monitor<>0')" == 0 ]] || { echo 'Price monitor permission must default off' >&2; exit 1; }
+
+[[ "$(query 'SELECT COUNT(*) FROM experience_curation')" == 0 ]] || { echo 'Must not seed curation' >&2; exit 1; }
+[[ "$(query 'SELECT COUNT(*) FROM operator_account WHERE can_community_curate<>0')" == 0 ]] || { echo 'Curation permission must default off' >&2; exit 1; }
+
+for table in community_qa_service_policy community_qa_case community_qa_message community_qa_case_event; do
+  [[ "$(query "SELECT COUNT(*) FROM $table")" == 0 ]] || { echo 'Must not seed private community content or admission' >&2; exit 1; }
+done
+[[ "$(query 'SELECT COUNT(*) FROM operator_account WHERE can_community_answer<>0 OR can_community_manage<>0')" == 0 ]] || { echo 'Community privileges must default off' >&2; exit 1; }
+[[ "$(query 'SELECT COUNT(*) FROM community_qa_control WHERE id=1')" == 1 ]] || { echo 'Community serialization control missing' >&2; exit 1; }
+
+for table in community_qa_publication community_qa_publication_event; do
+  [[ "$(query "SELECT COUNT(*) FROM $table")" == 0 ]] || { echo "Must not seed public QA or consent" >&2; exit 1; }
 done

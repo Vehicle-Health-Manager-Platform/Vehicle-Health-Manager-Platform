@@ -1,0 +1,30 @@
+package com.autocare.platform.order;
+
+import com.autocare.platform.gateway.identity.*;
+import com.autocare.platform.service.MerchantActor;
+import java.time.*;
+import java.util.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+import static com.autocare.platform.order.ReservationStore.*;
+
+/** Current month context and explicit read scopes. No score or attribution is recalculated here. */
+public class AssessmentViews {
+ private final ReservationStore db;private final AssessmentSnapshots snapshots;private final OperatorIdentity operators;
+ public AssessmentViews(ReservationStore db,AssessmentSnapshots snapshots,OperatorIdentity operators){this.db=db;this.snapshots=snapshots;this.operators=operators;}
+ private void operator(OperatorActor a){operators.authorize(a,OperatorIdentity.Permission.ASSESSMENT,false);}
+ private void manager(MerchantActor a){if(!a.manager())throw new ResponseStatusException(HttpStatus.FORBIDDEN,"仅店长可读取本店月度考核");db.merchant(a,false);}
+ private void pageNumber(int p){if(p<1||p>1000000)throw ReservationInput.bad();}
+ private Map<String,Object> merchant(long id){var r=db.one("SELECT id,name,address FROM merchant WHERE id=? AND status=1 AND is_deleted=0",id);return Map.of("id",r.get("id"),"name",r.get("name"),"address",Objects.toString(r.get("address"),""));}
+ private Map<String,Object> latest(long shop,String month){var rows=db.jdbc.queryForList("SELECT * FROM assessment_snapshot WHERE merchant_id=? AND period_month=? ORDER BY revision DESC LIMIT 1",shop,month);return rows.isEmpty()?null:rows.get(0);}
+ private Map<String,Object> context(long shop,String month,boolean writable){var m=AssessmentCalculation.month(month);var merchant=merchant(shop);var latest=latest(shop,month);var heads=db.jdbc.queryForList("SELECT revision FROM assessment_month WHERE merchant_id=? AND period_month=?",shop,month);long revision=heads.isEmpty()?0:number(heads.get(0),"revision");if((latest==null?0:number(latest,"revision"))!=revision)throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"月结版本尚不可确认，请重试");var end=AssessmentCalculation.start(m.plusMonths(1));var now=db.now();var policy=snapshots.policy(shop,m,false);boolean ended=!end.isAfter(now);var out=new LinkedHashMap<String,Object>();out.put("merchant",merchant);out.put("period_month",month);out.put("timezone","Asia/Shanghai");out.put("server_now",now.toString());out.put("month_end",end.toString());out.put("revision",revision);out.put("latest",latest==null?null:snapshots.view(latest));out.put("policy",policy);out.put("state",!ended?"MONTH_OPEN":policy.isNull()?"POLICY_UNKNOWN":"READY");out.put("can_settle",writable&&ended);return out;}
+ public Map<String,Object> context(OperatorActor a,long shop,String month){com.autocare.platform.service.ServiceCatalog.validateId(shop);AssessmentCalculation.month(month);return db.reads.execute(tx->{operator(a);return context(shop,month,true);});}
+ public Map<String,Object> context(MerchantActor a,String month){AssessmentCalculation.month(month);return db.reads.execute(tx->{manager(a);return context(a.merchantId(),month,false);});}
+ private Map<String,Object> history(long shop,String month,int p){long count=db.jdbc.queryForObject("SELECT COUNT(*) FROM assessment_snapshot WHERE merchant_id=? AND period_month=?",Long.class,shop,month);return page(db.jdbc.queryForList("SELECT * FROM assessment_snapshot WHERE merchant_id=? AND period_month=? ORDER BY revision DESC LIMIT 20 OFFSET ?",shop,month,(p-1)*20L).stream().map(snapshots::view).toList(),count,p,20);}
+ public Map<String,Object> history(OperatorActor a,long shop,String month,int p){com.autocare.platform.service.ServiceCatalog.validateId(shop);AssessmentCalculation.month(month);pageNumber(p);return db.reads.execute(tx->{operator(a);return history(shop,month,p);});}
+ public Map<String,Object> history(MerchantActor a,String month,int p){AssessmentCalculation.month(month);pageNumber(p);return db.reads.execute(tx->{manager(a);return history(a.merchantId(),month,p);});}
+ private Map<String,Object> own(MerchantActor a,long id){var r=db.one("SELECT * FROM assessment_snapshot WHERE id=? AND merchant_id=?",id,a.merchantId());return r;}
+ public Map<String,Object> detail(MerchantActor a,long id){com.autocare.platform.service.ServiceCatalog.validateId(id);return db.reads.execute(tx->{manager(a);return snapshots.view(own(a,id));});}
+ public Map<String,Object> facts(MerchantActor a,long id,int p){com.autocare.platform.service.ServiceCatalog.validateId(id);pageNumber(p);return db.reads.execute(tx->{manager(a);own(a,id);long count=db.jdbc.queryForObject("SELECT COUNT(*) FROM assessment_snapshot_fact WHERE snapshot_id=?",Long.class,id);return page(db.jdbc.queryForList("SELECT fact_json FROM assessment_snapshot_fact WHERE snapshot_id=? ORDER BY ordinal LIMIT 20 OFFSET ?",id,(p-1)*20L).stream().map(r->db.parse(r.get("fact_json"))).toList(),count,p,20);});}
+ public Map<String,Object> staff(MerchantActor a,String month){AssessmentCalculation.month(month);return db.reads.execute(tx->{db.merchant(a,false);var last=latest(a.merchantId(),month);var counts=new LinkedHashMap<String,Object>();for(String state:List.of("INCLUDED","EXCLUDED","UNKNOWN"))counts.put(state.toLowerCase(Locale.ROOT),last==null?0L:db.jdbc.queryForObject("SELECT COUNT(*) FROM assessment_snapshot_fact WHERE snapshot_id=? AND JSON_UNQUOTE(JSON_EXTRACT(fact_json,'$.dimension'))='ACQUISITION' AND JSON_UNQUOTE(JSON_EXTRACT(fact_json,'$.staff_id'))=? AND JSON_UNQUOTE(JSON_EXTRACT(fact_json,'$.state'))=?",Long.class,last.get("id"),Long.toString(a.staffId()),state));var out=new LinkedHashMap<String,Object>();out.put("role",a.role());out.put("staff_id",a.staffId());out.put("merchant_id",a.merchantId());out.put("period_month",month);out.put("timezone","Asia/Shanghai");out.put("state",last==null?"NO_SNAPSHOT":"FROZEN");out.put("revision",last==null?0:number(last,"revision"));out.put("captured_from",last==null?null:iso(last.get("captured_from")));out.put("captured_to",last==null?null:iso(last.get("captured_to")));out.put("attribution",counts);return out;});}
+}

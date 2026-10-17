@@ -58,6 +58,8 @@ public class DeepSeekClient {
         return model;
     }
 
+    public boolean officialEndpoint(){return configured() && endpoint.equals(URI.create(DEFAULT_BASE_URL+"/chat/completions"));}
+
     public boolean configured() {
         return !apiKey.isBlank() && !"unconfigured".equalsIgnoreCase(apiKey);
     }

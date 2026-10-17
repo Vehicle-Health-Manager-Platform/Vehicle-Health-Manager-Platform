@@ -33,6 +33,14 @@ onHide(() => { visible = false; clear() }); onUnload(() => { visible = false; cl
     <button v-if="operatorSession.canCatalog" @tap="uni.navigateTo({url:'/pages/operator/catalog'})">标准项目与车型库维护</button>
     <button v-if="operatorSession.canDiagnoseManage" @tap="uni.navigateTo({url:'/pages/operator/diagnosis-service'})">诊断受理配置与分配</button>
     <button v-if="operatorSession.canDiagnose||operatorSession.canDiagnoseManage" @tap="uni.navigateTo({url:'/pages/operator/diagnosis-cases'})">诊断处理工作区</button>
+    <button v-if="operatorSession.canCommunityManage" @tap="uni.navigateTo({url:'/pages/operator/question-service'})">私有问答受理与分配</button>
+    <button v-if="operatorSession.canCommunityAnswer" @tap="uni.navigateTo({url:'/pages/operator/questions?scope=mine'})">我的私有问答处理</button>
+    <button v-if="operatorSession.canCommunityCurate" @tap="uni.navigateTo({url:'/pages/operator/experience-curations'})">同款经验运营精选</button>
+    <button v-if="operatorSession.canPriceMonitor" @tap="uni.navigateTo({url:'/pages/operator/price-comparisons'})">只读价格比较</button><button v-if="operatorSession.canPriceMonitor" @tap="uni.navigateTo({url:'/pages/operator/price-policies'})">价格监控来源依据</button><button v-if="operatorSession.canAnalytics" @tap="uni.navigateTo({url:'/pages/operator/business-dashboard'})">门店经营看板</button>
+    <button v-if="operatorSession.canAssessment" @tap="uni.navigateTo({url:'/pages/operator/monthly-assessment'})">门店月度结算与历史</button>
+    <button v-if="operatorSession.canAssessment" @tap="uni.navigateTo({url:'/pages/operator/assessment-policies'})">门店月度考核政策</button>
+    <button v-if="operatorSession.canPoints" @tap="uni.navigateTo({url:'/pages/operator/points-policies'})">积分任务规则</button>
+    <button v-if="operatorSession.canPoints" @tap="uni.navigateTo({url:'/pages/operator/points-exchange'})">积分兑换目录</button>
     <button v-if="operatorSession.canInvite" @tap="uni.navigateTo({url:'/pages/operator/invite-policies'})">邀请奖励规则配置</button>
     <button v-if="operatorSession.canInvite" @tap="uni.navigateTo({url:'/pages/operator/diagnosis-policies'})">人工诊断邀请条件</button>
     <button v-if="operatorSession.canCoupon" @tap="uni.navigateTo({url:'/pages/operator/coupons'})">管理运营精选券池</button>

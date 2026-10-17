@@ -15,9 +15,10 @@ final class PublicReviewTextInput {
     static JsonNode parse(String raw){try{if(raw==null||raw.length()>4096)throw ReservationInput.bad();return JSON.readTree(raw);}catch(com.fasterxml.jackson.core.JsonProcessingException e){throw ReservationInput.bad();}}
     static void fields(JsonNode b,String... keys){if(b==null||!b.isObject()||b.size()!=keys.length||!Arrays.stream(keys).allMatch(b::has))throw ReservationInput.bad();}
     static long version(JsonNode n){if(n==null||!n.isIntegralNumber()||!n.canConvertToLong()||n.longValue()<0||n.longValue()>9007199254740991L)throw ReservationInput.bad();return n.longValue();}
-    static String redact(JsonNode node){
+    static String redact(JsonNode node){return redact(node,300);}
+    static String redact(JsonNode node,int limit){
         if(node==null||!node.isTextual())throw ReservationInput.bad();String raw=node.textValue();
-        if(raw.codePointCount(0,raw.length())>300)throw ReservationInput.bad();
+        if(raw.codePointCount(0,raw.length())>limit)throw ReservationInput.bad();
         for(int i=0;i<raw.length();i++){char c=raw.charAt(i);if(Character.isHighSurrogate(c)){if(i+1>=raw.length()||!Character.isLowSurrogate(raw.charAt(++i)))throw ReservationInput.bad();}else if(Character.isLowSurrogate(c))throw ReservationInput.bad();}
         String s=Normalizer.normalize(raw,Normalizer.Form.NFKC).strip();
         if(s.isEmpty()||s.codePoints().anyMatch(c->Character.getType(c)==Character.FORMAT||Character.isISOControl(c)&&c!='\n'))throw ReservationInput.bad();
@@ -26,7 +27,7 @@ final class PublicReviewTextInput {
             .replaceAll("(?i)(?<![A-Z0-9])[A-HJ-NPR-Z0-9]{17}(?![A-Z0-9])","[已隐藏]")
             .replaceAll("[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼][A-Za-z][A-Za-z0-9]{5,6}","[已隐藏]")
             .replaceAll("[0-9](?:[ \\-]*[0-9]){6,}","[已隐藏]");
-        if(s.codePointCount(0,s.length())>300)throw ReservationInput.bad();return s;
+        if(s.codePointCount(0,s.length())>limit)throw ReservationInput.bad();return s;
     }
     static JsonNode owner(JsonNode b){
         if(b==null||!b.path("action").isTextual())throw ReservationInput.bad();String action=b.get("action").textValue();

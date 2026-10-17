@@ -15,7 +15,7 @@ public class ExperienceModeration {
     public ExperienceModeration(ReservationStore db,OperatorIdentity operators,boolean enabled){this.db=db;this.operators=operators;this.enabled=enabled;}
     private void enabled(){if(!enabled)throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"经验审核与展示尚未开启");}
     private Long model(Map<String,Object> c,boolean lock){
-        var rows=db.jdbc.queryForList("SELECT v.model_id FROM vehicle v JOIN model m ON m.id=v.model_id AND m.is_deleted=0 JOIN series s ON s.id=m.series_id AND s.is_deleted=0 JOIN brand b ON b.id=s.brand_id AND b.is_deleted=0 WHERE v.id=? AND v.user_id=? AND v.is_deleted=0"+(lock?" FOR UPDATE":""),c.get("vehicle_id"),c.get("user_id"));
+        var rows=db.jdbc.queryForList("SELECT v.model_id FROM vehicle v JOIN model m ON m.id=v.model_id AND m.status=1 AND m.is_deleted=0 JOIN series s ON s.id=m.series_id AND s.status=1 AND s.is_deleted=0 JOIN brand b ON b.id=s.brand_id AND b.status=1 AND b.is_deleted=0 WHERE v.id=? AND v.user_id=? AND v.is_deleted=0"+(lock?" FOR UPDATE":""),c.get("vehicle_id"),c.get("user_id"));
         return rows.isEmpty()?null:ReservationStore.number(rows.get(0),"model_id");
     }
     private Map<String,Object> summary(Map<String,Object> c){
@@ -60,15 +60,40 @@ public class ExperienceModeration {
             return new Change("EXPERIENCE_CARD_MODERATE","experience_card",id,before,after,data,changed);
         });
     }
+    // List and detail use the same current authorization, model and publication predicate.
+    private static final String PUBLIC_SOURCE=" FROM experience_card_moderation m JOIN experience_card c ON c.id=m.card_id JOIN vehicle v ON v.id=c.vehicle_id AND v.user_id=c.user_id AND v.model_id=m.model_id AND v.is_deleted=0 JOIN user u ON u.id=c.user_id AND u.status=1 AND u.is_deleted=0 JOIN model md ON md.id=m.model_id AND md.status=1 AND md.is_deleted=0 JOIN series s ON s.id=md.series_id AND s.status=1 AND s.is_deleted=0 JOIN brand b ON b.id=s.brand_id AND b.status=1 AND b.is_deleted=0 WHERE m.decision='APPROVE' AND c.status='PUBLISHED' AND c.test_mode=0 AND c.revision=m.request_revision+1 AND c.consent_version=? AND c.consented_at IS NOT NULL AND c.withdrawn_at IS NULL";
+    private static final String PUBLIC_SELECT="SELECT c.*,m.id AS moderation_id,m.model_id AS approved_model,m.public_id,m.decided_at";
+    Object recipient(VehicleOwner owner,long vehicle){
+        db.owner(owner,false);
+        return db.one("SELECT md.id AS model_id FROM vehicle v LEFT JOIN (model md JOIN series s ON s.id=md.series_id AND s.status=1 AND s.is_deleted=0 JOIN brand b ON b.id=s.brand_id AND b.status=1 AND b.is_deleted=0) ON md.id=v.model_id AND md.status=1 AND md.is_deleted=0 WHERE v.id=? AND v.user_id=? AND v.is_deleted=0",vehicle,owner.id()).get("model_id");
+    }
+    private Map<String,Object> publicView(Map<String,Object> c){return Map.of("experience_id",c.get("public_id"),"title","施工经验摘要","summary",summary(c),"model_id",c.get("approved_model"),"published_at",ReservationStore.iso(c.get("decided_at")));}
+    static String publicId(String id){if(id==null||!id.matches("[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}"))throw ReservationInput.bad();return id;}
+    boolean publicationEnabled(){return enabled;}
+    Map<String,Object> publishedSource(String id,boolean lock){
+        publicId(id);enabled();
+        if(lock){var mapping=db.one("SELECT c.id,c.order_id,c.user_id FROM experience_card_moderation m JOIN experience_card c ON c.id=m.card_id WHERE m.public_id=?",id);db.one("SELECT id FROM user WHERE id=? AND status=1 AND is_deleted=0 FOR UPDATE",mapping.get("user_id"));db.one("SELECT id FROM `order` WHERE id=? FOR UPDATE",mapping.get("order_id"));db.one("SELECT id FROM experience_card WHERE id=? FOR UPDATE",mapping.get("id"));}
+        var rows=db.jdbc.queryForList(PUBLIC_SELECT+PUBLIC_SOURCE+" AND m.public_id=?"+(lock?" FOR UPDATE":""),ExperienceCardInput.VERSION,id);if(rows.size()!=1)throw ReservationStore.missing();var c=rows.get(0);try{new ExperienceCards(db).trusted(c);}catch(FulfillmentConflict e){throw ReservationStore.missing();}return publicView(c);
+    }
+    Map<String,Object> curationSources(int page){enabled();long total=db.jdbc.queryForObject("SELECT COUNT(*)"+PUBLIC_SOURCE,Long.class,ExperienceCardInput.VERSION);var rows=db.jdbc.queryForList(PUBLIC_SELECT+PUBLIC_SOURCE+" ORDER BY m.id DESC LIMIT 20 OFFSET ?",ExperienceCardInput.VERSION,(page-1)*20L);var items=new ArrayList<Map<String,Object>>();for(var c:rows){try{new ExperienceCards(db).trusted(c);items.add(publicView(c));}catch(FulfillmentConflict e){}}return ReservationStore.page(items,total,page,20);}
+    public Map<String,Object> experience(VehicleOwner owner,long vehicle,String id){
+        ServiceCatalog.validateId(vehicle);publicId(id);
+        return db.reads.execute(t->{Object model=recipient(owner,vehicle);enabled();if(model==null)throw ReservationStore.missing();
+            var rows=db.jdbc.queryForList(PUBLIC_SELECT+PUBLIC_SOURCE+" AND m.model_id=? AND m.public_id=?",ExperienceCardInput.VERSION,model,id);
+            if(rows.size()!=1)throw ReservationStore.missing();var c=rows.get(0);
+            try{new ExperienceCards(db).trusted(c);}catch(FulfillmentConflict invalid){throw ReservationStore.missing();}
+            return Map.of("vehicle_id",vehicle,"experience",publicView(c));
+        });
+    }
     public Map<String,Object> experiences(VehicleOwner owner,long vehicle,Long cursor){
         ServiceCatalog.validateId(vehicle);if(cursor!=null)ServiceCatalog.validateId(cursor);
-        return db.reads.execute(t->{db.owner(owner,false);var v=db.one("SELECT model_id FROM vehicle WHERE id=? AND user_id=? AND is_deleted=0",vehicle,owner.id());
+        return db.reads.execute(t->{Object model=recipient(owner,vehicle);
             var out=new LinkedHashMap<String,Object>();out.put("items",List.of());out.put("next_cursor",null);
-            if(!enabled || v.get("model_id")==null)return out;
-            var rows=db.jdbc.queryForList("SELECT c.*,m.id AS moderation_id,m.model_id AS approved_model,m.public_id,m.decided_at FROM experience_card_moderation m JOIN experience_card c ON c.id=m.card_id JOIN vehicle v ON v.id=c.vehicle_id AND v.user_id=c.user_id AND v.model_id=m.model_id AND v.is_deleted=0 JOIN user u ON u.id=c.user_id AND u.status=1 AND u.is_deleted=0 JOIN model md ON md.id=m.model_id AND md.is_deleted=0 JOIN series s ON s.id=md.series_id AND s.is_deleted=0 JOIN brand b ON b.id=s.brand_id AND b.is_deleted=0 WHERE m.decision='APPROVE' AND m.model_id=? AND c.status='PUBLISHED' AND c.test_mode=0 AND c.revision=m.request_revision+1 AND c.consent_version=? AND c.consented_at IS NOT NULL AND c.withdrawn_at IS NULL AND m.id<? ORDER BY m.id DESC LIMIT 21",v.get("model_id"),ExperienceCardInput.VERSION,cursor==null?Long.MAX_VALUE:cursor);
+            if(!enabled || model==null)return out;
+            var rows=db.jdbc.queryForList(PUBLIC_SELECT+PUBLIC_SOURCE+" AND m.model_id=? AND m.id<? ORDER BY m.id DESC LIMIT 21",ExperienceCardInput.VERSION,model,cursor==null?Long.MAX_VALUE:cursor);
             var items=new ArrayList<Map<String,Object>>();int count=Math.min(20,rows.size());
             for(int n=0;n<count;n++){var c=rows.get(n);try{new ExperienceCards(db).trusted(c);}catch(FulfillmentConflict e){continue;}
-                items.add(Map.of("experience_id",c.get("public_id"),"title","施工经验摘要","summary",summary(c),"model_id",c.get("approved_model"),"published_at",ReservationStore.iso(c.get("decided_at"))));}
+                items.add(publicView(c));}
             out.put("items",items);out.put("next_cursor",rows.size()>20?rows.get(19).get("moderation_id"):null);return out;
         });
     }

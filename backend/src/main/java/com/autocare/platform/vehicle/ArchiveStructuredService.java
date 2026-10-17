@@ -14,11 +14,16 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 public class ArchiveStructuredService {
+    private final com.autocare.platform.order.PointLedger points;
     private final JdbcTemplate jdbc;
     private final WriteIntegrityService integrity;
     private final ObjectMapper mapper;
     private final TransactionTemplate reads;
     public ArchiveStructuredService(JdbcTemplate jdbc, WriteIntegrityService integrity, ObjectMapper mapper, PlatformTransactionManager transactions) {
+        this(jdbc,integrity,mapper,transactions,null);
+    }
+    public ArchiveStructuredService(JdbcTemplate jdbc, WriteIntegrityService integrity, ObjectMapper mapper, PlatformTransactionManager transactions,com.autocare.platform.order.PointLedger points) {
+        this.points=points;
         this.jdbc=jdbc; this.integrity=integrity; this.mapper=mapper;
         reads=new TransactionTemplate(transactions); reads.setReadOnly(true); reads.setTimeout(15);
     }
@@ -47,6 +52,7 @@ public class ArchiveStructuredService {
                 else jdbc.update("UPDATE archive_structured_detail SET vehicle_id=?,archive_type=?,fields_json=?,revision=? WHERE id=?",
                     source.vehicle(),source.type(),json(input.fields()),next,before.id());
                 var after=slot(owner.id(),archive,true);
+                if(points!=null && (before==null||!com.autocare.platform.order.PointLedger.completeManual(source.type(),before.fields())) && com.autocare.platform.order.PointLedger.completeManual(source.type(),after.fields()))points.archiveCompleted(owner,archive);
                 return new WriteIntegrityService.Change("ARCHIVE_STRUCTURED_SET","archive_structured_detail",after.id(),
                     before==null?Map.of():audit(before),audit(after),receipt(source,archive,next,input.fields().isEmpty()));
             });

@@ -89,6 +89,9 @@ onMounted(() => {
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantStaff">本店员工与员工码</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="uni.navigateTo({url:'/pages/merchant/invite'})">我的推广码与新客归因</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantProfile">门店资料</button>
+      <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="uni.navigateTo({url:'/pages/merchant/assessment'})">本店月度考核与本人归因</button>
+      <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="uni.navigateTo({url:'/pages/merchant/business-dashboard'})">本店经营看板（店长）</button>
+      <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="uni.navigateTo({url:'/pages/merchant/customers'})">本店服务关系（店长）</button>
       <button v-if="role === 'merchant' && accessToken" class="login-button" :disabled="busy" @tap="openMerchantCommissions">本店佣金账单（店长）</button>
       <button v-if="role === 'technician' && accessToken" class="login-button" @tap="uni.navigateTo({url:'/pages/workspace/tasks?role=tech'})">我的技师工作台</button><button v-if="role === 'technician' && accessToken" class="login-button" :disabled="busy" @tap="openTechnicianOrders">我的工单</button>
       <button v-if="accessToken" class="login-button" @tap="uni.navigateTo({url:`/pages/workspace/notifications?role=${role==='technician'?'tech':role}`})">站内消息</button>

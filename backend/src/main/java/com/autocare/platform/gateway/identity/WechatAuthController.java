@@ -28,6 +28,8 @@ public class WechatAuthController {
     private com.autocare.platform.order.InvitationRegistration invitations;
     @Value("${INVITE_VERIFIED_IDENTITY_ENABLED:false}")
     private boolean inviteVerified;
+    @Value("${POINTS_VERIFIED_IDENTITY_ENABLED:false}")
+    private boolean pointsVerified;
 
     public WechatAuthController(WechatCode2SessionClient wechat, WechatPhoneClient phone,
                                 ObjectProvider<IdentityRepository> repositories,
@@ -58,7 +60,7 @@ public class WechatAuthController {
             if (owner.status() != 1 || owner.deleted()) {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "账号不可用");
             }
-            var data=new java.util.LinkedHashMap<String,Object>(tokens.owner(owner,appId));
+            var data=new java.util.LinkedHashMap<String,Object>(pointsVerified?tokens.owner(owner,appId,wechat.officialEndpoint()):tokens.owner(owner,appId));
             if(invite!=null)data.put("invitation_result",registration.invitationResult());
             return ApiResponse.success(data);
         }

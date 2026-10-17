@@ -20,6 +20,18 @@ class ExperienceModerationHttpTest {
     @BeforeEach void tokens(){when(decoder.decode(anyString())).thenAnswer(c->{String t=c.getArgument(0);return Jwt.withTokenValue(t).header("alg","HS256").subject("1").claim("jti","session").expiresAt(Instant.now().plusSeconds(900)).claim("subject_type",t.equals("operator")?"operator_account":t.equals("owner")?"user":"staff_account").claim("role",t.equals("operator")?"OPERATOR":t.equals("owner")?"OWNER":"MERCHANT").claim("app_id","operator-account").build();});}
     String body(){return "{\"revision\":1,\"decision\":\"APPROVE\",\"reason_code\":null}";}
     String key(){return UUID.randomUUID().toString();}
+    @Test void detailRequiresOwnerAndExactCurrentVehicleSelector()throws Exception{
+        String path="/api/community/experiences/"+key();mvc.perform(get(path+"?vehicle_id=1")).andExpect(status().isUnauthorized());
+        for(String t:List.of("operator","merchant"))mvc.perform(get(path+"?vehicle_id=1").header("Authorization","Bearer "+t)).andExpect(status().isForbidden());
+        for(String q:List.of("","vehicle_id=0","vehicle_id=1&vehicle_id=2","vehicle_id=1&cursor=1","vehicle_id=1&user_id=2","vehicle_id=9007199254740992"))mvc.perform(get(path+"?"+q).header("Authorization","Bearer owner")).andExpect(status().isBadRequest());
+        for(String id:List.of("1","bad-reference","00000000-0-0-0-000000000000"))mvc.perform(get("/api/community/experiences/"+id+"?vehicle_id=1").header("Authorization","Bearer owner")).andExpect(status().isBadRequest());verifyNoInteractions(service);
+    }
+    @Test void detailIsNoStoreAndDoesNotRevealMissingOrDatabaseEvidence()throws Exception{
+        String id=key(),path="/api/community/experiences/"+id+"?vehicle_id=1";when(service.experience(any(),eq(1L),eq(id))).thenReturn(Map.of("vehicle_id",1,"experience",Map.of()));
+        mvc.perform(get(path).header("Authorization","Bearer owner")).andExpect(status().isOk()).andExpect(header().string("Cache-Control","no-store")).andExpect(jsonPath("$.data.vehicle_id").value(1));
+        when(service.experience(any(),eq(1L),eq(id))).thenThrow(ReservationStore.missing());mvc.perform(get(path).header("Authorization","Bearer owner")).andExpect(status().isNotFound()).andExpect(header().string("Cache-Control","no-store"));
+        when(service.experience(any(),eq(1L),eq(id))).thenThrow(new org.springframework.dao.DataAccessResourceFailureException("private SQL"));mvc.perform(get(path).header("Authorization","Bearer owner")).andExpect(status().isServiceUnavailable()).andExpect(jsonPath("$.code").value(50300)).andExpect(header().string("Cache-Control","no-store"));
+    }
     @Test void roleIsolationAndAnonymousReject()throws Exception{
         mvc.perform(get("/api/admin/experience-cards")).andExpect(status().isUnauthorized());
         for(String t:List.of("owner","merchant"))mvc.perform(get("/api/admin/experience-cards").header("Authorization","Bearer "+t)).andExpect(status().isForbidden());

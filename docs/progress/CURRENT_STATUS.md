@@ -1,5 +1,41 @@
 # 当前进度
 
+> **2026-10-17最新上传指示**：用户要求立即上传当前更新并合并，取代此前整R8完成后上传的限制。正在整理包含全部代码/迁移/测试/文档的main汇总PR，并纳入尚未进入main的R5/R6/R7提交；六项完整CI通过后合并。[本次范围与未完成清单](R8_PARTIAL_UPLOAD_MERGE_2026_10_17.md)。R8仍部分完成，下一b3b、之后c2/c3及整阶段验收；R9最后。下方“仅本地/不得上传”为当时历史记录。
+
+> **2026-10-17 R8c1b3a公开问答后端本地完成**：[执行](R8C1B3A_PUBLIC_QA_EXECUTION.md)、[验收](../testing/LOCAL_R8C1B3A_PUBLIC_QA_ACCEPTANCE.md)。新消息原文/身份/app指纹、具体问题/答复预览和独立公开consent、最小can_review审核/撤回及本人同款读取八API、永久原申请回执与最后凭证防回退已实现；旧/测试记录不补正式来源，独立公开开关默认关闭。修复JSON数值节点比较误拒及RR锁等待后旧快照漏看有效申请，最新完整30/30通过，与其他19项合并49不同后端（新19/原30）。840前端、微信/H5、V059/124表重放及旧凭证保留、331操作1174引用/104页/59挂载/16字段和原基线保持通过。下一[b3b公开页面/确认/恢复及受控引用](R8C1B3B_PUBLIC_QA_UI_NEXT_PLAN.md)，再b3/c1b销项、c2图片/c3许可资料及整R8门禁；不声称公开页面或整个R8完成，所有代码/迁移/测试/文档仅本地，无上传/合并/发布。下方保留历史。
+
+> **2026-10-17 R8c1b2b及私有b2本地完成**：[页面与恢复执行](R8C1B2B_PRIVATE_QA_UI_EXECUTION.md)、[验收](../testing/LOCAL_R8C1B2B_PRIVATE_QA_UI_ACCEPTANCE.md)、[整b2销项](R8C1B2_PRIVATE_QA_COMPLETION.md)。车主新建/历史及角色详情、管理受理政策/最小队列与当前获派四实际页，严格API、完整原文字/目标/版本确认、角色账号问答隔离持久恢复、精确登录落点及切号隐藏/撤权迟到清理已完成。840前端（新26）、最终微信/H5、323操作1139引用/104页面/58挂载/16登录字段及原基线保持通过。无后端/DDL变更，沿b2a38真实库/HTTP及V058/122表重放；不重复累计。下一[b3独立公开授权/审核/撤回](R8C1B3_PUBLIC_QA_NEXT_PLAN.md)，再c2图片/c3许可检索和整R8门禁；整个c1b与R8尚未销项，所有源码/迁移/测试/文档仅本地，HEAD仍d4c7763，无上传/合并/发布。下方保留历史。
+
+> **2026-10-17 R8c1b2a后端本地完成**：[私有问答执行](R8C1B2A_PRIVATE_QA_EXECUTION.md)、[验收](../testing/LOCAL_R8C1B2A_PRIVATE_QA_ACCEPTANCE.md)。独立两权限/受理来源、本人提问/补充/分配/当前获派答复/关闭及CAS/原子事件/永久创建回执已接通；队列无正文，车辆转移不转移原提问者历史，无R7诊断/邀请资格混用。38不同后端（新26/原12）、814前端（新3登录兼容）、微信/H5、V058/122表重放、323操作1139引用/16登录字段/100页/58挂载及原基线保持通过。下一[b2b页面与本机恢复](R8C1B2B_PRIVATE_QA_UI_NEXT_PLAN.md)，整个b2尚未销项；再b3公开授权审核、c2图片和c3许可资料检索及整R8门禁。全部代码/迁移/测试/文档仅本地，HEAD仍d4c7763，无上传/合并/发布。下方保留历史。
+
+> **2026-10-17 R8c1b1本地完成**：[运营精选及引用导入执行](R8C1B1_CURATED_EXPERIENCES_EXECUTION.md)、[验收](../testing/LOCAL_R8C1B1_CURATED_EXPERIENCES_ACCEPTANCE.md)。默认关闭独立精选权限、当前获批来源/哈希与冻结版本、排序/未来窗口/停止、永久创建回执和实际运营页；本人同款精选与手动引用导入已接通，来源说明不公开、无虚构热度。73不同后端（新18/原55）、811前端（新15）、最终微信/H5、V057/117表重放、307操作1076引用/100路由/57挂载/14字段及原基线保持通过。下一[b2私有问答](R8C1B2_PRIVATE_QA_NEXT_PLAN.md)，已确认独立运营非实时答复与默认私有，不重复询问。后续b3公开授权审核、图片、许可资料检索及整R8统一门禁仍待完成；所有代码/迁移/测试/文档仅本地，HEAD仍d4c7763，无push/PR更新。下方保留历史。
+
+> **2026-10-17 R8c1a本地完成**：[受控经验详情执行](R8C1A_EXPERIENCE_DETAIL_EXECUTION.md)、[验收](../testing/LOCAL_R8C1A_EXPERIENCE_DETAIL_ACCEPTANCE.md)。新OWNER单条GET、列表/详情共用当前同款授权/审核/可信来源与目录有效性，旧UUID撤回/重审不复活；同款现有页详情/复制应用内入口、AI摘要引用、精确登录返回和切号/换车/车型/隐藏清理已接通。54不同后端（新9/原45）、最终796前端、最终微信/H5、301操作1048引用/99路由/56挂载与原基线保持通过。无新迁移，仍V056/116表。下一[R8c1b同款热门/结构化问答/应用内分享](R8C1B_COMMUNITY_NEXT_PLAN.md)，还需图片逐项公开授权、许可资料检索及整阶段门禁；全R8完成后同批上传全部源码/迁移/测试/文档，当前HEAD仍d4c7763，无push/PR更新。下方保留历史。
+
+> **2026-10-17 R8b3c2及R8b本地完成**：[只读价格比较执行](R8B3C2_PRICE_COMPARISON_EXECUTION.md)、[验收](../testing/LOCAL_R8B3C2_PRICE_COMPARISON_ACCEPTANCE.md)、[价格监控销项](R8B3C_PRICE_MONITORING_COMPLETION.md)、[R8b销项](R8B_OPERATIONS_COMPLETION.md)。同一观察时点核验当前报价/冻结依据/最后原凭证及窗口，含边界精确比较、未知不造正常、偏离仅需核对；独立权限及两GET/两实际页、回退/软删除证据保护已完成。45不同后端（新15/原30）、785前端、最终微信/H5、300操作1044引用/99路由/56挂载及原基线保持通过。无新迁移，沿V056/116表。下一[R8c1a获批同款经验受控详情与引用](R8C1A_EXPERIENCE_DETAIL_NEXT_PLAN.md)，后续R8c及整阶段门禁完成后统一上传全部源码/迁移/测试/文档；当前HEAD仍d4c7763，无push/PR更新。下方保留历史。
+
+> **2026-10-16 R8b3c1本地完成**：[报价版本价格来源执行](R8B3C1_PRICE_SOURCE_EXECUTION.md)、[验收](../testing/LOCAL_R8B3C1_PRICE_SOURCE_ACCEPTANCE.md)。用户确认按具体版本/内容单位车型范围/来源/窗口及含边界区间；独立权限、六API、真实来源哈希、草稿CAS/发布冻结/停止、永久原键及实际配置页已实现。44不同后端/771前端、最终微信/H5与V056/116表重放通过。当前仅配置，下一[c2只读比较](R8B3C2_PRICE_COMPARISON_NEXT_PLAN.md)，再R8b销项/R8c/整阶段门禁；全部代码和文档仅本地，无push/PR更新。下方保留历史。
+
+> **2026-10-16 R8b3b本地完成**：[本店最小服务关系执行](R8B3B_CUSTOMER_RELATIONS_EXECUTION.md)、[验收](../testing/LOCAL_R8B3B_CUSTOMER_RELATIONS_ACCEPTANCE.md)。用户确认店长本店最小汇总与车型/服务时间、不显示联系或车辆标识、原R7逐单逐条授权；两只读API和两实际页面、来源未知及范围/撤销校验已实现。43不同后端/757前端、最终微信/H5、292操作/96路由通过；无新迁移，仍115表。下一[来源价格监控](R8B3C_PRICE_MONITORING_NEXT_PLAN.md)，再R8b销项/R8c/整阶段门禁；全部R8代码和文档仅本地，无push/PR更新。下方保留历史。
+
+> **2026-10-16 R8b3a本地完成**：[只读经营看板执行](R8B3A_BUSINESS_DASHBOARD_EXECUTION.md)、[验收](../testing/LOCAL_R8B3A_BUSINESS_DASHBOARD_ACCEPTANCE.md)。独立经营权限/三GET/运营与本店店长两页，八指标来源与正式/测试/未知、跨月退款负差额和独立冻结月结已实现；65不同后端/745前端、最终微信/H5及V055/115表重放通过。下一[客户关系/主动授权](R8B3B_CUSTOMER_AUTHORIZATION_NEXT_PLAN.md)，再价格监控/R8c/整阶段门禁；所有R8代码和文档仅本地，无push/PR更新。下方保留历史。
+
+> **2026-10-16 R8b2b/R8b2本地完成**：[月结查看与恢复执行](R8B2B_MONTHLY_ASSESSMENT_UI_EXECUTION.md)、[考核销项](R8B2_ASSESSMENT_COMPLETION.md)。服务器当前版本/历史、店长本店/员工本人范围、七读取API及运营确认/持久恢复和两实际页面已接通。51不同后端/728前端、最终微信/H5及115表重放通过；无新迁移。下一[R8b3经营、客户授权与价格监控](R8B3_BUSINESS_NEXT_PLAN.md)，再R8c及整阶段门禁；整个R8完成前全部代码和文档留本地，无push/PR更新。下方保留历史。
+
+> **2026-10-16 R8b2a本地完成**：[月度快照与计算后端执行](R8B2A_MONTHLY_SNAPSHOT_EXECUTION.md)、[验收](../testing/LOCAL_R8B2A_MONTHLY_SNAPSHOT_ACCEPTANCE.md)。已确认次月结算/全退原月剔除/来源未知/修订留旧；真实资格与双券/正式完成证据、一致快照、CAS/永久恢复及四运营API已实现，47不同后端/709前端回归和V054/115表通过。下一[R8b2b月结页面与本店读取](R8B2B_MONTHLY_ASSESSMENT_UI_NEXT_PLAN.md)，本步不声明页面或整个R8已完成；整R8完成前全部代码和文档留本地，无push/PR更新。下方保留历史。
+
+> **2026-10-16 R8b1本地完成**：[门店考核来源政策执行](R8B1_ASSESSMENT_POLICY_EXECUTION.md)、[验收](../testing/LOCAL_R8B1_ASSESSMENT_POLICY_ACCEPTANCE.md)。独立can_assessment、真实门店、未来完整北京月份、40/40/20固定权重和来源目标/必需证据/等级、CAS/发布冻结/停止及永久原请求恢复已实现。43不同后端/709前端、微信/H5和V053/112表通过；配置不生成成绩，未知不补历史。下一[R8b2月份样本与计算](R8B2_ASSESSMENT_SAMPLES_NEXT_PLAN.md)；整个R8完成前全部代码和文档仅本地，无push或PR更新。下方保留历史。
+
+> **2026-10-16 R8a3c/R8a本地完成**：[本人兑换执行](R8A3C_OWNER_EXCHANGE_EXECUTION.md)、[积分闭环销项](R8A_POINTS_COMPLETION.md)。本人目录/真实资格、冻结报价确认、账号隔离原请求恢复、成功记录/券入口已接通。62不同后端/701前端、微信/H5及111表重放通过。下一[R8b1考核规则来源与配置](R8B1_ASSESSMENT_POLICY_NEXT_PLAN.md)；整个R8完成前不上传。
+
+> **2026-10-16 R8a3b本地完成**：[原子兑换执行](R8A3B_ATOMIC_EXCHANGE_EXECUTION.md)。已核验余额扣分、模板累计限额、本人券/POINTS来源/库存/审计与永久回执同事务，修复真实末券并发间隙锁死锁，补收支兼容。98不同后端/689前端、微信/H5、111表及旧凭证保留通过。下一[R8a3c本人兑换确认与恢复](R8A3C_OWNER_EXCHANGE_NEXT_PLAN.md)；整个R8完成前不上传。
+
+> **2026-10-16 R8a3a本地完成**：[兑换目录执行](R8A3A_EXCHANGE_CATALOG_EXECUTION.md)。已确认双券种、模板跨版本累计限额和返分规则；独立积分运营的真实精选来源/价/限额/窗口、版本冻结及恢复已实现。31不同后端/686前端、微信/H5及110表重放通过。下一R8a3b原子扣分发券，尚未开放兑换；整R8完成前不上传。
+
+> **2026-10-16 R8a2本地完成**：可信会话来源、三任务源事务/IO后证据、唯一冻结事件、可靠积分账本与系统审计、永久原日期签到请求、本人已核验积分/任务/分页明细及恢复已实现。旧余额保留待核对，不导入；获分/正式身份/AI来源开关默认关闭，兑换仍R8a3，正式接入/真机仍R9。54个不同后端、679前端、最终微信/H5及V050/109表重放通过，见[执行](R8A2_POINTS_LEDGER_EXECUTION.md)、[验收](../testing/LOCAL_R8A2_POINTS_LEDGER_ACCEPTANCE.md)。下一[R8a3可信积分兑换](R8A3_POINTS_EXCHANGE_NEXT_PLAN.md)。**整个R8完成后再统一上传全部代码、迁移、测试和文档；当前没有R8 push或PR更新。** 下方保留历史。
+
+> **2026-10-16 R8a1本地完成**：用户已确认三类积分任务和来源配置/未知/不补历史/TEST隔离；独立can_points、版本化任务来源/分值/窗口、草稿CAS/发布冻结/停止、永久创建意图和受限配置页已实现。46个不同后端用例、671前端、微信/H5、V049/105表重放及86路由/261操作通过，见[执行](R8A1_POINTS_POLICY_EXECUTION.md)、[验收](../testing/LOCAL_R8A1_POINTS_POLICY_ACCEPTANCE.md)。下一[R8a2可信任务事件与账本](R8A2_POINTS_LEDGER_NEXT_PLAN.md)；配置不发积分/券、不导入旧余额，兑换尚未开放。**整个R8完成后才统一上传全部代码/迁移/测试/文档，本步没有R8上传或PR更新。** R7已上传PR153最终d4c7763六项成功（后端1230/前端664），未合并或发布。下方保留历史。
+
 > **整R7已统一上传 [PR153](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/153)**：全部功能及收尾代码、V044–V048迁移、测试和文档共168个文件，业务提交c856eb9，R7子阶段无中间上传。664前端、微信/H5/四兼容Web及104表重放通过；上传前本地其余后端快照499项通过，真实上传/Compose受Docker Hub阻断，最终完整六项CI与实际后端数量以PR153当前head正文为准，不将进行中写成功。未合并或发布。见[整R7销项](R7_REQUIREMENT_CLOSURE.md)、[统一验收](../testing/LOCAL_R7_COMPLETION_ACCEPTANCE.md)和[下一R8](R8_IMPLEMENTATION_PLAN.md)。下方保留阶段历史。
 
 > **2026-10-16 整R7收尾核对与补缺已完成**：登录回跳、技师显式草稿/原报工签字恢复、配置有界恢复和共享履约未知正文冻结已接入；664前端、微信/H5、四兼容Web、V048/104表重放通过。完整其余后端运行中，真实上传/Compose实际烟测受Docker Hub阻断，不能称全套本地通过。见[需求销项](R7_REQUIREMENT_CLOSURE.md)、[执行](R7_COMPLETION_EXECUTION.md)、[统一验收](../testing/LOCAL_R7_COMPLETION_ACCEPTANCE.md)和[恢复边界](R7_RECOVERY_MATRIX.md)。全部R7完成后同批上传所有代码/迁移/测试/文档，当前尚未上传；下一[R8积分先行](R8_IMPLEMENTATION_PLAN.md)，最后R9。下方保留阶段历史。

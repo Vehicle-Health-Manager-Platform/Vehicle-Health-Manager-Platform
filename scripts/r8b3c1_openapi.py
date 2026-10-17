@@ -1,0 +1,22 @@
+"""Exact quote version evidence and explicitly confirmed price source ranges."""
+def add_r8b3c1(d,operation):
+    s=d['components']['schemas'];ref=lambda n:{'$ref':'#/components/schemas/'+n};strict=lambda p:{'type':'object','additionalProperties':False,'required':list(p),'properties':p};nullable=lambda p:{'anyOf':[p,{'type':'null'}]}
+    ident={'type':'integer','minimum':1,'maximum':9007199254740990};stamp={'type':'string','format':'date-time'};hash_value={'type':'string','pattern':'^[a-f0-9]{64}$'};money={'type':'string','pattern':'^(?:0|[1-9][0-9]{0,7})\\.[0-9]{2}$','description':'两位正数0.01–99999999.99；下限≤上限，含边界。'};text=lambda lo,hi:{'type':'string','minLength':lo,'maxLength':hi}
+    s['OperatorAuthenticatedUser']['properties']['can_price_monitor']={'type':'boolean'};s['OperatorAuthenticatedUser']['required'].append('can_price_monitor')
+    s['PriceQuoteSnapshot']=strict({'quote_id':ident,'quote_version_id':nullable(ident),'quote_version':nullable(ident),'price':{'type':'string','pattern':'^-?(?:0|[1-9][0-9]{0,7})\\.[0-9]{2}$','description':'READY及冻结依据必须正数；UNKNOWN可显示遗留非正价格，不能确认。'},'merchant':strict({'id':ident,'name':text(1,128),'region_code':{'type':'string'}}),'project':strict({'id':ident,'revision':ident,**{k:{'type':'string'} for k in ['project_name','service_content','quality_standard','source_note']}})})
+    s['PriceQuoteSource']=strict({'quote_id':ident,'state':{'enum':['READY','UNKNOWN']},'source':ref('PriceQuoteSnapshot'),'source_hash':nullable(hash_value)})
+    fields={'quote_id':ident,'source_hash':hash_value,'lower_price':money,'upper_price':money,'price_unit':text(1,32),'applicability_note':text(2,256),'source_note':text(2,256),'scope_confirmed':{'const':True},'valid_from':stamp,'valid_to':stamp}
+    s['PricePolicyCreate']=strict(fields);s['PricePolicyUpdate']=strict({**fields,'expected_revision':ident});s['PricePolicyStatus']=strict({'expected_revision':ident,'status':{'enum':['PUBLISHED','STOPPED']}})
+    s['PricePolicy']=strict({**fields,'id':ident,'source_snapshot':ref('PriceQuoteSnapshot'),'revision':ident,'status':{'enum':['DRAFT','PUBLISHED','STOPPED']},'rule_version':{'const':'R8B_PRICE_SOURCE_V1'},'created_at':stamp,'published_at':nullable(stamp),'stopped_at':nullable(stamp),'comparison_available':{'const':False}})
+    for name,item in [('PriceQuotePage','PriceQuoteSource'),('PricePolicyPage','PricePolicy')]:s[name]=strict({'items':{'type':'array','maxItems':20,'items':ref(item)},'total':{'type':'integer','minimum':0},'page':{'type':'integer','minimum':1,'maximum':1000000},'page_size':{'const':20}})
+    routes=[('get','/api/admin/price-monitor/quotes','PriceQuotePage',None,True),('get','/api/admin/price-monitor/policies','PricePolicyPage',None,True),('post','/api/admin/price-monitor/policies','PricePolicy','PricePolicyCreate',False),('get','/api/admin/price-monitor/policies/{id}','PricePolicy',None,False),('put','/api/admin/price-monitor/policies/{id}','PricePolicy','PricePolicyUpdate',False),('put','/api/admin/price-monitor/policies/{id}/status','PricePolicy','PricePolicyStatus',False)]
+    for method,path,result,body,paged in routes:
+        item=operation(method,path,'具体报价版本的价格监控来源依据','F20');item['x-roles']='OPERATOR(can_price_monitor)';item['x-implementation-status']='r8b3c1-price-source-config-implemented'
+        item['description']='no-store，独立can_price_monitor默认0。仅当前有效门店/项目/上架报价，核对最新版本/价格/原保存审计，遗留或破损来源UNKNOWN。运营确认内容/单位/车型说明、来源及未来窗口/含边界区间。草稿CAS，发布再次核对来源哈希，发布冻结/仅可停止，同报价最多一发布版本；新报价需新依据。创建永久主体/键/规范化正文哈希/原回执，重放先查当前权限，审计与变更同事务。配置不生成偏离判断，comparison_available=false，下一c2。不自动改价/处罚，详见PRICE_MONITOR_SOURCES.md。'
+        item['parameters']=([{'name':'id','in':'path','required':True,'schema':ident}] if '{id}' in path else [])
+        if paged:item['parameters'] += [{'name':'page','in':'query','schema':{'type':'integer','minimum':1,'maximum':1000000}},{'name':'page_size','in':'query','schema':{'const':20}}]
+        if body:
+            item['parameters'].append({'name':'Idempotency-Key','in':'header','required':True,'schema':{'type':'string','format':'uuid'}});item['requestBody']={'required':True,'content':{'application/json':{'schema':ref(body)}}}
+        item['responses']['200']['content']['application/json']['schema']={'allOf':[ref('ApiResponse'),{'type':'object','required':['data'],'properties':{'data':ref(result)}}]}
+        item['responses'].update({'404':{'description':'依据或当前有效报价来源不存在'},'409':{'description':'来源/报价/版本/时间已变或已有发布依据'},'503':{'description':'数据库/事务暂不可用'}})
+        d['paths'].setdefault(path,{})[method]=item

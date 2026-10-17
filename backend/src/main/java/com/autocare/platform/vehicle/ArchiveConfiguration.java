@@ -20,8 +20,8 @@ public class ArchiveConfiguration {
     @Bean HealthObservationService healthObservationService(JdbcTemplate jdbc,WriteIntegrityService integrity,ObjectMapper mapper,PlatformTransactionManager manager){
         return new HealthObservationService(jdbc,integrity,mapper,manager,java.time.Clock.systemUTC());
     }
-    @Bean ArchiveStructuredService archiveStructuredService(JdbcTemplate jdbc, WriteIntegrityService integrity, ObjectMapper mapper, PlatformTransactionManager transactions) {
-        return new ArchiveStructuredService(jdbc, integrity, mapper, transactions);
+    @Bean ArchiveStructuredService archiveStructuredService(JdbcTemplate jdbc, WriteIntegrityService integrity, ObjectMapper mapper, PlatformTransactionManager transactions,org.springframework.beans.factory.ObjectProvider<com.autocare.platform.order.PointLedger> points) {
+        return new ArchiveStructuredService(jdbc, integrity, mapper, transactions,points.getIfAvailable());
     }
     @Bean ArchiveReportPdfRenderer archiveReportPdfRenderer() { return new ArchiveReportPdfRenderer(); }
     @Bean ArchiveReminderService archiveReminderService(JdbcTemplate jdbc, WriteIntegrityService integrity,

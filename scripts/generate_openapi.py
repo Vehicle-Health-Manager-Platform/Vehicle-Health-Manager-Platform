@@ -16,6 +16,22 @@ from r7b_openapi import add_r7b
 from r7c1_openapi import add_r7c1
 from r7c2_openapi import add_r7c2
 from r7c3_openapi import add_r7c3
+from r8a1_openapi import add_r8a1
+from r8a2_openapi import add_r8a2
+from r8a3a_openapi import add_r8a3a
+from r8a3b_openapi import add_r8a3b
+from r8a3c_openapi import add_r8a3c
+from r8b1_openapi import add_r8b1
+from r8b2a_openapi import add_r8b2a
+from r8b2b_openapi import add_r8b2b
+from r8b3a_openapi import add_r8b3a
+from r8b3b_openapi import add_r8b3b
+from r8b3c1_openapi import add_r8b3c1
+from r8b3c2_openapi import add_r8b3c2
+from r8c1a_openapi import add_r8c1a
+from r8c1b1_openapi import add_r8c1b1
+from r8c1b2a_openapi import add_r8c1b2a
+from r8c1b3a_openapi import add_r8c1b3a
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -1492,6 +1508,22 @@ def main():
     add_r7c1(document, operation)
     add_r7c2(document, operation)
     add_r7c3(document, operation)
+    add_r8a1(document, operation)
+    add_r8a2(document, operation)
+    add_r8a3a(document, operation)
+    add_r8a3b(document, operation)
+    add_r8a3c(document, operation)
+    add_r8b1(document, operation)
+    add_r8b2a(document, operation)
+    add_r8b2b(document, operation)
+    add_r8b3a(document, operation)
+    add_r8b3b(document, operation)
+    add_r8b3c1(document, operation)
+    add_r8b3c2(document, operation)
+    add_r8c1a(document, operation)
+    add_r8c1b1(document, operation)
+    add_r8c1b2a(document, operation)
+    add_r8c1b3a(document, operation)
     OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     count = sum(len(item) for item in document["paths"].values())
     print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")

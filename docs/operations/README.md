@@ -1,5 +1,39 @@
 # 部署与运维文档
 
+> [R8c1b3a公开问答后端操作](PUBLIC_COMMUNITY_QUESTIONS.md)：V059/124表、独立默认关闭公开开关；旧/测试消息不补正式来源，现有can_review仅审核公开预览，不读取私有详情。
+
+> [R8c1b2私有问答页面与恢复](PRIVATE_COMMUNITY_QUESTIONS.md)：车主/当前获派详情、最小队列/政策四页；独立权限落点、永久创建及非创建23小时原请求恢复，公开仍b3。
+
+> [R8c1b2a私有问答后端操作](PRIVATE_COMMUNITY_QUESTIONS.md)：V058/122表、两权限默认0与16字段登录、独立非实时受理及私有范围；本步无问答页面入口。
+
+> [R8c1b1运营精选操作](CURATED_EXPERIENCES.md)：V057/117表、默认关闭can_community_curate、14字段登录、配置/停止/原键恢复和手动引用导入。
+
+> [R8c1a同款经验详情与引用](EXPERIENCE_DETAIL.md)：原开关和审核授权、当前重验/撤回失效、应用内复制入口及登录返回，无新迁移。
+
+> [R8b3c2价格比较操作](PRICE_COMPARISONS.md)：观察时点/来源/窗口核对，失效或改版未知、偏离仅需核对；无新迁移或自动处置。
+
+> [R8b3c1价格来源操作](PRICE_MONITOR_SOURCES.md)：V056、默认关闭独立can_price_monitor、13字段登录及原请求恢复。
+
+> [R8b3b本店客户关系操作](CUSTOMER_RELATIONS.md)：无新增迁移或长期档案授权，店长专属只读与原逐条授权入口。
+
+> [R8b3a经营看板操作](BUSINESS_DASHBOARD.md)：V055默认关闭can_analytics，离线授权后读取；不是结算余额。
+
+> [R8b2b月结确认、历史和账号恢复](MONTHLY_ASSESSMENT_VIEWS.md)；无新增迁移，115表。整个R8完成前源码与文档保留本地。
+
+> [R8b2a月结、退款原月修订、永久原请求与V054](ASSESSMENT_SNAPSHOTS.md)：115表，无成绩回填，整R8完成前不上传。
+
+> [R8b1考核独立授权、V053及政策操作](ASSESSMENT_POLICIES.md)；112表，无政策/等级种子，整R8完成前不上传。
+
+> [R8a3c车主兑换确认、断线与账号恢复](OWNER_POINT_EXCHANGES.md)，沿用V052/111表，无新增迁移；整个R8完成前代码和文档保留本地。
+
+> [R8a3b独立兑换开关、V052及永久回执](POINT_EXCHANGES.md)；本地98不同后端验收通过，整个R8完成前不上传源码或文档。
+
+> [R8a3a兑换目录、V051及独立原请求恢复](POINT_EXCHANGE_CATALOG.md)；整个R8完成前所有源码和文档保留本地。
+
+> [R8a2任务、余额与原日期恢复](POINT_LEDGER.md)；整个R8完成前保留本地，不做中间上传。
+
+> [R8a1独立权限与任务配置操作](POINT_TASK_POLICIES.md)；整个R8完成前不上传中间内容。
+
 > 整R7：[恢复/登录/配置安全窗口](../progress/R7_RECOVERY_MATRIX.md)，[统一验收与本地环境限制](../testing/LOCAL_R7_COMPLETION_ACCEPTANCE.md)。已有卷V044–V048升级先备份再顺序显式迁移，初始化挂载不替代升级。
 
 > R7c3 第三步：[诊断消息使用和恢复](DIAGNOSIS_NOTIFICATIONS.md)。

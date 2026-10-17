@@ -1,5 +1,39 @@
 # 测试资料
 
+> [R8c1b3a公开问答后端验收](LOCAL_R8C1B3A_PUBLIC_QA_ACCEPTANCE.md)：原来源/审核撤回真实库复验、840前端/微信/H5及V059/124表记录；实际公开页面下一b3b。
+
+> [R8c1b2b页面与恢复验收](LOCAL_R8C1B2B_PRIVATE_QA_UI_ACCEPTANCE.md)：840前端（新26）含实际页面脚本/恢复/权限/确认测试、最终微信/H5；后端/DDL未改，沿b2a38及V058/122表。
+
+> [R8c1b2a私有问答后端验收](LOCAL_R8C1B2A_PRIVATE_QA_ACCEPTANCE.md)：真实库/权限/HTTP执行结果与814前端、微信/H5、V058/122表记录；实际页面及恢复下一b2b，整R8门禁另行执行。
+
+> [R8c1b1精选及引用导入验收](LOCAL_R8C1B1_CURATED_EXPERIENCES_ACCEPTANCE.md)：73不同后端/811前端、最终微信/H5与V057/117表重放通过；整R8门禁及统一上传仍待后续。
+
+> [R8c1a受控详情本地验收](LOCAL_R8C1A_EXPERIENCE_DETAIL_ACCEPTANCE.md)：54不同后端/796前端、最终微信/H5通过；无新迁移或正式分享，整R8完成前不上传。
+
+> [R8b3c2只读价格比较验收](LOCAL_R8B3C2_PRICE_COMPARISON_ACCEPTANCE.md)：45不同后端/785前端、最终微信/H5通过；最新事件防回退及软删除凭证保护已复验，整R8完成前不上传。
+
+> [R8b3c1价格来源本地验收](LOCAL_R8B3C1_PRICE_SOURCE_ACCEPTANCE.md)：44不同后端/771前端、最终微信/H5及V056/116表通过；整个R8完成前不上传。
+
+> [R8b3b本店服务关系验收](LOCAL_R8B3B_CUSTOMER_RELATIONS_ACCEPTANCE.md)：43不同后端/757前端、最终微信/H5通过；无新迁移，整R8完成前不上传。
+
+> [R8b3a经营看板本地验收](LOCAL_R8B3A_BUSINESS_DASHBOARD_ACCEPTANCE.md)：65不同后端/745前端、微信/H5及V055/115表通过；整R8完成前不上传。
+
+> [R8b2b月结页面与范围读取验收](LOCAL_R8B2B_MONTHLY_ASSESSMENT_UI_ACCEPTANCE.md)：51不同后端/728前端、最终微信/H5、115表及原请求恢复通过。
+
+> [R8b2a月结后端本地验收](LOCAL_R8B2A_MONTHLY_SNAPSHOT_ACCEPTANCE.md)：47不同后端/709前端回归、115表重放、不可变修订和全退原月剔除通过。
+
+> [R8b1考核政策本地验收](LOCAL_R8B1_ASSESSMENT_POLICY_ACCEPTANCE.md)：43不同后端/709前端、微信/H5、V053/112表及独立权限/来源/恢复通过。
+
+> [R8a3c本人兑换本地验收](LOCAL_R8A3C_OWNER_EXCHANGE_ACCEPTANCE.md)：62不同后端/701前端、最终微信/H5、111表及旧凭证保留通过，无新迁移。
+
+> [R8a3b原子兑换验收](LOCAL_R8A3B_ATOMIC_EXCHANGE_ACCEPTANCE.md)，98不同后端/689前端、微信/H5和111表升级保留验证通过；失败修复及去重计数详见正文。
+
+> [R8a3a兑换目录本地验收](LOCAL_R8A3A_EXCHANGE_CATALOG_ACCEPTANCE.md)；31后端/686前端、微信/H5及110表通过。实际兑换后续，整R8完成前不上传。
+
+> [R8a2本地验收](LOCAL_R8A2_POINTS_LEDGER_ACCEPTANCE.md)；整个R8完成前保留本地，不做中间上传。
+
+> [R8a1本地验收：46后端/671前端/105表](LOCAL_R8A1_POINTS_POLICY_ACCEPTANCE.md)，整个R8完成前无中间上传。
+
 > 整R7已同批上传[PR153](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/153)，[统一验收](LOCAL_R7_COMPLETION_ACCEPTANCE.md)保留本地实测和网络限制，最终完整CI结果以PR当前head正文为准。
 
 > 整R7：[最终统一验收](LOCAL_R7_COMPLETION_ACCEPTANCE.md)，664前端和构建/104表通过；完整其余后端运行中，真实上传镜像/Compose实际烟测受本地网络阻断，最终远程六项不得提前写成功。

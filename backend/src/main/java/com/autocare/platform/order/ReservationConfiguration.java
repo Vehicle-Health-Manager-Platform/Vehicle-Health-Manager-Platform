@@ -11,12 +11,26 @@ import org.springframework.transaction.PlatformTransactionManager;
 @ConditionalOnProperty("MYSQL_HOST")
 @EnableScheduling
 public class ReservationConfiguration {
+    @Bean PointLedger pointLedger(ReservationStore db,PointTaskPolicies policies,@org.springframework.beans.factory.annotation.Value("${WECHAT_APP_ID:}")String app,@org.springframework.beans.factory.annotation.Value("${POINTS_EARNING_ENABLED:false}")boolean enabled,@org.springframework.beans.factory.annotation.Value("${POINTS_AI_VERIFIED_ENABLED:false}")boolean aiEnabled,com.autocare.platform.ai.DeepSeekClient ai){return new PointLedger(db,policies,app,enabled,aiEnabled,ai::officialEndpoint);}
+
+    @Bean PointTaskPolicies pointTaskPolicies(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators){return new PointTaskPolicies(db,operators);}
+    @Bean PricePolicies pricePolicies(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators){return new PricePolicies(db,operators);}
+    @Bean ExperienceCurations experienceCurations(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators,ExperienceModeration experiences){return new ExperienceCurations(db,operators,experiences);}
+    @Bean PriceComparisons priceComparisons(ReservationStore db,PricePolicies policies,com.autocare.platform.gateway.identity.OperatorIdentity operators){return new PriceComparisons(db,policies,operators);}
+    @Bean AssessmentPolicies assessmentPolicies(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators){return new AssessmentPolicies(db,operators);}
+    @Bean PointExchangeCatalog pointExchangeCatalog(ReservationStore db,CouponInventory coupons,com.autocare.platform.gateway.identity.OperatorIdentity operators){return new PointExchangeCatalog(db,coupons,operators);}
+    @Bean PointExchanges pointExchanges(ReservationStore db,PointExchangeCatalog catalog,CouponInventory coupons,PointLedger ledger,@org.springframework.beans.factory.annotation.Value("${POINTS_EXCHANGE_ENABLED:false}")boolean enabled){return new PointExchanges(db,catalog,coupons,ledger,enabled);}
+    @Bean PointExchangeOffers pointExchangeOffers(ReservationStore db,PointExchangeCatalog catalog,PointLedger ledger,@org.springframework.beans.factory.annotation.Value("${POINTS_EXCHANGE_ENABLED:false}")boolean enabled){return new PointExchangeOffers(db,catalog,ledger,enabled);}
+    @Bean PublicCommunityQuestions publicCommunityQuestions(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators,CommunityQuestionPolicies policies,ExperienceModeration experiences,@org.springframework.beans.factory.annotation.Value("${COMMUNITY_PUBLICATION_ENABLED:false}")boolean enabled,@org.springframework.beans.factory.annotation.Value("${WECHAT_APP_ID:}")String app){return new PublicCommunityQuestions(db,operators,policies,experiences,enabled,app);}
+    @Bean CommunityQuestionPolicies communityQuestionPolicies(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators){return new CommunityQuestionPolicies(db,operators);}
+    @Bean CommunityQuestions communityQuestions(ReservationStore db,CommunityQuestionPolicies policies,PointLedger identity){return new CommunityQuestions(db,policies,identity);}
     @Bean DiagnosisServicePolicies diagnosisServicePolicies(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators){return new DiagnosisServicePolicies(db,operators);}
     @Bean DiagnosisNotifications diagnosisNotifications(ReservationStore db,DiagnosisServicePolicies policies){return new DiagnosisNotifications(db,policies);}
     @Bean DiagnosisCases diagnosisCases(ReservationStore db,DiagnosisServicePolicies policies,InviteDiagnosisPolicies eligibility){return new DiagnosisCases(db,policies,eligibility);}
     @Bean ServiceNotifications serviceNotifications(ReservationStore db,@org.springframework.beans.factory.annotation.Value("${WECHAT_APP_ID:}")String appId){return new ServiceNotifications(db,appId);}
     @Bean ServiceTaskScope serviceTaskScope(ReservationStore db,TechnicianAssignments assignments,@org.springframework.beans.factory.annotation.Value("${WECHAT_APP_ID:}")String appId){return new ServiceTaskScope(db,assignments,appId);}
     @Bean ServiceWorkbench serviceWorkbench(ServiceTaskScope scope){return new ServiceWorkbench(scope);}
+    @Bean CustomerRelations customerRelations(ServiceTaskScope scope){return new CustomerRelations(scope);}
     @Bean OrderArchiveGrants orderArchiveGrants(ServiceTaskScope scope){return new OrderArchiveGrants(scope);}
     @Bean OwnerServiceEvidence ownerServiceEvidence(ReservationStore db){return new OwnerServiceEvidence(db);}
     @Bean InviteDiagnosisPolicies inviteDiagnosisPolicies(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators){return new InviteDiagnosisPolicies(db,operators);}
@@ -28,6 +42,9 @@ public class ReservationConfiguration {
     @Bean CouponTransactions couponTransactions(ReservationStore db){return new CouponTransactions(db);}
     @Bean CouponServiceRedemption couponServiceRedemption(ReservationStore db){return new CouponServiceRedemption(db);}
     @Bean CouponRecovery couponRecovery(ReservationStore db){return new CouponRecovery(db);}
+    @Bean BusinessDashboard businessDashboard(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators,PlatformTransactionManager manager){return new BusinessDashboard(db,operators,manager);}
+    @Bean AssessmentViews assessmentViews(ReservationStore db,AssessmentSnapshots snapshots,com.autocare.platform.gateway.identity.OperatorIdentity operators){return new AssessmentViews(db,snapshots,operators);}
+    @Bean AssessmentSnapshots assessmentSnapshots(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators,AssessmentPolicies policies,PlatformTransactionManager manager){return new AssessmentSnapshots(db,operators,policies,manager);}
     @Bean ReservationStore reservationStore(JdbcTemplate jdbc,ObjectMapper mapper,WriteIntegrityService writes,PlatformTransactionManager manager){return new ReservationStore(jdbc,mapper,writes,Clock.systemUTC(),manager);}
     @Bean ReservationExpiry reservationExpiry(ReservationStore db){return new ReservationExpiry(db);}
     @Bean ReservationSlots reservationSlots(ReservationStore db){return new ReservationSlots(db);}
