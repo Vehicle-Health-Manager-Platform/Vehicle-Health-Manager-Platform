@@ -80,7 +80,7 @@ function sheet(){uni.redirectTo({url:`/pages/check/pickup-detail?id=${order}&rol
       <text>车主提供的六位预约码</text><input v-model="form.code" type="number" maxlength="6" :disabled="disabled" placeholder="保留前导零" />
       <text v-if="message" role="status">{{message}}</text><button v-if="permission" @tap="images.authorize">去开启相机 / 相册权限</button>
       <text v-if="write.message" role="status">{{write.message}}</text><button v-if="['unauthorized','forbidden'].includes(write.failureKind)" @tap="login">重新登录</button>
-      <button v-if="write.saved" @tap="sheet">查看接车单</button><button v-else :disabled="disabled||!complete" :loading="write.busy" @tap="submit">提交完整接车单</button>
+      <button v-if="write.saved" @tap="sheet">查看接车单</button><button v-else class="reservation-primary" :disabled="disabled||!complete" :loading="write.busy" @tap="submit">提交完整接车单</button>
       <text>提交后仍需车主确认和派工，本步不能开始施工。</text>
     </view>
   </view>

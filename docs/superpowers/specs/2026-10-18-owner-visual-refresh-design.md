@@ -108,6 +108,21 @@
 
 安全依据：`apps/miniapp/test/` 下 JSON/JS/CJS 里**颜色字面量出现 0 次**，没有任何测试断言具体色值；916 项测试断言的是请求契约与页面装配。因此这批替换的风险面只有视觉，改完 916/916 仍全绿、两端构建均通过。
 
+## 第三批：主操作标记
+
+共享层把 `.reservation-page button` 统一成发丝描边的中性按钮后，出现一个副作用：**旧页面的主操作不再突出**（80 个页面复用这个壳，无法靠全局规则判断哪一个是主操作，`:first-of-type` 之类的位置推断并不可靠——有的页面第一个按钮是筛选）。
+
+因此不改共享规则，只在四个高频业务页面手工标记 `.reservation-primary`（该类早已在 `reservations.css` 定义，此处只加类名，不改样式与事件）：
+
+| 页面 | 主操作 |
+| --- | --- |
+| `pages/merchant/orders.vue` | 扫码接车 |
+| `pages/merchant/pickup.vue` | 提交完整接车单 |
+| `pages/merchant/coupon-redeem.vue` | 扫描车主服务券授权码 |
+| `pages/technician/work.vue` | 确认提交完整报工 |
+
+只动 `class` 属性，`:disabled`、`:loading`、`@tap` 与 `data-testid` 全部原样。其余页面留给后续按页精修时逐个判断。
+
 ## 不可变量清单
 
 改动过程中逐条守住，任何一条破坏都会表现为"UI 好了但功能坏了"：

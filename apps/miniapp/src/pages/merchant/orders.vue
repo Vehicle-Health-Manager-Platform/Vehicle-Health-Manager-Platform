@@ -30,7 +30,7 @@ onUnload(() => { visible = false; scanner.reset(); flow.reset() })
     <text class="reservation-title">本店订单</text>
     <button v-if="!merchantSession.accessToken" @tap="login">前往门店登录</button>
     <template v-else>
-      <button :disabled="scanState.busy" :loading="scanState.busy" @tap="scanner.scan">扫码接车</button>
+      <button class="reservation-primary" :disabled="scanState.busy" :loading="scanState.busy" @tap="scanner.scan">扫码接车</button>
       <text v-if="scanState.message" role="status">{{ scanState.message }}</text>
       <view class="filters">
         <button :class="{ selected: status === '' }" @tap="changeStatus('')">全部</button>

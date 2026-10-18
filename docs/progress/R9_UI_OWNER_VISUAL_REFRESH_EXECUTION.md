@@ -81,6 +81,17 @@
 
 脚本留在 `.cache/unify_palette.py`（未入库），映射表与例外原因写进规格文档，便于后续新增页面沿用同一套值。
 
+## 第三批：主操作标记（4 个关键业务页）
+
+共享层把 `.reservation-page button` 统一成中性描边后，**旧页面的主操作不再突出**——这是升级共享层的副作用。80 个页面复用这个壳，用 `:first-of-type` 之类的位置规则去猜主操作并不可靠（有的页面第一个按钮是筛选芯片），所以不改共享规则，只手工标记 4 个高频页面：
+
+- `merchant/orders.vue` → 扫码接车
+- `merchant/pickup.vue` → 提交完整接车单
+- `merchant/coupon-redeem.vue` → 扫描车主服务券授权码
+- `technician/work.vue` → 确认提交完整报工
+
+只加 `class="reservation-primary"`（该类早已在 `reservations.css` 定义），`:disabled`/`:loading`/`@tap`/`data-testid` 原样。改后 916/916 仍全绿。
+
 ## 没有做的事
 
 - 逐页精修只覆盖车主端 9 个文件。色板已全仓统一（54 文件），但商家端、技师端、运营端页面的布局与信息层级仍是旧结构，**不声明"整体 UI 优化完成"**。

@@ -90,7 +90,7 @@ onUnload(() => { visible.value = false; clear() })
         <button :disabled="locked||!!reportWrite.saved||form.noParts||form.parts.length>=20" @tap="addPart">添加实际使用配件</button>
         <checkbox-group @change="form.noParts=$event.detail.value.includes('none')"><label><checkbox value="none" :checked="form.noParts" :disabled="locked||!!reportWrite.saved||form.parts.length>0" />本次未使用配件</label></checkbox-group>
         <text>实际工时（分钟）</text><input v-model="form.minutes" type="number" maxlength="4" :disabled="locked||!!reportWrite.saved" placeholder="整数分钟，1–1440" />
-        <button :disabled="locked||!!reportWrite.saved" :loading="reportWrite.busy" @tap="confirm('report')">确认提交完整报工</button>
+        <button class="reservation-primary" :disabled="locked||!!reportWrite.saved" :loading="reportWrite.busy" @tap="confirm('report')">确认提交完整报工</button>
       </template>
       <text v-else-if="!work.report && !canWork && work.order_status!=='DISPUTED'">需本人接单且订单处于施工中，才能提交报工。请返回工单确认接单，或刷新订单状态。</text>
       <template v-if="work.report">
