@@ -1,6 +1,6 @@
 # R9 A4c-1：隔离数据库备份恢复与迁移回退
 
-2026-10-18。前置PR161；分支 `codex/r9-a4c1-database-recovery`。本地演练通过，代码/测试/CI/文档准备上传；完整远程CI另记，不合并或部署。
+2026-10-18。前置PR161；分支 `codex/r9-a4c1-database-recovery`。本地演练通过，代码/测试/CI/文档已上传[PR162](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/162)（代码提交 `8a298fb`），依赖PR161；完整远程CI待完成、保持草稿，不合并或部署。
 
 ## 本轮实现
 
