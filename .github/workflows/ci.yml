@@ -78,6 +78,7 @@ jobs:
           python-version: '3.11'
       - run: python -m unittest discover -s scripts -p test_core_coverage.py -v
       - run: python -m unittest discover -s scripts -p test_isolated_journeys.py -v
+      - run: python -m unittest discover -s scripts -p test_database_recovery.py -v
       - run: python scripts/generate_traceability.py
       - run: python scripts/build_init_sql.py
       - run: python scripts/generate_openapi.py
@@ -89,6 +90,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: bash scripts/verify_mysql_schema.sh
+  database-recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Exercise isolated backup restore and upgrade rollback
+        run: python scripts/run_database_recovery.py
+      - name: Save recovery evidence without SQL dumps
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: database-recovery-evidence
+          retention-days: 14
+          if-no-files-found: error
+          include-hidden-files: true
+          path: .cache/database-recovery-*/report.json
   compose-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 15
