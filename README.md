@@ -1,3 +1,5 @@
+> **A4b 本地旅程通过（2026-10-18）**：真实 HTTP + 全新 MySQL 的车主档案、预约到归档、入驻审核三条通过，失败/错误/跳过0；另6项新报告门禁与14项既有门禁测试通过。前置PR160六项CI全绿。正式账号激活仍未实现，留B1；全API Postman/Newman覆盖、性能和恢复不算已完成。下一A4c隔离备份/迁移→性能，再A段收口→A5→B→C。阶段代码、测试、报告与文档准备上传，完整CI另记。
+
 # 汽车健康管家平台
 
 > **A4a已上传**：[PR160](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/160)含覆盖率profile、门禁/测试、CI与实际报告，代码提交 `a410638`，依赖PR159。431项真实核心执行及14项门禁测试通过，核心LINE93.43%/METHOD89.91%；远程全量CI待完成，保持草稿。下一A4b端到端，再A4c性能与恢复。

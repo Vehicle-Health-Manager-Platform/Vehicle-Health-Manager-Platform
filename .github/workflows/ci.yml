@@ -54,6 +54,9 @@ jobs:
       - name: Check declared core business coverage
         if: always()
         run: python scripts/check_core_coverage.py
+      - name: Check isolated HTTP journey evidence
+        if: always()
+        run: python scripts/run_isolated_journeys.py --check-only
       - name: Save coverage and test evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -64,6 +67,7 @@ jobs:
           path: |
             backend/target/site/core-coverage/
             backend/target/core-coverage-summary.json
+            backend/target/isolated-journeys-run.json
             backend/target/surefire-reports/TEST-*.xml
   schema-and-ocr:
     runs-on: ubuntu-latest
@@ -73,6 +77,7 @@ jobs:
         with:
           python-version: '3.11'
       - run: python -m unittest discover -s scripts -p test_core_coverage.py -v
+      - run: python -m unittest discover -s scripts -p test_isolated_journeys.py -v
       - run: python scripts/generate_traceability.py
       - run: python scripts/build_init_sql.py
       - run: python scripts/generate_openapi.py

@@ -14,11 +14,12 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 public class IdentityDatabaseConfig {
     @Bean
     DataSource identityDataSource(@Value("${MYSQL_HOST}") String host,
+                                  @Value("${MYSQL_PORT:3306}") int port,
                                   @Value("${MYSQL_DATABASE}") String database,
                                   @Value("${MYSQL_USER}") String user,
                                   @Value("${MYSQL_PASSWORD}") String password) {
         HikariDataSource source = new HikariDataSource();
-        source.setJdbcUrl("jdbc:mysql://" + host + ":3306/" + database + "?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC");
+        source.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC");
         source.setUsername(user);
         source.setPassword(password);
         source.setMaximumPoolSize(10);

@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "passed": true,
+  "finished_at": "2026-10-18T09:26:56.110687+00:00",
+  "started_from_commit": "796ded718f37b7097ce3848dd29ee153cfa8d588",
+  "execution_mode": "local-execution",
+  "command": [
+    "python",
+    "scripts/run_isolated_journeys.py",
+    "--docker"
+  ],
+  "maven_exit_code": 0,
+  "duration_seconds": 175.81,
+  "host_system": "Windows-10-10.0.26200-SP0",
+  "java_and_migrations_sha256": "2ac1a6bccf1f2c4e28fb1e93fe7ca650f748a7f130db5ea33e63998403b810d9",
+  "sources_unchanged": true,
+  "tests": {
+    "counts": {
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "cases": [
+      "merchantApplicationReviewAndPendingActivationBoundary",
+      "ownerVehicleArchiveAndInquiryPreparation",
+      "reservationThroughPickupServiceRedemptionAndArchive"
+    ]
+  },
+  "report_error": null,
+  "boundaries": [
+    "synthetic identities and CLEAN file metadata",
+    "LOCAL_TEST funds only",
+    "no real WeChat/SMS/AI/upload/device acceptance",
+    "merchant activation remains unimplemented; pending account must reject login",
+    "three HTTP business journeys, not all API or UI coverage"
+  ],
+  "evidence_note": "Actual local execution with working tree source digest; parent commit identifies the starting baseline, not an assertion that A4b was already committed.",
+  "supplementary_identity_regression": {
+    "command": "mvn -B -Dtest=MerchantAuthTest,WechatAuthTest test",
+    "maven_exit_code": 0,
+    "tests": 9,
+    "suites": [
+      {
+        "suite": "com.autocare.platform.MerchantAuthTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "com.autocare.platform.WechatAuthTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ],
+    "boundary": "Existing MockMvc/adapter tests; not real WeChat/SMS acceptance"
+  }
+}
