@@ -1,6 +1,8 @@
 # 当前进度
 
-> **2026-10-18 A2b实施**：受控MP3/PDF上传、独立材料表、扫描/用途/车辆授权及页面显式上传已编码；前端899项、后端相关64项及最终定向7项、微信/H5、完整迁移与13项模拟器均通过，正在阶段上传。当前352操作/131表/62挂载，服务默认关闭。下一A3候选确认；正式设施/识别/真机仍后置。[执行](R9_A2B_CONTROLLED_MATERIAL_EXECUTION.md)。
+> **A2b已上传**：[PR158](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/158)，代码提交 `69e248b`，依赖PR157；本地验收已通过，远程全量CI尚未结束，保持草稿，不合并部署。下一A3候选确认与修正入库。
+
+> **2026-10-18 A2b实施**：受控MP3/PDF上传、独立材料表、扫描/用途/车辆授权及页面显式上传已编码；前端899项、后端相关64项及最终定向7项、微信/H5、完整迁移与13项模拟器均通过，已上传PR158（远程CI待完成）。当前352操作/131表/62挂载，服务默认关闭。下一A3候选确认；正式设施/识别/真机仍后置。[执行](R9_A2B_CONTROLLED_MATERIAL_EXECUTION.md)。
 
 > **2026-10-18 A1/A2a已上传**：预览为[PR156](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/156)，A1设计及A2a本机录音/试听/图片PDF选择、隔离与AI/档案页接入为[PR157](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/157)。最终本地891/891、微信/H5构建及页面装配通过；六项远程CI尚未全部结束，保持草稿。无新增API/迁移；下一A2b受控媒体上传，再A3识别确认和B段真实外部效果，不自动合并/部署。
 

@@ -1,6 +1,8 @@
 # 后续执行顺序：独立功能优先，外部接入后置
 
-> **A2b更新**：已实现独立辅助材料策略/元数据、受控上传/访问和显式页面上传，本地验证通过，正在阶段上传。A2不等于识别完成；下一A3候选确认，真实识别留B2。[执行](R9_A2B_CONTROLLED_MATERIAL_EXECUTION.md)。
+> **最新交付**：A2b代码/迁移/测试/文档已上传[PR158](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/158)，本地验证通过、远程CI待结束。下一A3 → A4 → A5 → B外部接入 → C真机发布。
+
+> **A2b更新**：已实现独立辅助材料策略/元数据、受控上传/访问和显式页面上传，本地验证通过，已上传PR158（远程CI待完成）。A2不等于识别完成；下一A3候选确认，真实识别留B2。[执行](R9_A2B_CONTROLLED_MATERIAL_EXECUTION.md)。
 
 日期：2026-10-18。依据：[交付检查](DELIVERY_AUDIT_2026_10_18.md)、[R8 软件销项](R8_SOFTWARE_COMPLETION.md)及用户本次“先完成能够独立完成的功能，外部接口连接放后面”的要求。
 

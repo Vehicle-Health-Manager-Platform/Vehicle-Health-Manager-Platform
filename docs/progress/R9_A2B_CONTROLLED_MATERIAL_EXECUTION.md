@@ -19,7 +19,7 @@
 
 ## 最终验证与上传
 
-前端899/899、普通微信与H5构建通过，普通产物无演示令牌/钩子；独立微信模拟器13检查/24请求通过并返回三端入口。后端相关套件64/64通过，最终格式规则及新增PDF入库定向复验7/7通过（6项重复、1项新增，合计65个不同测试）。完整V001–V062重放/重复迁移/合成种子通过，62挂载及生成文件一致性检查通过。阶段PR及当前head的CI结果在上传后补充，不提前声称六项通过。见[验收](../testing/CONTROLLED_INPUT_MATERIALS_ACCEPTANCE.md)、[接口](../api/CONTROLLED_INPUT_MATERIALS.md)、[使用](../user-guides/CONTROLLED_INPUT_MATERIALS.md)。
+前端899/899、普通微信与H5构建通过，普通产物无演示令牌/钩子；独立微信模拟器13检查/24请求通过并返回三端入口。后端相关套件64/64通过，最终格式规则及新增PDF入库定向复验7/7通过（6项重复、1项新增，合计65个不同测试）。完整V001–V062重放/重复迁移/合成种子通过，62挂载及生成文件一致性检查通过。代码/迁移/测试/文档已上传[PR158](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/158)，代码提交 `69e248b`，base为 `codex/r9-a2a-local-input-materials`。远程全量CI尚未结束，保持草稿，最终结果以PR当前head为准，不提前声称六项通过。见[验收](../testing/CONTROLLED_INPUT_MATERIALS_ACCEPTANCE.md)、[接口](../api/CONTROLLED_INPUT_MATERIALS.md)、[使用](../user-guides/CONTROLLED_INPUT_MATERIALS.md)。
 
 后端命令：`mvn -o -B -Dtest=InputMaterialValidatorTest,JdbcInputMaterialTest,JdbcUploadHttpTest,PrivateUploadTest,PrivateFileAccessTest,UploadHttpTransportTest test`，再以 `InputMaterialValidatorTest,JdbcInputMaterialTest#pdfPersistsServerDerivedPageCountWithoutImageMetadata` 复验最终规则。Java17/Maven缓存容器执行，未跳过Docker数据库测试。真实MinIO新增附件响应头测试编译通过但本机未执行，留当前head全量CI验证。前序PR156现已六项CI通过，PR157后端仍运行。
 

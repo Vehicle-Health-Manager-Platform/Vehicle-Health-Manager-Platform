@@ -1,6 +1,8 @@
 # 下一步规划
 
-> **2026-10-18 当前下一步**：A2b格式策略、受控上传和页面接入已实施，本地验收通过，正在阶段上传。其后A3候选修正与确认入库 → A4质量检查 → A5使用及接入准备 → B真实外部接口 → C真机发布。[阶段执行](R9_A2B_CONTROLLED_MATERIAL_EXECUTION.md)。
+> **A2b交付**：[PR158](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/158)已上传代码/迁移/测试/文档。下一执行A3候选确认与修正入库，先本地契约/确认流程，真实识别仍B2；当前PR全量CI待结束。
+
+> **2026-10-18 当前下一步**：A2b格式策略、受控上传和页面接入已实施，本地验收通过，已上传PR158（远程CI待完成）。其后A3候选修正与确认入库 → A4质量检查 → A5使用及接入准备 → B真实外部接口 → C真机发布。[阶段执行](R9_A2B_CONTROLLED_MATERIAL_EXECUTION.md)。
 
 > **本轮已上传**：[预览PR156](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/156)及[A1/A2a PR157](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/157)，后者依赖前者。A2a最终891前端和微信/H5通过，远程CI待完成。下一A2b安全媒体上传，再A3候选确认；下方上传中的文字保留为先前记录。
 
