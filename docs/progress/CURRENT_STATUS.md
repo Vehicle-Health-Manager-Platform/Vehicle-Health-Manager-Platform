@@ -1,5 +1,7 @@
 # 当前进度
 
+> **2026-10-18 A2b实施**：受控MP3/PDF上传、独立材料表、扫描/用途/车辆授权及页面显式上传已编码；前端899项、后端相关64项及最终定向7项、微信/H5、完整迁移与13项模拟器均通过，正在阶段上传。当前352操作/131表/62挂载，服务默认关闭。下一A3候选确认；正式设施/识别/真机仍后置。[执行](R9_A2B_CONTROLLED_MATERIAL_EXECUTION.md)。
+
 > **2026-10-18 A1/A2a已上传**：预览为[PR156](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/156)，A1设计及A2a本机录音/试听/图片PDF选择、隔离与AI/档案页接入为[PR157](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/157)。最终本地891/891、微信/H5构建及页面装配通过；六项远程CI尚未全部结束，保持草稿。无新增API/迁移；下一A2b受控媒体上传，再A3识别确认和B段真实外部效果，不自动合并/部署。
 
 > **2026-10-18 本轮续做**：用户要求按阶段实施、同步文档并上传GitHub。三角色只读预览及默认入口修复已本地完成，874项小程序测试、普通微信/演示构建及13项模拟器检查通过，正在作为独立阶段交付；接下来A1录入设计及A2a录音/附件本机采集。真实识别、身份资金及发布保持后置。参见[预览验收](../testing/LOCAL_ROLE_PREVIEW_ACCEPTANCE.md)和[执行队列](REMAINING_EXECUTION_ORDER_2026_10_18.md)。阶段PR与最终head CI另记，不把上传或演示当正式验收。

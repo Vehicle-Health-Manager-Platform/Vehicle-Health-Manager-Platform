@@ -2,23 +2,30 @@
 import {computed,reactive,watch,onBeforeUnmount} from 'vue'
 import {onShow,onHide,onUnload} from '@dcloudio/uni-app'
 import {createLocalMaterialsFlow,initialLocalMaterialsState} from '../services/local-input-materials.js'
+import {createMaterialUploadFlow,materialScope} from '../services/input-material-upload.js'
+import {imageRequestKey} from '../services/private-images.js'
 const props=defineProps({actor:{type:String,required:true},scope:{type:String,required:true}})
 const emit=defineEmits(['change','picker-change'])
 const state=reactive(initialLocalMaterialsState())
 const flow=createLocalMaterialsFlow({state,actor:()=>props.actor,scope:()=>props.scope})
-const busy=computed(()=>['requesting','recording','stopping','selecting','reading'].includes(state.phase))
+const uploadState=reactive({busyId:'',message:'',results:{}})
+const uploadFlow=createMaterialUploadFlow({state:uploadState,items:()=>state.items,actor:()=>props.actor,scope:()=>props.scope,keyFactory:imageRequestKey})
+const busy=computed(()=>Boolean(uploadState.busyId)||['requesting','recording','stopping','selecting','reading'].includes(state.phase))
 const full=computed(()=>state.items.length>=3)
 const sizeLabel=bytes=>bytes>=1024*1024?(bytes/1024/1024).toFixed(1)+' MiB':Math.ceil(bytes/1024)+' KiB'
 watch(()=>[props.actor,props.scope],flow.reset,{flush:'sync'})
+watch(()=>[props.actor,props.scope],uploadFlow.reset,{flush:'sync'})
 watch(()=>state.items.length,count=>emit('change',{count}),{flush:'sync'})
 watch(()=>state.phase,phase=>emit('picker-change',phase==='selecting'||phase==='reading'),{flush:'sync'})
 onShow(flow.resume);onHide(flow.suspend);onUnload(flow.dispose);onBeforeUnmount(flow.dispose)
+onHide(()=>{if(!['selecting','reading'].includes(state.phase))uploadFlow.reset()});onUnload(uploadFlow.reset);onBeforeUnmount(uploadFlow.reset)
+function remove(id){delete uploadState.results[id];flow.remove(id)}
 </script>
 
 <template>
   <view class="materials" data-testid="local-input-materials">
     <text class="heading">本机辅助材料（{{state.items.length}}/3）</text>
-    <text class="hint">可先录音、试听或查看图片/PDF，再手动填写。材料未上传、未识别，不会随文字提问或档案保存发送。</text>
+    <text class="hint">可先试听或查看材料，再手动填写。音频/PDF需单独点击上传；材料不会随文字提问或档案保存发送，上传后也尚未识别。</text>
     <view class="actions">
       <button v-if="!['requesting','recording','stopping'].includes(state.phase)" :disabled="!actor||busy||full" data-testid="local-record-start" @tap="flow.startRecording">录制语音</button>
       <button v-if="state.phase==='recording'" data-testid="local-record-stop" @tap="flow.stopRecording">停止录音（{{state.seconds}}秒）</button>
@@ -36,10 +43,14 @@ onShow(flow.resume);onHide(flow.suspend);onUnload(flow.dispose);onBeforeUnmount(
         <button v-if="item.kind==='audio'&&state.playingId!==item.id" :disabled="busy" @tap="flow.play(item.id)">试听</button>
         <button v-else-if="item.kind==='audio'" @tap="flow.stopPlayback">停止试听</button>
         <button v-else :disabled="busy" @tap="flow.preview(item.id)">预览</button>
-        <button :disabled="busy" @tap="flow.remove(item.id)">移除</button>
+        <button v-if="item.kind!=='image'&&!uploadState.results[item.id]" :disabled="busy||!materialScope(scope)" :data-testid="'upload-material-'+item.kind" @tap="uploadFlow.upload(item.id)">{{uploadState.busyId===item.id?'上传检查中…':'上传本份材料'}}</button>
+        <text v-if="uploadState.results[item.id]" class="hint">已上传 · 扫描通过 · 尚未识别</text>
+        <button :disabled="busy" @tap="remove(item.id)">移除本机引用</button>
       </view>
     </view>
     <text v-if="state.message" class="status" role="status">{{state.message}}</text>
+    <text v-if="uploadState.message" class="status" role="status">{{uploadState.message}}</text>
+    <text class="hint">上传仅供本人在当前车辆与用途下使用。移除本机引用不会删除已上传材料；尚未配置服务时仍可本机查看和手动填写。</text>
     <button v-if="state.kind==='permission'" @tap="flow.authorize">去开启权限</button>
     <text class="hint">语音1–60秒、最多3MiB；图片/PDF每份最多10MiB。离开页面后清除本机材料引用，原文件由微信管理。</text>
   </view>

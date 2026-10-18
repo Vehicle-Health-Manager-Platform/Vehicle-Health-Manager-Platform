@@ -79,5 +79,15 @@ public class MinioPrivateObjectStore implements SignedObjectStore {
                 .bucket(bucket).object(key).expiry(seconds, TimeUnit.SECONDS).build());
         } catch (Exception exception) { throw unavailable(); }
     }
+    @Override public String signAttachment(String key,int seconds,String contentType) {
+        key(key);requirePrivate();
+        if(signer==null || seconds<1 || seconds>300 || !("audio/mpeg".equals(contentType)||"application/pdf".equals(contentType)))throw unavailable();
+        try {
+            return signer.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder().method(Http.Method.GET)
+                .bucket(bucket).object(key).expiry(seconds,TimeUnit.SECONDS).extraQueryParams(java.util.Map.of(
+                    "response-content-disposition","attachment; filename=\"material."+("audio/mpeg".equals(contentType)?"mp3":"pdf")+"\"",
+                    "response-content-type",contentType,"response-cache-control","no-store")).build());
+        }catch(Exception e){throw unavailable();}
+    }
     private UploadException unavailable() { return new UploadException(UploadException.Reason.UNAVAILABLE); }
 }

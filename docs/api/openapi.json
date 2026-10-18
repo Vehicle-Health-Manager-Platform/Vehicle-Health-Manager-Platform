@@ -33287,6 +33287,250 @@
         "x-implementation-status": "r8-remaining-implemented",
         "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。检索method=KEYWORD，不冒充Milvus向量效果；AI只发送问题与许可摘录，调用后重验所有引用。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
       }
+    },
+    "/api/input-materials/{purpose}/{vehicleId}/upload": {
+      "post": {
+        "summary": "本人车辆辅助材料受控上传",
+        "operationId": "post_api_input_materials_purpose_vehicleId_upload",
+        "tags": [
+          "input-materials"
+        ],
+        "x-feature-ids": [
+          "F03",
+          "F05"
+        ],
+        "parameters": [
+          {
+            "name": "purpose",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "enum": [
+                "AI",
+                "ARCHIVE"
+              ]
+            }
+          },
+          {
+            "name": "vehicleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-Material-Kind",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "enum": [
+                "audio",
+                "pdf"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InputMaterialReceipt"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或multipart无效"
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "车辆或材料不可用"
+          },
+          "409": {
+            "description": "幂等冲突或处理中"
+          },
+          "413": {
+            "description": "材料/请求过大"
+          },
+          "422": {
+            "description": "格式或扫描未通过"
+          },
+          "429": {
+            "description": "限流/并发限制"
+          },
+          "503": {
+            "description": "开关关闭或设施不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-roles": "OWNER",
+        "description": "no-store。默认关闭 INPUT_MATERIAL_UPLOAD_ENABLED；仅本人有效车辆、正式会话。独立input_material表，不接受或返回业务图片file_id，不做ASR/OCR。MP3 16kHz单声道48kbps、1–60秒、3MiB；静态PDF 1–50页10MiB，无加密/表单/注释/动作/附件。CLEAN才写入；用途及车辆隔离幂等，同键不同内容409。签发60秒强制attachment/no-store，复核会话/车辆/用途及对象元数据。详见CONTROLLED_INPUT_MATERIALS.md。"
+      }
+    },
+    "/api/input-materials/{purpose}/{vehicleId}/{id}/access": {
+      "get": {
+        "summary": "本人原用途辅助材料短时附件访问",
+        "operationId": "get_api_input_materials_purpose_vehicleId_id_access",
+        "tags": [
+          "input-materials"
+        ],
+        "x-feature-ids": [
+          "F03",
+          "F05"
+        ],
+        "parameters": [
+          {
+            "name": "purpose",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "enum": [
+                "AI",
+                "ARCHIVE"
+              ]
+            }
+          },
+          {
+            "name": "vehicleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "统一成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/InputMaterialAccess"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数或multipart无效"
+          },
+          "401": {
+            "description": "认证失败，code=40100"
+          },
+          "403": {
+            "description": "无权访问，code=40300"
+          },
+          "404": {
+            "description": "车辆或材料不可用"
+          },
+          "409": {
+            "description": "幂等冲突或处理中"
+          },
+          "413": {
+            "description": "材料/请求过大"
+          },
+          "422": {
+            "description": "格式或扫描未通过"
+          },
+          "429": {
+            "description": "限流/并发限制"
+          },
+          "503": {
+            "description": "开关关闭或设施不可用"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-roles": "OWNER",
+        "description": "no-store。默认关闭 INPUT_MATERIAL_UPLOAD_ENABLED；仅本人有效车辆、正式会话。独立input_material表，不接受或返回业务图片file_id，不做ASR/OCR。MP3 16kHz单声道48kbps、1–60秒、3MiB；静态PDF 1–50页10MiB，无加密/表单/注释/动作/附件。CLEAN才写入；用途及车辆隔离幂等，同键不同内容409。签发60秒强制attachment/no-store，复核会话/车辆/用途及对象元数据。详见CONTROLLED_INPUT_MATERIALS.md。"
+      }
     }
   },
   "components": {
@@ -51814,6 +52058,111 @@
           },
           "method": {
             "const": "KEYWORD"
+          }
+        }
+      },
+      "InputMaterialReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "material_id",
+          "vehicle_id",
+          "purpose",
+          "content_type",
+          "size_bytes",
+          "duration_ms",
+          "pages",
+          "scan_status"
+        ],
+        "properties": {
+          "material_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "vehicle_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "purpose": {
+            "enum": [
+              "AI",
+              "ARCHIVE"
+            ]
+          },
+          "content_type": {
+            "enum": [
+              "audio/mpeg",
+              "application/pdf"
+            ]
+          },
+          "size_bytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10485760
+          },
+          "duration_ms": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 60000
+          },
+          "pages": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 50
+          },
+          "scan_status": {
+            "const": "CLEAN"
+          }
+        },
+        "oneOf": [
+          {
+            "properties": {
+              "content_type": {
+                "const": "audio/mpeg"
+              },
+              "size_bytes": {
+                "maximum": 3145728
+              },
+              "duration_ms": {
+                "minimum": 1000
+              },
+              "pages": {
+                "const": 0
+              }
+            }
+          },
+          {
+            "properties": {
+              "content_type": {
+                "const": "application/pdf"
+              },
+              "duration_ms": {
+                "const": 0
+              },
+              "pages": {
+                "minimum": 1
+              }
+            }
+          }
+        ]
+      },
+      "InputMaterialAccess": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "url",
+          "expires_at"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       }

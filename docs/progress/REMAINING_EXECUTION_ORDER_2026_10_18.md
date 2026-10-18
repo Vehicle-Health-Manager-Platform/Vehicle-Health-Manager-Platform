@@ -1,5 +1,7 @@
 # 后续执行顺序：独立功能优先，外部接入后置
 
+> **A2b更新**：已实现独立辅助材料策略/元数据、受控上传/访问和显式页面上传，本地验证通过，正在阶段上传。A2不等于识别完成；下一A3候选确认，真实识别留B2。[执行](R9_A2B_CONTROLLED_MATERIAL_EXECUTION.md)。
+
 日期：2026-10-18。依据：[交付检查](DELIVERY_AUDIT_2026_10_18.md)、[R8 软件销项](R8_SOFTWARE_COMPLETION.md)及用户本次“先完成能够独立完成的功能，外部接口连接放后面”的要求。
 
 > **本轮实施更新**：三角色只读预览已上传[PR156](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/156)。A1细化规格已形成，A2拆为A2a本机采集与A2b受控媒体上传；A2a代码/页面已实施，正在最终验收和独立阶段上传。原始计划下方保留，整A2及A3尚未销项。依据[详细设计](../superpowers/specs/2026-10-18-local-input-materials-design.md)。用户最新授权要求每阶段上传代码、测试与文档，取代本计划最初“仅规划”的状态说明。
