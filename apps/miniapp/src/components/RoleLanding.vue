@@ -48,13 +48,13 @@ onMounted(() => {
 <template>
   <view class="page">
     <view class="hero">
-      <text class="eyebrow">{{ role.toUpperCase() }} · S0 预览</text>
+      <text class="eyebrow">{{ role.toUpperCase() }} · 开发预览</text>
       <text class="title">{{ title }}</text>
       <text class="description">{{ description }}</text>
     </view>
 
     <view class="section">
-      <text class="section-title">将要接入的工作流程</text>
+      <text class="section-title">登录后可使用的工作流程</text>
       <view v-for="(step, index) in steps" :key="step" class="step">
         <text class="number">{{ index + 1 }}</text>
         <text class="step-text">{{ step }}</text>
