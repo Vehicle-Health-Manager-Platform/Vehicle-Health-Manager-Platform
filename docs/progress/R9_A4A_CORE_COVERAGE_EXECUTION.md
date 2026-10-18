@@ -30,4 +30,4 @@
 
 ## 文档与后续
 
-[范围与复跑](../testing/CORE_COVERAGE.md) · [设计](../superpowers/specs/2026-10-18-core-coverage-design.md) · [计划](../superpowers/plans/2026-10-18-core-coverage.md)。阶段PR及最终headCI在本地验收后记录；不合并部署。下一A4b核心业务端到端，再A4c性能与备份恢复，随后A5与B段真实接入。
+[范围与复跑](../testing/CORE_COVERAGE.md) · [设计](../superpowers/specs/2026-10-18-core-coverage-design.md) · [计划](../superpowers/plans/2026-10-18-core-coverage.md)。代码/profile/门禁/测试/CI/报告与文档已上传[PR160](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/160)，代码提交 `a410638`，base为 `codex/r9-a3-candidate-confirmation`。远程全量CI待完成，保持草稿，结果以PR当前head为准；不合并部署。前序PR158六项CI已全部成功，PR159后端尚在运行。下一A4b核心业务端到端，再A4c性能与备份恢复，随后A5与B段真实接入。

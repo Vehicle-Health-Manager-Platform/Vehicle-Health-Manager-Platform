@@ -1,5 +1,7 @@
 # 后续执行顺序：独立功能优先，外部接入后置
 
+> **A4a已上传**：[PR160](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/160)含覆盖率profile、门禁/测试、CI与实际报告，代码提交 `a410638`，依赖PR159。431项真实核心执行及14项门禁测试通过，核心LINE93.43%/METHOD89.91%；远程全量CI待完成，保持草稿。下一A4b端到端，再A4c性能与恢复。
+
 > **A4拆分与本轮结果**：A4a覆盖率先交付，真实431项与14项门禁测试通过，核心范围LINE93.43%/METHOD89.91%，六组≥70%。A4b隔离端到端、A4c性能/备份恢复仍未执行，本轮不将整个A4标完成。后续A5→B→C。[执行](R9_A4A_CORE_COVERAGE_EXECUTION.md)。
 
 > **A3已上传**：[PR159](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/159)包含代码、测试及中文阶段文档，代码提交 `364f07d`，依赖PR158。本地916项前端、微信/H5与13模拟器检查通过；远程全量CI待结束，保持草稿。下一A4质量门禁，随后A5→B外部接入→C真机发布。

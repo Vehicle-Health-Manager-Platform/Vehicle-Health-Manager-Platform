@@ -1,5 +1,7 @@
 # 当前进度
 
+> **A4a已上传**：[PR160](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/160)含覆盖率profile、门禁/测试、CI与实际报告，代码提交 `a410638`，依赖PR159。431项真实核心执行及14项门禁测试通过，核心LINE93.43%/METHOD89.91%；远程全量CI待完成，保持草稿。下一A4b端到端，再A4c性能与恢复。
+
 > **2026-10-18 A4a本地完成**：固定六组33核心业务根类及内部类，真实19套件431项无失败/跳过，LINE93.43%、METHOD89.91%，逐组两项均≥70%。14项门禁/运行器测试通过，CI已接入报告artifact。当前是本机定向基线，非平台全量或全部A4销项；四个输入类单类较低保留在报告。下一A4b/A4c。[执行](R9_A4A_CORE_COVERAGE_EXECUTION.md)。
 
 > **A3已上传**：[PR159](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/159)包含代码、测试及中文阶段文档，代码提交 `364f07d`，依赖PR158。本地916项前端、微信/H5与13模拟器检查通过；远程全量CI待结束，保持草稿。下一A4质量门禁，随后A5→B外部接入→C真机发布。

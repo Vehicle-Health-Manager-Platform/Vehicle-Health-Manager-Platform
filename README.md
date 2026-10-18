@@ -1,6 +1,8 @@
 # 汽车健康管家平台
 
-> **2026-10-18 A4a**：核心覆盖率门禁已实现并完成真实基线：19套件431项通过，六组33业务根类的LINE93.43%、METHOD89.91%，各组均达70%；门禁/运行器14项通过。正在阶段上传；下一A4b端到端、A4c性能与恢复。[执行与报告](docs/progress/R9_A4A_CORE_COVERAGE_EXECUTION.md)。
+> **A4a已上传**：[PR160](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/160)含覆盖率profile、门禁/测试、CI与实际报告，代码提交 `a410638`，依赖PR159。431项真实核心执行及14项门禁测试通过，核心LINE93.43%/METHOD89.91%；远程全量CI待完成，保持草稿。下一A4b端到端，再A4c性能与恢复。
+
+> **2026-10-18 A4a**：核心覆盖率门禁已实现并完成真实基线：19套件431项通过，六组33业务根类的LINE93.43%、METHOD89.91%，各组均达70%；门禁/运行器14项通过。已上传PR160（远程CI待完成）；下一A4b端到端、A4c性能与恢复。[执行与报告](docs/progress/R9_A4A_CORE_COVERAGE_EXECUTION.md)。
 
 > **A3已上传**：[PR159](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/159)包含代码、测试及中文阶段文档，代码提交 `364f07d`，依赖PR158。本地916项前端、微信/H5与13模拟器检查通过；远程全量CI待结束，保持草稿。下一A4质量门禁，随后A5→B外部接入→C真机发布。
 

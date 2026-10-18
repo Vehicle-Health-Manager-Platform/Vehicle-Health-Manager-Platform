@@ -8,4 +8,4 @@
 
 开始基线2576060；前序PR159前端/生成/数据库通过，后端运行中。
 
-1–4已完成：431项真实核心执行、14项门禁/运行器测试通过；LINE93.43%、METHOD89.91%，各组六组双门槛通过。5准备上传。A4b/A4c保留，未计作本轮完成。
+1–4已完成：431项真实核心执行、14项门禁/运行器测试通过；LINE93.43%、METHOD89.91%，各组六组双门槛通过。5已上传[PR160](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/160)，当前head全量CI待完成，保持草稿。A4b/A4c保留，未计作本轮完成。
