@@ -8,4 +8,4 @@
 
 基线183e009，PR158未合并；web/miniapp/schema检查成功，backend仍运行。
 
-本地1–4完成：916前端、微信/H5、13模拟器及面板截图通过；原生控件点击确认端到端未验收。第5正在阶段上传。
+本地1–4完成：916前端、微信/H5、13模拟器及面板截图通过；原生控件点击确认端到端未验收。第5已上传[PR159](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/159)，远程CI待完成，保持草稿。

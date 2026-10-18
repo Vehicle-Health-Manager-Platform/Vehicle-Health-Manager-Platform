@@ -1,5 +1,7 @@
 # 当前进度
 
+> **A3已上传**：[PR159](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/159)包含代码、测试及中文阶段文档，代码提交 `364f07d`，依赖PR158。本地916项前端、微信/H5与13模拟器检查通过；远程全量CI待结束，保持草稿。下一A4质量门禁，随后A5→B外部接入→C真机发布。
+
 > **2026-10-18 A3本地完成**：车辆VIN/车牌/仪表里程、档案材料/语音整理、行驶证及AI正文的候选修正/明确确认带入与默认不可用适配契约已实施。916/916、微信/H5与13项三端模拟器通过；完整点击确认的真机/端到端尚未验收。无新HTTP/SQL，不把人工整理当真实识别。[执行](R9_A3_CANDIDATE_CONFIRMATION_EXECUTION.md)。
 
 > **A2b已上传**：[PR158](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/158)，代码提交 `69e248b`，依赖PR157；本地验收已通过，远程全量CI尚未结束，保持草稿，不合并部署。下一A3候选确认与修正入库。

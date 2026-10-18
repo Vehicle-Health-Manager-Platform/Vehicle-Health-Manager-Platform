@@ -18,6 +18,6 @@
 
 ## 上传与下一步
 
-本地已收口，阶段PR上传后补充；当前不提前写远程CI成功。前序PR157六项CI已通过，PR158前端/生成/数据库通过、后端仍运行。下一A4本地质量门禁与既有核心业务收口，随后A5接入准备，再B段真实身份/识别/资金等接口。真实识别来源、服务端任务/材料绑定、真机和准确率仍待B2/C，不以本阶段替代。
+本地已收口，代码/测试/设计/契约/使用/验收及进度文档已上传[PR159](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/159)，代码提交 `364f07d`，base为 `codex/r9-a2b-controlled-material-upload`。远程全量CI待完成，保持草稿，不合并部署；最终以PR当前head状态为准。前序PR157六项CI已通过，PR158前端/生成/数据库通过、后端仍运行。下一A4本地质量门禁与既有核心业务收口，随后A5接入准备，再B段真实身份/识别/资金等接口。真实识别来源、服务端任务/材料绑定、真机和准确率仍待B2/C，不以本阶段替代。
 
 [设计](../superpowers/specs/2026-10-18-candidate-confirmation-design.md) · [计划](../superpowers/plans/2026-10-18-candidate-confirmation.md) · [契约](../api/INPUT_CANDIDATES.md) · [使用](../user-guides/INPUT_CANDIDATES.md)

@@ -1,6 +1,8 @@
 # 下一步规划
 
-> **2026-10-18 当前下一步**：A3本地候选确认已实施并通过916项前端/构建/模拟器装配验证，正在阶段上传。下一A4质量门禁：先核对现有覆盖率/端到端/性能脚本，按差距补充可复跑隔离验收，再A5手册与接入准备。真实外部接口保持B段后置。[A3执行](R9_A3_CANDIDATE_CONFIRMATION_EXECUTION.md)。
+> **A3已上传**：[PR159](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/159)包含代码、测试及中文阶段文档，代码提交 `364f07d`，依赖PR158。本地916项前端、微信/H5与13模拟器检查通过；远程全量CI待结束，保持草稿。下一A4质量门禁，随后A5→B外部接入→C真机发布。
+
+> **2026-10-18 当前下一步**：A3本地候选确认已实施并通过916项前端/构建/模拟器装配验证，已上传PR159（远程CI待结束）。下一A4质量门禁：先核对现有覆盖率/端到端/性能脚本，按差距补充可复跑隔离验收，再A5手册与接入准备。真实外部接口保持B段后置。[A3执行](R9_A3_CANDIDATE_CONFIRMATION_EXECUTION.md)。
 
 > **A2b交付**：[PR158](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/158)已上传代码/迁移/测试/文档。下一执行A3候选确认与修正入库，先本地契约/确认流程，真实识别仍B2；当前PR全量CI待结束。
 
