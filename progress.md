@@ -1,3 +1,7 @@
+# 当前阶段：R9 车主端视觉刷新
+
+2026-10-18：车主端核心旅程9个页面/组件视觉刷新完成，新增 `design-system.css`（264行令牌与 `ux-*` 原语），`uni.scss` 与 `reservations.css` 同步换语义取值并保留全部选择器与 `padding` 契约。业务逻辑/接口调用/`data-testid`/路由/生命周期零改动。916/916前端测试、微信构建与两项原生门禁、H5构建通过；模拟器冒烟2项后Devtools RPC超时，不计入通过。代码、规格、执行记录与本机验收说明已上传[PR164](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/164)（代码`e1d8fd2`），依赖PR163，保持草稿。不声明整体UI完成。
+
 # 当前阶段：R9 A4c-2 核心接口性能基线
 
 2026-10-18：A4c-2完成500并发三场景实测，错误预算达标（4000采样0错误、1520单全部落库），延迟门禁未达标（读P95 590.001/683.877ms、写P95 613.913ms），原因定位为24核被后端与MySQL占满，池80诊断排除池因素。修复档案附件N+1、共享目录行排他锁、席位判定整表锁、过期占位间隙锁四处实现缺陷（修复前50并发下单42/50返回503）。14项门禁单测、80项预约/退款/支付回归通过。代码/CI/文档/实际报告已上传[PR163](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/163)，代码dd49b2a，依赖PR162，完整CI待完成、保持草稿。下一A段收口→A5→B外部接入→C真机。
