@@ -79,6 +79,7 @@ jobs:
       - run: python -m unittest discover -s scripts -p test_core_coverage.py -v
       - run: python -m unittest discover -s scripts -p test_isolated_journeys.py -v
       - run: python -m unittest discover -s scripts -p test_database_recovery.py -v
+      - run: python -m unittest discover -s scripts -p test_performance_baseline.py -v
       - run: python scripts/generate_traceability.py
       - run: python scripts/build_init_sql.py
       - run: python scripts/generate_openapi.py
@@ -122,3 +123,27 @@ jobs:
       - run: npm ci
       - run: npm run build:legacy-web
       - run: bash scripts/verify_compose.sh
+  performance-baseline:
+    runs-on: ubuntu-latest
+    # Builds the jar in a Maven container, then measures 500-concurrency reads and writes.
+    # The runner size is not controlled, so CI enforces the error budget only; latency is
+    # measured and published, and the recorded acceptance run is the fixed-hardware report.
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Measure 500-concurrency core baseline
+        run: python scripts/run_performance_baseline.py --gates errors --report performance-baseline.json
+      - name: Check baseline evidence consistency
+        if: success()
+        run: python scripts/run_performance_baseline.py --check-only performance-baseline.json
+      - name: Save performance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-baseline-evidence
+          retention-days: 14
+          if-no-files-found: warn
+          path: performance-baseline.json
