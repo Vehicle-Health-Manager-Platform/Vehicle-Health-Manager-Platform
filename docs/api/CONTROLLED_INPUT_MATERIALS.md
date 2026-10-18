@@ -1,5 +1,7 @@
 # R9-A2b 受控辅助材料接口
 
+> **A3补充**：上传成功收据不触发识别或写入；本人可手动整理候选再明确带入当前表单。真实材料识别/任务绑定仍B2。[候选契约](INPUT_CANDIDATES.md)。
+
 ## 开关与依赖
 
 V062 在 V061 后运行，可重复执行，增加 input_material，当前131张表。Compose包含62个有序初始化挂载。默认 `INPUT_MATERIAL_UPLOAD_ENABLED=false`；准备正式车主会话、MySQL、已有私有MinIO适配和ClamAV扫描后才开启。签发还需可访问的 `MINIO_PUBLIC_ENDPOINT`；本机测试使用合成身份/设施替身，不表示正式环境接通。

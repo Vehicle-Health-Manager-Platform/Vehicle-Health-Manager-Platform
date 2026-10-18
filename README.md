@@ -1,5 +1,7 @@
 # 汽车健康管家平台
 
+> **2026-10-18 A3**：四场景材料候选的手动整理、格式检查、修正、逐项核对及显式带入已实施，916项前端、微信/H5和13项模拟器检查通过；正在阶段上传。候选不自动保存或发送，真实识别仍B2后置。[执行](docs/progress/R9_A3_CANDIDATE_CONFIRMATION_EXECUTION.md)。
+
 > **A2b已上传**：[PR158](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/158)包含受控材料上传代码、V062、测试和中文文档；本地验证通过，远程全量CI待完成，仍为草稿。下一A3候选确认与修正入库，真实识别后置。
 
 > **2026-10-18 A2b**：车主辅助录音/PDF的格式校验、受控上传、用途/车辆授权和页面显式上传已实施，899项小程序测试及微信/H5构建通过，后端相关64项和最终定向7项、完整迁移及13项模拟器检查通过，已上传PR158（远程CI待完成）。功能默认关闭，未接真实识别。[执行记录](docs/progress/R9_A2B_CONTROLLED_MATERIAL_EXECUTION.md)。

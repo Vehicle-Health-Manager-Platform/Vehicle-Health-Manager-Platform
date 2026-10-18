@@ -6,6 +6,8 @@ import { vehicleApi } from '../../services/vehicles.js'
 import { imageRequestKey } from '../../services/private-images.js'
 import { createVehicleFlow, initialVehicleState } from '../../services/vehicle-flow.js'
 import { vehicleEntryPrefill } from '../../services/vehicle-entry-session.js'
+import InputCandidateReview from '../../components/InputCandidateReview.vue'
+import {candidateFields} from '../../services/input-candidates.js'
 const sourceMessage = ref('')
 const state = reactive(initialVehicleState())
 const flow = createVehicleFlow({ state, api: vehicleApi, token: () => ownerSession.accessToken, newKey: imageRequestKey })
@@ -41,6 +43,7 @@ function retryCatalog() { if (state.catalogRetry) flow.load(state.catalogRetry.k
     <view v-if="!ownerSession.accessToken" class="panel"><text>请先登录车主账号</text><button @tap="login">前往登录</button></view>
     <view v-else class="panel">
       <text v-if="sourceMessage" class="note">{{ sourceMessage }}</text>
+      <InputCandidateReview :actor="ownerSession.accessToken" :scope="'vehicle:new:'+state.modelId" scene="vehicle" :fields="candidateFields.vehicle" :values="state" :disabled="locked" @apply="Object.assign(state,$event)" />
       <text class="label">品牌</text>
       <picker :disabled="locked || !state.brand.length" :range="state.brand" range-key="name" @change="pickBrand"><view class="field">{{ state.brand.find(item => item.id === state.brandId)?.name || '请选择品牌' }}</view></picker>
       <button v-if="state.brand.length < state.totals.brand" class="more" :disabled="locked" @tap="flow.load('brand', true)">加载更多品牌</button>

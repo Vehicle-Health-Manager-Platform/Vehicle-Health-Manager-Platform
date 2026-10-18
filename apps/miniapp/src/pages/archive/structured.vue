@@ -1,5 +1,6 @@
 <script setup>
-import { reactive, watch } from 'vue'
+import { reactive, watch, computed } from 'vue'
+import InputCandidateReview from '../../components/InputCandidateReview.vue'
 import { onLoad, onShow, onHide, onUnload } from '@dcloudio/uni-app'
 import { ownerSession, clearOwnerSession } from '../../services/owner-session.js'
 import { archiveStructuredApi, structuredFields, structuredTypes } from '../../services/archive-structured.js'
@@ -7,6 +8,7 @@ import { createStructuredFlow, initialStructuredState } from '../../services/arc
 import { imageRequestKey } from '../../services/private-images.js'
 
 const state=reactive(initialStructuredState())
+const licenseCandidates=computed(()=>(structuredFields[8]||[]).filter(d=>['text','date','number'].includes(d.kind)).map(d=>({...d,kind:d.key==='vin'?'vin':d.key==='plate_number'?'plate':d.kind,max:d.max||100})))
 const flow=createStructuredFlow({state,api:archiveStructuredApi,token:()=>ownerSession.accessToken,newKey:imageRequestKey,
   confirmClear:()=>new Promise(resolve=>uni.showModal({title:'清空本条结构化资料',content:'移除本页填写的资料，原档案、照片及个人提醒目标保留。',success:r=>resolve(Boolean(r.confirm)),fail:()=>resolve(false)})),
 })
@@ -27,6 +29,7 @@ function optionLabel(def){const index=def.values.indexOf(state.form[def.key]);re
     <text class="hint">本人填写，尚非官方核验。请逐项核对原资料，确认关键字段和来源后勾选本人确认；修改字段后需再次确认。未填写不会推断。证件/身份字段仅本人可读，不进入公开分享或第三方AI。</text>
     <text v-if="state.busy" class="hint">正在处理…</text>
     <view v-if="state.context" class="card">
+      <InputCandidateReview v-if="state.context.archive_type===8" :actor="ownerSession.accessToken" :scope="'license:'+state.context.vehicle_id+':'+state.context.archive_id+':'+state.context.revision" scene="license" :fields="licenseCandidates" :values="state.form" :disabled="state.busy||state.kind==='conflict'" @apply="Object.assign(state.form,$event,{owner_confirmed:false})" />
       <text class="heading">来源：{{ structuredTypes[state.context.archive_type] }} · {{ state.context.recorded_date || '日期未填写' }}</text>
       <text class="hint">{{ state.context.status === 'NOT_SET' ? '本条尚无结构化资料' : '现有资料为本人填写、未核验' }}</text>
       <view v-for="def in structuredFields[state.context.archive_type]" :key="def.key">

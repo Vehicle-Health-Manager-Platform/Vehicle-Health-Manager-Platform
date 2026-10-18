@@ -5,6 +5,8 @@ import OwnerTabShell from '../../components/OwnerTabShell.vue'
 import VehicleList from '../../components/VehicleList.vue'
 import InviteDiagnosisEligibility from '../../components/InviteDiagnosisEligibility.vue'
 import LocalInputMaterials from '../../components/LocalInputMaterials.vue'
+import InputCandidateReview from '../../components/InputCandidateReview.vue'
+import {candidateFields} from '../../services/input-candidates.js'
 import { ownerSession, clearOwnerSession } from '../../services/owner-session.js'
 import { selectedOwnerVehicle, selectOwnerVehicle } from '../../services/owner-vehicle-selection.js'
 import { aiChatApi, MAX_QUESTION_CHARS } from '../../services/ai-chat.js'
@@ -25,7 +27,7 @@ const lastMessageId = computed(() => (state.messages.length ? `message-${state.m
 
 // 换车或换身份会让上一辆车的回答过期，直接开一段新对话。
 watch(() => ownerSession.accessToken, () => { draft.value = ''; flow.reset() }, { flush: 'sync' })
-watch(() => selectedOwnerVehicle.value?.vehicle_id, () => { if (state.messages.length) flow.reset() }, { flush: 'sync' })
+watch(() => selectedOwnerVehicle.value?.vehicle_id, () => { draft.value = ''; flow.reset() }, { flush: 'sync' })
 onHide(flow.suspend)
 onUnload(flow.reset)
 
@@ -85,6 +87,7 @@ function ask(text) { draft.value = text; return send() }
 
       <view class="composer">
         <LocalInputMaterials :actor="ownerSession.accessToken" :scope="'ai:'+(selectedOwnerVehicle?.vehicle_id||0)" @change="localMaterialCount=$event.count" />
+        <InputCandidateReview :actor="ownerSession.accessToken" :scope="'ai:'+(selectedOwnerVehicle?.vehicle_id||0)" scene="voice" :fields="candidateFields.voice" :values="{question:draft}" :disabled="state.busy" @apply="draft=$event.question" />
         <textarea v-model="draft" class="input" :maxlength="MAX_QUESTION_CHARS" :disabled="state.busy || !ownerSession.accessToken"
           placeholder="描述车辆的现象或想问的问题" auto-height />
         <view class="composer-foot">

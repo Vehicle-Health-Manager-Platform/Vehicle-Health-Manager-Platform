@@ -1,4 +1,6 @@
 <script setup>
+import InputCandidateReview from '../../components/InputCandidateReview.vue'
+import {candidateFields} from '../../services/input-candidates.js'
 import { reactive, ref, watch } from 'vue'
 import { onLoad, onHide, onUnload } from '@dcloudio/uni-app'
 import LocalInputMaterials from '../../components/LocalInputMaterials.vue'
@@ -75,6 +77,7 @@ async function preview(id) {
     <view v-else-if="!state.vehicleId" class="panel"><text>车辆信息无效，请返回选择车辆</text><button @tap="back">返回档案</button></view>
     <view v-else class="panel">
       <LocalInputMaterials :actor="ownerSession.accessToken" :scope="'archive:'+state.vehicleId+':'+state.archiveType" @picker-change="auxiliaryPicker=$event" />
+      <InputCandidateReview :actor="ownerSession.accessToken" :scope="'archive:'+state.vehicleId+':'+state.archiveType" scene="archive" :fields="candidateFields.archive" :values="state" :disabled="state.busy||uploadBusy||!!state.saved" @apply="Object.assign(state,$event)" />
       <text class="label">档案类型</text>
       <picker :disabled="state.busy || uploadBusy || state.saved" :range="types" @change="pickType"><view class="field">{{ types[state.archiveType - 1] }}</view></picker>
       <text class="label">发生日期</text>
