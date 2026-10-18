@@ -19,4 +19,4 @@
 - [complete] c2源/副本治理与实际页面，阶段62后端/858前端及微信/H5通过，后续收紧由集中回归复验；见R8C2_PUBLIC_IMAGES_EXECUTION.md。
 - [complete] c3许可治理、确定性检索/AI引用、实际页面；首轮32相关后端/868前端通过，见R8C3_LICENSED_KNOWLEDGE_EXECUTION.md；新增HTTP/CLI回归并入集中验收。
 - [complete] 整R8本地软件验收与文档：868前端、180相关后端加最终9次边界复验、微信/H5/四Web、130表迁移、350操作/1247引用/108页/61挂载通过；实际Compose本地遇Docker Hub网络失败，不计通过。
-- [in progress] 统一上传全部代码和文档，核验本次最终head六项GitHub CI，全部通过后合并；正式语料/嵌入及R9仍为独立外部验收。
+- [complete] 全部代码和文档通过[PR155](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/155)上传并合并main `8373341`；最终业务提交2117后端/868前端、六项CI及[合并后复验](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/39045134951)成功。正式语料/嵌入及R9仍为独立外部验收。

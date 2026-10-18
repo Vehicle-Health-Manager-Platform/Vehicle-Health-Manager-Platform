@@ -6,14 +6,14 @@
 
 ## 当前进度
 
-更新日期：**2026-10-17（Asia/Shanghai）**。
+更新日期：**2026-10-18（Asia/Shanghai）**。
 
-- R4–R7 与此前 R8 增量已通过 [PR #154](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/154) 进入 main；本轮统一补齐 R8 剩余软件范围，代码、迁移、测试、配置与文档一起交付。
+- **R4–R8 已完成的软件范围均已进入 main**，包含代码、迁移、测试、配置与阶段文档。此前汇总见 [PR #154](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/154)，R8 剩余闭环见 [PR #155](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/155)，合并提交 `8373341`。
 - **R8 按已确认的软件范围完成**：公开问答实际页面与恢复、独立脱敏图片授权/审核/撤回、许可资料治理、车型关键词检索与可追溯 AI 参考均已实现。[整阶段销项](docs/progress/R8_SOFTWARE_COMPLETION.md)。
-- 本轮本地前端 **868/868**、集中相关后端 **180 次执行**及微信/H5/四 Web 构建、MySQL 迁移通过。全量后端和实际 Compose 以本次统一 PR 最终提交的六项 CI 为准；本地 Compose 因 Docker Hub 网络失败未完成。[本轮验收](docs/testing/LOCAL_R8_COMPLETION_ACCEPTANCE.md)。
+- R8 最终业务提交六项 CI 全部通过：后端 **2,117/2,117**、前端 **868/868**，微信/H5/历史 Web 构建、MySQL 迁移及实际 Compose 均成功。[PR 验收](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/39042750634)；[合并后 main 复验](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/39045134951)亦全部成功。本地 Compose 网络失败保留为本地历史记录，已由远程实际集成验证补齐。[本轮验收](docs/testing/LOCAL_R8_COMPLETION_ACCEPTANCE.md)。
 - 暂无正式授权资料与嵌入服务：已完成配置、KEYWORD 检索和引用闭环，**不声称 Milvus 向量效果或真实语料验收完成**。供应商识别、正式短信/微信身份/资金、真机及发布交付继续最后 R9。
 
-R5–R7 的历史串联 PR #151–#153 已在确认全部提交进入 main 后关闭，实际汇总合并记录为 #154。上传与代码合并不代表生产部署或真机验收。历史阶段文档中的“仅本地”“等待整 R8 后上传”等描述保留为当时记录，由最新上传授权及[汇总交付说明](docs/progress/R8_PARTIAL_UPLOAD_MERGE_2026_10_17.md)覆盖。
+R5–R7 的历史串联 PR #151–#153 已在确认全部提交进入 main 后关闭，实际汇总合并记录为 #154。上传与代码合并不代表生产部署或真机验收。历史阶段文档中的“仅本地”“等待整 R8 后上传”等描述保留为当时记录，由[当前仓库核对记录](docs/progress/REPOSITORY_PROGRESS_SYNC_2026_10_18.md)及已合并交付结果覆盖。
 
 ## 三端功能与权限
 
@@ -61,12 +61,12 @@ R5–R7 的历史串联 PR #151–#153 已在确认全部提交进入 main 后�
 
 ## 测试与数据库基线
 
-以下历史结果为 PR #154 最终业务提交的[完整 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/39028173826)结果，不是本轮新增代码的全量验收。本轮见[验收记录](docs/testing/LOCAL_R8_COMPLETION_ACCEPTANCE.md)及统一 PR 最终 CI：
+以下为 R8 最终业务提交的[完整 CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/39042750634)结果；合并到 `main` 的 `8373341` 后，[六项复验](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/39045134951)全部成功。2026-10-18 核对时当前项目业务文件树与该远端版本一致。
 
 | 检查 | 结果 | 覆盖内容 |
 | --- | --- | --- |
-| backend | 2,008/2,008，零失败/错误/跳过 | Java、真实 MySQL/上传容器、HTTP 权限与事务边界；CI 任务上限为 45 分钟。 |
-| miniapp | 840/840 | 状态流、确认恢复、账号隔离、迟到请求与实际页面脚本；微信和 H5 构建。 |
+| backend | 2,117/2,117，零失败/错误/跳过 | Java、真实 MySQL/上传容器、HTTP 权限与事务边界；CI 任务上限为 45 分钟。 |
+| miniapp | 868/868 | 状态流、确认恢复、账号隔离、迟到请求与实际页面脚本；微信和 H5 构建。 |
 | web | SUCCESS | 历史 Vue/Vite 项目兼容构建。 |
 | schema-and-ocr | SUCCESS | 追踪/SQL/OpenAPI 生成一致性、OCR Python 语法及原始 Compose 迁移挂载检查；不代表真实识别效果。 |
 | schema-mysql | SUCCESS | MySQL 8.0 初始化与迁移重放，保留旧业务凭证。 |

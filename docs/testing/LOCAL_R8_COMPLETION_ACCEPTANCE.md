@@ -1,5 +1,7 @@
 # R8 剩余软件闭环本地验收
 
+> 2026-10-18补记：[PR155](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/155)已合并main `8373341`。[最终PR CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/39042750634)后端2117次执行、前端868次执行及六项检查全部通过；[main六项复验](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/39045134951)亦成功。以下保留上传前本地记录，原本地Compose网络失败不改写为本地成功，远程真实Compose已经通过。
+
 2026-10-17。承接PR154，范围和外部例外见[R8软件销项](../progress/R8_SOFTWARE_COMPLETION.md)。本记录写于统一上传前；最终全量后端、实际Compose及合并结果以对应GitHub PR最终head为准。
 
 ## 已完成验证

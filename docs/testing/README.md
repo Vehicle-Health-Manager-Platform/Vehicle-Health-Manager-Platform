@@ -1,5 +1,7 @@
 # 测试资料
 
+> 2026-10-18最新：[R8验收](LOCAL_R8_COMPLETION_ACCEPTANCE.md)已补齐[PR155](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/155)实际结果：2117后端/868前端、六项CI及[main复验](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/39045134951)成功。下方待CI/仅本地文字为历史记录。
+
 > 2026-10-17最新：[R8剩余统一验收](LOCAL_R8_COMPLETION_ACCEPTANCE.md)：180次相关后端、868前端及构建/130表重放记录；本地Compose外部网络失败单列，完整后端和Compose最终以对应PR CI为准。
 
 > [R8c1b3a公开问答后端验收](LOCAL_R8C1B3A_PUBLIC_QA_ACCEPTANCE.md)：原来源/审核撤回真实库复验、840前端/微信/H5及V059/124表记录；实际公开页面下一b3b。

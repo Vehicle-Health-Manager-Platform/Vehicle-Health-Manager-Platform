@@ -23,3 +23,7 @@
 1. 用户尚未提供正式授权语料和嵌入服务；正式目录为空、未知不虚构。当前实现KEYWORD检索及许可引用，不声称已经实现或验收Milvus向量检索、召回率或真实语料效果。引入真实资料前需权利人许可核验及独立效果验收。
 2. 图片重新编码只移除元数据，不代表自动遮挡视觉隐私；车主与人工审核仍需实际查看。已下载、复制或截图的内容不能远程收回。
 3. 正式识别供应商、短信、微信身份/资金/官方分享订阅、性能/安全备份、真机、部署与提审发布继续最后R9。模拟器/H5/离线脚本不替代真机证据。
+
+## 已完成远程交付（2026-10-18核对）
+
+[PR155](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/155)已于2026-10-17 23:27:36（Asia/Shanghai）合并，业务提交`5f21598`、main合并提交`8373341`。[最终PR CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/39042750634)后端2117次、前端868次及六项门禁全部通过；[main六项复验](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/39045134951)亦成功。上文上传前“以最终CI为准”的条件已经满足。本次核对当前业务文件树与远端main一致，来源与外部交付边界保持不变。

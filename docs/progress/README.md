@@ -1,5 +1,9 @@
 # 项目进度与下一步规划
 
+> 2026-10-18核对：R8用户确认的软件范围已通过[PR155](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/155)合并main（`8373341`），代码/迁移/测试/配置/阶段文档均在仓库。最终业务提交2117后端、868前端和六项CI通过；[合并后main六项CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/39045134951)亦全部成功。当前项目与该远端业务文件树完全一致，没有遗漏代码。本次仅补齐此前待上传/待CI的文档状态，详见[仓库核对](REPOSITORY_PROGRESS_SYNC_2026_10_18.md)。无正式授权语料/嵌入服务，Milvus效果及R9仍待独立验收。
+
+## 历史记录（以下状态为当时记录）
+
 > 2026-10-17当前：[R8剩余统一计划](R8_REMAINING_COMPLETION_PLAN.md) · [问答销项](R8C1B_COMMUNITY_COMPLETION.md) · [图片执行](R8C2_PUBLIC_IMAGES_EXECUTION.md) · [资料执行](R8C3_LICENSED_KNOWLEDGE_EXECUTION.md)。b3b/c2/c3功能已接通，整阶段集中验收进行中，当前仍未统一上传。
 
 > 2026-10-17：[R8c1b3a公开问答后端](R8C1B3A_PUBLIC_QA_EXECUTION.md)本地完成，49不同后端/840前端、微信/H5及V059/124表通过。下一[b3b实际页面与恢复](R8C1B3B_PUBLIC_QA_UI_NEXT_PLAN.md)，公开后端不等于整个b3/c1b完成；整R8完成前代码和文档留本地。
