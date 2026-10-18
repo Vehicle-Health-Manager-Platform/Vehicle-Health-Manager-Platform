@@ -32,8 +32,8 @@ function login() { flow.reset(); clearOwnerSession(); uni.navigateTo({ url: '/pa
 </template>
 <style scoped>
 .page { padding: 32rpx; }.title { display: block; font-size: 36rpx; font-weight: 700; }
-.hint { display: block; margin-top: 16rpx; color: #697585; font-size: 24rpx; line-height: 38rpx; }
-.card { padding: 28rpx; margin-top: 24rpx; border-radius: 20rpx; background: #fff; }
-.error { display: block; margin-top: 20rpx; color: #b42318; font-size: 25rpx; }
-button { margin-top: 20rpx; background: #eef8f0; color: #008f24; border-radius: 14rpx; font-size: 26rpx; }button::after { border: 0; }
+.hint { display: block; margin-top: 16rpx; color: #63685e; font-size: 24rpx; line-height: 38rpx; }
+.card { padding: 28rpx; margin-top: 24rpx; border-radius: 20rpx; background: #fcfbf8; }
+.error { display: block; margin-top: 20rpx; color: #b3261e; font-size: 25rpx; }
+button { margin-top: 20rpx; background: #e9f2ec; color: #074d30; border-radius: 14rpx; font-size: 26rpx; }button::after { border: 0; }
 </style>

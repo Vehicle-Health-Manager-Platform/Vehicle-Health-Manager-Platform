@@ -16,4 +16,4 @@ function date(value){return `${couponLocalTime(value)}（北京时间）`}
   <text v-if="mine&&!row.source_known">该券缺少可验证发行记录，请联系发行门店核对。</text>
  </view>
 </template>
-<style scoped>.coupon-terms{display:flex;flex-direction:column;gap:14rpx;font-size:26rpx;line-height:38rpx;color:#4e5969}</style>
+<style scoped>.coupon-terms{display:flex;flex-direction:column;gap:14rpx;font-size:26rpx;line-height:38rpx;color:#454a41}</style>

@@ -70,4 +70,4 @@ function couponBooking(){if(state.busy||state.uncertain||!state.confirmed||!stat
     <button @tap="uni.navigateBack()">返回方案</button>
   </view>
 </template>
-<style scoped>.booking-row{display:flex;flex-direction:column;gap:16rpx;padding:24rpx 0;border-top:1px solid #e5e6eb}</style>
+<style scoped>.booking-row{display:flex;flex-direction:column;gap:16rpx;padding:24rpx 0;border-top:1px solid #e0ded6}</style>

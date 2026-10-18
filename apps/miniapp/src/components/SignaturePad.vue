@@ -53,5 +53,5 @@ async function save() {
   </view>
 </template>
 <style scoped>
-.signature-panel{display:flex;flex-direction:column;gap:12rpx}.signature-canvas{width:100%;height:180px;border:1px solid #c9cdd4;border-radius:8px;background:#fff;touch-action:none}
+.signature-panel{display:flex;flex-direction:column;gap:12rpx}.signature-canvas{width:100%;height:180px;border:1px solid #d6d3c9;border-radius:8px;background:#fff;touch-action:none}
 </style>

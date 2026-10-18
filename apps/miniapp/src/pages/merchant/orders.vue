@@ -60,4 +60,4 @@ onUnload(() => { visible = false; scanner.reset(); flow.reset() })
   </view>
 </template>
 
-<style scoped>.filters{display:flex;flex-wrap:wrap;gap:8rpx}.filters button{font-size:23rpx;margin:8rpx 0}.filters .selected{background:#00b42a;color:white}</style>
+<style scoped>.filters{display:flex;flex-wrap:wrap;gap:8rpx}.filters button{font-size:23rpx;margin:8rpx 0}.filters .selected{background:#0b6b43;color:#fcfbf8}</style>

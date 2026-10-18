@@ -22,6 +22,8 @@ node apps/miniapp/test/simulator-smoke.cjs
 
 ## 本轮实际结果
 
+第一轮（9 个页面精修）：
+
 | 步骤 | 结果 |
 | --- | --- |
 | 1 | `# tests 916 / # pass 916 / # fail 0 / # skipped 0`，4625ms |
@@ -29,7 +31,25 @@ node apps/miniapp/test/simulator-smoke.cjs
 | 3 | exit 0，`DONE Build complete.` |
 | 4 | **INCOMPLETE**：`complete build and source route inventory match`、`native WebSocket handshake and RPC connection` 两项 PASS，随后 `Devtools RPC timeout: App.callWxMethod` 中断 |
 
+第二轮（全仓色板统一，54 个页面文件 + 6 个组件/服务文件，400+ 处颜色值）后复跑，确认只影响视觉：
+
+| 步骤 | 结果 |
+| --- | --- |
+| 1 | `# tests 916 / # pass 916 / # fail 0`，4190ms |
+| 2 | exit 0，两项原生门禁均 PASS |
+| 3 | exit 0，`DONE Build complete.` |
+
 第 4 步未完成的原因是本机开发者工具未就绪，不是构建或源码问题；本轮**不**据此声明 UI 验收通过。
+
+## 色板核对
+
+```bash
+# 改完后应只剩二维码纯黑与 canvas 纯白这类有意保留的值
+grep -rhoE "#[0-9a-fA-F]{6}" apps/miniapp/src/pages apps/miniapp/src/components \
+  | sort | uniq -c | sort -rn
+```
+
+期望：除 `#000000`（二维码）、`#ffffff`（签名板/海报画布）外，其余都落在 `#f3f1eb / #fcfbf8 / #efede6 / #1a1d18 / #454a41 / #63685e / #8a8f84 / #0b6b43 / #074d30 / #e9f2ec / #c25a00 / #9a4700 / #f7ecdf / #b3261e / #f8ebea / #e0ded6 / #d6d3c9 / #c6ded2` 之内。
 
 ## 第 3 步为什么要把旧产物移走
 

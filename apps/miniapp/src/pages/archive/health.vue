@@ -60,5 +60,5 @@ function edit(row){uni.navigateTo({url:`/pages/archive/health-observation?vehicl
   </view>
 </template>
 <style scoped>
-.page{padding:32rpx}.title{display:block;font-size:36rpx;font-weight:700}.hint{display:block;margin-top:16rpx;color:#697585;font-size:24rpx;line-height:38rpx}.card{margin-top:24rpx;padding:28rpx;background:#fff;border-radius:20rpx}.heading{font-size:28rpx;font-weight:600}.reading{display:block;margin-top:18rpx;font-size:28rpx}.error{display:block;margin-top:20rpx;color:#b42318}button{margin-top:20rpx;background:#00b42a;color:#fff;border-radius:14rpx;font-size:26rpx}button::after{border:0}.secondary{background:#eef8f0;color:#008f24}
+.page{padding:32rpx}.title{display:block;font-size:36rpx;font-weight:700}.hint{display:block;margin-top:16rpx;color:#63685e;font-size:24rpx;line-height:38rpx}.card{margin-top:24rpx;padding:28rpx;background:#fcfbf8;border-radius:20rpx}.heading{font-size:28rpx;font-weight:600}.reading{display:block;margin-top:18rpx;font-size:28rpx}.error{display:block;margin-top:20rpx;color:#b3261e}button{margin-top:20rpx;background:#0b6b43;color:#fcfbf8;border-radius:14rpx;font-size:26rpx}button::after{border:0}.secondary{background:#e9f2ec;color:#074d30}
 </style>

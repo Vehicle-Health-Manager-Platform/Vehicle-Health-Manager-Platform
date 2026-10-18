@@ -16,5 +16,5 @@ defineEmits(['choose', 'remove', 'retry', 'preview'])
   </view>
 </template>
 <style scoped>
-.photo-group,.photo-entry{display:flex;flex-direction:column;gap:12rpx;padding:16rpx 0}.photo-entry{border-bottom:1px solid #e5e6eb}.photo-thumbnail{width:100%;height:220rpx;background:#f2f3f5;border-radius:8rpx}
+.photo-group,.photo-entry{display:flex;flex-direction:column;gap:12rpx;padding:16rpx 0}.photo-entry{border-bottom:1px solid #e0ded6}.photo-thumbnail{width:100%;height:220rpx;background:#efede6;border-radius:8rpx}
 </style>

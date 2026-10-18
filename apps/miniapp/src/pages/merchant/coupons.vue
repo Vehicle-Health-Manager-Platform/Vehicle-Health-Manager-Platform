@@ -48,4 +48,4 @@ function login(){reset();clearMerchantSession();uni.navigateTo({url:'/pages/merc
  <text v-if="state.message" role="status">{{ state.message }}</text><button v-if="state.kind==='unauthorized'" @tap="login">重新登录门店账号</button><button v-if="state.retryWrite" :disabled="state.busy" @tap="flow.retry">重试原操作</button><button :disabled="state.busy||state.retryWrite" @tap="flow.load(1)">刷新本店券</button>
  <button v-if="state.page>1" :disabled="state.busy||state.retryWrite" @tap="flow.load(state.page-1)">上一页</button><button v-if="state.page*20<state.total" :disabled="state.busy||state.retryWrite" @tap="flow.load(state.page+1)">下一页</button></template>
 </view></template>
-<style scoped>input,.field{margin-top:18rpx;padding:18rpx;background:#f2f3f5;border-radius:12rpx;font-size:26rpx}input{min-height:56rpx}</style>
+<style scoped>input,.field{margin-top:18rpx;padding:18rpx;background:#efede6;border-radius:12rpx;font-size:26rpx}input{min-height:56rpx}</style>

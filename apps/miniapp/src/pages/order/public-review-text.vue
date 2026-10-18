@@ -47,4 +47,4 @@ watch(() => ownerSession.accessToken, () => { flow.reset(); if (visible) flow.lo
     <button @tap="uni.navigateBack()">返回本人评价</button>
   </view>
 </template>
-<style scoped>.text-area{box-sizing:border-box;width:100%;min-height:240rpx}.preview{display:flex;flex-direction:column;gap:16rpx;padding:20rpx;background:#f1f8f2}.public-text{white-space:pre-wrap;overflow-wrap:anywhere}</style>
+<style scoped>.text-area{box-sizing:border-box;width:100%;min-height:240rpx}.preview{display:flex;flex-direction:column;gap:16rpx;padding:20rpx;background:#e9f2ec}.public-text{white-space:pre-wrap;overflow-wrap:anywhere}</style>

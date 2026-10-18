@@ -87,5 +87,5 @@ function sheet(){uni.redirectTo({url:`/pages/check/pickup-detail?id=${order}&rol
 </template>
 
 <style scoped>
-.photo-block{display:flex;flex-direction:column;gap:12rpx;padding:20rpx 0;border-bottom:1px solid #e5e6eb}.photo-canvas{position:relative}.photo-canvas image{display:block;width:100%}.damage-dot{position:absolute;transform:translate(-50%,-50%);width:36rpx;height:36rpx;border-radius:50%;background:#d33;color:white;text-align:center;pointer-events:none}.picker-value,input,textarea{padding:16rpx;background:#f2f3f5;border-radius:8rpx}textarea{width:auto}
+.photo-block{display:flex;flex-direction:column;gap:12rpx;padding:20rpx 0;border-bottom:1px solid #e0ded6}.photo-canvas{position:relative}.photo-canvas image{display:block;width:100%}.damage-dot{position:absolute;transform:translate(-50%,-50%);width:36rpx;height:36rpx;border-radius:50%;background:#b3261e;color:#fcfbf8;text-align:center;pointer-events:none}.picker-value,input,textarea{padding:16rpx;background:#efede6;border-radius:8rpx}textarea{width:auto}
 </style>

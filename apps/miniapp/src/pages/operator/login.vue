@@ -38,4 +38,4 @@ onHide(clear); onUnload(clear)
   </view>
 </template>
 
-<style scoped>input{padding:20rpx;border:1rpx solid #e5e6eb;border-radius:12rpx;min-height:48rpx}</style>
+<style scoped>input{padding:20rpx;border:1rpx solid #e0ded6;border-radius:12rpx;min-height:48rpx}</style>

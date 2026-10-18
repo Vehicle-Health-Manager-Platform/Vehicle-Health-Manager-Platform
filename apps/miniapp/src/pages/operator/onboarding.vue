@@ -102,9 +102,9 @@ onUnload(clear)
 </template>
 
 <style scoped>
-.reason { padding: 22rpx; border: 1rpx solid #e5e6eb; border-radius: 12rpx; font-size: 28rpx; }
+.reason { padding: 22rpx; border: 1rpx solid #e0ded6; border-radius: 12rpx; font-size: 28rpx; }
 .image-row { display: flex; align-items: center; gap: 12rpx; margin-top: 12rpx; font-size: 24rpx; }
-.review-row { margin-top: 10rpx; color: #4e5969; font-size: 24rpx; }
-.secondary { align-self: flex-start; min-height: 68rpx; padding: 0 24rpx; margin: 12rpx 0 0; background: #eef8f0; color: #008f24; font-size: 24rpx; }
-.error { color: #b42318; }
+.review-row { margin-top: 10rpx; color: #454a41; font-size: 24rpx; }
+.secondary { align-self: flex-start; min-height: 68rpx; padding: 0 24rpx; margin: 12rpx 0 0; background: #e9f2ec; color: #074d30; font-size: 24rpx; }
+.error { color: #b3261e; }
 </style>

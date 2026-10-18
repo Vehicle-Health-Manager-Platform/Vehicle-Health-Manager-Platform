@@ -30,4 +30,4 @@ watch(() => ownerSession.accessToken, () => { flow.reset(); if (visible) flow.lo
     <button @tap="uni.navigateBack()">返回门店</button>
   </view>
 </template>
-<style scoped>.text-row{display:flex;flex-direction:column;gap:18rpx;padding:24rpx 0;border-top:1px solid #e5e6eb}.public-text{white-space:pre-wrap;overflow-wrap:anywhere}</style>
+<style scoped>.text-row{display:flex;flex-direction:column;gap:18rpx;padding:24rpx 0;border-top:1px solid #e0ded6}.public-text{white-space:pre-wrap;overflow-wrap:anywhere}</style>

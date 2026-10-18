@@ -116,4 +116,4 @@ onUnload(() => { visible.value = false; clear() })
   </view>
 </template>
 
-<style scoped>.part-block{display:flex;flex-direction:column;gap:12rpx;padding:16rpx;background:#f2f3f5;border-radius:8rpx}input,textarea{padding:16rpx;border:1px solid #c9cdd4;border-radius:8rpx}textarea{width:auto;min-height:180rpx}.signature-preview{width:100%;height:180px;background:#fff;border:1px solid #c9cdd4}</style>
+<style scoped>.part-block{display:flex;flex-direction:column;gap:12rpx;padding:16rpx;background:#efede6;border-radius:8rpx}input,textarea{padding:16rpx;border:1px solid #d6d3c9;border-radius:8rpx}textarea{width:auto;min-height:180rpx}.signature-preview{width:100%;height:180px;background:#fcfbf8;border:1px solid #d6d3c9}</style>

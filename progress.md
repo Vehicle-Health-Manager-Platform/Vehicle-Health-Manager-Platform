@@ -1,6 +1,6 @@
 # 当前阶段：R9 车主端视觉刷新
 
-2026-10-18：车主端核心旅程9个页面/组件视觉刷新完成，新增 `design-system.css`（264行令牌与 `ux-*` 原语），`uni.scss` 与 `reservations.css` 同步换语义取值并保留全部选择器与 `padding` 契约。业务逻辑/接口调用/`data-testid`/路由/生命周期零改动。916/916前端测试、微信构建与两项原生门禁、H5构建通过；模拟器冒烟2项后Devtools RPC超时，不计入通过。代码、规格、执行记录与本机验收说明已上传[PR164](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/164)（代码`e1d8fd2`），依赖PR163，保持草稿。不声明整体UI完成。
+2026-10-18：车主端核心旅程9个页面/组件视觉刷新完成，新增 `design-system.css`（264行令牌与 `ux-*` 原语），`uni.scss` 与 `reservations.css` 同步换语义取值并保留全部选择器与 `padding` 契约。业务逻辑/接口调用/`data-testid`/路由/生命周期零改动。916/916前端测试、微信构建与两项原生门禁、H5构建通过；模拟器冒烟2项后Devtools RPC超时，不计入通过。代码、规格、执行记录与本机验收说明已上传[PR164](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/164)（代码`e1d8fd2`），依赖PR163，保持草稿。另做全仓色板统一（54个页面文件+6个组件/服务文件、400+处硬编码色值归入新令牌），复跑916/916与两端构建仍通过。不声明整体UI完成。
 
 # 当前阶段：R9 A4c-2 核心接口性能基线
 

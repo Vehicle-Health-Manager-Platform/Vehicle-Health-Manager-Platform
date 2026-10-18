@@ -57,6 +57,6 @@ function remove(id){delete uploadState.results[id];flow.remove(id)}
 </template>
 
 <style scoped>
-.materials{display:flex;flex-direction:column;gap:16rpx;padding:24rpx;margin:24rpx 0;border:1rpx solid #e5e6eb;border-radius:16rpx;background:#f7f8fa}
-.heading{font-size:28rpx;font-weight:500;color:#1d2129}.hint{font-size:24rpx;line-height:36rpx;color:#86909c}.actions{display:flex;flex-wrap:wrap;gap:16rpx}.actions button,button{margin:0;padding:0 24rpx;min-height:72rpx;line-height:72rpx;font-size:26rpx;border-radius:16rpx;background:#fff;color:#009a24}.actions button[disabled]{color:#86909c;background:#f2f3f5}button::after{border:0}.material{display:flex;flex-direction:column;gap:16rpx;padding-top:16rpx;border-top:1rpx solid #e5e6eb;font-size:26rpx;line-height:40rpx;color:#4e5969;word-break:break-all}.status{font-size:24rpx;line-height:36rpx;color:#ff7d00}
+.materials{display:flex;flex-direction:column;gap:16rpx;padding:24rpx;margin:24rpx 0;border:1rpx solid #e0ded6;border-radius:16rpx;background:#fcfbf8}
+.heading{font-size:28rpx;font-weight:500;color:#1a1d18}.hint{font-size:24rpx;line-height:36rpx;color:#63685e}.actions{display:flex;flex-wrap:wrap;gap:16rpx}.actions button,button{margin:0;padding:0 24rpx;min-height:72rpx;line-height:72rpx;font-size:26rpx;border-radius:16rpx;background:#fcfbf8;color:#0b6b43}.actions button[disabled]{color:#63685e;background:#efede6}button::after{border:0}.material{display:flex;flex-direction:column;gap:16rpx;padding-top:16rpx;border-top:1rpx solid #e0ded6;font-size:26rpx;line-height:40rpx;color:#454a41;word-break:break-all}.status{font-size:24rpx;line-height:36rpx;color:#c25a00}
 </style>

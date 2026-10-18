@@ -72,4 +72,4 @@ onHide(() => { visible = false; clear() }); onUnload(() => { visible = false; cl
   </view>
 </template>
 
-<style scoped>.reason{padding:22rpx;border:1rpx solid #e5e6eb;border-radius:12rpx;font-size:28rpx}.secondary{align-self:flex-start;min-height:68rpx;padding:0 24rpx;margin:12rpx 0 0;background:#eef8f0;color:#008f24;font-size:24rpx}</style>
+<style scoped>.reason{padding:22rpx;border:1rpx solid #e0ded6;border-radius:12rpx;font-size:28rpx}.secondary{align-self:flex-start;min-height:68rpx;padding:0 24rpx;margin:12rpx 0 0;background:#e9f2ec;color:#074d30;font-size:24rpx}</style>

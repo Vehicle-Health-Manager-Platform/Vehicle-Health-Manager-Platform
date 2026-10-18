@@ -57,15 +57,15 @@ function login() { flow.reset(); clearOwnerSession(); uni.navigateTo({ url: '/pa
 <style scoped>
 .page { padding: 32rpx; }
 .title { display: block; font-size: 36rpx; font-weight: 700; }
-.hint { display: block; margin-top: 16rpx; color: #697585; font-size: 24rpx; line-height: 38rpx; }
-.card { margin-top: 24rpx; padding: 28rpx; background: #fff; border-radius: 20rpx; }
+.hint { display: block; margin-top: 16rpx; color: #63685e; font-size: 24rpx; line-height: 38rpx; }
+.card { margin-top: 24rpx; padding: 28rpx; background: #fcfbf8; border-radius: 20rpx; }
 .heading { font-size: 28rpx; font-weight: 600; }
 .label { display: block; margin: 24rpx 0 12rpx; font-size: 25rpx; }
-.input { padding: 20rpx; border: 1rpx solid #d9dfe8; border-radius: 12rpx; font-size: 26rpx; }
-.notice,.message { display: block; margin-top: 20rpx; font-size: 25rpx; line-height: 38rpx; color: #008f24; }
-.error { color: #b42318; }
-button { margin-top: 20rpx; background: #00b42a; color: #fff; border-radius: 14rpx; font-size: 26rpx; }
+.input { padding: 20rpx; border: 1rpx solid #e0ded6; border-radius: 12rpx; font-size: 26rpx; }
+.notice,.message { display: block; margin-top: 20rpx; font-size: 25rpx; line-height: 38rpx; color: #074d30; }
+.error { color: #b3261e; }
+button { margin-top: 20rpx; background: #0b6b43; color: #fcfbf8; border-radius: 14rpx; font-size: 26rpx; }
 button::after { border: 0; }
-.secondary { background: #eef8f0; color: #008f24; }
-.danger { background: #fff2e8; color: #b42318; }
+.secondary { background: #e9f2ec; color: #074d30; }
+.danger { background: #f7ecdf; color: #b3261e; }
 </style>
