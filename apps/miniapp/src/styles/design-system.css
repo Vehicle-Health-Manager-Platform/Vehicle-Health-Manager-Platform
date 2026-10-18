@@ -1,0 +1,103 @@
+/* 车主端设计系统 ux-*：工业实用 × 仪表盘语义。
+ * 令牌挂在 page 上（mp-weixin 的自定义属性根），旧页面不引此类也能继承变量。
+ * 只做视觉原语：页面壳、hero、卡片、按钮族、状态徽章、等宽数值、空态、入场错峰。 */
+
+page {
+  /* 色彩 60/30/10：暖纸灰底 + 暖近白卡片 + 墨绿主导 + 琥珀强调 */
+  --ux-bg: #f3f1eb;
+  --ux-surface: #fcfbf8;
+  --ux-surface-sunk: #efede6;
+  --ux-ink: #1a1d18;
+  --ux-ink-soft: #454a41;
+  --ux-muted: #63685e;
+  --ux-faint: #8a8f84;
+  --ux-primary: #0b6b43;
+  --ux-primary-ink: #074d30;
+  --ux-primary-wash: #e9f2ec;
+  --ux-accent: #c25a00;
+  --ux-accent-ink: #9a4700;
+  --ux-accent-wash: #f7ecdf;
+  --ux-risk: #b3261e;
+  --ux-risk-wash: #f8ebea;
+  --ux-line: rgba(26, 29, 24, 0.14);
+  --ux-line-strong: rgba(26, 29, 24, 0.3);
+  --ux-shadow-1: 0 2rpx 10rpx rgba(26, 29, 24, 0.07);
+  --ux-shadow-2: 0 10rpx 34rpx rgba(26, 29, 24, 0.12);
+  --ux-radius-card: 20rpx;
+  --ux-radius-ctl: 12rpx;
+  --ux-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ux-dur-fast: 160ms;
+  --ux-dur-base: 320ms;
+}
+
+/* —— 页面壳：左右出血交给内容，底部给足回弹空间 —— */
+.ux-page { min-height: 100vh; box-sizing: border-box; padding: 48rpx 32rpx 112rpx; background: var(--ux-bg); color: var(--ux-ink); }
+
+/* —— hero：非对称首屏。左对齐大标题 + 右上角低透明主色光斑做氛围层 —— */
+.ux-hero { position: relative; padding: 16rpx 8rpx 40rpx; overflow: hidden; }
+.ux-hero::before { content: ''; position: absolute; left: 300rpx; top: -220rpx; width: 620rpx; height: 620rpx;
+  background: radial-gradient(closest-side, rgba(11, 107, 67, 0.14), rgba(11, 107, 67, 0));
+  pointer-events: none; }
+.ux-eyebrow { position: relative; color: var(--ux-primary-ink); font-size: 23rpx; font-weight: 600; letter-spacing: 4rpx; }
+.ux-title { position: relative; display: block; margin-top: 14rpx; font-size: 52rpx; line-height: 1.15; font-weight: 700; letter-spacing: 1rpx; }
+.ux-lead { position: relative; display: block; margin-top: 16rpx; max-width: 34em; color: var(--ux-muted); font-size: 27rpx; line-height: 1.7; }
+
+/* —— 卡片：发丝边框 + 暖色轻阴影，不再用无边框纯白块 —— */
+.ux-card { position: relative; box-sizing: border-box; padding: 30rpx 30rpx; background: var(--ux-surface);
+  border: 1rpx solid var(--ux-line); border-radius: var(--ux-radius-card); box-shadow: var(--ux-shadow-1); }
+.ux-card + .ux-card { margin-top: 24rpx; }
+.ux-card-title { font-size: 31rpx; font-weight: 650; color: var(--ux-ink); }
+.ux-card-note { margin-top: 12rpx; color: var(--ux-faint); font-size: 23rpx; line-height: 1.6; }
+.ux-divider { height: 1rpx; margin: 24rpx -30rpx; background: var(--ux-line); }
+
+/* —— 仪表盘数值：等宽数字大读数，品牌记忆点 —— */
+.ux-metric { display: flex; flex-direction: column; }
+.ux-metric-label { color: var(--ux-muted); font-size: 23rpx; letter-spacing: 2rpx; }
+.ux-metric-value { margin-top: 8rpx; color: var(--ux-ink); font-size: 64rpx; line-height: 1.05; font-weight: 700;
+  font-variant-numeric: tabular-nums; letter-spacing: -1rpx; }
+.ux-metric-unit { color: var(--ux-muted); font-size: 26rpx; font-weight: 600; }
+.ux-num { font-variant-numeric: tabular-nums; }
+
+/* —— 状态灯语义：仅靠颜色不够，统一配合文字使用 —— */
+.ux-badge { display: inline-flex; align-items: center; gap: 10rpx; padding: 8rpx 20rpx; border-radius: 999rpx;
+  font-size: 23rpx; font-weight: 600; line-height: 1.4; }
+.ux-badge::before { content: ''; width: 12rpx; height: 12rpx; border-radius: 50%; background: currentColor; }
+.ux-badge-ok { color: var(--ux-primary-ink); background: var(--ux-primary-wash); }
+.ux-badge-warn { color: var(--ux-accent-ink); background: var(--ux-accent-wash); }
+.ux-badge-risk { color: var(--ux-risk); background: var(--ux-risk-wash); }
+.ux-badge-muted { color: var(--ux-muted); background: var(--ux-surface-sunk); }
+
+/* —— 按钮族：默认为发丝描边的中性按钮，主操作才用实色 —— */
+.ux-btn { display: flex; align-items: center; justify-content: center; margin: 0; min-height: 84rpx;
+  padding: 0 32rpx; box-sizing: border-box; border-radius: var(--ux-radius-ctl);
+  border: 1rpx solid var(--ux-line-strong); background: var(--ux-surface); color: var(--ux-ink);
+  font-size: 27rpx; font-weight: 600; line-height: 1.4; transition: transform var(--ux-dur-fast) var(--ux-ease), opacity var(--ux-dur-fast) ease-out; }
+.ux-btn::after { border: 0; }
+.ux-btn[disabled] { color: var(--ux-faint); border-color: var(--ux-line); background: var(--ux-surface-sunk); opacity: 1; }
+.ux-btn-primary { border-color: var(--ux-primary); background: var(--ux-primary); color: #fcfbf8; }
+.ux-btn-accent { border-color: var(--ux-accent); background: var(--ux-accent); color: #fcfbf8; }
+.ux-btn-quiet { border-color: transparent; background: var(--ux-primary-wash); color: var(--ux-primary-ink); }
+.ux-btn-ghost { border-color: transparent; background: transparent; color: var(--ux-ink-soft); }
+.ux-btn:active { transform: translateY(2rpx); }
+
+/* —— 列表行：发丝分隔的信息密度 —— */
+.ux-row { display: flex; flex-direction: column; padding: 26rpx 0; border-top: 1rpx solid var(--ux-line); }
+.ux-row:first-child { border-top: 0; }
+.ux-row-title { font-size: 30rpx; font-weight: 650; color: var(--ux-ink); }
+.ux-row-copy { margin-top: 10rpx; color: var(--ux-muted); font-size: 25rpx; line-height: 1.65; }
+
+/* —— 空态 —— */
+.ux-empty { display: flex; flex-direction: column; align-items: center; padding: 72rpx 40rpx; border: 1rpx dashed var(--ux-line-strong);
+  border-radius: var(--ux-radius-card); background: var(--ux-surface); }
+.ux-empty-title { color: var(--ux-ink-soft); font-size: 29rpx; font-weight: 650; }
+.ux-empty-copy { margin-top: 12rpx; color: var(--ux-muted); font-size: 25rpx; line-height: 1.65; text-align: center; }
+
+/* —— 入场错峰：一次编排好的 4 组序列，只动 opacity / translateY —— */
+.ux-reveal { opacity: 0; transform: translateY(20rpx); }
+.ux-in { animation: ux-rise var(--ux-dur-base) var(--ux-ease) both; }
+.ux-r1 { animation-delay: 0ms; } .ux-r2 { animation-delay: 80ms; } .ux-r3 { animation-delay: 160ms; } .ux-r4 { animation-delay: 240ms; }
+@keyframes ux-rise { from { opacity: 0; transform: translateY(20rpx); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .ux-reveal { opacity: 1; transform: none; }
+  .ux-in { animation: none; }
+}

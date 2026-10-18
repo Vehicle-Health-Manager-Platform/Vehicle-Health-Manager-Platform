@@ -53,13 +53,19 @@ function detail(item) { uni.navigateTo({ url: `/pages/service/detail?id=${item.i
 </template>
 
 <style scoped>
-.categories { display: flex; flex-wrap: wrap; gap: 14rpx; margin-bottom: 24rpx; }
-.category { margin: 0; padding: 0 24rpx; font-size: 25rpx; line-height: 66rpx; color: #4e5969; background: #fff; border-radius: 16rpx; }
-.category.selected { background: #00b42a; color: #fff; }
-.project { display: flex; flex-direction: column; text-align: left; line-height: normal; padding: 30rpx; margin: 0 0 22rpx; border-radius: 24rpx; background: #fff; }
-.name { font-size: 32rpx; font-weight: 650; color: #1d2129; }.copy { margin-top: 16rpx; color: #4e5969; font-size: 25rpx; }
-.price { margin-top: 20rpx; color: #008f24; font-size: 28rpx; }.panel { padding: 28rpx; margin-bottom: 24rpx; background: #fff; border-radius: 24rpx; }
-.notice { color: #4e5969; padding: 24rpx 0; font-size: 27rpx; }.error { color: #b42318; font-size: 26rpx; }
-.action { margin: 22rpx 0; background: #eef8f0; color: #008f24; font-size: 27rpx; border-radius: 14rpx; }button::after { border: 0; }
-.panel{display:flex;flex-direction:column;gap:16rpx;font-size:25rpx;line-height:38rpx}.panel input,.panel textarea{box-sizing:border-box;width:100%;padding:20rpx;background:#f7f8fa;border:1rpx solid #d9dfe8;border-radius:12rpx}.panel input{height:84rpx}.panel textarea{min-height:160rpx}
+/* 分类筛选：药丸芯片，选中态实色主绿 + 对勾前缀由 aria 表达，不止靠颜色。 */
+.categories { display: flex; flex-wrap: wrap; gap: 14rpx; margin-bottom: 26rpx; }
+.category { margin: 0; padding: 0 28rpx; font-size: 25rpx; font-weight: 600; line-height: 66rpx; color: #454a41; border: 1rpx solid rgba(26, 29, 24, 0.3); background: #fcfbf8; border-radius: 999rpx; box-sizing: border-box; transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1); }
+.category:active { transform: translateY(2rpx); }
+.category.selected { border-color: #0b6b43; background: #0b6b43; color: #fcfbf8; }
+/* 项目卡：左主色条 + 等宽参考价读数。 */
+.project { display: flex; flex-direction: column; align-items: flex-start; text-align: left; line-height: normal; padding: 30rpx; margin: 0 0 22rpx; border: 1rpx solid rgba(26, 29, 24, 0.14); border-left: 6rpx solid #0b6b43; border-radius: 20rpx; background: #fcfbf8; box-shadow: 0 2rpx 10rpx rgba(26, 29, 24, 0.07); }
+.name { font-size: 32rpx; font-weight: 700; color: #1a1d18; letter-spacing: 1rpx; }.copy { margin-top: 14rpx; color: #63685e; font-size: 25rpx; }
+.price { margin-top: 20rpx; color: #074d30; font-size: 28rpx; font-weight: 600; font-variant-numeric: tabular-nums; }
+.panel { display: flex; flex-direction: column; gap: 16rpx; padding: 28rpx; margin-bottom: 26rpx; font-size: 25rpx; line-height: 1.65; border: 1rpx solid rgba(26, 29, 24, 0.14); border-radius: 20rpx; background: #fcfbf8; box-shadow: 0 2rpx 10rpx rgba(26, 29, 24, 0.07); }
+.panel input, .panel textarea { box-sizing: border-box; width: 100%; padding: 20rpx; background: #efede6; border: 1rpx solid rgba(26, 29, 24, 0.14); border-radius: 12rpx; color: #1a1d18; }
+.panel input { height: 84rpx; }
+.panel textarea { min-height: 160rpx; }
+.notice { color: #63685e; padding: 24rpx 8rpx; font-size: 27rpx; }.error { color: #b3261e; font-size: 26rpx; }
+.action { margin: 22rpx 0; border: 1rpx solid transparent; background: #e9f2ec; color: #074d30; font-size: 27rpx; font-weight: 600; border-radius: 12rpx; }button::after { border: 0; }
 </style>
