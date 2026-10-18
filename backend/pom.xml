@@ -90,4 +90,47 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>core-coverage</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.8.12</version>
+            <configuration>
+              <dataFile>${project.build.directory}/core-coverage.exec</dataFile>
+              <outputDirectory>${project.reporting.outputDirectory}/core-coverage</outputDirectory>
+            </configuration>
+            <executions>
+              <execution>
+                <id>core-coverage-agent</id>
+                <goals><goal>prepare-agent</goal></goals>
+                <configuration>
+                  <propertyName>coreCoverageArgLine</propertyName>
+                  <destFile>${project.build.directory}/core-coverage.exec</destFile>
+                  <append>false</append>
+                </configuration>
+              </execution>
+              <execution>
+                <id>core-coverage-report</id>
+                <phase>verify</phase>
+                <goals><goal>report</goal></goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <argLine>@{coreCoverageArgLine}</argLine>
+              <forkCount>1</forkCount>
+              <reuseForks>true</reuseForks>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

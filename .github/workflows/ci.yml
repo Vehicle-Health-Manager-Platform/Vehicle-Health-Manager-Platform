@@ -41,13 +41,30 @@ jobs:
           java-version: '17'
           cache: maven
           cache-dependency-path: backend/pom.xml
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
       - name: Build real upload test images
         timeout-minutes: 5
         run: |
           docker build --progress=plain --tag autocare-upload-minio-ci deploy/minio
           docker build --progress=plain --tag autocare-upload-init-ci deploy/upload-init
-      - run: mvn -B -Dupload.test.images.prebuilt=true test
+      - run: mvn -B -Pcore-coverage -Dupload.test.images.prebuilt=true clean verify
         working-directory: backend
+      - name: Check declared core business coverage
+        if: always()
+        run: python scripts/check_core_coverage.py
+      - name: Save coverage and test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: core-coverage-and-tests
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            backend/target/site/core-coverage/
+            backend/target/core-coverage-summary.json
+            backend/target/surefire-reports/TEST-*.xml
   schema-and-ocr:
     runs-on: ubuntu-latest
     steps:
@@ -55,6 +72,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - run: python -m unittest discover -s scripts -p test_core_coverage.py -v
       - run: python scripts/generate_traceability.py
       - run: python scripts/build_init_sql.py
       - run: python scripts/generate_openapi.py
