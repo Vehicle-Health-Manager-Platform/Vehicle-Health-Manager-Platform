@@ -13,7 +13,7 @@ import { apiOrigin, cloudRun } from './api-config.js'
 const JSON_CONTENT_TYPE = { 'content-type': 'application/json' }
 
 // 需要原样透传的本地能力（回调式，参数与 uni/wx 一致）。
-const FORWARDED = ['chooseMedia', 'scanCode', 'chooseImage', 'uploadFile', 'previewImage', 'openSetting', 'downloadFile', 'openDocument']
+const FORWARDED = ['chooseMedia', 'scanCode', 'chooseImage', 'chooseMessageFile', 'uploadFile', 'previewImage', 'openSetting', 'downloadFile', 'openDocument']
 
 // 小程序运行时全局对象；Node 离线测试与 H5 构建下不存在。
 function defaultCloud() {
@@ -107,6 +107,13 @@ export function createApiRuntime({ origin, cloud, runtime, cloudApi }) {
     }
   }
 
+  function getRecorderManager() {
+    try { return runtime()?.getRecorderManager?.() } catch { return undefined }
+  }
+  function createInnerAudioContext() {
+    try { return runtime()?.createInnerAudioContext?.() } catch { return undefined }
+  }
+
   function userDataPath() {
     try {
       const target = runtime()
@@ -135,7 +142,7 @@ export function createApiRuntime({ origin, cloud, runtime, cloudApi }) {
     return target[name](...args)
   }]))
 
-  return { initCloud, request, login, supports, environment, getFileSystemManager, userDataPath, ...forwarded, ...storage }
+  return { initCloud, request, login, supports, environment, getFileSystemManager, getRecorderManager, createInnerAudioContext, userDataPath, ...forwarded, ...storage }
 }
 
 export const apiRuntime = createApiRuntime({

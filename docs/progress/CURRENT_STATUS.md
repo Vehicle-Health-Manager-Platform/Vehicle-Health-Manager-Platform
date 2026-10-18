@@ -1,5 +1,7 @@
 # 当前进度
 
+> **2026-10-18 A1/A2a**：预览阶段已上传[PR156](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/156)；A1细化设计及A2a本机录音/试听/图片PDF选择、账号车辆隔离和实际AI/档案页接入已实施，正在最终验证与独立上传。无新增API/迁移；音频PDF受控上传、识别确认和真实外部效果仍在后续单元。
+
 > **2026-10-18 本轮续做**：用户要求按阶段实施、同步文档并上传GitHub。三角色只读预览及默认入口修复已本地完成，874项小程序测试、普通微信/演示构建及13项模拟器检查通过，正在作为独立阶段交付；接下来A1录入设计及A2a录音/附件本机采集。真实识别、身份资金及发布保持后置。参见[预览验收](../testing/LOCAL_ROLE_PREVIEW_ACCEPTANCE.md)和[执行队列](REMAINING_EXECUTION_ORDER_2026_10_18.md)。阶段PR与最终head CI另记，不把上传或演示当正式验收。
 
 > 2026-10-18核对：R8用户确认的软件范围已通过[PR155](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/155)合并main（`8373341`），代码/迁移/测试/配置/阶段文档均在仓库。最终业务提交2117后端、868前端和六项CI通过；[合并后main六项CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/39045134951)亦全部成功。当前项目与该远端业务文件树完全一致，没有遗漏代码。本次仅补齐此前待上传/待CI的文档状态，详见[仓库核对](REPOSITORY_PROGRESS_SYNC_2026_10_18.md)。无正式授权语料/嵌入服务，Milvus效果及R9仍待独立验收。

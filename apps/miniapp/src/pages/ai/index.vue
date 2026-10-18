@@ -4,6 +4,7 @@ import { onHide, onUnload } from '@dcloudio/uni-app'
 import OwnerTabShell from '../../components/OwnerTabShell.vue'
 import VehicleList from '../../components/VehicleList.vue'
 import InviteDiagnosisEligibility from '../../components/InviteDiagnosisEligibility.vue'
+import LocalInputMaterials from '../../components/LocalInputMaterials.vue'
 import { ownerSession, clearOwnerSession } from '../../services/owner-session.js'
 import { selectedOwnerVehicle, selectOwnerVehicle } from '../../services/owner-vehicle-selection.js'
 import { aiChatApi, MAX_QUESTION_CHARS } from '../../services/ai-chat.js'
@@ -11,6 +12,7 @@ import { createAiChatFlow, initialAiChatState } from '../../services/ai-chat-flo
 
 const state = reactive(initialAiChatState())
 const draft = ref('')
+const localMaterialCount = ref(0)
 const flow = createAiChatFlow({
   state,
   api: aiChatApi,
@@ -22,7 +24,7 @@ const currentVehicle = computed(() => selectedOwnerVehicle.value?.model_name || 
 const lastMessageId = computed(() => (state.messages.length ? `message-${state.messages.length - 1}` : ''))
 
 // 换车或换身份会让上一辆车的回答过期，直接开一段新对话。
-watch(() => ownerSession.accessToken, flow.reset, { flush: 'sync' })
+watch(() => ownerSession.accessToken, () => { draft.value = ''; flow.reset() }, { flush: 'sync' })
 watch(() => selectedOwnerVehicle.value?.vehicle_id, () => { if (state.messages.length) flow.reset() }, { flush: 'sync' })
 onHide(flow.suspend)
 onUnload(flow.reset)
@@ -82,11 +84,12 @@ function ask(text) { draft.value = text; return send() }
       </text>
 
       <view class="composer">
+        <LocalInputMaterials :actor="ownerSession.accessToken" :scope="'ai:'+(selectedOwnerVehicle?.vehicle_id||0)" @change="localMaterialCount=$event.count" />
         <textarea v-model="draft" class="input" :maxlength="MAX_QUESTION_CHARS" :disabled="state.busy || !ownerSession.accessToken"
           placeholder="描述车辆的现象或想问的问题" auto-height />
         <view class="composer-foot">
           <text class="counter">{{ draft.length }}/{{ MAX_QUESTION_CHARS }}</text>
-          <button class="send" :disabled="state.busy || !draft.trim()" data-testid="ai-send" @tap="send">发送</button>
+          <button class="send" :disabled="state.busy || !draft.trim()" data-testid="ai-send" @tap="send">{{localMaterialCount?'仅发送文字':'发送'}}</button>
         </view>
       </view>
       <text class="note">AI 建议仅供参考，不能替代到店检查；涉及制动、转向、轮胎等安全问题时请尽快到店。</text>

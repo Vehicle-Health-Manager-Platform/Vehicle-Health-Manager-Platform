@@ -28,7 +28,12 @@ export function createLocalPreviewRuntime(runtime) {
   stub.setStorageSync = (key,value) => { storage.set(key,clone(value)) }
   stub.removeStorageSync = key => { storage.delete(key) }
   stub.login = blocked(runtime)
-  for (const key of ['uploadFile','downloadFile','previewImage','requestPayment','requestSubscribeMessage']) stub[key] = blocked(runtime)
+  for (const key of ['uploadFile','downloadFile','requestPayment','requestSubscribeMessage']) stub[key] = blocked(runtime)
+  stub.previewImage = options => {
+    const local = p => typeof p==='string' && /^(?:wxfile:\/\/|file:\/\/\/|\/(?!\/)|[a-z]:[\\/]|https?:\/\/tmp\/)/i.test(p)
+    if(Array.isArray(options?.urls)&&options.urls.length&&options.urls.every(local)&&typeof runtime.previewImage==='function')return runtime.previewImage(options)
+    return blocked(runtime)(options)
+  }
   stub.request = options => {
     let aborted = false
     const ready = active || runtime.getSystemInfoSync?.().platform === 'devtools'

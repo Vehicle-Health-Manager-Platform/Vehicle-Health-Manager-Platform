@@ -1,6 +1,7 @@
 <script setup>
 import { reactive, ref, watch } from 'vue'
 import { onLoad, onHide, onUnload } from '@dcloudio/uni-app'
+import LocalInputMaterials from '../../components/LocalInputMaterials.vue'
 import { ownerSession, clearOwnerSession } from '../../services/owner-session.js'
 import { archiveApi } from '../../services/archives.js'
 import { createArchiveFlow, initialArchiveState } from '../../services/archive-flow.js'
@@ -12,12 +13,13 @@ const flow = createArchiveFlow({ state, api: archiveApi, token: () => ownerSessi
 const types = ['保养', '维修', '保险', '事故', '改装', '违章', '年检', '行驶证资料', '驾驶证资料', '本人故障记录']
 const uploadBusy = ref(false), imageMessage = ref(''), candidate = ref(null)
 const notice = ref(''), permissionDenied = ref(false)
+const auxiliaryPicker = ref(false)
 let generation = 0, imageKey = '', routeVehicleId = 0, routeInputType = 3, routeArchiveType = 1
 const today = () => { const now = new Date(); return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}` }
 onLoad(query => { routeVehicleId = Number(query.vehicle_id); routeInputType = archiveInputType(query);const type=Number(query.archive_type);routeArchiveType=Number.isInteger(type)&&type>=1&&type<=10?type:1;state.archiveType=routeArchiveType; state.vehicleId = Number.isSafeInteger(routeVehicleId) && routeVehicleId > 0 ? routeVehicleId : 0; state.inputType = routeInputType; state.recordedDate = today() })
 function clear() { generation++; flow.reset(); uploadBusy.value = false; imageMessage.value = ''; candidate.value = null; imageKey = ''; notice.value = ''; permissionDenied.value = false; state.vehicleId = routeVehicleId; state.inputType = routeInputType;state.archiveType=routeArchiveType; state.recordedDate = today() }
 watch(() => ownerSession.accessToken, clear, { flush: 'sync' })
-onHide(clear)
+onHide(() => { if (auxiliaryPicker.value) flow.suspend(); else clear() })
 onUnload(clear)
 function login() { clearOwnerSession(); uni.navigateTo({ url: '/pages/owner/index' }) }
 function back() { uni.switchTab({ url: '/pages/archive/index' }) }
@@ -72,6 +74,7 @@ async function preview(id) {
     <view v-if="!ownerSession.accessToken" class="panel"><text>请先登录车主账号</text><button @tap="login">前往登录</button></view>
     <view v-else-if="!state.vehicleId" class="panel"><text>车辆信息无效，请返回选择车辆</text><button @tap="back">返回档案</button></view>
     <view v-else class="panel">
+      <LocalInputMaterials :actor="ownerSession.accessToken" :scope="'archive:'+state.vehicleId+':'+state.archiveType" @picker-change="auxiliaryPicker=$event" />
       <text class="label">档案类型</text>
       <picker :disabled="state.busy || uploadBusy || state.saved" :range="types" @change="pickType"><view class="field">{{ types[state.archiveType - 1] }}</view></picker>
       <text class="label">发生日期</text>
