@@ -1,6 +1,6 @@
 # R9 A4b：隔离核心业务 HTTP 旅程
 
-日期：2026-10-18。前置 PR160；实施分支 `codex/r9-a4b-isolated-journeys`。本地核心旅程已通过，补充9项身份回归亦通过，准备 GitHub 阶段交付；完整远程CI另记。
+日期：2026-10-18。前置 PR160；实施分支 `codex/r9-a4b-isolated-journeys`。本地核心旅程已通过，补充9项身份回归亦通过，代码、测试、报告与文档已上传[PR161](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/161)（代码提交 `7dd43a8`），依赖PR160；完整远程CI待结束，保持草稿，不合并或部署。
 
 ## 实施内容
 
