@@ -12,17 +12,25 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 @Configuration
 @ConditionalOnProperty("MYSQL_HOST")
 public class IdentityDatabaseConfig {
+    /** Pool size stays at 10 unless a deployment explicitly sizes it for measured concurrency. */
+    static int poolSize(String value) {
+        int size = Integer.parseInt(value);
+        if (size < 1 || size > 200) throw new IllegalStateException("MYSQL_POOL_SIZE must be between 1 and 200");
+        return size;
+    }
+
     @Bean
     DataSource identityDataSource(@Value("${MYSQL_HOST}") String host,
                                   @Value("${MYSQL_PORT:3306}") int port,
                                   @Value("${MYSQL_DATABASE}") String database,
                                   @Value("${MYSQL_USER}") String user,
-                                  @Value("${MYSQL_PASSWORD}") String password) {
+                                  @Value("${MYSQL_PASSWORD}") String password,
+                                  @Value("${MYSQL_POOL_SIZE:10}") String poolSize) {
         HikariDataSource source = new HikariDataSource();
         source.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC");
         source.setUsername(user);
         source.setPassword(password);
-        source.setMaximumPoolSize(10);
+        source.setMaximumPoolSize(poolSize(poolSize));
         return source;
     }
 

@@ -59,10 +59,14 @@ public class ReservationStore {
     static Map<String,Object> page(List<?> items,long count,int page,int size){return Map.of("items",items,"total",count,"page",page,"page_size",size);}
     // Future paid/service statuses continue consuming capacity. Only closed,
     // deleted and already expired unpaid orders cease to consume a place.
+    // This is a display-only count and never takes locks: `FOR UPDATE` here was measured
+    // to fall back to a full table scan while `order` is small (EXPLAIN type=ALL), which
+    // took next-key locks over every order row and the supremum record, serialising all
+    // bookings and deadlocking concurrent creations (A4c-2). Capacity enforcement reads
+    // `appointment_slot.reserved_count` under the slot row lock instead.
     long occupied(long slot,Instant now){
         String filter=" FROM `order` WHERE slot_id=? AND is_deleted=0 AND status<>'CLOSED' AND (status<>'PENDING_PAYMENT' OR expires_at IS NULL OR expires_at>?)";
-        if(org.springframework.transaction.support.TransactionSynchronizationManager.isCurrentTransactionReadOnly())return jdbc.queryForObject("SELECT COUNT(*)"+filter,Long.class,slot,time(now));
-        return jdbc.queryForList("SELECT id"+filter+" FOR UPDATE",slot,time(now)).size();
+        return jdbc.queryForObject("SELECT COUNT(*)"+filter,Long.class,slot,time(now));
     }
     Map<String,Object> slotRow(Map<String,Object> row,Instant now){
         var result=new LinkedHashMap<String,Object>();long id=number(row,"id");
@@ -71,10 +75,16 @@ public class ReservationStore {
     Map<String,Object> quote(long id,boolean lock){
         var q=one("SELECT merchant_id,project_id FROM merchant_project WHERE id=?",id);
         long shop=number(q,"merchant_id"),project=number(q,"project_id");
-        if(lock){lockShop(shop);one("SELECT id FROM standard_project WHERE id=? FOR UPDATE",project);one("SELECT id FROM merchant_project WHERE id=? FOR UPDATE",id);}
+        // Lock only the shop quote and its version: `FOR UPDATE` over the join also took an
+        // exclusive lock on the shared catalog row, which serialised every booking on the
+        // platform through one row (A4c-2 measured ~50 bookings/s at any concurrency). The
+        // catalog row is still held FOR SHARE above, so a concurrent rename/disable waits for
+        // the booking while other bookings proceed; the shop and quote stay exclusive so price
+        // and format changes remain conflict-checked.
+        if(lock){lockShop(shop);one("SELECT id FROM standard_project WHERE id=? FOR SHARE",project);one("SELECT id FROM merchant_project WHERE id=? FOR UPDATE",id);}
         Long latest=lock?number(one("SELECT id FROM merchant_project_version WHERE merchant_project_id=? ORDER BY version DESC LIMIT 1 FOR UPDATE",id),"id"):null;
         var args=lock?new Object[]{id,latest}:new Object[]{id};
-        var row=one("SELECT q.id,q.merchant_id,q.project_id,m.name,m.address,p.project_name,p.service_content,v.id AS version_id,v.version,v.price FROM merchant_project q JOIN merchant m ON m.id=q.merchant_id JOIN standard_project p ON p.id=q.project_id JOIN merchant_project_version v ON v.merchant_project_id=q.id WHERE q.id=? AND q.is_deleted=0 AND q.on_shelf=1 AND m.status=1 AND m.is_deleted=0 AND p.status=1 AND p.is_deleted=0"+(lock?" AND v.id=? FOR UPDATE":" AND v.version=(SELECT MAX(v2.version) FROM merchant_project_version v2 WHERE v2.merchant_project_id=q.id)"),args);
+        var row=one("SELECT q.id,q.merchant_id,q.project_id,m.name,m.address,p.project_name,p.service_content,v.id AS version_id,v.version,v.price FROM merchant_project q JOIN merchant m ON m.id=q.merchant_id JOIN standard_project p ON p.id=q.project_id JOIN merchant_project_version v ON v.merchant_project_id=q.id WHERE q.id=? AND q.is_deleted=0 AND q.on_shelf=1 AND m.status=1 AND m.is_deleted=0 AND p.status=1 AND p.is_deleted=0"+(lock?" AND v.id=? FOR UPDATE OF q,v":" AND v.version=(SELECT MAX(v2.version) FROM merchant_project_version v2 WHERE v2.merchant_project_id=q.id)"),args);
         if(((java.math.BigDecimal)row.get("price")).signum()<=0)throw missing();return row;
     }
     Map<String,Object> quoteResult(Map<String,Object> q){return Map.of("merchant_project_id",number(q,"id"),"quote_version_id",number(q,"version_id"),"version",number(q,"version"),"merchant_id",number(q,"merchant_id"),"standard_project_id",number(q,"project_id"),"merchant_name",q.get("name"),"address",q.get("address"),"project_name",q.get("project_name"),"price",q.get("price").toString());}
