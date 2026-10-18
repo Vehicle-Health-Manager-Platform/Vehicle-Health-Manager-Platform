@@ -132,7 +132,7 @@ export function createLocalMaterialsFlow({state,runtime=()=>apiRuntime,actor,sco
     }
     const onError=error=>{if(entry.finished)return;entry.finished=true;release();if(live(e,c)&&!entry.cancelled){state.phase='idle';const f=safeFailure(error,'录音失败，请重新录制或手动填写');fail(f.kind,f.message)}}
     try{manager.onStart(onStart);manager.onStop(onStop);manager.onError(onError);manager.start({...RECORD_OPTIONS})}
-    catch{release();if(live(e,c)){state.phase='idle';fail('native','无法开始录音，请先手动填写')}}
+    catch{entry.finished=true;release();if(live(e,c)){state.phase='idle';fail('native','无法开始录音，请先手动填写')}}
   }
   function stopRecording(){
     if(!lease||lease.cancelled||!['requesting','recording'].includes(state.phase))return

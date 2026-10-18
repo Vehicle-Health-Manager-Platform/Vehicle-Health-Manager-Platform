@@ -109,6 +109,13 @@ test('duplicate queued recorder terminal callbacks cannot add the same audio twi
  await stop(recording);await stop(recording);error({errMsg:'late error'})
  assert.equal(h.state.items.length,1);assert.equal(h.state.phase,'idle');assert.equal(h.state.message,'')
 })
+test('a synchronous native start failure invalidates callbacks already queued by that attempt',async()=>{
+ const m=manager();let lateStart,lateStop
+ m.start=()=>{lateStart=[...m.handlers.Start][0];lateStop=[...m.handlers.Stop][0];throw Error('native start rejected')}
+ const h=harness({manager:m});h.flow.startRecording();lateStart();await lateStop(recording)
+ assert.equal(h.state.phase,'idle');assert.equal(h.state.items.length,0);assert.equal(h.state.kind,'native')
+ assert.ok(Object.values(m.handlers).every(s=>s.size===0))
+})
 test('late recorded-size response and record errors cannot cross account changes',async()=>{
  const h=harness();h.flow.startRecording();await h.record.emit('Start');const finished=h.record.emit('Stop',{...recording,fileSize:0})
  h.setActor('another-owner');h.flow.reset();h.calls.at(-1)[1].success({size:1000});await finished;assert.deepEqual(h.state.items,[])
