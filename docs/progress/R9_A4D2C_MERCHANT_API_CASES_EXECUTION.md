@@ -29,3 +29,7 @@
 下一 A4d-2d 社区/知识与剩余车主接口，再 A5→B 外部接入→C 真机；全部 API 验收和性能延迟达标仍未完成。
 
 首轮真实119请求/397断言仅1条失败：提交回执也是 data.application.application_id，预期误写扁平字段；其他请求/断言通过，隔离资源全部清理。已按既有契约修正；同轮来源有开发修改，不计最终成功。清理等待采用单次inspect快照校验归属，避免检测存在后第二次guard时容器已删除的竞态。最终固定实现完整复跑已PASS，见实际报告。
+
+## GitHub 交付
+
+本阶段全部成果已上传 [PR169](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/169)，业务验收及清理修复代码 `edfa3a9`，依赖 PR168；完整远程 CI 待结果，保持草稿，不合并或部署。

@@ -6,3 +6,5 @@
 4. 固定来源真实运行，必要时修复并完整复跑；更新 CI、实际报告、中文操作与阶段进度。
 5. 上传依赖 PR168 的草稿 PR，完整远程 CI 结果如实记录，不合并/部署。
 6. 下一 A4d-2d 社区/知识与剩余车主 API，再 A5→B 外部身份/资金/识别→C 真机；性能延迟未达标保留。
+
+步骤1–5已完成本地实施和交付，119业务请求/397断言、65项脚本测试通过，见[PR169](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/169)；完整远程CI待结果。

@@ -1,4 +1,4 @@
-> **A4d-2c 本地通过（2026-10-19）**：商家入驻/配额审核、员工管理与运营权限，17接口/119业务请求/397断言通过；338匿名请求/1014断言及65项脚本测试通过。修复Docker自动删除清理竞态，隔离资源清理全部成功。[执行与实际报告](docs/progress/R9_A4D2C_MERCHANT_API_CASES_EXECUTION.md)。下一社区/知识及剩余车主接口；真实激活/上传/绑定、全部API验收和性能延迟达标仍未完成。
+> **A4d-2c 本地通过（2026-10-19）**：商家入驻/配额审核、员工管理与运营权限，17接口/119业务请求/397断言通过；338匿名请求/1014断言及65项脚本测试通过。修复Docker自动删除清理竞态，隔离资源清理全部成功。[执行与实际报告](docs/progress/R9_A4D2C_MERCHANT_API_CASES_EXECUTION.md)。下一社区/知识及剩余车主接口；真实激活/上传/绑定、全部API验收和性能延迟达标仍未完成。 本阶段全部成果已上传 [PR169](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/169)，业务验收及清理修复代码 `edfa3a9`，依赖 PR168；完整远程 CI 待结果，保持草稿，不合并或部署。
 
 > **A4d-2b2 本地通过（2026-10-19）**：现金券预占/取消释放/支付消费/退款失败不返与成功返原券、独立服务券核销，20 接口/160 业务请求/547 断言全部通过；338 匿名请求/1014 断言与41项脚本测试通过。有效期、历史合同、零佣金及唯一事件核对通过，隔离资源清理成功。[执行与实际报告](docs/progress/R9_A4D2B2_COUPON_API_CASES_EXECUTION.md)。下一商家入驻/员工与运营权限；供应商调用、全部 API 验收及性能延迟达标仍未完成。 本阶段全部成果已上传 [PR168](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/168)，业务验收代码 `90c6f4a`，依赖 PR167；完整远程 CI 待结束，保持草稿，不合并或部署。
 
