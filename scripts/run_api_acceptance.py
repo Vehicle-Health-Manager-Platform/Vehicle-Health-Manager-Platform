@@ -49,7 +49,7 @@ def source_hash():
     paths += [ROOT / 'scripts/fulfillment_api_cases.py', ROOT / 'scripts/coupon_api_cases.py']
     paths += [ROOT / 'scripts/merchant_api_cases.py']
     paths += [ROOT / 'scripts/community_api_cases.py', ROOT / 'scripts/publication_api_cases.py', ROOT / 'scripts/experience_api_cases.py', ROOT / 'scripts/health_api_cases.py', ROOT / 'scripts/export_api_cases.py', ROOT / 'scripts/requirements-export-qa.txt']
-    paths += [ROOT / 'scripts/points_api_cases.py']
+    paths += [ROOT / 'scripts/points_api_cases.py', ROOT / 'scripts/exchange_api_cases.py']
     value = hashlib.sha256()
     for path in paths:
         if path.is_file(): value.update(path.relative_to(ROOT).as_posix().encode()); value.update(path.read_bytes())
@@ -132,12 +132,13 @@ def main():
     parser.add_argument('--health-cases', action='store_true', help='Run synthetic owner structured archive health and reminder cases.')
     parser.add_argument('--export-cases', action='store_true', help='Run isolated private PDF and archive share cases.')
     parser.add_argument('--points-cases', action='store_true', help='Run isolated point policies, check-in and verified ledger with synthetic identity flags.')
+    parser.add_argument('--exchange-cases', action='store_true', help='Run earned points and atomic cash/service coupon exchange cases.')
     args = parser.parse_args()
     if args.record_ci_sources:
-        if any((args.ci_built_jar,args.owner_cases,args.fulfillment_cases,args.coupon_cases,args.merchant_cases,args.community_cases,args.publication_cases,args.experience_cases,args.health_cases,args.export_cases,args.points_cases)):
+        if any((args.ci_built_jar,args.owner_cases,args.fulfillment_cases,args.coupon_cases,args.merchant_cases,args.community_cases,args.publication_cases,args.experience_cases,args.health_cases,args.export_cases,args.points_cases,args.exchange_cases)):
             parser.error('Record CI inputs separately before the build')
         record_ci_sources(); print('API acceptance: recorded fresh CI build inputs',flush=True); return 0
-    if sum((args.owner_cases, args.fulfillment_cases, args.coupon_cases, args.merchant_cases, args.community_cases,args.publication_cases,args.experience_cases,args.health_cases,args.export_cases,args.points_cases)) > 1:
+    if sum((args.owner_cases, args.fulfillment_cases, args.coupon_cases, args.merchant_cases, args.community_cases,args.publication_cases,args.experience_cases,args.health_cases,args.export_cases,args.points_cases,args.exchange_cases)) > 1:
         parser.error('Business suites require separate fresh databases; select one per run')
     run = uuid.uuid4().hex
     work = ROOT / '.cache' / ('api-acceptance-' + run[:12]); work.mkdir(parents=True)
@@ -157,7 +158,7 @@ def main():
         if len(expected) != 338: raise ValueError('Review changed anonymous acceptance scope')
         report['contract_operations'] = assets['acceptance_inventory.json']['operations']
         report['collection_sha256'] = hashlib.sha256((OUTPUT / 'anonymous.postman_collection.json').read_bytes()).hexdigest()
-        suite = 'owner' if args.owner_cases else 'fulfillment' if args.fulfillment_cases else 'coupon' if args.coupon_cases else 'merchant' if args.merchant_cases else 'community' if args.community_cases else 'publication' if args.publication_cases else 'experience' if args.experience_cases else 'health' if args.health_cases else 'export' if args.export_cases else 'points' if args.points_cases else None
+        suite = 'owner' if args.owner_cases else 'fulfillment' if args.fulfillment_cases else 'coupon' if args.coupon_cases else 'merchant' if args.merchant_cases else 'community' if args.community_cases else 'publication' if args.publication_cases else 'experience' if args.experience_cases else 'health' if args.health_cases else 'export' if args.export_cases else 'points' if args.points_cases else 'exchange' if args.exchange_cases else None
         business_module = importlib.import_module(suite+'_api_cases') if suite else None
         if business_module:
             business_collection, business_manifest = business_module.assets()

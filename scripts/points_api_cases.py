@@ -86,9 +86,9 @@ def seed(mysql,secret):
 def environment(tokens):return [('WECHAT_APP_ID','fulfillment-cases'),('POINTS_EARNING_ENABLED','true'),('POINTS_AI_VERIFIED_ENABLED','false'),('POINTS_EXCHANGE_ENABLED','false'),('POINTS_RECOVERY_DELAY_MS','250'),('KNOWLEDGE_AI_ENABLED','false'),('EXPERIENCE_PUBLICATION_ENABLED','false')]
 
 
-def audit(path,collection,manifest,tokens):
+def audit(path,collection,manifest,tokens,expected_operations=OPERATION_COUNT):
     from run_api_acceptance import audit_owner_cases
-    result=audit_owner_cases(path,collection,manifest,tokens,expected_operations=OPERATION_COUNT)
+    result=audit_owner_cases(path,collection,manifest,tokens,expected_operations=expected_operations)
     requests={x['name']:x['request'] for x in collection['item']}
     for e in json.loads(path.read_text(encoding='utf-8'))['run']['executions']:
         planned=requests[e['item']['name']];actual=e['request']

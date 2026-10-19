@@ -126,3 +126,7 @@ KNOWLEDGE_AI_ENABLED与COMMUNITY_PUBLICATION_ENABLED明确false，真实公开�
 ## A4d-2e3 积分规则与本人账本
 
 `python scripts/run_api_acceptance.py --points-cases` 覆盖4项运营积分规则和4项车主任务/概览/流水/签到，共8接口116业务请求397断言。真实HTTP/MySQL及后台恢复任务，隔离SQL身份标记对照，不调用真实微信或外部AI。逐条审计实际正文、规则ID/版本/日期及幂等键，另核对冻结奖励、唯一分录、历史余额隔离和他人余额不变。集合默认禁发；真实身份获分与兑换事务另行验收。见[执行](../progress/R9_A4D2E3_POINTS_LEDGER_API_EXECUTION.md)。
+
+## A4d-2e4 积分兑换、扣分与券到账
+
+`python scripts/run_api_acceptance.py --exchange-cases` 覆盖8兑换本域及9串联支撑接口，17接口196请求668断言。真实签到获分→目录及两类券发布→兑换扣分/库存/到账→旧回执、停用及终身限额，正文源版本和幂等键严格审计，独立运营权限与另一车主对照。默认禁发；正式微信/外部服务及真机仍后置。见[执行](../progress/R9_A4D2E4_POINTS_EXCHANGE_API_EXECUTION.md)。
