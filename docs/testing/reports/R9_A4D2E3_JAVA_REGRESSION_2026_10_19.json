@@ -1,0 +1,91 @@
+{
+  "passed": true,
+  "scope": "targeted point policy/ledger and identity/AI hooks; not full backend suite",
+  "tests": 69,
+  "suites": [
+    {
+      "class": "com.autocare.platform.PointIdentityHookTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "time_seconds": 0.209,
+      "junit_sha256": "b0599b36c86181dc8fb2a2ade8486289b12e57df7d2cecfc79a85c3ed4623b11"
+    },
+    {
+      "class": "com.autocare.platform.PointAiHookTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "time_seconds": 0.289,
+      "junit_sha256": "22046749d9cd42af81626f94f68bc970610ec368760509c957c13873c21e248f"
+    },
+    {
+      "class": "com.autocare.platform.order.JdbcPointTaskPoliciesTest",
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "time_seconds": 53.931,
+      "junit_sha256": "c2b3cce4c8aad83c8472bfabc92b724cd8a0bb15e6478696b9908c8782539ce4"
+    },
+    {
+      "class": "com.autocare.platform.order.JdbcPointLedgerTest",
+      "tests": 30,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "time_seconds": 83.926,
+      "junit_sha256": "263ab1200c3b70dee3669bdf43c66a1f608847c6d15084b9a01b03c4894242fa"
+    },
+    {
+      "class": "com.autocare.platform.order.PointTaskPolicyHttpTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "time_seconds": 23.151,
+      "junit_sha256": "092fdee92de9738b7eefeb455983e85850636f9f3d6e8152f1d131b72bf4d1dd"
+    },
+    {
+      "class": "com.autocare.platform.order.PointLedgerHttpTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "time_seconds": 48.755,
+      "junit_sha256": "394b85b50a12b8fc6d403bb64bd0a6637791a68b1091a7d603f5c296a03a7f58"
+    },
+    {
+      "class": "com.autocare.platform.order.PointTaskPolicyNoDatabaseTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "time_seconds": 0.095,
+      "junit_sha256": "932dd56c49e5ea67421344b1d23c6a7ace45f379beffbb9e88ec6dbd1e0599fa"
+    },
+    {
+      "class": "com.autocare.platform.order.PointLedgerNoDatabaseTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "time_seconds": 14.028,
+      "junit_sha256": "0f027386420cd1dbdea9b72ddf48b32576a04d3400bdb44f463284d5dce347db"
+    }
+  ],
+  "python_new_tests": 9,
+  "python_existing_tests": 27,
+  "default_collection_requests": 0,
+  "default_collection_failures": 0,
+  "default_collection_sha256": "aa04aed1cf71b07985d4465684219f881f757a02c086eef3cdf49c6a2a3016ab",
+  "initial_run": {
+    "tests": 69,
+    "errors": 1,
+    "failed_case": "JdbcPointLedgerTest.lastStockConcurrentHasOneWinner (inherited coupon concurrency test)",
+    "error": "Future.get TimeoutException at existing 30 second limit",
+    "resolution": "Whole JdbcPointLedgerTest rerun in a separate Docker invocation, unchanged code and timeout; passed. Cause not established; first failed XML/log retained privately."
+  }
+}

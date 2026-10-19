@@ -122,3 +122,7 @@ KNOWLEDGE_AI_ENABLED与COMMUNITY_PUBLICATION_ENABLED明确false，真实公开�
 `python scripts/run_upload_acceptance.py --docker` 使用新的真实HTTP/Spring、MySQL、MinIO及ClamAV环境，8接口53场景。三角色上传/访问、扫描拒绝、重放/内容变化、越权、附件归属和签名实际下载/篡改/过期由Java旅程执行，Python核对独立清单、源码摘要、检查及资源清理。
 
 合成病毒库仅在测试配置注入真实引擎，主程序没有新鲜度绕过开关；不代表生产病毒库覆盖。CI full clean verify后使用 --check-only验证当前源码证据。只提交脱敏JSON，签名URL/JWT/原始日志不上传。见[执行](../progress/R9_A4D2E2B_PRIVATE_UPLOAD_API_EXECUTION.md)。
+
+## A4d-2e3 积分规则与本人账本
+
+`python scripts/run_api_acceptance.py --points-cases` 覆盖4项运营积分规则和4项车主任务/概览/流水/签到，共8接口116业务请求397断言。真实HTTP/MySQL及后台恢复任务，隔离SQL身份标记对照，不调用真实微信或外部AI。逐条审计实际正文、规则ID/版本/日期及幂等键，另核对冻结奖励、唯一分录、历史余额隔离和他人余额不变。集合默认禁发；真实身份获分与兑换事务另行验收。见[执行](../progress/R9_A4D2E3_POINTS_LEDGER_API_EXECUTION.md)。
