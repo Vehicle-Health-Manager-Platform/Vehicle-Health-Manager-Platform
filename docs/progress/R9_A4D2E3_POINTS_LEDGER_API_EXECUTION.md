@@ -44,3 +44,8 @@ Python在通用实际方法/完整路径query/角色JWT/状态/断言审计上�
 
 
 交付前核对：PR175 head 6640583 的运行39224175581已8项SUCCESS，包括backend/compose-smoke；本轮完整远程CI以新PR head为准。
+
+
+## GitHub交付
+
+本阶段成果已上传 [PR176](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/176)，验收代码 `5fab216`，依赖PR175；本轮完整远程CI待结束，保持草稿，不合并或部署。
