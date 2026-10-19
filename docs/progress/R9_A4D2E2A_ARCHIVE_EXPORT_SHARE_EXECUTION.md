@@ -46,3 +46,10 @@ PDF渲染器在写字时记录实际编码→原始Unicode，字体子集生成�
 
 
 实际私有样本PDF共2页，使用pdftoppm逐页渲染并人工视觉核对：中文字形、长备注换行、页边距和跨页续文均正常；完整中文已通过pypdf与Java双重精确提取。见[渲染脱敏摘要](../testing/reports/R9_A4D2E2A_PDF_RENDER_2026_10_19.json)。原始PDF/PNG仅留.cache。
+
+
+## GitHub交付
+
+本阶段成果已上传 [PR174](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/174)，修复与验收代码 `923befd`，依赖PR173；完整远程CI待结果，保持草稿，不合并或部署。
+
+首次push遇到GitHub空响应，分支未上传导致首次创建PR失败；重试同分支push成功后创建实际PR174，交付状态已核对。
