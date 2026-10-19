@@ -137,10 +137,12 @@ def cases():
     return items
 
 
-def assets():
+def assemble(items, name, flag, operation_count):
+    names=[item['name'] for item in items]
+    if len(names)!=len(set(names)):raise ValueError('Duplicate business case name')
     spec=json.loads((ROOT/'docs/api/openapi.json').read_text(encoding='utf-8'))
     ops=operations(spec)
-    items=cases(); manifest=[]
+    manifest=[]
     for item in items:
         path=urlsplit(item['request']['url'].removeprefix('{{base_url}}')).path
         exact=[op['operationId'] for method,route,op,_ in ops if method==item['request']['method'] and route==path]
@@ -149,13 +151,17 @@ def assets():
         if len(candidates)!=1: raise ValueError('Ambiguous or missing fulfillment operation '+path)
         manifest.append({'name':item['name'],'method':item['request']['method'],'path':path,'operation_id':candidates[0],
                          'kind':item['kind'],'status':item['status'],'role':item['role'],'assertions':item['assertions'],
-                         **({'callback_mode':item['callback_mode']} if 'callback_mode' in item else {})})
-    collection={'info':{'name':'Autocare isolated reservation to archive LOCAL_TEST','schema':SCHEMA},
-                'variable':[{'key':'base_url','value':'http://127.0.0.1:1'},{'key':'isolated_fulfillment_cases','value':'false'}],
+                         **{key:item[key] for key in ('callback_mode','notice_status') if key in item}})
+    collection={'info':{'name':name,'schema':SCHEMA},
+                'variable':[{'key':'base_url','value':'http://127.0.0.1:1'},{'key':flag,'value':'false'}],
                 'event':[{'listen':'prerequest','script':{'type':'text/javascript','exec':[
-                    'if(pm.variables.get("isolated_fulfillment_cases")!=="true"){pm.execution.skipRequest();throw new Error("Use the isolated fulfillment runner");}']}}],
+                    'if(pm.variables.get("'+flag+'")!=="true"){pm.execution.skipRequest();throw new Error("Use the isolated fulfillment runner");}']}}],
                 'item':[{k:v for k,v in item.items() if k in {'name','request','event'}} for item in items]}
-    return collection, {'version':1,'cases':len(manifest),'operations':OPERATION_COUNT,'full_api_acceptance_passed':False,'items':manifest}
+    return collection, {'version':1,'cases':len(manifest),'operations':operation_count,'full_api_acceptance_passed':False,'items':manifest}
+
+
+def assets():
+    return assemble(cases(),'Autocare isolated reservation to archive LOCAL_TEST','isolated_fulfillment_cases',OPERATION_COUNT)
 
 
 def seed(mysql, secret):

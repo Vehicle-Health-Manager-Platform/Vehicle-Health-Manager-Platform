@@ -55,3 +55,13 @@ A4d-2先核定源草案中历史占位的适用性，以已确认软件范围为
 LOCAL_TEST 回调在 Newman 中签署实际 JSON，验证无效签名、过期通知、签名正确但正文错误、成功及同一签名原文重放；报告审计重新计算 HMAC 并核对重放完全相同。仅隔离容器显式设置 local-payment-test profile、开关与随机测试密钥，真实 WECHAT 创建应 503。默认导入集合不发送请求。
 
 以本次退出码 0、脱敏报告 passed=true、数据库核对及清理通过为成功条件。证据目录中的 `fulfillment-environment.private.json`、`fulfillment-newman.private.json` 和日志含合成 JWT/预约码/签名，必须留在 .cache，不能作为共享 Postman 环境或 CI 附件上传。参考[阶段执行](../progress/R9_A4D2B1_FULFILLMENT_API_CASES_EXECUTION.md)。券交易生命周期下一 A4d-2b2 单独补齐，全部 API 验收仍未完成。
+
+## A4d-2b2 券交易生命周期
+
+生成：`python scripts/coupon_api_cases.py`。复跑：`python scripts/run_api_acceptance.py --coupon-cases`，CI 使用 `--ci-built-jar --coupon-cases`。与 owner/fulfillment 选项互斥，各自全新隔离数据库；默认无业务选项仍只检查匿名范围。加载/执行共用流程，原有集合和报告键保留。
+
+20 接口、160 请求/547 断言，包含现金券发布领取、预占与取消释放、服务端优惠后实付 7.34、签名支付消费、退款失败不返/成功返原券、再次预占；独立服务券授权、预览、核销与零佣金记录。正常/边界/错误/未授权均纳入，每次写入重放核对原回执，三组通知重放核对完全相同的正文/时间戳/随机数/签名，重新计算 HMAC。
+
+合成身份、目录和车辆夹具复用履约阶段，券与支付/退款等业务事实由真实 HTTP 创建。LOCAL_TEST 通知不需要真实资金；本轮不配置供应商查询/提交地址、不启用退款后台调度，不将通知处理通过当作外部退款完成。真实供应商调用继续留 B。开发态或哈希变化的报告不能作为最终成功证据。
+
+共享仅限本轮 `report.json` 与默认禁发脱敏摘要；`.cache` 内 `coupon-environment.private.json`、`coupon-newman.private.json` 及日志含 JWT/授权码/签名，不能上传。完整报告需 passed=true、来源稳定、数据库不变量与资源清理均通过。参考[执行记录](../progress/R9_A4D2B2_COUPON_API_CASES_EXECUTION.md)。下一商家入驻/员工与运营权限；全部 API 验收仍未完成。
