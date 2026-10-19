@@ -1,4 +1,4 @@
-> **A4d-2b1 本地通过（2026-10-19）**：预约到 LOCAL_TEST 支付、接车、派工、施工签名、核销及自动归档，16 接口/102 业务请求/341 断言全部通过；338 匿名请求/1014 断言与38项脚本测试通过。数据库唯一性、跨归属及回调签名重放核对成功，测试资源清理完毕。[阶段执行与报告](docs/progress/R9_A4D2B1_FULFILLMENT_API_CASES_EXECUTION.md)。下一券交易生命周期验收，外部接入后置；全部 API 验收及性能延迟达标仍未完成。
+> **A4d-2b1 本地通过（2026-10-19）**：预约到 LOCAL_TEST 支付、接车、派工、施工签名、核销及自动归档，16 接口/102 业务请求/341 断言全部通过；338 匿名请求/1014 断言与38项脚本测试通过。数据库唯一性、跨归属及回调签名重放核对成功，测试资源清理完毕。[阶段执行与报告](docs/progress/R9_A4D2B1_FULFILLMENT_API_CASES_EXECUTION.md)。下一券交易生命周期验收，外部接入后置；全部 API 验收及性能延迟达标仍未完成。 本阶段全部成果已上传 [PR167](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/167)，业务验收代码 `26fac80`，依赖 PR166；完整远程 CI 待结束，保持草稿，不合并或部署。
 
 > **A4d-2a 本地通过（2026-10-19）**：8 个车辆/档案接口、61 业务请求/204 断言和338匿名请求/1014断言通过；16项脚本测试通过，数据库与幂等/归属核对通过，隔离资源清理成功。[执行与实际报告](docs/progress/R9_A4D2A_OWNER_API_CASES_EXECUTION.md)。下一预约履约/券业务验收；全部 API 业务验收仍未完成，外部接入后置，性能延迟未达标保留。 阶段全部成果已上传 [PR166](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/166)，业务验收代码提交 `843a02f`，依赖 PR165；完整远程 CI 待结束，保持草稿。
 
