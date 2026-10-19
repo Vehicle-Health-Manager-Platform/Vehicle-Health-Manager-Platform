@@ -65,3 +65,8 @@
 - 53条为业务API请求；另实际执行多次对象下载与拒绝校验，不将其重复计为业务API。每接口四类覆盖通过。
 - 源码SHA256：`afc9e35cb8a3b112ec92e24ea1d42047b7efdeff86692a5f77627e4bbff71285`。Java证据/Python摘要一致且执行前后不变；原始JUnit和日志不提交。
 - 本轮只运行上述54项Java定向测试；完整后端及所有远程CI以新PR结果为准。前置CI性能检查通过不代表延迟目标达标。
+
+
+## GitHub交付
+
+本阶段成果已上传 [PR175](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/175)，修复与验收代码 `d67e3d8`，依赖PR174；本轮完整远程CI待结束，保持草稿，不合并或部署。
