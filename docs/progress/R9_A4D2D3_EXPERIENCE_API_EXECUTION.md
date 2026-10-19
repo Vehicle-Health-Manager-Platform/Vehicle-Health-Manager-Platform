@@ -45,3 +45,8 @@ schema-and-ocr验证生成一致性和证据审计；backend在clean verify后�
 2026-10-19：A4d-2d3 本地PASS（258.719秒）：14接口、131业务请求/448断言、338匿名请求/1014断言通过。真实消费者生成2档案/2卡片；合成非测试来源卡最终WITHDRAWN/revision9，LOCAL_TEST对照卡始终DRAFT/revision0；3审核/2公开UUID，1精选STOPPED/revision4。公开字段白名单、独立权限、来源哈希、真实时间窗、撤回同步隐藏、旧键/旧UUID不复活与旧精选不改绑检查通过。来源稳定，容器/网络清理成功；默认新集合0请求；新增10项和既有17项测试、编译/diff通过。WECHAT仅SQL合成来源字段，不代表真实付款/身份核验。前置PR171八项CI全绿。下一车主结构化档案/健康/提醒12接口→文件/PDF/分享→其他缺口→A5→B外部接口→C真机；全部API业务验收和性能延迟达标仍未完成。
 
 [脱敏报告](../testing/reports/R9_A4D2D3_EXPERIENCE_API_2026_10_19.json)；[默认禁发实测](../testing/reports/R9_A4D2D3_DEFAULT_DISABLED_2026_10_19.json)。本轮交付为验收资产、证据审计、运行器准备钩子与CI接入，无生产业务代码变更。完整远程CI待结果。
+
+
+## GitHub交付
+
+本阶段成果已上传 [PR172](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/172)，验收代码 `ab43581`，依赖PR171；完整远程CI待结果，保持草稿，不合并或部署。
