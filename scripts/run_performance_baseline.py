@@ -240,6 +240,9 @@ class Owned:
                     'Network ownership mismatch; refusing operation')
             return
         info = json.loads(Docker.run(['inspect', '--format', '{{json .}}', self.id]).stdout)
+        self.check_container(info)
+
+    def check_container(self, info):
         labels = info.get('Config', {}).get('Labels') or {}
         require(info.get('Id') == self.id and info.get('Name') == '/' + self.name
                 and all(labels.get(k) == v for k, v in self.labels.items()),
@@ -255,8 +258,15 @@ class Owned:
             require(gone.returncode != 0, 'Owned network still exists after cleanup')
         else:
             Docker.run(['stop', '--time', '10', self.id], timeout=timeout)
-            gone = Docker.run(['inspect', self.id], allow_failure=True)
-            require(gone.returncode != 0, 'Owned container still exists after cleanup')
+            # --rm is asynchronous: stop can return before the removal finishes.
+            deadline = time.monotonic() + 10
+            while True:
+                gone = Docker.run(['inspect', '--format', '{{json .}}', self.id], allow_failure=True)
+                if gone.returncode != 0: break
+                # Validate the same snapshot: removal between two inspect calls is harmless.
+                self.check_container(json.loads(gone.stdout))
+                require(time.monotonic() < deadline, 'Owned container still exists after cleanup deadline')
+                time.sleep(0.1)
         self.id = None
 
 

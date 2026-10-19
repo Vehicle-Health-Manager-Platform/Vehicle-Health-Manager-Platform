@@ -67,3 +67,11 @@ LOCAL_TEST 回调在 Newman 中签署实际 JSON，验证无效签名、过期�
 共享仅限本轮 `report.json` 与默认禁发脱敏摘要；`.cache` 内 `coupon-environment.private.json`、`coupon-newman.private.json` 及日志含 JWT/授权码/签名，不能上传。完整报告需 passed=true、来源稳定、数据库不变量与资源清理均通过。参考[执行记录](../progress/R9_A4D2B2_COUPON_API_CASES_EXECUTION.md)。下一商家入驻/员工与运营权限；全部 API 验收仍未完成。
 
 CI 构建来源采用内容摘要与新产物证据：`--record-ci-sources` 必须在 CI=true 且 jar 不存在时运行，在 clean verify 前写入 .cache/api-ci-build-input.json；三个 `--ci-built-jar` 验收均核对同一内容摘要。旧 jar、缺证明、缺产物、正文变化均拒绝，单纯文件时间戳变化不影响内容证明。
+
+## A4d-2c 商家管理与运营权限
+
+生成：`python scripts/merchant_api_cases.py`。复跑：`python scripts/run_api_acceptance.py --merchant-cases`。与其他业务选项互斥，各自新建隔离库；CI 使用 `--ci-built-jar --merchant-cases`，四组业务仍复用同一构建前内容摘要。新增来源哈希覆盖 merchant_api_cases.py。
+
+17 接口、119 请求/397 断言，覆盖申请/驳回重提/配额批准、独立运营权限、员工新增、禁用/启用与码轮换/撤销、店员/店长与跨店权限、门店资料白名单/空坐标/边界。员工码相关请求明确不带 Idempotency-Key，轮换须得到新码；正文与回执原始日志属于合成私有材料，不得上传。
+
+清理为唯一归属容器停止后等待自动删除，最多10秒，等待期间继续复核归属；仍存在、超时或归属变化均失败。仅将本轮 passed=true、源码稳定、数据库及资源回收全部通过的报告当作成功证据。详见[执行记录](../progress/R9_A4D2C_MERCHANT_API_CASES_EXECUTION.md)。正式激活/短信/微信绑定、真实资质上传与文件访问另行验收，全部 API 验收仍未完成。

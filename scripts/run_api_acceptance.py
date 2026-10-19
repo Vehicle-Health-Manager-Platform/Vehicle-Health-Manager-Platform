@@ -47,6 +47,7 @@ def source_hash():
     paths += [ROOT / 'scripts' / n for n in ('run_api_acceptance.py', 'generate_api_acceptance.py', 'run_performance_baseline.py')]
     paths += [ROOT / 'scripts/owner_api_cases.py']
     paths += [ROOT / 'scripts/fulfillment_api_cases.py', ROOT / 'scripts/coupon_api_cases.py']
+    paths += [ROOT / 'scripts/merchant_api_cases.py']
     value = hashlib.sha256()
     for path in paths:
         if path.is_file(): value.update(path.relative_to(ROOT).as_posix().encode()); value.update(path.read_bytes())
@@ -122,12 +123,13 @@ def main():
     parser.add_argument('--owner-cases', action='store_true', help='Also run synthetic owner vehicle/archive business scenarios.')
     parser.add_argument('--fulfillment-cases', action='store_true', help='Run synthetic reservation to archive scenarios with LOCAL_TEST payments.')
     parser.add_argument('--coupon-cases', action='store_true', help='Run cash coupon lifecycle and independent service redemption with LOCAL_TEST notices.')
+    parser.add_argument('--merchant-cases', action='store_true', help='Run isolated merchant onboarding, staff and operator permission cases.')
     args = parser.parse_args()
     if args.record_ci_sources:
-        if any((args.ci_built_jar,args.owner_cases,args.fulfillment_cases,args.coupon_cases)):
+        if any((args.ci_built_jar,args.owner_cases,args.fulfillment_cases,args.coupon_cases,args.merchant_cases)):
             parser.error('Record CI inputs separately before the build')
         record_ci_sources(); print('API acceptance: recorded fresh CI build inputs',flush=True); return 0
-    if sum((args.owner_cases, args.fulfillment_cases, args.coupon_cases)) > 1:
+    if sum((args.owner_cases, args.fulfillment_cases, args.coupon_cases, args.merchant_cases)) > 1:
         parser.error('Business suites require separate fresh databases; select one per run')
     run = uuid.uuid4().hex
     work = ROOT / '.cache' / ('api-acceptance-' + run[:12]); work.mkdir(parents=True)
@@ -147,7 +149,7 @@ def main():
         if len(expected) != 338: raise ValueError('Review changed anonymous acceptance scope')
         report['contract_operations'] = assets['acceptance_inventory.json']['operations']
         report['collection_sha256'] = hashlib.sha256((OUTPUT / 'anonymous.postman_collection.json').read_bytes()).hexdigest()
-        suite = 'owner' if args.owner_cases else 'fulfillment' if args.fulfillment_cases else 'coupon' if args.coupon_cases else None
+        suite = 'owner' if args.owner_cases else 'fulfillment' if args.fulfillment_cases else 'coupon' if args.coupon_cases else 'merchant' if args.merchant_cases else None
         business_module = importlib.import_module(suite+'_api_cases') if suite else None
         if business_module:
             business_collection, business_manifest = business_module.assets()
