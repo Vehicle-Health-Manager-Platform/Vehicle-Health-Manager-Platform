@@ -1,0 +1,1318 @@
+{
+  "version": 1,
+  "cases": 131,
+  "operations": 14,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "cards",
+      "method": "GET",
+      "path": "/api/experience-cards",
+      "operation_id": "get_api_experience_cards",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "cards_boundary",
+      "method": "GET",
+      "path": "/api/experience-cards",
+      "operation_id": "get_api_experience_cards",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "cards_error",
+      "method": "GET",
+      "path": "/api/experience-cards",
+      "operation_id": "get_api_experience_cards",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "cards_anonymous",
+      "method": "GET",
+      "path": "/api/experience-cards",
+      "operation_id": "get_api_experience_cards",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "cards_wrong_role",
+      "method": "GET",
+      "path": "/api/experience-cards",
+      "operation_id": "get_api_experience_cards",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "foreign_cards",
+      "method": "GET",
+      "path": "/api/experience-cards",
+      "operation_id": "get_api_experience_cards",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "test_card_cannot_consent",
+      "method": "POST",
+      "path": "/api/experience-cards/2/consent",
+      "operation_id": "post_api_experience_cards_id_consent",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "foreign_consent",
+      "method": "POST",
+      "path": "/api/experience-cards/1/consent",
+      "operation_id": "post_api_experience_cards_id_consent",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "consent",
+      "method": "POST",
+      "path": "/api/experience-cards/1/consent",
+      "operation_id": "post_api_experience_cards_id_consent",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "consent_replay",
+      "method": "POST",
+      "path": "/api/experience-cards/1/consent",
+      "operation_id": "post_api_experience_cards_id_consent",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "consent_malformed",
+      "method": "POST",
+      "path": "/api/experience-cards/1/consent",
+      "operation_id": "post_api_experience_cards_id_consent",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "consent_anonymous",
+      "method": "POST",
+      "path": "/api/experience-cards/1/consent",
+      "operation_id": "post_api_experience_cards_id_consent",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "consent_wrong_role",
+      "method": "POST",
+      "path": "/api/experience-cards/1/consent",
+      "operation_id": "post_api_experience_cards_id_consent",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "pending",
+      "method": "GET",
+      "path": "/api/admin/experience-cards",
+      "operation_id": "get_api_admin_experience_cards",
+      "kind": "normal",
+      "status": 200,
+      "role": "reviewer",
+      "assertions": 5
+    },
+    {
+      "name": "pending_boundary",
+      "method": "GET",
+      "path": "/api/admin/experience-cards",
+      "operation_id": "get_api_admin_experience_cards",
+      "kind": "boundary",
+      "status": 200,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "pending_error",
+      "method": "GET",
+      "path": "/api/admin/experience-cards",
+      "operation_id": "get_api_admin_experience_cards",
+      "kind": "error",
+      "status": 400,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "pending_anonymous",
+      "method": "GET",
+      "path": "/api/admin/experience-cards",
+      "operation_id": "get_api_admin_experience_cards",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "pending_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/experience-cards",
+      "operation_id": "get_api_admin_experience_cards",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "curator_not_reviewer",
+      "method": "GET",
+      "path": "/api/admin/experience-cards",
+      "operation_id": "get_api_admin_experience_cards",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "unapproved_hidden",
+      "method": "GET",
+      "path": "/api/community/experiences",
+      "operation_id": "get_api_community_experiences",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "approve",
+      "method": "POST",
+      "path": "/api/admin/experience-cards/1/moderate",
+      "operation_id": "post_api_admin_experience_cards_id_moderate",
+      "kind": "normal",
+      "status": 200,
+      "role": "reviewer",
+      "assertions": 5
+    },
+    {
+      "name": "approve_replay",
+      "method": "POST",
+      "path": "/api/admin/experience-cards/1/moderate",
+      "operation_id": "post_api_admin_experience_cards_id_moderate",
+      "kind": "boundary",
+      "status": 200,
+      "role": "reviewer",
+      "assertions": 4
+    },
+    {
+      "name": "approve_malformed",
+      "method": "POST",
+      "path": "/api/admin/experience-cards/1/moderate",
+      "operation_id": "post_api_admin_experience_cards_id_moderate",
+      "kind": "error",
+      "status": 400,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "approve_anonymous",
+      "method": "POST",
+      "path": "/api/admin/experience-cards/1/moderate",
+      "operation_id": "post_api_admin_experience_cards_id_moderate",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "approve_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/experience-cards/1/moderate",
+      "operation_id": "post_api_admin_experience_cards_id_moderate",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "stale_moderation",
+      "method": "POST",
+      "path": "/api/admin/experience-cards/1/moderate",
+      "operation_id": "post_api_admin_experience_cards_id_moderate",
+      "kind": "boundary",
+      "status": 409,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "public_list",
+      "method": "GET",
+      "path": "/api/community/experiences",
+      "operation_id": "get_api_community_experiences",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "public_list_boundary",
+      "method": "GET",
+      "path": "/api/community/experiences",
+      "operation_id": "get_api_community_experiences",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "public_list_error",
+      "method": "GET",
+      "path": "/api/community/experiences",
+      "operation_id": "get_api_community_experiences",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "public_list_anonymous",
+      "method": "GET",
+      "path": "/api/community/experiences",
+      "operation_id": "get_api_community_experiences",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "public_list_wrong_role",
+      "method": "GET",
+      "path": "/api/community/experiences",
+      "operation_id": "get_api_community_experiences",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "public_foreign_vehicle",
+      "method": "GET",
+      "path": "/api/community/experiences",
+      "operation_id": "get_api_community_experiences",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "same_model_other_owner",
+      "method": "GET",
+      "path": "/api/community/experiences",
+      "operation_id": "get_api_community_experiences",
+      "kind": "boundary",
+      "status": 200,
+      "role": "other",
+      "assertions": 4
+    },
+    {
+      "name": "public_detail",
+      "method": "GET",
+      "path": "/api/community/experiences/{{experience_reference}}",
+      "operation_id": "get_api_community_experiences_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "public_detail_boundary",
+      "method": "GET",
+      "path": "/api/community/experiences/00000000-0000-4000-8000-000000000000",
+      "operation_id": "get_api_community_experiences_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "public_detail_error",
+      "method": "GET",
+      "path": "/api/community/experiences/invalid",
+      "operation_id": "get_api_community_experiences_id",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "public_detail_anonymous",
+      "method": "GET",
+      "path": "/api/community/experiences/{{experience_reference}}",
+      "operation_id": "get_api_community_experiences_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "public_detail_wrong_role",
+      "method": "GET",
+      "path": "/api/community/experiences/{{experience_reference}}",
+      "operation_id": "get_api_community_experiences_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "foreign_public_detail",
+      "method": "GET",
+      "path": "/api/community/experiences/{{experience_reference}}",
+      "operation_id": "get_api_community_experiences_id",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "curation_sources",
+      "method": "GET",
+      "path": "/api/admin/community/curation-sources",
+      "operation_id": "get_api_admin_community_curation_sources",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 5
+    },
+    {
+      "name": "curation_sources_boundary",
+      "method": "GET",
+      "path": "/api/admin/community/curation-sources",
+      "operation_id": "get_api_admin_community_curation_sources",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "curation_sources_error",
+      "method": "GET",
+      "path": "/api/admin/community/curation-sources",
+      "operation_id": "get_api_admin_community_curation_sources",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "curation_sources_anonymous",
+      "method": "GET",
+      "path": "/api/admin/community/curation-sources",
+      "operation_id": "get_api_admin_community_curation_sources",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "curation_sources_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/community/curation-sources",
+      "operation_id": "get_api_admin_community_curation_sources",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "reviewer_not_curator",
+      "method": "GET",
+      "path": "/api/admin/community/curation-sources",
+      "operation_id": "get_api_admin_community_curation_sources",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "curation_create",
+      "method": "POST",
+      "path": "/api/admin/community/curations",
+      "operation_id": "post_api_admin_community_curations",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "curation_create_replay",
+      "method": "POST",
+      "path": "/api/admin/community/curations",
+      "operation_id": "post_api_admin_community_curations",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "curation_create_malformed",
+      "method": "POST",
+      "path": "/api/admin/community/curations",
+      "operation_id": "post_api_admin_community_curations",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "curation_create_anonymous",
+      "method": "POST",
+      "path": "/api/admin/community/curations",
+      "operation_id": "post_api_admin_community_curations",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "curation_create_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/community/curations",
+      "operation_id": "post_api_admin_community_curations",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "source_hash_mismatch",
+      "method": "POST",
+      "path": "/api/admin/community/curations",
+      "operation_id": "post_api_admin_community_curations",
+      "kind": "boundary",
+      "status": 409,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "curation_list",
+      "method": "GET",
+      "path": "/api/admin/community/curations",
+      "operation_id": "get_api_admin_community_curations",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "curation_list_boundary",
+      "method": "GET",
+      "path": "/api/admin/community/curations",
+      "operation_id": "get_api_admin_community_curations",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "curation_list_error",
+      "method": "GET",
+      "path": "/api/admin/community/curations",
+      "operation_id": "get_api_admin_community_curations",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "curation_list_anonymous",
+      "method": "GET",
+      "path": "/api/admin/community/curations",
+      "operation_id": "get_api_admin_community_curations",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "curation_list_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/community/curations",
+      "operation_id": "get_api_admin_community_curations",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "curation_detail",
+      "method": "GET",
+      "path": "/api/admin/community/curations/1",
+      "operation_id": "get_api_admin_community_curations_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "curation_detail_boundary",
+      "method": "GET",
+      "path": "/api/admin/community/curations/999999",
+      "operation_id": "get_api_admin_community_curations_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "curation_detail_error",
+      "method": "GET",
+      "path": "/api/admin/community/curations/1",
+      "operation_id": "get_api_admin_community_curations_id",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "curation_detail_anonymous",
+      "method": "GET",
+      "path": "/api/admin/community/curations/1",
+      "operation_id": "get_api_admin_community_curations_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "curation_detail_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/community/curations/1",
+      "operation_id": "get_api_admin_community_curations_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "curation_update",
+      "method": "PUT",
+      "path": "/api/admin/community/curations/1",
+      "operation_id": "put_api_admin_community_curations_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "curation_update_replay",
+      "method": "PUT",
+      "path": "/api/admin/community/curations/1",
+      "operation_id": "put_api_admin_community_curations_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "curation_update_malformed",
+      "method": "PUT",
+      "path": "/api/admin/community/curations/1",
+      "operation_id": "put_api_admin_community_curations_id",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "curation_update_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/community/curations/1",
+      "operation_id": "put_api_admin_community_curations_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "curation_update_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/community/curations/1",
+      "operation_id": "put_api_admin_community_curations_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "stale_curation_update",
+      "method": "PUT",
+      "path": "/api/admin/community/curations/1",
+      "operation_id": "put_api_admin_community_curations_id",
+      "kind": "boundary",
+      "status": 409,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "curation_publish",
+      "method": "PUT",
+      "path": "/api/admin/community/curations/1/status",
+      "operation_id": "put_api_admin_community_curations_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "curation_publish_replay",
+      "method": "PUT",
+      "path": "/api/admin/community/curations/1/status",
+      "operation_id": "put_api_admin_community_curations_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "curation_publish_malformed",
+      "method": "PUT",
+      "path": "/api/admin/community/curations/1/status",
+      "operation_id": "put_api_admin_community_curations_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "curation_publish_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/community/curations/1/status",
+      "operation_id": "put_api_admin_community_curations_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "curation_publish_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/community/curations/1/status",
+      "operation_id": "put_api_admin_community_curations_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "published_curation_frozen",
+      "method": "PUT",
+      "path": "/api/admin/community/curations/1",
+      "operation_id": "put_api_admin_community_curations_id",
+      "kind": "boundary",
+      "status": 409,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "hot_before_window",
+      "method": "GET",
+      "path": "/api/community/hot",
+      "operation_id": "get_api_community_hot",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "hot",
+      "method": "GET",
+      "path": "/api/community/hot",
+      "operation_id": "get_api_community_hot",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 6
+    },
+    {
+      "name": "hot_boundary",
+      "method": "GET",
+      "path": "/api/community/hot",
+      "operation_id": "get_api_community_hot",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "hot_error",
+      "method": "GET",
+      "path": "/api/community/hot",
+      "operation_id": "get_api_community_hot",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "hot_anonymous",
+      "method": "GET",
+      "path": "/api/community/hot",
+      "operation_id": "get_api_community_hot",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "hot_wrong_role",
+      "method": "GET",
+      "path": "/api/community/hot",
+      "operation_id": "get_api_community_hot",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "foreign_withdraw",
+      "method": "POST",
+      "path": "/api/experience-cards/1/withdraw",
+      "operation_id": "post_api_experience_cards_id_withdraw",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "withdraw",
+      "method": "POST",
+      "path": "/api/experience-cards/1/withdraw",
+      "operation_id": "post_api_experience_cards_id_withdraw",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "withdraw_replay",
+      "method": "POST",
+      "path": "/api/experience-cards/1/withdraw",
+      "operation_id": "post_api_experience_cards_id_withdraw",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "withdraw_malformed",
+      "method": "POST",
+      "path": "/api/experience-cards/1/withdraw",
+      "operation_id": "post_api_experience_cards_id_withdraw",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "withdraw_anonymous",
+      "method": "POST",
+      "path": "/api/experience-cards/1/withdraw",
+      "operation_id": "post_api_experience_cards_id_withdraw",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "withdraw_wrong_role",
+      "method": "POST",
+      "path": "/api/experience-cards/1/withdraw",
+      "operation_id": "post_api_experience_cards_id_withdraw",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "withdrawn_detail",
+      "method": "GET",
+      "path": "/api/community/experiences/{{experience_reference}}",
+      "operation_id": "get_api_community_experiences_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "withdrawn_hot",
+      "method": "GET",
+      "path": "/api/community/hot",
+      "operation_id": "get_api_community_hot",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "withdrawn_sources",
+      "method": "GET",
+      "path": "/api/admin/community/curation-sources",
+      "operation_id": "get_api_admin_community_curation_sources",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "old_consent_key_rejected",
+      "method": "POST",
+      "path": "/api/experience-cards/1/consent",
+      "operation_id": "post_api_experience_cards_id_consent",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "creation_receipt_after_source_loss",
+      "method": "POST",
+      "path": "/api/admin/community/curations",
+      "operation_id": "post_api_admin_community_curations",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "reconsent",
+      "method": "POST",
+      "path": "/api/experience-cards/1/consent",
+      "operation_id": "post_api_experience_cards_id_consent",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "reconsent_replay",
+      "method": "POST",
+      "path": "/api/experience-cards/1/consent",
+      "operation_id": "post_api_experience_cards_id_consent",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "reconsent_malformed",
+      "method": "POST",
+      "path": "/api/experience-cards/1/consent",
+      "operation_id": "post_api_experience_cards_id_consent",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "reconsent_anonymous",
+      "method": "POST",
+      "path": "/api/experience-cards/1/consent",
+      "operation_id": "post_api_experience_cards_id_consent",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "reconsent_wrong_role",
+      "method": "POST",
+      "path": "/api/experience-cards/1/consent",
+      "operation_id": "post_api_experience_cards_id_consent",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "reapprove",
+      "method": "POST",
+      "path": "/api/admin/experience-cards/1/moderate",
+      "operation_id": "post_api_admin_experience_cards_id_moderate",
+      "kind": "normal",
+      "status": 200,
+      "role": "reviewer",
+      "assertions": 4
+    },
+    {
+      "name": "reapprove_replay",
+      "method": "POST",
+      "path": "/api/admin/experience-cards/1/moderate",
+      "operation_id": "post_api_admin_experience_cards_id_moderate",
+      "kind": "boundary",
+      "status": 200,
+      "role": "reviewer",
+      "assertions": 4
+    },
+    {
+      "name": "reapprove_malformed",
+      "method": "POST",
+      "path": "/api/admin/experience-cards/1/moderate",
+      "operation_id": "post_api_admin_experience_cards_id_moderate",
+      "kind": "error",
+      "status": 400,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "reapprove_anonymous",
+      "method": "POST",
+      "path": "/api/admin/experience-cards/1/moderate",
+      "operation_id": "post_api_admin_experience_cards_id_moderate",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "reapprove_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/experience-cards/1/moderate",
+      "operation_id": "post_api_admin_experience_cards_id_moderate",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "new_public_uuid",
+      "method": "GET",
+      "path": "/api/community/experiences",
+      "operation_id": "get_api_community_experiences",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "old_uuid_never_revives",
+      "method": "GET",
+      "path": "/api/community/experiences/{{experience_reference}}",
+      "operation_id": "get_api_community_experiences_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "curation_not_rebound",
+      "method": "GET",
+      "path": "/api/community/hot",
+      "operation_id": "get_api_community_hot",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "curation_stop",
+      "method": "PUT",
+      "path": "/api/admin/community/curations/1/status",
+      "operation_id": "put_api_admin_community_curations_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "curation_stop_replay",
+      "method": "PUT",
+      "path": "/api/admin/community/curations/1/status",
+      "operation_id": "put_api_admin_community_curations_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "curation_stop_malformed",
+      "method": "PUT",
+      "path": "/api/admin/community/curations/1/status",
+      "operation_id": "put_api_admin_community_curations_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "curation_stop_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/community/curations/1/status",
+      "operation_id": "put_api_admin_community_curations_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "curation_stop_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/community/curations/1/status",
+      "operation_id": "put_api_admin_community_curations_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "curation_cannot_reopen",
+      "method": "PUT",
+      "path": "/api/admin/community/curations/1/status",
+      "operation_id": "put_api_admin_community_curations_id_status",
+      "kind": "boundary",
+      "status": 409,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "second_withdraw",
+      "method": "POST",
+      "path": "/api/experience-cards/1/withdraw",
+      "operation_id": "post_api_experience_cards_id_withdraw",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "second_withdraw_replay",
+      "method": "POST",
+      "path": "/api/experience-cards/1/withdraw",
+      "operation_id": "post_api_experience_cards_id_withdraw",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "second_withdraw_malformed",
+      "method": "POST",
+      "path": "/api/experience-cards/1/withdraw",
+      "operation_id": "post_api_experience_cards_id_withdraw",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "second_withdraw_anonymous",
+      "method": "POST",
+      "path": "/api/experience-cards/1/withdraw",
+      "operation_id": "post_api_experience_cards_id_withdraw",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "second_withdraw_wrong_role",
+      "method": "POST",
+      "path": "/api/experience-cards/1/withdraw",
+      "operation_id": "post_api_experience_cards_id_withdraw",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "third_consent",
+      "method": "POST",
+      "path": "/api/experience-cards/1/consent",
+      "operation_id": "post_api_experience_cards_id_consent",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "third_consent_replay",
+      "method": "POST",
+      "path": "/api/experience-cards/1/consent",
+      "operation_id": "post_api_experience_cards_id_consent",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "third_consent_malformed",
+      "method": "POST",
+      "path": "/api/experience-cards/1/consent",
+      "operation_id": "post_api_experience_cards_id_consent",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "third_consent_anonymous",
+      "method": "POST",
+      "path": "/api/experience-cards/1/consent",
+      "operation_id": "post_api_experience_cards_id_consent",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "third_consent_wrong_role",
+      "method": "POST",
+      "path": "/api/experience-cards/1/consent",
+      "operation_id": "post_api_experience_cards_id_consent",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "reject",
+      "method": "POST",
+      "path": "/api/admin/experience-cards/1/moderate",
+      "operation_id": "post_api_admin_experience_cards_id_moderate",
+      "kind": "normal",
+      "status": 200,
+      "role": "reviewer",
+      "assertions": 4
+    },
+    {
+      "name": "reject_replay",
+      "method": "POST",
+      "path": "/api/admin/experience-cards/1/moderate",
+      "operation_id": "post_api_admin_experience_cards_id_moderate",
+      "kind": "boundary",
+      "status": 200,
+      "role": "reviewer",
+      "assertions": 4
+    },
+    {
+      "name": "reject_malformed",
+      "method": "POST",
+      "path": "/api/admin/experience-cards/1/moderate",
+      "operation_id": "post_api_admin_experience_cards_id_moderate",
+      "kind": "error",
+      "status": 400,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "reject_anonymous",
+      "method": "POST",
+      "path": "/api/admin/experience-cards/1/moderate",
+      "operation_id": "post_api_admin_experience_cards_id_moderate",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "reject_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/experience-cards/1/moderate",
+      "operation_id": "post_api_admin_experience_cards_id_moderate",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "rejected_withdraw",
+      "method": "POST",
+      "path": "/api/experience-cards/1/withdraw",
+      "operation_id": "post_api_experience_cards_id_withdraw",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "rejected_withdraw_replay",
+      "method": "POST",
+      "path": "/api/experience-cards/1/withdraw",
+      "operation_id": "post_api_experience_cards_id_withdraw",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "rejected_withdraw_malformed",
+      "method": "POST",
+      "path": "/api/experience-cards/1/withdraw",
+      "operation_id": "post_api_experience_cards_id_withdraw",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "rejected_withdraw_anonymous",
+      "method": "POST",
+      "path": "/api/experience-cards/1/withdraw",
+      "operation_id": "post_api_experience_cards_id_withdraw",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "rejected_withdraw_wrong_role",
+      "method": "POST",
+      "path": "/api/experience-cards/1/withdraw",
+      "operation_id": "post_api_experience_cards_id_withdraw",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "final_public_empty",
+      "method": "GET",
+      "path": "/api/community/experiences",
+      "operation_id": "get_api_community_experiences",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "test_card_still_denied",
+      "method": "POST",
+      "path": "/api/experience-cards/2/consent",
+      "operation_id": "post_api_experience_cards_id_consent",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 4
+    }
+  ]
+}

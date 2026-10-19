@@ -94,3 +94,10 @@ KNOWLEDGE_AI_ENABLED与COMMUNITY_PUBLICATION_ENABLED明确false，真实公开�
 仅隔离夹具将合成车主1测试会话设为VERIFIED_WECHAT，车主2保留未知来源以验证拒绝公开；不代表真实微信核验。问题、答复、授权与审核均通过HTTP生成。仅隔离服务开启公开问答，生产默认开关不变。原始环境/令牌/响应留在.cache，公共报告只保留数量、哈希与检查结果。下一经验卡授权与精选治理，再剩余车主接口。
 
 见[本阶段执行](../progress/R9_A4D2D2_PUBLIC_QA_API_EXECUTION.md)。
+
+
+## A4d-2d3 经验卡与精选治理
+
+独立执行 `python scripts/run_api_acceptance.py --experience-cases`；14接口、131请求/448断言。两组SQL合成已完成来源（WECHAT字段协议夹具与LOCAL_TEST排除对照）交由真实归档消费者生成卡片；准备钩子等待两卡完成后才冻结匿名表基线。治理写入全部经HTTP完成，公开详情绑定实际列表UUID，精选窗口以真实时间等待生效。
+
+包含授权、独立审核、撤回、同款投影、精选来源/配置/停止、旧UUID和旧精选不复活。此结果不代表真实微信身份、真实付款或供应商回调验签。原始JWT和私有响应仅留.cache，公开只提供脱敏报告。见[本阶段执行](../progress/R9_A4D2D3_EXPERIENCE_API_EXECUTION.md)。

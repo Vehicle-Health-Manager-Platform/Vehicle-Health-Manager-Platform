@@ -1,0 +1,1410 @@
+{
+  "version": 1,
+  "passed": true,
+  "full_api_acceptance_passed": false,
+  "started_at": "2026-10-19T06:20:18.535443+00:00",
+  "scope": "anonymous authentication plus experience business operations (synthetic identities; LOCAL_TEST funds only)",
+  "source_sha256": "5b4f42e4e399b2565fcef2f418622b9174e2ab09d3fdfe88c157083a9eb8e2f8",
+  "cleanup": [
+    {
+      "role": "backend",
+      "passed": true
+    },
+    {
+      "role": "mysql",
+      "passed": true
+    },
+    {
+      "role": "network",
+      "passed": true
+    }
+  ],
+  "contract_operations": 352,
+  "collection_sha256": "17d694318592e54bc139a122c5078cbe067084f710fc05cd05b5c953acf078a5",
+  "experience_collection_sha256": "aba943d7bbb56ddf20968adb383efca06385116208339d0d8faffd96c66eee51",
+  "jar_sha256": "5d5720f90ce9328711ae8afc93bc830036b361f8f9dbae28e455e77370475206",
+  "newman_exit_code": 0,
+  "evidence": {
+    "requests": 338,
+    "assertions": 1014,
+    "failures": 0,
+    "operations": [
+      "delete_api_merchant_staff_id_employee_code",
+      "generated_post_fe032ea229a821bb",
+      "get_api_admin_assessment",
+      "get_api_admin_assessment_history",
+      "get_api_admin_assessment_merchants",
+      "get_api_admin_assessment_month",
+      "get_api_admin_assessment_policies",
+      "get_api_admin_assessment_snapshots",
+      "get_api_admin_assessment_snapshots_id",
+      "get_api_admin_assessment_snapshots_id_facts",
+      "get_api_admin_business_dashboard",
+      "get_api_admin_business_merchants",
+      "get_api_admin_catalog_kind",
+      "get_api_admin_community_curation_sources",
+      "get_api_admin_community_curations",
+      "get_api_admin_community_curations_id",
+      "get_api_admin_community_images",
+      "get_api_admin_community_images_id_preview",
+      "get_api_admin_community_question_publications",
+      "get_api_admin_community_questions_cases",
+      "get_api_admin_community_questions_cases_id",
+      "get_api_admin_community_questions_handlers",
+      "get_api_admin_community_questions_policies",
+      "get_api_admin_coupons",
+      "get_api_admin_dashboard",
+      "get_api_admin_diagnosis_cases",
+      "get_api_admin_diagnosis_cases_id",
+      "get_api_admin_diagnosis_handlers",
+      "get_api_admin_diagnosis_notifications",
+      "get_api_admin_diagnosis_policies",
+      "get_api_admin_experience_cards",
+      "get_api_admin_health_policies_model_metric",
+      "get_api_admin_invite_diagnosis_policies",
+      "get_api_admin_invite_reward_coupons",
+      "get_api_admin_invite_reward_policies",
+      "get_api_admin_knowledge_documents",
+      "get_api_admin_knowledge_models",
+      "get_api_admin_merchant_applications",
+      "get_api_admin_merchant_applications_id",
+      "get_api_admin_merchant_applications_id_files_file_access",
+      "get_api_admin_merchant_quotas",
+      "get_api_admin_point_exchange_catalog",
+      "get_api_admin_point_exchange_sources",
+      "get_api_admin_point_task_policies",
+      "get_api_admin_price_monitor_comparisons",
+      "get_api_admin_price_monitor_comparisons_id",
+      "get_api_admin_price_monitor_policies",
+      "get_api_admin_price_monitor_policies_id",
+      "get_api_admin_price_monitor_quotes",
+      "get_api_admin_project_applicability_project_model",
+      "get_api_admin_reconciliation",
+      "get_api_admin_review_texts",
+      "get_api_admin_standard_project",
+      "get_api_ai_service_plan_catalog",
+      "get_api_archive_archiveId_files_fileId_access",
+      "get_api_archive_id_health_observation",
+      "get_api_archive_id_reminder",
+      "get_api_archive_id_structured",
+      "get_api_archive_list",
+      "get_api_archive_report",
+      "get_api_archive_shares",
+      "get_api_archive_shares_id_link",
+      "get_api_brand_list",
+      "get_api_check_pickup_context",
+      "get_api_check_pickup_order",
+      "get_api_check_pickup_order_files_file_access",
+      "get_api_community_experiences",
+      "get_api_community_experiences_id",
+      "get_api_community_hot",
+      "get_api_community_images",
+      "get_api_community_images_publicId",
+      "get_api_community_questions",
+      "get_api_community_questions_publicId",
+      "get_api_coupon_id_service_redemption",
+      "get_api_coupon_mine",
+      "get_api_coupon_offers",
+      "get_api_demo_vehicles_id",
+      "get_api_experience_cards",
+      "get_api_file_id_access",
+      "get_api_home_dashboard",
+      "get_api_home_reminders",
+      "get_api_input_materials_purpose_vehicleId_id_access",
+      "get_api_invite_diagnosis_eligibility",
+      "get_api_invite_progress",
+      "get_api_invite_qrcode",
+      "get_api_invite_records",
+      "get_api_invite_registration",
+      "get_api_invite_reward_policy",
+      "get_api_invite_rewards",
+      "get_api_knowledge_documents_reference",
+      "get_api_knowledge_search",
+      "get_api_merchant_applications_mine",
+      "get_api_merchant_assessment_history",
+      "get_api_merchant_assessment_month",
+      "get_api_merchant_assessment_policy",
+      "get_api_merchant_assessment_snapshots_id",
+      "get_api_merchant_assessment_snapshots_id_facts",
+      "get_api_merchant_assessment_staff",
+      "get_api_merchant_business_dashboard",
+      "get_api_merchant_commissions",
+      "get_api_merchant_coupons",
+      "get_api_merchant_coupons_service_redemptions",
+      "get_api_merchant_customer_relations",
+      "get_api_merchant_customer_relations_id",
+      "get_api_merchant_files_id_access",
+      "get_api_merchant_id",
+      "get_api_merchant_id_reviews_summary",
+      "get_api_merchant_invite_code",
+      "get_api_merchant_invite_progress",
+      "get_api_merchant_invite_records",
+      "get_api_merchant_invite_rewards",
+      "get_api_merchant_location",
+      "get_api_merchant_notifications",
+      "get_api_merchant_orders",
+      "get_api_merchant_orders_id",
+      "get_api_merchant_orders_id_assignment",
+      "get_api_merchant_orders_id_redemption",
+      "get_api_merchant_orders_id_refund",
+      "get_api_merchant_orders_id_service_context",
+      "get_api_merchant_orders_id_service_context_archives_archive_files_file_access",
+      "get_api_merchant_orders_id_work",
+      "get_api_merchant_orders_id_work_files_file_access",
+      "get_api_merchant_profile",
+      "get_api_merchant_projects",
+      "get_api_merchant_slots",
+      "get_api_merchant_staff",
+      "get_api_merchant_standard_projects",
+      "get_api_merchant_technicians",
+      "get_api_merchant_workbench",
+      "get_api_model_list",
+      "get_api_notifications",
+      "get_api_order_id",
+      "get_api_order_id_archive_grants",
+      "get_api_order_id_archive_grants_archive_files_file_preview",
+      "get_api_order_id_public_review_text",
+      "get_api_order_id_redemption",
+      "get_api_order_id_refund",
+      "get_api_order_id_review",
+      "get_api_order_id_review_publication",
+      "get_api_order_id_review_summary_consent",
+      "get_api_order_id_work",
+      "get_api_order_id_work_files_file_access",
+      "get_api_order_list",
+      "get_api_order_quote_id",
+      "get_api_order_slots",
+      "get_api_owner_community_image_sources",
+      "get_api_owner_community_images",
+      "get_api_owner_community_images_id_preview",
+      "get_api_owner_community_questions_cases",
+      "get_api_owner_community_questions_cases_caseId_publications",
+      "get_api_owner_community_questions_cases_id",
+      "get_api_owner_community_questions_context",
+      "get_api_owner_diagnosis_cases",
+      "get_api_owner_diagnosis_cases_id",
+      "get_api_owner_diagnosis_context",
+      "get_api_owner_diagnosis_notifications",
+      "get_api_owner_notifications",
+      "get_api_payments_id",
+      "get_api_point_exchange_catalog",
+      "get_api_point_exchanges",
+      "get_api_point_flow",
+      "get_api_point_overview",
+      "get_api_point_tasks",
+      "get_api_series_list",
+      "get_api_service_merchant_id",
+      "get_api_service_merchant_id_ratings",
+      "get_api_service_merchant_id_review_texts",
+      "get_api_service_project_id",
+      "get_api_service_project_id_merchants",
+      "get_api_service_project_id_rating_quotes",
+      "get_api_service_projects",
+      "get_api_tech_files_id_access",
+      "get_api_tech_notifications",
+      "get_api_tech_orders",
+      "get_api_tech_orders_id",
+      "get_api_tech_orders_id_service_context",
+      "get_api_tech_orders_id_service_context_archives_archive_files_file_access",
+      "get_api_tech_orders_id_work",
+      "get_api_tech_orders_id_work_files_file_access",
+      "get_api_tech_workbench",
+      "get_api_vehicle_health_observation_history",
+      "get_api_vehicle_health_observations",
+      "get_api_vehicle_list",
+      "get_api_vehicle_ocr_license",
+      "get_api_vehicle_reminders",
+      "get_api_vehicle_vehicle_health_dashboard",
+      "get_api_vehicle_vin_decode",
+      "post_api_admin_assessment_policies",
+      "post_api_admin_assessment_snapshots",
+      "post_api_admin_catalog_kind",
+      "post_api_admin_community_curations",
+      "post_api_admin_community_images_id_moderate",
+      "post_api_admin_community_question_publications_id_moderate",
+      "post_api_admin_community_questions_cases_id_close",
+      "post_api_admin_community_questions_cases_id_reply",
+      "post_api_admin_community_questions_policies",
+      "post_api_admin_diagnosis_cases_id_close",
+      "post_api_admin_diagnosis_cases_id_reply",
+      "post_api_admin_diagnosis_policies",
+      "post_api_admin_experience_cards_id_moderate",
+      "post_api_admin_invite_diagnosis_policies",
+      "post_api_admin_invite_reward_policies",
+      "post_api_admin_knowledge_documents",
+      "post_api_admin_knowledge_documents_id_status",
+      "post_api_admin_merchant_applications_id_moderate",
+      "post_api_admin_merchant_audit",
+      "post_api_admin_point_exchange_catalog",
+      "post_api_admin_point_task_policies",
+      "post_api_admin_price_monitor_policies",
+      "post_api_admin_review_texts_id_moderate",
+      "post_api_ai_chat",
+      "post_api_ai_plan",
+      "post_api_ai_service_plan",
+      "post_api_ai_service_plan_vehicle_evidence",
+      "post_api_archive_add",
+      "post_api_archive_share_view",
+      "post_api_archive_shares",
+      "post_api_archive_shares_id_revoke",
+      "post_api_auth_logout",
+      "post_api_auth_operator_logout",
+      "post_api_auth_phone_bind",
+      "post_api_auth_technician_bind",
+      "post_api_check_delivery_compare",
+      "post_api_check_pickup_confirm",
+      "post_api_check_pickup_dispute_review",
+      "post_api_check_pickup_submit",
+      "post_api_check_protection_upload",
+      "post_api_coupon_id_service_authorization",
+      "post_api_coupon_receive",
+      "post_api_coupon_release",
+      "post_api_coupon_reserve",
+      "post_api_demo_vehicles_id_mileage",
+      "post_api_experience_cards_id_consent",
+      "post_api_experience_cards_id_withdraw",
+      "post_api_file_upload",
+      "post_api_input_materials_purpose_vehicleId_upload",
+      "post_api_invite_code",
+      "post_api_knowledge_answer",
+      "post_api_merchant_applications",
+      "post_api_merchant_apply",
+      "post_api_merchant_coupons",
+      "post_api_merchant_coupons_service_preview",
+      "post_api_merchant_coupons_service_redeem",
+      "post_api_merchant_files_upload",
+      "post_api_merchant_invite_code",
+      "post_api_merchant_orders_id_actions",
+      "post_api_merchant_orders_id_assign",
+      "post_api_merchant_orders_id_dispute_handle",
+      "post_api_merchant_orders_id_redeem",
+      "post_api_merchant_orders_id_refund_decision",
+      "post_api_merchant_orders_id_refund_reconcile",
+      "post_api_merchant_projects",
+      "post_api_merchant_slots",
+      "post_api_merchant_slots_id_close",
+      "post_api_merchant_staff",
+      "post_api_merchant_staff_id_disable",
+      "post_api_merchant_staff_id_employee_code",
+      "post_api_merchant_staff_id_enable",
+      "post_api_order_cancel",
+      "post_api_order_coupon_create",
+      "post_api_order_coupon_preview",
+      "post_api_order_create",
+      "post_api_order_id_public_review_text_preview",
+      "post_api_order_id_refund",
+      "post_api_order_id_refund_withdraw",
+      "post_api_order_plan_booking_context",
+      "post_api_order_review",
+      "post_api_order_verify",
+      "post_api_owner_community_images",
+      "post_api_owner_community_images_id_withdraw",
+      "post_api_owner_community_images_preview",
+      "post_api_owner_community_question_publications_id_withdraw",
+      "post_api_owner_community_questions_cases",
+      "post_api_owner_community_questions_cases_caseId_publication_preview",
+      "post_api_owner_community_questions_cases_caseId_publications",
+      "post_api_owner_community_questions_cases_id_close",
+      "post_api_owner_community_questions_cases_id_message",
+      "post_api_owner_diagnosis_cases",
+      "post_api_owner_diagnosis_cases_id_close",
+      "post_api_owner_diagnosis_cases_id_message",
+      "post_api_payments_create",
+      "post_api_payments_id_reconcile",
+      "post_api_point_check_in",
+      "post_api_point_exchange",
+      "post_api_refunds_create",
+      "post_api_service_merchant_id_distance",
+      "post_api_service_merchant_id_review_summary",
+      "post_api_service_project_id_nearby_merchants",
+      "post_api_service_project_search",
+      "post_api_tech_files_upload",
+      "post_api_tech_orders_id_accept",
+      "post_api_tech_report_submit",
+      "post_api_tech_sign",
+      "post_api_vehicle_add",
+      "put_api_admin_assessment_policies_id",
+      "put_api_admin_assessment_policies_id_status",
+      "put_api_admin_catalog_kind_id",
+      "put_api_admin_community_curations_id",
+      "put_api_admin_community_curations_id_status",
+      "put_api_admin_community_questions_cases_id_assignment",
+      "put_api_admin_community_questions_policies_id",
+      "put_api_admin_community_questions_policies_id_status",
+      "put_api_admin_coupons_id_pool",
+      "put_api_admin_diagnosis_cases_id_assignment",
+      "put_api_admin_diagnosis_notifications_id_read",
+      "put_api_admin_diagnosis_policies_id",
+      "put_api_admin_diagnosis_policies_id_status",
+      "put_api_admin_health_policies_model_metric",
+      "put_api_admin_invite_diagnosis_policies_id",
+      "put_api_admin_invite_diagnosis_policies_id_status",
+      "put_api_admin_invite_reward_policies_id",
+      "put_api_admin_invite_reward_policies_id_status",
+      "put_api_admin_knowledge_documents_id",
+      "put_api_admin_merchant_quotas",
+      "put_api_admin_point_exchange_catalog_id",
+      "put_api_admin_point_exchange_catalog_id_status",
+      "put_api_admin_point_task_policies_id",
+      "put_api_admin_point_task_policies_id_status",
+      "put_api_admin_price_monitor_policies_id",
+      "put_api_admin_price_monitor_policies_id_status",
+      "put_api_admin_project_applicability_project_model",
+      "put_api_archive_id_health_observation",
+      "put_api_archive_id_reminder",
+      "put_api_archive_id_structured",
+      "put_api_merchant_coupons_id",
+      "put_api_merchant_coupons_id_status",
+      "put_api_merchant_location",
+      "put_api_merchant_notifications_id_read",
+      "put_api_merchant_profile",
+      "put_api_order_id_archive_grants_archive",
+      "put_api_order_id_public_review_text",
+      "put_api_order_id_review_publication",
+      "put_api_order_id_review_summary_consent",
+      "put_api_owner_diagnosis_notifications_id_read",
+      "put_api_owner_notifications_id_read",
+      "put_api_tech_notifications_id_read",
+      "put_api_vehicle_vehicle_health_metric_confirmation",
+      "put_api_vehicle_vehicle_reminder_preference"
+    ]
+  },
+  "prepared_default_disabled_verified": true,
+  "business_table_counts_unchanged": true,
+  "experience_newman_exit_code": 0,
+  "experience_evidence": {
+    "requests": 131,
+    "assertions": 448,
+    "failures": 0,
+    "coverage": {
+      "get_api_experience_cards": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_experience_cards_id_consent": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "get_api_admin_experience_cards": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "get_api_community_experiences": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_admin_experience_cards_id_moderate": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "get_api_community_experiences_id": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "get_api_admin_community_curation_sources": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_admin_community_curations": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "get_api_admin_community_curations": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "get_api_admin_community_curations_id": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "put_api_admin_community_curations_id": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "put_api_admin_community_curations_id_status": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "get_api_community_hot": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_experience_cards_id_withdraw": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ]
+    },
+    "cases": [
+      {
+        "name": "cards",
+        "operation_id": "get_api_experience_cards",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "cards_boundary",
+        "operation_id": "get_api_experience_cards",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "cards_error",
+        "operation_id": "get_api_experience_cards",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "cards_anonymous",
+        "operation_id": "get_api_experience_cards",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "cards_wrong_role",
+        "operation_id": "get_api_experience_cards",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "foreign_cards",
+        "operation_id": "get_api_experience_cards",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "test_card_cannot_consent",
+        "operation_id": "post_api_experience_cards_id_consent",
+        "kind": "boundary",
+        "status": 409,
+        "passed": true
+      },
+      {
+        "name": "foreign_consent",
+        "operation_id": "post_api_experience_cards_id_consent",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "consent",
+        "operation_id": "post_api_experience_cards_id_consent",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "consent_replay",
+        "operation_id": "post_api_experience_cards_id_consent",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "consent_malformed",
+        "operation_id": "post_api_experience_cards_id_consent",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "consent_anonymous",
+        "operation_id": "post_api_experience_cards_id_consent",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "consent_wrong_role",
+        "operation_id": "post_api_experience_cards_id_consent",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "pending",
+        "operation_id": "get_api_admin_experience_cards",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "pending_boundary",
+        "operation_id": "get_api_admin_experience_cards",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "pending_error",
+        "operation_id": "get_api_admin_experience_cards",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "pending_anonymous",
+        "operation_id": "get_api_admin_experience_cards",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "pending_wrong_role",
+        "operation_id": "get_api_admin_experience_cards",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "curator_not_reviewer",
+        "operation_id": "get_api_admin_experience_cards",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "unapproved_hidden",
+        "operation_id": "get_api_community_experiences",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "approve",
+        "operation_id": "post_api_admin_experience_cards_id_moderate",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "approve_replay",
+        "operation_id": "post_api_admin_experience_cards_id_moderate",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "approve_malformed",
+        "operation_id": "post_api_admin_experience_cards_id_moderate",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "approve_anonymous",
+        "operation_id": "post_api_admin_experience_cards_id_moderate",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "approve_wrong_role",
+        "operation_id": "post_api_admin_experience_cards_id_moderate",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "stale_moderation",
+        "operation_id": "post_api_admin_experience_cards_id_moderate",
+        "kind": "boundary",
+        "status": 409,
+        "passed": true
+      },
+      {
+        "name": "public_list",
+        "operation_id": "get_api_community_experiences",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "public_list_boundary",
+        "operation_id": "get_api_community_experiences",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "public_list_error",
+        "operation_id": "get_api_community_experiences",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "public_list_anonymous",
+        "operation_id": "get_api_community_experiences",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "public_list_wrong_role",
+        "operation_id": "get_api_community_experiences",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "public_foreign_vehicle",
+        "operation_id": "get_api_community_experiences",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "same_model_other_owner",
+        "operation_id": "get_api_community_experiences",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "public_detail",
+        "operation_id": "get_api_community_experiences_id",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "public_detail_boundary",
+        "operation_id": "get_api_community_experiences_id",
+        "kind": "boundary",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "public_detail_error",
+        "operation_id": "get_api_community_experiences_id",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "public_detail_anonymous",
+        "operation_id": "get_api_community_experiences_id",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "public_detail_wrong_role",
+        "operation_id": "get_api_community_experiences_id",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "foreign_public_detail",
+        "operation_id": "get_api_community_experiences_id",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "curation_sources",
+        "operation_id": "get_api_admin_community_curation_sources",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "curation_sources_boundary",
+        "operation_id": "get_api_admin_community_curation_sources",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "curation_sources_error",
+        "operation_id": "get_api_admin_community_curation_sources",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "curation_sources_anonymous",
+        "operation_id": "get_api_admin_community_curation_sources",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "curation_sources_wrong_role",
+        "operation_id": "get_api_admin_community_curation_sources",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "reviewer_not_curator",
+        "operation_id": "get_api_admin_community_curation_sources",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "curation_create",
+        "operation_id": "post_api_admin_community_curations",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "curation_create_replay",
+        "operation_id": "post_api_admin_community_curations",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "curation_create_malformed",
+        "operation_id": "post_api_admin_community_curations",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "curation_create_anonymous",
+        "operation_id": "post_api_admin_community_curations",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "curation_create_wrong_role",
+        "operation_id": "post_api_admin_community_curations",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "source_hash_mismatch",
+        "operation_id": "post_api_admin_community_curations",
+        "kind": "boundary",
+        "status": 409,
+        "passed": true
+      },
+      {
+        "name": "curation_list",
+        "operation_id": "get_api_admin_community_curations",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "curation_list_boundary",
+        "operation_id": "get_api_admin_community_curations",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "curation_list_error",
+        "operation_id": "get_api_admin_community_curations",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "curation_list_anonymous",
+        "operation_id": "get_api_admin_community_curations",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "curation_list_wrong_role",
+        "operation_id": "get_api_admin_community_curations",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "curation_detail",
+        "operation_id": "get_api_admin_community_curations_id",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "curation_detail_boundary",
+        "operation_id": "get_api_admin_community_curations_id",
+        "kind": "boundary",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "curation_detail_error",
+        "operation_id": "get_api_admin_community_curations_id",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "curation_detail_anonymous",
+        "operation_id": "get_api_admin_community_curations_id",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "curation_detail_wrong_role",
+        "operation_id": "get_api_admin_community_curations_id",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "curation_update",
+        "operation_id": "put_api_admin_community_curations_id",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "curation_update_replay",
+        "operation_id": "put_api_admin_community_curations_id",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "curation_update_malformed",
+        "operation_id": "put_api_admin_community_curations_id",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "curation_update_anonymous",
+        "operation_id": "put_api_admin_community_curations_id",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "curation_update_wrong_role",
+        "operation_id": "put_api_admin_community_curations_id",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "stale_curation_update",
+        "operation_id": "put_api_admin_community_curations_id",
+        "kind": "boundary",
+        "status": 409,
+        "passed": true
+      },
+      {
+        "name": "curation_publish",
+        "operation_id": "put_api_admin_community_curations_id_status",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "curation_publish_replay",
+        "operation_id": "put_api_admin_community_curations_id_status",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "curation_publish_malformed",
+        "operation_id": "put_api_admin_community_curations_id_status",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "curation_publish_anonymous",
+        "operation_id": "put_api_admin_community_curations_id_status",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "curation_publish_wrong_role",
+        "operation_id": "put_api_admin_community_curations_id_status",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "published_curation_frozen",
+        "operation_id": "put_api_admin_community_curations_id",
+        "kind": "boundary",
+        "status": 409,
+        "passed": true
+      },
+      {
+        "name": "hot_before_window",
+        "operation_id": "get_api_community_hot",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "hot",
+        "operation_id": "get_api_community_hot",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "hot_boundary",
+        "operation_id": "get_api_community_hot",
+        "kind": "boundary",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "hot_error",
+        "operation_id": "get_api_community_hot",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "hot_anonymous",
+        "operation_id": "get_api_community_hot",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "hot_wrong_role",
+        "operation_id": "get_api_community_hot",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "foreign_withdraw",
+        "operation_id": "post_api_experience_cards_id_withdraw",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "withdraw",
+        "operation_id": "post_api_experience_cards_id_withdraw",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "withdraw_replay",
+        "operation_id": "post_api_experience_cards_id_withdraw",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "withdraw_malformed",
+        "operation_id": "post_api_experience_cards_id_withdraw",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "withdraw_anonymous",
+        "operation_id": "post_api_experience_cards_id_withdraw",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "withdraw_wrong_role",
+        "operation_id": "post_api_experience_cards_id_withdraw",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "withdrawn_detail",
+        "operation_id": "get_api_community_experiences_id",
+        "kind": "boundary",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "withdrawn_hot",
+        "operation_id": "get_api_community_hot",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "withdrawn_sources",
+        "operation_id": "get_api_admin_community_curation_sources",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "old_consent_key_rejected",
+        "operation_id": "post_api_experience_cards_id_consent",
+        "kind": "boundary",
+        "status": 409,
+        "passed": true
+      },
+      {
+        "name": "creation_receipt_after_source_loss",
+        "operation_id": "post_api_admin_community_curations",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "reconsent",
+        "operation_id": "post_api_experience_cards_id_consent",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "reconsent_replay",
+        "operation_id": "post_api_experience_cards_id_consent",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "reconsent_malformed",
+        "operation_id": "post_api_experience_cards_id_consent",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "reconsent_anonymous",
+        "operation_id": "post_api_experience_cards_id_consent",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "reconsent_wrong_role",
+        "operation_id": "post_api_experience_cards_id_consent",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "reapprove",
+        "operation_id": "post_api_admin_experience_cards_id_moderate",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "reapprove_replay",
+        "operation_id": "post_api_admin_experience_cards_id_moderate",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "reapprove_malformed",
+        "operation_id": "post_api_admin_experience_cards_id_moderate",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "reapprove_anonymous",
+        "operation_id": "post_api_admin_experience_cards_id_moderate",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "reapprove_wrong_role",
+        "operation_id": "post_api_admin_experience_cards_id_moderate",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "new_public_uuid",
+        "operation_id": "get_api_community_experiences",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "old_uuid_never_revives",
+        "operation_id": "get_api_community_experiences_id",
+        "kind": "boundary",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "curation_not_rebound",
+        "operation_id": "get_api_community_hot",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "curation_stop",
+        "operation_id": "put_api_admin_community_curations_id_status",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "curation_stop_replay",
+        "operation_id": "put_api_admin_community_curations_id_status",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "curation_stop_malformed",
+        "operation_id": "put_api_admin_community_curations_id_status",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "curation_stop_anonymous",
+        "operation_id": "put_api_admin_community_curations_id_status",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "curation_stop_wrong_role",
+        "operation_id": "put_api_admin_community_curations_id_status",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "curation_cannot_reopen",
+        "operation_id": "put_api_admin_community_curations_id_status",
+        "kind": "boundary",
+        "status": 409,
+        "passed": true
+      },
+      {
+        "name": "second_withdraw",
+        "operation_id": "post_api_experience_cards_id_withdraw",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "second_withdraw_replay",
+        "operation_id": "post_api_experience_cards_id_withdraw",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "second_withdraw_malformed",
+        "operation_id": "post_api_experience_cards_id_withdraw",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "second_withdraw_anonymous",
+        "operation_id": "post_api_experience_cards_id_withdraw",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "second_withdraw_wrong_role",
+        "operation_id": "post_api_experience_cards_id_withdraw",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "third_consent",
+        "operation_id": "post_api_experience_cards_id_consent",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "third_consent_replay",
+        "operation_id": "post_api_experience_cards_id_consent",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "third_consent_malformed",
+        "operation_id": "post_api_experience_cards_id_consent",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "third_consent_anonymous",
+        "operation_id": "post_api_experience_cards_id_consent",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "third_consent_wrong_role",
+        "operation_id": "post_api_experience_cards_id_consent",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "reject",
+        "operation_id": "post_api_admin_experience_cards_id_moderate",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "reject_replay",
+        "operation_id": "post_api_admin_experience_cards_id_moderate",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "reject_malformed",
+        "operation_id": "post_api_admin_experience_cards_id_moderate",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "reject_anonymous",
+        "operation_id": "post_api_admin_experience_cards_id_moderate",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "reject_wrong_role",
+        "operation_id": "post_api_admin_experience_cards_id_moderate",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "rejected_withdraw",
+        "operation_id": "post_api_experience_cards_id_withdraw",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "rejected_withdraw_replay",
+        "operation_id": "post_api_experience_cards_id_withdraw",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "rejected_withdraw_malformed",
+        "operation_id": "post_api_experience_cards_id_withdraw",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "rejected_withdraw_anonymous",
+        "operation_id": "post_api_experience_cards_id_withdraw",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "rejected_withdraw_wrong_role",
+        "operation_id": "post_api_experience_cards_id_withdraw",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "final_public_empty",
+        "operation_id": "get_api_community_experiences",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "test_card_still_denied",
+        "operation_id": "post_api_experience_cards_id_consent",
+        "kind": "boundary",
+        "status": 409,
+        "passed": true
+      }
+    ],
+    "detail_bound_to_actual_experience_list": true
+  },
+  "experience_database": {
+    "row_counts": {
+      "cards": 2,
+      "moderations": 3,
+      "curations": 1,
+      "archives": 2,
+      "archive_jobs": 2,
+      "reviews": 2,
+      "payments": 2,
+      "payment_events": 2
+    },
+    "checks": {
+      "withdrawn_revision_9": true,
+      "test_card_never_authorized": true,
+      "curation_stopped": true,
+      "distinct_approved_ids": true,
+      "consumer_not_retried": true,
+      "no_private_text_in_governance_audit": true
+    },
+    "payment_scope": "two SQL synthetic source fixtures including WECHAT channel field; no supplier IO or real funds"
+  },
+  "sources_unchanged": true,
+  "finished_at": "2026-10-19T06:24:37.329785+00:00",
+  "duration_seconds": 258.719
+}
