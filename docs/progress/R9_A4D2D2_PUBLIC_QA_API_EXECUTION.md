@@ -31,3 +31,8 @@
 2026-10-19：A4d-2d2 本地PASS（176.953秒）：14接口、134业务请求/456断言、338匿名请求/1014断言通过。3次申请均WITHDRAWN/revision3，9授权事件、2个不同公开UUID；2问答/5消息/7问答事件，0积分任务事件/支付。脱敏、独立审核权限、未知来源拒绝、公开字段白名单、补充不扩权、撤回与旧UUID不复活验证通过。来源稳定，容器/网络清理成功；默认新集合0请求；新增8项和既有26项测试、编译/diff通过。仅合成来源协议夹具，不代表真实微信身份。下一经验卡授权/审核/撤回与精选治理→剩余车主→A5→B外部接口→C真机；全部API业务验收和性能延迟达标仍未完成。
 
 [脱敏报告](../testing/reports/R9_A4D2D2_PUBLIC_QA_API_2026_10_19.json)；[默认禁发实测](../testing/reports/R9_A4D2D2_DEFAULT_DISABLED_2026_10_19.json)。本轮交付为验收资产、证据审计、运行器与CI接入，无生产业务代码变更。完整远程CI待结果。
+
+
+## GitHub交付
+
+本阶段成果已上传 [PR171](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/171)，验收代码 `b05d885`，依赖PR170；完整远程CI待结果，保持草稿，不合并或部署。
