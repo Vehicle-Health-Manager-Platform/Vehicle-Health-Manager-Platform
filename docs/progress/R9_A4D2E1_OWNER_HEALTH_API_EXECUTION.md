@@ -55,3 +55,8 @@ Java测试执行成功后，本机日志包装曾把CompletedProcess直接传给
 2026-10-19：A4d-2e1 本地PASS（210.187秒）：14接口（车主12+规则2）、199业务请求/668断言、338匿名请求/1014断言通过。修复三组早期控制器忽略未知/重复query，写接口禁止query；22项Java定向测试及9项新增/19项既有Python测试、编译/diff通过。3份结构化资料、3指标当前值/7条历史、1确认/1已撤回规则、3提醒/1偏好；更正/换来源/清空、旧回执不恢复撤销状态、提醒状态与另一车主隔离检查通过。源码稳定，容器/网络清理成功；默认新集合0请求。健康规则仅合成协议值，不是生产阈值；本地提醒不代表外部消息送达。前置PR172完整CI待结束。下一文件/PDF/分享→其余缺口→A5→B外部接口→C真机；全部API业务验收和性能延迟达标仍未完成。
 
 [脱敏报告](../testing/reports/R9_A4D2E1_OWNER_HEALTH_API_2026_10_19.json)；[默认禁发实测](../testing/reports/R9_A4D2E1_DEFAULT_DISABLED_2026_10_19.json)。本轮交付含三组控制器查询校验修复、HTTP回归、验收资产、证据审计与CI接入。完整远程CI待结果。
+
+
+## GitHub交付
+
+本阶段成果已上传 [PR173](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/173)，修复与验收代码 `c4addbd`，依赖PR172；完整远程CI待结果，保持草稿，不合并或部署。
