@@ -12,7 +12,7 @@
 
 ## 验证状态
 
-生成器与证据校验9/9通过，diff检查通过。首次开发态执行Newman338请求/1014断言全部通过，但因验证器开发期间源码变化，整轮正确判为FAIL、容器/网络已清理，不作为最终成功证据。最终固定实现复跑PASS，144.266秒：Newman338请求、1014断言、零失败；默认业务模板352项实际发送0请求、零失败；131表前后行数相同，来源哈希一致，后端/MySQL/网络清理全部成功。见[实际报告](../testing/reports/R9_A4D1_API_ACCEPTANCE_2026_10_19.json)。Python编译与diff检查通过。阶段完整远程CI待运行。
+生成器与证据校验9/9通过，diff检查通过。首次开发态执行Newman338请求/1014断言全部通过，但因验证器开发期间源码变化，整轮正确判为FAIL、容器/网络已清理，不作为最终成功证据。最终固定实现复跑PASS，144.266秒：Newman338请求、1014断言、零失败；默认业务模板352项实际发送0请求、零失败；131表前后行数相同，来源哈希一致，后端/MySQL/网络清理全部成功。见[实际报告](../testing/reports/R9_A4D1_API_ACCEPTANCE_2026_10_19.json)。Python编译与diff检查通过。阶段代码/资产/测试/CI/文档/报告已上传[PR165](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/165)，代码 `ab5d1e6`，依赖PR164；完整远程CI待结束、保持草稿，不合并或部署。
 
 ## 边界与下一步
 
