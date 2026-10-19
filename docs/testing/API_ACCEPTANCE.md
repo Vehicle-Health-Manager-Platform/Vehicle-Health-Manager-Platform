@@ -130,3 +130,7 @@ KNOWLEDGE_AI_ENABLED与COMMUNITY_PUBLICATION_ENABLED明确false，真实公开�
 ## A4d-2e4 积分兑换、扣分与券到账
 
 `python scripts/run_api_acceptance.py --exchange-cases` 覆盖8兑换本域及9串联支撑接口，17接口196请求668断言。真实签到获分→目录及两类券发布→兑换扣分/库存/到账→旧回执、停用及终身限额，正文源版本和幂等键严格审计，独立运营权限与另一车主对照。默认禁发；正式微信/外部服务及真机仍后置。见[执行](../progress/R9_A4D2E4_POINTS_EXCHANGE_API_EXECUTION.md)。
+
+## A4d-2f1 邀请关系与月度资格
+
+`python scripts/run_api_acceptance.py --invitation-cases` 覆盖9项推广码/本人归因/车主和员工记录进度、5项月度解锁政策及资格，共14接口136请求462断言。SQL合成19条归因/15条手机号证据与实际HTTP码/规则变更，核对唯一性、隐私、他人隔离、月度计数及政策CAS/停用/未来窗口。默认禁发；真实注册/电话核验和奖励发券另行验收。见[执行](../progress/R9_A4D2F1_INVITATION_MONTHLY_API_EXECUTION.md)。
