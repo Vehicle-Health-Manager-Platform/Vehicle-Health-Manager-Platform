@@ -22,6 +22,7 @@ class OwnerArchiveQueryHttpTest {
     @MockitoBean ArchiveStructuredService structured;
     @MockitoBean ArchiveReminderService reminders;
     @MockitoBean HealthObservationService observations;
+    @MockitoBean ArchiveShareService shares;
     @BeforeEach void token() {
         when(decoder.decode(anyString())).thenAnswer(call -> Jwt.withTokenValue(call.getArgument(0))
             .header("alg","HS256").subject("1").claim("subject_type","user").claim("role","OWNER")
@@ -30,6 +31,8 @@ class OwnerArchiveQueryHttpTest {
     @Test void unknownAndDuplicateSelectorsNeverReachPrivateServices() throws Exception {
         for (String path : List.of(
             "/api/archive/1/structured?user_id=2", "/api/archive/1/reminder?user_id=2",
+            "/api/archive/shares?vehicle_id=1&vehicle_id=2", "/api/archive/shares?vehicle_id=1&user_id=2",
+            "/api/archive/shares/1/link?user_id=2",
             "/api/vehicle/reminders?vehicle_id=1&vehicle_id=2",
             "/api/vehicle/health-observations?vehicle_id=1&user_id=2",
             "/api/vehicle/health-observations?vehicle_id=1&vehicle_id=2",
@@ -41,7 +44,7 @@ class OwnerArchiveQueryHttpTest {
             mvc.perform(get(path).header("Authorization","Bearer owner"))
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value(40001))
                 .andExpect(header().string("Cache-Control","no-store"));
-        verifyNoInteractions(structured,reminders,observations);
+        verifyNoInteractions(structured,reminders,observations,shares);
     }
     @Test void writesRejectQueryBeforeBodyOrService() throws Exception {
         for (String path : List.of("/api/archive/1/structured","/api/archive/1/reminder","/api/archive/1/health-observation"))
@@ -56,6 +59,14 @@ class OwnerArchiveQueryHttpTest {
         mvc.perform(get("/api/vehicle/health-observation-history?vehicle_id=1&metric=OIL&before_revision=3&limit=2")
             .header("Authorization","Bearer owner")).andExpect(status().isOk());
         verify(observations).history(any(),eq(1L),eq("OIL"),eq(3),eq(2));
+    }
+    @Test void sharePostsRejectSelectorsBeforeService() throws Exception {
+        for (String path : List.of("/api/archive/shares","/api/archive/shares/1/revoke","/api/archive/share/view"))
+            mvc.perform(post(path+"?user_id=2").header("Authorization","Bearer owner")
+                .header("Idempotency-Key",UUID.randomUUID().toString()).contentType("application/json").content("{}"))
+                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value(40001))
+                .andExpect(header().string("Cache-Control","no-store"));
+        verifyNoInteractions(shares);
     }
     @Test void authenticationStillPrecedesQueryValidation() throws Exception {
         mvc.perform(get("/api/vehicle/reminders?vehicle_id=1&vehicle_id=2"))

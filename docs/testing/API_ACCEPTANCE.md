@@ -108,3 +108,10 @@ KNOWLEDGE_AI_ENABLED与COMMUNITY_PUBLICATION_ENABLED明确false，真实公开�
 独立执行 `python scripts/run_api_acceptance.py --health-cases`：12项车主接口加2项规则接口，14接口、199请求/668断言。仅种合成身份与5条手动来源；目标资料、读数、历史、确认、规则、提醒和偏好全部真实HTTP写入。覆盖更正链、来源替换、清空、旧回执不恢复撤回状态及本人/运营权限，公开报告不保存原始私有响应。
 
 合成规则不是生产诊断阈值，本轮本地状态不代表外部消息送达。下一文件/PDF/分享，真实识别等供应商后置。见[执行文档](../progress/R9_A4D2E1_OWNER_HEALTH_API_EXECUTION.md)。
+
+
+## A4d-2e2a 私有PDF与摘要分享
+
+`python scripts/run_api_acceptance.py --export-cases` 覆盖PDF与分享6接口及快照冻结所需档案新增，共7接口、66请求/228断言。先安装固定的 `scripts/requirements-export-qa.txt`。实际解析二进制/规范Base64返回的PDF，检查中文和隐藏来源；能力令牌来自实际取链接响应并绑定接收正文，报告仅保留哈希、数量及通过标记。集合默认禁发，原始PDF/环境/令牌仅留.cache。
+
+修复分享未知/重复query校验。下一A4d-2e2b独立本地存储/扫描环境下的上传、签名访问、档案附件；本阶段不宣称它们完成。见[执行](../progress/R9_A4D2E2A_ARCHIVE_EXPORT_SHARE_EXECUTION.md)。

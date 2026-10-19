@@ -1,0 +1,668 @@
+{
+  "version": 1,
+  "cases": 66,
+  "operations": 7,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "pdf",
+      "method": "GET",
+      "path": "/api/archive/report",
+      "operation_id": "get_api_archive_report",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "pdf_boundary",
+      "method": "GET",
+      "path": "/api/archive/report",
+      "operation_id": "get_api_archive_report",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "pdf_error",
+      "method": "GET",
+      "path": "/api/archive/report",
+      "operation_id": "get_api_archive_report",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "pdf_anonymous",
+      "method": "GET",
+      "path": "/api/archive/report",
+      "operation_id": "get_api_archive_report",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "pdf_wrong_role",
+      "method": "GET",
+      "path": "/api/archive/report",
+      "operation_id": "get_api_archive_report",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "pdf_base64",
+      "method": "GET",
+      "path": "/api/archive/report",
+      "operation_id": "get_api_archive_report",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "pdf_filtered",
+      "method": "GET",
+      "path": "/api/archive/report",
+      "operation_id": "get_api_archive_report",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "pdf_foreign",
+      "method": "GET",
+      "path": "/api/archive/report",
+      "operation_id": "get_api_archive_report",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "pdf_duplicate_vehicle",
+      "method": "GET",
+      "path": "/api/archive/report",
+      "operation_id": "get_api_archive_report",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "pdf_unknown_query",
+      "method": "GET",
+      "path": "/api/archive/report",
+      "operation_id": "get_api_archive_report",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "share_create",
+      "method": "POST",
+      "path": "/api/archive/shares",
+      "operation_id": "post_api_archive_shares",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 6
+    },
+    {
+      "name": "share_create_replay",
+      "method": "POST",
+      "path": "/api/archive/shares",
+      "operation_id": "post_api_archive_shares",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "share_create_malformed",
+      "method": "POST",
+      "path": "/api/archive/shares",
+      "operation_id": "post_api_archive_shares",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "share_create_anonymous",
+      "method": "POST",
+      "path": "/api/archive/shares",
+      "operation_id": "post_api_archive_shares",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "share_create_wrong_role",
+      "method": "POST",
+      "path": "/api/archive/shares",
+      "operation_id": "post_api_archive_shares",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "share_create_foreign",
+      "method": "POST",
+      "path": "/api/archive/shares",
+      "operation_id": "post_api_archive_shares",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "share_bad_expiry",
+      "method": "POST",
+      "path": "/api/archive/shares",
+      "operation_id": "post_api_archive_shares",
+      "kind": "boundary",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "share_create_query",
+      "method": "POST",
+      "path": "/api/archive/shares",
+      "operation_id": "post_api_archive_shares",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "shares",
+      "method": "GET",
+      "path": "/api/archive/shares",
+      "operation_id": "get_api_archive_shares",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "shares_boundary",
+      "method": "GET",
+      "path": "/api/archive/shares",
+      "operation_id": "get_api_archive_shares",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "shares_error",
+      "method": "GET",
+      "path": "/api/archive/shares",
+      "operation_id": "get_api_archive_shares",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "shares_anonymous",
+      "method": "GET",
+      "path": "/api/archive/shares",
+      "operation_id": "get_api_archive_shares",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "shares_wrong_role",
+      "method": "GET",
+      "path": "/api/archive/shares",
+      "operation_id": "get_api_archive_shares",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "share_duplicate_vehicle",
+      "method": "GET",
+      "path": "/api/archive/shares",
+      "operation_id": "get_api_archive_shares",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "shares_foreign_owner",
+      "method": "GET",
+      "path": "/api/archive/shares",
+      "operation_id": "get_api_archive_shares",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "link",
+      "method": "GET",
+      "path": "/api/archive/shares/1/link",
+      "operation_id": "get_api_archive_shares_id_link",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "link_boundary",
+      "method": "GET",
+      "path": "/api/archive/shares/999999/link",
+      "operation_id": "get_api_archive_shares_id_link",
+      "kind": "boundary",
+      "status": 410,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "link_error",
+      "method": "GET",
+      "path": "/api/archive/shares/1/link",
+      "operation_id": "get_api_archive_shares_id_link",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "link_anonymous",
+      "method": "GET",
+      "path": "/api/archive/shares/1/link",
+      "operation_id": "get_api_archive_shares_id_link",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "link_wrong_role",
+      "method": "GET",
+      "path": "/api/archive/shares/1/link",
+      "operation_id": "get_api_archive_shares_id_link",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "link_foreign",
+      "method": "GET",
+      "path": "/api/archive/shares/1/link",
+      "operation_id": "get_api_archive_shares_id_link",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "recipient_view",
+      "method": "POST",
+      "path": "/api/archive/share/view",
+      "operation_id": "post_api_archive_share_view",
+      "kind": "normal",
+      "status": 200,
+      "role": "other",
+      "assertions": 5
+    },
+    {
+      "name": "view_invalid_token",
+      "method": "POST",
+      "path": "/api/archive/share/view",
+      "operation_id": "post_api_archive_share_view",
+      "kind": "boundary",
+      "status": 410,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "view_malformed",
+      "method": "POST",
+      "path": "/api/archive/share/view",
+      "operation_id": "post_api_archive_share_view",
+      "kind": "error",
+      "status": 400,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "view_anonymous",
+      "method": "POST",
+      "path": "/api/archive/share/view",
+      "operation_id": "post_api_archive_share_view",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "view_wrong_role",
+      "method": "POST",
+      "path": "/api/archive/share/view",
+      "operation_id": "post_api_archive_share_view",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "view_query",
+      "method": "POST",
+      "path": "/api/archive/share/view",
+      "operation_id": "post_api_archive_share_view",
+      "kind": "error",
+      "status": 400,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "later_archive",
+      "method": "POST",
+      "path": "/api/archive/add",
+      "operation_id": "post_api_archive_add",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "later_archive_replay",
+      "method": "POST",
+      "path": "/api/archive/add",
+      "operation_id": "post_api_archive_add",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "later_archive_malformed",
+      "method": "POST",
+      "path": "/api/archive/add",
+      "operation_id": "post_api_archive_add",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "later_archive_anonymous",
+      "method": "POST",
+      "path": "/api/archive/add",
+      "operation_id": "post_api_archive_add",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "later_archive_wrong_role",
+      "method": "POST",
+      "path": "/api/archive/add",
+      "operation_id": "post_api_archive_add",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "old_snapshot_frozen",
+      "method": "POST",
+      "path": "/api/archive/share/view",
+      "operation_id": "post_api_archive_share_view",
+      "kind": "boundary",
+      "status": 200,
+      "role": "other",
+      "assertions": 5
+    },
+    {
+      "name": "new_share",
+      "method": "POST",
+      "path": "/api/archive/shares",
+      "operation_id": "post_api_archive_shares",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "new_share_replay",
+      "method": "POST",
+      "path": "/api/archive/shares",
+      "operation_id": "post_api_archive_shares",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "new_share_malformed",
+      "method": "POST",
+      "path": "/api/archive/shares",
+      "operation_id": "post_api_archive_shares",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "new_share_anonymous",
+      "method": "POST",
+      "path": "/api/archive/shares",
+      "operation_id": "post_api_archive_shares",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "new_share_wrong_role",
+      "method": "POST",
+      "path": "/api/archive/shares",
+      "operation_id": "post_api_archive_shares",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "new_link",
+      "method": "GET",
+      "path": "/api/archive/shares/2/link",
+      "operation_id": "get_api_archive_shares_id_link",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "new_snapshot",
+      "method": "POST",
+      "path": "/api/archive/share/view",
+      "operation_id": "post_api_archive_share_view",
+      "kind": "normal",
+      "status": 200,
+      "role": "other",
+      "assertions": 5
+    },
+    {
+      "name": "revoke_foreign",
+      "method": "POST",
+      "path": "/api/archive/shares/1/revoke",
+      "operation_id": "post_api_archive_shares_id_revoke",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "revoke",
+      "method": "POST",
+      "path": "/api/archive/shares/1/revoke",
+      "operation_id": "post_api_archive_shares_id_revoke",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 6
+    },
+    {
+      "name": "revoke_replay",
+      "method": "POST",
+      "path": "/api/archive/shares/1/revoke",
+      "operation_id": "post_api_archive_shares_id_revoke",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "revoke_malformed",
+      "method": "POST",
+      "path": "/api/archive/shares/1/revoke",
+      "operation_id": "post_api_archive_shares_id_revoke",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "revoke_anonymous",
+      "method": "POST",
+      "path": "/api/archive/shares/1/revoke",
+      "operation_id": "post_api_archive_shares_id_revoke",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "revoke_wrong_role",
+      "method": "POST",
+      "path": "/api/archive/shares/1/revoke",
+      "operation_id": "post_api_archive_shares_id_revoke",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "revoked_view",
+      "method": "POST",
+      "path": "/api/archive/share/view",
+      "operation_id": "post_api_archive_share_view",
+      "kind": "boundary",
+      "status": 410,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "revoked_link",
+      "method": "GET",
+      "path": "/api/archive/shares/1/link",
+      "operation_id": "get_api_archive_shares_id_link",
+      "kind": "boundary",
+      "status": 410,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "revoke_query",
+      "method": "POST",
+      "path": "/api/archive/shares/2/revoke",
+      "operation_id": "post_api_archive_shares_id_revoke",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "revoke_new",
+      "method": "POST",
+      "path": "/api/archive/shares/2/revoke",
+      "operation_id": "post_api_archive_shares_id_revoke",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "revoke_new_replay",
+      "method": "POST",
+      "path": "/api/archive/shares/2/revoke",
+      "operation_id": "post_api_archive_shares_id_revoke",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "revoke_new_malformed",
+      "method": "POST",
+      "path": "/api/archive/shares/2/revoke",
+      "operation_id": "post_api_archive_shares_id_revoke",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "revoke_new_anonymous",
+      "method": "POST",
+      "path": "/api/archive/shares/2/revoke",
+      "operation_id": "post_api_archive_shares_id_revoke",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "revoke_new_wrong_role",
+      "method": "POST",
+      "path": "/api/archive/shares/2/revoke",
+      "operation_id": "post_api_archive_shares_id_revoke",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "both_revoked",
+      "method": "GET",
+      "path": "/api/archive/shares",
+      "operation_id": "get_api_archive_shares",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "recipient_cannot_read_source_pdf",
+      "method": "GET",
+      "path": "/api/archive/report",
+      "operation_id": "get_api_archive_report",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    }
+  ]
+}

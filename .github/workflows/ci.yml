@@ -31,7 +31,7 @@ jobs:
       - run: test -f apps/miniapp/dist/build/h5/index.html
   backend:
     runs-on: ubuntu-latest
-    # Full real-MySQL regression plus five independently seeded Newman stacks.
+    # Full real-MySQL regression plus independently seeded Newman stacks.
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
@@ -78,6 +78,10 @@ jobs:
         run: python scripts/run_api_acceptance.py --ci-built-jar --experience-cases
       - name: Verify owner structured archives health and reminders
         run: python scripts/run_api_acceptance.py --ci-built-jar --health-cases
+      - name: Install PDF evidence reader
+        run: python -m pip install -r scripts/requirements-export-qa.txt
+      - name: Verify private PDF export and frozen share summaries
+        run: python scripts/run_api_acceptance.py --ci-built-jar --export-cases
       - name: Save sanitized API evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -130,6 +134,9 @@ jobs:
       - run: python -m unittest discover -s scripts -p test_experience_api_cases.py -v
       - run: python scripts/health_api_cases.py
       - run: python -m unittest discover -s scripts -p test_health_api_cases.py -v
+      - run: python -m pip install -r scripts/requirements-export-qa.txt
+      - run: python scripts/export_api_cases.py
+      - run: python -m unittest discover -s scripts -p test_export_api_cases.py -v
       - run: git diff --exit-code -- docs/testing/postman/
       - run: python scripts/generate_traceability.py
       - run: python scripts/build_init_sql.py

@@ -1,5 +1,7 @@
 # 档案摘要分享 R3c3
 
+> 2026-10-19：查询校验补齐。列表只接受单值vehicle_id；创建、取链接、撤销和接收不接受query。未知/重复参数400/no-store，在当前身份校验后、私有服务调用前拒绝。
+
 全部接口须正式 OWNER JWT，检查未撤销且未过期的 auth_session 和正常 user。响应统一 ApiResponse、Cache-Control: no-store。商家、技师、运营 JWT 不可用。能力链接允许其他已登录车主转发读取。
 
 | 接口 | 请求 | 返回 data |

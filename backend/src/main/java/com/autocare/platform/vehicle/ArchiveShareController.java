@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
@@ -23,30 +24,30 @@ public class ArchiveShareController {
         return service;
     }
     @PostMapping("/api/archive/shares")
-    public ResponseEntity<?> create(@AuthenticationPrincipal Jwt jwt, @RequestHeader(value="Idempotency-Key", required=false) String key, @RequestBody JsonNode body) {
-        var owner = VehicleOwner.from(jwt); WriteIntegrityService.normalizeKey(key);
+    public ResponseEntity<?> create(@AuthenticationPrincipal Jwt jwt, @RequestHeader(value="Idempotency-Key", required=false) String key, @RequestBody JsonNode body, @RequestParam MultiValueMap<String,String> query) {
+        var owner = VehicleOwner.from(jwt); OwnerArchiveQuery.validate(query); WriteIntegrityService.normalizeKey(key);
         var input = ArchiveShareInput.parse(body);
         return ok(service().create(owner, key, input));
     }
     @GetMapping("/api/archive/shares")
-    public ResponseEntity<?> list(@AuthenticationPrincipal Jwt jwt, @RequestParam("vehicle_id") long vehicle) {
-        var owner = VehicleOwner.from(jwt);
+    public ResponseEntity<?> list(@AuthenticationPrincipal Jwt jwt, @RequestParam("vehicle_id") long vehicle, @RequestParam MultiValueMap<String,String> query) {
+        var owner = VehicleOwner.from(jwt); OwnerArchiveQuery.validate(query, "vehicle_id");
         return ok(ApiResponse.success(service().list(owner, vehicle)));
     }
     @GetMapping("/api/archive/shares/{id}/link")
-    public ResponseEntity<?> link(@AuthenticationPrincipal Jwt jwt, @PathVariable long id) {
-        var owner = VehicleOwner.from(jwt);
+    public ResponseEntity<?> link(@AuthenticationPrincipal Jwt jwt, @PathVariable long id, @RequestParam MultiValueMap<String,String> query) {
+        var owner = VehicleOwner.from(jwt); OwnerArchiveQuery.validate(query);
         return ok(ApiResponse.success(service().link(owner, id)));
     }
     @PostMapping("/api/archive/shares/{id}/revoke")
     public ResponseEntity<?> revoke(@AuthenticationPrincipal Jwt jwt, @PathVariable long id,
-                                   @RequestHeader(value="Idempotency-Key", required=false) String key, @RequestBody JsonNode body) {
-        var owner = VehicleOwner.from(jwt); WriteIntegrityService.normalizeKey(key);
+                                   @RequestHeader(value="Idempotency-Key", required=false) String key, @RequestBody JsonNode body, @RequestParam MultiValueMap<String,String> query) {
+        var owner = VehicleOwner.from(jwt); OwnerArchiveQuery.validate(query); WriteIntegrityService.normalizeKey(key);
         return ok(service().revoke(owner, id, key, body));
     }
     @PostMapping("/api/archive/share/view")
-    public ResponseEntity<?> view(@AuthenticationPrincipal Jwt jwt, @RequestBody JsonNode body) {
-        var owner = VehicleOwner.from(jwt);
+    public ResponseEntity<?> view(@AuthenticationPrincipal Jwt jwt, @RequestBody JsonNode body, @RequestParam MultiValueMap<String,String> query) {
+        var owner = VehicleOwner.from(jwt); OwnerArchiveQuery.validate(query);
         if (body == null || !body.isObject() || body.size() != 1 || !body.path("share_token").isTextual()) throw WriteIntegrityService.badRequest("分享请求参数无效");
         return ok(ApiResponse.success(service().view(owner, body.path("share_token").textValue())));
     }
