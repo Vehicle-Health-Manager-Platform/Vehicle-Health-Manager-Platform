@@ -23,3 +23,7 @@
 私有环境、JWT、原始Newman及正文响应留在忽略目录.cache，仅提交脱敏汇总与默认禁发摘要。全部API业务验收及性能延迟达标仍未完成。
 
 下一A4d-2d2公开社区/经验授权治理及其余接口，再剩余车主→A5→B真实身份/资金/识别→C真机。
+
+## GitHub交付
+
+本阶段全部成果已上传 [PR170](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/170)，业务验收代码 `db27b05`，依赖PR169；完整远程CI待结果，保持草稿，不合并或部署。

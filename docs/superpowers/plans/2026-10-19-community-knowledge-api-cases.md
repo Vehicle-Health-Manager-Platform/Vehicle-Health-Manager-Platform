@@ -6,3 +6,5 @@
 4. 固定来源真实Newman验收，必要时修复后完整复跑；CI纳入生成一致性/业务门禁。
 5. 整理脱敏报告、操作说明、进度及下一步，全部上传依赖PR169的草稿PR，不合并部署。
 6. 下一A4d-2d2公开社区/经验授权治理与其余接口，再剩余车主→A5→B真实身份/资金/识别→C真机。正式来源、向量及外部AI后置。
+
+步骤1–5本地实施和阶段上传完成，176请求/590断言及58项脚本测试通过，见[PR170](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/170)；最终提交完整远程CI待结果。
