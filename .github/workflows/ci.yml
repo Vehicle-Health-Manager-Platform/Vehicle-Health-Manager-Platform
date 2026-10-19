@@ -49,6 +49,8 @@ jobs:
         run: |
           docker build --progress=plain --tag autocare-upload-minio-ci deploy/minio
           docker build --progress=plain --tag autocare-upload-init-ci deploy/upload-init
+      - name: Record fresh backend source content before building
+        run: python scripts/run_api_acceptance.py --record-ci-sources
       - run: mvn -B -Pcore-coverage -Dupload.test.images.prebuilt=true clean verify
         working-directory: backend
       - name: Check declared core business coverage
@@ -106,6 +108,7 @@ jobs:
       - run: python -m unittest discover -s scripts -p test_fulfillment_api_cases.py -v
       - run: python scripts/coupon_api_cases.py
       - run: python -m unittest discover -s scripts -p test_coupon_api_cases.py -v
+      - run: python -m unittest discover -s scripts -p test_ci_build_evidence.py -v
       - run: git diff --exit-code -- docs/testing/postman/
       - run: python scripts/generate_traceability.py
       - run: python scripts/build_init_sql.py

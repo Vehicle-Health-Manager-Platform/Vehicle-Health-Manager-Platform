@@ -26,7 +26,7 @@ Newman固定6.2.1，通过npm exec安装在被忽略的.cache/npm-newman缓存�
 
 退出码0、最新本次report.json的passed=true才表示本轮匿名范围通过，full_api_acceptance_passed始终false。不能用历史成功报告、请求发送成功、案例数量或模板跳过来充当验收。
 
-CI：schema-and-ocr检查生成一致性及必要证据测试；backend在clean verify后运行同一Newman入口（CI专用--ci-built-jar，核对jar不早于来源文件），上传api-acceptance-evidence报告。完整后端CI仍单独决定整套回归结果。
+CI：schema-and-ocr检查生成一致性及必要证据测试；backend在clean verify后运行同一Newman入口（CI专用--ci-built-jar，须先在无jar的新检出执行--record-ci-sources，再clean verify；核对构建后来源内容摘要一致与产物存在），上传api-acceptance-evidence报告。完整后端CI仍单独决定整套回归结果。
 
 ## 使用业务模板
 
@@ -65,3 +65,5 @@ LOCAL_TEST 回调在 Newman 中签署实际 JSON，验证无效签名、过期�
 合成身份、目录和车辆夹具复用履约阶段，券与支付/退款等业务事实由真实 HTTP 创建。LOCAL_TEST 通知不需要真实资金；本轮不配置供应商查询/提交地址、不启用退款后台调度，不将通知处理通过当作外部退款完成。真实供应商调用继续留 B。开发态或哈希变化的报告不能作为最终成功证据。
 
 共享仅限本轮 `report.json` 与默认禁发脱敏摘要；`.cache` 内 `coupon-environment.private.json`、`coupon-newman.private.json` 及日志含 JWT/授权码/签名，不能上传。完整报告需 passed=true、来源稳定、数据库不变量与资源清理均通过。参考[执行记录](../progress/R9_A4D2B2_COUPON_API_CASES_EXECUTION.md)。下一商家入驻/员工与运营权限；全部 API 验收仍未完成。
+
+CI 构建来源采用内容摘要与新产物证据：`--record-ci-sources` 必须在 CI=true 且 jar 不存在时运行，在 clean verify 前写入 .cache/api-ci-build-input.json；三个 `--ci-built-jar` 验收均核对同一内容摘要。旧 jar、缺证明、缺产物、正文变化均拒绝，单纯文件时间戳变化不影响内容证明。

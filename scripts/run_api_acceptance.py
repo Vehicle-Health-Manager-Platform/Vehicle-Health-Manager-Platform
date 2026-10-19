@@ -15,6 +15,31 @@ from urllib.parse import urlsplit, parse_qsl
 from generate_api_acceptance import ROOT, OUTPUT, generate
 from run_performance_baseline import Docker, Owned, MySQL, Backend, LABEL, JAR, build_jar, free_port, migration_files
 
+CI_INPUT = ROOT / '.cache/api-ci-build-input.json'
+
+
+def backend_input_hash():
+    value = hashlib.sha256()
+    for path in sorted((ROOT / 'backend/src/main').rglob('*')) + [ROOT / 'backend/pom.xml']:
+        if path.is_file(): value.update(path.relative_to(ROOT).as_posix().encode()); value.update(path.read_bytes())
+    return value.hexdigest()
+
+
+def record_ci_sources():
+    if os.environ.get('CI') != 'true': raise ValueError('Build input recording is restricted to CI')
+    if JAR.exists(): raise ValueError('Record build inputs before any jar exists on the fresh CI checkout')
+    CI_INPUT.parent.mkdir(parents=True,exist_ok=True)
+    CI_INPUT.write_text(json.dumps({'version':1,'jar_absent_before_build':True,'source_sha256':backend_input_hash()}),encoding='utf-8')
+
+
+def verify_ci_jar():
+    if os.environ.get('CI') != 'true' or not JAR.is_file(): raise ValueError('Existing jar is restricted to CI after clean verify')
+    if not CI_INPUT.is_file(): raise ValueError('Missing pre-build CI source evidence')
+    proof=json.loads(CI_INPUT.read_text(encoding='utf-8'))
+    if proof.get('version')!=1 or proof.get('jar_absent_before_build') is not True or proof.get('source_sha256')!=backend_input_hash():
+        raise ValueError('Backend source content changed after CI build input recording')
+    return proof['source_sha256']
+
 
 def source_hash():
     paths = sorted((ROOT / 'backend/src/main').rglob('*')) + [ROOT / 'backend/pom.xml', ROOT / 'docs/api/openapi.json']
@@ -93,10 +118,15 @@ def audit_owner_cases(path, collection, manifest, tokens, expected_operations=8)
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--ci-built-jar', action='store_true')
+    parser.add_argument('--record-ci-sources', action='store_true', help='Record backend input content before clean verify on a fresh CI checkout.')
     parser.add_argument('--owner-cases', action='store_true', help='Also run synthetic owner vehicle/archive business scenarios.')
     parser.add_argument('--fulfillment-cases', action='store_true', help='Run synthetic reservation to archive scenarios with LOCAL_TEST payments.')
     parser.add_argument('--coupon-cases', action='store_true', help='Run cash coupon lifecycle and independent service redemption with LOCAL_TEST notices.')
     args = parser.parse_args()
+    if args.record_ci_sources:
+        if any((args.ci_built_jar,args.owner_cases,args.fulfillment_cases,args.coupon_cases)):
+            parser.error('Record CI inputs separately before the build')
+        record_ci_sources(); print('API acceptance: recorded fresh CI build inputs',flush=True); return 0
     if sum((args.owner_cases, args.fulfillment_cases, args.coupon_cases)) > 1:
         parser.error('Business suites require separate fresh databases; select one per run')
     run = uuid.uuid4().hex
@@ -125,9 +155,7 @@ def main():
                 if json.loads(path.read_text(encoding='utf-8')) != data: raise ValueError('Business API assets are stale')
             report[suite+'_collection_sha256'] = hashlib.sha256(business_module.OUTPUT.read_bytes()).hexdigest()
         if args.ci_built_jar:
-            if os.environ.get('CI') != 'true' or not JAR.is_file(): raise ValueError('Existing jar is restricted to CI after clean verify')
-            sources = [p for p in (ROOT / 'backend/src/main').rglob('*') if p.is_file()] + [ROOT / 'backend/pom.xml']
-            if JAR.stat().st_mtime < max(p.stat().st_mtime for p in sources): raise ValueError('CI jar predates source inputs')
+            report['ci_build_source_sha256'] = verify_ci_jar()
         else:
             print('API acceptance: build current backend', flush=True); build_jar()
         report['jar_sha256'] = hashlib.sha256(JAR.read_bytes()).hexdigest()
