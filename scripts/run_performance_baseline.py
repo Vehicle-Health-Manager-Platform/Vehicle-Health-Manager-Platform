@@ -310,7 +310,7 @@ class Backend(Owned):
                          {LABEL: run, 'autocare.performance.role': 'backend'})
         self.network, self.port, self.secret, self.pool_size = network, port, secret, pool_size
 
-    def start(self, mysql):
+    def start(self, mysql, extra_env=()):
         require(JAR.is_file(), 'Backend jar missing; build it before starting the container')
         raw = Docker.run(['run', '--detach', '--rm', '--name', self.name, '--network', self.network.name,
                           '--label', f'{LABEL}={self.run}', '--label', 'autocare.performance.role=backend',
@@ -322,6 +322,7 @@ class Backend(Owned):
                           '--env', f'MYSQL_POOL_SIZE={self.pool_size}',
                           '--env', 'SERVER_TOMCAT_MBEANREGISTRY_ENABLED=true',
                           '--env', 'JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m',
+                          *[arg for key, value in extra_env for arg in ('--env', key+'='+value)],
                           RUNTIME_IMAGE, 'java', '-jar',
                           '/workspace/backend/target/' + JAR.name]).stdout.decode().strip()
         require(bool(re.fullmatch('[0-9a-f]{64}', raw)), 'Docker did not return a full owned backend ID')

@@ -1,0 +1,1033 @@
+{
+  "version": 1,
+  "cases": 102,
+  "operations": 16,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "slot_publish",
+      "method": "POST",
+      "path": "/api/merchant/slots",
+      "operation_id": "post_api_merchant_slots",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 5
+    },
+    {
+      "name": "slot_publish_replay",
+      "method": "POST",
+      "path": "/api/merchant/slots",
+      "operation_id": "post_api_merchant_slots",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "slot_publish_malformed",
+      "method": "POST",
+      "path": "/api/merchant/slots",
+      "operation_id": "post_api_merchant_slots",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "slot_publish_anonymous",
+      "method": "POST",
+      "path": "/api/merchant/slots",
+      "operation_id": "post_api_merchant_slots",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "slot_publish_wrong_role",
+      "method": "POST",
+      "path": "/api/merchant/slots",
+      "operation_id": "post_api_merchant_slots",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "slot_capacity_overflow",
+      "method": "POST",
+      "path": "/api/merchant/slots",
+      "operation_id": "post_api_merchant_slots",
+      "kind": "boundary",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "quote",
+      "method": "GET",
+      "path": "/api/order/quote/1",
+      "operation_id": "get_api_order_quote_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "quote_missing",
+      "method": "GET",
+      "path": "/api/order/quote/999999",
+      "operation_id": "get_api_order_quote_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "quote_invalid",
+      "method": "GET",
+      "path": "/api/order/quote/0",
+      "operation_id": "get_api_order_quote_id",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "quote_anonymous",
+      "method": "GET",
+      "path": "/api/order/quote/1",
+      "operation_id": "get_api_order_quote_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "quote_wrong_role",
+      "method": "GET",
+      "path": "/api/order/quote/1",
+      "operation_id": "get_api_order_quote_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "booking_foreign_vehicle",
+      "method": "POST",
+      "path": "/api/order/create",
+      "operation_id": "post_api_order_create",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "booking_stale_quote",
+      "method": "POST",
+      "path": "/api/order/create",
+      "operation_id": "post_api_order_create",
+      "kind": "error",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "booking",
+      "method": "POST",
+      "path": "/api/order/create",
+      "operation_id": "post_api_order_create",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "booking_replay",
+      "method": "POST",
+      "path": "/api/order/create",
+      "operation_id": "post_api_order_create",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "booking_malformed",
+      "method": "POST",
+      "path": "/api/order/create",
+      "operation_id": "post_api_order_create",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "booking_anonymous",
+      "method": "POST",
+      "path": "/api/order/create",
+      "operation_id": "post_api_order_create",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "booking_wrong_role",
+      "method": "POST",
+      "path": "/api/order/create",
+      "operation_id": "post_api_order_create",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "booking_changed_intent",
+      "method": "POST",
+      "path": "/api/order/create",
+      "operation_id": "post_api_order_create",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_order",
+      "method": "GET",
+      "path": "/api/order/1",
+      "operation_id": "get_api_order_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "owner_order_missing",
+      "method": "GET",
+      "path": "/api/order/999999",
+      "operation_id": "get_api_order_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_order_invalid",
+      "method": "GET",
+      "path": "/api/order/0",
+      "operation_id": "get_api_order_id",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_order_anonymous",
+      "method": "GET",
+      "path": "/api/order/1",
+      "operation_id": "get_api_order_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "owner_order_wrong_role",
+      "method": "GET",
+      "path": "/api/order/1",
+      "operation_id": "get_api_order_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "owner_order_foreign",
+      "method": "GET",
+      "path": "/api/order/1",
+      "operation_id": "get_api_order_id",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_order",
+      "method": "GET",
+      "path": "/api/merchant/orders/1",
+      "operation_id": "get_api_merchant_orders_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "merchant_order_missing",
+      "method": "GET",
+      "path": "/api/merchant/orders/999999",
+      "operation_id": "get_api_merchant_orders_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_order_invalid",
+      "method": "GET",
+      "path": "/api/merchant/orders/0",
+      "operation_id": "get_api_merchant_orders_id",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_order_anonymous",
+      "method": "GET",
+      "path": "/api/merchant/orders/1",
+      "operation_id": "get_api_merchant_orders_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_order_wrong_role",
+      "method": "GET",
+      "path": "/api/merchant/orders/1",
+      "operation_id": "get_api_merchant_orders_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_order_foreign",
+      "method": "GET",
+      "path": "/api/merchant/orders/1",
+      "operation_id": "get_api_merchant_orders_id",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other_merchant",
+      "assertions": 3
+    },
+    {
+      "name": "wechat_payment_unconfigured",
+      "method": "POST",
+      "path": "/api/payments/create",
+      "operation_id": "post_api_payments_create",
+      "kind": "error",
+      "status": 503,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "payment_foreign_owner",
+      "method": "POST",
+      "path": "/api/payments/create",
+      "operation_id": "post_api_payments_create",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "payment",
+      "method": "POST",
+      "path": "/api/payments/create",
+      "operation_id": "post_api_payments_create",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "payment_replay",
+      "method": "POST",
+      "path": "/api/payments/create",
+      "operation_id": "post_api_payments_create",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "payment_malformed",
+      "method": "POST",
+      "path": "/api/payments/create",
+      "operation_id": "post_api_payments_create",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "payment_anonymous",
+      "method": "POST",
+      "path": "/api/payments/create",
+      "operation_id": "post_api_payments_create",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "payment_wrong_role",
+      "method": "POST",
+      "path": "/api/payments/create",
+      "operation_id": "post_api_payments_create",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "callback_bad_signature",
+      "method": "POST",
+      "path": "/api/payments/callback/LOCAL_TEST",
+      "operation_id": "post_api_payments_callback_LOCAL_TEST",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3,
+      "callback_mode": "bad_signature"
+    },
+    {
+      "name": "callback_expired",
+      "method": "POST",
+      "path": "/api/payments/callback/LOCAL_TEST",
+      "operation_id": "post_api_payments_callback_LOCAL_TEST",
+      "kind": "boundary",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3,
+      "callback_mode": "expired"
+    },
+    {
+      "name": "callback_malformed",
+      "method": "POST",
+      "path": "/api/payments/callback/LOCAL_TEST",
+      "operation_id": "post_api_payments_callback_LOCAL_TEST",
+      "kind": "error",
+      "status": 400,
+      "role": "anonymous",
+      "assertions": 3,
+      "callback_mode": "bad_body"
+    },
+    {
+      "name": "callback_paid",
+      "method": "POST",
+      "path": "/api/payments/callback/LOCAL_TEST",
+      "operation_id": "post_api_payments_callback_LOCAL_TEST",
+      "kind": "normal",
+      "status": 200,
+      "role": "anonymous",
+      "assertions": 3,
+      "callback_mode": "valid"
+    },
+    {
+      "name": "callback_replay",
+      "method": "POST",
+      "path": "/api/payments/callback/LOCAL_TEST",
+      "operation_id": "post_api_payments_callback_LOCAL_TEST",
+      "kind": "boundary",
+      "status": 200,
+      "role": "anonymous",
+      "assertions": 3,
+      "callback_mode": "valid"
+    },
+    {
+      "name": "order_paid",
+      "method": "GET",
+      "path": "/api/order/1",
+      "operation_id": "get_api_order_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "pickup_foreign_merchant",
+      "method": "POST",
+      "path": "/api/check/pickup/submit",
+      "operation_id": "post_api_check_pickup_submit",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other_merchant",
+      "assertions": 3
+    },
+    {
+      "name": "pickup_negative_mileage",
+      "method": "POST",
+      "path": "/api/check/pickup/submit",
+      "operation_id": "post_api_check_pickup_submit",
+      "kind": "boundary",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "pickup",
+      "method": "POST",
+      "path": "/api/check/pickup/submit",
+      "operation_id": "post_api_check_pickup_submit",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "pickup_replay",
+      "method": "POST",
+      "path": "/api/check/pickup/submit",
+      "operation_id": "post_api_check_pickup_submit",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "pickup_malformed",
+      "method": "POST",
+      "path": "/api/check/pickup/submit",
+      "operation_id": "post_api_check_pickup_submit",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "pickup_anonymous",
+      "method": "POST",
+      "path": "/api/check/pickup/submit",
+      "operation_id": "post_api_check_pickup_submit",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "pickup_wrong_role",
+      "method": "POST",
+      "path": "/api/check/pickup/submit",
+      "operation_id": "post_api_check_pickup_submit",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "assignment_before_confirmation",
+      "method": "POST",
+      "path": "/api/merchant/orders/1/assign",
+      "operation_id": "post_api_merchant_orders_id_assign",
+      "kind": "error",
+      "status": 409,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "confirmation_foreign_owner",
+      "method": "POST",
+      "path": "/api/check/pickup/confirm",
+      "operation_id": "post_api_check_pickup_confirm",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "confirmation",
+      "method": "POST",
+      "path": "/api/check/pickup/confirm",
+      "operation_id": "post_api_check_pickup_confirm",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "confirmation_replay",
+      "method": "POST",
+      "path": "/api/check/pickup/confirm",
+      "operation_id": "post_api_check_pickup_confirm",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "confirmation_malformed",
+      "method": "POST",
+      "path": "/api/check/pickup/confirm",
+      "operation_id": "post_api_check_pickup_confirm",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "confirmation_anonymous",
+      "method": "POST",
+      "path": "/api/check/pickup/confirm",
+      "operation_id": "post_api_check_pickup_confirm",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "confirmation_wrong_role",
+      "method": "POST",
+      "path": "/api/check/pickup/confirm",
+      "operation_id": "post_api_check_pickup_confirm",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "assignment_foreign_merchant",
+      "method": "POST",
+      "path": "/api/merchant/orders/1/assign",
+      "operation_id": "post_api_merchant_orders_id_assign",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other_merchant",
+      "assertions": 3
+    },
+    {
+      "name": "assignment",
+      "method": "POST",
+      "path": "/api/merchant/orders/1/assign",
+      "operation_id": "post_api_merchant_orders_id_assign",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "assignment_replay",
+      "method": "POST",
+      "path": "/api/merchant/orders/1/assign",
+      "operation_id": "post_api_merchant_orders_id_assign",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "assignment_malformed",
+      "method": "POST",
+      "path": "/api/merchant/orders/1/assign",
+      "operation_id": "post_api_merchant_orders_id_assign",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "assignment_anonymous",
+      "method": "POST",
+      "path": "/api/merchant/orders/1/assign",
+      "operation_id": "post_api_merchant_orders_id_assign",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "assignment_wrong_role",
+      "method": "POST",
+      "path": "/api/merchant/orders/1/assign",
+      "operation_id": "post_api_merchant_orders_id_assign",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "accept",
+      "method": "POST",
+      "path": "/api/tech/orders/1/accept",
+      "operation_id": "post_api_tech_orders_id_accept",
+      "kind": "normal",
+      "status": 200,
+      "role": "technician",
+      "assertions": 5
+    },
+    {
+      "name": "accept_replay",
+      "method": "POST",
+      "path": "/api/tech/orders/1/accept",
+      "operation_id": "post_api_tech_orders_id_accept",
+      "kind": "boundary",
+      "status": 200,
+      "role": "technician",
+      "assertions": 4
+    },
+    {
+      "name": "accept_malformed",
+      "method": "POST",
+      "path": "/api/tech/orders/1/accept",
+      "operation_id": "post_api_tech_orders_id_accept",
+      "kind": "error",
+      "status": 400,
+      "role": "technician",
+      "assertions": 3
+    },
+    {
+      "name": "accept_anonymous",
+      "method": "POST",
+      "path": "/api/tech/orders/1/accept",
+      "operation_id": "post_api_tech_orders_id_accept",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "accept_wrong_role",
+      "method": "POST",
+      "path": "/api/tech/orders/1/accept",
+      "operation_id": "post_api_tech_orders_id_accept",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "report_before_protection",
+      "method": "POST",
+      "path": "/api/tech/report/submit",
+      "operation_id": "post_api_tech_report_submit",
+      "kind": "error",
+      "status": 409,
+      "role": "technician",
+      "assertions": 4
+    },
+    {
+      "name": "protection_foreign_merchant",
+      "method": "POST",
+      "path": "/api/check/protection/upload",
+      "operation_id": "post_api_check_protection_upload",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other_merchant",
+      "assertions": 3
+    },
+    {
+      "name": "protection",
+      "method": "POST",
+      "path": "/api/check/protection/upload",
+      "operation_id": "post_api_check_protection_upload",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "protection_replay",
+      "method": "POST",
+      "path": "/api/check/protection/upload",
+      "operation_id": "post_api_check_protection_upload",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "protection_malformed",
+      "method": "POST",
+      "path": "/api/check/protection/upload",
+      "operation_id": "post_api_check_protection_upload",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "protection_anonymous",
+      "method": "POST",
+      "path": "/api/check/protection/upload",
+      "operation_id": "post_api_check_protection_upload",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "protection_wrong_role",
+      "method": "POST",
+      "path": "/api/check/protection/upload",
+      "operation_id": "post_api_check_protection_upload",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "report_foreign_file",
+      "method": "POST",
+      "path": "/api/tech/report/submit",
+      "operation_id": "post_api_tech_report_submit",
+      "kind": "unauthorized",
+      "status": 422,
+      "role": "technician",
+      "assertions": 3
+    },
+    {
+      "name": "report_negative_hours",
+      "method": "POST",
+      "path": "/api/tech/report/submit",
+      "operation_id": "post_api_tech_report_submit",
+      "kind": "boundary",
+      "status": 400,
+      "role": "technician",
+      "assertions": 3
+    },
+    {
+      "name": "report",
+      "method": "POST",
+      "path": "/api/tech/report/submit",
+      "operation_id": "post_api_tech_report_submit",
+      "kind": "normal",
+      "status": 200,
+      "role": "technician",
+      "assertions": 4
+    },
+    {
+      "name": "report_replay",
+      "method": "POST",
+      "path": "/api/tech/report/submit",
+      "operation_id": "post_api_tech_report_submit",
+      "kind": "boundary",
+      "status": 200,
+      "role": "technician",
+      "assertions": 4
+    },
+    {
+      "name": "report_malformed",
+      "method": "POST",
+      "path": "/api/tech/report/submit",
+      "operation_id": "post_api_tech_report_submit",
+      "kind": "error",
+      "status": 400,
+      "role": "technician",
+      "assertions": 3
+    },
+    {
+      "name": "report_anonymous",
+      "method": "POST",
+      "path": "/api/tech/report/submit",
+      "operation_id": "post_api_tech_report_submit",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "report_wrong_role",
+      "method": "POST",
+      "path": "/api/tech/report/submit",
+      "operation_id": "post_api_tech_report_submit",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "signature",
+      "method": "POST",
+      "path": "/api/tech/sign",
+      "operation_id": "post_api_tech_sign",
+      "kind": "normal",
+      "status": 200,
+      "role": "technician",
+      "assertions": 5
+    },
+    {
+      "name": "signature_replay",
+      "method": "POST",
+      "path": "/api/tech/sign",
+      "operation_id": "post_api_tech_sign",
+      "kind": "boundary",
+      "status": 200,
+      "role": "technician",
+      "assertions": 4
+    },
+    {
+      "name": "signature_malformed",
+      "method": "POST",
+      "path": "/api/tech/sign",
+      "operation_id": "post_api_tech_sign",
+      "kind": "error",
+      "status": 400,
+      "role": "technician",
+      "assertions": 3
+    },
+    {
+      "name": "signature_anonymous",
+      "method": "POST",
+      "path": "/api/tech/sign",
+      "operation_id": "post_api_tech_sign",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "signature_wrong_role",
+      "method": "POST",
+      "path": "/api/tech/sign",
+      "operation_id": "post_api_tech_sign",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "signature_foreign_file",
+      "method": "POST",
+      "path": "/api/tech/sign",
+      "operation_id": "post_api_tech_sign",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "technician",
+      "assertions": 3
+    },
+    {
+      "name": "redemption_foreign_merchant",
+      "method": "POST",
+      "path": "/api/merchant/orders/1/redeem",
+      "operation_id": "post_api_merchant_orders_id_redeem",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other_merchant",
+      "assertions": 3
+    },
+    {
+      "name": "redemption",
+      "method": "POST",
+      "path": "/api/merchant/orders/1/redeem",
+      "operation_id": "post_api_merchant_orders_id_redeem",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "redemption_replay",
+      "method": "POST",
+      "path": "/api/merchant/orders/1/redeem",
+      "operation_id": "post_api_merchant_orders_id_redeem",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "redemption_malformed",
+      "method": "POST",
+      "path": "/api/merchant/orders/1/redeem",
+      "operation_id": "post_api_merchant_orders_id_redeem",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "redemption_anonymous",
+      "method": "POST",
+      "path": "/api/merchant/orders/1/redeem",
+      "operation_id": "post_api_merchant_orders_id_redeem",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "redemption_wrong_role",
+      "method": "POST",
+      "path": "/api/merchant/orders/1/redeem",
+      "operation_id": "post_api_merchant_orders_id_redeem",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "order_completed",
+      "method": "GET",
+      "path": "/api/order/1",
+      "operation_id": "get_api_order_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "archives",
+      "method": "GET",
+      "path": "/api/archive/list",
+      "operation_id": "get_api_archive_list",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "archives_empty_page",
+      "method": "GET",
+      "path": "/api/archive/list",
+      "operation_id": "get_api_archive_list",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "archives_missing_vehicle",
+      "method": "GET",
+      "path": "/api/archive/list",
+      "operation_id": "get_api_archive_list",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "archives_foreign_owner",
+      "method": "GET",
+      "path": "/api/archive/list",
+      "operation_id": "get_api_archive_list",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "archives_anonymous",
+      "method": "GET",
+      "path": "/api/archive/list",
+      "operation_id": "get_api_archive_list",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "archives_wrong_role",
+      "method": "GET",
+      "path": "/api/archive/list",
+      "operation_id": "get_api_archive_list",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    }
+  ]
+}

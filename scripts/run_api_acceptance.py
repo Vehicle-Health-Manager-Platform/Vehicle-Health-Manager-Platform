@@ -20,6 +20,7 @@ def source_hash():
     paths += sorted((ROOT / 'docs/sql/migrations').glob('*.sql'))
     paths += [ROOT / 'scripts' / n for n in ('run_api_acceptance.py', 'generate_api_acceptance.py', 'run_performance_baseline.py')]
     paths += [ROOT / 'scripts/owner_api_cases.py']
+    paths += [ROOT / 'scripts/fulfillment_api_cases.py']
     value = hashlib.sha256()
     for path in paths:
         if path.is_file(): value.update(path.relative_to(ROOT).as_posix().encode()); value.update(path.read_bytes())
@@ -57,7 +58,7 @@ def counts(mysql):
     return mysql.text(' UNION ALL '.join("SELECT '" + t + "',COUNT(*) FROM `" + t + '`' for t in tables) + ';')
 
 
-def audit_owner_cases(path, collection, manifest, tokens):
+def audit_owner_cases(path, collection, manifest, tokens, expected_operations=8):
     run = json.loads(path.read_text(encoding='utf-8'))['run']
     expected = {item['name']: item for item in manifest['items']}
     requests = {item['name']: item['request'] for item in collection['item']}
@@ -82,8 +83,8 @@ def audit_owner_cases(path, collection, manifest, tokens):
             raise ValueError('Missing, skipped or failed owner business assertions')
         coverage.setdefault(case['operation_id'],set()).add(case['kind'])
         results.append({'name':case['name'],'operation_id':case['operation_id'],'kind':case['kind'],'status':case['status'],'passed':True})
-    if len(coverage)!=8 or any(kinds!={'normal','boundary','error','unauthorized'} for kinds in coverage.values()):
-        raise ValueError('Owner cases do not cover all four categories of the eight scoped operations')
+    if len(coverage)!=expected_operations or any(kinds!={'normal','boundary','error','unauthorized'} for kinds in coverage.values()):
+        raise ValueError('Business cases do not cover all four categories of the scoped operations')
     return {'requests':len(results),'assertions':sum(x['assertions'] for x in manifest['items']),'failures':0,
             'coverage':{key:sorted(value) for key,value in coverage.items()},'cases':results}
 
@@ -92,7 +93,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--ci-built-jar', action='store_true')
     parser.add_argument('--owner-cases', action='store_true', help='Also run synthetic owner vehicle/archive business scenarios.')
+    parser.add_argument('--fulfillment-cases', action='store_true', help='Run synthetic reservation to archive scenarios with LOCAL_TEST payments.')
     args = parser.parse_args()
+    if args.owner_cases and args.fulfillment_cases:
+        parser.error('Business suites require separate fresh databases; select one per run')
     run = uuid.uuid4().hex
     work = ROOT / '.cache' / ('api-acceptance-' + run[:12]); work.mkdir(parents=True)
     network = Owned(run, 'network', 'autocare-perf-' + run[:12], {LABEL: run}, kind='network')
@@ -118,6 +122,12 @@ def main():
             for path,data in [(OWNER_OUTPUT,owner_collection),(OWNER_MANIFEST,owner_manifest)]:
                 if json.loads(path.read_text(encoding='utf-8')) != data: raise ValueError('Owner API assets are stale')
             report['owner_collection_sha256'] = hashlib.sha256(OWNER_OUTPUT.read_bytes()).hexdigest()
+        if args.fulfillment_cases:
+            from fulfillment_api_cases import assets as fulfillment_assets, OUTPUT as FULFILLMENT_OUTPUT, MANIFEST as FULFILLMENT_MANIFEST
+            fulfillment_collection, fulfillment_manifest = fulfillment_assets()
+            for path, data in [(FULFILLMENT_OUTPUT, fulfillment_collection), (FULFILLMENT_MANIFEST, fulfillment_manifest)]:
+                if json.loads(path.read_text(encoding='utf-8')) != data: raise ValueError('Fulfillment API assets are stale')
+            report['fulfillment_collection_sha256'] = hashlib.sha256(FULFILLMENT_OUTPUT.read_bytes()).hexdigest()
         if args.ci_built_jar:
             if os.environ.get('CI') != 'true' or not JAR.is_file(): raise ValueError('Existing jar is restricted to CI after clean verify')
             sources = [p for p in (ROOT / 'backend/src/main').rglob('*') if p.is_file()] + [ROOT / 'backend/pom.xml']
@@ -133,9 +143,14 @@ def main():
         if args.owner_cases:
             from owner_api_cases import seed
             owner_tokens = seed(mysql,secret)
+        extra_env = ()
+        if args.fulfillment_cases:
+            from fulfillment_api_cases import seed, environment
+            fulfillment_tokens = seed(mysql, secret)
+            extra_env = environment(fulfillment_tokens)
         before = counts(mysql)
         port = free_port(); backend = Backend(run, network, port, secret, 10)
-        backend.start(mysql); backend.wait_healthy()
+        backend.start(mysql, extra_env=extra_env); backend.wait_healthy()
         npm = shutil.which('npm.cmd' if os.name == 'nt' else 'npm')
         if not npm: raise ValueError('Node/npm required for Newman')
         raw = work / 'newman.json'
@@ -177,6 +192,23 @@ def main():
             report['owner_evidence'] = audit_owner_cases(owner_raw,owner_collection,owner_manifest,owner_tokens)
             report['owner_database'] = verify_database(mysql)
             report['scope'] = 'anonymous authentication plus eight owner vehicle/archive business operations'
+        if args.fulfillment_cases:
+            from fulfillment_api_cases import audit, verify_database
+            private_env = work / 'fulfillment-environment.private.json'
+            private_env.write_text(json.dumps({'name':'isolated fulfillment identities','values':[
+                {'key':k,'value':v,'enabled':True} for k,v in fulfillment_tokens.items()]}),encoding='utf-8')
+            fulfillment_raw = work / 'fulfillment-newman.private.json'
+            business_command = [str(FULFILLMENT_OUTPUT) if v==str(OUTPUT / 'anonymous.postman_collection.json')
+                                else str(fulfillment_raw) if v==str(raw) else v for v in command]
+            business_command += ['--environment',str(private_env),'--delay-request','100']
+            print('API acceptance: reservation to archive / LOCAL_TEST only',flush=True)
+            with (work / 'fulfillment-newman.private.log').open('wb') as log:
+                business = subprocess.run(business_command,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT,timeout=600,shell=False)
+            report['fulfillment_newman_exit_code'] = business.returncode
+            if business.returncode: raise ValueError('Fulfillment Newman scenarios failed; inspect local private report')
+            report['fulfillment_evidence'] = audit(fulfillment_raw,fulfillment_collection,fulfillment_manifest,fulfillment_tokens)
+            report['fulfillment_database'] = verify_database(mysql)
+            report['scope'] = 'anonymous authentication plus reservation to archive LOCAL_TEST business operations'
         report['sources_unchanged'] = report['source_sha256'] == source_hash()
         if not report['sources_unchanged']: raise ValueError('Acceptance sources changed during execution')
         report['passed'] = True

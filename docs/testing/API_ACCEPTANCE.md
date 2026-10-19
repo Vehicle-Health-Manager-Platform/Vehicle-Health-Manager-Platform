@@ -45,3 +45,13 @@ A4d-2先核定源草案中历史占位的适用性，以已确认软件范围为
 生成：`python scripts/owner_api_cases.py`。复跑：`python scripts/run_api_acceptance.py --owner-cases`。默认不传参数仍只执行原匿名范围。CI 使用 `--ci-built-jar --owner-cases`。新增集合默认关闭，只有隔离运行器灌入合成身份、归属数据后才执行。
 
 8 个接口各有正常、边界、错误、未授权案例，共 61 请求/204 断言。报告校验实际方法、路径、查询、身份令牌、状态与断言完整性，再检查车辆/档案/幂等记录/审计数量及其他用户数据未变。详见[阶段执行](../progress/R9_A4D2A_OWNER_API_CASES_EXECUTION.md)。私有 Newman JSON 与环境文件含合成 JWT，仅保留在 .cache，不上传。全 API 验收仍未完成。
+
+## A4d-2b1 预约到归档案例
+
+生成：`python scripts/fulfillment_api_cases.py`。复跑：`python scripts/run_api_acceptance.py --fulfillment-cases`。与 `--owner-cases` 分别执行，各使用全新隔离库；不能同时传入。CI 在同一 clean verify 后分别运行两次 `--ci-built-jar`，仅上传各自 `report.json`。
+
+16 接口共 102 请求/341 断言，每项有正常、边界、错误、未授权类别。夹具创建车主/另一车主/门店/另一门店/绑定技师会话、目录和两辆车及施工文件元数据，不直接植入已支付或已完成订单。席位、订单、支付、接车、派工、报工、签名、核销均由真实 HTTP 写入，服务归档由生产后台任务产生。
+
+LOCAL_TEST 回调在 Newman 中签署实际 JSON，验证无效签名、过期通知、签名正确但正文错误、成功及同一签名原文重放；报告审计重新计算 HMAC 并核对重放完全相同。仅隔离容器显式设置 local-payment-test profile、开关与随机测试密钥，真实 WECHAT 创建应 503。默认导入集合不发送请求。
+
+以本次退出码 0、脱敏报告 passed=true、数据库核对及清理通过为成功条件。证据目录中的 `fulfillment-environment.private.json`、`fulfillment-newman.private.json` 和日志含合成 JWT/预约码/签名，必须留在 .cache，不能作为共享 Postman 环境或 CI 附件上传。参考[阶段执行](../progress/R9_A4D2B1_FULFILLMENT_API_CASES_EXECUTION.md)。券交易生命周期下一 A4d-2b2 单独补齐，全部 API 验收仍未完成。
