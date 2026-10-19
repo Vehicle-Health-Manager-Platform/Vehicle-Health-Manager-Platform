@@ -42,3 +42,8 @@
 - `python scripts/run_api_acceptance.py --diagnosis-cases` 使用全新MySQL、62迁移/131表、真实后端TCP端口和自动定时通知worker；没有手动调用通知投递器或SQL预置工单/通知结果。仅资格政策、推广归因、手机号证据为明确合成夹具。
 - 20接口各有正常/边界/错误/越权；动态通知路径必须来自正确角色的实际响应，且逐条审计实际角色、方法、完整query、状态、断言、写正文及幂等键。新增10项审计负例拒绝删失/跳过/伪造角色/正文/版本/键/通知ID。
 - 生产诊断功能按既有实现执行，本轮交付可复现验收资产与CI门禁。外部身份、AI、微信通知、真机与完整远程CI分别验收。
+
+
+## GitHub交付
+
+本阶段成果已上传 [PR180](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/180)，验收代码 `86c0cea`，依赖PR179；完整远程CI待结束，保持草稿，不合并或部署。
