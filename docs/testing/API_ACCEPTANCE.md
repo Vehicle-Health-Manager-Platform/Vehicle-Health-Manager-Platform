@@ -75,3 +75,13 @@ CI 构建来源采用内容摘要与新产物证据：`--record-ci-sources` 必�
 17 接口、119 请求/397 断言，覆盖申请/驳回重提/配额批准、独立运营权限、员工新增、禁用/启用与码轮换/撤销、店员/店长与跨店权限、门店资料白名单/空坐标/边界。员工码相关请求明确不带 Idempotency-Key，轮换须得到新码；正文与回执原始日志属于合成私有材料，不得上传。
 
 清理为唯一归属容器停止后等待自动删除，最多10秒，等待期间继续复核归属；仍存在、超时或归属变化均失败。仅将本轮 passed=true、源码稳定、数据库及资源回收全部通过的报告当作成功证据。详见[执行记录](../progress/R9_A4D2C_MERCHANT_API_CASES_EXECUTION.md)。正式激活/短信/微信绑定、真实资质上传与文件访问另行验收，全部 API 验收仍未完成。
+
+## A4d-2d1 私有问答与许可资料关键词检索
+
+生成：`python scripts/community_api_cases.py`。复跑：`python scripts/run_api_acceptance.py --community-cases`。与其他业务选项互斥，各用全新隔离数据库；CI复用同一已验证构建，加入第五套业务验收。新增来源哈希覆盖community_api_cases.py。
+
+23接口、176请求/590断言：私有问答16项，许可资料非AI7项。五个独立权限运营分别负责管理、第一/第二处理人、知识库、审核。私有问答重分配后旧处理者404（包括旧回执重放），管理员不能凭队列权限读正文；车主和处理者各关闭一条。政策停止后不得新建，原创建回执仍是原状态，必须GET读取现态。
+
+自写合成许可资料由真实HTTP创建/修订/发布，先验证未确认许可拒绝发布，再验证精确车型KEYWORD检索和公开引用详情，停止后旧引用不可读。详情路径必须绑定实际 knowledge_search 响应中的UUID；保留严格方法/查询/角色/断言核对。公用查询审计保留空值，q=不能被无声删除或当作缺参数充数。
+
+KNOWLEDGE_AI_ENABLED与COMMUNITY_PUBLICATION_ENABLED明确false，真实公开来源、正式语料、向量与外部AI另验。私有正文、许可凭证和JWT只留.cache原始材料，CI只上传report.json。只有本次passed=true、数据库/哈希及清理全部通过才可计本范围成功。见[执行记录](../progress/R9_A4D2D1_COMMUNITY_KNOWLEDGE_API_EXECUTION.md)。
