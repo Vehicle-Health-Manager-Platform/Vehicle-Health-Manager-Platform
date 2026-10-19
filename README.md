@@ -1,3 +1,7 @@
+## 2026-10-19 A4d-2d2：公开问答授权治理验收
+
+2026-10-19：A4d-2d2 本地PASS（176.953秒）：14接口、134业务请求/456断言、338匿名请求/1014断言通过。3次申请均WITHDRAWN/revision3，9授权事件、2个不同公开UUID；2问答/5消息/7问答事件，0积分任务事件/支付。脱敏、独立审核权限、未知来源拒绝、公开字段白名单、补充不扩权、撤回与旧UUID不复活验证通过。来源稳定，容器/网络清理成功；默认新集合0请求；新增8项和既有26项测试、编译/diff通过。仅合成来源协议夹具，不代表真实微信身份。下一经验卡授权/审核/撤回与精选治理→剩余车主→A5→B外部接口→C真机；全部API业务验收和性能延迟达标仍未完成。 [阶段执行](docs/progress/R9_A4D2D2_PUBLIC_QA_API_EXECUTION.md)。
+
 > **A4d-2d1本地通过（2026-10-19）**：私有问答闭环与合成许可资料KEYWORD检索，23接口/176业务请求/590断言通过；338匿名请求/1014断言及58项脚本测试通过。独立权限、重分配撤权、停用引用及隐私核对通过，测试资源已清理。[执行与报告](docs/progress/R9_A4D2D1_COMMUNITY_KNOWLEDGE_API_EXECUTION.md)。前置PR169八项CI全绿；下一公开社区/经验授权治理。正式语料、向量、外部AI、全部API验收及性能延迟达标仍未完成。 本阶段全部成果已上传 [PR170](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/170)，业务验收代码 `db27b05`，依赖PR169；完整远程CI待结果，保持草稿，不合并或部署。
 
 > **A4d-2c 本地通过（2026-10-19）**：商家入驻/配额审核、员工管理与运营权限，17接口/119业务请求/397断言通过；338匿名请求/1014断言及65项脚本测试通过。修复Docker自动删除清理竞态，隔离资源清理全部成功。[执行与实际报告](docs/progress/R9_A4D2C_MERCHANT_API_CASES_EXECUTION.md)。下一社区/知识及剩余车主接口；真实激活/上传/绑定、全部API验收和性能延迟达标仍未完成。 本阶段全部成果已上传 [PR169](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/169)，业务验收及清理修复代码 `edfa3a9`，依赖 PR168；完整远程 CI 待结果，保持草稿，不合并或部署。

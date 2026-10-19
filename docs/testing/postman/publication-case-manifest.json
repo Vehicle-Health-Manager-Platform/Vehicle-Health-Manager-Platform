@@ -1,0 +1,1348 @@
+{
+  "version": 1,
+  "cases": 134,
+  "operations": 14,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "policy_create",
+      "method": "POST",
+      "path": "/api/admin/community/questions/policies",
+      "operation_id": "post_api_admin_community_questions_policies",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "policy_create_replay",
+      "method": "POST",
+      "path": "/api/admin/community/questions/policies",
+      "operation_id": "post_api_admin_community_questions_policies",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "policy_create_malformed",
+      "method": "POST",
+      "path": "/api/admin/community/questions/policies",
+      "operation_id": "post_api_admin_community_questions_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_anonymous",
+      "method": "POST",
+      "path": "/api/admin/community/questions/policies",
+      "operation_id": "post_api_admin_community_questions_policies",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/community/questions/policies",
+      "operation_id": "post_api_admin_community_questions_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "policy_publish",
+      "method": "PUT",
+      "path": "/api/admin/community/questions/policies/1/status",
+      "operation_id": "put_api_admin_community_questions_policies_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "policy_publish_replay",
+      "method": "PUT",
+      "path": "/api/admin/community/questions/policies/1/status",
+      "operation_id": "put_api_admin_community_questions_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "policy_publish_malformed",
+      "method": "PUT",
+      "path": "/api/admin/community/questions/policies/1/status",
+      "operation_id": "put_api_admin_community_questions_policies_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "policy_publish_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/community/questions/policies/1/status",
+      "operation_id": "put_api_admin_community_questions_policies_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_publish_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/community/questions/policies/1/status",
+      "operation_id": "put_api_admin_community_questions_policies_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "question_create",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases",
+      "operation_id": "post_api_owner_community_questions_cases",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "question_create_replay",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases",
+      "operation_id": "post_api_owner_community_questions_cases",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "question_create_malformed",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases",
+      "operation_id": "post_api_owner_community_questions_cases",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "question_create_anonymous",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases",
+      "operation_id": "post_api_owner_community_questions_cases",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "question_create_wrong_role",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases",
+      "operation_id": "post_api_owner_community_questions_cases",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "assign",
+      "method": "PUT",
+      "path": "/api/admin/community/questions/cases/1/assignment",
+      "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "assign_replay",
+      "method": "PUT",
+      "path": "/api/admin/community/questions/cases/1/assignment",
+      "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "assign_malformed",
+      "method": "PUT",
+      "path": "/api/admin/community/questions/cases/1/assignment",
+      "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "assign_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/community/questions/cases/1/assignment",
+      "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "assign_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/community/questions/cases/1/assignment",
+      "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "reply",
+      "method": "POST",
+      "path": "/api/admin/community/questions/cases/1/reply",
+      "operation_id": "post_api_admin_community_questions_cases_id_reply",
+      "kind": "normal",
+      "status": 200,
+      "role": "handler",
+      "assertions": 4
+    },
+    {
+      "name": "reply_replay",
+      "method": "POST",
+      "path": "/api/admin/community/questions/cases/1/reply",
+      "operation_id": "post_api_admin_community_questions_cases_id_reply",
+      "kind": "boundary",
+      "status": 200,
+      "role": "handler",
+      "assertions": 4
+    },
+    {
+      "name": "reply_malformed",
+      "method": "POST",
+      "path": "/api/admin/community/questions/cases/1/reply",
+      "operation_id": "post_api_admin_community_questions_cases_id_reply",
+      "kind": "error",
+      "status": 400,
+      "role": "handler",
+      "assertions": 3
+    },
+    {
+      "name": "reply_anonymous",
+      "method": "POST",
+      "path": "/api/admin/community/questions/cases/1/reply",
+      "operation_id": "post_api_admin_community_questions_cases_id_reply",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "reply_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/community/questions/cases/1/reply",
+      "operation_id": "post_api_admin_community_questions_cases_id_reply",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "preview",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publication-preview",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publication_preview",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "preview_wrong_pair",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publication-preview",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publication_preview",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "preview_invalid",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publication-preview",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publication_preview",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "preview_anonymous",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publication-preview",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publication_preview",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "preview_foreign",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publication-preview",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publication_preview",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "preview_client_identity",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publication-preview",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publication_preview",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "wrong_preview_hash",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publications",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "missing_consent",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publications",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "submit",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publications",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "submit_replay",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publications",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "submit_malformed",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publications",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "submit_anonymous",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publications",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "submit_wrong_role",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publications",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "duplicate_active_application",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publications",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_applications",
+      "method": "GET",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "get_api_owner_community_questions_cases_caseId_publications",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "owner_applications_boundary",
+      "method": "GET",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "get_api_owner_community_questions_cases_caseId_publications",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_applications_error",
+      "method": "GET",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "get_api_owner_community_questions_cases_caseId_publications",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_applications_anonymous",
+      "method": "GET",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "get_api_owner_community_questions_cases_caseId_publications",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "owner_applications_wrong_role",
+      "method": "GET",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "get_api_owner_community_questions_cases_caseId_publications",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "foreign_applications",
+      "method": "GET",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "get_api_owner_community_questions_cases_caseId_publications",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "review_queue",
+      "method": "GET",
+      "path": "/api/admin/community/question-publications",
+      "operation_id": "get_api_admin_community_question_publications",
+      "kind": "normal",
+      "status": 200,
+      "role": "reviewer",
+      "assertions": 4
+    },
+    {
+      "name": "review_queue_boundary",
+      "method": "GET",
+      "path": "/api/admin/community/question-publications",
+      "operation_id": "get_api_admin_community_question_publications",
+      "kind": "boundary",
+      "status": 200,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "review_queue_error",
+      "method": "GET",
+      "path": "/api/admin/community/question-publications",
+      "operation_id": "get_api_admin_community_question_publications",
+      "kind": "error",
+      "status": 400,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "review_queue_anonymous",
+      "method": "GET",
+      "path": "/api/admin/community/question-publications",
+      "operation_id": "get_api_admin_community_question_publications",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "review_queue_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/community/question-publications",
+      "operation_id": "get_api_admin_community_question_publications",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "manager_cannot_review",
+      "method": "GET",
+      "path": "/api/admin/community/question-publications",
+      "operation_id": "get_api_admin_community_question_publications",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "public_pending_hidden",
+      "method": "GET",
+      "path": "/api/community/questions",
+      "operation_id": "get_api_community_questions",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "approve",
+      "method": "POST",
+      "path": "/api/admin/community/question-publications/1/moderate",
+      "operation_id": "post_api_admin_community_question_publications_id_moderate",
+      "kind": "normal",
+      "status": 200,
+      "role": "reviewer",
+      "assertions": 5
+    },
+    {
+      "name": "approve_replay",
+      "method": "POST",
+      "path": "/api/admin/community/question-publications/1/moderate",
+      "operation_id": "post_api_admin_community_question_publications_id_moderate",
+      "kind": "boundary",
+      "status": 200,
+      "role": "reviewer",
+      "assertions": 4
+    },
+    {
+      "name": "approve_malformed",
+      "method": "POST",
+      "path": "/api/admin/community/question-publications/1/moderate",
+      "operation_id": "post_api_admin_community_question_publications_id_moderate",
+      "kind": "error",
+      "status": 400,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "approve_anonymous",
+      "method": "POST",
+      "path": "/api/admin/community/question-publications/1/moderate",
+      "operation_id": "post_api_admin_community_question_publications_id_moderate",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "approve_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/community/question-publications/1/moderate",
+      "operation_id": "post_api_admin_community_question_publications_id_moderate",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "approve_stale",
+      "method": "POST",
+      "path": "/api/admin/community/question-publications/1/moderate",
+      "operation_id": "post_api_admin_community_question_publications_id_moderate",
+      "kind": "boundary",
+      "status": 409,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "public_list",
+      "method": "GET",
+      "path": "/api/community/questions",
+      "operation_id": "get_api_community_questions",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "public_list_boundary",
+      "method": "GET",
+      "path": "/api/community/questions",
+      "operation_id": "get_api_community_questions",
+      "kind": "boundary",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "public_list_error",
+      "method": "GET",
+      "path": "/api/community/questions",
+      "operation_id": "get_api_community_questions",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "public_list_anonymous",
+      "method": "GET",
+      "path": "/api/community/questions",
+      "operation_id": "get_api_community_questions",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "public_list_wrong_role",
+      "method": "GET",
+      "path": "/api/community/questions",
+      "operation_id": "get_api_community_questions",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "public_foreign_vehicle",
+      "method": "GET",
+      "path": "/api/community/questions",
+      "operation_id": "get_api_community_questions",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "other_same_model",
+      "method": "GET",
+      "path": "/api/community/questions",
+      "operation_id": "get_api_community_questions",
+      "kind": "boundary",
+      "status": 200,
+      "role": "other",
+      "assertions": 4
+    },
+    {
+      "name": "public_detail",
+      "method": "GET",
+      "path": "/api/community/questions/{{public_reference}}",
+      "operation_id": "get_api_community_questions_publicId",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "public_detail_boundary",
+      "method": "GET",
+      "path": "/api/community/questions/00000000-0000-4000-8000-000000000000",
+      "operation_id": "get_api_community_questions_publicId",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "public_detail_error",
+      "method": "GET",
+      "path": "/api/community/questions/invalid",
+      "operation_id": "get_api_community_questions_publicId",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "public_detail_anonymous",
+      "method": "GET",
+      "path": "/api/community/questions/{{public_reference}}",
+      "operation_id": "get_api_community_questions_publicId",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "public_detail_wrong_role",
+      "method": "GET",
+      "path": "/api/community/questions/{{public_reference}}",
+      "operation_id": "get_api_community_questions_publicId",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "followup",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/message",
+      "operation_id": "post_api_owner_community_questions_cases_id_message",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "followup_replay",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/message",
+      "operation_id": "post_api_owner_community_questions_cases_id_message",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "followup_malformed",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/message",
+      "operation_id": "post_api_owner_community_questions_cases_id_message",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "followup_anonymous",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/message",
+      "operation_id": "post_api_owner_community_questions_cases_id_message",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "followup_wrong_role",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/message",
+      "operation_id": "post_api_owner_community_questions_cases_id_message",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "public_scope_frozen",
+      "method": "GET",
+      "path": "/api/community/questions/{{public_reference}}",
+      "operation_id": "get_api_community_questions_publicId",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "foreign_withdraw",
+      "method": "POST",
+      "path": "/api/owner/community/question-publications/1/withdraw",
+      "operation_id": "post_api_owner_community_question_publications_id_withdraw",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "withdraw_first",
+      "method": "POST",
+      "path": "/api/owner/community/question-publications/1/withdraw",
+      "operation_id": "post_api_owner_community_question_publications_id_withdraw",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "withdraw_first_replay",
+      "method": "POST",
+      "path": "/api/owner/community/question-publications/1/withdraw",
+      "operation_id": "post_api_owner_community_question_publications_id_withdraw",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "withdraw_first_malformed",
+      "method": "POST",
+      "path": "/api/owner/community/question-publications/1/withdraw",
+      "operation_id": "post_api_owner_community_question_publications_id_withdraw",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "withdraw_first_anonymous",
+      "method": "POST",
+      "path": "/api/owner/community/question-publications/1/withdraw",
+      "operation_id": "post_api_owner_community_question_publications_id_withdraw",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "withdraw_first_wrong_role",
+      "method": "POST",
+      "path": "/api/owner/community/question-publications/1/withdraw",
+      "operation_id": "post_api_owner_community_question_publications_id_withdraw",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "old_detail_withdrawn",
+      "method": "GET",
+      "path": "/api/community/questions/{{public_reference}}",
+      "operation_id": "get_api_community_questions_publicId",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "public_empty_after_withdraw",
+      "method": "GET",
+      "path": "/api/community/questions",
+      "operation_id": "get_api_community_questions",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "creation_receipt_after_withdraw",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publications",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "resubmit",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publications",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "resubmit_replay",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publications",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "resubmit_malformed",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publications",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "resubmit_anonymous",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publications",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "resubmit_wrong_role",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publications",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "approve_second",
+      "method": "POST",
+      "path": "/api/admin/community/question-publications/2/moderate",
+      "operation_id": "post_api_admin_community_question_publications_id_moderate",
+      "kind": "normal",
+      "status": 200,
+      "role": "reviewer",
+      "assertions": 4
+    },
+    {
+      "name": "approve_second_replay",
+      "method": "POST",
+      "path": "/api/admin/community/question-publications/2/moderate",
+      "operation_id": "post_api_admin_community_question_publications_id_moderate",
+      "kind": "boundary",
+      "status": 200,
+      "role": "reviewer",
+      "assertions": 4
+    },
+    {
+      "name": "approve_second_malformed",
+      "method": "POST",
+      "path": "/api/admin/community/question-publications/2/moderate",
+      "operation_id": "post_api_admin_community_question_publications_id_moderate",
+      "kind": "error",
+      "status": 400,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "approve_second_anonymous",
+      "method": "POST",
+      "path": "/api/admin/community/question-publications/2/moderate",
+      "operation_id": "post_api_admin_community_question_publications_id_moderate",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "approve_second_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/community/question-publications/2/moderate",
+      "operation_id": "post_api_admin_community_question_publications_id_moderate",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "new_uuid_after_reauthorization",
+      "method": "GET",
+      "path": "/api/community/questions",
+      "operation_id": "get_api_community_questions",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "old_uuid_never_revived",
+      "method": "GET",
+      "path": "/api/community/questions/{{public_reference}}",
+      "operation_id": "get_api_community_questions_publicId",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "withdraw_second",
+      "method": "POST",
+      "path": "/api/owner/community/question-publications/2/withdraw",
+      "operation_id": "post_api_owner_community_question_publications_id_withdraw",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "withdraw_second_replay",
+      "method": "POST",
+      "path": "/api/owner/community/question-publications/2/withdraw",
+      "operation_id": "post_api_owner_community_question_publications_id_withdraw",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "withdraw_second_malformed",
+      "method": "POST",
+      "path": "/api/owner/community/question-publications/2/withdraw",
+      "operation_id": "post_api_owner_community_question_publications_id_withdraw",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "withdraw_second_anonymous",
+      "method": "POST",
+      "path": "/api/owner/community/question-publications/2/withdraw",
+      "operation_id": "post_api_owner_community_question_publications_id_withdraw",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "withdraw_second_wrong_role",
+      "method": "POST",
+      "path": "/api/owner/community/question-publications/2/withdraw",
+      "operation_id": "post_api_owner_community_question_publications_id_withdraw",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "third_submit",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publications",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "third_submit_replay",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publications",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "third_submit_malformed",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publications",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "third_submit_anonymous",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publications",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "third_submit_wrong_role",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/1/publications",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publications",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "reject",
+      "method": "POST",
+      "path": "/api/admin/community/question-publications/3/moderate",
+      "operation_id": "post_api_admin_community_question_publications_id_moderate",
+      "kind": "normal",
+      "status": 200,
+      "role": "reviewer",
+      "assertions": 5
+    },
+    {
+      "name": "reject_replay",
+      "method": "POST",
+      "path": "/api/admin/community/question-publications/3/moderate",
+      "operation_id": "post_api_admin_community_question_publications_id_moderate",
+      "kind": "boundary",
+      "status": 200,
+      "role": "reviewer",
+      "assertions": 4
+    },
+    {
+      "name": "reject_malformed",
+      "method": "POST",
+      "path": "/api/admin/community/question-publications/3/moderate",
+      "operation_id": "post_api_admin_community_question_publications_id_moderate",
+      "kind": "error",
+      "status": 400,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "reject_anonymous",
+      "method": "POST",
+      "path": "/api/admin/community/question-publications/3/moderate",
+      "operation_id": "post_api_admin_community_question_publications_id_moderate",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "reject_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/community/question-publications/3/moderate",
+      "operation_id": "post_api_admin_community_question_publications_id_moderate",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "withdraw_rejected",
+      "method": "POST",
+      "path": "/api/owner/community/question-publications/3/withdraw",
+      "operation_id": "post_api_owner_community_question_publications_id_withdraw",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "withdraw_rejected_replay",
+      "method": "POST",
+      "path": "/api/owner/community/question-publications/3/withdraw",
+      "operation_id": "post_api_owner_community_question_publications_id_withdraw",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "withdraw_rejected_malformed",
+      "method": "POST",
+      "path": "/api/owner/community/question-publications/3/withdraw",
+      "operation_id": "post_api_owner_community_question_publications_id_withdraw",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "withdraw_rejected_anonymous",
+      "method": "POST",
+      "path": "/api/owner/community/question-publications/3/withdraw",
+      "operation_id": "post_api_owner_community_question_publications_id_withdraw",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "withdraw_rejected_wrong_role",
+      "method": "POST",
+      "path": "/api/owner/community/question-publications/3/withdraw",
+      "operation_id": "post_api_owner_community_question_publications_id_withdraw",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "final_public_empty",
+      "method": "GET",
+      "path": "/api/community/questions",
+      "operation_id": "get_api_community_questions",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "unknown_question",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases",
+      "operation_id": "post_api_owner_community_questions_cases",
+      "kind": "normal",
+      "status": 200,
+      "role": "other",
+      "assertions": 4
+    },
+    {
+      "name": "unknown_question_replay",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases",
+      "operation_id": "post_api_owner_community_questions_cases",
+      "kind": "boundary",
+      "status": 200,
+      "role": "other",
+      "assertions": 4
+    },
+    {
+      "name": "unknown_question_malformed",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases",
+      "operation_id": "post_api_owner_community_questions_cases",
+      "kind": "error",
+      "status": 400,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "unknown_question_anonymous",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases",
+      "operation_id": "post_api_owner_community_questions_cases",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "unknown_question_wrong_role",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases",
+      "operation_id": "post_api_owner_community_questions_cases",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "unknown_assign",
+      "method": "PUT",
+      "path": "/api/admin/community/questions/cases/2/assignment",
+      "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "unknown_assign_replay",
+      "method": "PUT",
+      "path": "/api/admin/community/questions/cases/2/assignment",
+      "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "unknown_assign_malformed",
+      "method": "PUT",
+      "path": "/api/admin/community/questions/cases/2/assignment",
+      "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "unknown_assign_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/community/questions/cases/2/assignment",
+      "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "unknown_assign_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/community/questions/cases/2/assignment",
+      "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "unknown_reply",
+      "method": "POST",
+      "path": "/api/admin/community/questions/cases/2/reply",
+      "operation_id": "post_api_admin_community_questions_cases_id_reply",
+      "kind": "normal",
+      "status": 200,
+      "role": "handler",
+      "assertions": 4
+    },
+    {
+      "name": "unknown_reply_replay",
+      "method": "POST",
+      "path": "/api/admin/community/questions/cases/2/reply",
+      "operation_id": "post_api_admin_community_questions_cases_id_reply",
+      "kind": "boundary",
+      "status": 200,
+      "role": "handler",
+      "assertions": 4
+    },
+    {
+      "name": "unknown_reply_malformed",
+      "method": "POST",
+      "path": "/api/admin/community/questions/cases/2/reply",
+      "operation_id": "post_api_admin_community_questions_cases_id_reply",
+      "kind": "error",
+      "status": 400,
+      "role": "handler",
+      "assertions": 3
+    },
+    {
+      "name": "unknown_reply_anonymous",
+      "method": "POST",
+      "path": "/api/admin/community/questions/cases/2/reply",
+      "operation_id": "post_api_admin_community_questions_cases_id_reply",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "unknown_reply_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/community/questions/cases/2/reply",
+      "operation_id": "post_api_admin_community_questions_cases_id_reply",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "unknown_source_denied",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/2/publication-preview",
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publication_preview",
+      "kind": "boundary",
+      "status": 409,
+      "role": "other",
+      "assertions": 3
+    }
+  ]
+}

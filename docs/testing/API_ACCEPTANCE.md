@@ -85,3 +85,12 @@ CI 构建来源采用内容摘要与新产物证据：`--record-ci-sources` 必�
 自写合成许可资料由真实HTTP创建/修订/发布，先验证未确认许可拒绝发布，再验证精确车型KEYWORD检索和公开引用详情，停止后旧引用不可读。详情路径必须绑定实际 knowledge_search 响应中的UUID；保留严格方法/查询/角色/断言核对。公用查询审计保留空值，q=不能被无声删除或当作缺参数充数。
 
 KNOWLEDGE_AI_ENABLED与COMMUNITY_PUBLICATION_ENABLED明确false，真实公开来源、正式语料、向量与外部AI另验。私有正文、许可凭证和JWT只留.cache原始材料，CI只上传report.json。只有本次passed=true、数据库/哈希及清理全部通过才可计本范围成功。见[执行记录](../progress/R9_A4D2D1_COMMUNITY_KNOWLEDGE_API_EXECUTION.md)。
+
+
+## A4d-2d2 公开问答授权治理
+
+独立执行 `python scripts/run_api_acceptance.py --publication-cases`；与其他业务套件互斥，分别使用新数据库。覆盖公开问答8接口及6项私有准备接口，134请求/456断言。详情证据绑定实际公开列表UUID，校验正常/边界/错误/未授权与实际令牌身份。脚本 `python scripts/publication_api_cases.py` 生成默认禁发集合与清单；`python -m unittest discover -s scripts -p test_publication_api_cases.py -v` 检查证据拒绝条件。
+
+仅隔离夹具将合成车主1测试会话设为VERIFIED_WECHAT，车主2保留未知来源以验证拒绝公开；不代表真实微信核验。问题、答复、授权与审核均通过HTTP生成。仅隔离服务开启公开问答，生产默认开关不变。原始环境/令牌/响应留在.cache，公共报告只保留数量、哈希与检查结果。下一经验卡授权与精选治理，再剩余车主接口。
+
+见[本阶段执行](../progress/R9_A4D2D2_PUBLIC_QA_API_EXECUTION.md)。
