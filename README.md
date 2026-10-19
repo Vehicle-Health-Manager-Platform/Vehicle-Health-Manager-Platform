@@ -1,4 +1,4 @@
-> **A4d-2a 本地通过（2026-10-19）**：8 个车辆/档案接口、61 业务请求/204 断言和338匿名请求/1014断言通过；16项脚本测试通过，数据库与幂等/归属核对通过，隔离资源清理成功。[执行与实际报告](docs/progress/R9_A4D2A_OWNER_API_CASES_EXECUTION.md)。下一预约履约/券业务验收；全部 API 业务验收仍未完成，外部接入后置，性能延迟未达标保留。
+> **A4d-2a 本地通过（2026-10-19）**：8 个车辆/档案接口、61 业务请求/204 断言和338匿名请求/1014断言通过；16项脚本测试通过，数据库与幂等/归属核对通过，隔离资源清理成功。[执行与实际报告](docs/progress/R9_A4D2A_OWNER_API_CASES_EXECUTION.md)。下一预约履约/券业务验收；全部 API 业务验收仍未完成，外部接入后置，性能延迟未达标保留。 阶段全部成果已上传 [PR166](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/166)，业务验收代码提交 `843a02f`，依赖 PR165；完整远程 CI 待结束，保持草稿。
 
 > **A4d-1 本地通过（2026-10-19）**：352项契约验收资产已生成；隔离Newman实际338匿名请求/1014断言通过，默认业务模板发送0请求；9项脚本测试通过。代码/资产/测试/CI/中文文档/实际报告已上传[PR165](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/165)（代码ab5d1e6，依赖PR164），完整CI待结束、保持草稿。全部API业务验收未完成，下一A4d-2按域补正常/边界/错误及跨角色/归属；性能延迟仍未达标，后续A5→B外部接入→C真机。
 
