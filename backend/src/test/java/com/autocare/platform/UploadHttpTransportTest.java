@@ -150,6 +150,15 @@ class UploadHttpTransportTest {
         finally {release.countDown();}
         assertEquals(200,first.get(10,TimeUnit.SECONDS).statusCode());assertEquals(200,post(multipart(11,""),"owner",false,key()).statusCode());
     }
+    @Test void signedAccessRejectsIgnoredQueryBeforeSigning() throws Exception {
+        for(String path:List.of("/api/file/1/access","/api/merchant/files/1/access","/api/tech/files/1/access")) {
+            String role=path.contains("/merchant/")?"merchant":path.contains("/tech/")?"tech":"owner";
+            var request=HttpRequest.newBuilder(URI.create("http://127.0.0.1:"+port+path+"?owner_id=1001&owner_id=1002")).header("Authorization","Bearer "+role).GET().build();
+            var response=client.send(request,HttpResponse.BodyHandlers.ofString());
+            assertEquals(400,response.statusCode());assertEquals("no-store",response.headers().firstValue("Cache-Control").orElseThrow());
+        }
+        verifyNoInteractions(access);
+    }
     @Test void accessIsNotCachedAndFailureDoesNotExposeSignedUrl() throws Exception {
         var request=HttpRequest.newBuilder(URI.create("http://127.0.0.1:"+port+"/api/file/1/access")).header("Authorization","Bearer owner").GET().build();
         var response=client.send(request,HttpResponse.BodyHandlers.ofString());assertEquals(200,response.statusCode());assertEquals("no-store",response.headers().firstValue("Cache-Control").orElseThrow());

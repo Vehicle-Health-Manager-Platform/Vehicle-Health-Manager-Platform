@@ -43,6 +43,7 @@ public class UploadHttpController {
     @GetMapping("/{id}/access")
     public ResponseEntity<ApiResponse<Map<String,Object>>> access(@PathVariable long id,HttpServletRequest request) {
         var owner=owner(request);
+        if(!request.getParameterMap().isEmpty())throw new UploadHttpException(400,"图片访问不接受查询参数");
         var service=services.getIfAvailable();if(service==null) throw UploadHttpException.unavailable();
         var signed=access.sign(owner.actor(),id);
         return ResponseEntity.ok().header("Cache-Control","no-store")

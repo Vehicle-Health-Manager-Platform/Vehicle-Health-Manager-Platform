@@ -177,6 +177,27 @@ class JdbcServiceArchiveTest {
         jdbc.update("UPDATE file_object SET is_deleted=1 WHERE id=101"); assertThrows(ResponseStatusException.class,()->archives.fileOwner(owner,archive(),101));
         jdbc.update("UPDATE vehicle SET user_id=2 WHERE id=1"); assertEquals(0L,archives.list(other,1,1,20).get("total"));
     }
+    @Test void ownerPhotoAndManualAttachmentsRequireCurrentOwnershipAndSafeLinkedImage() {
+        jdbc.update("INSERT INTO file_object(id,owner_type,owner_id,object_key,content_type,size_bytes,scan_status) VALUES(201,'user',1,'synthetic-owner-photo','image/png',100,'CLEAN')");
+        for(int inputType:List.of(1,3)) {
+            long id=archives.add(owner,key(),new ArchiveInput(1,1,LocalDate.of(2026,10,8),100,"本人图片","",List.of(201L),inputType)).path("data").path("archive_id").asLong();
+            assertEquals(new com.autocare.platform.file.FileMetadataRepository.Actor("user",1),archives.fileOwner(owner,id,201));
+            assertEquals(404,assertThrows(ResponseStatusException.class,()->archives.fileOwner(other,id,201)).getStatusCode().value());
+            assertThrows(ResponseStatusException.class,()->archives.fileOwner(owner,id,101));
+            for(String mutation:List.of("scan_status='PENDING'","is_deleted=1","owner_id=2","owner_type='staff_account'","content_type='application/pdf'","size_bytes=0","size_bytes=10485761")) {
+                jdbc.update("UPDATE file_object SET "+mutation+" WHERE id=201");
+                assertEquals(404,assertThrows(ResponseStatusException.class,()->archives.fileOwner(owner,id,201)).getStatusCode().value(),mutation);
+                jdbc.update("UPDATE file_object SET scan_status='CLEAN',is_deleted=0,owner_id=1,owner_type='user',content_type='image/png',size_bytes=100 WHERE id=201");
+            }
+            jdbc.update("UPDATE vehicle_archive SET is_deleted=1 WHERE id=?",id);
+            assertThrows(ResponseStatusException.class,()->archives.fileOwner(owner,id,201));
+            jdbc.update("UPDATE vehicle_archive SET is_deleted=0 WHERE id=?",id);
+            jdbc.update("UPDATE vehicle SET user_id=2 WHERE id=1");
+            assertThrows(ResponseStatusException.class,()->archives.fileOwner(owner,id,201));
+            assertThrows(ResponseStatusException.class,()->archives.fileOwner(other,id,201));
+            jdbc.update("UPDATE vehicle SET user_id=1 WHERE id=1");
+        }
+    }
     @Test void disabledWorkerPreservesPendingTasksAndManualArchivesRemain() {
         submit(); new ServiceArchiveJobs(db,false).sweep(); assertEquals(0,count("vehicle_archive"));
         archives.add(owner,key(),new ArchiveInput(1,1,LocalDate.of(2026,10,8),12345,"手动记录","旧记录",List.of(),3));

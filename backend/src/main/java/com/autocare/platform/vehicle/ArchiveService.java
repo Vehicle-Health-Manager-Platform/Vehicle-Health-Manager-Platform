@@ -145,6 +145,13 @@ public class ArchiveService {
 
     public com.autocare.platform.file.FileMetadataRepository.Actor fileOwner(VehicleOwner owner, long archiveId, long fileId) {
         authorize(owner, false);
+        var ownFiles = jdbc.queryForList("SELECT f.id FROM vehicle_archive a "
+            + "JOIN vehicle v ON v.id=a.vehicle_id AND v.user_id=? AND v.is_deleted=0 "
+            + "JOIN vehicle_archive_file af ON af.archive_id=a.id AND af.file_id=? "
+            + "JOIN file_object f ON f.id=af.file_id AND f.owner_type='user' AND f.owner_id=? "
+            + "AND f.scan_status='CLEAN' AND f.is_deleted=0 AND f.content_type IN ('image/jpeg','image/png') AND f.size_bytes BETWEEN 1 AND 10485760 "
+            + "WHERE a.id=? AND a.is_deleted=0 AND a.input_type IN (1,3)", owner.id(), fileId, owner.id(), archiveId);
+        if (ownFiles.size() == 1) return new com.autocare.platform.file.FileMetadataRepository.Actor("user", owner.id());
         var rows = jdbc.queryForList("SELECT f.owner_type,f.owner_id FROM vehicle_archive a "
             + "JOIN vehicle v ON v.id=a.vehicle_id AND v.user_id=? AND v.is_deleted=0 "
             + "JOIN service_archive_job j ON j.archive_id=a.id AND j.status='DONE' "

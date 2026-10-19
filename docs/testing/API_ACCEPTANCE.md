@@ -115,3 +115,10 @@ KNOWLEDGE_AI_ENABLED与COMMUNITY_PUBLICATION_ENABLED明确false，真实公开�
 `python scripts/run_api_acceptance.py --export-cases` 覆盖PDF与分享6接口及快照冻结所需档案新增，共7接口、66请求/228断言。先安装固定的 `scripts/requirements-export-qa.txt`。实际解析二进制/规范Base64返回的PDF，检查中文和隐藏来源；能力令牌来自实际取链接响应并绑定接收正文，报告仅保留哈希、数量及通过标记。集合默认禁发，原始PDF/环境/令牌仅留.cache。
 
 修复分享未知/重复query校验。下一A4d-2e2b独立本地存储/扫描环境下的上传、签名访问、档案附件；本阶段不宣称它们完成。见[执行](../progress/R9_A4D2E2A_ARCHIVE_EXPORT_SHARE_EXECUTION.md)。
+
+
+## A4d-2e2b 私有上传与签名附件
+
+`python scripts/run_upload_acceptance.py --docker` 使用新的真实HTTP/Spring、MySQL、MinIO及ClamAV环境，8接口53场景。三角色上传/访问、扫描拒绝、重放/内容变化、越权、附件归属和签名实际下载/篡改/过期由Java旅程执行，Python核对独立清单、源码摘要、检查及资源清理。
+
+合成病毒库仅在测试配置注入真实引擎，主程序没有新鲜度绕过开关；不代表生产病毒库覆盖。CI full clean verify后使用 --check-only验证当前源码证据。只提交脱敏JSON，签名URL/JWT/原始日志不上传。见[执行](../progress/R9_A4D2E2B_PRIVATE_UPLOAD_API_EXECUTION.md)。
