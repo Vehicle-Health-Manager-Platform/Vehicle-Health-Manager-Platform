@@ -76,6 +76,8 @@ jobs:
         run: python scripts/run_api_acceptance.py --ci-built-jar --publication-cases
       - name: Verify experience consent review withdrawal and curation
         run: python scripts/run_api_acceptance.py --ci-built-jar --experience-cases
+      - name: Verify owner structured archives health and reminders
+        run: python scripts/run_api_acceptance.py --ci-built-jar --health-cases
       - name: Save sanitized API evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -126,6 +128,8 @@ jobs:
       - run: python -m unittest discover -s scripts -p test_publication_api_cases.py -v
       - run: python scripts/experience_api_cases.py
       - run: python -m unittest discover -s scripts -p test_experience_api_cases.py -v
+      - run: python scripts/health_api_cases.py
+      - run: python -m unittest discover -s scripts -p test_health_api_cases.py -v
       - run: git diff --exit-code -- docs/testing/postman/
       - run: python scripts/generate_traceability.py
       - run: python scripts/build_init_sql.py

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
@@ -22,13 +23,13 @@ public class ArchiveStructuredController {
         return service;
     }
     @GetMapping("/api/archive/{id}/structured")
-    public ResponseEntity<?> context(@AuthenticationPrincipal Jwt jwt, @PathVariable long id) {
-        var owner = VehicleOwner.from(jwt); return ok(ApiResponse.success(service().context(owner, id)));
+    public ResponseEntity<?> context(@AuthenticationPrincipal Jwt jwt, @PathVariable long id, @RequestParam MultiValueMap<String,String> query) {
+        var owner = VehicleOwner.from(jwt); OwnerArchiveQuery.validate(query); return ok(ApiResponse.success(service().context(owner, id)));
     }
     @PutMapping("/api/archive/{id}/structured")
     public ResponseEntity<?> save(@AuthenticationPrincipal Jwt jwt, @PathVariable long id,
-                                @RequestHeader(value="Idempotency-Key", required=false) String key, @RequestBody JsonNode body) {
-        var owner = VehicleOwner.from(jwt); WriteIntegrityService.normalizeKey(key);
+                                @RequestHeader(value="Idempotency-Key", required=false) String key, @RequestBody JsonNode body, @RequestParam MultiValueMap<String,String> query) {
+        var owner = VehicleOwner.from(jwt); OwnerArchiveQuery.validate(query); WriteIntegrityService.normalizeKey(key);
         var input = ArchiveStructuredInput.parse(body); return ok(service().save(owner, id, key, input));
     }
     private ResponseEntity<?> ok(Object body) { return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(body); }

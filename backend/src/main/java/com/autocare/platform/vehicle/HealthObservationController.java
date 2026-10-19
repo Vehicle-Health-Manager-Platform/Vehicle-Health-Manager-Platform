@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
@@ -22,22 +23,22 @@ public class HealthObservationController {
         return service;
     }
     @GetMapping("/api/archive/{id}/health-observation")
-    public ResponseEntity<?> context(@AuthenticationPrincipal Jwt jwt, @PathVariable long id, @RequestParam("metric") String metric) {
-        var owner = VehicleOwner.from(jwt); return ok(ApiResponse.success(service().context(owner, id, metric)));
+    public ResponseEntity<?> context(@AuthenticationPrincipal Jwt jwt, @PathVariable long id, @RequestParam("metric") String metric, @RequestParam MultiValueMap<String,String> query) {
+        var owner = VehicleOwner.from(jwt); OwnerArchiveQuery.validate(query, "metric"); return ok(ApiResponse.success(service().context(owner, id, metric)));
     }
     @GetMapping("/api/vehicle/health-observations")
-    public ResponseEntity<?> list(@AuthenticationPrincipal Jwt jwt,@RequestParam("vehicle_id") long vehicle){
-        var owner=VehicleOwner.from(jwt);return ok(ApiResponse.success(service().list(owner,vehicle)));
+    public ResponseEntity<?> list(@AuthenticationPrincipal Jwt jwt,@RequestParam("vehicle_id") long vehicle, @RequestParam MultiValueMap<String,String> query){
+        var owner=VehicleOwner.from(jwt);OwnerArchiveQuery.validate(query,"vehicle_id");return ok(ApiResponse.success(service().list(owner,vehicle)));
     }
     @GetMapping("/api/vehicle/health-observation-history")
     public ResponseEntity<?> history(@AuthenticationPrincipal Jwt jwt,@RequestParam("vehicle_id") long vehicle,@RequestParam("metric") String metric,
-                                    @RequestParam(value="before_revision",required=false) Integer before,@RequestParam(value="limit",defaultValue="20") int limit){
-        var owner=VehicleOwner.from(jwt);return ok(ApiResponse.success(service().history(owner,vehicle,metric,before,limit)));
+                                    @RequestParam(value="before_revision",required=false) Integer before,@RequestParam(value="limit",defaultValue="20") int limit, @RequestParam MultiValueMap<String,String> query){
+        var owner=VehicleOwner.from(jwt);OwnerArchiveQuery.validate(query,"vehicle_id","metric","before_revision","limit");return ok(ApiResponse.success(service().history(owner,vehicle,metric,before,limit)));
     }
     @PutMapping("/api/archive/{id}/health-observation")
     public ResponseEntity<?> save(@AuthenticationPrincipal Jwt jwt, @PathVariable long id,
-                                @RequestHeader(value="Idempotency-Key", required=false) String key, @RequestBody JsonNode body) {
-        var owner = VehicleOwner.from(jwt); WriteIntegrityService.normalizeKey(key);
+                                @RequestHeader(value="Idempotency-Key", required=false) String key, @RequestBody JsonNode body, @RequestParam MultiValueMap<String,String> query) {
+        var owner = VehicleOwner.from(jwt); OwnerArchiveQuery.validate(query); WriteIntegrityService.normalizeKey(key);
         var input = HealthObservationInput.parse(body); return ok(service().save(owner, id, key, input));
     }
     private ResponseEntity<?> ok(Object body) { return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(body); }

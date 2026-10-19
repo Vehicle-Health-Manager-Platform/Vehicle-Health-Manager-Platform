@@ -101,3 +101,10 @@ KNOWLEDGE_AI_ENABLED与COMMUNITY_PUBLICATION_ENABLED明确false，真实公开�
 独立执行 `python scripts/run_api_acceptance.py --experience-cases`；14接口、131请求/448断言。两组SQL合成已完成来源（WECHAT字段协议夹具与LOCAL_TEST排除对照）交由真实归档消费者生成卡片；准备钩子等待两卡完成后才冻结匿名表基线。治理写入全部经HTTP完成，公开详情绑定实际列表UUID，精选窗口以真实时间等待生效。
 
 包含授权、独立审核、撤回、同款投影、精选来源/配置/停止、旧UUID和旧精选不复活。此结果不代表真实微信身份、真实付款或供应商回调验签。原始JWT和私有响应仅留.cache，公开只提供脱敏报告。见[本阶段执行](../progress/R9_A4D2D3_EXPERIENCE_API_EXECUTION.md)。
+
+
+## A4d-2e1 车主档案、健康与提醒
+
+独立执行 `python scripts/run_api_acceptance.py --health-cases`：12项车主接口加2项规则接口，14接口、199请求/668断言。仅种合成身份与5条手动来源；目标资料、读数、历史、确认、规则、提醒和偏好全部真实HTTP写入。覆盖更正链、来源替换、清空、旧回执不恢复撤回状态及本人/运营权限，公开报告不保存原始私有响应。
+
+合成规则不是生产诊断阈值，本轮本地状态不代表外部消息送达。下一文件/PDF/分享，真实识别等供应商后置。见[执行文档](../progress/R9_A4D2E1_OWNER_HEALTH_API_EXECUTION.md)。

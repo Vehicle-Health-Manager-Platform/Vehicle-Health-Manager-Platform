@@ -1,5 +1,7 @@
 # R4a4 本人读数历史接口
 
+> 2026-10-19 查询校验补齐：仅接受接口列明的单值query，未知字段与重复参数返回400；写接口不接受query。校验在本人身份解析后、私有服务调用前执行，错误no-store。
+
 ## 写入扩展
 
 PUT `/api/archive/{id}/health-observation` 保留 R4a3 六字段读数、expected_revision、replace_source 与 UUID Idempotency-Key。可选 operation：RECORD 新测量、CORRECT 修正当前同来源非空版本、CLEAR 清空当前。省略时按 measurement 是否为空推导 CLEAR/RECORD，兼容旧客户端与已保存的幂等指纹。CORRECT 必须同来源且 replace_source=false；不允许修正任意旧版本、失效来源或已清空值。空值仅允许 CLEAR；连续清空拒绝409。

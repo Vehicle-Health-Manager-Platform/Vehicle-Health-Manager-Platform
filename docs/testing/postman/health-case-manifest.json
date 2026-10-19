@@ -1,0 +1,1998 @@
+{
+  "version": 1,
+  "cases": 199,
+  "operations": 14,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "structured_empty",
+      "method": "GET",
+      "path": "/api/archive/1/structured",
+      "operation_id": "get_api_archive_id_structured",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "structured_empty_boundary",
+      "method": "GET",
+      "path": "/api/archive/999999/structured",
+      "operation_id": "get_api_archive_id_structured",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "structured_empty_error",
+      "method": "GET",
+      "path": "/api/archive/1/structured",
+      "operation_id": "get_api_archive_id_structured",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "structured_empty_anonymous",
+      "method": "GET",
+      "path": "/api/archive/1/structured",
+      "operation_id": "get_api_archive_id_structured",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "structured_empty_wrong_role",
+      "method": "GET",
+      "path": "/api/archive/1/structured",
+      "operation_id": "get_api_archive_id_structured",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "structured_set",
+      "method": "PUT",
+      "path": "/api/archive/1/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "structured_set_replay",
+      "method": "PUT",
+      "path": "/api/archive/1/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "structured_set_malformed",
+      "method": "PUT",
+      "path": "/api/archive/1/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "structured_set_anonymous",
+      "method": "PUT",
+      "path": "/api/archive/1/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "structured_set_wrong_role",
+      "method": "PUT",
+      "path": "/api/archive/1/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "structured_stale",
+      "method": "PUT",
+      "path": "/api/archive/1/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "structured_foreign",
+      "method": "PUT",
+      "path": "/api/archive/1/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "structured_read_values",
+      "method": "GET",
+      "path": "/api/archive/1/structured",
+      "operation_id": "get_api_archive_id_structured",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "structured_clear",
+      "method": "PUT",
+      "path": "/api/archive/1/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "structured_clear_replay",
+      "method": "PUT",
+      "path": "/api/archive/1/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "structured_clear_malformed",
+      "method": "PUT",
+      "path": "/api/archive/1/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "structured_clear_anonymous",
+      "method": "PUT",
+      "path": "/api/archive/1/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "structured_clear_wrong_role",
+      "method": "PUT",
+      "path": "/api/archive/1/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "structured_cleared",
+      "method": "GET",
+      "path": "/api/archive/1/structured",
+      "operation_id": "get_api_archive_id_structured",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "insurance_fields",
+      "method": "PUT",
+      "path": "/api/archive/4/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "insurance_fields_replay",
+      "method": "PUT",
+      "path": "/api/archive/4/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "insurance_fields_malformed",
+      "method": "PUT",
+      "path": "/api/archive/4/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "insurance_fields_anonymous",
+      "method": "PUT",
+      "path": "/api/archive/4/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "insurance_fields_wrong_role",
+      "method": "PUT",
+      "path": "/api/archive/4/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "inspection_fields",
+      "method": "PUT",
+      "path": "/api/archive/5/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "inspection_fields_replay",
+      "method": "PUT",
+      "path": "/api/archive/5/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "inspection_fields_malformed",
+      "method": "PUT",
+      "path": "/api/archive/5/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "inspection_fields_anonymous",
+      "method": "PUT",
+      "path": "/api/archive/5/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "inspection_fields_wrong_role",
+      "method": "PUT",
+      "path": "/api/archive/5/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "insurance_bad_date_range",
+      "method": "PUT",
+      "path": "/api/archive/4/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "health_current_empty",
+      "method": "GET",
+      "path": "/api/vehicle/health-observations",
+      "operation_id": "get_api_vehicle_health_observations",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "health_current_empty_boundary",
+      "method": "GET",
+      "path": "/api/vehicle/health-observations",
+      "operation_id": "get_api_vehicle_health_observations",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "health_current_empty_error",
+      "method": "GET",
+      "path": "/api/vehicle/health-observations",
+      "operation_id": "get_api_vehicle_health_observations",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "health_current_empty_anonymous",
+      "method": "GET",
+      "path": "/api/vehicle/health-observations",
+      "operation_id": "get_api_vehicle_health_observations",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "health_current_empty_wrong_role",
+      "method": "GET",
+      "path": "/api/vehicle/health-observations",
+      "operation_id": "get_api_vehicle_health_observations",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "observation_empty",
+      "method": "GET",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "get_api_archive_id_health_observation",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "observation_empty_boundary",
+      "method": "GET",
+      "path": "/api/archive/3/health-observation",
+      "operation_id": "get_api_archive_id_health_observation",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "observation_empty_error",
+      "method": "GET",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "get_api_archive_id_health_observation",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "observation_empty_anonymous",
+      "method": "GET",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "get_api_archive_id_health_observation",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "observation_empty_wrong_role",
+      "method": "GET",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "get_api_archive_id_health_observation",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "record",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "record_replay",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "record_malformed",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "record_anonymous",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "record_wrong_role",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "observation_foreign",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "future_measurement",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "percentage_overflow",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "boundary",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "dashboard_no_policy",
+      "method": "GET",
+      "path": "/api/vehicle/1/health-dashboard",
+      "operation_id": "get_api_vehicle_vehicle_health_dashboard",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "dashboard_no_policy_boundary",
+      "method": "GET",
+      "path": "/api/vehicle/2/health-dashboard",
+      "operation_id": "get_api_vehicle_vehicle_health_dashboard",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "dashboard_no_policy_error",
+      "method": "GET",
+      "path": "/api/vehicle/1/health-dashboard",
+      "operation_id": "get_api_vehicle_vehicle_health_dashboard",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "dashboard_no_policy_anonymous",
+      "method": "GET",
+      "path": "/api/vehicle/1/health-dashboard",
+      "operation_id": "get_api_vehicle_vehicle_health_dashboard",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "dashboard_no_policy_wrong_role",
+      "method": "GET",
+      "path": "/api/vehicle/1/health-dashboard",
+      "operation_id": "get_api_vehicle_vehicle_health_dashboard",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "policy_empty",
+      "method": "GET",
+      "path": "/api/admin/health-policies/1/OIL",
+      "operation_id": "get_api_admin_health_policies_model_metric",
+      "kind": "normal",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 4
+    },
+    {
+      "name": "policy_empty_boundary",
+      "method": "GET",
+      "path": "/api/admin/health-policies/999999/OIL",
+      "operation_id": "get_api_admin_health_policies_model_metric",
+      "kind": "boundary",
+      "status": 404,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "policy_empty_error",
+      "method": "GET",
+      "path": "/api/admin/health-policies/1/OIL",
+      "operation_id": "get_api_admin_health_policies_model_metric",
+      "kind": "error",
+      "status": 400,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "policy_empty_anonymous",
+      "method": "GET",
+      "path": "/api/admin/health-policies/1/OIL",
+      "operation_id": "get_api_admin_health_policies_model_metric",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_empty_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/health-policies/1/OIL",
+      "operation_id": "get_api_admin_health_policies_model_metric",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "reviewer_not_catalog",
+      "method": "GET",
+      "path": "/api/admin/health-policies/1/OIL",
+      "operation_id": "get_api_admin_health_policies_model_metric",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "policy_set",
+      "method": "PUT",
+      "path": "/api/admin/health-policies/1/OIL",
+      "operation_id": "put_api_admin_health_policies_model_metric",
+      "kind": "normal",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 4
+    },
+    {
+      "name": "policy_set_replay",
+      "method": "PUT",
+      "path": "/api/admin/health-policies/1/OIL",
+      "operation_id": "put_api_admin_health_policies_model_metric",
+      "kind": "boundary",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 4
+    },
+    {
+      "name": "policy_set_malformed",
+      "method": "PUT",
+      "path": "/api/admin/health-policies/1/OIL",
+      "operation_id": "put_api_admin_health_policies_model_metric",
+      "kind": "error",
+      "status": 400,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "policy_set_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/health-policies/1/OIL",
+      "operation_id": "put_api_admin_health_policies_model_metric",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_set_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/health-policies/1/OIL",
+      "operation_id": "put_api_admin_health_policies_model_metric",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "policy_stale",
+      "method": "PUT",
+      "path": "/api/admin/health-policies/1/OIL",
+      "operation_id": "put_api_admin_health_policies_model_metric",
+      "kind": "boundary",
+      "status": 409,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "before_confirmation",
+      "method": "GET",
+      "path": "/api/vehicle/1/health-dashboard",
+      "operation_id": "get_api_vehicle_vehicle_health_dashboard",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "confirm",
+      "method": "PUT",
+      "path": "/api/vehicle/1/health/OIL/confirmation",
+      "operation_id": "put_api_vehicle_vehicle_health_metric_confirmation",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "confirm_replay",
+      "method": "PUT",
+      "path": "/api/vehicle/1/health/OIL/confirmation",
+      "operation_id": "put_api_vehicle_vehicle_health_metric_confirmation",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "confirm_malformed",
+      "method": "PUT",
+      "path": "/api/vehicle/1/health/OIL/confirmation",
+      "operation_id": "put_api_vehicle_vehicle_health_metric_confirmation",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "confirm_anonymous",
+      "method": "PUT",
+      "path": "/api/vehicle/1/health/OIL/confirmation",
+      "operation_id": "put_api_vehicle_vehicle_health_metric_confirmation",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "confirm_wrong_role",
+      "method": "PUT",
+      "path": "/api/vehicle/1/health/OIL/confirmation",
+      "operation_id": "put_api_vehicle_vehicle_health_metric_confirmation",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "confirmation_stale",
+      "method": "PUT",
+      "path": "/api/vehicle/1/health/OIL/confirmation",
+      "operation_id": "put_api_vehicle_vehicle_health_metric_confirmation",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "confirmed_reference",
+      "method": "GET",
+      "path": "/api/vehicle/1/health-dashboard",
+      "operation_id": "get_api_vehicle_vehicle_health_dashboard",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "withdraw_confirmation",
+      "method": "PUT",
+      "path": "/api/vehicle/1/health/OIL/confirmation",
+      "operation_id": "put_api_vehicle_vehicle_health_metric_confirmation",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "withdraw_confirmation_replay",
+      "method": "PUT",
+      "path": "/api/vehicle/1/health/OIL/confirmation",
+      "operation_id": "put_api_vehicle_vehicle_health_metric_confirmation",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "withdraw_confirmation_malformed",
+      "method": "PUT",
+      "path": "/api/vehicle/1/health/OIL/confirmation",
+      "operation_id": "put_api_vehicle_vehicle_health_metric_confirmation",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "withdraw_confirmation_anonymous",
+      "method": "PUT",
+      "path": "/api/vehicle/1/health/OIL/confirmation",
+      "operation_id": "put_api_vehicle_vehicle_health_metric_confirmation",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "withdraw_confirmation_wrong_role",
+      "method": "PUT",
+      "path": "/api/vehicle/1/health/OIL/confirmation",
+      "operation_id": "put_api_vehicle_vehicle_health_metric_confirmation",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "old_confirmation_receipt",
+      "method": "PUT",
+      "path": "/api/vehicle/1/health/OIL/confirmation",
+      "operation_id": "put_api_vehicle_vehicle_health_metric_confirmation",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "withdrawal_not_undone",
+      "method": "GET",
+      "path": "/api/vehicle/1/health-dashboard",
+      "operation_id": "get_api_vehicle_vehicle_health_dashboard",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "correct",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "correct_replay",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "correct_malformed",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "correct_anonymous",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "correct_wrong_role",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "reconfirm",
+      "method": "PUT",
+      "path": "/api/vehicle/1/health/OIL/confirmation",
+      "operation_id": "put_api_vehicle_vehicle_health_metric_confirmation",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "reconfirm_replay",
+      "method": "PUT",
+      "path": "/api/vehicle/1/health/OIL/confirmation",
+      "operation_id": "put_api_vehicle_vehicle_health_metric_confirmation",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "reconfirm_malformed",
+      "method": "PUT",
+      "path": "/api/vehicle/1/health/OIL/confirmation",
+      "operation_id": "put_api_vehicle_vehicle_health_metric_confirmation",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "reconfirm_anonymous",
+      "method": "PUT",
+      "path": "/api/vehicle/1/health/OIL/confirmation",
+      "operation_id": "put_api_vehicle_vehicle_health_metric_confirmation",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "reconfirm_wrong_role",
+      "method": "PUT",
+      "path": "/api/vehicle/1/health/OIL/confirmation",
+      "operation_id": "put_api_vehicle_vehicle_health_metric_confirmation",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_requires_confirmation",
+      "method": "PUT",
+      "path": "/api/archive/2/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "replace_source",
+      "method": "PUT",
+      "path": "/api/archive/2/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "replace_source_replay",
+      "method": "PUT",
+      "path": "/api/archive/2/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "replace_source_malformed",
+      "method": "PUT",
+      "path": "/api/archive/2/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "replace_source_anonymous",
+      "method": "PUT",
+      "path": "/api/archive/2/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "replace_source_wrong_role",
+      "method": "PUT",
+      "path": "/api/archive/2/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "source_change_invalidates_confirmation",
+      "method": "GET",
+      "path": "/api/vehicle/1/health-dashboard",
+      "operation_id": "get_api_vehicle_vehicle_health_dashboard",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "cannot_clear_different_source",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "clear",
+      "method": "PUT",
+      "path": "/api/archive/2/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "clear_replay",
+      "method": "PUT",
+      "path": "/api/archive/2/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "clear_malformed",
+      "method": "PUT",
+      "path": "/api/archive/2/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "clear_anonymous",
+      "method": "PUT",
+      "path": "/api/archive/2/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "clear_wrong_role",
+      "method": "PUT",
+      "path": "/api/archive/2/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "double_clear_rejected",
+      "method": "PUT",
+      "path": "/api/archive/2/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "history",
+      "method": "GET",
+      "path": "/api/vehicle/health-observation-history",
+      "operation_id": "get_api_vehicle_health_observation_history",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "history_boundary",
+      "method": "GET",
+      "path": "/api/vehicle/health-observation-history",
+      "operation_id": "get_api_vehicle_health_observation_history",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "history_error",
+      "method": "GET",
+      "path": "/api/vehicle/health-observation-history",
+      "operation_id": "get_api_vehicle_health_observation_history",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "history_anonymous",
+      "method": "GET",
+      "path": "/api/vehicle/health-observation-history",
+      "operation_id": "get_api_vehicle_health_observation_history",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "history_wrong_role",
+      "method": "GET",
+      "path": "/api/vehicle/health-observation-history",
+      "operation_id": "get_api_vehicle_health_observation_history",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "history_older_page",
+      "method": "GET",
+      "path": "/api/vehicle/health-observation-history",
+      "operation_id": "get_api_vehicle_health_observation_history",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "history_foreign",
+      "method": "GET",
+      "path": "/api/vehicle/health-observation-history",
+      "operation_id": "get_api_vehicle_health_observation_history",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "coolant_negative",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "coolant_negative_replay",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "coolant_negative_malformed",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "coolant_negative_anonymous",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "coolant_negative_wrong_role",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "coolant_clear",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "coolant_clear_replay",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "coolant_clear_malformed",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "coolant_clear_anonymous",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "coolant_clear_wrong_role",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "percentage_maximum",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "percentage_maximum_replay",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "percentage_maximum_malformed",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "percentage_maximum_anonymous",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "percentage_maximum_wrong_role",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "policy_withdraw",
+      "method": "PUT",
+      "path": "/api/admin/health-policies/1/OIL",
+      "operation_id": "put_api_admin_health_policies_model_metric",
+      "kind": "normal",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 4
+    },
+    {
+      "name": "policy_withdraw_replay",
+      "method": "PUT",
+      "path": "/api/admin/health-policies/1/OIL",
+      "operation_id": "put_api_admin_health_policies_model_metric",
+      "kind": "boundary",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 4
+    },
+    {
+      "name": "policy_withdraw_malformed",
+      "method": "PUT",
+      "path": "/api/admin/health-policies/1/OIL",
+      "operation_id": "put_api_admin_health_policies_model_metric",
+      "kind": "error",
+      "status": 400,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "policy_withdraw_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/health-policies/1/OIL",
+      "operation_id": "put_api_admin_health_policies_model_metric",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_withdraw_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/health-policies/1/OIL",
+      "operation_id": "put_api_admin_health_policies_model_metric",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "old_policy_receipt",
+      "method": "PUT",
+      "path": "/api/admin/health-policies/1/OIL",
+      "operation_id": "put_api_admin_health_policies_model_metric",
+      "kind": "boundary",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 4
+    },
+    {
+      "name": "policy_stays_withdrawn",
+      "method": "GET",
+      "path": "/api/admin/health-policies/1/OIL",
+      "operation_id": "get_api_admin_health_policies_model_metric",
+      "kind": "boundary",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 4
+    },
+    {
+      "name": "reminder_empty",
+      "method": "GET",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "get_api_archive_id_reminder",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "reminder_empty_boundary",
+      "method": "GET",
+      "path": "/api/archive/3/reminder",
+      "operation_id": "get_api_archive_id_reminder",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "reminder_empty_error",
+      "method": "GET",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "get_api_archive_id_reminder",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "reminder_empty_anonymous",
+      "method": "GET",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "get_api_archive_id_reminder",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "reminder_empty_wrong_role",
+      "method": "GET",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "get_api_archive_id_reminder",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "reminder_due",
+      "method": "PUT",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "reminder_due_replay",
+      "method": "PUT",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "reminder_due_malformed",
+      "method": "PUT",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "reminder_due_anonymous",
+      "method": "PUT",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "reminder_due_wrong_role",
+      "method": "PUT",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "reminders",
+      "method": "GET",
+      "path": "/api/vehicle/reminders",
+      "operation_id": "get_api_vehicle_reminders",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "reminders_boundary",
+      "method": "GET",
+      "path": "/api/vehicle/reminders",
+      "operation_id": "get_api_vehicle_reminders",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "reminders_error",
+      "method": "GET",
+      "path": "/api/vehicle/reminders",
+      "operation_id": "get_api_vehicle_reminders",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "reminders_anonymous",
+      "method": "GET",
+      "path": "/api/vehicle/reminders",
+      "operation_id": "get_api_vehicle_reminders",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "reminders_wrong_role",
+      "method": "GET",
+      "path": "/api/vehicle/reminders",
+      "operation_id": "get_api_vehicle_reminders",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "reminder_stale",
+      "method": "PUT",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "reminder_foreign",
+      "method": "PUT",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "reminder_planned",
+      "method": "PUT",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "reminder_planned_replay",
+      "method": "PUT",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "reminder_planned_malformed",
+      "method": "PUT",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "reminder_planned_anonymous",
+      "method": "PUT",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "reminder_planned_wrong_role",
+      "method": "PUT",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "reminder_planned_read",
+      "method": "GET",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "get_api_archive_id_reminder",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "preference",
+      "method": "PUT",
+      "path": "/api/vehicle/1/reminder-preference",
+      "operation_id": "put_api_vehicle_vehicle_reminder_preference",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "preference_replay",
+      "method": "PUT",
+      "path": "/api/vehicle/1/reminder-preference",
+      "operation_id": "put_api_vehicle_vehicle_reminder_preference",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "preference_malformed",
+      "method": "PUT",
+      "path": "/api/vehicle/1/reminder-preference",
+      "operation_id": "put_api_vehicle_vehicle_reminder_preference",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "preference_anonymous",
+      "method": "PUT",
+      "path": "/api/vehicle/1/reminder-preference",
+      "operation_id": "put_api_vehicle_vehicle_reminder_preference",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "preference_wrong_role",
+      "method": "PUT",
+      "path": "/api/vehicle/1/reminder-preference",
+      "operation_id": "put_api_vehicle_vehicle_reminder_preference",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "preference_stale",
+      "method": "PUT",
+      "path": "/api/vehicle/1/reminder-preference",
+      "operation_id": "put_api_vehicle_vehicle_reminder_preference",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "preference_foreign",
+      "method": "PUT",
+      "path": "/api/vehicle/2/reminder-preference",
+      "operation_id": "put_api_vehicle_vehicle_reminder_preference",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "early_reminder",
+      "method": "GET",
+      "path": "/api/vehicle/1/health-dashboard",
+      "operation_id": "get_api_vehicle_vehicle_health_dashboard",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "disable_reminder",
+      "method": "PUT",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "disable_reminder_replay",
+      "method": "PUT",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "disable_reminder_malformed",
+      "method": "PUT",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "disable_reminder_anonymous",
+      "method": "PUT",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "disable_reminder_wrong_role",
+      "method": "PUT",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "insurance_due",
+      "method": "PUT",
+      "path": "/api/archive/4/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "insurance_due_replay",
+      "method": "PUT",
+      "path": "/api/archive/4/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "insurance_due_malformed",
+      "method": "PUT",
+      "path": "/api/archive/4/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "insurance_due_anonymous",
+      "method": "PUT",
+      "path": "/api/archive/4/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "insurance_due_wrong_role",
+      "method": "PUT",
+      "path": "/api/archive/4/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "insurance_mileage_rejected",
+      "method": "PUT",
+      "path": "/api/archive/4/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "inspection_planned",
+      "method": "PUT",
+      "path": "/api/archive/5/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "inspection_planned_replay",
+      "method": "PUT",
+      "path": "/api/archive/5/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "inspection_planned_malformed",
+      "method": "PUT",
+      "path": "/api/archive/5/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "inspection_planned_anonymous",
+      "method": "PUT",
+      "path": "/api/archive/5/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "inspection_planned_wrong_role",
+      "method": "PUT",
+      "path": "/api/archive/5/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "inspection_disable",
+      "method": "PUT",
+      "path": "/api/archive/5/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "inspection_disable_replay",
+      "method": "PUT",
+      "path": "/api/archive/5/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "inspection_disable_malformed",
+      "method": "PUT",
+      "path": "/api/archive/5/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "inspection_disable_anonymous",
+      "method": "PUT",
+      "path": "/api/archive/5/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "inspection_disable_wrong_role",
+      "method": "PUT",
+      "path": "/api/archive/5/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "final_reminders",
+      "method": "GET",
+      "path": "/api/vehicle/reminders",
+      "operation_id": "get_api_vehicle_reminders",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "foreign_vehicle_unchanged",
+      "method": "GET",
+      "path": "/api/vehicle/health-observations",
+      "operation_id": "get_api_vehicle_health_observations",
+      "kind": "unauthorized",
+      "status": 200,
+      "role": "other",
+      "assertions": 4
+    },
+    {
+      "name": "health_list_duplicate",
+      "method": "GET",
+      "path": "/api/vehicle/health-observations",
+      "operation_id": "get_api_vehicle_health_observations",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "health_context_duplicate",
+      "method": "GET",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "get_api_archive_id_health_observation",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "health_context_unknown",
+      "method": "GET",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "get_api_archive_id_health_observation",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "history_duplicate_vehicle",
+      "method": "GET",
+      "path": "/api/vehicle/health-observation-history",
+      "operation_id": "get_api_vehicle_health_observation_history",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "history_duplicate_metric",
+      "method": "GET",
+      "path": "/api/vehicle/health-observation-history",
+      "operation_id": "get_api_vehicle_health_observation_history",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "history_duplicate_cursor",
+      "method": "GET",
+      "path": "/api/vehicle/health-observation-history",
+      "operation_id": "get_api_vehicle_health_observation_history",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "history_duplicate_limit",
+      "method": "GET",
+      "path": "/api/vehicle/health-observation-history",
+      "operation_id": "get_api_vehicle_health_observation_history",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "history_unknown_selector",
+      "method": "GET",
+      "path": "/api/vehicle/health-observation-history",
+      "operation_id": "get_api_vehicle_health_observation_history",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "reminders_duplicate",
+      "method": "GET",
+      "path": "/api/vehicle/reminders",
+      "operation_id": "get_api_vehicle_reminders",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "structured_query",
+      "method": "PUT",
+      "path": "/api/archive/1/structured",
+      "operation_id": "put_api_archive_id_structured",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "observation_query",
+      "method": "PUT",
+      "path": "/api/archive/1/health-observation",
+      "operation_id": "put_api_archive_id_health_observation",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "reminder_query",
+      "method": "PUT",
+      "path": "/api/archive/1/reminder",
+      "operation_id": "put_api_archive_id_reminder",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    }
+  ]
+}
