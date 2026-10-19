@@ -37,3 +37,8 @@ Java定向执行3分23秒PASS：JdbcInviteDiagnosisPoliciesTest 48项（含继�
 - [Java定向与默认禁发摘要](../testing/reports/R9_A4D2F1_JAVA_REGRESSION_2026_10_19.json)
 - 本轮交付真实HTTP验收资产和CI门禁，生产路径按既有邀请实现执行；完整远程CI以新PR为准。
 - 源码SHA256：`319ce95b3f62f5f9ee933568d548cb8df1f5f006c9744c79d85635ca2cf64443`；集合SHA256：`a0512cacfba5e3da22cff67a2e8b91acb4b5c03242126124fb143593a913d582`。
+
+
+## GitHub交付
+
+本阶段成果已上传 [PR178](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/178)，验收代码 `dc25914`，依赖PR177；本轮完整远程CI待结束，保持草稿，不合并或部署。
