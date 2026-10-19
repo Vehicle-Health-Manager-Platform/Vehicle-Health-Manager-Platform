@@ -62,6 +62,9 @@ jobs:
       - name: Check real private upload and signed attachment journey
         if: always()
         run: python scripts/run_upload_acceptance.py --check-only
+      - name: Check invitation qualification freeze and scheduled reward delivery
+        if: always()
+        run: python scripts/run_reward_acceptance.py --check-only
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -102,6 +105,7 @@ jobs:
           path: |
             .cache/api-acceptance-*/report.json
             backend/target/private-upload-acceptance.json
+            backend/target/invitation-reward-acceptance.json
       - name: Save coverage and test evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -153,6 +157,7 @@ jobs:
       - run: python -m unittest discover -s scripts -p test_invitation_api_cases.py -v
       - run: python -m pip install -r scripts/requirements-export-qa.txt
       - run: python -m unittest discover -s scripts -p test_upload_acceptance.py -v
+      - run: python -m unittest discover -s scripts -p test_reward_acceptance.py -v
       - run: python scripts/export_api_cases.py
       - run: python -m unittest discover -s scripts -p test_export_api_cases.py -v
       - run: git diff --exit-code -- docs/testing/postman/

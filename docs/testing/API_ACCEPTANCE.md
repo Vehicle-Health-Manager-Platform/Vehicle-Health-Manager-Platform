@@ -134,3 +134,7 @@ KNOWLEDGE_AI_ENABLED与COMMUNITY_PUBLICATION_ENABLED明确false，真实公开�
 ## A4d-2f1 邀请关系与月度资格
 
 `python scripts/run_api_acceptance.py --invitation-cases` 覆盖9项推广码/本人归因/车主和员工记录进度、5项月度解锁政策及资格，共14接口136请求462断言。SQL合成19条归因/15条手机号证据与实际HTTP码/规则变更，核对唯一性、隐私、他人隔离、月度计数及政策CAS/停用/未来窗口。默认禁发；真实注册/电话核验和奖励发券另行验收。见[执行](../progress/R9_A4D2F1_INVITATION_MONTHLY_API_EXECUTION.md)。
+
+## A4d-2f2 奖励政策、资格冻结与定时发券
+
+`python scripts/run_reward_acceptance.py --docker` 使用真实Spring HTTP/MySQL旅程，14接口144请求及16项状态/事务/隐私不变量。HTTP发布政策前后调用生产资格bean接收明确合成的上游结果，真实定时worker执行审计失败回滚、退避到期重试、旧政策快照、缺库存不部分发券、停用来源及员工单边奖励。JUnit/Python绑定主程序与资源/测试/迁移/运行器源码，CI clean verify后--check-only只验本次证据，容器未移除不得通过。真实微信/电话供应商仍未验。见[执行](../progress/R9_A4D2F2_INVITATION_REWARD_API_EXECUTION.md)。

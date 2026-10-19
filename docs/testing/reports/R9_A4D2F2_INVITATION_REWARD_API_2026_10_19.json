@@ -1,0 +1,1570 @@
+{
+  "version": 1,
+  "passed": true,
+  "full_api_acceptance_passed": false,
+  "finished_at": "2026-10-19T14:25:24.258699+00:00",
+  "duration_seconds": 184.0,
+  "source_sha256": "51174c7b542debe3fc716b0e238d269b46b958606a297da8d1bee08fa4b26e0a",
+  "sources_unchanged": true,
+  "maven_exit_code": 0,
+  "execution_mode": "local-execution",
+  "proof": {
+    "requests": 144,
+    "operations": 14,
+    "coverage": {
+      "POST /api/invite/code": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "POST /api/merchant/invite/code": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/admin/invite/reward-policies": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/admin/invite/reward-coupons": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/invite/reward-policy": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "POST /api/merchant/coupons": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "PUT /api/merchant/coupons/{id}/status": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "PUT /api/admin/coupons/{id}/pool": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "POST /api/admin/invite/reward-policies": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "PUT /api/admin/invite/reward-policies/{id}": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "PUT /api/admin/invite/reward-policies/{id}/status": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/invite/rewards": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/merchant/invite/rewards": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/coupon/mine": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ]
+    },
+    "checks": {
+      "missing_policy_is_terminal": true,
+      "audit_failure_rolls_back_entire_pair": true,
+      "policy_snapshot_frozen": true,
+      "retry_uses_old_snapshot_once": true,
+      "insufficient_stock_never_partially_issues": true,
+      "staff_reward_is_invitee_only": true,
+      "test_unknown_and_unverified_phone_have_no_rewards": true,
+      "stopped_source_does_not_issue": true,
+      "recipient_sees_only_own_coupon_id": true,
+      "staff_owner_id_overlap_does_not_leak_coupon": true,
+      "unknown_policy_not_backfilled": true,
+      "final_inventory_and_audit_unique": true,
+      "no_money_or_points": true,
+      "policy_stops_not_undone": true,
+      "completed_batches_never_issue_twice": true,
+      "public_projection_has_no_identity_evidence": true
+    },
+    "cleanup": {
+      "mysql": true
+    },
+    "cases": [
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/invite/code",
+        "role": "owner",
+        "operation": "/api/invite/code",
+        "name": "owner_code"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/invite/code",
+        "role": "owner",
+        "operation": "/api/invite/code",
+        "name": "owner_code_replay"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/invite/code",
+        "role": "owner",
+        "operation": "/api/invite/code",
+        "name": "owner_code_invalid"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/invite/code",
+        "role": "anonymous",
+        "operation": "/api/invite/code",
+        "name": "owner_code_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/invite/code",
+        "role": "merchant",
+        "operation": "/api/invite/code",
+        "name": "owner_code_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/merchant/invite/code",
+        "role": "merchant",
+        "operation": "/api/merchant/invite/code",
+        "name": "staff_code"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/merchant/invite/code",
+        "role": "merchant",
+        "operation": "/api/merchant/invite/code",
+        "name": "staff_code_replay"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/merchant/invite/code",
+        "role": "merchant",
+        "operation": "/api/merchant/invite/code",
+        "name": "staff_code_invalid"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/merchant/invite/code",
+        "role": "anonymous",
+        "operation": "/api/merchant/invite/code",
+        "name": "staff_code_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/merchant/invite/code",
+        "role": "owner",
+        "operation": "/api/merchant/invite/code",
+        "name": "staff_code_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/admin/invite/reward-policies",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "empty_policies"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/admin/invite/reward-policies?page=1000000",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "empty_policies_boundary"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/admin/invite/reward-policies?user_id=2",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "empty_policies_invalid"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies",
+        "role": "anonymous",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "empty_policies_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies",
+        "role": "owner",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "empty_policies_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/admin/invite/reward-coupons",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-coupons",
+        "name": "empty_sources"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/admin/invite/reward-coupons?page=1000000",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-coupons",
+        "name": "empty_sources_boundary"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/admin/invite/reward-coupons?user_id=2",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-coupons",
+        "name": "empty_sources_invalid"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-coupons",
+        "role": "anonymous",
+        "operation": "/api/admin/invite/reward-coupons",
+        "name": "empty_sources_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-coupons",
+        "role": "owner",
+        "operation": "/api/admin/invite/reward-coupons",
+        "name": "empty_sources_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/invite/reward-policy?scope=OWNER",
+        "role": "owner",
+        "operation": "/api/invite/reward-policy",
+        "name": "empty_current"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/invite/reward-policy?scope=STAFF",
+        "role": "owner",
+        "operation": "/api/invite/reward-policy",
+        "name": "empty_current_boundary"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/invite/reward-policy?scope=OWNER&user_id=2",
+        "role": "owner",
+        "operation": "/api/invite/reward-policy",
+        "name": "empty_current_invalid"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/invite/reward-policy?scope=OWNER",
+        "role": "anonymous",
+        "operation": "/api/invite/reward-policy",
+        "name": "empty_current_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/invite/reward-policy?scope=OWNER",
+        "role": "merchant",
+        "operation": "/api/invite/reward-policy",
+        "name": "empty_current_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/merchant/coupons",
+        "role": "merchant",
+        "operation": "/api/merchant/coupons",
+        "name": "coupon_1"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/merchant/coupons",
+        "role": "merchant",
+        "operation": "/api/merchant/coupons",
+        "name": "coupon_1_replay"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/merchant/coupons",
+        "role": "merchant",
+        "operation": "/api/merchant/coupons",
+        "name": "coupon_1_invalid"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/merchant/coupons",
+        "role": "anonymous",
+        "operation": "/api/merchant/coupons",
+        "name": "coupon_1_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/merchant/coupons",
+        "role": "owner",
+        "operation": "/api/merchant/coupons",
+        "name": "coupon_1_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/merchant/coupons/1/status",
+        "role": "merchant",
+        "operation": "/api/merchant/coupons/{id}/status",
+        "name": "coupon_publish_1"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/merchant/coupons/1/status",
+        "role": "merchant",
+        "operation": "/api/merchant/coupons/{id}/status",
+        "name": "coupon_publish_1_replay"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/merchant/coupons/1/status",
+        "role": "merchant",
+        "operation": "/api/merchant/coupons/{id}/status",
+        "name": "coupon_publish_1_invalid"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/merchant/coupons/1/status",
+        "role": "anonymous",
+        "operation": "/api/merchant/coupons/{id}/status",
+        "name": "coupon_publish_1_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/merchant/coupons/1/status",
+        "role": "owner",
+        "operation": "/api/merchant/coupons/{id}/status",
+        "name": "coupon_publish_1_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/admin/coupons/1/pool",
+        "role": "coupon",
+        "operation": "/api/admin/coupons/{id}/pool",
+        "name": "coupon_pool_1"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/admin/coupons/1/pool",
+        "role": "coupon",
+        "operation": "/api/admin/coupons/{id}/pool",
+        "name": "coupon_pool_1_replay"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/admin/coupons/1/pool",
+        "role": "coupon",
+        "operation": "/api/admin/coupons/{id}/pool",
+        "name": "coupon_pool_1_invalid"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/admin/coupons/1/pool",
+        "role": "anonymous",
+        "operation": "/api/admin/coupons/{id}/pool",
+        "name": "coupon_pool_1_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/admin/coupons/1/pool",
+        "role": "owner",
+        "operation": "/api/admin/coupons/{id}/pool",
+        "name": "coupon_pool_1_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/merchant/coupons",
+        "role": "merchant",
+        "operation": "/api/merchant/coupons",
+        "name": "coupon_2"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/merchant/coupons",
+        "role": "merchant",
+        "operation": "/api/merchant/coupons",
+        "name": "coupon_2_replay"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/merchant/coupons",
+        "role": "merchant",
+        "operation": "/api/merchant/coupons",
+        "name": "coupon_2_invalid"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/merchant/coupons",
+        "role": "anonymous",
+        "operation": "/api/merchant/coupons",
+        "name": "coupon_2_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/merchant/coupons",
+        "role": "owner",
+        "operation": "/api/merchant/coupons",
+        "name": "coupon_2_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/merchant/coupons/2/status",
+        "role": "merchant",
+        "operation": "/api/merchant/coupons/{id}/status",
+        "name": "coupon_publish_2"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/merchant/coupons/2/status",
+        "role": "merchant",
+        "operation": "/api/merchant/coupons/{id}/status",
+        "name": "coupon_publish_2_replay"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/merchant/coupons/2/status",
+        "role": "merchant",
+        "operation": "/api/merchant/coupons/{id}/status",
+        "name": "coupon_publish_2_invalid"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/merchant/coupons/2/status",
+        "role": "anonymous",
+        "operation": "/api/merchant/coupons/{id}/status",
+        "name": "coupon_publish_2_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/merchant/coupons/2/status",
+        "role": "owner",
+        "operation": "/api/merchant/coupons/{id}/status",
+        "name": "coupon_publish_2_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/admin/coupons/2/pool",
+        "role": "coupon",
+        "operation": "/api/admin/coupons/{id}/pool",
+        "name": "coupon_pool_2"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/admin/coupons/2/pool",
+        "role": "coupon",
+        "operation": "/api/admin/coupons/{id}/pool",
+        "name": "coupon_pool_2_replay"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/admin/coupons/2/pool",
+        "role": "coupon",
+        "operation": "/api/admin/coupons/{id}/pool",
+        "name": "coupon_pool_2_invalid"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/admin/coupons/2/pool",
+        "role": "anonymous",
+        "operation": "/api/admin/coupons/{id}/pool",
+        "name": "coupon_pool_2_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/admin/coupons/2/pool",
+        "role": "owner",
+        "operation": "/api/admin/coupons/{id}/pool",
+        "name": "coupon_pool_2_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/admin/invite/reward-coupons",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-coupons",
+        "name": "selected_sources"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/admin/invite/reward-policies",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "policy_owner"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/admin/invite/reward-policies",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "policy_owner_replay"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/admin/invite/reward-policies",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "policy_owner_invalid"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies",
+        "role": "anonymous",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "policy_owner_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies",
+        "role": "owner",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "policy_owner_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/admin/invite/reward-policies/1",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}",
+        "name": "policy_edit"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/admin/invite/reward-policies/1",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}",
+        "name": "policy_edit_replay"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/admin/invite/reward-policies/1",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}",
+        "name": "policy_edit_invalid"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies/1",
+        "role": "anonymous",
+        "operation": "/api/admin/invite/reward-policies/{id}",
+        "name": "policy_edit_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies/1",
+        "role": "owner",
+        "operation": "/api/admin/invite/reward-policies/{id}",
+        "name": "policy_edit_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 409,
+        "kind": "boundary",
+        "path": "/api/admin/invite/reward-policies/1",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}",
+        "name": "stale_policy"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 404,
+        "kind": "boundary",
+        "path": "/api/admin/invite/reward-policies/999999",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}",
+        "name": "missing_policy"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies",
+        "role": "coupon",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "coupon_cannot_manage"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/admin/invite/reward-policies/1/status",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "owner_publish"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/admin/invite/reward-policies/1/status",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "owner_publish_replay"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/admin/invite/reward-policies/1/status",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "owner_publish_invalid"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies/1/status",
+        "role": "anonymous",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "owner_publish_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies/1/status",
+        "role": "owner",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "owner_publish_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/invite/reward-policy?scope=OWNER",
+        "role": "owner",
+        "operation": "/api/invite/reward-policy",
+        "name": "configured_owner"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/admin/invite/reward-policies",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "policy_replacement"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/admin/invite/reward-policies",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "policy_replacement_replay"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/admin/invite/reward-policies",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "policy_replacement_invalid"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies",
+        "role": "anonymous",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "policy_replacement_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies",
+        "role": "owner",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "policy_replacement_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 409,
+        "kind": "boundary",
+        "path": "/api/admin/invite/reward-policies/2/status",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "unique_active_policy"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/admin/invite/reward-policies/1/status",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "owner_stop"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/admin/invite/reward-policies/1/status",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "owner_stop_replay"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/admin/invite/reward-policies/1/status",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "owner_stop_invalid"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies/1/status",
+        "role": "anonymous",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "owner_stop_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies/1/status",
+        "role": "owner",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "owner_stop_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/admin/invite/reward-policies/1/status",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "old_publish_receipt"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 409,
+        "kind": "boundary",
+        "path": "/api/admin/invite/reward-policies/1/status",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "stopped_cannot_publish"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/admin/invite/reward-policies/2/status",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "replacement_publish"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/admin/invite/reward-policies/2/status",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "replacement_publish_replay"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/admin/invite/reward-policies/2/status",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "replacement_publish_invalid"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies/2/status",
+        "role": "anonymous",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "replacement_publish_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies/2/status",
+        "role": "owner",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "replacement_publish_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/admin/invite/reward-policies",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "policy_staff"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/admin/invite/reward-policies",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "policy_staff_replay"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/admin/invite/reward-policies",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "policy_staff_invalid"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies",
+        "role": "anonymous",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "policy_staff_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies",
+        "role": "owner",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "policy_staff_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/admin/invite/reward-policies/3/status",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "staff_publish"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/admin/invite/reward-policies/3/status",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "staff_publish_replay"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/admin/invite/reward-policies/3/status",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "staff_publish_invalid"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies/3/status",
+        "role": "anonymous",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "staff_publish_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies/3/status",
+        "role": "owner",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "staff_publish_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/merchant/coupons/2/status",
+        "role": "merchant",
+        "operation": "/api/merchant/coupons/{id}/status",
+        "name": "stop_service_source"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/merchant/coupons/2/status",
+        "role": "merchant",
+        "operation": "/api/merchant/coupons/{id}/status",
+        "name": "stop_service_source_replay"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/merchant/coupons/2/status",
+        "role": "merchant",
+        "operation": "/api/merchant/coupons/{id}/status",
+        "name": "stop_service_source_invalid"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/merchant/coupons/2/status",
+        "role": "anonymous",
+        "operation": "/api/merchant/coupons/{id}/status",
+        "name": "stop_service_source_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/merchant/coupons/2/status",
+        "role": "owner",
+        "operation": "/api/merchant/coupons/{id}/status",
+        "name": "stop_service_source_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/invite/reward-policy?scope=OWNER",
+        "role": "owner",
+        "operation": "/api/invite/reward-policy",
+        "name": "current_source_unavailable"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/admin/invite/reward-policies/2/status",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "replacement_stop"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/admin/invite/reward-policies/2/status",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "replacement_stop_replay"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/admin/invite/reward-policies/2/status",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "replacement_stop_invalid"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies/2/status",
+        "role": "anonymous",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "replacement_stop_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies/2/status",
+        "role": "owner",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "replacement_stop_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/admin/invite/reward-policies/3/status",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "staff_stop"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/admin/invite/reward-policies/3/status",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "staff_stop_replay"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/admin/invite/reward-policies/3/status",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "staff_stop_invalid"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies/3/status",
+        "role": "anonymous",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "staff_stop_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "PUT",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/admin/invite/reward-policies/3/status",
+        "role": "owner",
+        "operation": "/api/admin/invite/reward-policies/{id}/status",
+        "name": "staff_stop_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/invite/rewards",
+        "role": "owner",
+        "operation": "/api/invite/rewards",
+        "name": "owner_rewards"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/invite/rewards?page=1000000",
+        "role": "owner",
+        "operation": "/api/invite/rewards",
+        "name": "owner_rewards_boundary"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/invite/rewards?user_id=2",
+        "role": "owner",
+        "operation": "/api/invite/rewards",
+        "name": "owner_rewards_invalid"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/invite/rewards",
+        "role": "anonymous",
+        "operation": "/api/invite/rewards",
+        "name": "owner_rewards_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/invite/rewards",
+        "role": "merchant",
+        "operation": "/api/invite/rewards",
+        "name": "owner_rewards_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/invite/rewards",
+        "role": "recipient",
+        "operation": "/api/invite/rewards",
+        "name": "recipient_rewards"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/merchant/invite/rewards",
+        "role": "merchant",
+        "operation": "/api/merchant/invite/rewards",
+        "name": "staff_rewards"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/merchant/invite/rewards?page=1000000",
+        "role": "merchant",
+        "operation": "/api/merchant/invite/rewards",
+        "name": "staff_rewards_boundary"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/merchant/invite/rewards?user_id=2",
+        "role": "merchant",
+        "operation": "/api/merchant/invite/rewards",
+        "name": "staff_rewards_invalid"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/merchant/invite/rewards",
+        "role": "anonymous",
+        "operation": "/api/merchant/invite/rewards",
+        "name": "staff_rewards_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/merchant/invite/rewards",
+        "role": "owner",
+        "operation": "/api/merchant/invite/rewards",
+        "name": "staff_rewards_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "unauthorized",
+        "path": "/api/invite/rewards",
+        "role": "other",
+        "operation": "/api/invite/rewards",
+        "name": "foreign_owner_rewards"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "unauthorized",
+        "path": "/api/merchant/invite/rewards",
+        "role": "other_merchant",
+        "operation": "/api/merchant/invite/rewards",
+        "name": "foreign_shop_rewards"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/coupon/mine",
+        "role": "owner",
+        "operation": "/api/coupon/mine",
+        "name": "owner_coupon"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/coupon/mine?page=1000000",
+        "role": "owner",
+        "operation": "/api/coupon/mine",
+        "name": "owner_coupon_boundary"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/coupon/mine?user_id=2",
+        "role": "owner",
+        "operation": "/api/coupon/mine",
+        "name": "owner_coupon_invalid"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/coupon/mine",
+        "role": "anonymous",
+        "operation": "/api/coupon/mine",
+        "name": "owner_coupon_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/coupon/mine",
+        "role": "merchant",
+        "operation": "/api/coupon/mine",
+        "name": "owner_coupon_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/coupon/mine",
+        "role": "recipient",
+        "operation": "/api/coupon/mine",
+        "name": "recipient_coupon"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/coupon/mine",
+        "role": "staff_recipient",
+        "operation": "/api/coupon/mine",
+        "name": "staff_recipient_coupon"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/coupon/mine",
+        "role": "waiting",
+        "operation": "/api/coupon/mine",
+        "name": "waiting_coupon"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/admin/invite/reward-policies",
+        "role": "invite",
+        "operation": "/api/admin/invite/reward-policies",
+        "name": "final_policies"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/invite/reward-policy?scope=OWNER",
+        "role": "owner",
+        "operation": "/api/invite/reward-policy",
+        "name": "current_after_stop"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/invite/reward-policy?scope=OWNER&scope=STAFF",
+        "role": "owner",
+        "operation": "/api/invite/reward-policy",
+        "name": "duplicate_scope"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/invite/rewards?page=1&page=2",
+        "role": "owner",
+        "operation": "/api/invite/rewards",
+        "name": "duplicate_page"
+      }
+    ]
+  },
+  "error": null,
+  "boundaries": [
+    "synthetic upstream registration/phone results; real HTTP/MySQL/production qualification freeze and scheduled worker",
+    "test resets next_attempt_at only to simulate retry deadline; production backoff unchanged",
+    "no real identity provider, external supplier, money or device acceptance"
+  ]
+}
