@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import time
 import uuid
+from urllib.parse import urlsplit, parse_qsl
 from generate_api_acceptance import ROOT, OUTPUT, generate
 from run_performance_baseline import Docker, Owned, MySQL, Backend, LABEL, JAR, build_jar, free_port, migration_files
 
@@ -18,6 +19,7 @@ def source_hash():
     paths = sorted((ROOT / 'backend/src/main').rglob('*')) + [ROOT / 'backend/pom.xml', ROOT / 'docs/api/openapi.json']
     paths += sorted((ROOT / 'docs/sql/migrations').glob('*.sql'))
     paths += [ROOT / 'scripts' / n for n in ('run_api_acceptance.py', 'generate_api_acceptance.py', 'run_performance_baseline.py')]
+    paths += [ROOT / 'scripts/owner_api_cases.py']
     value = hashlib.sha256()
     for path in paths:
         if path.is_file(): value.update(path.relative_to(ROOT).as_posix().encode()); value.update(path.read_bytes())
@@ -55,9 +57,41 @@ def counts(mysql):
     return mysql.text(' UNION ALL '.join("SELECT '" + t + "',COUNT(*) FROM `" + t + '`' for t in tables) + ';')
 
 
+def audit_owner_cases(path, collection, manifest, tokens):
+    run = json.loads(path.read_text(encoding='utf-8'))['run']
+    expected = {item['name']: item for item in manifest['items']}
+    requests = {item['name']: item['request'] for item in collection['item']}
+    executions = run['executions']
+    if run.get('failures') or len(executions) != len(expected) or {x['item']['name'] for x in executions} != set(expected):
+        raise ValueError('Missing, duplicate or failed owner API cases')
+    coverage, results = {}, []
+    for execution in executions:
+        case = expected[execution['item']['name']]
+        request = execution['request']; url = request['url']
+        planned = urlsplit(requests[case['name']]['url'].removeprefix('{{base_url}}'))
+        actual_query = sorted((str(x['key']),str(x.get('value',''))) for x in url.get('query',[]) if not x.get('disabled'))
+        if request['method'] != case['method'] or '/'+'/'.join(url['path']) != case['path'] or actual_query != sorted(parse_qsl(planned.query)):
+            raise ValueError('Owner API case targeted a different route/query')
+        auth = [h['value'] for h in request.get('header',[]) if h['key'].lower()=='authorization' and not h.get('disabled')]
+        wanted = [] if case['role']=='anonymous' else ['Bearer '+tokens[case['role']+'_token']]
+        if auth != wanted: raise ValueError('Owner API case used the wrong identity')
+        assertions = execution.get('assertions',[])
+        if execution.get('requestError') or (execution.get('response') or {}).get('code') != case['status']:
+            raise ValueError('Owner API case status differs from expected')
+        if len(assertions) != case['assertions'] or any(a.get('error') or a.get('skipped') for a in assertions):
+            raise ValueError('Missing, skipped or failed owner business assertions')
+        coverage.setdefault(case['operation_id'],set()).add(case['kind'])
+        results.append({'name':case['name'],'operation_id':case['operation_id'],'kind':case['kind'],'status':case['status'],'passed':True})
+    if len(coverage)!=8 or any(kinds!={'normal','boundary','error','unauthorized'} for kinds in coverage.values()):
+        raise ValueError('Owner cases do not cover all four categories of the eight scoped operations')
+    return {'requests':len(results),'assertions':sum(x['assertions'] for x in manifest['items']),'failures':0,
+            'coverage':{key:sorted(value) for key,value in coverage.items()},'cases':results}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--ci-built-jar', action='store_true')
+    parser.add_argument('--owner-cases', action='store_true', help='Also run synthetic owner vehicle/archive business scenarios.')
     args = parser.parse_args()
     run = uuid.uuid4().hex
     work = ROOT / '.cache' / ('api-acceptance-' + run[:12]); work.mkdir(parents=True)
@@ -77,6 +111,13 @@ def main():
         if len(expected) != 338: raise ValueError('Review changed anonymous acceptance scope')
         report['contract_operations'] = assets['acceptance_inventory.json']['operations']
         report['collection_sha256'] = hashlib.sha256((OUTPUT / 'anonymous.postman_collection.json').read_bytes()).hexdigest()
+        owner_collection = owner_manifest = None
+        if args.owner_cases:
+            from owner_api_cases import assets as owner_assets, OUTPUT as OWNER_OUTPUT, MANIFEST as OWNER_MANIFEST
+            owner_collection, owner_manifest = owner_assets()
+            for path,data in [(OWNER_OUTPUT,owner_collection),(OWNER_MANIFEST,owner_manifest)]:
+                if json.loads(path.read_text(encoding='utf-8')) != data: raise ValueError('Owner API assets are stale')
+            report['owner_collection_sha256'] = hashlib.sha256(OWNER_OUTPUT.read_bytes()).hexdigest()
         if args.ci_built_jar:
             if os.environ.get('CI') != 'true' or not JAR.is_file(): raise ValueError('Existing jar is restricted to CI after clean verify')
             sources = [p for p in (ROOT / 'backend/src/main').rglob('*') if p.is_file()] + [ROOT / 'backend/pom.xml']
@@ -87,8 +128,13 @@ def main():
         print('API acceptance: start new owned stack', flush=True)
         network.id = Docker.run(['network', 'create', '--label', LABEL+'='+run, network.name]).stdout.decode().strip()
         network.guard(); mysql.start(); mysql.migrate(migration_files())
+        secret = secrets.token_hex(24)
+        owner_tokens = None
+        if args.owner_cases:
+            from owner_api_cases import seed
+            owner_tokens = seed(mysql,secret)
         before = counts(mysql)
-        port = free_port(); backend = Backend(run, network, port, secrets.token_hex(24), 10)
+        port = free_port(); backend = Backend(run, network, port, secret, 10)
         backend.start(mysql); backend.wait_healthy()
         npm = shutil.which('npm.cmd' if os.name == 'nt' else 'npm')
         if not npm: raise ValueError('Node/npm required for Newman')
@@ -114,6 +160,23 @@ def main():
         report['prepared_default_disabled_verified'] = True
         report['business_table_counts_unchanged'] = before == counts(mysql)
         if not report['business_table_counts_unchanged']: raise ValueError('Anonymous requests changed table row counts')
+        if args.owner_cases:
+            from owner_api_cases import verify_database
+            environment = work / 'owner-environment.private.json'
+            environment.write_text(json.dumps({'name':'isolated owner case identities','values':[
+                {'key':k,'value':v,'enabled':True} for k,v in owner_tokens.items()]}),encoding='utf-8')
+            owner_raw = work / 'owner-newman.private.json'
+            owner_command = [str(OWNER_OUTPUT) if v==str(OUTPUT / 'anonymous.postman_collection.json')
+                             else str(owner_raw) if v==str(raw) else v for v in command]
+            owner_command += ['--environment',str(environment)]
+            print('API acceptance: owner vehicle/archive business cases',flush=True)
+            with (work / 'owner-newman.private.log').open('wb') as log:
+                owner_run = subprocess.run(owner_command,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT,timeout=600,shell=False)
+            report['owner_newman_exit_code'] = owner_run.returncode
+            if owner_run.returncode: raise ValueError('Owner Newman scenarios failed; inspect local private report')
+            report['owner_evidence'] = audit_owner_cases(owner_raw,owner_collection,owner_manifest,owner_tokens)
+            report['owner_database'] = verify_database(mysql)
+            report['scope'] = 'anonymous authentication plus eight owner vehicle/archive business operations'
         report['sources_unchanged'] = report['source_sha256'] == source_hash()
         if not report['sources_unchanged']: raise ValueError('Acceptance sources changed during execution')
         report['passed'] = True

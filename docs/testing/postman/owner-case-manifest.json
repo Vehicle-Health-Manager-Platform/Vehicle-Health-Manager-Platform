@@ -1,0 +1,617 @@
+{
+  "version": 1,
+  "cases": 61,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "brand_normal",
+      "method": "GET",
+      "path": "/api/brand/list",
+      "operation_id": "get_api_brand_list",
+      "kind": "normal",
+      "status": 200,
+      "assertions": 4,
+      "role": "owner"
+    },
+    {
+      "name": "brand_empty_page",
+      "method": "GET",
+      "path": "/api/brand/list",
+      "operation_id": "get_api_brand_list",
+      "kind": "boundary",
+      "status": 200,
+      "assertions": 4,
+      "role": "owner"
+    },
+    {
+      "name": "brand_bad_size",
+      "method": "GET",
+      "path": "/api/brand/list",
+      "operation_id": "get_api_brand_list",
+      "kind": "error",
+      "status": 400,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "brand_anonymous",
+      "method": "GET",
+      "path": "/api/brand/list",
+      "operation_id": "get_api_brand_list",
+      "kind": "unauthorized",
+      "status": 401,
+      "assertions": 3,
+      "role": "anonymous"
+    },
+    {
+      "name": "brand_wrong_role",
+      "method": "GET",
+      "path": "/api/brand/list",
+      "operation_id": "get_api_brand_list",
+      "kind": "unauthorized",
+      "status": 403,
+      "assertions": 3,
+      "role": "merchant"
+    },
+    {
+      "name": "series_normal",
+      "method": "GET",
+      "path": "/api/series/list",
+      "operation_id": "get_api_series_list",
+      "kind": "normal",
+      "status": 200,
+      "assertions": 4,
+      "role": "owner"
+    },
+    {
+      "name": "series_empty_page",
+      "method": "GET",
+      "path": "/api/series/list",
+      "operation_id": "get_api_series_list",
+      "kind": "boundary",
+      "status": 200,
+      "assertions": 4,
+      "role": "owner"
+    },
+    {
+      "name": "series_bad_size",
+      "method": "GET",
+      "path": "/api/series/list",
+      "operation_id": "get_api_series_list",
+      "kind": "error",
+      "status": 400,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "series_anonymous",
+      "method": "GET",
+      "path": "/api/series/list",
+      "operation_id": "get_api_series_list",
+      "kind": "unauthorized",
+      "status": 401,
+      "assertions": 3,
+      "role": "anonymous"
+    },
+    {
+      "name": "series_wrong_role",
+      "method": "GET",
+      "path": "/api/series/list",
+      "operation_id": "get_api_series_list",
+      "kind": "unauthorized",
+      "status": 403,
+      "assertions": 3,
+      "role": "merchant"
+    },
+    {
+      "name": "model_normal",
+      "method": "GET",
+      "path": "/api/model/list",
+      "operation_id": "get_api_model_list",
+      "kind": "normal",
+      "status": 200,
+      "assertions": 4,
+      "role": "owner"
+    },
+    {
+      "name": "model_empty_page",
+      "method": "GET",
+      "path": "/api/model/list",
+      "operation_id": "get_api_model_list",
+      "kind": "boundary",
+      "status": 200,
+      "assertions": 4,
+      "role": "owner"
+    },
+    {
+      "name": "model_bad_size",
+      "method": "GET",
+      "path": "/api/model/list",
+      "operation_id": "get_api_model_list",
+      "kind": "error",
+      "status": 400,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "model_anonymous",
+      "method": "GET",
+      "path": "/api/model/list",
+      "operation_id": "get_api_model_list",
+      "kind": "unauthorized",
+      "status": 401,
+      "assertions": 3,
+      "role": "anonymous"
+    },
+    {
+      "name": "model_wrong_role",
+      "method": "GET",
+      "path": "/api/model/list",
+      "operation_id": "get_api_model_list",
+      "kind": "unauthorized",
+      "status": 403,
+      "assertions": 3,
+      "role": "merchant"
+    },
+    {
+      "name": "vehicle_create",
+      "method": "POST",
+      "path": "/api/vehicle/add",
+      "operation_id": "post_api_vehicle_add",
+      "kind": "normal",
+      "status": 200,
+      "assertions": 4,
+      "role": "owner"
+    },
+    {
+      "name": "vehicle_replay",
+      "method": "POST",
+      "path": "/api/vehicle/add",
+      "operation_id": "post_api_vehicle_add",
+      "kind": "boundary",
+      "status": 200,
+      "assertions": 4,
+      "role": "owner"
+    },
+    {
+      "name": "vehicle_changed_intent",
+      "method": "POST",
+      "path": "/api/vehicle/add",
+      "operation_id": "post_api_vehicle_add",
+      "kind": "error",
+      "status": 400,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "vehicle_duplicate",
+      "method": "POST",
+      "path": "/api/vehicle/add",
+      "operation_id": "post_api_vehicle_add",
+      "kind": "error",
+      "status": 409,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "vehicle_negative_mileage",
+      "method": "POST",
+      "path": "/api/vehicle/add",
+      "operation_id": "post_api_vehicle_add",
+      "kind": "boundary",
+      "status": 400,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "vehicle_integer_overflow",
+      "method": "POST",
+      "path": "/api/vehicle/add",
+      "operation_id": "post_api_vehicle_add",
+      "kind": "boundary",
+      "status": 400,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "vehicle_invalid_vin",
+      "method": "POST",
+      "path": "/api/vehicle/add",
+      "operation_id": "post_api_vehicle_add",
+      "kind": "error",
+      "status": 400,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "vehicle_unknown_model",
+      "method": "POST",
+      "path": "/api/vehicle/add",
+      "operation_id": "post_api_vehicle_add",
+      "kind": "error",
+      "status": 404,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "vehicle_missing_key",
+      "method": "POST",
+      "path": "/api/vehicle/add",
+      "operation_id": "post_api_vehicle_add",
+      "kind": "error",
+      "status": 400,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "vehicle_create_anonymous",
+      "method": "POST",
+      "path": "/api/vehicle/add",
+      "operation_id": "post_api_vehicle_add",
+      "kind": "unauthorized",
+      "status": 401,
+      "assertions": 3,
+      "role": "anonymous"
+    },
+    {
+      "name": "vehicle_create_wrong_role",
+      "method": "POST",
+      "path": "/api/vehicle/add",
+      "operation_id": "post_api_vehicle_add",
+      "kind": "unauthorized",
+      "status": 403,
+      "assertions": 3,
+      "role": "merchant"
+    },
+    {
+      "name": "vehicles_normal",
+      "method": "GET",
+      "path": "/api/vehicle/list",
+      "operation_id": "get_api_vehicle_list",
+      "kind": "normal",
+      "status": 200,
+      "assertions": 5,
+      "role": "owner"
+    },
+    {
+      "name": "vehicles_other_owner",
+      "method": "GET",
+      "path": "/api/vehicle/list",
+      "operation_id": "get_api_vehicle_list",
+      "kind": "unauthorized",
+      "status": 200,
+      "assertions": 4,
+      "role": "other"
+    },
+    {
+      "name": "vehicles_page_boundary",
+      "method": "GET",
+      "path": "/api/vehicle/list",
+      "operation_id": "get_api_vehicle_list",
+      "kind": "boundary",
+      "status": 200,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "vehicles_invalid_page",
+      "method": "GET",
+      "path": "/api/vehicle/list",
+      "operation_id": "get_api_vehicle_list",
+      "kind": "error",
+      "status": 400,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "vehicles_anonymous",
+      "method": "GET",
+      "path": "/api/vehicle/list",
+      "operation_id": "get_api_vehicle_list",
+      "kind": "unauthorized",
+      "status": 401,
+      "assertions": 3,
+      "role": "anonymous"
+    },
+    {
+      "name": "vehicles_wrong_role",
+      "method": "GET",
+      "path": "/api/vehicle/list",
+      "operation_id": "get_api_vehicle_list",
+      "kind": "unauthorized",
+      "status": 403,
+      "assertions": 3,
+      "role": "merchant"
+    },
+    {
+      "name": "plate_owned",
+      "method": "POST",
+      "path": "/api/vehicle/match-plate",
+      "operation_id": "generated_post_fe032ea229a821bb",
+      "kind": "normal",
+      "status": 200,
+      "assertions": 4,
+      "role": "owner"
+    },
+    {
+      "name": "plate_other_owner",
+      "method": "POST",
+      "path": "/api/vehicle/match-plate",
+      "operation_id": "generated_post_fe032ea229a821bb",
+      "kind": "unauthorized",
+      "status": 200,
+      "assertions": 4,
+      "role": "other"
+    },
+    {
+      "name": "plate_no_match",
+      "method": "POST",
+      "path": "/api/vehicle/match-plate",
+      "operation_id": "generated_post_fe032ea229a821bb",
+      "kind": "boundary",
+      "status": 200,
+      "assertions": 4,
+      "role": "owner"
+    },
+    {
+      "name": "plate_invalid",
+      "method": "POST",
+      "path": "/api/vehicle/match-plate",
+      "operation_id": "generated_post_fe032ea229a821bb",
+      "kind": "error",
+      "status": 400,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "plate_identity_override",
+      "method": "POST",
+      "path": "/api/vehicle/match-plate",
+      "operation_id": "generated_post_fe032ea229a821bb",
+      "kind": "error",
+      "status": 400,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "plate_query_override",
+      "method": "POST",
+      "path": "/api/vehicle/match-plate",
+      "operation_id": "generated_post_fe032ea229a821bb",
+      "kind": "error",
+      "status": 400,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "plate_anonymous",
+      "method": "POST",
+      "path": "/api/vehicle/match-plate",
+      "operation_id": "generated_post_fe032ea229a821bb",
+      "kind": "unauthorized",
+      "status": 401,
+      "assertions": 3,
+      "role": "anonymous"
+    },
+    {
+      "name": "plate_wrong_role",
+      "method": "POST",
+      "path": "/api/vehicle/match-plate",
+      "operation_id": "generated_post_fe032ea229a821bb",
+      "kind": "unauthorized",
+      "status": 403,
+      "assertions": 3,
+      "role": "merchant"
+    },
+    {
+      "name": "archive_create",
+      "method": "POST",
+      "path": "/api/archive/add",
+      "operation_id": "post_api_archive_add",
+      "kind": "normal",
+      "status": 200,
+      "assertions": 4,
+      "role": "owner"
+    },
+    {
+      "name": "archive_replay",
+      "method": "POST",
+      "path": "/api/archive/add",
+      "operation_id": "post_api_archive_add",
+      "kind": "boundary",
+      "status": 200,
+      "assertions": 4,
+      "role": "owner"
+    },
+    {
+      "name": "archive_changed_intent",
+      "method": "POST",
+      "path": "/api/archive/add",
+      "operation_id": "post_api_archive_add",
+      "kind": "error",
+      "status": 400,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "archive_other_vehicle",
+      "method": "POST",
+      "path": "/api/archive/add",
+      "operation_id": "post_api_archive_add",
+      "kind": "unauthorized",
+      "status": 404,
+      "assertions": 4,
+      "role": "owner"
+    },
+    {
+      "name": "archive_other_file",
+      "method": "POST",
+      "path": "/api/archive/add",
+      "operation_id": "post_api_archive_add",
+      "kind": "unauthorized",
+      "status": 404,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "archive_title_overflow",
+      "method": "POST",
+      "path": "/api/archive/add",
+      "operation_id": "post_api_archive_add",
+      "kind": "boundary",
+      "status": 400,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "archive_notes_overflow",
+      "method": "POST",
+      "path": "/api/archive/add",
+      "operation_id": "post_api_archive_add",
+      "kind": "boundary",
+      "status": 400,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "archive_negative_mileage",
+      "method": "POST",
+      "path": "/api/archive/add",
+      "operation_id": "post_api_archive_add",
+      "kind": "boundary",
+      "status": 400,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "archive_invalid_date",
+      "method": "POST",
+      "path": "/api/archive/add",
+      "operation_id": "post_api_archive_add",
+      "kind": "error",
+      "status": 400,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "archive_invalid_type",
+      "method": "POST",
+      "path": "/api/archive/add",
+      "operation_id": "post_api_archive_add",
+      "kind": "error",
+      "status": 400,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "archive_unsupported_voice",
+      "method": "POST",
+      "path": "/api/archive/add",
+      "operation_id": "post_api_archive_add",
+      "kind": "error",
+      "status": 400,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "archive_missing_key",
+      "method": "POST",
+      "path": "/api/archive/add",
+      "operation_id": "post_api_archive_add",
+      "kind": "error",
+      "status": 400,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "archive_anonymous",
+      "method": "POST",
+      "path": "/api/archive/add",
+      "operation_id": "post_api_archive_add",
+      "kind": "unauthorized",
+      "status": 401,
+      "assertions": 3,
+      "role": "anonymous"
+    },
+    {
+      "name": "archive_wrong_role",
+      "method": "POST",
+      "path": "/api/archive/add",
+      "operation_id": "post_api_archive_add",
+      "kind": "unauthorized",
+      "status": 403,
+      "assertions": 3,
+      "role": "merchant"
+    },
+    {
+      "name": "archives_normal",
+      "method": "GET",
+      "path": "/api/archive/list",
+      "operation_id": "get_api_archive_list",
+      "kind": "normal",
+      "status": 200,
+      "assertions": 5,
+      "role": "owner"
+    },
+    {
+      "name": "archives_empty_page",
+      "method": "GET",
+      "path": "/api/archive/list",
+      "operation_id": "get_api_archive_list",
+      "kind": "boundary",
+      "status": 200,
+      "assertions": 4,
+      "role": "owner"
+    },
+    {
+      "name": "archives_missing_vehicle",
+      "method": "GET",
+      "path": "/api/archive/list",
+      "operation_id": "get_api_archive_list",
+      "kind": "error",
+      "status": 400,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "archives_other_owner",
+      "method": "GET",
+      "path": "/api/archive/list",
+      "operation_id": "get_api_archive_list",
+      "kind": "unauthorized",
+      "status": 404,
+      "assertions": 4,
+      "role": "other"
+    },
+    {
+      "name": "archives_other_vehicle",
+      "method": "GET",
+      "path": "/api/archive/list",
+      "operation_id": "get_api_archive_list",
+      "kind": "unauthorized",
+      "status": 404,
+      "assertions": 3,
+      "role": "owner"
+    },
+    {
+      "name": "archives_anonymous",
+      "method": "GET",
+      "path": "/api/archive/list",
+      "operation_id": "get_api_archive_list",
+      "kind": "unauthorized",
+      "status": 401,
+      "assertions": 3,
+      "role": "anonymous"
+    },
+    {
+      "name": "archives_wrong_role",
+      "method": "GET",
+      "path": "/api/archive/list",
+      "operation_id": "get_api_archive_list",
+      "kind": "unauthorized",
+      "status": 403,
+      "assertions": 3,
+      "role": "merchant"
+    }
+  ]
+}

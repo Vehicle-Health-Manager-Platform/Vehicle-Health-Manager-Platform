@@ -60,9 +60,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Verify anonymous API contracts through Newman on an isolated stack
-        run: python scripts/run_api_acceptance.py --ci-built-jar
-      - name: Save anonymous API evidence
+      - name: Verify anonymous and owner API cases through Newman on an isolated stack
+        run: python scripts/run_api_acceptance.py --ci-built-jar --owner-cases
+      - name: Save sanitized API evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -96,6 +96,8 @@ jobs:
       - run: python -m unittest discover -s scripts -p test_performance_baseline.py -v
       - run: python -m unittest discover -s scripts -p test_api_acceptance.py -v
       - run: python scripts/generate_api_acceptance.py
+      - run: python scripts/owner_api_cases.py
+      - run: python -m unittest discover -s scripts -p test_owner_api_cases.py -v
       - run: git diff --exit-code -- docs/testing/postman/
       - run: python scripts/generate_traceability.py
       - run: python scripts/build_init_sql.py

@@ -1,3 +1,7 @@
+## 2026-10-19 A4d-2a：车辆与档案业务验收
+
+2026-10-19：A4d-2a 本地 PASS（172.671 秒）：8 接口的正常/边界/错误/未授权案例共 61 请求/204 断言全部通过；338 匿名请求/1014 断言通过，默认模板实际 0 请求。131 表匿名前后行数一致，业务结束车辆/档案各 2 条（其中本用户各 1 条）、幂等/审计各 2 条，跨用户数据不变，源码哈希一致，后端/MySQL/网络清理成功。7 项新增、9 项既有脚本测试及编译/diff通过。下一 A4d-2b 预约履约/券/本地资金→其他域→A5→B 外部接入→C 真机；全部 API 业务验收仍未完成，性能延迟未达标保留。 [阶段执行](R9_A4D2A_OWNER_API_CASES_EXECUTION.md)。
+
 > **A4d-1 本地通过（2026-10-19）**：352项契约验收资产已生成；隔离Newman实际338匿名请求/1014断言通过，默认业务模板发送0请求；9项脚本测试通过。代码/资产/测试/CI/中文文档/实际报告已上传[PR165](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/165)（代码ab5d1e6，依赖PR164），完整CI待结束、保持草稿。全部API业务验收未完成，下一A4d-2按域补正常/边界/错误及跨角色/归属；性能延迟仍未达标，后续A5→B外部接入→C真机。
 
 > **UI 视觉刷新已上传（2026-10-18）**：车主端核心旅程9个页面/组件完成视觉刷新——新增 `design-system.css`（令牌挂 `page`，提供 `ux-*` 视觉原语），`uni.scss` 与 `reservations.css` 同步换语义取值并保留全部选择器与 `padding` 契约。业务逻辑、接口调用、`data-testid`、路由与生命周期**零改动**。916/916前端测试通过、微信构建与两项原生门禁PASS、H5构建通过；模拟器冒烟2项PASS后因 `Devtools RPC timeout: App.callWxMethod` 中断，**不计入通过**。H5曾报 `Build failed with errors`，定位为本工具环境拦截 `uni build` 清理262个旧 `assets` 的批量删除，非源码问题。代码/规格/执行记录/验收说明已上传[PR164](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/164)（代码`e1d8fd2`，依赖PR163），保持草稿。另做全仓色板统一（54个页面文件+6个组件/服务文件、400+处硬编码色值归入新令牌；签名板纯白与二维码纯黑有意保留），复跑916/916与两端构建仍通过。商家/技师/运营端页面结构仍是旧布局，**不声明整体UI完成**。[执行](R9_UI_OWNER_VISUAL_REFRESH_EXECUTION.md)。下一步可继续精修商家端与技师端页面，再回到A段收口。

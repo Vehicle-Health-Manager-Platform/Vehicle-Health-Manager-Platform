@@ -1,0 +1,2274 @@
+{
+  "info": {
+    "name": "Autocare owner vehicle/archive isolated cases",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:1"
+    },
+    {
+      "key": "isolated_owner_cases",
+      "value": "false"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "if (pm.variables.get(\"isolated_owner_cases\") !== \"true\") { pm.execution.skipRequest(); throw new Error(\"Use the isolated owner case runner\"); }"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "brand_normal",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/brand/list?page=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\", () => { pm.expect(pm.response.json().data.list).to.have.lengthOf(1); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "brand_empty_page",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/brand/list?page=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\", () => { pm.expect(pm.response.json().data.list).to.have.lengthOf(0); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "brand_bad_size",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/brand/list?page_size=101",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "brand_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/brand/list?page=1",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(401));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "brand_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/brand/list?page=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(403));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "series_normal",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/series/list?brand_id=1&page=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\", () => { pm.expect(pm.response.json().data.list).to.have.lengthOf(1); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "series_empty_page",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/series/list?brand_id=1&page=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\", () => { pm.expect(pm.response.json().data.list).to.have.lengthOf(0); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "series_bad_size",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/series/list?brand_id=1&page_size=101",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "series_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/series/list?brand_id=1&page=1",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(401));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "series_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/series/list?brand_id=1&page=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(403));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "model_normal",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/model/list?series_id=1&page=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\", () => { pm.expect(pm.response.json().data.list).to.have.lengthOf(1); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "model_empty_page",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/model/list?series_id=1&page=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\", () => { pm.expect(pm.response.json().data.list).to.have.lengthOf(0); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "model_bad_size",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/model/list?series_id=1&page_size=101",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "model_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/model/list?series_id=1&page=1",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(401));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "model_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/model/list?series_id=1&page=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(403));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "vehicle_create",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/vehicle/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "11111111-1111-4111-8111-111111111111"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"add_type\": 4, \"model_id\": 1, \"current_mileage\": 0, \"plate_no\": \"粤A12345\", \"vin\": \"LTEST123456789012\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\", () => { pm.expect(pm.response.json().data.vehicle_id).to.eql(2); pm.collectionVariables.set(\"vehicle_receipt\",JSON.stringify(pm.response.json())); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "vehicle_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/vehicle/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "11111111-1111-4111-8111-111111111111"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"add_type\": 4, \"model_id\": 1, \"current_mileage\": 0, \"plate_no\": \"粤A12345\", \"vin\": \"LTEST123456789012\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\", () => { pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"vehicle_receipt\"))); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "vehicle_changed_intent",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/vehicle/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "11111111-1111-4111-8111-111111111111"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"add_type\": 4, \"model_id\": 1, \"current_mileage\": 1, \"plate_no\": \"粤A12345\", \"vin\": \"LTEST123456789012\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "vehicle_duplicate",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/vehicle/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "a3c29060-d99d-58d2-99db-c475b0031ffb"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"add_type\": 4, \"model_id\": 1, \"current_mileage\": 0, \"plate_no\": \"粤A12345\", \"vin\": \"LTEST123456789012\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(409));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "vehicle_negative_mileage",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/vehicle/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "c3e0338a-0000-5e8f-91fd-0e9984a24639"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"add_type\": 4, \"model_id\": 1, \"current_mileage\": -1, \"plate_no\": \"粤A12345\", \"vin\": \"LTEST123456789012\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "vehicle_integer_overflow",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/vehicle/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "969853f8-de33-58f7-9dee-e73660c6dfc3"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"add_type\": 4, \"model_id\": 1, \"current_mileage\": 2147483648, \"plate_no\": \"粤A12345\", \"vin\": \"LTEST123456789012\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "vehicle_invalid_vin",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/vehicle/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "1d36efa4-a620-5fb8-a8e3-1c9b66f778ba"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"add_type\": 4, \"model_id\": 1, \"current_mileage\": 0, \"plate_no\": \"粤A12345\", \"vin\": \"INVALID\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "vehicle_unknown_model",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/vehicle/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "5b308309-57e1-5c6d-8b2f-a1bd10876c47"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"add_type\": 4, \"model_id\": 999999, \"current_mileage\": 0, \"plate_no\": \"粤A12345\", \"vin\": \"LTEST123456789012\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(404));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "vehicle_missing_key",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/vehicle/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"add_type\": 4, \"model_id\": 1, \"current_mileage\": 0, \"plate_no\": \"粤A12345\", \"vin\": \"LTEST123456789012\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "vehicle_create_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/vehicle/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "2d52596e-0d5c-5d4c-a1e0-64d060099321"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"add_type\": 4, \"model_id\": 1, \"current_mileage\": 0, \"plate_no\": \"粤A12345\", \"vin\": \"LTEST123456789012\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(401));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "vehicle_create_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/vehicle/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "e27f495a-b197-5ae5-bfa7-74c28abcdedb"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"add_type\": 4, \"model_id\": 1, \"current_mileage\": 0, \"plate_no\": \"粤A12345\", \"vin\": \"LTEST123456789012\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(403));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "vehicles_normal",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/vehicle/list",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\", () => { pm.expect(pm.response.json().data.total).to.eql(1); pm.expect(pm.response.json().data.list[0].vehicle_id).to.eql(2); });",
+              "pm.test(\"business 1\", () => { const text=JSON.stringify(pm.response.json().data); pm.expect(text).not.to.include(\"粤A12345\"); pm.expect(text).not.to.include(\"LTEST123456789012\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "vehicles_other_owner",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/vehicle/list",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\", () => { pm.expect(pm.response.json().data.total).to.eql(1); pm.expect(pm.response.json().data.list[0].vehicle_id).to.eql(1); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "vehicles_page_boundary",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/vehicle/list?page_size=100",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "vehicles_invalid_page",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/vehicle/list?page=0",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "vehicles_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/vehicle/list",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(401));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "vehicles_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/vehicle/list",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(403));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "plate_owned",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/vehicle/match-plate",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"plate_no\": \"粤A12345\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\", () => { pm.expect(pm.response.json().data.matches[0].vehicle_id).to.eql(2); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "plate_other_owner",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/vehicle/match-plate",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"plate_no\": \"粤A12345\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\", () => { pm.expect(pm.response.json().data.matches).to.have.lengthOf(0); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "plate_no_match",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/vehicle/match-plate",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"plate_no\": \"粤C99999\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\", () => { pm.expect(pm.response.json().data.matches).to.have.lengthOf(0); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "plate_invalid",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/vehicle/match-plate",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"plate_no\": \"INVALID\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "plate_identity_override",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/vehicle/match-plate",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"plate_no\": \"粤A12345\", \"user_id\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "plate_query_override",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/vehicle/match-plate?user_id=1",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"plate_no\": \"粤A12345\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "plate_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/vehicle/match-plate",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"plate_no\": \"粤A12345\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(401));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "plate_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/vehicle/match-plate",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"plate_no\": \"粤A12345\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(403));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archive_create",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/archive/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "22222222-2222-4222-8222-222222222222"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"vehicle_id\": 2, \"archive_type\": 1, \"recorded_date\": \"2026-10-19\", \"mileage\": 0, \"title\": \"修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修\", \"notes\": \"检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检\", \"file_ids\": []}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\", () => { pm.expect(pm.response.json().data.archive_id).to.eql(2); pm.collectionVariables.set(\"archive_receipt\",JSON.stringify(pm.response.json())); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archive_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/archive/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "22222222-2222-4222-8222-222222222222"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"vehicle_id\": 2, \"archive_type\": 1, \"recorded_date\": \"2026-10-19\", \"mileage\": 0, \"title\": \"修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修\", \"notes\": \"检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检\", \"file_ids\": []}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\", () => { pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"archive_receipt\"))); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archive_changed_intent",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/archive/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "22222222-2222-4222-8222-222222222222"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"vehicle_id\": 2, \"archive_type\": 1, \"recorded_date\": \"2026-10-19\", \"mileage\": 0, \"title\": \"修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修\", \"notes\": \"changed\", \"file_ids\": []}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archive_other_vehicle",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/archive/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "92115cb5-88dd-5363-a54a-b5a8a9f00dca"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"vehicle_id\": 1, \"archive_type\": 1, \"recorded_date\": \"2026-10-19\", \"mileage\": 0, \"title\": \"修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修\", \"notes\": \"检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检\", \"file_ids\": []}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(404));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\", () => { pm.expect(pm.response.text()).not.to.include(\"FOREIGN_PRIVATE_NOTES\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archive_other_file",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/archive/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "188927cb-48dd-51ba-a54b-2b4fbf9a4c15"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"vehicle_id\": 2, \"archive_type\": 1, \"recorded_date\": \"2026-10-19\", \"mileage\": 0, \"title\": \"修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修\", \"notes\": \"检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检\", \"file_ids\": [1]}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(404));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archive_title_overflow",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/archive/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "08cb035c-91e2-5773-8c8f-6ec65a314c52"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"vehicle_id\": 2, \"archive_type\": 1, \"recorded_date\": \"2026-10-19\", \"mileage\": 0, \"title\": \"修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修\", \"notes\": \"检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检\", \"file_ids\": []}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archive_notes_overflow",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/archive/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "13ac702e-fffb-5a33-a2f9-61850140a374"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"vehicle_id\": 2, \"archive_type\": 1, \"recorded_date\": \"2026-10-19\", \"mileage\": 0, \"title\": \"修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修\", \"notes\": \"检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检\", \"file_ids\": []}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archive_negative_mileage",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/archive/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "85c0e2f2-be8f-56b5-8941-8fc0af4bf582"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"vehicle_id\": 2, \"archive_type\": 1, \"recorded_date\": \"2026-10-19\", \"mileage\": -1, \"title\": \"修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修\", \"notes\": \"检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检\", \"file_ids\": []}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archive_invalid_date",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/archive/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "1baa82c5-e885-505b-a2fc-d04e6ba18f88"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"vehicle_id\": 2, \"archive_type\": 1, \"recorded_date\": \"2026-02-30\", \"mileage\": 0, \"title\": \"修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修\", \"notes\": \"检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检\", \"file_ids\": []}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archive_invalid_type",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/archive/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "f1dadbe1-cf50-5794-833c-51a9a1bb12d0"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"vehicle_id\": 2, \"archive_type\": 11, \"recorded_date\": \"2026-10-19\", \"mileage\": 0, \"title\": \"修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修\", \"notes\": \"检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检\", \"file_ids\": []}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archive_unsupported_voice",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/archive/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "92035d59-ba23-5c4e-964c-9b851768800d"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"vehicle_id\": 2, \"archive_type\": 1, \"recorded_date\": \"2026-10-19\", \"mileage\": 0, \"title\": \"修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修\", \"notes\": \"检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检\", \"file_ids\": [], \"input_type\": 2}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archive_missing_key",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/archive/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"vehicle_id\": 2, \"archive_type\": 1, \"recorded_date\": \"2026-10-19\", \"mileage\": 0, \"title\": \"修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修\", \"notes\": \"检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检\", \"file_ids\": []}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archive_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/archive/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "dd3bb84f-d67c-5708-8f45-9d63eb959725"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"vehicle_id\": 2, \"archive_type\": 1, \"recorded_date\": \"2026-10-19\", \"mileage\": 0, \"title\": \"修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修\", \"notes\": \"检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检\", \"file_ids\": []}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(401));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archive_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/archive/add",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "bf99aac0-6c14-560c-a8cc-f7f35e040296"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"vehicle_id\": 2, \"archive_type\": 1, \"recorded_date\": \"2026-10-19\", \"mileage\": 0, \"title\": \"修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修修\", \"notes\": \"检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检检\", \"file_ids\": []}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(403));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archives_normal",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/archive/list?vehicle_id=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\", () => { const d=pm.response.json().data; pm.expect(d.total).to.eql(1); pm.expect(d.list[0].archive_id).to.eql(2); pm.expect(d.list[0].title.length).to.eql(80); pm.expect(d.list[0].notes.length).to.eql(1000); });",
+              "pm.test(\"business 1\", () => { pm.expect(pm.response.text()).not.to.include(\"FOREIGN_PRIVATE_NOTES\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archives_empty_page",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/archive/list?vehicle_id=2&page=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\", () => { pm.expect(pm.response.json().data.list).to.have.lengthOf(0); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archives_missing_vehicle",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/archive/list",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archives_other_owner",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/archive/list?vehicle_id=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(404));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\", () => { pm.expect(pm.response.text()).not.to.include(\"FOREIGN_PRIVATE_NOTES\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archives_other_vehicle",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/archive/list?vehicle_id=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(404));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.not.eql(0);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archives_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/archive/list?vehicle_id=2",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(401));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archives_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/archive/list?vehicle_id=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(403));",
+              "pm.test(\"envelope\", () => {pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
