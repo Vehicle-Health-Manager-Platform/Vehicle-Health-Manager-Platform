@@ -1,0 +1,1698 @@
+{
+  "version": 1,
+  "cases": 169,
+  "operations": 20,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "unknown_service",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/context",
+      "operation_id": "get_api_owner_diagnosis_context",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "unknown_cannot_submit",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "post_api_owner_diagnosis_cases",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/policies",
+      "operation_id": "post_api_admin_diagnosis_policies",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "policy_create_replay",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/policies",
+      "operation_id": "post_api_admin_diagnosis_policies",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "policy_create_malformed",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/policies",
+      "operation_id": "post_api_admin_diagnosis_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_anonymous",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/policies",
+      "operation_id": "post_api_admin_diagnosis_policies",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/policies",
+      "operation_id": "post_api_admin_diagnosis_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "policy_update",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/1",
+      "operation_id": "put_api_admin_diagnosis_policies_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "policy_update_replay",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/1",
+      "operation_id": "put_api_admin_diagnosis_policies_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "policy_update_malformed",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/1",
+      "operation_id": "put_api_admin_diagnosis_policies_id",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "policy_update_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/1",
+      "operation_id": "put_api_admin_diagnosis_policies_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_update_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/1",
+      "operation_id": "put_api_admin_diagnosis_policies_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "stale_policy_update",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/1",
+      "operation_id": "put_api_admin_diagnosis_policies_id",
+      "kind": "boundary",
+      "status": 409,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "policy_publish",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/1/status",
+      "operation_id": "put_api_admin_diagnosis_policies_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "policy_publish_replay",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/1/status",
+      "operation_id": "put_api_admin_diagnosis_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "policy_publish_malformed",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/1/status",
+      "operation_id": "put_api_admin_diagnosis_policies_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "policy_publish_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/1/status",
+      "operation_id": "put_api_admin_diagnosis_policies_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_publish_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/1/status",
+      "operation_id": "put_api_admin_diagnosis_policies_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "policies",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/policies",
+      "operation_id": "get_api_admin_diagnosis_policies",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "policies_boundary",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/policies",
+      "operation_id": "get_api_admin_diagnosis_policies",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "policies_error",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/policies",
+      "operation_id": "get_api_admin_diagnosis_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "policies_anonymous",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/policies",
+      "operation_id": "get_api_admin_diagnosis_policies",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policies_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/policies",
+      "operation_id": "get_api_admin_diagnosis_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "handler_cannot_manage",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/policies",
+      "operation_id": "get_api_admin_diagnosis_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "handler",
+      "assertions": 3
+    },
+    {
+      "name": "open_context",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/context",
+      "operation_id": "get_api_owner_diagnosis_context",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "open_context_boundary",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/context",
+      "operation_id": "get_api_owner_diagnosis_context",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "open_context_error",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/context",
+      "operation_id": "get_api_owner_diagnosis_context",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "open_context_anonymous",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/context",
+      "operation_id": "get_api_owner_diagnosis_context",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "open_context_wrong_role",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/context",
+      "operation_id": "get_api_owner_diagnosis_context",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "other_owner_locked",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/context",
+      "operation_id": "get_api_owner_diagnosis_context",
+      "kind": "unauthorized",
+      "status": 200,
+      "role": "other",
+      "assertions": 4
+    },
+    {
+      "name": "handlers",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/handlers",
+      "operation_id": "get_api_admin_diagnosis_handlers",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "handlers_boundary",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/handlers",
+      "operation_id": "get_api_admin_diagnosis_handlers",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "handlers_error",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/handlers",
+      "operation_id": "get_api_admin_diagnosis_handlers",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "handlers_anonymous",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/handlers",
+      "operation_id": "get_api_admin_diagnosis_handlers",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "handlers_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/handlers",
+      "operation_id": "get_api_admin_diagnosis_handlers",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "case_create",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "post_api_owner_diagnosis_cases",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "case_create_replay",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "post_api_owner_diagnosis_cases",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "case_create_malformed",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "post_api_owner_diagnosis_cases",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "case_create_anonymous",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "post_api_owner_diagnosis_cases",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "case_create_wrong_role",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "post_api_owner_diagnosis_cases",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "changed_submission_intent",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "post_api_owner_diagnosis_cases",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "wrong_vehicle",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "post_api_owner_diagnosis_cases",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "false_consent",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "post_api_owner_diagnosis_cases",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "forged_eligibility",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "post_api_owner_diagnosis_cases",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "stale_admission",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "post_api_owner_diagnosis_cases",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "other_owner_ineligible",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "post_api_owner_diagnosis_cases",
+      "kind": "unauthorized",
+      "status": 409,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "owner_cases",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "get_api_owner_diagnosis_cases",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "owner_cases_boundary",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "get_api_owner_diagnosis_cases",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_cases_error",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "get_api_owner_diagnosis_cases",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_cases_anonymous",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "get_api_owner_diagnosis_cases",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "owner_cases_wrong_role",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "get_api_owner_diagnosis_cases",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "owner_detail",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/cases/1",
+      "operation_id": "get_api_owner_diagnosis_cases_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "owner_detail_boundary",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/cases/1",
+      "operation_id": "get_api_owner_diagnosis_cases_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_detail_error",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/cases/1",
+      "operation_id": "get_api_owner_diagnosis_cases_id",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_detail_anonymous",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/cases/1",
+      "operation_id": "get_api_owner_diagnosis_cases_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "owner_detail_wrong_role",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/cases/1",
+      "operation_id": "get_api_owner_diagnosis_cases_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "other_cannot_read",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/cases/1",
+      "operation_id": "get_api_owner_diagnosis_cases_id",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "queue",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/cases",
+      "operation_id": "get_api_admin_diagnosis_cases",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "queue_boundary",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/cases",
+      "operation_id": "get_api_admin_diagnosis_cases",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "queue_error",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/cases",
+      "operation_id": "get_api_admin_diagnosis_cases",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "queue_anonymous",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/cases",
+      "operation_id": "get_api_admin_diagnosis_cases",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "queue_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/cases",
+      "operation_id": "get_api_admin_diagnosis_cases",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "manager_cannot_read_body",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/cases/1",
+      "operation_id": "get_api_admin_diagnosis_cases_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "handler_cannot_queue",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/cases",
+      "operation_id": "get_api_admin_diagnosis_cases",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "handler",
+      "assertions": 3
+    },
+    {
+      "name": "unassigned_handler",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/cases/1",
+      "operation_id": "get_api_admin_diagnosis_cases_id",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "handler",
+      "assertions": 3
+    },
+    {
+      "name": "assign_first",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/cases/1/assignment",
+      "operation_id": "put_api_admin_diagnosis_cases_id_assignment",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "assign_first_replay",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/cases/1/assignment",
+      "operation_id": "put_api_admin_diagnosis_cases_id_assignment",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "assign_first_malformed",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/cases/1/assignment",
+      "operation_id": "put_api_admin_diagnosis_cases_id_assignment",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "assign_first_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/cases/1/assignment",
+      "operation_id": "put_api_admin_diagnosis_cases_id_assignment",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "assign_first_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/cases/1/assignment",
+      "operation_id": "put_api_admin_diagnosis_cases_id_assignment",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "stale_assignment",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/cases/1/assignment",
+      "operation_id": "put_api_admin_diagnosis_cases_id_assignment",
+      "kind": "boundary",
+      "status": 409,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "handler_detail",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/cases/1",
+      "operation_id": "get_api_admin_diagnosis_cases_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "handler",
+      "assertions": 5
+    },
+    {
+      "name": "handler_detail_boundary",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/cases/1",
+      "operation_id": "get_api_admin_diagnosis_cases_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "handler",
+      "assertions": 3
+    },
+    {
+      "name": "handler_detail_error",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/cases/1",
+      "operation_id": "get_api_admin_diagnosis_cases_id",
+      "kind": "error",
+      "status": 400,
+      "role": "handler",
+      "assertions": 3
+    },
+    {
+      "name": "handler_detail_anonymous",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/cases/1",
+      "operation_id": "get_api_admin_diagnosis_cases_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "handler_detail_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/cases/1",
+      "operation_id": "get_api_admin_diagnosis_cases_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "reply_first",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/cases/1/reply",
+      "operation_id": "post_api_admin_diagnosis_cases_id_reply",
+      "kind": "normal",
+      "status": 200,
+      "role": "handler",
+      "assertions": 4
+    },
+    {
+      "name": "reply_first_replay",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/cases/1/reply",
+      "operation_id": "post_api_admin_diagnosis_cases_id_reply",
+      "kind": "boundary",
+      "status": 200,
+      "role": "handler",
+      "assertions": 4
+    },
+    {
+      "name": "reply_first_malformed",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/cases/1/reply",
+      "operation_id": "post_api_admin_diagnosis_cases_id_reply",
+      "kind": "error",
+      "status": 400,
+      "role": "handler",
+      "assertions": 3
+    },
+    {
+      "name": "reply_first_anonymous",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/cases/1/reply",
+      "operation_id": "post_api_admin_diagnosis_cases_id_reply",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "reply_first_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/cases/1/reply",
+      "operation_id": "post_api_admin_diagnosis_cases_id_reply",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_followup",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases/1/message",
+      "operation_id": "post_api_owner_diagnosis_cases_id_message",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "owner_followup_replay",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases/1/message",
+      "operation_id": "post_api_owner_diagnosis_cases_id_message",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "owner_followup_malformed",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases/1/message",
+      "operation_id": "post_api_owner_diagnosis_cases_id_message",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_followup_anonymous",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases/1/message",
+      "operation_id": "post_api_owner_diagnosis_cases_id_message",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "owner_followup_wrong_role",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases/1/message",
+      "operation_id": "post_api_owner_diagnosis_cases_id_message",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "transfer",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/cases/1/assignment",
+      "operation_id": "put_api_admin_diagnosis_cases_id_assignment",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "transfer_replay",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/cases/1/assignment",
+      "operation_id": "put_api_admin_diagnosis_cases_id_assignment",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "transfer_malformed",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/cases/1/assignment",
+      "operation_id": "put_api_admin_diagnosis_cases_id_assignment",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "transfer_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/cases/1/assignment",
+      "operation_id": "put_api_admin_diagnosis_cases_id_assignment",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "transfer_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/cases/1/assignment",
+      "operation_id": "put_api_admin_diagnosis_cases_id_assignment",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "former_handler_no_body",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/cases/1",
+      "operation_id": "get_api_admin_diagnosis_cases_id",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "handler",
+      "assertions": 3
+    },
+    {
+      "name": "former_handler_old_receipt_denied",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/cases/1/reply",
+      "operation_id": "post_api_admin_diagnosis_cases_id_reply",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "handler",
+      "assertions": 3
+    },
+    {
+      "name": "former_handler_no_notices",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/notifications",
+      "operation_id": "get_api_admin_diagnosis_notifications",
+      "kind": "unauthorized",
+      "status": 200,
+      "role": "handler",
+      "assertions": 4
+    },
+    {
+      "name": "reply_second",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/cases/1/reply",
+      "operation_id": "post_api_admin_diagnosis_cases_id_reply",
+      "kind": "normal",
+      "status": 200,
+      "role": "second_handler",
+      "assertions": 4
+    },
+    {
+      "name": "reply_second_replay",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/cases/1/reply",
+      "operation_id": "post_api_admin_diagnosis_cases_id_reply",
+      "kind": "boundary",
+      "status": 200,
+      "role": "second_handler",
+      "assertions": 4
+    },
+    {
+      "name": "reply_second_malformed",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/cases/1/reply",
+      "operation_id": "post_api_admin_diagnosis_cases_id_reply",
+      "kind": "error",
+      "status": 400,
+      "role": "second_handler",
+      "assertions": 3
+    },
+    {
+      "name": "reply_second_anonymous",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/cases/1/reply",
+      "operation_id": "post_api_admin_diagnosis_cases_id_reply",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "reply_second_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/cases/1/reply",
+      "operation_id": "post_api_admin_diagnosis_cases_id_reply",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_close",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases/1/close",
+      "operation_id": "post_api_owner_diagnosis_cases_id_close",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "owner_close_replay",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases/1/close",
+      "operation_id": "post_api_owner_diagnosis_cases_id_close",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "owner_close_malformed",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases/1/close",
+      "operation_id": "post_api_owner_diagnosis_cases_id_close",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_close_anonymous",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases/1/close",
+      "operation_id": "post_api_owner_diagnosis_cases_id_close",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "owner_close_wrong_role",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases/1/close",
+      "operation_id": "post_api_owner_diagnosis_cases_id_close",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "closed_reply",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/cases/1/reply",
+      "operation_id": "post_api_admin_diagnosis_cases_id_reply",
+      "kind": "boundary",
+      "status": 409,
+      "role": "second_handler",
+      "assertions": 3
+    },
+    {
+      "name": "closed_followup",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases/1/message",
+      "operation_id": "post_api_owner_diagnosis_cases_id_message",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "closed_assignment",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/cases/1/assignment",
+      "operation_id": "put_api_admin_diagnosis_cases_id_assignment",
+      "kind": "boundary",
+      "status": 409,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "second_case",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "post_api_owner_diagnosis_cases",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "second_case_replay",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "post_api_owner_diagnosis_cases",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "second_case_malformed",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "post_api_owner_diagnosis_cases",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "second_case_anonymous",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "post_api_owner_diagnosis_cases",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "second_case_wrong_role",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "post_api_owner_diagnosis_cases",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "manager_close",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/cases/2/close",
+      "operation_id": "post_api_admin_diagnosis_cases_id_close",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "manager_close_replay",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/cases/2/close",
+      "operation_id": "post_api_admin_diagnosis_cases_id_close",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "manager_close_malformed",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/cases/2/close",
+      "operation_id": "post_api_admin_diagnosis_cases_id_close",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "manager_close_anonymous",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/cases/2/close",
+      "operation_id": "post_api_admin_diagnosis_cases_id_close",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "manager_close_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/cases/2/close",
+      "operation_id": "post_api_admin_diagnosis_cases_id_close",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "other_cannot_close",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases/2/close",
+      "operation_id": "post_api_owner_diagnosis_cases_id_close",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "policy_stop",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/1/status",
+      "operation_id": "put_api_admin_diagnosis_policies_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "policy_stop_replay",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/1/status",
+      "operation_id": "put_api_admin_diagnosis_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "policy_stop_malformed",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/1/status",
+      "operation_id": "put_api_admin_diagnosis_policies_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "policy_stop_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/1/status",
+      "operation_id": "put_api_admin_diagnosis_policies_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_stop_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/1/status",
+      "operation_id": "put_api_admin_diagnosis_policies_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "old_publish_receipt",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/1/status",
+      "operation_id": "put_api_admin_diagnosis_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "stopped_stays_unknown",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/context",
+      "operation_id": "get_api_owner_diagnosis_context",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "stopped_no_new_case",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "post_api_owner_diagnosis_cases",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "paused_policy",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/policies",
+      "operation_id": "post_api_admin_diagnosis_policies",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "paused_policy_replay",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/policies",
+      "operation_id": "post_api_admin_diagnosis_policies",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "paused_policy_malformed",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/policies",
+      "operation_id": "post_api_admin_diagnosis_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "paused_policy_anonymous",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/policies",
+      "operation_id": "post_api_admin_diagnosis_policies",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "paused_policy_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/policies",
+      "operation_id": "post_api_admin_diagnosis_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "paused_publish",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/2/status",
+      "operation_id": "put_api_admin_diagnosis_policies_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "paused_publish_replay",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/2/status",
+      "operation_id": "put_api_admin_diagnosis_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "paused_publish_malformed",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/2/status",
+      "operation_id": "put_api_admin_diagnosis_policies_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "paused_publish_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/2/status",
+      "operation_id": "put_api_admin_diagnosis_policies_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "paused_publish_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/2/status",
+      "operation_id": "put_api_admin_diagnosis_policies_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "paused_context",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/context",
+      "operation_id": "get_api_owner_diagnosis_context",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "paused_no_new_case",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases",
+      "operation_id": "post_api_owner_diagnosis_cases",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "history_after_pause",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/cases/1",
+      "operation_id": "get_api_owner_diagnosis_cases_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "owner_notices",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/notifications",
+      "operation_id": "get_api_owner_diagnosis_notifications",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "owner_notices_boundary",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/notifications",
+      "operation_id": "get_api_owner_diagnosis_notifications",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_notices_error",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/notifications",
+      "operation_id": "get_api_owner_diagnosis_notifications",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_notices_anonymous",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/notifications",
+      "operation_id": "get_api_owner_diagnosis_notifications",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "owner_notices_wrong_role",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/notifications",
+      "operation_id": "get_api_owner_diagnosis_notifications",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "owner_read",
+      "method": "PUT",
+      "path": "/api/owner/diagnosis/notifications/{{owner_notice}}/read",
+      "operation_id": "put_api_owner_diagnosis_notifications_id_read",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "owner_read_replay",
+      "method": "PUT",
+      "path": "/api/owner/diagnosis/notifications/{{owner_notice}}/read",
+      "operation_id": "put_api_owner_diagnosis_notifications_id_read",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "owner_read_malformed",
+      "method": "PUT",
+      "path": "/api/owner/diagnosis/notifications/{{owner_notice}}/read",
+      "operation_id": "put_api_owner_diagnosis_notifications_id_read",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_read_anonymous",
+      "method": "PUT",
+      "path": "/api/owner/diagnosis/notifications/{{owner_notice}}/read",
+      "operation_id": "put_api_owner_diagnosis_notifications_id_read",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "owner_read_wrong_role",
+      "method": "PUT",
+      "path": "/api/owner/diagnosis/notifications/{{owner_notice}}/read",
+      "operation_id": "put_api_owner_diagnosis_notifications_id_read",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "owner_read_new_key",
+      "method": "PUT",
+      "path": "/api/owner/diagnosis/notifications/{{owner_notice}}/read",
+      "operation_id": "put_api_owner_diagnosis_notifications_id_read",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "owner_read_count",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/notifications",
+      "operation_id": "get_api_owner_diagnosis_notifications",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "manager_notices",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/notifications",
+      "operation_id": "get_api_admin_diagnosis_notifications",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 5
+    },
+    {
+      "name": "manager_notices_boundary",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/notifications",
+      "operation_id": "get_api_admin_diagnosis_notifications",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "manager_notices_error",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/notifications",
+      "operation_id": "get_api_admin_diagnosis_notifications",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "manager_notices_anonymous",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/notifications",
+      "operation_id": "get_api_admin_diagnosis_notifications",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "manager_notices_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/notifications",
+      "operation_id": "get_api_admin_diagnosis_notifications",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "manager_read",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/notifications/{{manager_notice}}/read",
+      "operation_id": "put_api_admin_diagnosis_notifications_id_read",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "manager_read_replay",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/notifications/{{manager_notice}}/read",
+      "operation_id": "put_api_admin_diagnosis_notifications_id_read",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "manager_read_malformed",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/notifications/{{manager_notice}}/read",
+      "operation_id": "put_api_admin_diagnosis_notifications_id_read",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "manager_read_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/notifications/{{manager_notice}}/read",
+      "operation_id": "put_api_admin_diagnosis_notifications_id_read",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "manager_read_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/notifications/{{manager_notice}}/read",
+      "operation_id": "put_api_admin_diagnosis_notifications_id_read",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "manager_read_new_key",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/notifications/{{manager_notice}}/read",
+      "operation_id": "put_api_admin_diagnosis_notifications_id_read",
+      "kind": "boundary",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "manager_read_count",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/notifications",
+      "operation_id": "get_api_admin_diagnosis_notifications",
+      "kind": "normal",
+      "status": 200,
+      "role": "manager",
+      "assertions": 4
+    },
+    {
+      "name": "foreign_notice_read",
+      "method": "PUT",
+      "path": "/api/owner/diagnosis/notifications/{{owner_notice}}/read",
+      "operation_id": "put_api_owner_diagnosis_notifications_id_read",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "handler_cannot_read_manager_notice",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/notifications/{{manager_notice}}/read",
+      "operation_id": "put_api_admin_diagnosis_notifications_id_read",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "second_handler",
+      "assertions": 3
+    },
+    {
+      "name": "context_duplicate",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/context",
+      "operation_id": "get_api_owner_diagnosis_context",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "queue_duplicate",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/cases",
+      "operation_id": "get_api_admin_diagnosis_cases",
+      "kind": "error",
+      "status": 400,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "notice_duplicate",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/notifications",
+      "operation_id": "get_api_owner_diagnosis_notifications",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "write_query",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases/1/close",
+      "operation_id": "post_api_owner_diagnosis_cases_id_close",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    }
+  ]
+}

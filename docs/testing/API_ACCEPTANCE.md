@@ -138,3 +138,10 @@ KNOWLEDGE_AI_ENABLED与COMMUNITY_PUBLICATION_ENABLED明确false，真实公开�
 ## A4d-2f2 奖励政策、资格冻结与定时发券
 
 `python scripts/run_reward_acceptance.py --docker` 使用真实Spring HTTP/MySQL旅程，14接口144请求及16项状态/事务/隐私不变量。HTTP发布政策前后调用生产资格bean接收明确合成的上游结果，真实定时worker执行审计失败回滚、退避到期重试、旧政策快照、缺库存不部分发券、停用来源及员工单边奖励。JUnit/Python绑定主程序与资源/测试/迁移/运行器源码，CI clean verify后--check-only只验本次证据，容器未移除不得通过。真实微信/电话供应商仍未验。见[执行](../progress/R9_A4D2F2_INVITATION_REWARD_API_EXECUTION.md)。
+
+
+## R9 A4d-2g1 人工诊断与本地消息
+
+2026-10-19：A4d-2g1 本地PASS（186.5秒）：20诊断接口169业务HTTP请求/566断言、338匿名请求/1014断言通过。2工单最终CLOSED/revision7及2，5正文/9事件/9已投递outbox/24接收目标及站内通知，2已读审计；转派立即撤销旧处理者正文与通知权限，管理者只可读队列，跨车主不可读/关闭/标已读。停用/暂停阻止新提交，历史答复保留，旧回执不重开工单或服务；通知ID绑定各接收者实际列表响应，正文/版本/角色/幂等键审计通过。143项Java定向（含继承事务回归）及10项新增/27项既有Python、默认新集合实际0请求0失败通过。源码前后稳定，后端/MySQL/网络清理成功。身份/月度资格仅SQL合成夹具，真实定时站内投递不代表微信消息送达；0奖励/积分/支付。前置PR179六项CI成功、后端待结束；全量API业务验收和性能延迟达标仍未完成。下一受控资料/档案授权与施工服务上下文→其他独立缺口→A5文档与交付核验→B微信/电话/外部服务→C真机。
+
+执行：`python scripts/diagnosis_api_cases.py`、`python -m unittest discover -s scripts -p test_diagnosis_api_cases.py -v`、`python scripts/run_api_acceptance.py --diagnosis-cases`。集合默认关闭；仅验收器新建全迁移数据库、合成身份和月度资格夹具后启用。CI先绑定构建前源文件，再clean verify，使用`--ci-built-jar --diagnosis-cases`执行；独立数据库，不能与其他业务suite共用。报告只上传脱敏summary，原始JWT/响应保留忽略目录。
