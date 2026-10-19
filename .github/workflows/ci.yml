@@ -57,6 +57,20 @@ jobs:
       - name: Check isolated HTTP journey evidence
         if: always()
         run: python scripts/run_isolated_journeys.py --check-only
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify anonymous API contracts through Newman on an isolated stack
+        run: python scripts/run_api_acceptance.py --ci-built-jar
+      - name: Save anonymous API evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-acceptance-evidence
+          retention-days: 14
+          include-hidden-files: true
+          if-no-files-found: warn
+          path: .cache/api-acceptance-*/report.json
       - name: Save coverage and test evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -80,6 +94,9 @@ jobs:
       - run: python -m unittest discover -s scripts -p test_isolated_journeys.py -v
       - run: python -m unittest discover -s scripts -p test_database_recovery.py -v
       - run: python -m unittest discover -s scripts -p test_performance_baseline.py -v
+      - run: python -m unittest discover -s scripts -p test_api_acceptance.py -v
+      - run: python scripts/generate_api_acceptance.py
+      - run: git diff --exit-code -- docs/testing/postman/
       - run: python scripts/generate_traceability.py
       - run: python scripts/build_init_sql.py
       - run: python scripts/generate_openapi.py
