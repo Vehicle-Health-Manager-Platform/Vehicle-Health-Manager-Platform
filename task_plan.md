@@ -1,3 +1,15 @@
+## 2026-10-20 A4d-2h5：运营审核台
+
+本阶段成果已上传 [PR188](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/188)（依赖PR187）；远程CI待结果，保持草稿，不合并或部署。
+
+A4d-2h5 本地PASS：运营审核台两页（入口分组 + 待审文字审核）统一到设计系统，新增 7 个纯映射（入口分组/权限摘要/待审行/队列/理由选择/摘要卡事实）与8项单测；小程序单测935/935（0失败/0跳过）、微信构建与H5构建均exit 0，10个共享选择器逐项在app.wxss、两页编译产物含ux-hero/ux-badge。修掉四处审核台缺陷：入驻审核入口未按can_onboard收口、待审文字“不能批准”要试才知道、队列缺待审数、驳回理由两套实现。并发与竞态不再列为缺口：service层已有4条竞态测试（双写只落一条、批准vs撤回必有一409、旧版本授权只改一次、第三个并发摘要请求降级）。后端与接口零改动；真机与模拟器未执行（本机开发者工具未打开该项目），不声明渲染通过。 下一其他独立缺口→A5交付→B外部接入→C真机。
+
+- [x] 新增 7 个运营台纯映射，入口按权限分组、状态文案可单独断言。
+- [x] 重做 operator/review.vue 与 operator/review-texts.vue：分组卡片、行内徽标、空态。
+- [x] 收口商家入驻入口（canOnboard），修掉驳回理由两套实现与队列数字缺失。
+- [x] 单测935项、两个构建、证据报告与三份文档已整理。
+- [ ] 远程CI结果核对（PR保持草稿，不合并、不部署）。
+
 ## 2026-10-20 A4d-2h4：评价与公开展示面
 
 本阶段成果已上传 [PR187](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/187)（依赖PR186）；八项远程CI全部成功（web / miniapp / backend / schema-and-ocr / schema-mysql / database-recovery / compose-smoke / performance-baseline，其中 `backend` 38 步全部通过，含第 31 步 `--ci-built-jar --reviews-cases`），保持草稿，不合并或部署。
