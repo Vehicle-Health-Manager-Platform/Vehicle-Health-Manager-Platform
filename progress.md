@@ -1,48 +1,63 @@
+## 2026-10-20 收口：12 支堆叠 PR 全部合并进 main
+
+R9 期间形成的整条栈（#181 → #192，12 支）已按链式顺序全部合并进 `main`，合并后 `main` = `13354bf8`，`open PR = 0`。合并前后做了三项核对：
+
+1. **逐支改 base 再合并**：每支先 `PATCH /pulls/{n} {"base":"main"}` 再 merge（`merge_method: merge`），否则后一支的提交会被合进前一支的分支而不是 `main`。
+2. **内容一致**：`git diff origin/codex/r9-a4d3d-protection origin/main` 为空，说明栈顶内容一字不差地进了 `main`（旧 `main` 到新 `main` 之间共 41 个提交），不存在"合了 12 支只进 1 支"。
+3. **曾经失败的那一项已复验**：#181 的 `database-recovery` 在 04:18Z 那次 run 里失败，同 head 重跑即通过（基础设施抖动），真正的竞态修复在 #182（"修复数据库恢复 CI 自动清理竞态"）；合并后 `main` 上的 `database-recovery`、`web`、`miniapp` 均已 success。
+
+两条工具事实，写下来避免下次踩：
+
+- REST 的 `PATCH /pulls/{n} {draft:false}` **不能**把草稿转为正式（返回 2xx 但状态不变，随后 merge 报 405 "Pull Request is still a draft"），必须用 GraphQL `markPullRequestReadyForReview`。
+- 转正式后立即 merge 仍可能读到旧草稿态，要轮询确认 `draft=false` 再合并。
+
+分支未删除（合并时保留原分支），各 PR 的 `merged=true` 记录可追溯。后续阶段直接从 `main` 开分支，不再叠栈。
+
 ## 2026-10-20 A4d-3d：商家施工防护
 
-本阶段成果已上传 [PR192](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/192)（依赖PR191）；远程CI待结果，保持草稿，不合并或部署。
+本阶段成果已上传 [PR192](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/192)（依赖PR191）；已随全栈合并进 main（八项 CI 在合并前全部成功，见顶部收口条目）。
 
 A4d-3d 本地PASS：商家施工防护页统一到设计系统，新增 11 个导出（必选项与常量、五阶段、勾选行、提交缺口、提交卡、已提交记录、报工两态三组、读取失败、写入状态、照片状态）与10项单测；小程序单测980/980（0失败/0跳过）、微信构建与H5构建均exit 0、10个共享选择器逐项在app.wxss。修掉六处缺陷：四层v-if链不可断言、未知状态可能被当成可提交、勾选行靠下标、提交按钮不说原因、报工记录条件散在模板里、读取失败只有重试没有重新登录。保留 protectionBody + confirmStillHolds 的二次确认与幂等、WorkPhotos 四个事件；照片只认 PROTECTION 那一张，未知报工状态当待签字。后端与接口零改动；真机与模拟器未执行，不声明渲染通过。 商家侧接车→防护→订单→时段→派工五个主流程页已收口；下一核销退款等缺口→A5交付→B外部接入→C真机。
 
 ## 2026-10-20 A4d-3c：商家接车检查
 
-本阶段成果已上传 [PR191](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/191)（依赖PR190）；远程CI待结果，保持草稿，不合并或部署。
+本阶段成果已上传 [PR191](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/191)（依赖PR190）；已随全栈合并进 main（八项 CI 在合并前全部成功，见顶部收口条目）。
 
 A4d-3c 本地PASS：商家接车检查页统一到设计系统，新增 13 个映射（照片三态/八张进度/基线来源/里程差值/油量下标/损伤额度/标注前提/损伤行标题/订单事实/读取失败/提交前置/写入状态）与13项单测；小程序单测970/970（0失败/0跳过）、微信构建与H5构建均exit 0、10个共享选择器逐项在app.wxss。修掉六处缺陷：八张照片只有complete布尔、缺片不说还差哪几张、里程差值算在模板里没有回退判断、「需填原因」是永远显示的静态标签、点照片没反应不解释原因、上传失败的「待上传」看不到。保留 pickup-form / pickup-slot-* / pickup-photo-* 三个既有锚点与 pickupBody 前置校验；mark() 改由 canMarkDamage 判定并在 boundingClientRect 回调里复检。后端与接口零改动；真机与模拟器未执行，不声明渲染通过。 下一施工防护页→A5交付→B外部接入→C真机。
 
 ## 2026-10-20 A4d-3b：商家时段与派工
 
-本阶段成果已上传 [PR190](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/190)（依赖PR189）；远程CI待结果，保持草稿，不合并或部署。
+本阶段成果已上传 [PR190](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/190)（依赖PR189）；已随全栈合并进 main（八项 CI 在合并前全部成功，见顶部收口条目）。
 
 A4d-3b 本地PASS：商家时段与派工两页统一到设计系统，新增 10 个映射（时段行/列表/项目选项/发布表单、派工六阶段/候选行/候选列表/已有派工/提交文案/候选加载时机）与11项单测；小程序单测957/957（0失败/0跳过）、微信构建与H5构建均exit 0、10个共享选择器逐项在app.wxss。修掉四处缺陷：约满没有独立状态、发布表单不说差什么、派工 4 层 v-if 链不可断言、候选加载挂在 order watcher 上而 ready 依赖后到的派工结果（可能永不加载，改监听阶段）。另记录一条工具事实：绑定形式的 data-testid 会被 mp-weixin 压成 {{O}}，编译产物里搜不到原文，行级锚点只能靠源码扫描。后端与接口零改动；真机与模拟器未执行，不声明渲染通过。 下一商家接车检查与防护→A5交付→B外部接入→C真机。
 
 ## 2026-10-20 A4d-3a：商家订单阅读面
 
-本阶段成果已上传 [PR189](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/189)（依赖PR188）；八项远程CI全部成功（web / miniapp / backend / schema-and-ocr / schema-mysql / database-recovery / compose-smoke / performance-baseline；`backend` 48 分 11 秒、38 步全部通过），保持草稿，不合并或部署。
+本阶段成果已上传 [PR189](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/189)（依赖PR188）；八项远程CI全部成功（web / miniapp / backend / schema-and-ocr / schema-mysql / database-recovery / compose-smoke / performance-baseline；`backend` 48 分 11 秒、38 步全部通过）；已随全栈合并进 main。
 
 A4d-3a 本地PASS：商家订单列表与详情统一到设计系统，新增 9 个映射（状态/支付/行/筛选/空态/价格/入口矩阵/动作提示）与11项单测，并把徽标色调抽成评价域与商家域共用的 ui-tone；小程序单测946/946（0失败/0跳过）、微信构建与H5构建均exit 0、10个共享选择器逐项在app.wxss、两页编译产物保留既有锚点。修掉三类真实缺陷：列表把RECEIVED/IN_SERVICE等后端枚举直接渲染、详情把支付码SUCCEEDED直出、7组状态数组被复制进模板。既有端到端流程的四条断言（行内按钮、预约日期文案、已支付子串、付款异常原文）逐条保留。后端与接口零改动；真机与模拟器未执行，不声明渲染通过。 下一商家工位与派工→其他独立缺口→A5交付→B外部接入→C真机。
 
 ## 2026-10-20 A4d-2h5：运营审核台
 
-本阶段成果已上传 [PR188](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/188)（依赖PR187）；八项远程CI全部成功（web / miniapp / backend / schema-and-ocr / schema-mysql / database-recovery / compose-smoke / performance-baseline；`backend` 38 步全部通过，含第 31 步 `--ci-built-jar --reviews-cases`），保持草稿，不合并或部署。
+本阶段成果已上传 [PR188](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/188)（依赖PR187）；八项远程CI全部成功（web / miniapp / backend / schema-and-ocr / schema-mysql / database-recovery / compose-smoke / performance-baseline；`backend` 38 步全部通过，含第 31 步 `--ci-built-jar --reviews-cases`）；已随全栈合并进 main。
 
 A4d-2h5 本地PASS：运营审核台两页（入口分组 + 待审文字审核）统一到设计系统，新增 7 个纯映射（入口分组/权限摘要/待审行/队列/理由选择/摘要卡事实）与8项单测；小程序单测935/935（0失败/0跳过）、微信构建与H5构建均exit 0，10个共享选择器逐项在app.wxss、两页编译产物含ux-hero/ux-badge。修掉四处审核台缺陷：入驻审核入口未按can_onboard收口、待审文字“不能批准”要试才知道、队列缺待审数、驳回理由两套实现。并发与竞态不再列为缺口：service层已有4条竞态测试（双写只落一条、批准vs撤回必有一409、旧版本授权只改一次、第三个并发摘要请求降级）。后端与接口零改动；真机与模拟器未执行（本机开发者工具未打开该项目），不声明渲染通过。 下一其他独立缺口→A5交付→B外部接入→C真机。
 
 ## 2026-10-20 A4d-2h4：评价与公开展示面
 
-本阶段成果已上传 [PR187](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/187)（依赖PR186）；八项远程CI全部成功（web / miniapp / backend / schema-and-ocr / schema-mysql / database-recovery / compose-smoke / performance-baseline，其中 `backend` 38 步全部通过，含第 31 步 `--ci-built-jar --reviews-cases`），保持草稿，不合并或部署。
+本阶段成果已上传 [PR187](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/187)（依赖PR186）；八项远程CI全部成功（web / miniapp / backend / schema-and-ocr / schema-mysql / database-recovery / compose-smoke / performance-baseline，其中 `backend` 38 步全部通过，含第 31 步 `--ci-built-jar --reviews-cases`）；已随全栈合并进 main。
 
 A4d-2h4 本地PASS：6个评价相关页面（公开星级/公开文字/评价要点+三个公开授权入口）统一到设计系统，新增 `public-review-display.js` 十个纯展示映射与11项单测；小程序单测927/927（0失败/0跳过）、微信构建与H5构建均exit 0，10个共享选择器在app.wxss逐项存在、6个页面编译产物含ux-hero/ux-badge、两个列表页含ux-empty。修掉三处展示缺陷：要点来源撤回后渲染“发布于 undefined”、平均分为空显示null、“已批准但停止展示”与“未公开”共用文案。后端与接口零改动；真机与模拟器未执行（本机开发者工具未打开该项目），不声明渲染通过。 下一其他独立缺口→A5交付→B外部接入→C真机。
 
 ## 2026-10-20 A4d-2h3：车主评价与独立公开授权
 
-本阶段成果已上传 [PR186](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/186)（依赖PR185）；八项远程CI全部成功（含 `backend` job 的 `--ci-built-jar --reviews-cases` 真实隔离执行），保持草稿，不合并或部署。
+本阶段成果已上传 [PR186](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/186)（依赖PR185）；八项远程CI全部成功（含 `backend` job 的 `--ci-built-jar --reviews-cases` 真实隔离执行）；已随全栈合并进 main。
 
 A4d-2h3 本地PASS（218.992秒）：4条评价/公开链路共14接口139业务请求/465断言、338匿名请求/1014断言通过；新评价集合及352模板默认执行均实际0请求。评价/星级/文本/摘要四条独立授权由HTTP逐条驱动：TEST订单与未完成/无核销/开放争议/他人订单的资格投影、评价不可修改（新键重发返回同一review且request_id不同）、图片位置顺序、脱敏预览与投稿逐字一致否则422、审核通过后版本2、重复审核按幂等重放返回200且不二次写审计、版本冲突与决定冲突返回409、星级与文本撤回后公开列表归零而审核履历保留。最终2条评价、2条图片、10条幂等记录、8条审计，11项数据库检查通过。62项Java定向（9组HTTP/JDBC）、11项新增/既有Python门禁测试通过；源码前后稳定，隔离后端/MySQL/网络清理成功。两个公开开关仅在隔离环境显式开启、生产回退值仍为false；单测同时断言这两件事。评价/订单/支付/核销/图片为SQL合成夹具，评价与四种授权全部走HTTP；正式微信身份与资金、真实对象存储、真实第三方模型、评分统计显著性与真机未覆盖。 下一公开文本及展示→其他独立缺口→A5交付→B外部接入→C真机。固定用例串行执行，不能替代并发下的公开资格竞态与审核并发；脱敏为规则式替换，漏匹配不等于合规认证。
 
 ## 2026-10-20 A4d-2h2：商家选品报价与上下架
 
-本阶段成果已上传 [PR185](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/185)，修复与验收代码 `229ee52`，依赖PR184；前置六项CI成功、backend仍运行。本轮完整远程CI待结果，保持草稿，不合并或部署。
+本阶段成果已上传 [PR185](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/185)，修复与验收代码 `229ee52`，依赖PR184；前置六项CI成功、backend仍运行。本轮完整远程CI待结果；已随全栈合并进 main。
 
 A4d-2h2 本地PASS（201.25秒）：3商家管理+1车主展示接口105业务请求/361断言、338匿名请求/1014断言通过；新报价集合及352模板默认执行均实际0请求。修复三管理入口的未知/重复查询校验，报价原始JSON拒绝重复字段、尾随token和超长正文。9次HTTP成功变更产生9幂等/9审计、14历史版本；本店4报价最终全下架，另一店20.00/version1保持不变。金额0.01/99999999.99、店员只读/跨店隔离、旧回执不恢复上下架、停用/删除目录只允许原价下架通过；条件审计失败503后报价/版本回滚，失败键未占用，8项数据库检查通过。22项Java定向、9项新增/31项既有Python测试、编译/diff通过；源码前后稳定，隔离后端/MySQL/网络清理成功。身份/目录/初始报价与失败触发器仅SQL合成夹具，后续报价变更经HTTP；失败键之后使用新金额提交，不等同于原失败正文恢复重试。正式供应商与支付未调用；全量API业务验收、性能延迟目标和真机仍未全部完成。 下一车主评价与公开展示→其他独立缺口→A5交付→B外部接入→C真机。
 
@@ -52,7 +67,7 @@ A4d-2h2 本地PASS（201.25秒）：3商家管理+1车主展示接口105业务�
 
 ## 2026-10-20 A4d-2h1：服务发现与门店位置
 
-本阶段成果已上传 [PR184](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/184)，修复与验收代码 `d7e1730`，依赖PR183；前置六项CI成功、backend仍运行。本轮完整远程CI待结果，保持草稿，不合并或部署。
+本阶段成果已上传 [PR184](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/184)，修复与验收代码 `d7e1730`，依赖PR183；前置六项CI成功、backend仍运行。本轮完整远程CI待结果；已随全栈合并进 main。
 
 A4d-2h1 本地PASS（311.344秒）：9接口105业务请求/349断言、338匿名请求/1014断言通过，默认业务集合实际零请求。修复目录/门店详情/报价发现四GET入口忽略未知或重复参数；分类/停用源过滤、最新报价/区域/价格排序、搜索通配符按字面量处理、附近门店/单店球面距离、未知位置排末、店员只读和跨店隔离通过。2位置记录最终本店清空version2、另一店保留version1，3幂等/3审计；旧回执未恢复坐标，临时车主坐标未写审计，只读距离未增加写记录，6项数据库检查通过。42项Java定向、9项新增及29项既有Python测试通过；源码前后稳定、后端/MySQL/网络清理成功。身份/目录/报价仅SQL合成夹具，位置维护由HTTP执行；距离为本地直线估计，不代表地图路网、真机定位或正式外部供应商。全量API业务验收与性能延迟目标仍未全部完成。 下一商家选品/报价维护→评价与公开展示等独立缺口→A5交付→B外部接口→C真机。
 
@@ -62,7 +77,7 @@ A4d-2h1 本地PASS（311.344秒）：9接口105业务请求/349断言、338匿�
 
 ## 2026-10-20 A4d-2g3：辅助材料与工作台真实验收
 
-本阶段已上传 [PR183](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/183)，修复与验收代码 `5728ec5`，依赖PR182；前置恢复CI已SUCCESS，后端仍待结束。本轮完整远程CI待结果，保持草稿，不合并或部署。
+本阶段已上传 [PR183](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/183)，修复与验收代码 `5728ec5`，依赖PR182；前置恢复CI已SUCCESS，后端仍待结束。本轮完整远程CI待结果；已随全栈合并进 main。
 
 A4d-2g3 本地PASS（396.109秒）：4接口80业务HTTP请求、15项检查，5份CLEAN辅助材料/5成功上传回执、0图片元数据；AI/ARCHIVE与音频/PDF组合、幂等重放/冲突、车主/车辆/用途隔离通过。真实MinIO下载逐字节一致，附件/MIME/no-store/60秒签名参数、匿名和篡改拒绝通过；数据库拒绝非CLEAN元数据，材料删除/车辆转移/会话撤销拒绝新访问。商家/技师八分类、分页21任务无重漏、最小字段、跨店/跨技师与当前绑定/员工状态检查通过。55项Java定向（含继承回归），10项新增及25项既有Python测试、编译/diff通过；源码稳定，4容器和网络实际移除。状态/派工/接车/身份变化仅SQL合成夹具；音频为结构验证帧，不代表真实播放或识别。签发后URL具有最长60秒租期，本轮未等待自然到期；本轮未重跑338匿名矩阵。生产辅助材料开关默认关闭、扫描鲜度和限流保持既有策略；外部服务/真机与全量API业务验收、性能延迟目标仍未全部完成。 下一核对剩余API业务案例并补齐本地缺口→A5交付→B外部接口→C真机。
 
@@ -76,7 +91,7 @@ A4d-2g3 本地PASS（396.109秒）：4接口80业务HTTP请求、15项检查，5
 
 ## 2026-10-20 A4d-2g3a：优先修复恢复 CI 阻塞
 
-本阶段成果已上传 [PR182](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/182)，修复及验收提交 `98c3f1d`，依赖PR181；远程CI待新提交结果，保持草稿，不合并或部署。
+本阶段成果已上传 [PR182](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/182)，修复及验收提交 `98c3f1d`，依赖PR181；远程CI待新提交结果；已随全栈合并进 main。
 
 A4d-2g3a 本地恢复演练 PASS（121.313秒，19项检查），两台独立 MySQL 均核验清理成功；16项恢复测试及3项既有清理测试通过。修复 stop/异步自动移除竞态、严格区分对象不存在与守护进程失败，并保留恢复原异常。完整迁移/实现输入前后哈希一致。 前置PR181恢复CI曾失败，历史结果不改写；本轮远程CI待新提交结果。下一辅助材料上传/访问与商家/技师工作台→其他独立缺口→A5交付→B外部接口→C真机。全量API业务验收与性能延迟目标仍未全部完成。
 
@@ -86,7 +101,7 @@ A4d-2g3a 本地恢复演练 PASS（121.313秒，19项检查），两台独立 My
 
 # 当前阶段：R9 A4d-2g2 档案授权与施工上下文
 
-2026-10-20：前置main八项CI全绿。A4d-2g2 本地PASS（347.016秒）：7授权/施工本域+3支撑接口，共10接口105真实HTTP请求、18项状态/隐私/事务/有效期检查通过。实际上传1个CLEAN文件并创建2份档案，唯一授权最终REVOKED/revision5、5次授权审计；默认不共享，未选档案不外泄，撤销后旧回执不复活；结构化内容更新改变源哈希，重新确认前正文和附件隐藏。审计失败整笔回滚、当前指派/已接单/车辆归属/扫描状态/订单关闭均重新核验；真实签名下载逐字节一致，已签发URL按10秒合成配置自然到期，新签发入口立即受当前权限约束。38项Java定向（含继承回归）及10项新增/27项既有Python、编译/diff通过，源码含资源配置前后稳定；4容器和网络实际移除。身份/已接受任务及后续改派/归属/关闭变化仅SQL合成夹具，授权/档案/结构化写入为HTTP；不是正式派工履约或微信接入验收。原始正文/JWT/签名URL仅留忽略目录。本阶段补齐可复现验收和CI门禁，生产逻辑沿用既有实现；全量API业务验收、性能延迟目标、正式外部服务与真机仍未全部完成。下一本地辅助材料上传/访问与商家/技师工作台→其他独立缺口→A5文档与交付核验→B外部接入→C真机。 本阶段已上传 [PR181](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/181)，验收代码`008ecd6`，基于main；本轮完整远程CI待结束，保持草稿，不合并或部署。
+2026-10-20：前置main八项CI全绿。A4d-2g2 本地PASS（347.016秒）：7授权/施工本域+3支撑接口，共10接口105真实HTTP请求、18项状态/隐私/事务/有效期检查通过。实际上传1个CLEAN文件并创建2份档案，唯一授权最终REVOKED/revision5、5次授权审计；默认不共享，未选档案不外泄，撤销后旧回执不复活；结构化内容更新改变源哈希，重新确认前正文和附件隐藏。审计失败整笔回滚、当前指派/已接单/车辆归属/扫描状态/订单关闭均重新核验；真实签名下载逐字节一致，已签发URL按10秒合成配置自然到期，新签发入口立即受当前权限约束。38项Java定向（含继承回归）及10项新增/27项既有Python、编译/diff通过，源码含资源配置前后稳定；4容器和网络实际移除。身份/已接受任务及后续改派/归属/关闭变化仅SQL合成夹具，授权/档案/结构化写入为HTTP；不是正式派工履约或微信接入验收。原始正文/JWT/签名URL仅留忽略目录。本阶段补齐可复现验收和CI门禁，生产逻辑沿用既有实现；全量API业务验收、性能延迟目标、正式外部服务与真机仍未全部完成。下一本地辅助材料上传/访问与商家/技师工作台→其他独立缺口→A5文档与交付核验→B外部接入→C真机。 本阶段已上传 [PR181](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/181)，验收代码`008ecd6`，基于main；本轮完整远程CI待结束；已随全栈合并进 main。
 
 # 当前阶段：2026-10-20 近期成果汇总合并完成
 
@@ -94,59 +109,59 @@ A4d-2g3a 本地恢复演练 PASS（121.313秒，19项检查），两台独立 My
 
 # 当前阶段：R9 A4d-2g1 人工诊断、队列与消息验收
 
-2026-10-19：A4d-2g1 本地PASS（186.5秒）：20诊断接口169业务HTTP请求/566断言、338匿名请求/1014断言通过。2工单最终CLOSED/revision7及2，5正文/9事件/9已投递outbox/24接收目标及站内通知，2已读审计；转派立即撤销旧处理者正文与通知权限，管理者只可读队列，跨车主不可读/关闭/标已读。停用/暂停阻止新提交，历史答复保留，旧回执不重开工单或服务；通知ID绑定各接收者实际列表响应，正文/版本/角色/幂等键审计通过。143项Java定向（含继承事务回归）及10项新增/27项既有Python、默认新集合实际0请求0失败通过。源码前后稳定，后端/MySQL/网络清理成功。身份/月度资格仅SQL合成夹具，真实定时站内投递不代表微信消息送达；0奖励/积分/支付。前置PR179六项CI成功、后端待结束；全量API业务验收和性能延迟达标仍未完成。下一受控资料/档案授权与施工服务上下文→其他独立缺口→A5文档与交付核验→B微信/电话/外部服务→C真机。 本阶段成果已上传 [PR180](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/180)，验收代码 `86c0cea`，依赖PR179；完整远程CI待结束，保持草稿，不合并或部署。
+2026-10-19：A4d-2g1 本地PASS（186.5秒）：20诊断接口169业务HTTP请求/566断言、338匿名请求/1014断言通过。2工单最终CLOSED/revision7及2，5正文/9事件/9已投递outbox/24接收目标及站内通知，2已读审计；转派立即撤销旧处理者正文与通知权限，管理者只可读队列，跨车主不可读/关闭/标已读。停用/暂停阻止新提交，历史答复保留，旧回执不重开工单或服务；通知ID绑定各接收者实际列表响应，正文/版本/角色/幂等键审计通过。143项Java定向（含继承事务回归）及10项新增/27项既有Python、默认新集合实际0请求0失败通过。源码前后稳定，后端/MySQL/网络清理成功。身份/月度资格仅SQL合成夹具，真实定时站内投递不代表微信消息送达；0奖励/积分/支付。前置PR179六项CI成功、后端待结束；全量API业务验收和性能延迟达标仍未完成。下一受控资料/档案授权与施工服务上下文→其他独立缺口→A5文档与交付核验→B微信/电话/外部服务→C真机。 本阶段成果已上传 [PR180](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/180)，验收代码 `86c0cea`，依赖PR179；完整远程CI待结束；已随全栈合并进 main。
 
 # 当前阶段：R9 A4d-2f2 邀请奖励冻结与后台发券
 
-2026-10-19：A4d-2f2 本地PASS（184.0秒）：14接口144真实HTTP请求、16资格/快照/事务/隐私检查通过。实际生产资格bean接收合成上游结果，7注册、4批次（2 COMPLETE/1 UNKNOWN_POLICY/1 WAIT_SOURCE）；真实定时worker处理审计失败整对回滚/旧政策快照重试、缺库存不部分发、来源停用及员工单边奖励。3到账券/3发券/3库存事件，现金券issued=3、服务券0，3政策均STOPPED；旧回执不复活、不追补未知政策、完成批次不重发，员工/车主同ID不误发、仅本人券ID可见。8项Java定向（含144请求旅程）及9项新增/27项既有Python、编译/diff通过；源码含资源配置绑定、执行前后稳定，独立MySQL容器移除成功。前置PR178后端CI待结束。身份/手机号仅合成协议结果，0真实供应商/支付/积分事件；全量API验收和性能延迟达标仍未完成。下一人工诊断服务/处理队列/消息通知→受控资料与施工授权等剩余独立缺口→A5→B正式微信/电话/外部服务→C真机。 本阶段成果已上传 [PR179](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/179)，验收代码 `9290538`，依赖PR178；本轮完整远程CI待结束，保持草稿，不合并或部署。
+2026-10-19：A4d-2f2 本地PASS（184.0秒）：14接口144真实HTTP请求、16资格/快照/事务/隐私检查通过。实际生产资格bean接收合成上游结果，7注册、4批次（2 COMPLETE/1 UNKNOWN_POLICY/1 WAIT_SOURCE）；真实定时worker处理审计失败整对回滚/旧政策快照重试、缺库存不部分发、来源停用及员工单边奖励。3到账券/3发券/3库存事件，现金券issued=3、服务券0，3政策均STOPPED；旧回执不复活、不追补未知政策、完成批次不重发，员工/车主同ID不误发、仅本人券ID可见。8项Java定向（含144请求旅程）及9项新增/27项既有Python、编译/diff通过；源码含资源配置绑定、执行前后稳定，独立MySQL容器移除成功。前置PR178后端CI待结束。身份/手机号仅合成协议结果，0真实供应商/支付/积分事件；全量API验收和性能延迟达标仍未完成。下一人工诊断服务/处理队列/消息通知→受控资料与施工授权等剩余独立缺口→A5→B正式微信/电话/外部服务→C真机。 本阶段成果已上传 [PR179](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/179)，验收代码 `9290538`，依赖PR178；本轮完整远程CI待结束；已随全栈合并进 main。
 
 # 当前阶段：R9 A4d-2f1 邀请关系与月度资格验收
 
-2026-10-19：前置PR177八项CI全绿。A4d-2f1 本地PASS（209.61秒）：14接口136业务请求/462断言、338匿名请求/1014断言通过。实际新建2推广码，最终4码唯一；19条SQL合成归因/15条电话证据不变。车主当月11合格/1周期、员工3合格；上月和TEST/UNKNOWN/PENDING/REJECTED不解锁，跨车主/门店隔离，TEST不因建码被升级。3解锁政策最终STOPPED revision4/STOPPED revision3/PUBLISHED revision2；旧回执不复活，12门槛LOCKED→11门槛ELIGIBLE但service_available=false→未来规则NOT_STARTED。源码稳定、后端/MySQL/网络清理成功；61项Java定向与9项新增/27项既有Python测试、编译/diff通过，新集合默认实际0请求0失败。真实微信注册/电话核验与本轮HTTP奖励发券未验，0奖励批次/发券/积分事件/支付。下一A4d-2f2奖励政策/冻结与后台发券→其余缺口→A5→B真实外部接入→C真机；全量API业务验收和性能延迟达标仍未完成。 本阶段成果已上传 [PR178](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/178)，验收代码 `dc25914`，依赖PR177；本轮完整远程CI待结束，保持草稿，不合并或部署。
+2026-10-19：前置PR177八项CI全绿。A4d-2f1 本地PASS（209.61秒）：14接口136业务请求/462断言、338匿名请求/1014断言通过。实际新建2推广码，最终4码唯一；19条SQL合成归因/15条电话证据不变。车主当月11合格/1周期、员工3合格；上月和TEST/UNKNOWN/PENDING/REJECTED不解锁，跨车主/门店隔离，TEST不因建码被升级。3解锁政策最终STOPPED revision4/STOPPED revision3/PUBLISHED revision2；旧回执不复活，12门槛LOCKED→11门槛ELIGIBLE但service_available=false→未来规则NOT_STARTED。源码稳定、后端/MySQL/网络清理成功；61项Java定向与9项新增/27项既有Python测试、编译/diff通过，新集合默认实际0请求0失败。真实微信注册/电话核验与本轮HTTP奖励发券未验，0奖励批次/发券/积分事件/支付。下一A4d-2f2奖励政策/冻结与后台发券→其余缺口→A5→B真实外部接入→C真机；全量API业务验收和性能延迟达标仍未完成。 本阶段成果已上传 [PR178](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/178)，验收代码 `dc25914`，依赖PR177；本轮完整远程CI待结束；已随全栈合并进 main。
 
 # 当前阶段：R9 A4d-2e4 积分兑换与券到账验收
 
-2026-10-19：前置PR176八项CI全绿。A4d-2e4 本地PASS（205.734秒）：8兑换本域+9串联支撑=17接口，196业务请求/668断言、338匿名请求/1014断言通过。实际签到入账20分、现金券扣6分/服务券扣9分，最终余额5/revision3、3分录、2兑换/2到账券/2库存事件；3目录均STOPPED。换目录不重置券模板终身限额，旧回执不重复扣分，池版本重选不恢复旧资格，历史99999积分及另一车主不变。独立积分/券池权限、正文/源版本/幂等键审计通过，源码稳定、后端/MySQL/网络清理成功；98项Java定向与9项新增/18项既有Python测试、编译/diff通过，新集合默认实际0请求0失败。仅SQL合成身份与测试政策，正式微信/外部服务/真机未验。下一邀请奖励及其余独立缺口→A5→B真实外部接入→C真机；全量API业务验收和性能延迟达标仍未完成。 本阶段成果已上传 [PR177](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/177)，验收代码 `a86b868`，依赖PR176；本轮完整远程CI待结束，保持草稿，不合并或部署。
+2026-10-19：前置PR176八项CI全绿。A4d-2e4 本地PASS（205.734秒）：8兑换本域+9串联支撑=17接口，196业务请求/668断言、338匿名请求/1014断言通过。实际签到入账20分、现金券扣6分/服务券扣9分，最终余额5/revision3、3分录、2兑换/2到账券/2库存事件；3目录均STOPPED。换目录不重置券模板终身限额，旧回执不重复扣分，池版本重选不恢复旧资格，历史99999积分及另一车主不变。独立积分/券池权限、正文/源版本/幂等键审计通过，源码稳定、后端/MySQL/网络清理成功；98项Java定向与9项新增/18项既有Python测试、编译/diff通过，新集合默认实际0请求0失败。仅SQL合成身份与测试政策，正式微信/外部服务/真机未验。下一邀请奖励及其余独立缺口→A5→B真实外部接入→C真机；全量API业务验收和性能延迟达标仍未完成。 本阶段成果已上传 [PR177](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/177)，验收代码 `a86b868`，依赖PR176；本轮完整远程CI待结束；已随全栈合并进 main。
 
 # 当前阶段：R9 A4d-2e3 积分规则与本人账本验收
 
-2026-10-19：前置PR175八项CI全绿。A4d-2e3 本地PASS（179.296秒）：8接口116业务请求/397断言、338匿名请求/1014断言通过。4积分规则，唯一签到事件CREDITED、1余额/1分录7分、3签到请求回执；停用规则revision4不被旧回执恢复，新规则11分不重复发放，事件冻结原规则revision3/7分；历史99999积分未导入、另一车主0余额/流水。独立积分权限、实际正文/日期/规则版本/幂等键审计通过，源码稳定、后端/MySQL/网络清理成功。69项Java定向复跑通过（首轮继承券并发用例超时，整类原样隔离重跑通过，原因未定，记录保留），9项新增/27项既有Python测试、编译/diff通过；新集合默认实际0请求0失败。身份仅SQL合成VERIFIED_WECHAT/UNKNOWN，真实微信/外部AI获分未验。下一兑换目录及兑换/券到账事务→邀请奖励与剩余缺口→A5→B真实外部接入→C真机；全量API业务验收和性能延迟达标仍未完成。 本阶段成果已上传 [PR176](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/176)，验收代码 `5fab216`，依赖PR175；本轮完整远程CI待结束，保持草稿，不合并或部署。
+2026-10-19：前置PR175八项CI全绿。A4d-2e3 本地PASS（179.296秒）：8接口116业务请求/397断言、338匿名请求/1014断言通过。4积分规则，唯一签到事件CREDITED、1余额/1分录7分、3签到请求回执；停用规则revision4不被旧回执恢复，新规则11分不重复发放，事件冻结原规则revision3/7分；历史99999积分未导入、另一车主0余额/流水。独立积分权限、实际正文/日期/规则版本/幂等键审计通过，源码稳定、后端/MySQL/网络清理成功。69项Java定向复跑通过（首轮继承券并发用例超时，整类原样隔离重跑通过，原因未定，记录保留），9项新增/27项既有Python测试、编译/diff通过；新集合默认实际0请求0失败。身份仅SQL合成VERIFIED_WECHAT/UNKNOWN，真实微信/外部AI获分未验。下一兑换目录及兑换/券到账事务→邀请奖励与剩余缺口→A5→B真实外部接入→C真机；全量API业务验收和性能延迟达标仍未完成。 本阶段成果已上传 [PR176](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/176)，验收代码 `5fab216`，依赖PR175；本轮完整远程CI待结束；已随全栈合并进 main。
 
 # 当前阶段：R9 A4d-2e2b 私有上传与签名附件真实链路
 
-2026-10-19：A4d-2e2b 本地PASS（349.594秒）：真实Spring HTTP/MySQL/MinIO/ClamAV，8接口53业务场景；实际下载与匿名/篡改/自然过期签名检查通过。数据库3个CLEAN文件、3成功上传/3扫描拒绝、1档案附件；4容器及网络移除核对通过。修复三角色文件访问忽略query，以及车主拍照/手动档案附件404；新增路径严格检查车辆、挂接、主体、扫描、类型/大小，施工档案授权不变。54项Java定向（含38项档案MySQL回归）及9项新增/15项既有Python测试通过，源码稳定。前置PR174八项CI全绿。合成身份与病毒库仅证明本地真实适配链，正式病毒库/外部供应商/微信/真机未验；全量API验收和性能延迟达标仍未完成。下一积分规则/本人余额流水/签到→兑换事务→邀请奖励及其余缺口→A5→B外部接入→C真机。 本阶段成果已上传 [PR175](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/175)，修复与验收代码 `d67e3d8`，依赖PR174；本轮完整远程CI待结束，保持草稿，不合并或部署。
+2026-10-19：A4d-2e2b 本地PASS（349.594秒）：真实Spring HTTP/MySQL/MinIO/ClamAV，8接口53业务场景；实际下载与匿名/篡改/自然过期签名检查通过。数据库3个CLEAN文件、3成功上传/3扫描拒绝、1档案附件；4容器及网络移除核对通过。修复三角色文件访问忽略query，以及车主拍照/手动档案附件404；新增路径严格检查车辆、挂接、主体、扫描、类型/大小，施工档案授权不变。54项Java定向（含38项档案MySQL回归）及9项新增/15项既有Python测试通过，源码稳定。前置PR174八项CI全绿。合成身份与病毒库仅证明本地真实适配链，正式病毒库/外部供应商/微信/真机未验；全量API验收和性能延迟达标仍未完成。下一积分规则/本人余额流水/签到→兑换事务→邀请奖励及其余缺口→A5→B外部接入→C真机。 本阶段成果已上传 [PR175](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/175)，修复与验收代码 `d67e3d8`，依赖PR174；本轮完整远程CI待结束；已随全栈合并进 main。
 
 # 当前阶段：R9 A4d-2e2a 私有PDF导出与摘要分享验收
 
-2026-10-19：A4d-2e2a 本地PASS（191.297秒）：7接口（PDF/分享6+档案新增1）、66业务请求/228断言、338匿名请求/1014断言通过。4份实际PDF完成严格解析与中文/隐藏来源检查；2分享均撤销，冻结摘要分别5/6条，3次合法接收审计；新增档案不扩旧快照，跨车主管理和私有PDF权限不扩大。修复分享未知/重复query及PDF中文ToUnicode映射；17项Java定向及12项新增/18项既有Python测试、编译/diff通过。源码稳定，容器/网络清理成功；默认集合0请求。原始PDF/能力令牌/JWT仅留.cache。前置PR173完整CI待结束。下一独立本地存储/扫描环境下上传/签名访问/档案附件→其余缺口→A5→B真实外部服务→C真机；全量API验收与性能延迟达标仍未完成。 本阶段成果已上传 [PR174](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/174)，修复与验收代码 `923befd`，依赖PR173；完整远程CI待结果，保持草稿，不合并或部署。
+2026-10-19：A4d-2e2a 本地PASS（191.297秒）：7接口（PDF/分享6+档案新增1）、66业务请求/228断言、338匿名请求/1014断言通过。4份实际PDF完成严格解析与中文/隐藏来源检查；2分享均撤销，冻结摘要分别5/6条，3次合法接收审计；新增档案不扩旧快照，跨车主管理和私有PDF权限不扩大。修复分享未知/重复query及PDF中文ToUnicode映射；17项Java定向及12项新增/18项既有Python测试、编译/diff通过。源码稳定，容器/网络清理成功；默认集合0请求。原始PDF/能力令牌/JWT仅留.cache。前置PR173完整CI待结束。下一独立本地存储/扫描环境下上传/签名访问/档案附件→其余缺口→A5→B真实外部服务→C真机；全量API验收与性能延迟达标仍未完成。 本阶段成果已上传 [PR174](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/174)，修复与验收代码 `923befd`，依赖PR173；完整远程CI待结果；已随全栈合并进 main。
 
 # 当前阶段：R9 A4d-2e1 车主结构化档案、健康与提醒验收
 
-2026-10-19：A4d-2e1 本地PASS（210.187秒）：14接口（车主12+规则2）、199业务请求/668断言、338匿名请求/1014断言通过。修复三组早期控制器忽略未知/重复query，写接口禁止query；22项Java定向测试及9项新增/19项既有Python测试、编译/diff通过。3份结构化资料、3指标当前值/7条历史、1确认/1已撤回规则、3提醒/1偏好；更正/换来源/清空、旧回执不恢复撤销状态、提醒状态与另一车主隔离检查通过。源码稳定，容器/网络清理成功；默认新集合0请求。健康规则仅合成协议值，不是生产阈值；本地提醒不代表外部消息送达。前置PR172完整CI待结束。下一文件/PDF/分享→其余缺口→A5→B外部接口→C真机；全部API业务验收和性能延迟达标仍未完成。 本阶段成果已上传 [PR173](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/173)，修复与验收代码 `c4addbd`，依赖PR172；完整远程CI待结果，保持草稿，不合并或部署。
+2026-10-19：A4d-2e1 本地PASS（210.187秒）：14接口（车主12+规则2）、199业务请求/668断言、338匿名请求/1014断言通过。修复三组早期控制器忽略未知/重复query，写接口禁止query；22项Java定向测试及9项新增/19项既有Python测试、编译/diff通过。3份结构化资料、3指标当前值/7条历史、1确认/1已撤回规则、3提醒/1偏好；更正/换来源/清空、旧回执不恢复撤销状态、提醒状态与另一车主隔离检查通过。源码稳定，容器/网络清理成功；默认新集合0请求。健康规则仅合成协议值，不是生产阈值；本地提醒不代表外部消息送达。前置PR172完整CI待结束。下一文件/PDF/分享→其余缺口→A5→B外部接口→C真机；全部API业务验收和性能延迟达标仍未完成。 本阶段成果已上传 [PR173](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/173)，修复与验收代码 `c4addbd`，依赖PR172；完整远程CI待结果；已随全栈合并进 main。
 
 # 当前阶段：R9 A4d-2d3 经验卡与精选治理验收
 
-2026-10-19：A4d-2d3 本地PASS（258.719秒）：14接口、131业务请求/448断言、338匿名请求/1014断言通过。真实消费者生成2档案/2卡片；合成非测试来源卡最终WITHDRAWN/revision9，LOCAL_TEST对照卡始终DRAFT/revision0；3审核/2公开UUID，1精选STOPPED/revision4。公开字段白名单、独立权限、来源哈希、真实时间窗、撤回同步隐藏、旧键/旧UUID不复活与旧精选不改绑检查通过。来源稳定，容器/网络清理成功；默认新集合0请求；新增10项和既有17项测试、编译/diff通过。WECHAT仅SQL合成来源字段，不代表真实付款/身份核验。前置PR171八项CI全绿。下一车主结构化档案/健康/提醒12接口→文件/PDF/分享→其他缺口→A5→B外部接口→C真机；全部API业务验收和性能延迟达标仍未完成。 本阶段成果已上传 [PR172](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/172)，验收代码 `ab43581`，依赖PR171；完整远程CI待结果，保持草稿，不合并或部署。
+2026-10-19：A4d-2d3 本地PASS（258.719秒）：14接口、131业务请求/448断言、338匿名请求/1014断言通过。真实消费者生成2档案/2卡片；合成非测试来源卡最终WITHDRAWN/revision9，LOCAL_TEST对照卡始终DRAFT/revision0；3审核/2公开UUID，1精选STOPPED/revision4。公开字段白名单、独立权限、来源哈希、真实时间窗、撤回同步隐藏、旧键/旧UUID不复活与旧精选不改绑检查通过。来源稳定，容器/网络清理成功；默认新集合0请求；新增10项和既有17项测试、编译/diff通过。WECHAT仅SQL合成来源字段，不代表真实付款/身份核验。前置PR171八项CI全绿。下一车主结构化档案/健康/提醒12接口→文件/PDF/分享→其他缺口→A5→B外部接口→C真机；全部API业务验收和性能延迟达标仍未完成。 本阶段成果已上传 [PR172](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/172)，验收代码 `ab43581`，依赖PR171；完整远程CI待结果；已随全栈合并进 main。
 
 # 当前阶段：R9 A4d-2d2 公开问答授权治理验收
 
-2026-10-19：A4d-2d2 本地PASS（176.953秒）：14接口、134业务请求/456断言、338匿名请求/1014断言通过。3次申请均WITHDRAWN/revision3，9授权事件、2个不同公开UUID；2问答/5消息/7问答事件，0积分任务事件/支付。脱敏、独立审核权限、未知来源拒绝、公开字段白名单、补充不扩权、撤回与旧UUID不复活验证通过。来源稳定，容器/网络清理成功；默认新集合0请求；新增8项和既有26项测试、编译/diff通过。仅合成来源协议夹具，不代表真实微信身份。下一经验卡授权/审核/撤回与精选治理→剩余车主→A5→B外部接口→C真机；全部API业务验收和性能延迟达标仍未完成。 本阶段成果已上传 [PR171](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/171)，验收代码 `b05d885`，依赖PR170；完整远程CI待结果，保持草稿，不合并或部署。
+2026-10-19：A4d-2d2 本地PASS（176.953秒）：14接口、134业务请求/456断言、338匿名请求/1014断言通过。3次申请均WITHDRAWN/revision3，9授权事件、2个不同公开UUID；2问答/5消息/7问答事件，0积分任务事件/支付。脱敏、独立审核权限、未知来源拒绝、公开字段白名单、补充不扩权、撤回与旧UUID不复活验证通过。来源稳定，容器/网络清理成功；默认新集合0请求；新增8项和既有26项测试、编译/diff通过。仅合成来源协议夹具，不代表真实微信身份。下一经验卡授权/审核/撤回与精选治理→剩余车主→A5→B外部接口→C真机；全部API业务验收和性能延迟达标仍未完成。 本阶段成果已上传 [PR171](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/171)，验收代码 `b05d885`，依赖PR170；完整远程CI待结果；已随全栈合并进 main。
 
 # 当前阶段：R9 A4d-2d1 私有问答与许可资料检索验收
 
-2026-10-19：A4d-2d1 本地PASS（205.641秒）：23接口、176业务请求/590断言、338匿名请求/1014断言通过。2条问答均关闭，5消息/10事件；1份合成资料STOPPED、4资料事件；私有正文/独立权限/旧处理者撤权/动态检索引用绑定与许可投影检查通过，0公开问答/诊断/支付。来源稳定、后端/MySQL/网络清理成功；默认新集合0请求，10项新增及48项既有测试与编译/diff通过。前置PR169八项CI全绿。下一公开社区/经验授权治理→剩余车主→A5→B外部身份/资金/识别→C真机；全部API验收和性能延迟达标仍未完成，正式语料/向量/外部AI未验。 本阶段全部成果已上传 [PR170](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/170)，业务验收代码 `db27b05`，依赖PR169；完整远程CI待结果，保持草稿，不合并或部署。
+2026-10-19：A4d-2d1 本地PASS（205.641秒）：23接口、176业务请求/590断言、338匿名请求/1014断言通过。2条问答均关闭，5消息/10事件；1份合成资料STOPPED、4资料事件；私有正文/独立权限/旧处理者撤权/动态检索引用绑定与许可投影检查通过，0公开问答/诊断/支付。来源稳定、后端/MySQL/网络清理成功；默认新集合0请求，10项新增及48项既有测试与编译/diff通过。前置PR169八项CI全绿。下一公开社区/经验授权治理→剩余车主→A5→B外部身份/资金/识别→C真机；全部API验收和性能延迟达标仍未完成，正式语料/向量/外部AI未验。 本阶段全部成果已上传 [PR170](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/170)，业务验收代码 `db27b05`，依赖PR169；完整远程CI待结果；已随全栈合并进 main。
 
 # 当前阶段：R9 A4d-2c 商家管理与运营权限验收
 
-2026-10-19：A4d-2c 本地 PASS（191.547秒）：17接口、119业务请求/397断言、338匿名请求/1014断言通过。1申请/2审核，累计3门店/5员工；新店待激活且无密码、店员管理面受限、员工启用不恢复旧会话/绑定、配额/门店白名单/码隐私检查通过。修复 Docker --rm 清理竞态，来源稳定、后端/MySQL/网络清理全部成功；默认新集合0请求。7项业务证据/3项清理/55项既有脚本测试及编译/diff通过。下一社区/知识与剩余车主接口→A5→B外部身份/资金/识别→C真机；全部API验收及性能延迟达标仍未完成。 本阶段全部成果已上传 [PR169](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/169)，业务验收及清理修复代码 `edfa3a9`，依赖 PR168；完整远程 CI 待结果，保持草稿，不合并或部署。
+2026-10-19：A4d-2c 本地 PASS（191.547秒）：17接口、119业务请求/397断言、338匿名请求/1014断言通过。1申请/2审核，累计3门店/5员工；新店待激活且无密码、店员管理面受限、员工启用不恢复旧会话/绑定、配额/门店白名单/码隐私检查通过。修复 Docker --rm 清理竞态，来源稳定、后端/MySQL/网络清理全部成功；默认新集合0请求。7项业务证据/3项清理/55项既有脚本测试及编译/diff通过。下一社区/知识与剩余车主接口→A5→B外部身份/资金/识别→C真机；全部API验收及性能延迟达标仍未完成。 本阶段全部成果已上传 [PR169](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/169)，业务验收及清理修复代码 `edfa3a9`，依赖 PR168；完整远程 CI 待结果；已随全栈合并进 main。
 
 # 当前阶段：R9 A4d-2b2 券生命周期业务验收
 
-2026-10-19：A4d-2b2 本地 PASS（213.594 秒）。20 接口、160 业务请求/547 断言及338匿名请求/1014断言全部通过；3 组支付/退款通知原文签名重放通过。现金券预占/释放/消费/失败不返/成功返原券/再次预占正确，原有效期不变；3 订单/合同、8 券事件、1 支付、1 退款/2 退款事件、1 服务券零佣金核销、0 档案，跨用户/店数据不变。来源稳定，容器/网络清理成功。新集合默认 0 请求，11 项券证据、6 项构建来源及24项既有测试、编译/diff通过。下一商家入驻/员工与运营权限→其他域→A5→B 外部接入→C 真机；供应商调用、全部 API 验收和性能延迟达标仍未完成。 本阶段全部成果已上传 [PR168](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/168)，业务验收代码 `90c6f4a`，依赖 PR167；完整远程 CI 待结束，保持草稿，不合并或部署。
+2026-10-19：A4d-2b2 本地 PASS（213.594 秒）。20 接口、160 业务请求/547 断言及338匿名请求/1014断言全部通过；3 组支付/退款通知原文签名重放通过。现金券预占/释放/消费/失败不返/成功返原券/再次预占正确，原有效期不变；3 订单/合同、8 券事件、1 支付、1 退款/2 退款事件、1 服务券零佣金核销、0 档案，跨用户/店数据不变。来源稳定，容器/网络清理成功。新集合默认 0 请求，11 项券证据、6 项构建来源及24项既有测试、编译/diff通过。下一商家入驻/员工与运营权限→其他域→A5→B 外部接入→C 真机；供应商调用、全部 API 验收和性能延迟达标仍未完成。 本阶段全部成果已上传 [PR168](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/168)，业务验收代码 `90c6f4a`，依赖 PR167；完整远程 CI 待结束；已随全栈合并进 main。
 
 # 当前阶段：R9 A4d-2b1 预约履约业务验收
 
-2026-10-19：A4d-2b1 本地 PASS（183.172 秒）。16 接口、102 业务请求/341 断言，338 匿名请求/1014 断言全部通过；HMAC 正确/无效/过期、原文重放及跨用户/门店检查通过。订单最终 COMPLETED，支付/支付事件/接车/派工/防护/报工/核销/归档任务/档案各 1 条；其他用户数据不变、来源哈希一致、隔离后端/MySQL/网络清理成功。新集合默认运行实际 0 请求/零失败，38 项脚本测试及编译/diff通过。下一 A4d-2b2 券预占/消费/释放/退款回退→其他域→A5→B 外部接入→C 真机；全部 API 验收和性能延迟达标仍未完成。 本阶段全部成果已上传 [PR167](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/167)，业务验收代码 `26fac80`，依赖 PR166；完整远程 CI 待结束，保持草稿，不合并或部署。
+2026-10-19：A4d-2b1 本地 PASS（183.172 秒）。16 接口、102 业务请求/341 断言，338 匿名请求/1014 断言全部通过；HMAC 正确/无效/过期、原文重放及跨用户/门店检查通过。订单最终 COMPLETED，支付/支付事件/接车/派工/防护/报工/核销/归档任务/档案各 1 条；其他用户数据不变、来源哈希一致、隔离后端/MySQL/网络清理成功。新集合默认运行实际 0 请求/零失败，38 项脚本测试及编译/diff通过。下一 A4d-2b2 券预占/消费/释放/退款回退→其他域→A5→B 外部接入→C 真机；全部 API 验收和性能延迟达标仍未完成。 本阶段全部成果已上传 [PR167](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/167)，业务验收代码 `26fac80`，依赖 PR166；完整远程 CI 待结束；已随全栈合并进 main。
 
 # 当前阶段：R9 A4d-2a 车主车辆与档案业务验收
 
