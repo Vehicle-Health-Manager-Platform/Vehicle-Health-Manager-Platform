@@ -7,6 +7,10 @@ const appStyles = fs.readFileSync(path.resolve(__dirname, '../dist/build/mp-weix
 for (const selector of ['reservation-page', 'reservation-title', 'reservation-panel', 'reservation-primary']) {
   assert.ok(appStyles.includes(`.${selector}`), `Shared native selector missing from app.wxss: ${selector}`)
 }
+// 公开评价展示面依赖设计系统原语；页面里写了但 app.wxss 没有，真机上会静默丢样式。
+for (const selector of ['ux-hero', 'ux-card', 'ux-metric-value', 'ux-badge', 'ux-row', 'ux-empty', 'ux-card-note', 'ux-divider']) {
+  assert.ok(appStyles.includes(`.${selector}`), `Design-system selector missing from app.wxss: ${selector}`)
+}
 console.log('PASS native shared styles available globally in app.wxss')
 function checkNormalBundle(directory) {
   for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {

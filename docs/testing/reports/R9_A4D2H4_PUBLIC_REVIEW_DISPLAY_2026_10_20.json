@@ -1,0 +1,88 @@
+{
+  "version": 1,
+  "scope": "公开星级/公开文字/评价要点展示面与三个公开授权页的展示层；不含真机与视觉回归截图",
+  "tests": {
+    "command": "node --test test/*.test.js",
+    "exit_code": 0,
+    "tests": 927,
+    "pass": 927,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 1761.4952,
+    "log_sha256": "d0059aa6e3b15a619dde619d62d730c9bc864a231bf33c70c8f97397276ca255"
+  },
+  "builds": {
+    "mp_weixin": {
+      "command": "npm run build:mp-weixin",
+      "exit_code": 0,
+      "build_complete": true,
+      "shared_selector_gate": true,
+      "no_test_bridge_gate": true,
+      "log_sha256": "530b37b51b54d65a5ce9db48258e8a2424cb8abfcdd7085c2b554081ca5746f4"
+    },
+    "h5": {
+      "command": "npm run build:h5",
+      "exit_code": 0,
+      "build_complete": true,
+      "log_sha256": "47fa3930c94797e17705cfa2fa39ce65c16747d5b34144af0ad4054ecd37c979"
+    }
+  },
+  "shared_selectors_in_app_wxss": {
+    "reservation-page": true,
+    "reservation-primary": true,
+    "ux-hero": true,
+    "ux-card": true,
+    "ux-metric-value": true,
+    "ux-badge": true,
+    "ux-row": true,
+    "ux-empty": true,
+    "ux-card-note": true,
+    "ux-divider": true
+  },
+  "compiled_pages": {
+    "service/ratings.wxml": {
+      "ux_hero": true,
+      "ux_badge": true,
+      "ux_empty": true
+    },
+    "service/review-texts.wxml": {
+      "ux_hero": true,
+      "ux_badge": true,
+      "ux_empty": true
+    },
+    "service/review-summary.wxml": {
+      "ux_hero": true,
+      "ux_badge": true,
+      "ux_empty": false
+    },
+    "order/public-review-text.wxml": {
+      "ux_hero": true,
+      "ux_badge": true,
+      "ux_empty": false
+    },
+    "order/review-publication.wxml": {
+      "ux_hero": true,
+      "ux_badge": true,
+      "ux_empty": false
+    },
+    "order/review-summary-consent.wxml": {
+      "ux_hero": true,
+      "ux_badge": true,
+      "ux_empty": false
+    }
+  },
+  "sources_sha256": {
+    "apps/miniapp/src/services/public-review-display.js": "be7d937b5dcc54e700abaf96641b53842c898f5e91eb93713fe6259dac77b65c",
+    "apps/miniapp/src/pages/service/ratings.vue": "42c1c166c17636acbdc02fe41f50edc5c6565a7e3d96d6b485702079de434445",
+    "apps/miniapp/src/pages/service/review-texts.vue": "f32cafbaba973e691e20d3c48f23b25a795fb9ec4c1af7b7521129914556d7ee",
+    "apps/miniapp/src/pages/service/review-summary.vue": "59c97d25f5945ef3ff83457ead6acb0f00b6432c068ec9d3659ae20dbc29f706",
+    "apps/miniapp/src/pages/order/public-review-text.vue": "8c4dbbc233342544bced9caa4a54202552785751301a03229dff84f0e8100f64",
+    "apps/miniapp/src/pages/order/review-publication.vue": "f7c5096f4bd335277cc1e2d1eb22c1881b6154a71ea93398dd3dbe36eba7227c",
+    "apps/miniapp/src/pages/order/review-summary-consent.vue": "5b62486b5e6ed69909f0794a53788efd9c75471c9be993ce69587975b609481f",
+    "apps/miniapp/test/public-review-display.test.js": "591069adf268005a0f297357a080e44bdd5c1c07d1a5ad6dc86b4a4b59fb6b0d",
+    "apps/miniapp/test/check-native-styles.cjs": "05f85508983e48cee1f1ad26c1a30690b84bafd197daa9b86836ffe897cd48fd"
+  },
+  "passed": true
+}
