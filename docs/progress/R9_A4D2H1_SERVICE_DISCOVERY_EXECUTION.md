@@ -1,5 +1,7 @@
 # A4d-2h1：服务发现、搜索与门店位置
 
+本阶段成果已上传 [PR184](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/184)，修复与验收代码 `d7e1730`，依赖PR183；前置六项CI成功、backend仍运行。本轮完整远程CI待结果，保持草稿，不合并或部署。
+
 ## 执行设计
 
 本阶段选择9个尚未映射专项业务案例的本地接口：GET服务项目列表/详情、项目商家报价、门店详情；POST项目搜索、附近门店、单店距离；GET/PUT本店位置。
