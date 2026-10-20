@@ -96,3 +96,112 @@ export function quoteSource(sources, publicId) {
   if (!row) return { public_text: '', published_date: '来源已不可见', missing: true }
   return { public_text: say(row.public_text, ''), published_date: say(row.published_date, '日期未提供'), missing: false }
 }
+
+/* ———————————————— 运营审核台 ————————————————
+ * 审核台与车主端面对同一批授权数据，但读者不同：运营要快速判断"能不能批、为什么不能批"。
+ * 这里只做纯映射，页面不再自己拼状态文案，权限过滤也不写在模板里。 */
+
+/** 审核台入口分组：组名与顺序固定，空组不下发。 */
+export const OPERATOR_GROUPS = [
+  { key: 'content', title: '内容与授权审核', note: '每条都要人工检查隐私与内容，规则不能替代人工判断。' },
+  { key: 'queue', title: '我的处理工作区', note: '只列出分配给我的处理任务。' },
+  { key: 'operate', title: '经营配置', note: '改动会立即影响车主端可见的目录、价格与券池。' },
+  { key: 'read', title: '只读与结算', note: '只读查看，不改变业务状态。' },
+]
+
+/** 入口清单：can 可以是单个权限键，也可以是"任一满足"的数组。 */
+const OPERATOR_ENTRIES = [
+  { group: 'content', key: 'knowledge', label: '独立许可资料管理', note: '维护可被逐字引用的许可资料', url: '/pages/operator/knowledge', can: 'canKnowledge' },
+  { group: 'content', key: 'public-images', label: '独立脱敏图片审核', note: '只看车主单独授权的脱敏图片', url: '/pages/community/public-images?mode=review', can: 'canReview' },
+  { group: 'content', key: 'public-questions', label: '公开问答脱敏摘要审核', note: '审核问答对外的脱敏摘要', url: '/pages/community/public-questions?mode=review', can: 'canReview' },
+  { group: 'content', key: 'review-texts', label: '公开评价文字审核', note: '只查看脱敏文字，批准即公开确切原文', url: '/pages/operator/review-texts', can: 'canReview' },
+  { group: 'content', key: 'curations', label: '同款经验运营精选', note: '从已授权经验里挑选同款案例', url: '/pages/operator/experience-curations', can: 'canCommunityCurate' },
+  { group: 'queue', key: 'diagnosis-cases', label: '诊断处理工作区', note: '受理与处理人工诊断任务', url: '/pages/operator/diagnosis-cases', can: ['canDiagnose', 'canDiagnoseManage'] },
+  { group: 'queue', key: 'questions', label: '我的私有问答处理', note: '只含分配给我的问答', url: '/pages/operator/questions?scope=mine', can: 'canCommunityAnswer' },
+  { group: 'operate', key: 'catalog', label: '标准项目与车型库维护', note: '标准项目、车型库与适用性', url: '/pages/operator/catalog', can: 'canCatalog' },
+  { group: 'operate', key: 'diagnosis-service', label: '诊断受理配置与分配', note: '受理规则、分配与转派', url: '/pages/operator/diagnosis-service', can: 'canDiagnoseManage' },
+  { group: 'operate', key: 'question-service', label: '私有问答受理与分配', note: '受理策略与处理者分配', url: '/pages/operator/question-service', can: 'canCommunityManage' },
+  { group: 'operate', key: 'coupons', label: '运营精选券池', note: '券池与兑换库存', url: '/pages/operator/coupons', can: 'canCoupon' },
+  { group: 'operate', key: 'points-policies', label: '积分任务规则', note: '任务与发放规则', url: '/pages/operator/points-policies', can: 'canPoints' },
+  { group: 'operate', key: 'points-exchange', label: '积分兑换目录', note: '兑换项与库存', url: '/pages/operator/points-exchange', can: 'canPoints' },
+  { group: 'operate', key: 'invite-policies', label: '邀请奖励规则配置', note: '奖励口径与月度资格', url: '/pages/operator/invite-policies', can: 'canInvite' },
+  { group: 'operate', key: 'diagnosis-policies', label: '人工诊断邀请条件', note: '邀请条件与门槛', url: '/pages/operator/diagnosis-policies', can: 'canInvite' },
+  { group: 'operate', key: 'onboarding', label: '商家入驻审核', note: '资质与门店信息核对', url: '/pages/operator/onboarding', can: 'canOnboard' },
+  { group: 'read', key: 'price-comparisons', label: '只读价格比较', note: '各门店同项目报价对比', url: '/pages/operator/price-comparisons', can: 'canPriceMonitor' },
+  { group: 'read', key: 'price-policies', label: '价格监控来源依据', note: '监控口径与来源留档', url: '/pages/operator/price-policies', can: 'canPriceMonitor' },
+  { group: 'read', key: 'business-dashboard', label: '门店经营看板', note: '聚合指标，不含车主明细', url: '/pages/operator/business-dashboard', can: 'canAnalytics' },
+  { group: 'read', key: 'monthly-assessment', label: '门店月度结算与历史', note: '考核结算与历史快照', url: '/pages/operator/monthly-assessment', can: 'canAssessment' },
+  { group: 'read', key: 'assessment-policies', label: '门店月度考核政策', note: '考核口径配置', url: '/pages/operator/assessment-policies', can: 'canAssessment' },
+]
+
+const granted = (session, need) => (Array.isArray(need) ? need : [need]).some(key => session?.[key] === true)
+
+/** 按权限把入口分到固定分组；没有可用入口的组整组不出现。 */
+export function operatorEntryGroups(session) {
+  const visible = OPERATOR_ENTRIES.filter(entry => granted(session, entry.can))
+  return OPERATOR_GROUPS.map(group => ({
+    key: group.key, title: group.title, note: group.note,
+    entries: visible.filter(entry => entry.group === group.key).map(({ key, label, note, url }) => ({ key, label, note, url })),
+  })).filter(group => group.entries.length > 0)
+}
+
+/** 权限摘要：说清"为什么只看到这些入口"，避免被当成权限缺失或越权。 */
+const CAPABILITY_LABELS = [
+  ['canReview', '内容审核'], ['canKnowledge', '许可资料'], ['canCatalog', '目录维护'],
+  ['canDiagnose', '诊断处理'], ['canDiagnoseManage', '诊断配置'], ['canCommunityManage', '问答受理'],
+  ['canCommunityAnswer', '问答答复'], ['canCommunityCurate', '经验精选'], ['canCoupon', '券池'],
+  ['canInvite', '邀请奖励'], ['canPoints', '积分规则'], ['canAssessment', '月度考核'],
+  ['canAnalytics', '经营看板'], ['canPriceMonitor', '价格监控'], ['canOnboard', '商家入驻'],
+]
+export function operatorCapabilitySummary(session) {
+  const keys = CAPABILITY_LABELS.filter(([key]) => session?.[key] === true).map(([, label]) => label)
+  if (keys.length === 0) return { granted: keys, tone: 'risk', copy: '当前账号没有运营权限，请联系管理员开通后再使用审核台。' }
+  return { granted: keys, tone: 'ok', copy: `${keys.length} 项权限；未授权的入口不会出现在下方，避免点进去才发现无权限。` }
+}
+
+/** 待审文字行：能不能批准必须写在行内，而不是让运营点一次才发现。 */
+export function moderationCardView(item) {
+  const approve = item?.can_approve === true
+  const version = num(item?.version)
+  return {
+    approve,
+    label: approve ? '可批准' : '来源已失效',
+    tone: approve ? 'ok' : 'risk',
+    versionCopy: version > 0 ? `第 ${version} 版` : '版本未知',
+    copy: approve ? '批准即公开这段确切文字，不能代改；驳回则车主修改后需重新授权。' : '来源核对不再通过，只能驳回；车主重新授权后才会回到待审。',
+  }
+}
+
+/** 待审列表的空态与页脚：区分"真的没有"和"还没加载"。 */
+export function moderationConsoleCopy(list) {
+  if (!list || !Array.isArray(list.items)) return { empty: false, pending: 0, loaded: 0, blocked: 0, emptyTitle: '', emptyCopy: '', footer: '' }
+  const pending = num(list.total), loaded = list.items.length, blocked = list.items.filter(item => item?.can_approve !== true).length
+  if (loaded === 0) return { empty: true, pending, loaded, blocked, emptyTitle: '当前没有待审文字', emptyCopy: '只有车主单独投稿、且来源核对通过的脱敏文字才会进入这里。', footer: '' }
+  return { empty: false, pending, loaded, blocked, emptyTitle: '', emptyCopy: '', footer: `待审 ${pending} 条 · 本页 ${loaded} 条${blocked > 0 ? ` · 其中 ${blocked} 条来源已失效只能驳回` : ''}` }
+}
+
+/** 驳回理由选择器：code 与可读文案分离，模板只渲染文案。 */
+export function reasonPicker(reasons = {}) {
+  const codes = Object.keys(reasons)
+  return { codes, labels: codes.map(code => say(reasons[code], code)), placeholder: '请选择驳回理由' }
+}
+export function reasonLabel(code, reasons = {}) {
+  return typeof code === 'string' && Object.hasOwn(reasons, code) ? say(reasons[code], code) : ''
+}
+
+/** 待审经验摘要卡：把"能不能批准"的事实（车型）与摘要事实分开说。 */
+export function operatorCardFacts(card) {
+  const summary = card?.summary || {}
+  const approvedModel = Number.isSafeInteger(card?.model_id) && card.model_id > 0
+  return {
+    title: say(card?.title, '未命名经验卡片'),
+    revisionCopy: `第 ${num(card?.revision)} 次修订`,
+    month: say(summary.recorded_month, '月份未提供'),
+    work: `实际工时 ${num(summary.work_minutes)} 分钟`,
+    parts: summary.no_parts === true ? '本次未使用配件' : `使用 ${num(summary.part_kinds)} 种配件`,
+    model: approvedModel ? `有效车型编号 ${card.model_id}` : '缺少有效车型，不能批准',
+    canApprove: approvedModel,
+    tone: approvedModel ? 'ok' : 'risk',
+  }
+}
+

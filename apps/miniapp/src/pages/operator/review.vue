@@ -1,17 +1,27 @@
 <script setup>
-import { reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { onShow, onHide, onUnload } from '@dcloudio/uni-app'
 import { operatorSession, operatorToken, clearOperatorSession } from '../../services/operator-session.js'
 import { publicationApi, initialPublicationState, createPublicationFlow } from '../../services/experience-publication.js'
 import { REVIEW_REASONS } from '../../services/experience-cards.js'
 import { imageRequestKey } from '../../services/private-images.js'
-const state = reactive(initialPublicationState()), reasons = ref({}), reasonCodes = Object.keys(REVIEW_REASONS), reasonLabels = reasonCodes.map(code => REVIEW_REASONS[code])
+import { operatorCardFacts, operatorCapabilitySummary, operatorEntryGroups, reasonPicker, reasonLabel, toneClass } from '../../services/public-review-display.js'
+const state = reactive(initialPublicationState()), reasons = ref({})
+// 入口与权限过滤都在展示映射里做，模板只渲染分组结果。
+const picker = reasonPicker(REVIEW_REASONS)
+const groups = computed(() => operatorEntryGroups(operatorSession))
+const capability = computed(() => operatorCapabilitySummary(operatorSession))
 const flow = createPublicationFlow({ state, api: publicationApi, token: operatorToken, operator: true, newKey: imageRequestKey })
+const cards = computed(() => (Array.isArray(state.rows) ? state.rows : []).map(card => ({ card, facts: operatorCardFacts(card) })))
+const queue = computed(() => ({ pending: state.total, loaded: cards.value.length, blocked: cards.value.filter(row => !row.facts.canApprove).length }))
+const queueCopy = computed(() => cards.value.length === 0 ? ''
+  : `待审 ${queue.value.pending} 条 · 已加载 ${queue.value.loaded} 条${queue.value.blocked > 0 ? ` · 其中 ${queue.value.blocked} 条缺有效车型只能驳回` : ''} · 第 ${state.page} 页`)
 let visible = false
 function clear() { flow.reset(); reasons.value = {} }
 function login() { clear(); clearOperatorSession(); uni.redirectTo({ url: '/pages/operator/login' }) }
 function refresh() { reasons.value = {}; flow.load() }
-function reason(card, event) { reasons.value[card.card_id] = reasonCodes[Number(event.detail.value)] }
+function open(url) { uni.navigateTo({ url }) }
+function reason(card, event) { reasons.value[card.card_id] = picker.codes[Number(event.detail.value)] }
 async function act(card, decision) {
   const selected = decision === 'APPROVE' ? null : reasons.value[card.card_id]
   if (decision === 'REJECT' && !selected) { state.message = '请先选择驳回理由'; return }
@@ -28,48 +38,89 @@ onHide(() => { visible = false; clear() }); onUnload(() => { visible = false; cl
 </script>
 <template>
   <view class="reservation-page">
-    <text class="reservation-title">经验卡片审核</text>
-    <button v-if="operatorSession.canKnowledge" @tap="uni.navigateTo({url:'/pages/operator/knowledge'})">独立许可资料管理</button>
-    <button v-if="operatorSession.canReview" @tap="uni.navigateTo({url:'/pages/community/public-images?mode=review'})">独立脱敏图片审核</button>
-    <button v-if="operatorSession.canReview" @tap="uni.navigateTo({url:'/pages/community/public-questions?mode=review'})">公开问答脱敏摘要审核</button>
-    <button v-if="operatorSession.canReview" @tap="uni.navigateTo({url:'/pages/operator/review-texts'})">公开评价文字审核</button>
-    <button v-if="operatorSession.canCatalog" @tap="uni.navigateTo({url:'/pages/operator/catalog'})">标准项目与车型库维护</button>
-    <button v-if="operatorSession.canDiagnoseManage" @tap="uni.navigateTo({url:'/pages/operator/diagnosis-service'})">诊断受理配置与分配</button>
-    <button v-if="operatorSession.canDiagnose||operatorSession.canDiagnoseManage" @tap="uni.navigateTo({url:'/pages/operator/diagnosis-cases'})">诊断处理工作区</button>
-    <button v-if="operatorSession.canCommunityManage" @tap="uni.navigateTo({url:'/pages/operator/question-service'})">私有问答受理与分配</button>
-    <button v-if="operatorSession.canCommunityAnswer" @tap="uni.navigateTo({url:'/pages/operator/questions?scope=mine'})">我的私有问答处理</button>
-    <button v-if="operatorSession.canCommunityCurate" @tap="uni.navigateTo({url:'/pages/operator/experience-curations'})">同款经验运营精选</button>
-    <button v-if="operatorSession.canPriceMonitor" @tap="uni.navigateTo({url:'/pages/operator/price-comparisons'})">只读价格比较</button><button v-if="operatorSession.canPriceMonitor" @tap="uni.navigateTo({url:'/pages/operator/price-policies'})">价格监控来源依据</button><button v-if="operatorSession.canAnalytics" @tap="uni.navigateTo({url:'/pages/operator/business-dashboard'})">门店经营看板</button>
-    <button v-if="operatorSession.canAssessment" @tap="uni.navigateTo({url:'/pages/operator/monthly-assessment'})">门店月度结算与历史</button>
-    <button v-if="operatorSession.canAssessment" @tap="uni.navigateTo({url:'/pages/operator/assessment-policies'})">门店月度考核政策</button>
-    <button v-if="operatorSession.canPoints" @tap="uni.navigateTo({url:'/pages/operator/points-policies'})">积分任务规则</button>
-    <button v-if="operatorSession.canPoints" @tap="uni.navigateTo({url:'/pages/operator/points-exchange'})">积分兑换目录</button>
-    <button v-if="operatorSession.canInvite" @tap="uni.navigateTo({url:'/pages/operator/invite-policies'})">邀请奖励规则配置</button>
-    <button v-if="operatorSession.canInvite" @tap="uni.navigateTo({url:'/pages/operator/diagnosis-policies'})">人工诊断邀请条件</button>
-    <button v-if="operatorSession.canCoupon" @tap="uni.navigateTo({url:'/pages/operator/coupons'})">管理运营精选券池</button>
-    <text class="reservation-copy">仅查看车主已明确授权的正式施工摘要。批准前会复核车型和来源；车主撤回后停止展示。</text>
-    <text v-if="!operatorSession.canReview">当前账号未配置审核权限。</text>
-    <text v-if="state.busy" role="status">正在加载待审摘要…</text>
-    <text v-else-if="state.loaded && !state.rows.length">当前没有待审摘要。</text>
-    <view v-for="card in state.rows" :key="card.card_id" class="reservation-panel">
-      <text class="reservation-heading">{{ card.title }}</text>
-      <text>{{ card.summary.recorded_month }} · 实际工时 {{ card.summary.work_minutes }} 分钟</text>
-      <text>{{ card.summary.no_parts ? '本次未使用配件' : `使用 ${card.summary.part_kinds} 种配件` }}</text>
-      <text>{{ card.model_id ? `有效车型编号 ${card.model_id}` : '缺少有效车型，不能批准' }}</text>
-      <button class="reservation-primary" :disabled="!card.model_id || state.busy || state.writing" :loading="state.writing" @tap="act(card,'APPROVE')">批准同款摘要展示</button>
-      <picker :range="reasonLabels" :disabled="state.busy || state.writing" @change="reason(card,$event)">
-        <view class="reason">{{ REVIEW_REASONS[reasons[card.card_id]] || '请选择驳回理由' }} ›</view>
-      </picker>
-      <button :disabled="!reasons[card.card_id] || state.busy || state.writing" @tap="act(card,'REJECT')">按所选理由驳回</button>
+    <view class="ux-hero ux-in">
+      <text class="ux-eyebrow">运营工作台</text>
+      <text class="ux-title">运营审核台</text>
+      <text class="ux-lead">入口按当前账号权限显示。审核类操作都会写版本与审计；授权由车主单独给出，运营不能代改原文。</text>
     </view>
-    <text v-if="state.message" role="status">{{ state.message }}</text>
-    <button v-if="state.kind === 'unauthorized'" @tap="login">重新登录运营账号</button>
+
+    <view class="ux-card ux-in ux-r2" data-testid="operator-capability">
+      <view class="head">
+        <text class="ux-card-title">我的权限</text>
+        <view class="ux-badge" :class="toneClass(capability.tone)"><text>{{ capability.granted.length ? capability.granted.length + ' 项' : '无权限' }}</text></view>
+      </view>
+      <text class="ux-card-note">{{ capability.copy }}</text>
+      <view v-if="capability.granted.length" class="chips">
+        <view v-for="label in capability.granted" :key="label" class="chip"><text>{{ label }}</text></view>
+      </view>
+    </view>
+
+    <view v-for="group in groups" :key="group.key" class="ux-card ux-in ux-r3" :data-testid="'operator-group-' + group.key">
+      <text class="ux-card-title">{{ group.title }}</text>
+      <text class="ux-card-note">{{ group.note }}</text>
+      <view class="ux-divider"></view>
+      <view v-for="entry in group.entries" :key="entry.key" class="ux-row entry" data-testid="operator-entry" @tap="open(entry.url)">
+        <view class="entry-head">
+          <text class="ux-row-title">{{ entry.label }}</text>
+          <text class="chevron">›</text>
+        </view>
+        <text class="ux-row-copy">{{ entry.note }}</text>
+      </view>
+    </view>
+
+    <view v-if="groups.length === 0" class="ux-empty ux-in ux-r3" data-testid="operator-empty">
+      <text class="ux-empty-title">没有可用的运营入口</text>
+      <text class="ux-empty-copy">当前账号没有配置任何运营权限，请联系管理员开通；你也可以退出后换账号登录。</text>
+    </view>
+
+    <view class="ux-card ux-in ux-r4" data-testid="pending-cards">
+      <view class="head">
+        <text class="ux-card-title">待审经验摘要</text>
+        <view class="ux-badge" :class="toneClass(queue.pending > 0 ? 'warn' : 'muted')"><text>待审 {{ queue.pending }} 条</text></view>
+      </view>
+      <text class="ux-card-note">仅查看车主已明确授权的正式施工摘要。批准前会复核车型和来源；车主撤回后停止展示。</text>
+      <text v-if="queueCopy" class="ux-card-note queue-line">{{ queueCopy }}</text>
+      <view class="ux-divider"></view>
+
+      <view v-if="!operatorSession.canReview" class="ux-card-note">当前账号未配置审核权限，待审摘要不可操作。</view>
+      <text v-else-if="state.busy" class="ux-card-note" role="status">正在加载待审摘要…</text>
+      <view v-else-if="state.loaded && cards.length === 0" class="ux-empty" data-testid="pending-empty">
+        <text class="ux-empty-title">当前没有待审摘要</text>
+        <text class="ux-empty-copy">只有车主明确授权、且来源核对通过的正式施工摘要才会进入这里；测试记录不会送审。</text>
+      </view>
+
+      <view v-for="row in cards" :key="row.card.card_id" class="ux-row" data-testid="pending-row">
+        <view class="head">
+          <text class="ux-row-title">{{ row.facts.title }}</text>
+          <view class="ux-badge" :class="toneClass(row.facts.tone)"><text>{{ row.facts.canApprove ? '可批准' : '缺有效车型' }}</text></view>
+        </view>
+        <text class="ux-row-copy">{{ row.facts.month }} · {{ row.facts.work }} · {{ row.facts.parts }} · {{ row.facts.revisionCopy }}</text>
+        <text class="ux-row-copy" :class="{ 'risk-copy': !row.facts.canApprove }">{{ row.facts.model }}</text>
+        <button class="reservation-primary" :disabled="!row.facts.canApprove || state.busy || state.writing" :loading="state.writing" @tap="act(row.card,'APPROVE')">批准同款摘要展示</button>
+        <picker :range="picker.labels" :disabled="state.busy || state.writing" @change="reason(row.card,$event)">
+          <view class="reason">{{ reasonLabel(reasons[row.card.card_id], REVIEW_REASONS) || picker.placeholder }} ›</view>
+        </picker>
+        <button :disabled="!reasons[row.card.card_id] || state.busy || state.writing" @tap="act(row.card,'REJECT')">按所选理由驳回</button>
+      </view>
+
+      <button v-if="state.loaded && state.page * 20 < state.total" :disabled="state.busy || state.writing" @tap="flow.load(true)">加载下一页</button>
+    </view>
+
+    <text v-if="state.message" class="status-line" role="status">{{ state.message }}</text>
+    <button v-if="state.kind === 'unauthorized'" class="reservation-primary" @tap="login">重新登录运营账号</button>
     <button :disabled="state.busy || state.writing" @tap="refresh">刷新待审列表</button>
-    <text v-if="state.loaded">待审 {{ state.total }} 条 · 第 {{ state.page }} 页</text>
-    <button v-if="state.loaded && state.page * 20 < state.total" :disabled="state.busy || state.writing" @tap="flow.load(true)">加载下一页</button>
-    <button class="secondary" :disabled="state.busy || state.writing" @tap="uni.navigateTo({url:'/pages/operator/onboarding'})">商家入驻审核</button>
     <button :disabled="state.writing || state.busy" @tap="logout">退出运营账号</button>
   </view>
 </template>
-
-<style scoped>.reason{padding:22rpx;border:1rpx solid #e0ded6;border-radius:12rpx;font-size:28rpx}.secondary{align-self:flex-start;min-height:68rpx;padding:0 24rpx;margin:12rpx 0 0;background:#e9f2ec;color:#074d30;font-size:24rpx}</style>
+<style scoped>
+.head { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
+.entry-head { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
+.chevron { color: #8a8f84; font-size: 30rpx; }
+.entry:active { opacity: 0.6; }
+.chips { display: flex; flex-wrap: wrap; gap: 12rpx; margin-top: 20rpx; }
+.chip { padding: 8rpx 20rpx; border-radius: 999rpx; background: #efede6; color: #454a41; font-size: 23rpx; }
+.queue-line { margin-top: 8rpx; }
+.risk-copy { color: #b3261e; }
+.reason { margin-top: 16rpx; padding: 22rpx; border: 1rpx solid #e0ded6; border-radius: 12rpx; font-size: 27rpx; color: #454a41; }
+.status-line { display: block; margin-top: 20rpx; color: #63685e; font-size: 26rpx; }
+</style>
