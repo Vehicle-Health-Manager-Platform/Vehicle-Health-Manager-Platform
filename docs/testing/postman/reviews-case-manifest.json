@@ -1,0 +1,1398 @@
+{
+  "version": 1,
+  "cases": 139,
+  "operations": 14,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "first_pending",
+      "method": "GET",
+      "path": "/api/order/1/review",
+      "operation_id": "get_api_order_id_review",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "first_pending_error",
+      "method": "GET",
+      "path": "/api/order/1/review",
+      "operation_id": "get_api_order_id_review",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "first_pending_anonymous",
+      "method": "GET",
+      "path": "/api/order/1/review",
+      "operation_id": "get_api_order_id_review",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "first_pending_wrong_role",
+      "method": "GET",
+      "path": "/api/order/1/review",
+      "operation_id": "get_api_order_id_review",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "not_completed",
+      "method": "GET",
+      "path": "/api/order/3/review",
+      "operation_id": "get_api_order_id_review",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "redemption_missing",
+      "method": "GET",
+      "path": "/api/order/4/review",
+      "operation_id": "get_api_order_id_review",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "open_dispute",
+      "method": "GET",
+      "path": "/api/order/6/review",
+      "operation_id": "get_api_order_id_review",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "other_owner_order",
+      "method": "GET",
+      "path": "/api/order/1/review",
+      "operation_id": "get_api_order_id_review",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "technician_order",
+      "method": "GET",
+      "path": "/api/order/1/review",
+      "operation_id": "get_api_order_id_review",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "technician",
+      "assertions": 3
+    },
+    {
+      "name": "bad_rating_0",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "bad_rating_1",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "bad_rating_2",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "blank_content_0",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "blank_content_1",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "blank_content_2",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "long_content",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "too_many_photos",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "duplicate_target",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "unknown_field",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "missing_photo_key",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "duplicate_rating",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "duplicate_content",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "trailing_json",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "large_json",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "submit_query",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "other_owner_file",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "boundary",
+      "status": 422,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "missing_file",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "boundary",
+      "status": 422,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "create",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "create_replay",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "create_malformed",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "create_anonymous",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "create_wrong_role",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "changed_payload",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "new_key_same_body",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "new_key_other_body",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "error",
+      "status": 409,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "reviewed_detail",
+      "method": "GET",
+      "path": "/api/order/1/review",
+      "operation_id": "get_api_order_id_review",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "reviewed_other_owner",
+      "method": "GET",
+      "path": "/api/order/1/review",
+      "operation_id": "get_api_order_id_review",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "create_public",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "create_public_replay",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "create_public_malformed",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "create_public_anonymous",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "create_public_wrong_role",
+      "method": "POST",
+      "path": "/api/order/review",
+      "operation_id": "post_api_order_review",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "publication_initial",
+      "method": "GET",
+      "path": "/api/order/2/review-publication",
+      "operation_id": "get_api_order_id_review_publication",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "publication_initial_error",
+      "method": "GET",
+      "path": "/api/order/2/review-publication",
+      "operation_id": "get_api_order_id_review_publication",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "publication_initial_anonymous",
+      "method": "GET",
+      "path": "/api/order/2/review-publication",
+      "operation_id": "get_api_order_id_review_publication",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "publication_initial_wrong_role",
+      "method": "GET",
+      "path": "/api/order/2/review-publication",
+      "operation_id": "get_api_order_id_review_publication",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "publication_test_order",
+      "method": "GET",
+      "path": "/api/order/1/review-publication",
+      "operation_id": "get_api_order_id_review_publication",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "publication_before_review",
+      "method": "GET",
+      "path": "/api/order/3/review-publication",
+      "operation_id": "get_api_order_id_review_publication",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "publish",
+      "method": "PUT",
+      "path": "/api/order/2/review-publication",
+      "operation_id": "put_api_order_id_review_publication",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "publish_replay",
+      "method": "PUT",
+      "path": "/api/order/2/review-publication",
+      "operation_id": "put_api_order_id_review_publication",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "publish_malformed",
+      "method": "PUT",
+      "path": "/api/order/2/review-publication",
+      "operation_id": "put_api_order_id_review_publication",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "publish_anonymous",
+      "method": "PUT",
+      "path": "/api/order/2/review-publication",
+      "operation_id": "put_api_order_id_review_publication",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "publish_wrong_role",
+      "method": "PUT",
+      "path": "/api/order/2/review-publication",
+      "operation_id": "put_api_order_id_review_publication",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "publish_stale_version",
+      "method": "PUT",
+      "path": "/api/order/2/review-publication",
+      "operation_id": "put_api_order_id_review_publication",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "publish_non_boolean",
+      "method": "PUT",
+      "path": "/api/order/2/review-publication",
+      "operation_id": "put_api_order_id_review_publication",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "publish_query",
+      "method": "PUT",
+      "path": "/api/order/2/review-publication",
+      "operation_id": "put_api_order_id_review_publication",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "publish_large_json",
+      "method": "PUT",
+      "path": "/api/order/2/review-publication",
+      "operation_id": "put_api_order_id_review_publication",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "publication_after_publish",
+      "method": "GET",
+      "path": "/api/order/2/review-publication",
+      "operation_id": "get_api_order_id_review_publication",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "ratings",
+      "method": "GET",
+      "path": "/api/service/merchant/1/ratings",
+      "operation_id": "get_api_service_merchant_id_ratings",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "ratings_boundary",
+      "method": "GET",
+      "path": "/api/service/merchant/1/ratings",
+      "operation_id": "get_api_service_merchant_id_ratings",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "ratings_error",
+      "method": "GET",
+      "path": "/api/service/merchant/1/ratings",
+      "operation_id": "get_api_service_merchant_id_ratings",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "ratings_anonymous",
+      "method": "GET",
+      "path": "/api/service/merchant/1/ratings",
+      "operation_id": "get_api_service_merchant_id_ratings",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "ratings_wrong_role",
+      "method": "GET",
+      "path": "/api/service/merchant/1/ratings",
+      "operation_id": "get_api_service_merchant_id_ratings",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "ratings_query_0",
+      "method": "GET",
+      "path": "/api/service/merchant/1/ratings",
+      "operation_id": "get_api_service_merchant_id_ratings",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "ratings_query_1",
+      "method": "GET",
+      "path": "/api/service/merchant/1/ratings",
+      "operation_id": "get_api_service_merchant_id_ratings",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "ratings_query_2",
+      "method": "GET",
+      "path": "/api/service/merchant/1/ratings",
+      "operation_id": "get_api_service_merchant_id_ratings",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "ratings_query_3",
+      "method": "GET",
+      "path": "/api/service/merchant/1/ratings",
+      "operation_id": "get_api_service_merchant_id_ratings",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "text_initial",
+      "method": "GET",
+      "path": "/api/order/2/public-review-text",
+      "operation_id": "get_api_order_id_public_review_text",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "text_initial_error",
+      "method": "GET",
+      "path": "/api/order/2/public-review-text",
+      "operation_id": "get_api_order_id_public_review_text",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "text_initial_anonymous",
+      "method": "GET",
+      "path": "/api/order/2/public-review-text",
+      "operation_id": "get_api_order_id_public_review_text",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "text_initial_wrong_role",
+      "method": "GET",
+      "path": "/api/order/2/public-review-text",
+      "operation_id": "get_api_order_id_public_review_text",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "text_not_reviewed",
+      "method": "GET",
+      "path": "/api/order/3/public-review-text",
+      "operation_id": "get_api_order_id_public_review_text",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "text_preview",
+      "method": "POST",
+      "path": "/api/order/2/public-review-text/preview",
+      "operation_id": "post_api_order_id_public_review_text_preview",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "text_preview_empty",
+      "method": "POST",
+      "path": "/api/order/2/public-review-text/preview",
+      "operation_id": "post_api_order_id_public_review_text_preview",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "text_preview_long",
+      "method": "POST",
+      "path": "/api/order/2/public-review-text/preview",
+      "operation_id": "post_api_order_id_public_review_text_preview",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "text_preview_unknown",
+      "method": "POST",
+      "path": "/api/order/2/public-review-text/preview",
+      "operation_id": "post_api_order_id_public_review_text_preview",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "text_preview_max",
+      "method": "POST",
+      "path": "/api/order/2/public-review-text/preview",
+      "operation_id": "post_api_order_id_public_review_text_preview",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "text_preview_wrong_role",
+      "method": "POST",
+      "path": "/api/order/2/public-review-text/preview",
+      "operation_id": "post_api_order_id_public_review_text_preview",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "text_submit_raw",
+      "method": "PUT",
+      "path": "/api/order/2/public-review-text",
+      "operation_id": "put_api_order_id_public_review_text",
+      "kind": "boundary",
+      "status": 422,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "text_submit",
+      "method": "PUT",
+      "path": "/api/order/2/public-review-text",
+      "operation_id": "put_api_order_id_public_review_text",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "text_submit_replay",
+      "method": "PUT",
+      "path": "/api/order/2/public-review-text",
+      "operation_id": "put_api_order_id_public_review_text",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "text_submit_malformed",
+      "method": "PUT",
+      "path": "/api/order/2/public-review-text",
+      "operation_id": "put_api_order_id_public_review_text",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "text_submit_anonymous",
+      "method": "PUT",
+      "path": "/api/order/2/public-review-text",
+      "operation_id": "put_api_order_id_public_review_text",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "text_submit_wrong_role",
+      "method": "PUT",
+      "path": "/api/order/2/public-review-text",
+      "operation_id": "put_api_order_id_public_review_text",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "text_stale_version",
+      "method": "PUT",
+      "path": "/api/order/2/public-review-text",
+      "operation_id": "put_api_order_id_public_review_text",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "text_consent_version",
+      "method": "PUT",
+      "path": "/api/order/2/public-review-text",
+      "operation_id": "put_api_order_id_public_review_text",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "text_query",
+      "method": "PUT",
+      "path": "/api/order/2/public-review-text",
+      "operation_id": "put_api_order_id_public_review_text",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "text_large_json",
+      "method": "PUT",
+      "path": "/api/order/2/public-review-text",
+      "operation_id": "put_api_order_id_public_review_text",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "admin_queue",
+      "method": "GET",
+      "path": "/api/admin/review-texts",
+      "operation_id": "get_api_admin_review_texts",
+      "kind": "normal",
+      "status": 200,
+      "role": "reviewer",
+      "assertions": 4
+    },
+    {
+      "name": "admin_queue_paging",
+      "method": "GET",
+      "path": "/api/admin/review-texts",
+      "operation_id": "get_api_admin_review_texts",
+      "kind": "boundary",
+      "status": 200,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "admin_queue_duplicate",
+      "method": "GET",
+      "path": "/api/admin/review-texts",
+      "operation_id": "get_api_admin_review_texts",
+      "kind": "error",
+      "status": 400,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "admin_manager_denied",
+      "method": "GET",
+      "path": "/api/admin/review-texts",
+      "operation_id": "get_api_admin_review_texts",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "manager",
+      "assertions": 3
+    },
+    {
+      "name": "admin_owner_denied",
+      "method": "GET",
+      "path": "/api/admin/review-texts",
+      "operation_id": "get_api_admin_review_texts",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "admin_moderate_bad_decision",
+      "method": "POST",
+      "path": "/api/admin/review-texts/2/moderate",
+      "operation_id": "post_api_admin_review_texts_id_moderate",
+      "kind": "error",
+      "status": 400,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "admin_moderate_unknown_reason",
+      "method": "POST",
+      "path": "/api/admin/review-texts/2/moderate",
+      "operation_id": "post_api_admin_review_texts_id_moderate",
+      "kind": "error",
+      "status": 400,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "admin_moderate_unknown",
+      "method": "POST",
+      "path": "/api/admin/review-texts/999/moderate",
+      "operation_id": "post_api_admin_review_texts_id_moderate",
+      "kind": "boundary",
+      "status": 404,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "admin_moderate_owner_denied",
+      "method": "POST",
+      "path": "/api/admin/review-texts/2/moderate",
+      "operation_id": "post_api_admin_review_texts_id_moderate",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "admin_approve",
+      "method": "POST",
+      "path": "/api/admin/review-texts/2/moderate",
+      "operation_id": "post_api_admin_review_texts_id_moderate",
+      "kind": "normal",
+      "status": 200,
+      "role": "reviewer",
+      "assertions": 5
+    },
+    {
+      "name": "admin_approve_replay",
+      "method": "POST",
+      "path": "/api/admin/review-texts/2/moderate",
+      "operation_id": "post_api_admin_review_texts_id_moderate",
+      "kind": "boundary",
+      "status": 200,
+      "role": "reviewer",
+      "assertions": 4
+    },
+    {
+      "name": "admin_approve_malformed",
+      "method": "POST",
+      "path": "/api/admin/review-texts/2/moderate",
+      "operation_id": "post_api_admin_review_texts_id_moderate",
+      "kind": "error",
+      "status": 400,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "admin_approve_anonymous",
+      "method": "POST",
+      "path": "/api/admin/review-texts/2/moderate",
+      "operation_id": "post_api_admin_review_texts_id_moderate",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "admin_approve_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/review-texts/2/moderate",
+      "operation_id": "post_api_admin_review_texts_id_moderate",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "admin_repeat_approve",
+      "method": "POST",
+      "path": "/api/admin/review-texts/2/moderate",
+      "operation_id": "post_api_admin_review_texts_id_moderate",
+      "kind": "boundary",
+      "status": 200,
+      "role": "reviewer",
+      "assertions": 4
+    },
+    {
+      "name": "admin_version_conflict",
+      "method": "POST",
+      "path": "/api/admin/review-texts/2/moderate",
+      "operation_id": "post_api_admin_review_texts_id_moderate",
+      "kind": "error",
+      "status": 409,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "admin_decision_conflict",
+      "method": "POST",
+      "path": "/api/admin/review-texts/2/moderate",
+      "operation_id": "post_api_admin_review_texts_id_moderate",
+      "kind": "error",
+      "status": 409,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "public_texts",
+      "method": "GET",
+      "path": "/api/service/merchant/1/review-texts",
+      "operation_id": "get_api_service_merchant_id_review_texts",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "public_texts_boundary",
+      "method": "GET",
+      "path": "/api/service/merchant/1/review-texts",
+      "operation_id": "get_api_service_merchant_id_review_texts",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "public_texts_error",
+      "method": "GET",
+      "path": "/api/service/merchant/1/review-texts",
+      "operation_id": "get_api_service_merchant_id_review_texts",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "public_texts_anonymous",
+      "method": "GET",
+      "path": "/api/service/merchant/1/review-texts",
+      "operation_id": "get_api_service_merchant_id_review_texts",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "public_texts_wrong_role",
+      "method": "GET",
+      "path": "/api/service/merchant/1/review-texts",
+      "operation_id": "get_api_service_merchant_id_review_texts",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "public_texts_other_merchant",
+      "method": "GET",
+      "path": "/api/service/merchant/2/review-texts",
+      "operation_id": "get_api_service_merchant_id_review_texts",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "text_visible_after_approve",
+      "method": "GET",
+      "path": "/api/order/2/public-review-text",
+      "operation_id": "get_api_order_id_public_review_text",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "consent_initial",
+      "method": "GET",
+      "path": "/api/order/2/review-summary-consent",
+      "operation_id": "get_api_order_id_review_summary_consent",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "consent_initial_error",
+      "method": "GET",
+      "path": "/api/order/2/review-summary-consent",
+      "operation_id": "get_api_order_id_review_summary_consent",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "consent_initial_anonymous",
+      "method": "GET",
+      "path": "/api/order/2/review-summary-consent",
+      "operation_id": "get_api_order_id_review_summary_consent",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "consent_initial_wrong_role",
+      "method": "GET",
+      "path": "/api/order/2/review-summary-consent",
+      "operation_id": "get_api_order_id_review_summary_consent",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "consent_missing_text_version",
+      "method": "PUT",
+      "path": "/api/order/2/review-summary-consent",
+      "operation_id": "put_api_order_id_review_summary_consent",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "consent_stale_version",
+      "method": "PUT",
+      "path": "/api/order/2/review-summary-consent",
+      "operation_id": "put_api_order_id_review_summary_consent",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "consent_stale_text",
+      "method": "PUT",
+      "path": "/api/order/2/review-summary-consent",
+      "operation_id": "put_api_order_id_review_summary_consent",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "consent",
+      "method": "PUT",
+      "path": "/api/order/2/review-summary-consent",
+      "operation_id": "put_api_order_id_review_summary_consent",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "consent_replay",
+      "method": "PUT",
+      "path": "/api/order/2/review-summary-consent",
+      "operation_id": "put_api_order_id_review_summary_consent",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "consent_malformed",
+      "method": "PUT",
+      "path": "/api/order/2/review-summary-consent",
+      "operation_id": "put_api_order_id_review_summary_consent",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "consent_anonymous",
+      "method": "PUT",
+      "path": "/api/order/2/review-summary-consent",
+      "operation_id": "put_api_order_id_review_summary_consent",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "consent_wrong_role",
+      "method": "PUT",
+      "path": "/api/order/2/review-summary-consent",
+      "operation_id": "put_api_order_id_review_summary_consent",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "consent_query",
+      "method": "PUT",
+      "path": "/api/order/2/review-summary-consent",
+      "operation_id": "put_api_order_id_review_summary_consent",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "consent_after",
+      "method": "GET",
+      "path": "/api/order/2/review-summary-consent",
+      "operation_id": "get_api_order_id_review_summary_consent",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "summary_body",
+      "method": "POST",
+      "path": "/api/service/merchant/1/review-summary",
+      "operation_id": "post_api_service_merchant_id_review_summary",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "summary_anonymous",
+      "method": "POST",
+      "path": "/api/service/merchant/1/review-summary",
+      "operation_id": "post_api_service_merchant_id_review_summary",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "summary_owner",
+      "method": "POST",
+      "path": "/api/service/merchant/1/review-summary",
+      "operation_id": "post_api_service_merchant_id_review_summary",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "unpublish",
+      "method": "PUT",
+      "path": "/api/order/2/review-publication",
+      "operation_id": "put_api_order_id_review_publication",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "unpublish_replay",
+      "method": "PUT",
+      "path": "/api/order/2/review-publication",
+      "operation_id": "put_api_order_id_review_publication",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "unpublish_malformed",
+      "method": "PUT",
+      "path": "/api/order/2/review-publication",
+      "operation_id": "put_api_order_id_review_publication",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "unpublish_anonymous",
+      "method": "PUT",
+      "path": "/api/order/2/review-publication",
+      "operation_id": "put_api_order_id_review_publication",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "unpublish_wrong_role",
+      "method": "PUT",
+      "path": "/api/order/2/review-publication",
+      "operation_id": "put_api_order_id_review_publication",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "ratings_after_withdraw",
+      "method": "GET",
+      "path": "/api/service/merchant/1/ratings",
+      "operation_id": "get_api_service_merchant_id_ratings",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "withdraw_text",
+      "method": "PUT",
+      "path": "/api/order/2/public-review-text",
+      "operation_id": "put_api_order_id_public_review_text",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "public_texts_after_withdraw",
+      "method": "GET",
+      "path": "/api/service/merchant/1/review-texts",
+      "operation_id": "get_api_service_merchant_id_review_texts",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "summary_after_withdraw",
+      "method": "POST",
+      "path": "/api/service/merchant/1/review-summary",
+      "operation_id": "post_api_service_merchant_id_review_summary",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "text_history_kept",
+      "method": "GET",
+      "path": "/api/order/2/public-review-text",
+      "operation_id": "get_api_order_id_public_review_text",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    }
+  ]
+}
