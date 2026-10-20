@@ -1,3 +1,15 @@
+## 2026-10-20 A4d-3c：商家接车检查
+
+本阶段成果已上传 [PR191](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/191)（依赖PR190）；远程CI待结果，保持草稿，不合并或部署。
+
+A4d-3c 本地PASS：商家接车检查页统一到设计系统，新增 13 个映射（照片三态/八张进度/基线来源/里程差值/油量下标/损伤额度/标注前提/损伤行标题/订单事实/读取失败/提交前置/写入状态）与13项单测；小程序单测970/970（0失败/0跳过）、微信构建与H5构建均exit 0、10个共享选择器逐项在app.wxss。修掉六处缺陷：八张照片只有complete布尔、缺片不说还差哪几张、里程差值算在模板里没有回退判断、「需填原因」是永远显示的静态标签、点照片没反应不解释原因、上传失败的「待上传」看不到。保留 pickup-form / pickup-slot-* / pickup-photo-* 三个既有锚点与 pickupBody 前置校验；mark() 改由 canMarkDamage 判定并在 boundingClientRect 回调里复检。后端与接口零改动；真机与模拟器未执行，不声明渲染通过。 下一施工防护页→A5交付→B外部接入→C真机。
+
+- [x] 新增 13 个接车映射：照片三态、八张进度、里程差值与回退判断、损伤额度与标注前提。
+- [x] 重做 merchant/pickup.vue：槽位卡/里程卡/油量与损伤卡/提交卡，保留三个既有锚点。
+- [x] mark() 改由 canMarkDamage 判定，异步回调里复检，避免换成同一照片后误落点。
+- [x] 单测970项、两个构建、证据报告与三份文档已整理。
+- [ ] 远程CI结果核对（PR保持草稿，不合并、不部署）。
+
 ## 2026-10-20 A4d-3b：商家时段与派工
 
 本阶段成果已上传 [PR190](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/190)（依赖PR189）；远程CI待结果，保持草稿，不合并或部署。
