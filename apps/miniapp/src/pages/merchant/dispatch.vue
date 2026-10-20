@@ -1,13 +1,15 @@
 <script setup>
-import { reactive, ref, watch } from 'vue'
+import { reactive, ref, watch, computed } from 'vue'
 import { onLoad, onShow, onHide, onUnload } from '@dcloudio/uni-app'
 import { clearMerchantSession, merchantSession } from '../../services/merchant-session.js'
 import { merchantOrdersApi } from '../../services/merchant-orders.js'
-import { assignmentStatusLabel, confirmStillHolds, dispatchApi } from '../../services/technician-dispatch.js'
+import { confirmStillHolds, dispatchApi } from '../../services/technician-dispatch.js'
 import { imageRequestKey } from '../../services/private-images.js'
 import { createQuoteListFlow, initialQuoteListState } from '../../services/quote-flow.js'
 import { createReservationReadFlow, createReservationWriteFlow, displayTime, initialReservationReadState, initialReservationWriteState } from '../../services/reservations.js'
-import { stateLabel } from '../../services/order-status.js'
+import { candidateRowView, dispatchCandidateCopy, dispatchExistingFacts, dispatchStageView, dispatchSubmitCopy, shouldLoadCandidates } from '../../services/merchant-scheduling-display.js'
+import { merchantOrderStatusView } from '../../services/merchant-order-display.js'
+import { toneClass } from '../../services/ui-tone.js'
 
 const order = reactive(initialReservationReadState())
 const assignment = reactive(initialReservationReadState())
@@ -28,6 +30,14 @@ const assign = createReservationWriteFlow({
   request: (actor, body, key) => dispatchApi.assign(actor, orderId, body.technician_id, key),
   onConflict: () => { selected.value = 0; submitted.technicianId = 0; refresh() },
 })
+
+// 阶段、行视图与提交文案都来自映射：模板不再有 4 层 v-if 与 7 处状态字面量。
+const stageView = computed(() => dispatchStageView(order.value, assignment))
+const orderStatus = computed(() => merchantOrderStatusView(order.value?.status))
+const existing = computed(() => dispatchExistingFacts(assignment.value))
+const rows = computed(() => (Array.isArray(candidates.items) ? candidates.items : []).map(item => ({ item, view: candidateRowView(item, selected.value) })))
+const candidateCopy = computed(() => dispatchCandidateCopy(candidates))
+const submit = computed(() => dispatchSubmitCopy(selected.value, labelOf(selected.value)))
 
 function login() { clearMerchantSession(); uni.navigateTo({ url: '/pages/merchant/index' }) }
 function refresh() { orderFlow.load(); assignmentFlow.load() }
@@ -52,8 +62,10 @@ function confirmAssign() {
 }
 
 watch(() => write.saved, saved => { if (saved && visible) refresh() })
-watch(() => order.value, () => {
-  if (!visible || order.value?.status !== 'RECEIVED' || assignment.value?.assignment || candidates.loaded || candidates.busy) return
+// 派工结果未读到之前不拉候选：否则可能对已有派工的订单重复提交，只能靠服务端 40905 兜底。
+// 监听阶段而不是 order：阶段要到 assignment.loaded 之后才变 ready，那时才是该拉候选的时机。
+watch(() => stageView.value.stage, () => {
+  if (!visible || !shouldLoadCandidates(stageView.value.stage, candidates)) return
   candidateFlow.load()
 }, { flush: 'post' })
 watch(token, () => {
@@ -71,74 +83,110 @@ onUnload(() => {
 })
 </script>
 <template>
-  <view class="reservation-page"><button v-if="write.retry" :disabled="write.busy" @tap="assign.retry">重试原派工请求（不使用当前编辑内容）</button>
-    <text class="reservation-title">派工</text>
-    <button v-if="!merchantSession.accessToken" @tap="login">前往门店登录</button>
+  <view class="reservation-page">
+    <view class="ux-hero ux-in">
+      <text class="ux-eyebrow">门店工作台</text>
+      <text class="ux-title">派工</text>
+      <text class="ux-lead">候选只含本店已绑定微信的在职技师。派工后必须由本人接单并开始施工，商家不能代接。</text>
+    </view>
+
+    <button v-if="write.retry" class="reservation-primary" :disabled="write.busy" @tap="assign.retry">重试原派工请求（不使用当前编辑内容）</button>
+
+    <view v-if="!merchantSession.accessToken" class="ux-card ux-in ux-r2" data-testid="dispatch-login">
+      <text class="ux-card-title">需要门店账号</text>
+      <text class="ux-card-note">派工只能由本店账号执行。</text>
+      <button class="reservation-primary" @tap="login">前往门店登录</button>
+    </view>
+
     <template v-else>
-      <text v-if="order.busy || assignment.busy" role="status">正在加载订单与派工状态…</text>
-      <view v-if="order.message || assignment.message" class="reservation-panel" role="status">
-        <text>{{ order.message || assignment.message }}</text>
-        <button v-if="['unauthorized', 'forbidden'].includes(order.failureKind || assignment.failureKind)" @tap="login">重新登录</button>
+      <text v-if="order.busy || assignment.busy" class="status-line" role="status">正在加载订单与派工状态…</text>
+
+      <view v-if="order.message || assignment.message" class="ux-card ux-in ux-r2" role="status" data-testid="dispatch-error">
+        <view class="head">
+          <text class="ux-card-title">加载未成功</text>
+          <view class="ux-badge" :class="toneClass('risk')"><text>{{ ['unauthorized', 'forbidden'].includes(order.failureKind || assignment.failureKind) ? '需重新登录' : '可重试' }}</text></view>
+        </view>
+        <text class="ux-card-note">{{ order.message || assignment.message }}</text>
+        <button v-if="['unauthorized', 'forbidden'].includes(order.failureKind || assignment.failureKind)" class="reservation-primary" @tap="login">重新登录</button>
         <button v-else :disabled="order.busy" @tap="refresh">重新加载派工信息</button>
       </view>
 
-      <view v-if="order.value" class="reservation-panel" data-testid="dispatch-order">
-        <text class="reservation-heading">{{ order.value.project_snapshot?.project_name || '历史订单' }}</text>
-        <text>订单号 {{ order.value.order_no }}</text>
-        <text>预约 {{ displayTime(order.value.appointment_snapshot?.starts_at) }}</text>
-        <text data-testid="dispatch-order-status">{{ stateLabel(order.value.status) }}</text>
+      <view v-if="order.value" class="ux-card ux-in ux-r2" data-testid="dispatch-order">
+        <view class="head">
+          <text class="ux-card-title">{{ order.value.project_snapshot?.project_name || '历史订单' }}</text>
+          <view class="ux-badge" :class="toneClass(orderStatus.tone)"><text data-testid="dispatch-order-status">{{ orderStatus.label }}</text></view>
+        </view>
+        <text class="ux-card-note">订单号 {{ order.value.order_no }} · 预约 {{ displayTime(order.value.appointment_snapshot?.starts_at) }}</text>
+        <text class="ux-card-note">{{ orderStatus.copy }}</text>
       </view>
 
-      <!-- 已有派工：只读展示，服务端不允许客户端覆盖 -->
-      <view v-if="assignment.value?.assignment" class="reservation-panel" data-testid="dispatch-existing">
-        <text class="reservation-heading">已有派工</text>
-        <text>技师 {{ assignment.value.assignment.technician_label }}</text>
-        <text data-testid="dispatch-existing-status">{{ assignmentStatusLabel(assignment.value.assignment.status) }}</text>
-        <text>派工时间 {{ displayTime(assignment.value.assignment.assigned_at) }}</text>
-        <text v-if="assignment.value.assignment.accepted_at">接单时间 {{ displayTime(assignment.value.assignment.accepted_at) }}</text>
-        <text v-else>技师尚未接单；一单仅一位技师，如需换人请联系管理员按后续流程处理。</text>
+      <view v-if="order.value" class="ux-card ux-in ux-r3" :data-testid="'dispatch-stage-' + stageView.stage">
+        <view class="head">
+          <text class="ux-card-title">{{ stageView.title }}</text>
+          <view class="ux-badge" :class="toneClass(stageView.tone)"><text>{{ stageView.stage === 'ready' ? '可派工' : stageView.stage === 'existing' ? '已派工' : '不可派工' }}</text></view>
+        </view>
+        <text class="ux-card-note">{{ stageView.copy }}</text>
+
+        <!-- 已有派工：只读展示，服务端不允许客户端覆盖 -->
+        <template v-if="stageView.stage === 'existing'">
+          <view class="ux-divider"></view>
+          <view data-testid="dispatch-existing">
+            <view class="fact"><text class="fact-label">技师</text><text class="fact-value">{{ existing.technician }}</text></view>
+            <view class="fact"><text class="fact-label">派工状态</text><text class="fact-value" data-testid="dispatch-existing-status">{{ existing.statusLabel }}</text></view>
+            <view class="fact"><text class="fact-label">派工时间</text><text class="fact-value">{{ existing.assignedCopy }}</text></view>
+            <view v-if="existing.acceptedCopy" class="fact"><text class="fact-label">接单时间</text><text class="fact-value">{{ existing.acceptedCopy }}</text></view>
+            <text v-if="existing.pendingCopy" class="ux-card-note">{{ existing.pendingCopy }}</text>
+          </view>
+        </template>
+
+        <button v-if="stageView.stage === 'loading'" :disabled="assignment.busy" @tap="refresh">重新读取派工结果</button>
+        <button v-if="stageView.stage === 'disputed'" @tap="uni.navigateTo({ url: `/pages/check/pickup-detail?id=${orderId}&role=merchant` })">打开接车单处理争议</button>
       </view>
 
-      <view v-else-if="order.value?.status === 'DISPUTED'" class="reservation-panel">
-        <text>车主已对接车单提出异议，派工与施工已阻断。请先在接车单中处理争议。</text>
-      </view>
-      <view v-else-if="order.value && order.value.status !== 'RECEIVED'" class="reservation-panel">
-        <text>订单当前为「{{ stateLabel(order.value.status) }}」，尚未满足派工条件（需已接车且车主已确认）。</text>
-      </view>
-      <!-- 派工结果未读到之前不能给候选列表：否则可能对已有派工的订单重复提交，只能靠服务端 40905 兜底。 -->
-      <view v-else-if="order.value?.status === 'RECEIVED' && !assignment.loaded" class="reservation-panel" role="status">
-        <text>正在读取派工结果…</text>
-        <button :disabled="assignment.busy" @tap="refresh">重新读取派工结果</button>
-      </view>
+      <template v-if="stageView.stage === 'ready'">
+        <text v-if="candidates.busy" class="status-line" role="status">正在加载候选技师…</text>
 
-      <template v-else-if="order.value?.status === 'RECEIVED'">
-        <text class="reservation-heading">本店候选技师</text>
-        <text>候选范围是已在本店完成微信绑定的在职技师；选择后需二次确认。</text>
-        <text v-if="candidates.busy" role="status">正在加载候选技师…</text>
-        <view v-if="candidates.message" class="reservation-panel" role="status">
-          <text>{{ candidates.message }}</text>
+        <view v-if="candidates.message" class="ux-card ux-in ux-r3" role="status" data-testid="dispatch-candidates-error">
+          <text class="ux-card-note">{{ candidates.message }}</text>
           <button :disabled="candidates.busy" @tap="candidateFlow.retry">重试候选技师</button>
         </view>
-        <view v-if="candidates.loaded && !candidates.items.length && !candidates.busy" class="reservation-panel" data-testid="dispatch-empty">
-          暂无已绑定微信的有效技师，请联系管理员维护技师账号。
+
+        <view v-if="candidateCopy.empty && candidates.loaded && !candidates.busy" class="ux-empty ux-in ux-r3" data-testid="dispatch-empty">
+          <text class="ux-empty-title">{{ candidateCopy.emptyTitle }}</text>
+          <text class="ux-empty-copy">{{ candidateCopy.emptyCopy }}</text>
         </view>
-        <view v-for="row in candidates.items" :key="row.technician_id" class="reservation-panel" :data-testid="`candidate-${row.technician_id}`">
-          <text>{{ row.label }}</text>
-          <text v-if="selected === row.technician_id" data-testid="candidate-selected">已选择</text>
-          <button :disabled="write.busy || Boolean(write.saved)" @tap="pick(row)">{{ selected === row.technician_id ? '已选择该技师' : '选择该技师' }}</button>
+
+        <view v-for="row in rows" :key="row.item.technician_id" class="ux-card ux-in ux-r3" :data-testid="`candidate-${row.item.technician_id}`">
+          <view class="head">
+            <text class="ux-card-title">{{ row.view.label }}</text>
+            <view v-if="row.view.selected" class="ux-badge" :class="toneClass('ok')" data-testid="candidate-selected"><text>已选择</text></view>
+          </view>
+          <button :class="{ 'reservation-primary': row.view.selected }" :disabled="write.busy || Boolean(write.saved)" @tap="pick(row.item)">{{ row.view.actionLabel }}</button>
         </view>
+
+        <text v-if="candidateCopy.footer" class="status-line">{{ candidateCopy.footer }}</text>
         <button v-if="candidates.items.length < candidates.total" :disabled="candidates.busy" @tap="candidateFlow.load(true)">加载更多候选技师</button>
 
-        <button v-if="selected" data-testid="dispatch-submit" :disabled="write.busy || Boolean(write.saved)" :loading="write.busy" @tap="confirmAssign">
-          派工给「{{ labelOf(selected) }}」
-        </button>
-        <text v-else>请先选择一位技师，再进行二次确认。</text>
-        <text v-if="write.message" role="status" data-testid="dispatch-message">{{ write.message }}</text>
-        <button v-if="write.saved" @tap="refresh">刷新派工结果</button>
+        <view class="ux-card ux-in ux-r4">
+          <text class="ux-card-title">确认派工</text>
+          <text class="ux-card-note">{{ submit.hint }}</text>
+          <button v-if="submit.ready" data-testid="dispatch-submit" class="reservation-primary" :disabled="write.busy || Boolean(write.saved)" :loading="write.busy" @tap="confirmAssign">{{ submit.label }}</button>
+          <text v-if="write.message" class="risk-line" role="status" data-testid="dispatch-message">{{ write.message }}</text>
+          <button v-if="write.saved" @tap="refresh">刷新派工结果</button>
+        </view>
       </template>
 
       <button :disabled="order.busy" @tap="refresh">刷新派工信息</button>
     </template>
+
     <button @tap="uni.redirectTo({ url: `/pages/merchant/order-detail?id=${orderId}` })">返回订单详情</button>
   </view>
 </template>
+<style scoped>
+.head { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
+.fact { display: flex; align-items: baseline; justify-content: space-between; gap: 20rpx; padding: 12rpx 0; border-top: 1rpx solid #efede6; }
+.fact-label { flex: none; color: #63685e; font-size: 24rpx; }
+.fact-value { color: #1a1d18; font-size: 26rpx; font-weight: 600; text-align: right; }
+.risk-line { display: block; margin-top: 12rpx; color: #b3261e; font-size: 25rpx; }
+.status-line { display: block; margin-top: 20rpx; color: #63685e; font-size: 26rpx; }
+</style>

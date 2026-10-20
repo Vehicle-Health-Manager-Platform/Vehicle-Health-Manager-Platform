@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "scope": "商家预约时段与派工展示层；不含真机与视觉回归截图",
+  "tests": {
+    "command": "node --test test/*.test.js",
+    "exit_code": 0,
+    "tests": 957,
+    "pass": 957,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 1761.6129,
+    "log_sha256": "4467919fffe320ac9237b6936f2679b5f4d5013893517d4e52df94d3cb30ad80"
+  },
+  "builds": {
+    "mp_weixin": {
+      "command": "npm run build:mp-weixin",
+      "exit_code": 0,
+      "build_complete": true,
+      "shared_selector_gate": true,
+      "no_test_bridge_gate": true,
+      "log_sha256": "530b37b51b54d65a5ce9db48258e8a2424cb8abfcdd7085c2b554081ca5746f4"
+    },
+    "h5": {
+      "command": "npm run build:h5",
+      "exit_code": 0,
+      "build_complete": true,
+      "log_sha256": "47fa3930c94797e17705cfa2fa39ce65c16747d5b34144af0ad4054ecd37c979"
+    }
+  },
+  "shared_selectors_in_app_wxss": {
+    "reservation-page": true,
+    "reservation-primary": true,
+    "ux-hero": true,
+    "ux-card": true,
+    "ux-metric-value": true,
+    "ux-badge": true,
+    "ux-row": true,
+    "ux-empty": true,
+    "ux-card-note": true,
+    "ux-divider": true
+  },
+  "compiled_pages": {
+    "merchant/slots.wxml": {
+      "ux_hero": true,
+      "ux_badge": true,
+      "ux_empty": true,
+      "publish_action": true,
+      "close_action": true
+    },
+    "merchant/dispatch.wxml": {
+      "ux_hero": true,
+      "ux_badge": true,
+      "submit_anchor": true,
+      "existing_anchor": true,
+      "confirm_title": true,
+      "candidate_more": true
+    }
+  },
+  "sources_sha256": {
+    "apps/miniapp/src/services/merchant-scheduling-display.js": "fa2e5a767c64add18a5fc19b34f3823d1e0e7d3c1d03b03b6dd2e3741338908b",
+    "apps/miniapp/src/pages/merchant/slots.vue": "7af1904895d416494c5df8a364d466f1b075661bc998197902836dc839062cbd",
+    "apps/miniapp/src/pages/merchant/dispatch.vue": "7d2ba0363955cdcc54d2058ce371937e705f05b0a7818e114c35c41a61d91aae",
+    "apps/miniapp/test/merchant-scheduling-display.test.js": "82d962a48c9a15afb60474e92ee7f5aaeeb621311ed964f65794925923a47fe6"
+  },
+  "passed": true
+}

@@ -35,6 +35,14 @@ A4d-2h5 本地 PASS：小程序单测 **935 / 935 通过**（0 失败 / 0 跳过
 
 本轮不再单开并发阶段，改为在文档里把这条结论写清楚，避免下一阶段重复"补"已存在的覆盖。
 
+## 实际执行与证据
+
+- 远程 CI（PR188，head `40e9271`，run `39435114729`，`conclusion=success`）：八项 job 全部 `completed / success` —— `web` 19 秒、`miniapp` 42 秒、`schema-and-ocr` 33 秒、`schema-mysql` 55 秒、`database-recovery` 56 秒、`performance-baseline` 115 秒、`backend` 38 分 57 秒（13:58:49Z → 14:37:46Z）、`compose-smoke` 2 分 25 秒（14:37:49Z → 14:40:14Z）。
+- `backend` 的 38 个步骤全部通过，含第 7 步 `mvn -B -Pcore-coverage clean verify` 与第 31 步 `Verify owner review and four independent public grants`（隔离真跑 `--ci-built-jar --reviews-cases`）。本阶段只改小程序源码与文档，这条通过说明前端改动没有连带破坏任何一条后端验收链路。
+- `compose-smoke` 有 `needs: [web, backend, schema-mysql]`，所以它是 `backend` 结束后才创建的第 8 个 check-run；`backend` 未完成时只看到 7 项属于正常顺序，不是缺项。
+- 本地侧证据见 `docs/testing/reports/R9_A4D2H5_OPERATOR_REVIEW_CONSOLE_2026_10_20.json`（935/935、两个构建 exit 0、10 个共享选择器、两页编译产物锚点、5 个源文件哈希）与 `docs/testing/LOCAL_UI_OPERATOR_REVIEW_CONSOLE_ACCEPTANCE.md`（复现命令）。
+- PR 保持草稿，未合并、未部署；合并前需先把 base 从 `codex/r9-a4d2h4-public-review-display` 改回 `main`。
+
 ## 未覆盖
 
 真机与模拟器渲染（本机微信开发者工具未打开 `dist/build/mp-weixin`，与 PR164 同一阻塞）、截图对比、暗色模式、无障碍朗读、运营端其余 23 个页面（仍是旧视觉，等 A5 前分批统一）、审核链路的 HTTP 级并发（同上，service 层已覆盖）。
