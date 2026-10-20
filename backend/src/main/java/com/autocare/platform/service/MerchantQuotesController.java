@@ -3,7 +3,6 @@ package com.autocare.platform.service;
 import com.autocare.platform.common.ApiResponse;
 import com.autocare.platform.common.write.WriteIntegrityService;
 import com.autocare.platform.vehicle.VehicleOwner;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,16 +26,16 @@ public class MerchantQuotesController {
     }
     @GetMapping("/api/merchant/standard-projects")
     public ResponseEntity<?> standards(@AuthenticationPrincipal Jwt jwt,@RequestParam(required=false) Integer category,
-        @RequestParam(defaultValue="1") int page,@RequestParam(name="page_size",defaultValue="20") int size) {
-        var actor=MerchantActor.from(jwt);ServiceCatalog.validate(category,page,size);return response(service().standards(actor,category,page,size));
+        @RequestParam(defaultValue="1") int page,@RequestParam(name="page_size",defaultValue="20") int size,@RequestParam org.springframework.util.MultiValueMap<String,String> query) {
+        var actor=MerchantActor.from(jwt);CatalogQuery.validate(query,"category","page","page_size");ServiceCatalog.validate(category,page,size);return response(service().standards(actor,category,page,size));
     }
     @GetMapping("/api/merchant/projects")
-    public ResponseEntity<?> own(@AuthenticationPrincipal Jwt jwt,@RequestParam(defaultValue="1") int page,@RequestParam(name="page_size",defaultValue="20") int size) {
-        var actor=MerchantActor.from(jwt);ServiceCatalog.validate(null,page,size);return response(service().ownList(actor,page,size));
+    public ResponseEntity<?> own(@AuthenticationPrincipal Jwt jwt,@RequestParam(defaultValue="1") int page,@RequestParam(name="page_size",defaultValue="20") int size,@RequestParam org.springframework.util.MultiValueMap<String,String> query) {
+        var actor=MerchantActor.from(jwt);CatalogQuery.validate(query,"page","page_size");ServiceCatalog.validate(null,page,size);return response(service().ownList(actor,page,size));
     }
-    @PostMapping("/api/merchant/projects")
-    public ResponseEntity<?> save(@AuthenticationPrincipal Jwt jwt,@RequestHeader(value="Idempotency-Key",required=false) String key,@RequestBody JsonNode body) {
-        var actor=MerchantActor.from(jwt);WriteIntegrityService.normalizeKey(key);var input=QuoteInput.parse(body);
+    @PostMapping(value="/api/merchant/projects",consumes=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> save(@AuthenticationPrincipal Jwt jwt,@RequestHeader(value="Idempotency-Key",required=false) String key,@RequestBody String raw,@RequestParam org.springframework.util.MultiValueMap<String,String> query) {
+        var actor=MerchantActor.from(jwt);CatalogQuery.validate(query);WriteIntegrityService.normalizeKey(key);var input=QuoteInput.parse(raw);
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(service().save(actor,key,input));
     }
     @ExceptionHandler(org.springframework.dao.DataAccessException.class)

@@ -1,6 +1,9 @@
 package com.autocare.platform.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.StreamReadFeature;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
@@ -8,6 +11,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 public record QuoteInput(long projectId,BigDecimal price,int status) {
+    private static final JsonMapper JSON=JsonMapper.builder().enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION)
+        .enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS).build();
+    public static QuoteInput parse(String raw) {
+        if(raw==null || raw.length()>2048)throw invalid();
+        try{return parse(JSON.readTree(raw));}
+        catch(com.fasterxml.jackson.core.JsonProcessingException e){throw invalid();}
+    }
     public static QuoteInput parse(JsonNode body) {
         if(body==null || !body.isObject() || body.size()!=3) throw invalid();
         var keys=Set.of("standard_project_id","price","status");

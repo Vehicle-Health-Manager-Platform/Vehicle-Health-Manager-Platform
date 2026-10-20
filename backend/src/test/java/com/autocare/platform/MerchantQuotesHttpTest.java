@@ -59,6 +59,28 @@ class MerchantQuotesHttpTest {
             .andExpect(status().isOk()).andExpect(header().string("Cache-Control","no-store"));
         verify(quotes).save(argThat(actor->actor.staffId()==1 && actor.merchantId()==2),anyString(),argThat(input->input.price().toPlainString().equals("0.01")));
     }
+    @Test void duplicateFieldsTrailingAndOversizedBodiesNeverReachWrites() throws Exception {
+        for(String raw:List.of("{\"standard_project_id\":1,\"price\":\"0.01\",\"price\":\"0.01\",\"status\":1}",
+            "{\"standard_project_id\":1,\"price\":\"0.01\",\"status\":0,\"status\":1}",
+            "{\"standard_project_id\":1,\"price\":\"0.01\",\"status\":1} {}",
+            "{\"standard_project_id\":1,\"price\":\"0.01\",\"status\":1}"+" ".repeat(2049)))
+            mvc.perform(post("/api/merchant/projects").header("Authorization","Bearer merchant")
+                .header("Idempotency-Key",UUID.randomUUID().toString()).contentType(MediaType.APPLICATION_JSON).content(raw))
+                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value(40001))
+                .andExpect(header().string("Cache-Control","no-store"));
+        verifyNoInteractions(quotes);
+    }
+    @Test void unknownAndRepeatedManagementQueriesRejectBeforeDatabase() throws Exception {
+        for(String path:List.of("/api/merchant/standard-projects?merchant_id=2",
+            "/api/merchant/standard-projects?category=1&category=2",
+            "/api/merchant/projects?page=1&page=2","/api/merchant/projects?merchant_id=2"))
+            mvc.perform(get(path).header("Authorization","Bearer merchant")).andExpect(status().isBadRequest());
+        mvc.perform(post("/api/merchant/projects?merchant_id=2").header("Authorization","Bearer merchant")
+            .header("Idempotency-Key",UUID.randomUUID().toString()).contentType(MediaType.APPLICATION_JSON)
+            .content("{\"standard_project_id\":1,\"price\":\"0.01\",\"status\":1}"))
+            .andExpect(status().isBadRequest());
+        verifyNoInteractions(quotes);
+    }
     @Test void ownerSortAndDatabaseFailureAreSafe() throws Exception {
         when(quotes.ownerList(any(),eq(1L),eq("price_desc"),eq(2),eq(20))).thenReturn(Map.of("items",List.of(),"total",0,"page",2,"page_size",20));
         mvc.perform(get("/api/service/project/1/merchants?sort=price_desc&page=2").header("Authorization","Bearer owner")).andExpect(status().isOk());
