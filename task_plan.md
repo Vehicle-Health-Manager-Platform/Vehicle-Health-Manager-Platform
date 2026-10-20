@@ -36,7 +36,7 @@ A4d-3b 本地PASS：商家时段与派工两页统一到设计系统，新增 10
 
 ## 2026-10-20 A4d-3a：商家订单阅读面
 
-本阶段成果已上传 [PR189](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/189)（依赖PR188）；远程CI待结果，保持草稿，不合并或部署。
+本阶段成果已上传 [PR189](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/189)（依赖PR188）；八项远程CI全部成功（web / miniapp / backend / schema-and-ocr / schema-mysql / database-recovery / compose-smoke / performance-baseline；`backend` 48 分 11 秒、38 步全部通过），保持草稿，不合并或部署。
 
 A4d-3a 本地PASS：商家订单列表与详情统一到设计系统，新增 9 个映射（状态/支付/行/筛选/空态/价格/入口矩阵/动作提示）与11项单测，并把徽标色调抽成评价域与商家域共用的 ui-tone；小程序单测946/946（0失败/0跳过）、微信构建与H5构建均exit 0、10个共享选择器逐项在app.wxss、两页编译产物保留既有锚点。修掉三类真实缺陷：列表把RECEIVED/IN_SERVICE等后端枚举直接渲染、详情把支付码SUCCEEDED直出、7组状态数组被复制进模板。既有端到端流程的四条断言（行内按钮、预约日期文案、已支付子串、付款异常原文）逐条保留。后端与接口零改动；真机与模拟器未执行，不声明渲染通过。 下一商家工位与派工→其他独立缺口→A5交付→B外部接入→C真机。
 
@@ -44,7 +44,7 @@ A4d-3a 本地PASS：商家订单列表与详情统一到设计系统，新增 9 
 - [x] 新增 9 个商家订单映射：状态/支付/行/筛选/空态/价格/入口矩阵/动作提示。
 - [x] 重做 orders.vue 与 order-detail.vue，保留既有 testid 与端到端流程依赖的四条文案。
 - [x] 单测946项、两个构建、证据报告与三份文档已整理。
-- [ ] 远程CI结果核对（PR保持草稿，不合并、不部署）。
+- [x] 远程CI结果核对（PR保持草稿，不合并、不部署）。
 
 ## 2026-10-20 A4d-2h5：运营审核台
 

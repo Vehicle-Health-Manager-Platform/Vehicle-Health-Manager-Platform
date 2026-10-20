@@ -28,6 +28,15 @@ A4d-3a 本地 PASS：小程序单测 **946 / 946 通过**（0 失败 / 0 跳过�
 
 `apps/miniapp/test/local-merchant-orders-browser-flow.js` 断言了四件事，本轮全部保留：行内必须有真实 `<button>`（它点击 `[data-testid="merchant-order-<id>"] uni-button`）、页面必须有 `预约日期：<日期>`、列表文本必须含"已支付"、详情必须含"本订单存在付款异常，待核对"。这四条已写进页面契约单测的注释里，避免下一轮改造顺手删掉。
 
+## 实际执行与证据
+
+- 远程 CI（PR189，head `5cf954b`，run `39438049355`，`conclusion=success`）：八项 job 全部 `completed / success` —— `web` 22 秒、`schema-and-ocr` 38 秒、`schema-mysql` 41 秒、`database-recovery` 57 秒、`miniapp` 62 秒、`performance-baseline` 120 秒、`backend` 48 分 11 秒（14:18:43Z → 15:06:54Z）、`compose-smoke` 2 分 28 秒（15:06:57Z → 15:09:25Z）。
+- `backend` 的 38 个步骤全部通过，含第 7 步 `mvn -B -Pcore-coverage clean verify` 与各条隔离真跑验收链路。本阶段只改 `merchant/orders.vue`、`merchant/order-detail.vue` 与新增的展示映射，这条通过说明前端改动没有连带破坏后端验收。
+- `compose-smoke` 有 `needs: [web, backend, schema-mysql]`，所以它是 `backend` 结束后才创建的第 8 个 check-run；`backend` 未完成时只看到 7 项属于正常顺序，不是缺项。
+- `mergeable_state=clean`（按栈内 base `codex/r9-a4d2h5-operator-review-console` 计算）。
+- 本地侧证据见 `docs/testing/reports/R9_A4D3A_MERCHANT_ORDERS_2026_10_20.json` 与 `docs/testing/LOCAL_UI_MERCHANT_ORDERS_ACCEPTANCE.md`。
+- PR 保持草稿，未合并、未部署；合并前需先把 base 改回 `main`（堆叠 PR 逐支改）。
+
 ## 未覆盖
 
 工位与派工页（`merchant/slots.vue`、`merchant/dispatch.vue`，留 A4d-3b）、接车检查/防护/退款页面本身、真机与模拟器渲染（本机微信开发者工具未打开 `dist/build/mp-weixin`，与 PR164 同一阻塞）、视觉回归截图、暗色模式、无障碍朗读。全仓 108 个页面中现已 11 个接入设计系统，剩余按域分批。
