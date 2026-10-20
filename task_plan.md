@@ -1,3 +1,15 @@
+## 2026-10-20 A4d-3d：商家施工防护
+
+本阶段成果已上传 [PR192](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/192)（依赖PR191）；远程CI待结果，保持草稿，不合并或部署。
+
+A4d-3d 本地PASS：商家施工防护页统一到设计系统，新增 11 个导出（必选项与常量、五阶段、勾选行、提交缺口、提交卡、已提交记录、报工两态三组、读取失败、写入状态、照片状态）与10项单测；小程序单测980/980（0失败/0跳过）、微信构建与H5构建均exit 0、10个共享选择器逐项在app.wxss。修掉六处缺陷：四层v-if链不可断言、未知状态可能被当成可提交、勾选行靠下标、提交按钮不说原因、报工记录条件散在模板里、读取失败只有重试没有重新登录。保留 protectionBody + confirmStillHolds 的二次确认与幂等、WorkPhotos 四个事件；照片只认 PROTECTION 那一张，未知报工状态当待签字。后端与接口零改动；真机与模拟器未执行，不声明渲染通过。 商家侧接车→防护→订单→时段→派工五个主流程页已收口；下一核销退款等缺口→A5交付→B外部接入→C真机。
+
+- [x] 新增 11 个防护映射：五阶段枚举锁顺序（已有防护优先于状态），未知状态落 not-allowed。
+- [x] 重做 merchant/protection.vue：阶段卡/防护项卡/提交卡/已提交卡/报工卡，新增 7 个静态锚点。
+- [x] 提交缺口合成一句话（还需勾选什么、还需 1 张防护照片），照片只认 PROTECTION。
+- [x] 单测980项、两个构建、证据报告与三份文档已整理。
+- [ ] 远程CI结果核对（PR保持草稿，不合并、不部署）。
+
 ## 2026-10-20 A4d-3c：商家接车检查
 
 本阶段成果已上传 [PR191](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/191)（依赖PR190）；远程CI待结果，保持草稿，不合并或部署。
