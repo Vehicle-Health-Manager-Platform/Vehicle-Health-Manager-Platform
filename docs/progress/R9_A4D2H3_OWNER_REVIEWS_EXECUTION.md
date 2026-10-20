@@ -42,7 +42,7 @@ A4d-2h3 本地PASS（218.992秒）：4条评价/公开链路共14接口139业务
 
 - `python scripts/run_api_acceptance.py --reviews-cases`：新网络 + 新 MySQL（62 迁移/131 表）+ 当前后端 jar，结果 `PASS`；`reviews_database.checks` 11 项全为 true。
 - `python scripts/reviews_api_cases.py` 生成默认禁发的集合与 139 条独立 manifest；审计逐项核对方法、路径、真实 query、角色令牌、状态码、实际正文（占位符字面部分必须逐字相同、`clean_text` 必须回指本次预览结果）与实际启用的幂等键。
-- `test_reviews_api_cases.py` 11 项；CI 的 `schema-and-ocr` job 生成资产并跑这组门禁。
+- `test_reviews_api_cases.py` 11 项；CI 的 `schema-and-ocr` job 生成资产并跑这组门禁，`backend` job 以 `--ci-built-jar --reviews-cases` 执行真实隔离验收（与其他业务域同一条链）。
 - Java 九组共 62 项：`OrderReviewsHttpTest`、`OrderReviewsNoDatabaseTest`、`PublicRatingsHttpTest`、`PublicReviewTextsHttpTest`、`ReviewSummariesHttpTest`、`JdbcOrderReviewsTest`、`JdbcPublicRatingsTest`、`JdbcPublicReviewTextsTest`、`JdbcReviewSummariesTest`。
 - 默认 reviews 集合另行不提供环境或令牌执行 Newman，exit0/requests0/failures0，且集合哈希与验收报告记录的一致；352 模板默认禁发由隔离运行器另测。
 - 三份脱敏报告：`R9_A4D2H3_OWNER_REVIEWS_2026_10_20.json`、`R9_A4D2H3_JAVA_REGRESSION_2026_10_20.json`、`R9_A4D2H3_DEFAULT_DISABLED_2026_10_20.json`，位于 `docs/testing/reports/`。
