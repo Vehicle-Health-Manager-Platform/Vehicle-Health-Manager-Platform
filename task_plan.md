@@ -1,6 +1,6 @@
 ## 2026-10-20 A4d-2h4：评价与公开展示面
 
-本阶段成果已上传 [PR187](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/187)（依赖PR186）；远程CI待结果，保持草稿，不合并或部署。
+本阶段成果已上传 [PR187](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/187)（依赖PR186）；八项远程CI全部成功（web / miniapp / backend / schema-and-ocr / schema-mysql / database-recovery / compose-smoke / performance-baseline，其中 `backend` 38 步全部通过，含第 31 步 `--ci-built-jar --reviews-cases`），保持草稿，不合并或部署。
 
 A4d-2h4 本地PASS：6个评价相关页面（公开星级/公开文字/评价要点+三个公开授权入口）统一到设计系统，新增 `public-review-display.js` 十个纯展示映射与11项单测；小程序单测927/927（0失败/0跳过）、微信构建与H5构建均exit 0，10个共享选择器在app.wxss逐项存在、6个页面编译产物含ux-hero/ux-badge、两个列表页含ux-empty。修掉三处展示缺陷：要点来源撤回后渲染“发布于 undefined”、平均分为空显示null、“已批准但停止展示”与“未公开”共用文案。后端与接口零改动；真机与模拟器未执行（本机开发者工具未打开该项目），不声明渲染通过。 下一其他独立缺口→A5交付→B外部接入→C真机。
 
@@ -9,7 +9,7 @@ A4d-2h4 本地PASS：6个评价相关页面（公开星级/公开文字/评价�
 - [x] 修掉要点来源undefined、平均分空值、已批准但停止展示三类展示缺陷。
 - [x] 扩展构建门禁：8个设计系统选择器必须在app.wxss；补页面契约扫描。
 - [x] 单测927项、两个构建、证据报告与三份文档已整理。
-- [ ] 远程CI结果核对（PR保持草稿，不合并、不部署）。
+- [x] 远程CI结果核对（PR保持草稿，不合并、不部署）。
 
 ## 2026-10-20 A4d-2h3：车主评价与独立公开授权
 

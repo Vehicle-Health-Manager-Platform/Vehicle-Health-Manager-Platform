@@ -29,6 +29,14 @@
 
 A4d-2h4 本地 PASS：小程序单测 **927 / 927 通过**（0 失败 / 0 跳过，新增 11 项）；`npm run build:mp-weixin` 构建完成且共享选择器门禁、无测试身份桥门禁均 PASS；`npm run build:h5` 构建完成。10 个共享选择器在 `app.wxss` 中逐项存在，6 个页面编译产物均含 `ux-hero`/`ux-badge`，两个列表页含 `ux-empty`。报告：`docs/testing/reports/R9_A4D2H4_PUBLIC_REVIEW_DISPLAY_2026_10_20.json`。
 
+## 实际执行与证据
+
+- 远程 CI（PR187，head `0812112`，run `39411103681`，`conclusion=success`）：八项 job 全部 `completed / success` —— `web` 36 秒、`miniapp` 54 秒、`schema-and-ocr` 32 秒、`schema-mysql` 45 秒、`database-recovery` 72 秒、`performance-baseline` 118 秒、`backend` 50 分 47 秒（10:53:32Z → 11:44:19Z）、`compose-smoke` 2 分 20 秒（11:44:22Z → 11:46:42Z）。
+- `compose-smoke` 有 `needs: [web, backend, schema-mysql]`，所以它是 `backend` 结束后才创建的第 8 个 check-run；`backend` 未完成时只看到 7 项且 `mergeable_state=unstable` 属于正常顺序，不是缺项。
+- `backend` 的 38 个步骤全部通过，其中第 7 步 `mvn -B -Pcore-coverage clean verify`、第 31 步 `Verify owner review and four independent public grants`（隔离真跑 `--ci-built-jar --reviews-cases`）、第 32/33 步证据归档均为 `success`。本阶段只改小程序源码与文档，这条通过说明前端改动没有连带破坏任何一条后端验收链路。
+- 本地侧证据见 `docs/testing/reports/R9_A4D2H4_PUBLIC_REVIEW_DISPLAY_2026_10_20.json`（927/927、两个构建 exit 0、10 个共享选择器、6 个页面编译产物、9 个源文件哈希）与 `docs/testing/LOCAL_UI_PUBLIC_REVIEW_DISPLAY_ACCEPTANCE.md`（复现命令）。
+- 最终 `mergeable_state=clean`，PR 保持草稿，未合并、未部署；合并前需先把 base 从 `codex/r9-a4d2h3-owner-reviews` 改回 `main`。
+
 ## 未覆盖
 
 真机渲染与视觉走查（本机开发者工具未打开该项目，模拟器冒烟未计入通过项）、截图对比、暗色模式、无障碍朗读、商家端与运营端评价页面、并发与视觉回归。
