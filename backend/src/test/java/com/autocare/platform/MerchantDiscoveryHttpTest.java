@@ -29,6 +29,17 @@ class MerchantDiscoveryHttpTest {
         for(String role:List.of("MERCHANT","TECHNICIAN","OPERATOR"))mvc.perform(get("/api/service/merchant/1").header("Authorization","Bearer "+role)).andExpect(status().isForbidden());
         verifyNoInteractions(discovery);
     }
+    @Test void unknownAndRepeatedSelectorsNeverReachDiscoveryOrQuotes() throws Exception {
+        for(String path:List.of("/api/service/merchant/1?merchant_id=2",
+            "/api/service/merchant/1?project_id=1&project_id=2",
+            "/api/service/merchant/1?page_size=20&page_size=20",
+            "/api/service/project/1/merchants?merchant_id=2",
+            "/api/service/project/1/merchants?sort=price_asc&sort=price_desc",
+            "/api/service/project/1/merchants?region_code=440305&region_code=440306"))
+            mvc.perform(get(path).header("Authorization","Bearer OWNER"))
+                .andExpect(status().isBadRequest()).andExpect(header().string("Cache-Control","no-store"));
+        verifyNoInteractions(discovery,quotes);
+    }
     @Test void invalidPagesIdsAndRegionsRejectBeforeDatabase() throws Exception {
         for(String path:List.of("/api/service/merchant/0","/api/service/merchant/1?project_id=0","/api/service/merchant/1?page=0","/api/service/merchant/1?page_size=101"))
             mvc.perform(get(path).header("Authorization","Bearer OWNER")).andExpect(status().isBadRequest());
