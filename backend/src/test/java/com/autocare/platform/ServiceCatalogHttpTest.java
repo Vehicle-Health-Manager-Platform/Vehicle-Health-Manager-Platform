@@ -45,7 +45,10 @@ class ServiceCatalogHttpTest {
     @Test void validatesQueriesAndIdsBeforeDatabase() throws Exception {
         for(String path:List.of("/api/service/projects?category=0","/api/service/projects?category=7",
             "/api/service/projects?page=0","/api/service/projects?page_size=101","/api/service/projects?page=abc",
-            "/api/service/project/0","/api/service/project/9007199254740992","/api/service/project/abc"))
+            "/api/service/project/0","/api/service/project/9007199254740992","/api/service/project/abc",
+            "/api/service/projects?owner_id=2","/api/service/projects?category=1&category=2",
+            "/api/service/projects?page=1&page=2","/api/service/projects?page_size=20&page_size=20",
+            "/api/service/project/1?owner_id=2"))
             mvc.perform(get(path).header("Authorization","Bearer owner")).andExpect(status().isBadRequest());
         verifyNoInteractions(catalog);
     }

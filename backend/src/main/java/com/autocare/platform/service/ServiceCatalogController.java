@@ -24,13 +24,13 @@ public class ServiceCatalogController {
     @GetMapping("/api/service/projects")
     public ResponseEntity<?> list(@AuthenticationPrincipal Jwt jwt,
         @RequestParam(required=false) Integer category, @RequestParam(defaultValue="1") int page,
-        @RequestParam(name="page_size",defaultValue="20") int size) {
-        var owner=VehicleOwner.from(jwt); ServiceCatalog.validate(category,page,size);
+        @RequestParam(name="page_size",defaultValue="20") int size,@RequestParam org.springframework.util.MultiValueMap<String,String> query) {
+        var owner=VehicleOwner.from(jwt); CatalogQuery.validate(query,"category","page","page_size"); ServiceCatalog.validate(category,page,size);
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(ApiResponse.success(catalog().list(owner,category,page,size)));
     }
     @GetMapping("/api/service/project/{id}")
-    public ResponseEntity<?> detail(@AuthenticationPrincipal Jwt jwt,@PathVariable long id) {
-        var owner=VehicleOwner.from(jwt); ServiceCatalog.validateId(id);
+    public ResponseEntity<?> detail(@AuthenticationPrincipal Jwt jwt,@PathVariable long id,@RequestParam org.springframework.util.MultiValueMap<String,String> query) {
+        var owner=VehicleOwner.from(jwt); CatalogQuery.validate(query); ServiceCatalog.validateId(id);
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(ApiResponse.success(catalog().detail(owner,id)));
     }
     @ExceptionHandler(DataAccessException.class)

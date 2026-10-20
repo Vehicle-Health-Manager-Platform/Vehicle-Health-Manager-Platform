@@ -16,8 +16,8 @@ public class MerchantDiscoveryController {
     public MerchantDiscoveryController(ObjectProvider<MerchantDiscovery> services){this.services=services;}
     @GetMapping("/api/service/merchant/{id}")
     public ResponseEntity<?> detail(@AuthenticationPrincipal Jwt jwt,@PathVariable long id,@RequestParam(value="project_id",required=false) Long project,
-                                   @RequestParam(defaultValue="1") int page,@RequestParam(value="page_size",defaultValue="20") int size){
-        var owner=VehicleOwner.from(jwt);ServiceCatalog.validateId(id);ServiceCatalog.validate(null,page,size);if(project!=null)ServiceCatalog.validateId(project);
+                                   @RequestParam(defaultValue="1") int page,@RequestParam(value="page_size",defaultValue="20") int size,@RequestParam org.springframework.util.MultiValueMap<String,String> query){
+        var owner=VehicleOwner.from(jwt);CatalogQuery.validate(query,"project_id","page","page_size");ServiceCatalog.validateId(id);ServiceCatalog.validate(null,page,size);if(project!=null)ServiceCatalog.validateId(project);
         var service=services.getIfAvailable();if(service==null)throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"门店详情服务尚未配置");
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(ApiResponse.success(service.detail(owner,id,project,page,size)));
     }

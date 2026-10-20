@@ -19,8 +19,8 @@ public class MerchantQuotesController {
     private ResponseEntity<?> response(Object data) {return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(ApiResponse.success(data));}
     @GetMapping("/api/service/project/{id}/merchants")
     public ResponseEntity<?> owners(@AuthenticationPrincipal Jwt jwt,@PathVariable long id,@RequestParam(defaultValue="price_asc") String sort,@RequestParam(value="region_code",required=false) String region,
-        @RequestParam(defaultValue="1") int page,@RequestParam(name="page_size",defaultValue="20") int size) {
-        var owner=VehicleOwner.from(jwt);ServiceCatalog.validateId(id);ServiceCatalog.validate(null,page,size);
+        @RequestParam(defaultValue="1") int page,@RequestParam(name="page_size",defaultValue="20") int size,@RequestParam org.springframework.util.MultiValueMap<String,String> query) {
+        var owner=VehicleOwner.from(jwt);CatalogQuery.validate(query,"sort","region_code","page","page_size");ServiceCatalog.validateId(id);ServiceCatalog.validate(null,page,size);
         if(!java.util.Set.of("price_asc","price_desc").contains(sort))throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"报价排序无效");
         MerchantDiscovery.validateRegion(region);
         return response(region==null?service().ownerList(owner,id,sort,page,size):service().ownerList(owner,id,sort,page,size,region));

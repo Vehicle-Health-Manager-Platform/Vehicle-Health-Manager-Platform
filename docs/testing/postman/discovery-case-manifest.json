@@ -1,0 +1,1058 @@
+{
+  "version": 1,
+  "cases": 105,
+  "operations": 9,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "projects",
+      "method": "GET",
+      "path": "/api/service/projects",
+      "operation_id": "get_api_service_projects",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "projects_boundary",
+      "method": "GET",
+      "path": "/api/service/projects",
+      "operation_id": "get_api_service_projects",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "projects_error",
+      "method": "GET",
+      "path": "/api/service/projects",
+      "operation_id": "get_api_service_projects",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "projects_anonymous",
+      "method": "GET",
+      "path": "/api/service/projects",
+      "operation_id": "get_api_service_projects",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "projects_wrong_role",
+      "method": "GET",
+      "path": "/api/service/projects",
+      "operation_id": "get_api_service_projects",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "category_filter",
+      "method": "GET",
+      "path": "/api/service/projects",
+      "operation_id": "get_api_service_projects",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "project_detail",
+      "method": "GET",
+      "path": "/api/service/project/1",
+      "operation_id": "get_api_service_project_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "project_detail_boundary",
+      "method": "GET",
+      "path": "/api/service/project/3",
+      "operation_id": "get_api_service_project_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "project_detail_error",
+      "method": "GET",
+      "path": "/api/service/project/0",
+      "operation_id": "get_api_service_project_id",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "project_detail_anonymous",
+      "method": "GET",
+      "path": "/api/service/project/1",
+      "operation_id": "get_api_service_project_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "project_detail_wrong_role",
+      "method": "GET",
+      "path": "/api/service/project/1",
+      "operation_id": "get_api_service_project_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "deleted_project",
+      "method": "GET",
+      "path": "/api/service/project/4",
+      "operation_id": "get_api_service_project_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "quotes",
+      "method": "GET",
+      "path": "/api/service/project/1/merchants",
+      "operation_id": "get_api_service_project_id_merchants",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "quotes_boundary",
+      "method": "GET",
+      "path": "/api/service/project/1/merchants",
+      "operation_id": "get_api_service_project_id_merchants",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_error",
+      "method": "GET",
+      "path": "/api/service/project/1/merchants",
+      "operation_id": "get_api_service_project_id_merchants",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_anonymous",
+      "method": "GET",
+      "path": "/api/service/project/1/merchants",
+      "operation_id": "get_api_service_project_id_merchants",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_wrong_role",
+      "method": "GET",
+      "path": "/api/service/project/1/merchants",
+      "operation_id": "get_api_service_project_id_merchants",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_descending",
+      "method": "GET",
+      "path": "/api/service/project/1/merchants",
+      "operation_id": "get_api_service_project_id_merchants",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "quotes_region",
+      "method": "GET",
+      "path": "/api/service/project/1/merchants",
+      "operation_id": "get_api_service_project_id_merchants",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "quotes_empty_region",
+      "method": "GET",
+      "path": "/api/service/project/1/merchants",
+      "operation_id": "get_api_service_project_id_merchants",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "quotes_inactive_project",
+      "method": "GET",
+      "path": "/api/service/project/3/merchants",
+      "operation_id": "get_api_service_project_id_merchants",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "storefront",
+      "method": "GET",
+      "path": "/api/service/merchant/1",
+      "operation_id": "get_api_service_merchant_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "storefront_boundary",
+      "method": "GET",
+      "path": "/api/service/merchant/999999",
+      "operation_id": "get_api_service_merchant_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "storefront_error",
+      "method": "GET",
+      "path": "/api/service/merchant/1",
+      "operation_id": "get_api_service_merchant_id",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "storefront_anonymous",
+      "method": "GET",
+      "path": "/api/service/merchant/1",
+      "operation_id": "get_api_service_merchant_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "storefront_wrong_role",
+      "method": "GET",
+      "path": "/api/service/merchant/1",
+      "operation_id": "get_api_service_merchant_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "storefront_filtered_empty",
+      "method": "GET",
+      "path": "/api/service/merchant/1",
+      "operation_id": "get_api_service_merchant_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "storefront_inactive_project",
+      "method": "GET",
+      "path": "/api/service/merchant/1",
+      "operation_id": "get_api_service_merchant_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "projects_query_0",
+      "method": "GET",
+      "path": "/api/service/projects",
+      "operation_id": "get_api_service_projects",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "projects_query_1",
+      "method": "GET",
+      "path": "/api/service/projects",
+      "operation_id": "get_api_service_projects",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "projects_query_2",
+      "method": "GET",
+      "path": "/api/service/projects",
+      "operation_id": "get_api_service_projects",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "projects_query_3",
+      "method": "GET",
+      "path": "/api/service/projects",
+      "operation_id": "get_api_service_projects",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "project_query_0",
+      "method": "GET",
+      "path": "/api/service/project/1",
+      "operation_id": "get_api_service_project_id",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "project_query_1",
+      "method": "GET",
+      "path": "/api/service/project/1",
+      "operation_id": "get_api_service_project_id",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_query_0",
+      "method": "GET",
+      "path": "/api/service/project/1/merchants",
+      "operation_id": "get_api_service_project_id_merchants",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_query_1",
+      "method": "GET",
+      "path": "/api/service/project/1/merchants",
+      "operation_id": "get_api_service_project_id_merchants",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_query_2",
+      "method": "GET",
+      "path": "/api/service/project/1/merchants",
+      "operation_id": "get_api_service_project_id_merchants",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_query_3",
+      "method": "GET",
+      "path": "/api/service/project/1/merchants",
+      "operation_id": "get_api_service_project_id_merchants",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "storefront_query_0",
+      "method": "GET",
+      "path": "/api/service/merchant/1",
+      "operation_id": "get_api_service_merchant_id",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "storefront_query_1",
+      "method": "GET",
+      "path": "/api/service/merchant/1",
+      "operation_id": "get_api_service_merchant_id",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "storefront_query_2",
+      "method": "GET",
+      "path": "/api/service/merchant/1",
+      "operation_id": "get_api_service_merchant_id",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "search",
+      "method": "POST",
+      "path": "/api/service/project-search",
+      "operation_id": "post_api_service_project_search",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "search_boundary",
+      "method": "POST",
+      "path": "/api/service/project-search",
+      "operation_id": "post_api_service_project_search",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "search_invalid",
+      "method": "POST",
+      "path": "/api/service/project-search",
+      "operation_id": "post_api_service_project_search",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "search_anonymous",
+      "method": "POST",
+      "path": "/api/service/project-search",
+      "operation_id": "post_api_service_project_search",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "search_wrong_role",
+      "method": "POST",
+      "path": "/api/service/project-search",
+      "operation_id": "post_api_service_project_search",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "literal_percent",
+      "method": "POST",
+      "path": "/api/service/project-search",
+      "operation_id": "post_api_service_project_search",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "literal_underscore",
+      "method": "POST",
+      "path": "/api/service/project-search",
+      "operation_id": "post_api_service_project_search",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "search_empty_category",
+      "method": "POST",
+      "path": "/api/service/project-search",
+      "operation_id": "post_api_service_project_search",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "search_duplicate_field",
+      "method": "POST",
+      "path": "/api/service/project-search",
+      "operation_id": "post_api_service_project_search",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "search_long_query",
+      "method": "POST",
+      "path": "/api/service/project-search",
+      "operation_id": "post_api_service_project_search",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "search_query_selector",
+      "method": "POST",
+      "path": "/api/service/project-search",
+      "operation_id": "post_api_service_project_search",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "location_initial",
+      "method": "GET",
+      "path": "/api/merchant/location",
+      "operation_id": "get_api_merchant_location",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "location_initial_boundary",
+      "method": "GET",
+      "path": "/api/merchant/location",
+      "operation_id": "get_api_merchant_location",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "location_initial_error",
+      "method": "GET",
+      "path": "/api/merchant/location",
+      "operation_id": "get_api_merchant_location",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "location_initial_anonymous",
+      "method": "GET",
+      "path": "/api/merchant/location",
+      "operation_id": "get_api_merchant_location",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "location_initial_wrong_role",
+      "method": "GET",
+      "path": "/api/merchant/location",
+      "operation_id": "get_api_merchant_location",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "staff_location_read",
+      "method": "GET",
+      "path": "/api/merchant/location",
+      "operation_id": "get_api_merchant_location",
+      "kind": "normal",
+      "status": 200,
+      "role": "staff",
+      "assertions": 4
+    },
+    {
+      "name": "location_set",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 5
+    },
+    {
+      "name": "location_set_replay",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "location_set_malformed",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "location_set_anonymous",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "location_set_wrong_role",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "location_changed_intent",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "staff_location_write",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "staff",
+      "assertions": 3
+    },
+    {
+      "name": "location_duplicate_json",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "location_untrusted_source",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "location_out_of_range",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "location_write_query",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "other_store_before",
+      "method": "GET",
+      "path": "/api/merchant/location",
+      "operation_id": "get_api_merchant_location",
+      "kind": "unauthorized",
+      "status": 200,
+      "role": "other_merchant",
+      "assertions": 4
+    },
+    {
+      "name": "other_location_set",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "normal",
+      "status": 200,
+      "role": "other_merchant",
+      "assertions": 4
+    },
+    {
+      "name": "other_location_set_replay",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "boundary",
+      "status": 200,
+      "role": "other_merchant",
+      "assertions": 4
+    },
+    {
+      "name": "other_location_set_malformed",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "error",
+      "status": 400,
+      "role": "other_merchant",
+      "assertions": 3
+    },
+    {
+      "name": "other_location_set_anonymous",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "other_location_set_wrong_role",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "own_store_unchanged",
+      "method": "GET",
+      "path": "/api/merchant/location",
+      "operation_id": "get_api_merchant_location",
+      "kind": "unauthorized",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "nearby",
+      "method": "POST",
+      "path": "/api/service/project/1/nearby-merchants",
+      "operation_id": "post_api_service_project_id_nearby_merchants",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "nearby_boundary",
+      "method": "POST",
+      "path": "/api/service/project/1/nearby-merchants",
+      "operation_id": "post_api_service_project_id_nearby_merchants",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "nearby_invalid",
+      "method": "POST",
+      "path": "/api/service/project/1/nearby-merchants",
+      "operation_id": "post_api_service_project_id_nearby_merchants",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "nearby_anonymous",
+      "method": "POST",
+      "path": "/api/service/project/1/nearby-merchants",
+      "operation_id": "post_api_service_project_id_nearby_merchants",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "nearby_wrong_role",
+      "method": "POST",
+      "path": "/api/service/project/1/nearby-merchants",
+      "operation_id": "post_api_service_project_id_nearby_merchants",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "nearby_price_sort",
+      "method": "POST",
+      "path": "/api/service/project/1/nearby-merchants",
+      "operation_id": "post_api_service_project_id_nearby_merchants",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "nearby_region",
+      "method": "POST",
+      "path": "/api/service/project/1/nearby-merchants",
+      "operation_id": "post_api_service_project_id_nearby_merchants",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "nearby_selector",
+      "method": "POST",
+      "path": "/api/service/project/1/nearby-merchants",
+      "operation_id": "post_api_service_project_id_nearby_merchants",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "nearby_bad_coordinates",
+      "method": "POST",
+      "path": "/api/service/project/1/nearby-merchants",
+      "operation_id": "post_api_service_project_id_nearby_merchants",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "nearby_foreign_coordinate_system",
+      "method": "POST",
+      "path": "/api/service/project/1/nearby-merchants",
+      "operation_id": "post_api_service_project_id_nearby_merchants",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "nearby_unknown_project",
+      "method": "POST",
+      "path": "/api/service/project/999999/nearby-merchants",
+      "operation_id": "post_api_service_project_id_nearby_merchants",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "distance",
+      "method": "POST",
+      "path": "/api/service/merchant/1/distance",
+      "operation_id": "post_api_service_merchant_id_distance",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "distance_boundary",
+      "method": "POST",
+      "path": "/api/service/merchant/1/distance",
+      "operation_id": "post_api_service_merchant_id_distance",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "distance_invalid",
+      "method": "POST",
+      "path": "/api/service/merchant/1/distance",
+      "operation_id": "post_api_service_merchant_id_distance",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "distance_anonymous",
+      "method": "POST",
+      "path": "/api/service/merchant/1/distance",
+      "operation_id": "post_api_service_merchant_id_distance",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "distance_wrong_role",
+      "method": "POST",
+      "path": "/api/service/merchant/1/distance",
+      "operation_id": "post_api_service_merchant_id_distance",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "distance_unknown_location",
+      "method": "POST",
+      "path": "/api/service/merchant/3/distance",
+      "operation_id": "post_api_service_merchant_id_distance",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "distance_unknown_merchant",
+      "method": "POST",
+      "path": "/api/service/merchant/999999/distance",
+      "operation_id": "post_api_service_merchant_id_distance",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "distance_query",
+      "method": "POST",
+      "path": "/api/service/merchant/1/distance",
+      "operation_id": "post_api_service_merchant_id_distance",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "distance_string_coordinate",
+      "method": "POST",
+      "path": "/api/service/merchant/1/distance",
+      "operation_id": "post_api_service_merchant_id_distance",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "location_clear",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 5
+    },
+    {
+      "name": "location_clear_replay",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "location_clear_malformed",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "location_clear_anonymous",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "location_clear_wrong_role",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "old_location_receipt",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "operation_id": "put_api_merchant_location",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "location_stays_clear",
+      "method": "GET",
+      "path": "/api/merchant/location",
+      "operation_id": "get_api_merchant_location",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "distance_after_clear",
+      "method": "POST",
+      "path": "/api/service/merchant/1/distance",
+      "operation_id": "post_api_service_merchant_id_distance",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "nearby_after_clear",
+      "method": "POST",
+      "path": "/api/service/project/1/nearby-merchants",
+      "operation_id": "post_api_service_project_id_nearby_merchants",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    }
+  ]
+}
