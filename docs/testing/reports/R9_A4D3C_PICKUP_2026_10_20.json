@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "scope": "商家接车检查展示层；不含真机与视觉回归截图",
+  "tests": {
+    "command": "node --test test/*.test.js",
+    "exit_code": 0,
+    "tests": 970,
+    "pass": 970,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 1929.9078,
+    "log_sha256": "28810cd3228092d6fb119291ff08398aa0cd78940d4ac9293b195429841eac95"
+  },
+  "builds": {
+    "mp_weixin": {
+      "command": "npm run build:mp-weixin",
+      "exit_code": 0,
+      "build_complete": true,
+      "shared_selector_gate": true,
+      "no_test_bridge_gate": true,
+      "log_sha256": "530b37b51b54d65a5ce9db48258e8a2424cb8abfcdd7085c2b554081ca5746f4"
+    },
+    "h5": {
+      "command": "npm run build:h5",
+      "exit_code": 0,
+      "build_complete": true,
+      "log_sha256": "47fa3930c94797e17705cfa2fa39ce65c16747d5b34144af0ad4054ecd37c979"
+    }
+  },
+  "shared_selectors_in_app_wxss": {
+    "reservation-page": true,
+    "reservation-primary": true,
+    "ux-hero": true,
+    "ux-card": true,
+    "ux-metric-value": true,
+    "ux-badge": true,
+    "ux-row": true,
+    "ux-empty": true,
+    "ux-card-note": true,
+    "ux-divider": true
+  },
+  "compiled_pages": {
+    "merchant/pickup.wxml": {
+      "ux_hero": true,
+      "ux_badge": true,
+      "form_anchor": true,
+      "login_anchor": true,
+      "order_anchor": true,
+      "mileage_anchor": true,
+      "fuel_anchor": true,
+      "arrival_anchor": true,
+      "submit_anchor": true,
+      "read_error_anchor": true,
+      "title_copy": true,
+      "damage_copy": true,
+      "arrival_copy": true,
+      "login_copy": true,
+      "dynamic_slot_anchor_expected_absent": true,
+      "dynamic_photo_class_expected_absent": true
+    }
+  },
+  "sources_sha256": {
+    "apps/miniapp/src/services/pickup-display.js": "d8b039ce8dfe95fc03cc3027393aac01c7d16924a30de17ba40abd8f0f303900",
+    "apps/miniapp/src/pages/merchant/pickup.vue": "1699dd7d7bb92f9681b2f9256e27e6583b5616acda36b55ecd46a5631419d469",
+    "apps/miniapp/test/pickup-display.test.js": "2f88d6277c5d2549b09d9b2129e37b4d5ac829dddd924c3932e32f930975a7e1"
+  },
+  "passed": true
+}
