@@ -1,5 +1,7 @@
 # A4d-2h2：商家选品报价维护
 
+本阶段成果已上传 [PR185](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/185)，修复与验收代码 `229ee52`，依赖PR184；前置六项CI成功、backend仍运行。本轮完整远程CI待结果，保持草稿，不合并或部署。
+
 ## 执行设计
 
 基于PR184，范围为GET商家标准项目、GET本店报价、POST报价保存/上下架，以及GET车主项目报价展示。先修复查询/JSON入口，再覆盖四类业务案例和事务状态，最后真实执行并交付草稿PR。
