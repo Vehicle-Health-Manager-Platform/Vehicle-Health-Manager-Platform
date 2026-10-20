@@ -1,5 +1,7 @@
 # A4d-2g3：辅助材料与商家/技师工作台
 
+本阶段已上传 [PR183](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/183)，修复与验收代码 `5728ec5`，依赖PR182；前置恢复CI已SUCCESS，后端仍待结束。本轮完整远程CI待结果，保持草稿，不合并或部署。
+
 ## 设计与执行顺序
 
 沿用已确定的本地优先顺序：先严格材料访问入口，再完成四接口真实HTTP验收，执行已有验证器/事务/工作台回归，最后上传报告、中文文档和草稿PR。新分支依赖PR182。
