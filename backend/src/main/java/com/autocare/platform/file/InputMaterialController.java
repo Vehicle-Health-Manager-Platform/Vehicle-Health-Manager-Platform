@@ -37,6 +37,8 @@ public class InputMaterialController {
     }
     @GetMapping("/{id}/access")
     public ResponseEntity<ApiResponse<Map<String,Object>>> access(@PathVariable String purpose,@PathVariable long vehicleId,@PathVariable long id,HttpServletRequest request){
+        if(!request.getParameterMap().isEmpty() || id<1 || id>9007199254740991L)
+            throw new UploadHttpException(400,"辅助材料访问参数无效");
         var value=service().access(owner(request),new InputMaterialScope(purpose,vehicleId),id);
         return ResponseEntity.ok().header("Cache-Control","no-store").body(ApiResponse.success(Map.of("url",value.url(),"expires_at",value.expiresAt())));
     }
