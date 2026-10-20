@@ -31,8 +31,10 @@ public class ReservationOrders {
             if(ReservationStore.number(q,"version_id")!=input.version())throw new ReservationConflict(40901,"报价已更新，请重新确认");
             var slot=db.one("SELECT * FROM appointment_slot WHERE id=? AND merchant_id=? AND project_id=? AND is_deleted=0 FOR UPDATE",input.slot(),ReservationStore.number(q,"merchant_id"),ReservationStore.number(q,"project_id"));
             Instant now=db.now();if(ReservationStore.number(slot,"is_open")!=1 || !ReservationStore.instant(slot.get("starts_at")).isAfter(now))throw new ReservationConflict(40902,"时段已关闭或开始，请重新选择");
-            expiry.expireSlot(input.slot(),now);long occupied=db.occupied(input.slot(),now);
-            if(occupied>=ReservationStore.number(slot,"capacity"))throw new ReservationConflict(40903,"预约名额不足，请重新选择");
+            // Expired holds are closed first, so the counter read below already excludes them.
+            int expired=expiry.expireSlot(input.slot(),now);
+            long booked=ReservationStore.number(slot,"reserved_count")-expired;
+            if(booked>=ReservationStore.number(slot,"capacity"))throw new ReservationConflict(40903,"预约名额不足，请重新选择");
             Instant start=ReservationStore.instant(slot.get("starts_at")),deadline=now.plusSeconds(900);if(start.isBefore(deadline))deadline=start;
             var selected=coupon==null?null:CouponTransactions.prepare(db,owner.id(),coupon,q);
             if(selected!=null&&selected.validTo().isBefore(deadline))deadline=selected.validTo();
@@ -46,7 +48,7 @@ public class ReservationOrders {
             if(selected!=null)CouponTransactions.reserve(db,id,owner.id(),selected,deadline,key,coupon);
             CommissionLedger.booking(db,id);
             db.jdbc.update("UPDATE `order` SET verify_code=? WHERE id=?",AppointmentCodes.create(),id);
-            db.jdbc.update("UPDATE appointment_slot SET reserved_count=? WHERE id=?",occupied+1,input.slot());
+            db.jdbc.update("UPDATE appointment_slot SET reserved_count=reserved_count+1 WHERE id=?",input.slot());
             var result=Map.<String,Object>of("order_id",id,"order_no",orderNo,"amount_due",cash.toString(),"status","PENDING_PAYMENT","expires_at",deadline.toString());return new Change("ORDER_CREATE","order",id,Map.of(),db.orderRow(db.one("SELECT * FROM `order` WHERE id=? FOR UPDATE",id),true),result);
         });
     }

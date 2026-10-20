@@ -38,4 +38,4 @@ watch(() => ownerSession.accessToken, () => flow.reset(), { flush: 'sync' })
     <button @tap="uni.navigateBack()">返回门店</button>
   </view>
 </template>
-<style scoped>.highlight{display:flex;flex-direction:column;gap:18rpx;padding:24rpx 0;border-top:1px solid #e5e6eb}.public-text{white-space:pre-wrap;overflow-wrap:anywhere}</style>
+<style scoped>.highlight{display:flex;flex-direction:column;gap:18rpx;padding:24rpx 0;border-top:1px solid #e0ded6}.public-text{white-space:pre-wrap;overflow-wrap:anywhere}</style>

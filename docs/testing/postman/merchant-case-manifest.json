@@ -1,0 +1,1198 @@
+{
+  "version": 1,
+  "cases": 119,
+  "operations": 17,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "application",
+      "method": "POST",
+      "path": "/api/merchant-applications",
+      "operation_id": "post_api_merchant_applications",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "application_replay",
+      "method": "POST",
+      "path": "/api/merchant-applications",
+      "operation_id": "post_api_merchant_applications",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "application_malformed",
+      "method": "POST",
+      "path": "/api/merchant-applications",
+      "operation_id": "post_api_merchant_applications",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "application_anonymous",
+      "method": "POST",
+      "path": "/api/merchant-applications",
+      "operation_id": "post_api_merchant_applications",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "application_wrong_role",
+      "method": "POST",
+      "path": "/api/merchant-applications",
+      "operation_id": "post_api_merchant_applications",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "application_duplicate",
+      "method": "POST",
+      "path": "/api/merchant-applications",
+      "operation_id": "post_api_merchant_applications",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "application_foreign_file",
+      "method": "POST",
+      "path": "/api/merchant-applications",
+      "operation_id": "post_api_merchant_applications",
+      "kind": "unauthorized",
+      "status": 409,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "application_mine",
+      "method": "GET",
+      "path": "/api/merchant-applications/mine",
+      "operation_id": "get_api_merchant_applications_mine",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "application_mine_error",
+      "method": "GET",
+      "path": "/api/merchant-applications/mine",
+      "operation_id": "get_api_merchant_applications_mine",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "application_mine_anonymous",
+      "method": "GET",
+      "path": "/api/merchant-applications/mine",
+      "operation_id": "get_api_merchant_applications_mine",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "application_mine_wrong_role",
+      "method": "GET",
+      "path": "/api/merchant-applications/mine",
+      "operation_id": "get_api_merchant_applications_mine",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "application_none_other",
+      "method": "GET",
+      "path": "/api/merchant-applications/mine",
+      "operation_id": "get_api_merchant_applications_mine",
+      "kind": "boundary",
+      "status": 200,
+      "role": "other",
+      "assertions": 4
+    },
+    {
+      "name": "pending_applications",
+      "method": "GET",
+      "path": "/api/admin/merchant-applications",
+      "operation_id": "get_api_admin_merchant_applications",
+      "kind": "normal",
+      "status": 200,
+      "role": "operator",
+      "assertions": 4
+    },
+    {
+      "name": "pending_applications_boundary",
+      "method": "GET",
+      "path": "/api/admin/merchant-applications",
+      "operation_id": "get_api_admin_merchant_applications",
+      "kind": "boundary",
+      "status": 200,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "pending_applications_error",
+      "method": "GET",
+      "path": "/api/admin/merchant-applications",
+      "operation_id": "get_api_admin_merchant_applications",
+      "kind": "error",
+      "status": 400,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "pending_applications_anonymous",
+      "method": "GET",
+      "path": "/api/admin/merchant-applications",
+      "operation_id": "get_api_admin_merchant_applications",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "pending_applications_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/merchant-applications",
+      "operation_id": "get_api_admin_merchant_applications",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "pending_review_permission_not_onboard",
+      "method": "GET",
+      "path": "/api/admin/merchant-applications",
+      "operation_id": "get_api_admin_merchant_applications",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "review_operator",
+      "assertions": 3
+    },
+    {
+      "name": "application_detail",
+      "method": "GET",
+      "path": "/api/admin/merchant-applications/1",
+      "operation_id": "get_api_admin_merchant_applications_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "operator",
+      "assertions": 4
+    },
+    {
+      "name": "application_detail_boundary",
+      "method": "GET",
+      "path": "/api/admin/merchant-applications/999999",
+      "operation_id": "get_api_admin_merchant_applications_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "application_detail_error",
+      "method": "GET",
+      "path": "/api/admin/merchant-applications/0",
+      "operation_id": "get_api_admin_merchant_applications_id",
+      "kind": "error",
+      "status": 400,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "application_detail_anonymous",
+      "method": "GET",
+      "path": "/api/admin/merchant-applications/1",
+      "operation_id": "get_api_admin_merchant_applications_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "application_detail_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/merchant-applications/1",
+      "operation_id": "get_api_admin_merchant_applications_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "detail_review_permission_not_onboard",
+      "method": "GET",
+      "path": "/api/admin/merchant-applications/1",
+      "operation_id": "get_api_admin_merchant_applications_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "review_operator",
+      "assertions": 3
+    },
+    {
+      "name": "moderate_review_permission_not_onboard",
+      "method": "POST",
+      "path": "/api/admin/merchant-applications/1/moderate",
+      "operation_id": "post_api_admin_merchant_applications_id_moderate",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "review_operator",
+      "assertions": 3
+    },
+    {
+      "name": "reject",
+      "method": "POST",
+      "path": "/api/admin/merchant-applications/1/moderate",
+      "operation_id": "post_api_admin_merchant_applications_id_moderate",
+      "kind": "normal",
+      "status": 200,
+      "role": "operator",
+      "assertions": 4
+    },
+    {
+      "name": "reject_replay",
+      "method": "POST",
+      "path": "/api/admin/merchant-applications/1/moderate",
+      "operation_id": "post_api_admin_merchant_applications_id_moderate",
+      "kind": "boundary",
+      "status": 200,
+      "role": "operator",
+      "assertions": 4
+    },
+    {
+      "name": "reject_malformed",
+      "method": "POST",
+      "path": "/api/admin/merchant-applications/1/moderate",
+      "operation_id": "post_api_admin_merchant_applications_id_moderate",
+      "kind": "error",
+      "status": 400,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "reject_anonymous",
+      "method": "POST",
+      "path": "/api/admin/merchant-applications/1/moderate",
+      "operation_id": "post_api_admin_merchant_applications_id_moderate",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "reject_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/merchant-applications/1/moderate",
+      "operation_id": "post_api_admin_merchant_applications_id_moderate",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "resubmit",
+      "method": "POST",
+      "path": "/api/merchant-applications",
+      "operation_id": "post_api_merchant_applications",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "resubmit_replay",
+      "method": "POST",
+      "path": "/api/merchant-applications",
+      "operation_id": "post_api_merchant_applications",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "resubmit_malformed",
+      "method": "POST",
+      "path": "/api/merchant-applications",
+      "operation_id": "post_api_merchant_applications",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "resubmit_anonymous",
+      "method": "POST",
+      "path": "/api/merchant-applications",
+      "operation_id": "post_api_merchant_applications",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "resubmit_wrong_role",
+      "method": "POST",
+      "path": "/api/merchant-applications",
+      "operation_id": "post_api_merchant_applications",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "approve_without_quota",
+      "method": "POST",
+      "path": "/api/admin/merchant-applications/1/moderate",
+      "operation_id": "post_api_admin_merchant_applications_id_moderate",
+      "kind": "boundary",
+      "status": 409,
+      "role": "operator",
+      "assertions": 4
+    },
+    {
+      "name": "quota_initial_empty",
+      "method": "GET",
+      "path": "/api/admin/merchant-quotas",
+      "operation_id": "get_api_admin_merchant_quotas",
+      "kind": "boundary",
+      "status": 200,
+      "role": "operator",
+      "assertions": 4
+    },
+    {
+      "name": "set_quota",
+      "method": "PUT",
+      "path": "/api/admin/merchant-quotas",
+      "operation_id": "put_api_admin_merchant_quotas",
+      "kind": "normal",
+      "status": 200,
+      "role": "operator",
+      "assertions": 4
+    },
+    {
+      "name": "set_quota_replay",
+      "method": "PUT",
+      "path": "/api/admin/merchant-quotas",
+      "operation_id": "put_api_admin_merchant_quotas",
+      "kind": "boundary",
+      "status": 200,
+      "role": "operator",
+      "assertions": 4
+    },
+    {
+      "name": "set_quota_malformed",
+      "method": "PUT",
+      "path": "/api/admin/merchant-quotas",
+      "operation_id": "put_api_admin_merchant_quotas",
+      "kind": "error",
+      "status": 400,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "set_quota_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/merchant-quotas",
+      "operation_id": "put_api_admin_merchant_quotas",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "set_quota_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/merchant-quotas",
+      "operation_id": "put_api_admin_merchant_quotas",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "quota_list",
+      "method": "GET",
+      "path": "/api/admin/merchant-quotas",
+      "operation_id": "get_api_admin_merchant_quotas",
+      "kind": "normal",
+      "status": 200,
+      "role": "operator",
+      "assertions": 4
+    },
+    {
+      "name": "quota_list_error",
+      "method": "GET",
+      "path": "/api/admin/merchant-quotas",
+      "operation_id": "get_api_admin_merchant_quotas",
+      "kind": "error",
+      "status": 400,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "quota_list_anonymous",
+      "method": "GET",
+      "path": "/api/admin/merchant-quotas",
+      "operation_id": "get_api_admin_merchant_quotas",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "quota_list_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/merchant-quotas",
+      "operation_id": "get_api_admin_merchant_quotas",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "quota_review_permission_not_onboard",
+      "method": "GET",
+      "path": "/api/admin/merchant-quotas",
+      "operation_id": "get_api_admin_merchant_quotas",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "review_operator",
+      "assertions": 3
+    },
+    {
+      "name": "quota_overflow",
+      "method": "PUT",
+      "path": "/api/admin/merchant-quotas",
+      "operation_id": "put_api_admin_merchant_quotas",
+      "kind": "boundary",
+      "status": 400,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "approve",
+      "method": "POST",
+      "path": "/api/admin/merchant-applications/1/moderate",
+      "operation_id": "post_api_admin_merchant_applications_id_moderate",
+      "kind": "normal",
+      "status": 200,
+      "role": "operator",
+      "assertions": 4
+    },
+    {
+      "name": "approve_replay",
+      "method": "POST",
+      "path": "/api/admin/merchant-applications/1/moderate",
+      "operation_id": "post_api_admin_merchant_applications_id_moderate",
+      "kind": "boundary",
+      "status": 200,
+      "role": "operator",
+      "assertions": 4
+    },
+    {
+      "name": "approve_malformed",
+      "method": "POST",
+      "path": "/api/admin/merchant-applications/1/moderate",
+      "operation_id": "post_api_admin_merchant_applications_id_moderate",
+      "kind": "error",
+      "status": 400,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "approve_anonymous",
+      "method": "POST",
+      "path": "/api/admin/merchant-applications/1/moderate",
+      "operation_id": "post_api_admin_merchant_applications_id_moderate",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "approve_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/merchant-applications/1/moderate",
+      "operation_id": "post_api_admin_merchant_applications_id_moderate",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "quota_below_active",
+      "method": "PUT",
+      "path": "/api/admin/merchant-quotas",
+      "operation_id": "put_api_admin_merchant_quotas",
+      "kind": "boundary",
+      "status": 409,
+      "role": "operator",
+      "assertions": 4
+    },
+    {
+      "name": "application_approved",
+      "method": "GET",
+      "path": "/api/merchant-applications/mine",
+      "operation_id": "get_api_merchant_applications_mine",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "merchant_orders",
+      "method": "GET",
+      "path": "/api/merchant/orders",
+      "operation_id": "get_api_merchant_orders",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "merchant_orders_boundary",
+      "method": "GET",
+      "path": "/api/merchant/orders",
+      "operation_id": "get_api_merchant_orders",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_orders_error",
+      "method": "GET",
+      "path": "/api/merchant/orders",
+      "operation_id": "get_api_merchant_orders",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_orders_anonymous",
+      "method": "GET",
+      "path": "/api/merchant/orders",
+      "operation_id": "get_api_merchant_orders",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_orders_wrong_role",
+      "method": "GET",
+      "path": "/api/merchant/orders",
+      "operation_id": "get_api_merchant_orders",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "pending_activation_cannot_use_signed_token",
+      "method": "GET",
+      "path": "/api/merchant/orders",
+      "operation_id": "get_api_merchant_orders",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "pending_merchant",
+      "assertions": 3
+    },
+    {
+      "name": "create_staff",
+      "method": "POST",
+      "path": "/api/merchant/staff",
+      "operation_id": "post_api_merchant_staff",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 5
+    },
+    {
+      "name": "create_staff_replay",
+      "method": "POST",
+      "path": "/api/merchant/staff",
+      "operation_id": "post_api_merchant_staff",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "create_staff_malformed",
+      "method": "POST",
+      "path": "/api/merchant/staff",
+      "operation_id": "post_api_merchant_staff",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "create_staff_anonymous",
+      "method": "POST",
+      "path": "/api/merchant/staff",
+      "operation_id": "post_api_merchant_staff",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "create_staff_wrong_role",
+      "method": "POST",
+      "path": "/api/merchant/staff",
+      "operation_id": "post_api_merchant_staff",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "staff_cannot_create_staff",
+      "method": "POST",
+      "path": "/api/merchant/staff",
+      "operation_id": "post_api_merchant_staff",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "staff",
+      "assertions": 3
+    },
+    {
+      "name": "staff_list",
+      "method": "GET",
+      "path": "/api/merchant/staff",
+      "operation_id": "get_api_merchant_staff",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "staff_list_boundary",
+      "method": "GET",
+      "path": "/api/merchant/staff",
+      "operation_id": "get_api_merchant_staff",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "staff_list_error",
+      "method": "GET",
+      "path": "/api/merchant/staff",
+      "operation_id": "get_api_merchant_staff",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "staff_list_anonymous",
+      "method": "GET",
+      "path": "/api/merchant/staff",
+      "operation_id": "get_api_merchant_staff",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "staff_list_wrong_role",
+      "method": "GET",
+      "path": "/api/merchant/staff",
+      "operation_id": "get_api_merchant_staff",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "staff_read_roster",
+      "method": "GET",
+      "path": "/api/merchant/staff",
+      "operation_id": "get_api_merchant_staff",
+      "kind": "normal",
+      "status": 200,
+      "role": "staff",
+      "assertions": 3
+    },
+    {
+      "name": "staff_execution_allowed",
+      "method": "GET",
+      "path": "/api/merchant/orders",
+      "operation_id": "get_api_merchant_orders",
+      "kind": "normal",
+      "status": 200,
+      "role": "staff",
+      "assertions": 3
+    },
+    {
+      "name": "tech_orders",
+      "method": "GET",
+      "path": "/api/tech/orders",
+      "operation_id": "get_api_tech_orders",
+      "kind": "normal",
+      "status": 200,
+      "role": "technician",
+      "assertions": 4
+    },
+    {
+      "name": "tech_orders_boundary",
+      "method": "GET",
+      "path": "/api/tech/orders",
+      "operation_id": "get_api_tech_orders",
+      "kind": "boundary",
+      "status": 200,
+      "role": "technician",
+      "assertions": 3
+    },
+    {
+      "name": "tech_orders_error",
+      "method": "GET",
+      "path": "/api/tech/orders",
+      "operation_id": "get_api_tech_orders",
+      "kind": "error",
+      "status": 400,
+      "role": "technician",
+      "assertions": 3
+    },
+    {
+      "name": "tech_orders_anonymous",
+      "method": "GET",
+      "path": "/api/tech/orders",
+      "operation_id": "get_api_tech_orders",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "tech_orders_wrong_role",
+      "method": "GET",
+      "path": "/api/tech/orders",
+      "operation_id": "get_api_tech_orders",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "disable_foreign_employee",
+      "method": "POST",
+      "path": "/api/merchant/staff/3/disable",
+      "operation_id": "post_api_merchant_staff_id_disable",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other_merchant",
+      "assertions": 3
+    },
+    {
+      "name": "staff_cannot_disable",
+      "method": "POST",
+      "path": "/api/merchant/staff/3/disable",
+      "operation_id": "post_api_merchant_staff_id_disable",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "staff",
+      "assertions": 3
+    },
+    {
+      "name": "disable_tech",
+      "method": "POST",
+      "path": "/api/merchant/staff/3/disable",
+      "operation_id": "post_api_merchant_staff_id_disable",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 5
+    },
+    {
+      "name": "disable_tech_replay",
+      "method": "POST",
+      "path": "/api/merchant/staff/3/disable",
+      "operation_id": "post_api_merchant_staff_id_disable",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "disable_tech_malformed",
+      "method": "POST",
+      "path": "/api/merchant/staff/3/disable",
+      "operation_id": "post_api_merchant_staff_id_disable",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "disable_tech_anonymous",
+      "method": "POST",
+      "path": "/api/merchant/staff/3/disable",
+      "operation_id": "post_api_merchant_staff_id_disable",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "disable_tech_wrong_role",
+      "method": "POST",
+      "path": "/api/merchant/staff/3/disable",
+      "operation_id": "post_api_merchant_staff_id_disable",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "disabled_tech_session_revoked",
+      "method": "GET",
+      "path": "/api/tech/orders",
+      "operation_id": "get_api_tech_orders",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "technician",
+      "assertions": 3
+    },
+    {
+      "name": "enable_tech",
+      "method": "POST",
+      "path": "/api/merchant/staff/3/enable",
+      "operation_id": "post_api_merchant_staff_id_enable",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "enable_tech_replay",
+      "method": "POST",
+      "path": "/api/merchant/staff/3/enable",
+      "operation_id": "post_api_merchant_staff_id_enable",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "enable_tech_malformed",
+      "method": "POST",
+      "path": "/api/merchant/staff/3/enable",
+      "operation_id": "post_api_merchant_staff_id_enable",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "enable_tech_anonymous",
+      "method": "POST",
+      "path": "/api/merchant/staff/3/enable",
+      "operation_id": "post_api_merchant_staff_id_enable",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "enable_tech_wrong_role",
+      "method": "POST",
+      "path": "/api/merchant/staff/3/enable",
+      "operation_id": "post_api_merchant_staff_id_enable",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "enabled_tech_old_session_stays_revoked",
+      "method": "GET",
+      "path": "/api/tech/orders",
+      "operation_id": "get_api_tech_orders",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "technician",
+      "assertions": 3
+    },
+    {
+      "name": "code_issue",
+      "method": "POST",
+      "path": "/api/merchant/staff/3/employee-code",
+      "operation_id": "post_api_merchant_staff_id_employee_code",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "code_rotate",
+      "method": "POST",
+      "path": "/api/merchant/staff/3/employee-code",
+      "operation_id": "post_api_merchant_staff_id_employee_code",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "code_unknown_query",
+      "method": "POST",
+      "path": "/api/merchant/staff/3/employee-code",
+      "operation_id": "post_api_merchant_staff_id_employee_code",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "code_anonymous",
+      "method": "POST",
+      "path": "/api/merchant/staff/3/employee-code",
+      "operation_id": "post_api_merchant_staff_id_employee_code",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "code_wrong_role",
+      "method": "POST",
+      "path": "/api/merchant/staff/3/employee-code",
+      "operation_id": "post_api_merchant_staff_id_employee_code",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "code_foreign_shop",
+      "method": "POST",
+      "path": "/api/merchant/staff/3/employee-code",
+      "operation_id": "post_api_merchant_staff_id_employee_code",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other_merchant",
+      "assertions": 3
+    },
+    {
+      "name": "code_revoke",
+      "method": "DELETE",
+      "path": "/api/merchant/staff/3/employee-code",
+      "operation_id": "delete_api_merchant_staff_id_employee_code",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "code_revoke_repeat",
+      "method": "DELETE",
+      "path": "/api/merchant/staff/3/employee-code",
+      "operation_id": "delete_api_merchant_staff_id_employee_code",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "code_revoke_unknown_query",
+      "method": "DELETE",
+      "path": "/api/merchant/staff/3/employee-code",
+      "operation_id": "delete_api_merchant_staff_id_employee_code",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "code_revoke_anonymous",
+      "method": "DELETE",
+      "path": "/api/merchant/staff/3/employee-code",
+      "operation_id": "delete_api_merchant_staff_id_employee_code",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "code_revoke_wrong_role",
+      "method": "DELETE",
+      "path": "/api/merchant/staff/3/employee-code",
+      "operation_id": "delete_api_merchant_staff_id_employee_code",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "profile",
+      "method": "GET",
+      "path": "/api/merchant/profile",
+      "operation_id": "get_api_merchant_profile",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "profile_error",
+      "method": "GET",
+      "path": "/api/merchant/profile",
+      "operation_id": "get_api_merchant_profile",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "profile_anonymous",
+      "method": "GET",
+      "path": "/api/merchant/profile",
+      "operation_id": "get_api_merchant_profile",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "profile_wrong_role",
+      "method": "GET",
+      "path": "/api/merchant/profile",
+      "operation_id": "get_api_merchant_profile",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "profile_staff_readonly",
+      "method": "GET",
+      "path": "/api/merchant/profile",
+      "operation_id": "get_api_merchant_profile",
+      "kind": "boundary",
+      "status": 200,
+      "role": "staff",
+      "assertions": 4
+    },
+    {
+      "name": "profile_save_null_coordinates",
+      "method": "PUT",
+      "path": "/api/merchant/profile",
+      "operation_id": "put_api_merchant_profile",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 5
+    },
+    {
+      "name": "profile_save_null_coordinates_replay",
+      "method": "PUT",
+      "path": "/api/merchant/profile",
+      "operation_id": "put_api_merchant_profile",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "profile_save_null_coordinates_malformed",
+      "method": "PUT",
+      "path": "/api/merchant/profile",
+      "operation_id": "put_api_merchant_profile",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "profile_save_null_coordinates_anonymous",
+      "method": "PUT",
+      "path": "/api/merchant/profile",
+      "operation_id": "put_api_merchant_profile",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "profile_save_null_coordinates_wrong_role",
+      "method": "PUT",
+      "path": "/api/merchant/profile",
+      "operation_id": "put_api_merchant_profile",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "profile_staff_cannot_edit",
+      "method": "PUT",
+      "path": "/api/merchant/profile",
+      "operation_id": "put_api_merchant_profile",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "staff",
+      "assertions": 3
+    },
+    {
+      "name": "profile_cannot_change_commission",
+      "method": "PUT",
+      "path": "/api/merchant/profile",
+      "operation_id": "put_api_merchant_profile",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "profile_coordinate_boundary",
+      "method": "PUT",
+      "path": "/api/merchant/profile",
+      "operation_id": "put_api_merchant_profile",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "profile_coordinate_overflow",
+      "method": "PUT",
+      "path": "/api/merchant/profile",
+      "operation_id": "put_api_merchant_profile",
+      "kind": "boundary",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "profile_canonical_coordinates",
+      "method": "GET",
+      "path": "/api/merchant/profile",
+      "operation_id": "get_api_merchant_profile",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    }
+  ]
+}

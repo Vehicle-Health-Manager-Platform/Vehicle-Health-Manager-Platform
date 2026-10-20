@@ -110,4 +110,4 @@ watch(() => ownerSession.accessToken, () => { transferredQuestion=null;flow.rese
     <button @tap="uni.navigateBack()">返回AI管家</button>
   </view>
 </template>
-<style scoped>.question{box-sizing:border-box;width:100%;min-height:220rpx}.plan-row{display:flex;flex-direction:column;gap:18rpx;padding:24rpx 0;border-top:1px solid #e5e6eb}.evidence{white-space:pre-wrap;overflow-wrap:anywhere}</style>
+<style scoped>.question{box-sizing:border-box;width:100%;min-height:220rpx}.plan-row{display:flex;flex-direction:column;gap:18rpx;padding:24rpx 0;border-top:1px solid #e0ded6}.evidence{white-space:pre-wrap;overflow-wrap:anywhere}</style>

@@ -14,44 +14,46 @@
 
 /* 颜色变量 */
 
-/* 行为相关颜色 */
-$uni-color-primary: #00b42a;
-$uni-color-success: #00b42a;
-$uni-color-warning: #ff7d00;
-$uni-color-error: #f53f3f;
+/* 行为相关颜色
+ * 工业实用 × 仪表盘语义：墨绿=健康/正常，琥珀=临期/关键动作，红=异常。
+ * 旧变量名保持不变，仅调整数值；新增令牌集中在 src/styles/design-system.css。 */
+$uni-color-primary: #0b6b43;
+$uni-color-success: #0b6b43;
+$uni-color-warning: #c25a00;
+$uni-color-error: #b3261e;
 
-/* 文字基本颜色 */
-$uni-text-color: #333; // 基本色
-$uni-text-color-inverse: #fff; // 反色
-$uni-text-color-grey: #999; // 辅助灰色，如加载更多的提示信息
-$uni-text-color-placeholder: #808080;
-$uni-text-color-disable: #c0c0c0;
+/* 文字基本颜色：暖近黑/暖灰，避免纯黑压纯白 */
+$uni-text-color: #1a1d18; // 基本色
+$uni-text-color-inverse: #fcfbf8; // 反色
+$uni-text-color-grey: #63685e; // 辅助灰
+$uni-text-color-placeholder: #8a8f84;
+$uni-text-color-disable: #b7bab1;
 
-/* 背景颜色 */
-$uni-bg-color: #fff;
-$uni-bg-color-grey: #f2f3f5;
-$uni-bg-color-hover: #f1f1f1; // 点击状态颜色
-$uni-bg-color-mask: rgba(0, 0, 0, 0.4); // 遮罩颜色
+/* 背景颜色：暖纸灰底 + 暖近白卡片，避免纯白平铺 */
+$uni-bg-color: #fcfbf8;
+$uni-bg-color-grey: #f3f1eb;
+$uni-bg-color-hover: #e9f2ec; // 点击状态：极浅主色底
+$uni-bg-color-mask: rgba(26, 29, 24, 0.48); // 遮罩带环境色
 
-/* 边框颜色 */
-$uni-border-color: #c8c7cc;
+/* 边框颜色：发丝线 */
+$uni-border-color: rgba(26, 29, 24, 0.14);
 
 /* 尺寸变量 */
 
 /* 文字尺寸 */
 $uni-font-size-sm: 12px;
 $uni-font-size-base: 14px;
-$uni-font-size-lg: 16;
+$uni-font-size-lg: 16px;
 
 /* 图片尺寸 */
 $uni-img-size-sm: 20px;
 $uni-img-size-base: 26px;
 $uni-img-size-lg: 40px;
 
-/* Border Radius */
-$uni-border-radius-sm: 2px;
-$uni-border-radius-base: 3px;
-$uni-border-radius-lg: 6px;
+/* Border Radius：工业实用偏直角，卡片圆角收敛 */
+$uni-border-radius-sm: 4px;
+$uni-border-radius-base: 8px;
+$uni-border-radius-lg: 12px;
 $uni-border-radius-circle: 50%;
 
 /* 水平间距 */
@@ -65,12 +67,12 @@ $uni-spacing-col-base: 8px;
 $uni-spacing-col-lg: 12px;
 
 /* 透明度 */
-$uni-opacity-disabled: 0.3; // 组件禁用态的透明度
+$uni-opacity-disabled: 0.38; // 组件禁用态的透明度
 
 /* 文章场景相关 */
-$uni-color-title: #2c405a; // 文章标题颜色
+$uni-color-title: #1a1d18; // 文章标题颜色
 $uni-font-size-title: 20px;
-$uni-color-subtitle: #555; // 二级标题颜色
+$uni-color-subtitle: #454a41; // 二级标题颜色
 $uni-font-size-subtitle: 18px;
-$uni-color-paragraph: #3f536e; // 文章段落颜色
+$uni-color-paragraph: #33372f; // 文章段落颜色
 $uni-font-size-paragraph: 15px;

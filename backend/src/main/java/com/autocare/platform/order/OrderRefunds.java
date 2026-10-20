@@ -69,7 +69,7 @@ public class OrderRefunds {
                 var now=ReservationStore.time(db.now());db.jdbc.update("UPDATE refund SET status='PENDING',revision=revision+1,merchant_actor=?,merchant_consented_at=?,decision_note=?,next_attempt_at=? WHERE id=?",actor.staffId(),now,text,now,r.get("id"));
                 db.jdbc.update("UPDATE `order` SET status='CLOSED',close_reason='REFUND_CANCELLED',closed_at=? WHERE id=?",now,id);
                 db.jdbc.update("UPDATE payment SET status='CLOSED',closed_at=? WHERE order_id=? AND status IN ('CREATED','PENDING')",now,id);
-                db.jdbc.update("UPDATE appointment_slot SET reserved_count=? WHERE id=?",db.occupied(ReservationStore.number(o,"slot_id"),db.now()),o.get("slot_id"));
+                db.jdbc.update("UPDATE appointment_slot SET reserved_count=GREATEST(reserved_count-1,0) WHERE id=?",o.get("slot_id"));
                 db.jdbc.update("INSERT INTO order_status_transition(order_id,merchant_id,from_status,to_status,action,actor_type,actor_id,note,occurred_at) VALUES(?,?,?,'CLOSED','ORDER_REFUND_CANCEL','staff_account',?,?,?)",id,actor.merchantId(),o.get("status"),actor.staffId(),text,now);
             }
             notice(id,"ACCEPT".equals(decision)?"REFUND_ACCEPTED":"REFUND_REJECTED");if("ACCEPT".equals(decision))ServiceNotifications.enqueue(db,id,"ORDER_CLOSED");

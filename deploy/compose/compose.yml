@@ -72,6 +72,7 @@ services:
       - ../../docs/sql/migrations/V059__public_community_questions.sql:/docker-entrypoint-initdb.d/059-public-community-questions.sql:ro
       - ../../docs/sql/migrations/V060__public_image_copies.sql:/docker-entrypoint-initdb.d/060-public-image-copies.sql:ro
       - ../../docs/sql/migrations/V061__licensed_knowledge.sql:/docker-entrypoint-initdb.d/061-licensed-knowledge.sql:ro
+      - ../../docs/sql/migrations/V062__input_material.sql:/docker-entrypoint-initdb.d/062-input-material.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent"]
       interval: 10s
@@ -173,6 +174,7 @@ services:
       SERVER_PORT: 8080
       UPLOAD_HTTP_CONCURRENCY: ${UPLOAD_HTTP_CONCURRENCY:-4}
       UPLOAD_CLEANUP_INTERVAL_MS: ${UPLOAD_CLEANUP_INTERVAL_MS:-60000}
+      INPUT_MATERIAL_UPLOAD_ENABLED: ${INPUT_MATERIAL_UPLOAD_ENABLED:-false}
       MYSQL_HOST: mysql
       SERVICE_ARCHIVE_ENABLED: ${SERVICE_ARCHIVE_ENABLED:-false}
       EXPERIENCE_CARD_ENABLED: ${EXPERIENCE_CARD_ENABLED:-false}

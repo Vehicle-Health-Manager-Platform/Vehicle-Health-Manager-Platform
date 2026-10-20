@@ -49,12 +49,12 @@ watch(() => ownerSession.accessToken, () => reader.invalidate(), { flush: 'sync'
 <style scoped>
 .page { padding: 32rpx; }
 .title { display: block; font-size: 36rpx; font-weight: 700; }
-.hint { display: block; margin-top: 16rpx; color: #697585; font-size: 24rpx; line-height: 38rpx; }
-.card { margin-top: 24rpx; padding: 28rpx; background: #fff; border-radius: 20rpx; }
+.hint { display: block; margin-top: 16rpx; color: #63685e; font-size: 24rpx; line-height: 38rpx; }
+.card { margin-top: 24rpx; padding: 28rpx; background: #fcfbf8; border-radius: 20rpx; }
 .heading { font-size: 28rpx; font-weight: 600; }
-.record { padding: 24rpx 0; margin-top: 20rpx; border-top: 1rpx solid #e5e6eb; }
-.message { display: block; margin: 24rpx 0; font-size: 26rpx; line-height: 40rpx; color: #697585; }
-.test { display: block; margin-top: 16rpx; color: #b42318; font-size: 24rpx; }
-button { margin-top: 20rpx; background: #00b42a; color: #fff; border-radius: 14rpx; font-size: 26rpx; }
+.record { padding: 24rpx 0; margin-top: 20rpx; border-top: 1rpx solid #e0ded6; }
+.message { display: block; margin: 24rpx 0; font-size: 26rpx; line-height: 40rpx; color: #63685e; }
+.test { display: block; margin-top: 16rpx; color: #b3261e; font-size: 24rpx; }
+button { margin-top: 20rpx; background: #0b6b43; color: #fcfbf8; border-radius: 14rpx; font-size: 26rpx; }
 button::after { border: 0; }
 </style>

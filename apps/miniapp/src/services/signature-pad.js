@@ -11,7 +11,7 @@ export function createSignatureStroke(context, width, height) {
   function move(p) {
     const next = point(p); if (!last || !next) return
     if (Math.hypot(next.x - last.x, next.y - last.y) < 2) return
-    context.setStrokeStyle('#111827'); context.setLineWidth(2); context.setLineCap('round'); context.setLineJoin('round')
+    context.setStrokeStyle('#1a1d18'); context.setLineWidth(2); context.setLineCap('round'); context.setLineJoin('round')
     context.beginPath(); context.moveTo(last.x, last.y); context.lineTo(next.x, next.y); context.stroke(); context.draw(true)
     last = next; ink = true
   }

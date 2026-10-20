@@ -1,0 +1,6037 @@
+{
+  "version": 1,
+  "operations": 352,
+  "anonymous_probes": 338,
+  "full_api_acceptance_passed": false,
+  "note": "Generated inventory, not test evidence. Anonymous 401 does not prove controller implementation or role/ownership validation.",
+  "items": [
+    {
+      "operation_id": "get_api_admin_assessment",
+      "method": "GET",
+      "path": "/api/admin/assessment",
+      "roles": null,
+      "implementation_status": "unspecified",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_assessment_history",
+      "method": "GET",
+      "path": "/api/admin/assessment/history",
+      "roles": "OPERATOR(can_assessment)",
+      "implementation_status": "r8b2b-monthly-read-ui-implemented",
+      "content_types": [],
+      "required_query": [
+        "period_month",
+        "merchant_id"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_assessment_merchants",
+      "method": "GET",
+      "path": "/api/admin/assessment/merchants",
+      "roles": "OPERATOR(can_assessment)",
+      "implementation_status": "r8b1-source-policy-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_assessment_month",
+      "method": "GET",
+      "path": "/api/admin/assessment/month",
+      "roles": "OPERATOR(can_assessment)",
+      "implementation_status": "r8b2b-monthly-read-ui-implemented",
+      "content_types": [],
+      "required_query": [
+        "period_month",
+        "merchant_id"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_assessment_policies",
+      "method": "GET",
+      "path": "/api/admin/assessment/policies",
+      "roles": "OPERATOR(can_assessment)",
+      "implementation_status": "r8b1-source-policy-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_assessment_policies",
+      "method": "POST",
+      "path": "/api/admin/assessment/policies",
+      "roles": "OPERATOR(can_assessment)",
+      "implementation_status": "r8b1-source-policy-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_assessment_policies_id",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/{id}",
+      "roles": "OPERATOR(can_assessment)",
+      "implementation_status": "r8b1-source-policy-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_assessment_policies_id_status",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/{id}/status",
+      "roles": "OPERATOR(can_assessment)",
+      "implementation_status": "r8b1-source-policy-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_assessment_snapshots",
+      "method": "GET",
+      "path": "/api/admin/assessment/snapshots",
+      "roles": "OPERATOR(can_assessment)",
+      "implementation_status": "r8b2a-monthly-snapshot-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_assessment_snapshots",
+      "method": "POST",
+      "path": "/api/admin/assessment/snapshots",
+      "roles": "OPERATOR(can_assessment)",
+      "implementation_status": "r8b2a-monthly-snapshot-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_assessment_snapshots_id",
+      "method": "GET",
+      "path": "/api/admin/assessment/snapshots/{id}",
+      "roles": "OPERATOR(can_assessment)",
+      "implementation_status": "r8b2a-monthly-snapshot-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_assessment_snapshots_id_facts",
+      "method": "GET",
+      "path": "/api/admin/assessment/snapshots/{id}/facts",
+      "roles": "OPERATOR(can_assessment)",
+      "implementation_status": "r8b2a-monthly-snapshot-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_business_dashboard",
+      "method": "GET",
+      "path": "/api/admin/business/dashboard",
+      "roles": "OPERATOR(can_analytics)",
+      "implementation_status": "r8b3a-business-dashboard-implemented",
+      "content_types": [],
+      "required_query": [
+        "period_month",
+        "merchant_id"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_business_merchants",
+      "method": "GET",
+      "path": "/api/admin/business/merchants",
+      "roles": "OPERATOR(can_analytics)",
+      "implementation_status": "r8b3a-business-dashboard-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_catalog_kind",
+      "method": "GET",
+      "path": "/api/admin/catalog/{kind}",
+      "roles": "OPERATOR with can_catalog",
+      "implementation_status": "catalog-governance-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_catalog_kind",
+      "method": "POST",
+      "path": "/api/admin/catalog/{kind}",
+      "roles": "OPERATOR with can_catalog",
+      "implementation_status": "catalog-governance-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_catalog_kind_id",
+      "method": "PUT",
+      "path": "/api/admin/catalog/{kind}/{id}",
+      "roles": "OPERATOR with can_catalog",
+      "implementation_status": "catalog-governance-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_community_curation_sources",
+      "method": "GET",
+      "path": "/api/admin/community/curation-sources",
+      "roles": "OPERATOR(can_community_curate)",
+      "implementation_status": "r8c1b1-curation-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_community_curations",
+      "method": "GET",
+      "path": "/api/admin/community/curations",
+      "roles": "OPERATOR(can_community_curate)",
+      "implementation_status": "r8c1b1-curation-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_community_curations",
+      "method": "POST",
+      "path": "/api/admin/community/curations",
+      "roles": "OPERATOR(can_community_curate)",
+      "implementation_status": "r8c1b1-curation-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_community_curations_id",
+      "method": "GET",
+      "path": "/api/admin/community/curations/{id}",
+      "roles": "OPERATOR(can_community_curate)",
+      "implementation_status": "r8c1b1-curation-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_community_curations_id",
+      "method": "PUT",
+      "path": "/api/admin/community/curations/{id}",
+      "roles": "OPERATOR(can_community_curate)",
+      "implementation_status": "r8c1b1-curation-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_community_curations_id_status",
+      "method": "PUT",
+      "path": "/api/admin/community/curations/{id}/status",
+      "roles": "OPERATOR(can_community_curate)",
+      "implementation_status": "r8c1b1-curation-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_community_images",
+      "method": "GET",
+      "path": "/api/admin/community/images",
+      "roles": "OPERATOR(can_review)",
+      "implementation_status": "r8-remaining-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_community_images_id_moderate",
+      "method": "POST",
+      "path": "/api/admin/community/images/{id}/moderate",
+      "roles": "OPERATOR(can_review)",
+      "implementation_status": "r8-remaining-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_community_images_id_preview",
+      "method": "GET",
+      "path": "/api/admin/community/images/{id}/preview",
+      "roles": "OPERATOR(can_review)",
+      "implementation_status": "r8-remaining-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_community_question_publications",
+      "method": "GET",
+      "path": "/api/admin/community/question-publications",
+      "roles": "OPERATOR(can_review)",
+      "implementation_status": "r8c1b3-public-qa-ui-and-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_community_question_publications_id_moderate",
+      "method": "POST",
+      "path": "/api/admin/community/question-publications/{id}/moderate",
+      "roles": "OPERATOR(can_review)",
+      "implementation_status": "r8c1b3-public-qa-ui-and-backend-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_community_questions_cases",
+      "method": "GET",
+      "path": "/api/admin/community/questions/cases",
+      "roles": "OPERATOR(can_community_answer or can_community_manage)",
+      "implementation_status": "r8c1b2-private-questions-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_community_questions_cases_id",
+      "method": "GET",
+      "path": "/api/admin/community/questions/cases/{id}",
+      "roles": "OPERATOR(can_community_answer + assigned)",
+      "implementation_status": "r8c1b2-private-questions-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+      "method": "PUT",
+      "path": "/api/admin/community/questions/cases/{id}/assignment",
+      "roles": "OPERATOR(can_community_manage)",
+      "implementation_status": "r8c1b2-private-questions-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_community_questions_cases_id_close",
+      "method": "POST",
+      "path": "/api/admin/community/questions/cases/{id}/close",
+      "roles": "OPERATOR(can_community_answer + assigned)",
+      "implementation_status": "r8c1b2-private-questions-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_community_questions_cases_id_reply",
+      "method": "POST",
+      "path": "/api/admin/community/questions/cases/{id}/reply",
+      "roles": "OPERATOR(can_community_answer + assigned)",
+      "implementation_status": "r8c1b2-private-questions-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_community_questions_handlers",
+      "method": "GET",
+      "path": "/api/admin/community/questions/handlers",
+      "roles": "OPERATOR(can_community_manage)",
+      "implementation_status": "r8c1b2-private-questions-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_community_questions_policies",
+      "method": "GET",
+      "path": "/api/admin/community/questions/policies",
+      "roles": "OPERATOR(can_community_manage)",
+      "implementation_status": "r8c1b2-private-questions-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_community_questions_policies",
+      "method": "POST",
+      "path": "/api/admin/community/questions/policies",
+      "roles": "OPERATOR(can_community_manage)",
+      "implementation_status": "r8c1b2-private-questions-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_community_questions_policies_id",
+      "method": "PUT",
+      "path": "/api/admin/community/questions/policies/{id}",
+      "roles": "OPERATOR(can_community_manage)",
+      "implementation_status": "r8c1b2-private-questions-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_community_questions_policies_id_status",
+      "method": "PUT",
+      "path": "/api/admin/community/questions/policies/{id}/status",
+      "roles": "OPERATOR(can_community_manage)",
+      "implementation_status": "r8c1b2-private-questions-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_coupons",
+      "method": "GET",
+      "path": "/api/admin/coupons",
+      "roles": "OPERATOR(can_coupon)",
+      "implementation_status": "r5a-inventory-claim-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "method": "PUT",
+      "path": "/api/admin/coupons/{id}/pool",
+      "roles": "OPERATOR(can_coupon)",
+      "implementation_status": "r5a-inventory-claim-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_dashboard",
+      "method": "GET",
+      "path": "/api/admin/dashboard",
+      "roles": null,
+      "implementation_status": "unspecified",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_diagnosis_cases",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/cases",
+      "roles": "OPERATOR(can_diagnose or can_diagnose_manage)",
+      "implementation_status": "r7c2-async-diagnosis-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_diagnosis_cases_id",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/cases/{id}",
+      "roles": "OPERATOR(can_diagnose + assigned)",
+      "implementation_status": "r7c2-async-diagnosis-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_diagnosis_cases_id_assignment",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/cases/{id}/assignment",
+      "roles": "OPERATOR(can_diagnose_manage)",
+      "implementation_status": "r7c2-async-diagnosis-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_diagnosis_cases_id_close",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/cases/{id}/close",
+      "roles": "OPERATOR(manage or assigned handler)",
+      "implementation_status": "r7c2-async-diagnosis-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_diagnosis_cases_id_reply",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/cases/{id}/reply",
+      "roles": "OPERATOR(can_diagnose + assigned)",
+      "implementation_status": "r7c2-async-diagnosis-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_diagnosis_handlers",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/handlers",
+      "roles": "OPERATOR(can_diagnose_manage)",
+      "implementation_status": "r7c2-async-diagnosis-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_diagnosis_notifications",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/notifications",
+      "roles": "OPERATOR with current diagnose or diagnose-manage privilege",
+      "implementation_status": "r7c3-diagnosis-notifications-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_diagnosis_notifications_id_read",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/notifications/{id}/read",
+      "roles": "OPERATOR with current diagnose or diagnose-manage privilege",
+      "implementation_status": "r7c3-diagnosis-notifications-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_diagnosis_policies",
+      "method": "GET",
+      "path": "/api/admin/diagnosis/policies",
+      "roles": "OPERATOR(can_diagnose_manage)",
+      "implementation_status": "r7c2-async-diagnosis-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_diagnosis_policies",
+      "method": "POST",
+      "path": "/api/admin/diagnosis/policies",
+      "roles": "OPERATOR(can_diagnose_manage)",
+      "implementation_status": "r7c2-async-diagnosis-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_diagnosis_policies_id",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/{id}",
+      "roles": "OPERATOR(can_diagnose_manage)",
+      "implementation_status": "r7c2-async-diagnosis-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_diagnosis_policies_id_status",
+      "method": "PUT",
+      "path": "/api/admin/diagnosis/policies/{id}/status",
+      "roles": "OPERATOR(can_diagnose_manage)",
+      "implementation_status": "r7c2-async-diagnosis-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_experience_cards",
+      "method": "GET",
+      "path": "/api/admin/experience-cards",
+      "roles": "OPERATOR with can_review",
+      "implementation_status": "experience-moderation-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_experience_cards_id_moderate",
+      "method": "POST",
+      "path": "/api/admin/experience-cards/{id}/moderate",
+      "roles": "OPERATOR with can_review",
+      "implementation_status": "experience-moderation-backend-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_health_policies_model_metric",
+      "method": "GET",
+      "path": "/api/admin/health-policies/{model}/{metric}",
+      "roles": "OPERATOR(can_catalog)",
+      "implementation_status": "r4-completion-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_health_policies_model_metric",
+      "method": "PUT",
+      "path": "/api/admin/health-policies/{model}/{metric}",
+      "roles": "OPERATOR(can_catalog)",
+      "implementation_status": "r4-completion-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_invite_diagnosis_policies",
+      "method": "GET",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "roles": "OPERATOR(can_invite)",
+      "implementation_status": "r6b3-diagnosis-eligibility-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_invite_diagnosis_policies",
+      "method": "POST",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "roles": "OPERATOR(can_invite)",
+      "implementation_status": "r6b3-diagnosis-eligibility-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/{id}",
+      "roles": "OPERATOR(can_invite)",
+      "implementation_status": "r6b3-diagnosis-eligibility-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/{id}/status",
+      "roles": "OPERATOR(can_invite)",
+      "implementation_status": "r6b3-diagnosis-eligibility-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_invite_reward_coupons",
+      "method": "GET",
+      "path": "/api/admin/invite/reward-coupons",
+      "roles": "OPERATOR(can_invite)",
+      "implementation_status": "r6b1-reward-policy-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_invite_reward_policies",
+      "method": "GET",
+      "path": "/api/admin/invite/reward-policies",
+      "roles": "OPERATOR(can_invite)",
+      "implementation_status": "r6b1-reward-policy-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_invite_reward_policies",
+      "method": "POST",
+      "path": "/api/admin/invite/reward-policies",
+      "roles": "OPERATOR(can_invite)",
+      "implementation_status": "r6b1-reward-policy-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_invite_reward_policies_id",
+      "method": "PUT",
+      "path": "/api/admin/invite/reward-policies/{id}",
+      "roles": "OPERATOR(can_invite)",
+      "implementation_status": "r6b1-reward-policy-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_invite_reward_policies_id_status",
+      "method": "PUT",
+      "path": "/api/admin/invite/reward-policies/{id}/status",
+      "roles": "OPERATOR(can_invite)",
+      "implementation_status": "r6b1-reward-policy-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_knowledge_documents",
+      "method": "GET",
+      "path": "/api/admin/knowledge/documents",
+      "roles": "OPERATOR(can_knowledge)",
+      "implementation_status": "r8-remaining-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_knowledge_documents",
+      "method": "POST",
+      "path": "/api/admin/knowledge/documents",
+      "roles": "OPERATOR(can_knowledge)",
+      "implementation_status": "r8-remaining-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_knowledge_documents_id",
+      "method": "PUT",
+      "path": "/api/admin/knowledge/documents/{id}",
+      "roles": "OPERATOR(can_knowledge)",
+      "implementation_status": "r8-remaining-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_knowledge_documents_id_status",
+      "method": "POST",
+      "path": "/api/admin/knowledge/documents/{id}/status",
+      "roles": "OPERATOR(can_knowledge)",
+      "implementation_status": "r8-remaining-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_knowledge_models",
+      "method": "GET",
+      "path": "/api/admin/knowledge/models",
+      "roles": "OPERATOR(can_knowledge)",
+      "implementation_status": "r8-remaining-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_merchant_applications",
+      "method": "GET",
+      "path": "/api/admin/merchant-applications",
+      "roles": "OPERATOR with can_onboard",
+      "implementation_status": "merchant-onboarding-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_merchant_applications_id",
+      "method": "GET",
+      "path": "/api/admin/merchant-applications/{id}",
+      "roles": "OPERATOR with can_onboard",
+      "implementation_status": "merchant-onboarding-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_merchant_applications_id_files_file_access",
+      "method": "GET",
+      "path": "/api/admin/merchant-applications/{id}/files/{file}/access",
+      "roles": "OPERATOR with can_onboard",
+      "implementation_status": "merchant-onboarding-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_merchant_applications_id_moderate",
+      "method": "POST",
+      "path": "/api/admin/merchant-applications/{id}/moderate",
+      "roles": "OPERATOR with can_onboard",
+      "implementation_status": "merchant-onboarding-backend-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_merchant_quotas",
+      "method": "GET",
+      "path": "/api/admin/merchant-quotas",
+      "roles": "OPERATOR with can_onboard",
+      "implementation_status": "merchant-onboarding-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_merchant_quotas",
+      "method": "PUT",
+      "path": "/api/admin/merchant-quotas",
+      "roles": "OPERATOR with can_onboard",
+      "implementation_status": "merchant-onboarding-backend-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_merchant_audit",
+      "method": "POST",
+      "path": "/api/admin/merchant/audit",
+      "roles": null,
+      "implementation_status": "unspecified",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_point_exchange_catalog",
+      "method": "GET",
+      "path": "/api/admin/point/exchange-catalog",
+      "roles": "OPERATOR(can_points)",
+      "implementation_status": "r8a3a-catalog-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "roles": "OPERATOR(can_points)",
+      "implementation_status": "r8a3a-catalog-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_point_exchange_catalog_id",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/{id}",
+      "roles": "OPERATOR(can_points)",
+      "implementation_status": "r8a3a-catalog-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/{id}/status",
+      "roles": "OPERATOR(can_points)",
+      "implementation_status": "r8a3a-catalog-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_point_exchange_sources",
+      "method": "GET",
+      "path": "/api/admin/point/exchange-sources",
+      "roles": "OPERATOR(can_points)",
+      "implementation_status": "r8a3a-catalog-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_point_task_policies",
+      "method": "GET",
+      "path": "/api/admin/point/task-policies",
+      "roles": "OPERATOR(can_points)",
+      "implementation_status": "r8a1-policy-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_point_task_policies",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "roles": "OPERATOR(can_points)",
+      "implementation_status": "r8a1-policy-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_point_task_policies_id",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/{id}",
+      "roles": "OPERATOR(can_points)",
+      "implementation_status": "r8a1-policy-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/{id}/status",
+      "roles": "OPERATOR(can_points)",
+      "implementation_status": "r8a1-policy-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_price_monitor_comparisons",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons",
+      "roles": "OPERATOR(can_price_monitor)",
+      "implementation_status": "r8b3c2-price-comparison-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_price_monitor_comparisons_id",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons/{id}",
+      "roles": "OPERATOR(can_price_monitor)",
+      "implementation_status": "r8b3c2-price-comparison-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_price_monitor_policies",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/policies",
+      "roles": "OPERATOR(can_price_monitor)",
+      "implementation_status": "r8b3c1-price-source-config-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_price_monitor_policies",
+      "method": "POST",
+      "path": "/api/admin/price-monitor/policies",
+      "roles": "OPERATOR(can_price_monitor)",
+      "implementation_status": "r8b3c1-price-source-config-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_price_monitor_policies_id",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/policies/{id}",
+      "roles": "OPERATOR(can_price_monitor)",
+      "implementation_status": "r8b3c1-price-source-config-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_price_monitor_policies_id",
+      "method": "PUT",
+      "path": "/api/admin/price-monitor/policies/{id}",
+      "roles": "OPERATOR(can_price_monitor)",
+      "implementation_status": "r8b3c1-price-source-config-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_price_monitor_policies_id_status",
+      "method": "PUT",
+      "path": "/api/admin/price-monitor/policies/{id}/status",
+      "roles": "OPERATOR(can_price_monitor)",
+      "implementation_status": "r8b3c1-price-source-config-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_price_monitor_quotes",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/quotes",
+      "roles": "OPERATOR(can_price_monitor)",
+      "implementation_status": "r8b3c1-price-source-config-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_project_applicability_project_model",
+      "method": "GET",
+      "path": "/api/admin/project-applicability/{project}/{model}",
+      "roles": "OPERATOR(can_catalog)",
+      "implementation_status": "vehicle-plan-evidence-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/{project}/{model}",
+      "roles": "OPERATOR(can_catalog)",
+      "implementation_status": "vehicle-plan-evidence-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_reconciliation",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "roles": "授权运营",
+      "implementation_status": "unspecified",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_review_texts",
+      "method": "GET",
+      "path": "/api/admin/review-texts",
+      "roles": "OPERATOR can_review",
+      "implementation_status": "public-review-text-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_admin_review_texts_id_moderate",
+      "method": "POST",
+      "path": "/api/admin/review-texts/{id}/moderate",
+      "roles": "OPERATOR can_review",
+      "implementation_status": "public-review-text-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_admin_standard_project",
+      "method": "GET",
+      "path": "/api/admin/standard-project",
+      "roles": null,
+      "implementation_status": "unspecified",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_ai_chat",
+      "method": "POST",
+      "path": "/api/ai/chat",
+      "roles": null,
+      "implementation_status": "unspecified",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_ai_plan",
+      "method": "POST",
+      "path": "/api/ai/plan",
+      "roles": null,
+      "implementation_status": "unspecified",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_ai_service_plan",
+      "method": "POST",
+      "path": "/api/ai/service-plan",
+      "roles": "OWNER",
+      "implementation_status": "catalog-based-service-plan-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_ai_service_plan_catalog",
+      "method": "GET",
+      "path": "/api/ai/service-plan/catalog",
+      "roles": "OWNER",
+      "implementation_status": "catalog-based-service-plan-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_ai_service_plan_vehicle_evidence",
+      "method": "POST",
+      "path": "/api/ai/service-plan/vehicle-evidence",
+      "roles": "OWNER",
+      "implementation_status": "vehicle-plan-evidence-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_archive_add",
+      "method": "POST",
+      "path": "/api/archive/add",
+      "roles": "正式车主",
+      "implementation_status": "manual-and-photo-core-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_archive_list",
+      "method": "GET",
+      "path": "/api/archive/list",
+      "roles": "正式车主",
+      "implementation_status": "manual-photo-and-service-archive-implemented",
+      "content_types": [],
+      "required_query": [
+        "vehicle_id"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_archive_report",
+      "method": "GET",
+      "path": "/api/archive/report",
+      "roles": "正式车主",
+      "implementation_status": "implemented",
+      "content_types": [],
+      "required_query": [
+        "vehicle_id"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_archive_share_view",
+      "method": "POST",
+      "path": "/api/archive/share/view",
+      "roles": "正式车主",
+      "implementation_status": "implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_archive_shares",
+      "method": "GET",
+      "path": "/api/archive/shares",
+      "roles": "正式车主",
+      "implementation_status": "implemented",
+      "content_types": [],
+      "required_query": [
+        "vehicle_id"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_archive_shares",
+      "method": "POST",
+      "path": "/api/archive/shares",
+      "roles": "正式车主",
+      "implementation_status": "implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_archive_shares_id_link",
+      "method": "GET",
+      "path": "/api/archive/shares/{id}/link",
+      "roles": "正式车主",
+      "implementation_status": "implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_archive_shares_id_revoke",
+      "method": "POST",
+      "path": "/api/archive/shares/{id}/revoke",
+      "roles": "正式车主",
+      "implementation_status": "implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_archive_archiveId_files_fileId_access",
+      "method": "GET",
+      "path": "/api/archive/{archiveId}/files/{fileId}/access",
+      "roles": "正式车主",
+      "implementation_status": "implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_archive_id_health_observation",
+      "method": "GET",
+      "path": "/api/archive/{id}/health-observation",
+      "roles": "正式车主",
+      "implementation_status": "implemented",
+      "content_types": [],
+      "required_query": [
+        "metric"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_archive_id_health_observation",
+      "method": "PUT",
+      "path": "/api/archive/{id}/health-observation",
+      "roles": "正式车主",
+      "implementation_status": "implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_archive_id_reminder",
+      "method": "GET",
+      "path": "/api/archive/{id}/reminder",
+      "roles": "正式车主",
+      "implementation_status": "implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_archive_id_reminder",
+      "method": "PUT",
+      "path": "/api/archive/{id}/reminder",
+      "roles": "正式车主",
+      "implementation_status": "implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_archive_id_structured",
+      "method": "GET",
+      "path": "/api/archive/{id}/structured",
+      "roles": "正式车主",
+      "implementation_status": "implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_archive_id_structured",
+      "method": "PUT",
+      "path": "/api/archive/{id}/structured",
+      "roles": "正式车主",
+      "implementation_status": "implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_auth_cloud_login",
+      "method": "POST",
+      "path": "/api/auth/cloud-login",
+      "roles": null,
+      "implementation_status": "unspecified",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": null,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "PUBLIC_REQUIRES_SEPARATE_REVIEW"
+      }
+    },
+    {
+      "operation_id": "post_api_auth_logout",
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "roles": "车主/商家/技师",
+      "implementation_status": "core-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_auth_merchant_code",
+      "method": "POST",
+      "path": "/api/auth/merchant/code",
+      "roles": "商家",
+      "implementation_status": "core-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": null,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "PUBLIC_REQUIRES_SEPARATE_REVIEW"
+      }
+    },
+    {
+      "operation_id": "post_api_auth_merchant_login",
+      "method": "POST",
+      "path": "/api/auth/merchant/login",
+      "roles": "商家",
+      "implementation_status": "core-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": null,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "PUBLIC_REQUIRES_SEPARATE_REVIEW"
+      }
+    },
+    {
+      "operation_id": "post_api_auth_operator_code",
+      "method": "POST",
+      "path": "/api/auth/operator/code",
+      "roles": "OPERATOR",
+      "implementation_status": "operator-auth-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": null,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "PUBLIC_REQUIRES_SEPARATE_REVIEW"
+      }
+    },
+    {
+      "operation_id": "post_api_auth_operator_login",
+      "method": "POST",
+      "path": "/api/auth/operator/login",
+      "roles": "OPERATOR",
+      "implementation_status": "operator-auth-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": null,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "PUBLIC_REQUIRES_SEPARATE_REVIEW"
+      }
+    },
+    {
+      "operation_id": "post_api_auth_operator_logout",
+      "method": "POST",
+      "path": "/api/auth/operator/logout",
+      "roles": "OPERATOR",
+      "implementation_status": "operator-auth-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_auth_phone_bind",
+      "method": "POST",
+      "path": "/api/auth/phone/bind",
+      "roles": "车主",
+      "implementation_status": "core-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_auth_refresh",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "roles": "车主/商家/技师",
+      "implementation_status": "core-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": null,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "PUBLIC_REQUIRES_SEPARATE_REVIEW"
+      }
+    },
+    {
+      "operation_id": "post_api_auth_sms_code",
+      "method": "POST",
+      "path": "/api/auth/sms-code",
+      "roles": "商家/需短信验证的账号",
+      "implementation_status": "unspecified",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": null,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "PUBLIC_REQUIRES_SEPARATE_REVIEW"
+      }
+    },
+    {
+      "operation_id": "post_api_auth_staff_login",
+      "method": "POST",
+      "path": "/api/auth/staff-login",
+      "roles": "商家/运营",
+      "implementation_status": "unspecified",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": null,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "PUBLIC_REQUIRES_SEPARATE_REVIEW"
+      }
+    },
+    {
+      "operation_id": "post_api_auth_technician_bind",
+      "method": "POST",
+      "path": "/api/auth/technician/bind",
+      "roles": "持有绑定凭证的技师",
+      "implementation_status": "core-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_auth_wx_login",
+      "method": "POST",
+      "path": "/api/auth/wx-login",
+      "roles": "车主/技师",
+      "implementation_status": "core-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": null,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "PUBLIC_REQUIRES_SEPARATE_REVIEW"
+      }
+    },
+    {
+      "operation_id": "get_api_brand_list",
+      "method": "GET",
+      "path": "/api/brand/list",
+      "roles": "正式车主",
+      "implementation_status": "core-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_check_delivery_compare",
+      "method": "POST",
+      "path": "/api/check/delivery/compare",
+      "roles": null,
+      "implementation_status": "unspecified",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_check_pickup_confirm",
+      "method": "POST",
+      "path": "/api/check/pickup/confirm",
+      "roles": "OWNER",
+      "implementation_status": "pickup-inspection-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_check_pickup_context",
+      "method": "GET",
+      "path": "/api/check/pickup/context",
+      "roles": "MERCHANT,STAFF",
+      "implementation_status": "pickup-inspection-implemented",
+      "content_types": [],
+      "required_query": [
+        "order_id"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_check_pickup_dispute_review",
+      "method": "POST",
+      "path": "/api/check/pickup/dispute/review",
+      "roles": "OWNER",
+      "implementation_status": "dispute-resolution-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_check_pickup_submit",
+      "method": "POST",
+      "path": "/api/check/pickup/submit",
+      "roles": "MERCHANT,STAFF",
+      "implementation_status": "pickup-inspection-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_check_pickup_order",
+      "method": "GET",
+      "path": "/api/check/pickup/{order}",
+      "roles": "OWNER,MERCHANT,STAFF",
+      "implementation_status": "pickup-inspection-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_check_pickup_order_files_file_access",
+      "method": "GET",
+      "path": "/api/check/pickup/{order}/files/{file}/access",
+      "roles": "OWNER,MERCHANT,STAFF",
+      "implementation_status": "pickup-inspection-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_check_protection_upload",
+      "method": "POST",
+      "path": "/api/check/protection/upload",
+      "roles": "MERCHANT",
+      "implementation_status": "service-work-backend-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_community_experiences",
+      "method": "GET",
+      "path": "/api/community/experiences",
+      "roles": "OWNER",
+      "implementation_status": "experience-moderation-backend-implemented",
+      "content_types": [],
+      "required_query": [
+        "vehicle_id"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_community_experiences_id",
+      "method": "GET",
+      "path": "/api/community/experiences/{id}",
+      "roles": "OWNER",
+      "implementation_status": "r8c1a-experience-detail-implemented",
+      "content_types": [],
+      "required_query": [
+        "vehicle_id"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_community_hot",
+      "method": "GET",
+      "path": "/api/community/hot",
+      "roles": "OWNER",
+      "implementation_status": "r8c1b1-curation-implemented",
+      "content_types": [],
+      "required_query": [
+        "vehicle_id"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_community_images",
+      "method": "GET",
+      "path": "/api/community/images",
+      "roles": "OWNER",
+      "implementation_status": "r8-remaining-implemented",
+      "content_types": [],
+      "required_query": [
+        "experience_id",
+        "vehicle_id"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_community_images_publicId",
+      "method": "GET",
+      "path": "/api/community/images/{publicId}",
+      "roles": "OWNER",
+      "implementation_status": "r8-remaining-implemented",
+      "content_types": [],
+      "required_query": [
+        "vehicle_id"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_community_questions",
+      "method": "GET",
+      "path": "/api/community/questions",
+      "roles": "OWNER",
+      "implementation_status": "r8c1b3-public-qa-ui-and-backend-implemented",
+      "content_types": [],
+      "required_query": [
+        "vehicle_id"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_community_questions_publicId",
+      "method": "GET",
+      "path": "/api/community/questions/{publicId}",
+      "roles": "OWNER",
+      "implementation_status": "r8c1b3-public-qa-ui-and-backend-implemented",
+      "content_types": [],
+      "required_query": [
+        "vehicle_id"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_coupon_mine",
+      "method": "GET",
+      "path": "/api/coupon/mine",
+      "roles": "OWNER",
+      "implementation_status": "r5a-inventory-claim-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_coupon_offers",
+      "method": "GET",
+      "path": "/api/coupon/offers",
+      "roles": "OWNER",
+      "implementation_status": "r5a-inventory-claim-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_coupon_receive",
+      "method": "POST",
+      "path": "/api/coupon/receive",
+      "roles": "OWNER",
+      "implementation_status": "r5a-inventory-claim-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_coupon_release",
+      "method": "POST",
+      "path": "/api/coupon/release",
+      "roles": "系统/订单所有者",
+      "implementation_status": "unspecified",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_coupon_reserve",
+      "method": "POST",
+      "path": "/api/coupon/reserve",
+      "roles": "车主",
+      "implementation_status": "unspecified",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_coupon_id_service_authorization",
+      "method": "POST",
+      "path": "/api/coupon/{id}/service-authorization",
+      "roles": "OWNER",
+      "implementation_status": "r5b-coupon-transactions-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_coupon_id_service_redemption",
+      "method": "GET",
+      "path": "/api/coupon/{id}/service-redemption",
+      "roles": "OWNER",
+      "implementation_status": "r5b-coupon-transactions-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_demo_vehicles_id",
+      "method": "GET",
+      "path": "/api/demo/vehicles/{id}",
+      "roles": null,
+      "implementation_status": "unspecified",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_demo_vehicles_id_mileage",
+      "method": "POST",
+      "path": "/api/demo/vehicles/{id}/mileage",
+      "roles": "车主",
+      "implementation_status": "local-example",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_dev_token",
+      "method": "POST",
+      "path": "/api/dev/token",
+      "roles": null,
+      "implementation_status": "unspecified",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": null,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "PUBLIC_REQUIRES_SEPARATE_REVIEW"
+      }
+    },
+    {
+      "operation_id": "get_api_experience_cards",
+      "method": "GET",
+      "path": "/api/experience-cards",
+      "roles": "OWNER",
+      "implementation_status": "private-experience-backend-implemented",
+      "content_types": [],
+      "required_query": [
+        "vehicle_id"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_experience_cards_id_consent",
+      "method": "POST",
+      "path": "/api/experience-cards/{id}/consent",
+      "roles": "OWNER",
+      "implementation_status": "private-experience-backend-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_experience_cards_id_withdraw",
+      "method": "POST",
+      "path": "/api/experience-cards/{id}/withdraw",
+      "roles": "OWNER",
+      "implementation_status": "private-experience-backend-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_file_upload",
+      "method": "POST",
+      "path": "/api/file/upload",
+      "roles": "车主正式会话",
+      "implementation_status": "implemented",
+      "content_types": [
+        "multipart/form-data"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_file_id_access",
+      "method": "GET",
+      "path": "/api/file/{id}/access",
+      "roles": "车主正式会话",
+      "implementation_status": "implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_home_dashboard",
+      "method": "GET",
+      "path": "/api/home/dashboard",
+      "roles": null,
+      "implementation_status": "unspecified",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_home_reminders",
+      "method": "GET",
+      "path": "/api/home/reminders",
+      "roles": null,
+      "implementation_status": "unspecified",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_input_materials_purpose_vehicleId_upload",
+      "method": "POST",
+      "path": "/api/input-materials/{purpose}/{vehicleId}/upload",
+      "roles": "OWNER",
+      "implementation_status": "unspecified",
+      "content_types": [
+        "multipart/form-data"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_input_materials_purpose_vehicleId_id_access",
+      "method": "GET",
+      "path": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+      "roles": "OWNER",
+      "implementation_status": "unspecified",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_invite_code",
+      "method": "POST",
+      "path": "/api/invite/code",
+      "roles": "OWNER",
+      "implementation_status": "r6a-invitation-attribution-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_invite_diagnosis_eligibility",
+      "method": "GET",
+      "path": "/api/invite/diagnosis-eligibility",
+      "roles": "OWNER",
+      "implementation_status": "r6b3-diagnosis-eligibility-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_invite_progress",
+      "method": "GET",
+      "path": "/api/invite/progress",
+      "roles": "OWNER",
+      "implementation_status": "r6a-invitation-attribution-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_invite_qrcode",
+      "method": "GET",
+      "path": "/api/invite/qrcode",
+      "roles": "OWNER",
+      "implementation_status": "r6a-invitation-attribution-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_invite_records",
+      "method": "GET",
+      "path": "/api/invite/records",
+      "roles": "OWNER",
+      "implementation_status": "r6a-invitation-attribution-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_invite_registration",
+      "method": "GET",
+      "path": "/api/invite/registration",
+      "roles": "OWNER",
+      "implementation_status": "r6a-invitation-attribution-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_invite_reward_policy",
+      "method": "GET",
+      "path": "/api/invite/reward-policy",
+      "roles": "OWNER",
+      "implementation_status": "r6b1-reward-policy-implemented",
+      "content_types": [],
+      "required_query": [
+        "scope"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_invite_rewards",
+      "method": "GET",
+      "path": "/api/invite/rewards",
+      "roles": "OWNER",
+      "implementation_status": "r6b2-reward-delivery-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_knowledge_answer",
+      "method": "POST",
+      "path": "/api/knowledge/answer",
+      "roles": "OWNER",
+      "implementation_status": "r8-remaining-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_knowledge_documents_reference",
+      "method": "GET",
+      "path": "/api/knowledge/documents/{reference}",
+      "roles": "OWNER",
+      "implementation_status": "r8-remaining-implemented",
+      "content_types": [],
+      "required_query": [
+        "vehicle_id"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_knowledge_search",
+      "method": "GET",
+      "path": "/api/knowledge/search",
+      "roles": "OWNER",
+      "implementation_status": "r8-remaining-implemented",
+      "content_types": [],
+      "required_query": [
+        "vehicle_id",
+        "q"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_merchant_applications",
+      "method": "POST",
+      "path": "/api/merchant-applications",
+      "roles": "OWNER",
+      "implementation_status": "merchant-onboarding-backend-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_applications_mine",
+      "method": "GET",
+      "path": "/api/merchant-applications/mine",
+      "roles": "OWNER",
+      "implementation_status": "merchant-onboarding-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_merchant_apply",
+      "method": "POST",
+      "path": "/api/merchant/apply",
+      "roles": "商家申请人",
+      "implementation_status": "unspecified",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_assessment_history",
+      "method": "GET",
+      "path": "/api/merchant/assessment/history",
+      "roles": "MERCHANT(manager)",
+      "implementation_status": "r8b2b-monthly-read-ui-implemented",
+      "content_types": [],
+      "required_query": [
+        "period_month"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_assessment_month",
+      "method": "GET",
+      "path": "/api/merchant/assessment/month",
+      "roles": "MERCHANT(manager)",
+      "implementation_status": "r8b2b-monthly-read-ui-implemented",
+      "content_types": [],
+      "required_query": [
+        "period_month"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_assessment_policy",
+      "method": "GET",
+      "path": "/api/merchant/assessment/policy",
+      "roles": "MERCHANT(manager)",
+      "implementation_status": "r8b1-source-policy-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_assessment_snapshots_id",
+      "method": "GET",
+      "path": "/api/merchant/assessment/snapshots/{id}",
+      "roles": "MERCHANT(manager)",
+      "implementation_status": "r8b2b-monthly-read-ui-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_assessment_snapshots_id_facts",
+      "method": "GET",
+      "path": "/api/merchant/assessment/snapshots/{id}/facts",
+      "roles": "MERCHANT(manager)",
+      "implementation_status": "r8b2b-monthly-read-ui-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_assessment_staff",
+      "method": "GET",
+      "path": "/api/merchant/assessment/staff",
+      "roles": "MERCHANT|STAFF(only own)",
+      "implementation_status": "r8b2b-monthly-read-ui-implemented",
+      "content_types": [],
+      "required_query": [
+        "period_month"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_business_dashboard",
+      "method": "GET",
+      "path": "/api/merchant/business/dashboard",
+      "roles": "MERCHANT(manager, own store only)",
+      "implementation_status": "r8b3a-business-dashboard-implemented",
+      "content_types": [],
+      "required_query": [
+        "period_month"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_commissions",
+      "method": "GET",
+      "path": "/api/merchant/commissions",
+      "roles": "MERCHANT",
+      "implementation_status": "commission-ledger-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_coupons",
+      "method": "GET",
+      "path": "/api/merchant/coupons",
+      "roles": "MERCHANT(manager)",
+      "implementation_status": "r5a-inventory-claim-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_merchant_coupons",
+      "method": "POST",
+      "path": "/api/merchant/coupons",
+      "roles": "MERCHANT(manager)",
+      "implementation_status": "r5a-inventory-claim-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_merchant_coupons_service_preview",
+      "method": "POST",
+      "path": "/api/merchant/coupons/service-preview",
+      "roles": "MERCHANT,STAFF",
+      "implementation_status": "r5b-coupon-transactions-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_merchant_coupons_service_redeem",
+      "method": "POST",
+      "path": "/api/merchant/coupons/service-redeem",
+      "roles": "MERCHANT,STAFF",
+      "implementation_status": "r5b-coupon-transactions-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_coupons_service_redemptions",
+      "method": "GET",
+      "path": "/api/merchant/coupons/service-redemptions",
+      "roles": "MERCHANT,STAFF",
+      "implementation_status": "r5b-coupon-transactions-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_merchant_coupons_id",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/{id}",
+      "roles": "MERCHANT(manager)",
+      "implementation_status": "r5a-inventory-claim-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/{id}/status",
+      "roles": "MERCHANT(manager)",
+      "implementation_status": "r5a-inventory-claim-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_customer_relations",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations",
+      "roles": "MERCHANT(manager, own store only)",
+      "implementation_status": "r8b3b-local-customer-relations-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_customer_relations_id",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations/{id}",
+      "roles": "MERCHANT(manager, own store only)",
+      "implementation_status": "r8b3b-local-customer-relations-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_merchant_files_upload",
+      "method": "POST",
+      "path": "/api/merchant/files/upload",
+      "roles": "MERCHANT,STAFF",
+      "implementation_status": "pickup-inspection-implemented",
+      "content_types": [
+        "multipart/form-data"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_files_id_access",
+      "method": "GET",
+      "path": "/api/merchant/files/{id}/access",
+      "roles": "MERCHANT,STAFF",
+      "implementation_status": "pickup-inspection-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_invite_code",
+      "method": "GET",
+      "path": "/api/merchant/invite/code",
+      "roles": "MERCHANT,STAFF",
+      "implementation_status": "r6a-invitation-attribution-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_merchant_invite_code",
+      "method": "POST",
+      "path": "/api/merchant/invite/code",
+      "roles": "MERCHANT,STAFF",
+      "implementation_status": "r6a-invitation-attribution-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_invite_progress",
+      "method": "GET",
+      "path": "/api/merchant/invite/progress",
+      "roles": "MERCHANT,STAFF",
+      "implementation_status": "r6a-invitation-attribution-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_invite_records",
+      "method": "GET",
+      "path": "/api/merchant/invite/records",
+      "roles": "MERCHANT,STAFF",
+      "implementation_status": "r6a-invitation-attribution-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_invite_rewards",
+      "method": "GET",
+      "path": "/api/merchant/invite/rewards",
+      "roles": "MERCHANT,STAFF",
+      "implementation_status": "r6b2-reward-delivery-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_location",
+      "method": "GET",
+      "path": "/api/merchant/location",
+      "roles": "MERCHANT/STAFF",
+      "implementation_status": "implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_merchant_location",
+      "method": "PUT",
+      "path": "/api/merchant/location",
+      "roles": "MERCHANT",
+      "implementation_status": "implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_notifications",
+      "method": "GET",
+      "path": "/api/merchant/notifications",
+      "roles": "MERCHANT,STAFF",
+      "implementation_status": "r7c3-order-events-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_merchant_notifications_id_read",
+      "method": "PUT",
+      "path": "/api/merchant/notifications/{id}/read",
+      "roles": "MERCHANT,STAFF",
+      "implementation_status": "r7c3-order-events-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_orders",
+      "method": "GET",
+      "path": "/api/merchant/orders",
+      "roles": "MERCHANT",
+      "implementation_status": "merchant-orders-read-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_orders_id",
+      "method": "GET",
+      "path": "/api/merchant/orders/{id}",
+      "roles": "MERCHANT",
+      "implementation_status": "merchant-orders-read-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_merchant_orders_id_actions",
+      "method": "POST",
+      "path": "/api/merchant/orders/{id}/actions",
+      "roles": "MERCHANT",
+      "implementation_status": "order-fulfillment-state-machine-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_merchant_orders_id_assign",
+      "method": "POST",
+      "path": "/api/merchant/orders/{id}/assign",
+      "roles": "MERCHANT",
+      "implementation_status": "technician-dispatch-backend-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_orders_id_assignment",
+      "method": "GET",
+      "path": "/api/merchant/orders/{id}/assignment",
+      "roles": "MERCHANT",
+      "implementation_status": "technician-dispatch-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_merchant_orders_id_dispute_handle",
+      "method": "POST",
+      "path": "/api/merchant/orders/{id}/dispute/handle",
+      "roles": "MERCHANT",
+      "implementation_status": "dispute-resolution-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_merchant_orders_id_redeem",
+      "method": "POST",
+      "path": "/api/merchant/orders/{id}/redeem",
+      "roles": "MERCHANT",
+      "implementation_status": "redemption-backend-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_orders_id_redemption",
+      "method": "GET",
+      "path": "/api/merchant/orders/{id}/redemption",
+      "roles": "MERCHANT",
+      "implementation_status": "redemption-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_orders_id_refund",
+      "method": "GET",
+      "path": "/api/merchant/orders/{id}/refund",
+      "roles": "MERCHANT",
+      "implementation_status": "order-refunds-local-test-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_merchant_orders_id_refund_decision",
+      "method": "POST",
+      "path": "/api/merchant/orders/{id}/refund/decision",
+      "roles": "MERCHANT",
+      "implementation_status": "order-refunds-local-test-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_merchant_orders_id_refund_reconcile",
+      "method": "POST",
+      "path": "/api/merchant/orders/{id}/refund/reconcile",
+      "roles": "MERCHANT",
+      "implementation_status": "order-refunds-local-test-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_orders_id_service_context",
+      "method": "GET",
+      "path": "/api/merchant/orders/{id}/service-context",
+      "roles": "MERCHANT",
+      "implementation_status": "r7b-service-workspace-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_orders_id_service_context_archives_archive_files_file_access",
+      "method": "GET",
+      "path": "/api/merchant/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+      "roles": "MERCHANT",
+      "implementation_status": "r7b-service-workspace-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_orders_id_work",
+      "method": "GET",
+      "path": "/api/merchant/orders/{id}/work",
+      "roles": "MERCHANT",
+      "implementation_status": "service-work-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_orders_id_work_files_file_access",
+      "method": "GET",
+      "path": "/api/merchant/orders/{id}/work/files/{file}/access",
+      "roles": "MERCHANT",
+      "implementation_status": "service-work-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_profile",
+      "method": "GET",
+      "path": "/api/merchant/profile",
+      "roles": "MERCHANT/STAFF（PUT 仅 MERCHANT）",
+      "implementation_status": "merchant-staff-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_merchant_profile",
+      "method": "PUT",
+      "path": "/api/merchant/profile",
+      "roles": "MERCHANT/STAFF（PUT 仅 MERCHANT）",
+      "implementation_status": "merchant-staff-backend-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_projects",
+      "method": "GET",
+      "path": "/api/merchant/projects",
+      "roles": "MERCHANT",
+      "implementation_status": "merchant-quotes-core-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_merchant_projects",
+      "method": "POST",
+      "path": "/api/merchant/projects",
+      "roles": "MERCHANT",
+      "implementation_status": "merchant-quotes-core-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_slots",
+      "method": "GET",
+      "path": "/api/merchant/slots",
+      "roles": "MERCHANT",
+      "implementation_status": "local-reservations-core-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_merchant_slots",
+      "method": "POST",
+      "path": "/api/merchant/slots",
+      "roles": "MERCHANT",
+      "implementation_status": "local-reservations-core-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_merchant_slots_id_close",
+      "method": "POST",
+      "path": "/api/merchant/slots/{id}/close",
+      "roles": "MERCHANT",
+      "implementation_status": "local-reservations-core-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_staff",
+      "method": "GET",
+      "path": "/api/merchant/staff",
+      "roles": "MERCHANT/STAFF",
+      "implementation_status": "merchant-staff-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_merchant_staff",
+      "method": "POST",
+      "path": "/api/merchant/staff",
+      "roles": "MERCHANT",
+      "implementation_status": "merchant-staff-backend-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_merchant_staff_id_disable",
+      "method": "POST",
+      "path": "/api/merchant/staff/{id}/disable",
+      "roles": "MERCHANT",
+      "implementation_status": "merchant-staff-backend-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "delete_api_merchant_staff_id_employee_code",
+      "method": "DELETE",
+      "path": "/api/merchant/staff/{id}/employee-code",
+      "roles": "MERCHANT",
+      "implementation_status": "merchant-staff-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_merchant_staff_id_employee_code",
+      "method": "POST",
+      "path": "/api/merchant/staff/{id}/employee-code",
+      "roles": "MERCHANT",
+      "implementation_status": "merchant-staff-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_merchant_staff_id_enable",
+      "method": "POST",
+      "path": "/api/merchant/staff/{id}/enable",
+      "roles": "MERCHANT",
+      "implementation_status": "merchant-staff-backend-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_standard_projects",
+      "method": "GET",
+      "path": "/api/merchant/standard-projects",
+      "roles": "MERCHANT",
+      "implementation_status": "merchant-quotes-core-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_technicians",
+      "method": "GET",
+      "path": "/api/merchant/technicians",
+      "roles": "MERCHANT",
+      "implementation_status": "technician-dispatch-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_workbench",
+      "method": "GET",
+      "path": "/api/merchant/workbench",
+      "roles": "MERCHANT",
+      "implementation_status": "r7b-service-workspace-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_id",
+      "method": "GET",
+      "path": "/api/merchant/{id}",
+      "roles": null,
+      "implementation_status": "unspecified",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_merchant_id_reviews_summary",
+      "method": "GET",
+      "path": "/api/merchant/{id}/reviews/summary",
+      "roles": null,
+      "implementation_status": "unspecified",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_model_list",
+      "method": "GET",
+      "path": "/api/model/list",
+      "roles": "正式车主",
+      "implementation_status": "core-implemented",
+      "content_types": [],
+      "required_query": [
+        "series_id"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_notifications",
+      "method": "GET",
+      "path": "/api/notifications",
+      "roles": "已登录用户",
+      "implementation_status": "unspecified",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_order_cancel",
+      "method": "POST",
+      "path": "/api/order/cancel",
+      "roles": "OWNER",
+      "implementation_status": "local-reservations-core-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_order_coupon_create",
+      "method": "POST",
+      "path": "/api/order/coupon-create",
+      "roles": "OWNER",
+      "implementation_status": "r5b-coupon-transactions-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_order_coupon_preview",
+      "method": "POST",
+      "path": "/api/order/coupon-preview",
+      "roles": "OWNER",
+      "implementation_status": "r5b-coupon-transactions-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_order_create",
+      "method": "POST",
+      "path": "/api/order/create",
+      "roles": "OWNER",
+      "implementation_status": "local-reservations-core-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_order_list",
+      "method": "GET",
+      "path": "/api/order/list",
+      "roles": "OWNER",
+      "implementation_status": "local-reservations-core-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_order_plan_booking_context",
+      "method": "POST",
+      "path": "/api/order/plan-booking-context",
+      "roles": "OWNER",
+      "implementation_status": "plan-booking-context-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_order_quote_id",
+      "method": "GET",
+      "path": "/api/order/quote/{id}",
+      "roles": "OWNER",
+      "implementation_status": "local-reservations-core-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_order_review",
+      "method": "POST",
+      "path": "/api/order/review",
+      "roles": "OWNER",
+      "implementation_status": "owner-review-backend-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_order_slots",
+      "method": "GET",
+      "path": "/api/order/slots",
+      "roles": "OWNER",
+      "implementation_status": "local-reservations-core-implemented",
+      "content_types": [],
+      "required_query": [
+        "merchant_id",
+        "project_id",
+        "date"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_order_verify",
+      "method": "POST",
+      "path": "/api/order/verify",
+      "roles": "本店商家",
+      "implementation_status": "unspecified",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_order_id",
+      "method": "GET",
+      "path": "/api/order/{id}",
+      "roles": "OWNER",
+      "implementation_status": "local-reservations-core-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_order_id_archive_grants",
+      "method": "GET",
+      "path": "/api/order/{id}/archive-grants",
+      "roles": "OWNER",
+      "implementation_status": "r7b-service-workspace-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_order_id_archive_grants_archive",
+      "method": "PUT",
+      "path": "/api/order/{id}/archive-grants/{archive}",
+      "roles": "OWNER",
+      "implementation_status": "r7b-service-workspace-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_order_id_archive_grants_archive_files_file_preview",
+      "method": "GET",
+      "path": "/api/order/{id}/archive-grants/{archive}/files/{file}/preview",
+      "roles": "OWNER",
+      "implementation_status": "r7b-service-workspace-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_order_id_public_review_text",
+      "method": "GET",
+      "path": "/api/order/{id}/public-review-text",
+      "roles": "OWNER",
+      "implementation_status": "public-review-text-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_order_id_public_review_text",
+      "method": "PUT",
+      "path": "/api/order/{id}/public-review-text",
+      "roles": "OWNER",
+      "implementation_status": "public-review-text-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_order_id_public_review_text_preview",
+      "method": "POST",
+      "path": "/api/order/{id}/public-review-text/preview",
+      "roles": "OWNER",
+      "implementation_status": "public-review-text-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_order_id_redemption",
+      "method": "GET",
+      "path": "/api/order/{id}/redemption",
+      "roles": "OWNER",
+      "implementation_status": "redemption-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_order_id_refund",
+      "method": "GET",
+      "path": "/api/order/{id}/refund",
+      "roles": "OWNER",
+      "implementation_status": "order-refunds-local-test-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_order_id_refund",
+      "method": "POST",
+      "path": "/api/order/{id}/refund",
+      "roles": "OWNER",
+      "implementation_status": "order-refunds-local-test-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_order_id_refund_withdraw",
+      "method": "POST",
+      "path": "/api/order/{id}/refund/withdraw",
+      "roles": "OWNER",
+      "implementation_status": "order-refunds-local-test-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_order_id_review",
+      "method": "GET",
+      "path": "/api/order/{id}/review",
+      "roles": "OWNER",
+      "implementation_status": "owner-review-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_order_id_review_publication",
+      "method": "GET",
+      "path": "/api/order/{id}/review-publication",
+      "roles": "OWNER",
+      "implementation_status": "rating-consent-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_order_id_review_publication",
+      "method": "PUT",
+      "path": "/api/order/{id}/review-publication",
+      "roles": "OWNER",
+      "implementation_status": "rating-consent-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_order_id_review_summary_consent",
+      "method": "GET",
+      "path": "/api/order/{id}/review-summary-consent",
+      "roles": "OWNER",
+      "implementation_status": "source-checked-review-extracts-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_order_id_review_summary_consent",
+      "method": "PUT",
+      "path": "/api/order/{id}/review-summary-consent",
+      "roles": "OWNER",
+      "implementation_status": "source-checked-review-extracts-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_order_id_work",
+      "method": "GET",
+      "path": "/api/order/{id}/work",
+      "roles": "OWNER",
+      "implementation_status": "r7a-owner-evidence-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_order_id_work_files_file_access",
+      "method": "GET",
+      "path": "/api/order/{id}/work/files/{file}/access",
+      "roles": "OWNER",
+      "implementation_status": "r7a-owner-evidence-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_owner_community_image_sources",
+      "method": "GET",
+      "path": "/api/owner/community/image-sources",
+      "roles": "OWNER",
+      "implementation_status": "r8-remaining-implemented",
+      "content_types": [],
+      "required_query": [
+        "experience_id"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_owner_community_images",
+      "method": "GET",
+      "path": "/api/owner/community/images",
+      "roles": "OWNER",
+      "implementation_status": "r8-remaining-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_owner_community_images",
+      "method": "POST",
+      "path": "/api/owner/community/images",
+      "roles": "OWNER",
+      "implementation_status": "r8-remaining-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_owner_community_images_preview",
+      "method": "POST",
+      "path": "/api/owner/community/images/preview",
+      "roles": "OWNER",
+      "implementation_status": "r8-remaining-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_owner_community_images_id_preview",
+      "method": "GET",
+      "path": "/api/owner/community/images/{id}/preview",
+      "roles": "OWNER",
+      "implementation_status": "r8-remaining-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_owner_community_images_id_withdraw",
+      "method": "POST",
+      "path": "/api/owner/community/images/{id}/withdraw",
+      "roles": "OWNER",
+      "implementation_status": "r8-remaining-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_owner_community_question_publications_id_withdraw",
+      "method": "POST",
+      "path": "/api/owner/community/question-publications/{id}/withdraw",
+      "roles": "OWNER",
+      "implementation_status": "r8c1b3-public-qa-ui-and-backend-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_owner_community_questions_cases",
+      "method": "GET",
+      "path": "/api/owner/community/questions/cases",
+      "roles": "OWNER",
+      "implementation_status": "r8c1b2-private-questions-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_owner_community_questions_cases",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases",
+      "roles": "OWNER",
+      "implementation_status": "r8c1b2-private-questions-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publication_preview",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/{caseId}/publication-preview",
+      "roles": "OWNER",
+      "implementation_status": "r8c1b3-public-qa-ui-and-backend-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_owner_community_questions_cases_caseId_publications",
+      "method": "GET",
+      "path": "/api/owner/community/questions/cases/{caseId}/publications",
+      "roles": "OWNER",
+      "implementation_status": "r8c1b3-public-qa-ui-and-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_owner_community_questions_cases_caseId_publications",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/{caseId}/publications",
+      "roles": "OWNER",
+      "implementation_status": "r8c1b3-public-qa-ui-and-backend-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_owner_community_questions_cases_id",
+      "method": "GET",
+      "path": "/api/owner/community/questions/cases/{id}",
+      "roles": "OWNER",
+      "implementation_status": "r8c1b2-private-questions-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_owner_community_questions_cases_id_close",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/{id}/close",
+      "roles": "OWNER",
+      "implementation_status": "r8c1b2-private-questions-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_owner_community_questions_cases_id_message",
+      "method": "POST",
+      "path": "/api/owner/community/questions/cases/{id}/message",
+      "roles": "OWNER",
+      "implementation_status": "r8c1b2-private-questions-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_owner_community_questions_context",
+      "method": "GET",
+      "path": "/api/owner/community/questions/context",
+      "roles": "OWNER",
+      "implementation_status": "r8c1b2-private-questions-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_owner_diagnosis_cases",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/cases",
+      "roles": "OWNER",
+      "implementation_status": "r7c2-async-diagnosis-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_owner_diagnosis_cases",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases",
+      "roles": "OWNER",
+      "implementation_status": "r7c2-async-diagnosis-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_owner_diagnosis_cases_id",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/cases/{id}",
+      "roles": "OWNER",
+      "implementation_status": "r7c2-async-diagnosis-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_owner_diagnosis_cases_id_close",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases/{id}/close",
+      "roles": "OWNER",
+      "implementation_status": "r7c2-async-diagnosis-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_owner_diagnosis_cases_id_message",
+      "method": "POST",
+      "path": "/api/owner/diagnosis/cases/{id}/message",
+      "roles": "OWNER",
+      "implementation_status": "r7c2-async-diagnosis-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_owner_diagnosis_context",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/context",
+      "roles": "OWNER",
+      "implementation_status": "r7c2-async-diagnosis-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_owner_diagnosis_notifications",
+      "method": "GET",
+      "path": "/api/owner/diagnosis/notifications",
+      "roles": "OWNER",
+      "implementation_status": "r7c3-diagnosis-notifications-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_owner_diagnosis_notifications_id_read",
+      "method": "PUT",
+      "path": "/api/owner/diagnosis/notifications/{id}/read",
+      "roles": "OWNER",
+      "implementation_status": "r7c3-diagnosis-notifications-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_owner_notifications",
+      "method": "GET",
+      "path": "/api/owner/notifications",
+      "roles": "OWNER",
+      "implementation_status": "r7c3-order-events-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_owner_notifications_id_read",
+      "method": "PUT",
+      "path": "/api/owner/notifications/{id}/read",
+      "roles": "OWNER",
+      "implementation_status": "r7c3-order-events-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_payments_callback_LOCAL_TEST",
+      "method": "POST",
+      "path": "/api/payments/callback/LOCAL_TEST",
+      "roles": "LOCAL_TEST signed channel",
+      "implementation_status": "payment-foundation-local-test-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": null,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "PUBLIC_REQUIRES_SEPARATE_REVIEW"
+      }
+    },
+    {
+      "operation_id": "post_api_payments_callback_channel",
+      "method": "POST",
+      "path": "/api/payments/callback/{channel}",
+      "roles": "支付渠道",
+      "implementation_status": "unspecified",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": null,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "PUBLIC_REQUIRES_SEPARATE_REVIEW"
+      }
+    },
+    {
+      "operation_id": "post_api_payments_create",
+      "method": "POST",
+      "path": "/api/payments/create",
+      "roles": "OWNER",
+      "implementation_status": "payment-foundation-local-test-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_payments_id",
+      "method": "GET",
+      "path": "/api/payments/{id}",
+      "roles": "OWNER",
+      "implementation_status": "payment-foundation-local-test-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_payments_id_reconcile",
+      "method": "POST",
+      "path": "/api/payments/{id}/reconcile",
+      "roles": "OWNER",
+      "implementation_status": "payment-query-recovery-local-test-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_point_check_in",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "roles": "OWNER",
+      "implementation_status": "r8a2-ledger-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_point_exchange",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "roles": "OWNER",
+      "implementation_status": "r8a3b-atomic-exchange-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_point_exchange_catalog",
+      "method": "GET",
+      "path": "/api/point/exchange-catalog",
+      "roles": "OWNER",
+      "implementation_status": "r8a3c-owner-exchange-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_point_exchanges",
+      "method": "GET",
+      "path": "/api/point/exchanges",
+      "roles": "OWNER",
+      "implementation_status": "r8a3b-atomic-exchange-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_point_flow",
+      "method": "GET",
+      "path": "/api/point/flow",
+      "roles": "OWNER",
+      "implementation_status": "r8a2-ledger-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_point_overview",
+      "method": "GET",
+      "path": "/api/point/overview",
+      "roles": "OWNER",
+      "implementation_status": "r8a2-ledger-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_point_tasks",
+      "method": "GET",
+      "path": "/api/point/tasks",
+      "roles": "OWNER",
+      "implementation_status": "r8a1-policy-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_refunds_callback_LOCAL_TEST",
+      "method": "POST",
+      "path": "/api/refunds/callback/LOCAL_TEST",
+      "roles": null,
+      "implementation_status": "order-refunds-local-test-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": null,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "PUBLIC_REQUIRES_SEPARATE_REVIEW"
+      }
+    },
+    {
+      "operation_id": "post_api_refunds_callback_channel",
+      "method": "POST",
+      "path": "/api/refunds/callback/{channel}",
+      "roles": "支付渠道",
+      "implementation_status": "unspecified",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": null,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "PUBLIC_REQUIRES_SEPARATE_REVIEW"
+      }
+    },
+    {
+      "operation_id": "post_api_refunds_create",
+      "method": "POST",
+      "path": "/api/refunds/create",
+      "roles": "车主/本店商家",
+      "implementation_status": "unspecified",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_series_list",
+      "method": "GET",
+      "path": "/api/series/list",
+      "roles": "正式车主",
+      "implementation_status": "core-implemented",
+      "content_types": [],
+      "required_query": [
+        "brand_id"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_service_merchant_id",
+      "method": "GET",
+      "path": "/api/service/merchant/{id}",
+      "roles": "正式车主",
+      "implementation_status": "implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_service_merchant_id_distance",
+      "method": "POST",
+      "path": "/api/service/merchant/{id}/distance",
+      "roles": "OWNER",
+      "implementation_status": "implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_service_merchant_id_ratings",
+      "method": "GET",
+      "path": "/api/service/merchant/{id}/ratings",
+      "roles": "OWNER",
+      "implementation_status": "rating-consent-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_service_merchant_id_review_summary",
+      "method": "POST",
+      "path": "/api/service/merchant/{id}/review-summary",
+      "roles": "OWNER",
+      "implementation_status": "source-checked-review-extracts-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_service_merchant_id_review_texts",
+      "method": "GET",
+      "path": "/api/service/merchant/{id}/review-texts",
+      "roles": "OWNER",
+      "implementation_status": "public-review-text-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_service_project_search",
+      "method": "POST",
+      "path": "/api/service/project-search",
+      "roles": "OWNER",
+      "implementation_status": "r4-completion-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_service_project_id",
+      "method": "GET",
+      "path": "/api/service/project/{id}",
+      "roles": "正式车主",
+      "implementation_status": "catalog-core-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_service_project_id_merchants",
+      "method": "GET",
+      "path": "/api/service/project/{id}/merchants",
+      "roles": "正式车主",
+      "implementation_status": "merchant-quotes-core-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_service_project_id_nearby_merchants",
+      "method": "POST",
+      "path": "/api/service/project/{id}/nearby-merchants",
+      "roles": "OWNER",
+      "implementation_status": "implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_service_project_id_rating_quotes",
+      "method": "GET",
+      "path": "/api/service/project/{id}/rating-quotes",
+      "roles": "OWNER",
+      "implementation_status": "r4-completion-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_service_projects",
+      "method": "GET",
+      "path": "/api/service/projects",
+      "roles": "正式车主",
+      "implementation_status": "catalog-core-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_tech_files_upload",
+      "method": "POST",
+      "path": "/api/tech/files/upload",
+      "roles": "TECHNICIAN",
+      "implementation_status": "service-work-backend-implemented",
+      "content_types": [
+        "multipart/form-data"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_tech_files_id_access",
+      "method": "GET",
+      "path": "/api/tech/files/{id}/access",
+      "roles": "TECHNICIAN",
+      "implementation_status": "service-work-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_tech_notifications",
+      "method": "GET",
+      "path": "/api/tech/notifications",
+      "roles": "TECHNICIAN",
+      "implementation_status": "r7c3-order-events-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_tech_notifications_id_read",
+      "method": "PUT",
+      "path": "/api/tech/notifications/{id}/read",
+      "roles": "TECHNICIAN",
+      "implementation_status": "r7c3-order-events-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_tech_orders",
+      "method": "GET",
+      "path": "/api/tech/orders",
+      "roles": "TECHNICIAN",
+      "implementation_status": "technician-dispatch-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_tech_orders_id",
+      "method": "GET",
+      "path": "/api/tech/orders/{id}",
+      "roles": "TECHNICIAN",
+      "implementation_status": "technician-dispatch-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_tech_orders_id_accept",
+      "method": "POST",
+      "path": "/api/tech/orders/{id}/accept",
+      "roles": "TECHNICIAN",
+      "implementation_status": "technician-dispatch-backend-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_tech_orders_id_service_context",
+      "method": "GET",
+      "path": "/api/tech/orders/{id}/service-context",
+      "roles": "TECHNICIAN",
+      "implementation_status": "r7b-service-workspace-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_tech_orders_id_service_context_archives_archive_files_file_access",
+      "method": "GET",
+      "path": "/api/tech/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+      "roles": "TECHNICIAN",
+      "implementation_status": "r7b-service-workspace-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_tech_orders_id_work",
+      "method": "GET",
+      "path": "/api/tech/orders/{id}/work",
+      "roles": "TECHNICIAN",
+      "implementation_status": "service-work-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_tech_orders_id_work_files_file_access",
+      "method": "GET",
+      "path": "/api/tech/orders/{id}/work/files/{file}/access",
+      "roles": "TECHNICIAN",
+      "implementation_status": "service-work-backend-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_tech_report_submit",
+      "method": "POST",
+      "path": "/api/tech/report/submit",
+      "roles": "TECHNICIAN",
+      "implementation_status": "service-work-backend-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_tech_sign",
+      "method": "POST",
+      "path": "/api/tech/sign",
+      "roles": "TECHNICIAN",
+      "implementation_status": "service-work-backend-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_tech_workbench",
+      "method": "GET",
+      "path": "/api/tech/workbench",
+      "roles": "TECHNICIAN",
+      "implementation_status": "r7b-service-workspace-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_vehicle_add",
+      "method": "POST",
+      "path": "/api/vehicle/add",
+      "roles": "正式车主",
+      "implementation_status": "manual-core-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_vehicle_health_observation_history",
+      "method": "GET",
+      "path": "/api/vehicle/health-observation-history",
+      "roles": "正式车主",
+      "implementation_status": "implemented",
+      "content_types": [],
+      "required_query": [
+        "vehicle_id",
+        "metric"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_vehicle_health_observations",
+      "method": "GET",
+      "path": "/api/vehicle/health-observations",
+      "roles": "正式车主",
+      "implementation_status": "implemented",
+      "content_types": [],
+      "required_query": [
+        "vehicle_id"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_vehicle_list",
+      "method": "GET",
+      "path": "/api/vehicle/list",
+      "roles": "正式车主",
+      "implementation_status": "core-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "generated_post_fe032ea229a821bb",
+      "method": "POST",
+      "path": "/api/vehicle/match-plate",
+      "roles": "正式车主",
+      "implementation_status": "core-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_vehicle_ocr_license",
+      "method": "GET",
+      "path": "/api/vehicle/ocr-license",
+      "roles": null,
+      "implementation_status": "unspecified",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_vehicle_reminders",
+      "method": "GET",
+      "path": "/api/vehicle/reminders",
+      "roles": "正式车主",
+      "implementation_status": "implemented",
+      "content_types": [],
+      "required_query": [
+        "vehicle_id"
+      ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_vehicle_vin_decode",
+      "method": "GET",
+      "path": "/api/vehicle/vin-decode",
+      "roles": null,
+      "implementation_status": "unspecified",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_vehicle_vehicle_health_dashboard",
+      "method": "GET",
+      "path": "/api/vehicle/{vehicle}/health-dashboard",
+      "roles": "OWNER",
+      "implementation_status": "r4-completion-implemented",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_vehicle_vehicle_health_metric_confirmation",
+      "method": "PUT",
+      "path": "/api/vehicle/{vehicle}/health/{metric}/confirmation",
+      "roles": "OWNER",
+      "implementation_status": "r4-completion-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "put_api_vehicle_vehicle_reminder_preference",
+      "method": "PUT",
+      "path": "/api/vehicle/{vehicle}/reminder-preference",
+      "roles": "OWNER",
+      "implementation_status": "r4-completion-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    }
+  ]
+}

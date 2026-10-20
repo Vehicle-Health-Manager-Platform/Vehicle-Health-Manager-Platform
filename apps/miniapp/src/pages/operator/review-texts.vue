@@ -39,4 +39,4 @@ watch(() => operatorSession.accessToken, () => { clear(); if (visible && operato
     <button @tap="uni.navigateBack()">返回运营审核</button>
   </view>
 </template>
-<style scoped>.public-text{white-space:pre-wrap;overflow-wrap:anywhere}picker{padding:20rpx;border:1px solid #e5e6eb}</style>
+<style scoped>.public-text{white-space:pre-wrap;overflow-wrap:anywhere}picker{padding:20rpx;border:1px solid #e0ded6}</style>

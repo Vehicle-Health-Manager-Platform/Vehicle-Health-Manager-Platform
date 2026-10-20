@@ -109,6 +109,17 @@ class RealUploadAdaptersTest {
         assertEquals(200, response.statusCode()); assertArrayEquals(PrivateUploadTest.PNG, response.body());
         store.delete(key); store.delete(key); assertThrows(UploadException.class, () -> store.stat(key));
     }
+    @Test void realMaterialAttachmentHasSafeResponseHeaders() throws Exception {
+        String key="uploads/"+UUID.randomUUID();byte[] bytes=InputMaterialValidatorTest.audio(30);
+        try {
+            store.put(key,"audio/mpeg",bytes);
+            var response=get(store.signAttachment(key,60,"audio/mpeg"));
+            assertEquals(200,response.statusCode());assertArrayEquals(bytes,response.body());
+            assertEquals("audio/mpeg",response.headers().firstValue("content-type").orElse(""));
+            assertEquals("attachment; filename=\"material.mp3\"",response.headers().firstValue("content-disposition").orElse(""));
+            assertEquals("no-store",response.headers().firstValue("cache-control").orElse(""));
+        }finally{store.delete(key);}
+    }
     @Test void realEngineRejectsInfectionWithoutMetadataOrObject() throws Exception {
         assertEquals(VirusScanner.Result.INFECTED, scanner.scan(INFECTED));
         var error = assertThrows(UploadException.class,

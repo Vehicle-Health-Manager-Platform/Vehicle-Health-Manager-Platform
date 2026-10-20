@@ -1,6 +1,9 @@
 <script setup>
+import InputCandidateReview from '../../components/InputCandidateReview.vue'
+import {candidateFields} from '../../services/input-candidates.js'
 import { reactive, ref, watch } from 'vue'
 import { onLoad, onHide, onUnload } from '@dcloudio/uni-app'
+import LocalInputMaterials from '../../components/LocalInputMaterials.vue'
 import { ownerSession, clearOwnerSession } from '../../services/owner-session.js'
 import { archiveApi } from '../../services/archives.js'
 import { createArchiveFlow, initialArchiveState } from '../../services/archive-flow.js'
@@ -12,12 +15,13 @@ const flow = createArchiveFlow({ state, api: archiveApi, token: () => ownerSessi
 const types = ['保养', '维修', '保险', '事故', '改装', '违章', '年检', '行驶证资料', '驾驶证资料', '本人故障记录']
 const uploadBusy = ref(false), imageMessage = ref(''), candidate = ref(null)
 const notice = ref(''), permissionDenied = ref(false)
+const auxiliaryPicker = ref(false)
 let generation = 0, imageKey = '', routeVehicleId = 0, routeInputType = 3, routeArchiveType = 1
 const today = () => { const now = new Date(); return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}` }
 onLoad(query => { routeVehicleId = Number(query.vehicle_id); routeInputType = archiveInputType(query);const type=Number(query.archive_type);routeArchiveType=Number.isInteger(type)&&type>=1&&type<=10?type:1;state.archiveType=routeArchiveType; state.vehicleId = Number.isSafeInteger(routeVehicleId) && routeVehicleId > 0 ? routeVehicleId : 0; state.inputType = routeInputType; state.recordedDate = today() })
 function clear() { generation++; flow.reset(); uploadBusy.value = false; imageMessage.value = ''; candidate.value = null; imageKey = ''; notice.value = ''; permissionDenied.value = false; state.vehicleId = routeVehicleId; state.inputType = routeInputType;state.archiveType=routeArchiveType; state.recordedDate = today() }
 watch(() => ownerSession.accessToken, clear, { flush: 'sync' })
-onHide(clear)
+onHide(() => { if (auxiliaryPicker.value) flow.suspend(); else clear() })
 onUnload(clear)
 function login() { clearOwnerSession(); uni.navigateTo({ url: '/pages/owner/index' }) }
 function back() { uni.switchTab({ url: '/pages/archive/index' }) }
@@ -72,6 +76,8 @@ async function preview(id) {
     <view v-if="!ownerSession.accessToken" class="panel"><text>请先登录车主账号</text><button @tap="login">前往登录</button></view>
     <view v-else-if="!state.vehicleId" class="panel"><text>车辆信息无效，请返回选择车辆</text><button @tap="back">返回档案</button></view>
     <view v-else class="panel">
+      <LocalInputMaterials :actor="ownerSession.accessToken" :scope="'archive:'+state.vehicleId+':'+state.archiveType" @picker-change="auxiliaryPicker=$event" />
+      <InputCandidateReview :actor="ownerSession.accessToken" :scope="'archive:'+state.vehicleId+':'+state.archiveType" scene="archive" :fields="candidateFields.archive" :values="state" :disabled="state.busy||uploadBusy||!!state.saved" @apply="Object.assign(state,$event)" />
       <text class="label">档案类型</text>
       <picker :disabled="state.busy || uploadBusy || state.saved" :range="types" @change="pickType"><view class="field">{{ types[state.archiveType - 1] }}</view></picker>
       <text class="label">发生日期</text>
@@ -96,17 +102,17 @@ async function preview(id) {
 </template>
 
 <style scoped>
-.page { padding: 52rpx 32rpx 96rpx; min-height: 100vh; box-sizing: border-box; background: #f2f3f5; display: flex; flex-direction: column; }
-.eyebrow { color: #008f24; font-size: 23rpx; }.title { color: #1d2129; font-size: 44rpx; font-weight: 700; margin-top: 16rpx; }
-.intro { color: #4e5969; font-size: 26rpx; line-height: 40rpx; margin: 16rpx 0 28rpx; }
-.panel { background: white; border-radius: 24rpx; padding: 32rpx; display: flex; flex-direction: column; }
-.label { color: #4e5969; font-size: 26rpx; margin: 24rpx 0 12rpx; }
-.field { height: 84rpx; line-height: 84rpx; padding: 0 20rpx; border: 1rpx solid #c9cdd4; border-radius: 12rpx; font-size: 27rpx; color: #1d2129; box-sizing: border-box; background: #fafafa; }
-.notes { min-height: 180rpx; padding: 18rpx 20rpx; border: 1rpx solid #c9cdd4; border-radius: 12rpx; font-size: 27rpx; box-sizing: border-box; width: 100%; background: #fafafa; }
+.page { padding: 52rpx 32rpx 96rpx; min-height: 100vh; box-sizing: border-box; background: #efede6; display: flex; flex-direction: column; }
+.eyebrow { color: #074d30; font-size: 23rpx; }.title { color: #1a1d18; font-size: 44rpx; font-weight: 700; margin-top: 16rpx; }
+.intro { color: #454a41; font-size: 26rpx; line-height: 40rpx; margin: 16rpx 0 28rpx; }
+.panel { background: #fcfbf8; border-radius: 24rpx; padding: 32rpx; display: flex; flex-direction: column; }
+.label { color: #454a41; font-size: 26rpx; margin: 24rpx 0 12rpx; }
+.field { height: 84rpx; line-height: 84rpx; padding: 0 20rpx; border: 1rpx solid #d6d3c9; border-radius: 12rpx; font-size: 27rpx; color: #1a1d18; box-sizing: border-box; background: #fcfbf8; }
+.notes { min-height: 180rpx; padding: 18rpx 20rpx; border: 1rpx solid #d6d3c9; border-radius: 12rpx; font-size: 27rpx; box-sizing: border-box; width: 100%; background: #fcfbf8; }
 .image-row { display: flex; align-items: center; flex-wrap: wrap; gap: 12rpx; margin-top: 14rpx; font-size: 24rpx; }
-button { margin: 24rpx 0 0; min-height: 80rpx; border-radius: 14rpx; font-size: 27rpx; background: #00b42a; color: white; }
-button::after { border: 0; }button[disabled] { background: #f2f3f5; color: #86909c; }
-.secondary { align-self: flex-start; min-height: 68rpx; padding: 0 24rpx; margin: 12rpx 0 0; background: #eef8f0; color: #008f24; font-size: 24rpx; }
-.status { margin-top: 20rpx; color: #008f24; font-size: 25rpx; }.error { color: #b42318; }
-.note { margin-top: 24rpx; color: #86909c; font-size: 23rpx; line-height: 36rpx; }
+button { margin: 24rpx 0 0; min-height: 80rpx; border-radius: 14rpx; font-size: 27rpx; background: #0b6b43; color: #fcfbf8; }
+button::after { border: 0; }button[disabled] { background: #efede6; color: #63685e; }
+.secondary { align-self: flex-start; min-height: 68rpx; padding: 0 24rpx; margin: 12rpx 0 0; background: #e9f2ec; color: #074d30; font-size: 24rpx; }
+.status { margin-top: 20rpx; color: #074d30; font-size: 25rpx; }.error { color: #b3261e; }
+.note { margin-top: 24rpx; color: #63685e; font-size: 23rpx; line-height: 36rpx; }
 </style>

@@ -22,7 +22,10 @@ class ArchiveReportPdfRendererTest {
         assertArrayEquals(new byte[]{'%', 'P', 'D', 'F', '-'}, java.util.Arrays.copyOf(bytes, 5));
         try (var document = Loader.loadPDF(bytes)) {
             assertTrue(document.getNumberOfPages() >= 1);
-            var text = Normalizer.normalize(new PDFTextStripper().getText(document), Normalizer.Form.NFKC);
+            var extracted = new PDFTextStripper().getText(document);
+            assertTrue(extracted.contains("车辆健康档案报告"), "Original Chinese characters must survive extraction");
+            assertTrue(extracted.contains("生成时间"));
+            var text = Normalizer.normalize(extracted, Normalizer.Form.NFKC);
             assertTrue(text.contains("健康档案报告"), "PDF 提取文本：" + text);
             assertTrue(text.contains("更换机油"));
             assertTrue(text.contains("测试施工记录"));

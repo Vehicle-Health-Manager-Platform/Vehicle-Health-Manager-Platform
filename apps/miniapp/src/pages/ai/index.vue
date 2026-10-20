@@ -4,6 +4,9 @@ import { onHide, onUnload } from '@dcloudio/uni-app'
 import OwnerTabShell from '../../components/OwnerTabShell.vue'
 import VehicleList from '../../components/VehicleList.vue'
 import InviteDiagnosisEligibility from '../../components/InviteDiagnosisEligibility.vue'
+import LocalInputMaterials from '../../components/LocalInputMaterials.vue'
+import InputCandidateReview from '../../components/InputCandidateReview.vue'
+import {candidateFields} from '../../services/input-candidates.js'
 import { ownerSession, clearOwnerSession } from '../../services/owner-session.js'
 import { selectedOwnerVehicle, selectOwnerVehicle } from '../../services/owner-vehicle-selection.js'
 import { aiChatApi, MAX_QUESTION_CHARS } from '../../services/ai-chat.js'
@@ -11,6 +14,7 @@ import { createAiChatFlow, initialAiChatState } from '../../services/ai-chat-flo
 
 const state = reactive(initialAiChatState())
 const draft = ref('')
+const localMaterialCount = ref(0)
 const flow = createAiChatFlow({
   state,
   api: aiChatApi,
@@ -22,8 +26,8 @@ const currentVehicle = computed(() => selectedOwnerVehicle.value?.model_name || 
 const lastMessageId = computed(() => (state.messages.length ? `message-${state.messages.length - 1}` : ''))
 
 // 换车或换身份会让上一辆车的回答过期，直接开一段新对话。
-watch(() => ownerSession.accessToken, flow.reset, { flush: 'sync' })
-watch(() => selectedOwnerVehicle.value?.vehicle_id, () => { if (state.messages.length) flow.reset() }, { flush: 'sync' })
+watch(() => ownerSession.accessToken, () => { draft.value = ''; flow.reset() }, { flush: 'sync' })
+watch(() => selectedOwnerVehicle.value?.vehicle_id, () => { draft.value = ''; flow.reset() }, { flush: 'sync' })
 onHide(flow.suspend)
 onUnload(flow.reset)
 
@@ -82,11 +86,13 @@ function ask(text) { draft.value = text; return send() }
       </text>
 
       <view class="composer">
+        <LocalInputMaterials :actor="ownerSession.accessToken" :scope="'ai:'+(selectedOwnerVehicle?.vehicle_id||0)" @change="localMaterialCount=$event.count" />
+        <InputCandidateReview :actor="ownerSession.accessToken" :scope="'ai:'+(selectedOwnerVehicle?.vehicle_id||0)" scene="voice" :fields="candidateFields.voice" :values="{question:draft}" :disabled="state.busy" @apply="draft=$event.question" />
         <textarea v-model="draft" class="input" :maxlength="MAX_QUESTION_CHARS" :disabled="state.busy || !ownerSession.accessToken"
           placeholder="描述车辆的现象或想问的问题" auto-height />
         <view class="composer-foot">
           <text class="counter">{{ draft.length }}/{{ MAX_QUESTION_CHARS }}</text>
-          <button class="send" :disabled="state.busy || !draft.trim()" data-testid="ai-send" @tap="send">发送</button>
+          <button class="send" :disabled="state.busy || !draft.trim()" data-testid="ai-send" @tap="send">{{localMaterialCount?'仅发送文字':'发送'}}</button>
         </view>
       </view>
       <text class="note">AI 建议仅供参考，不能替代到店检查；涉及制动、转向、轮胎等安全问题时请尽快到店。</text>
@@ -95,33 +101,33 @@ function ask(text) { draft.value = text; return send() }
 </template>
 
 <style scoped>
-.context { display: flex; flex-direction: column; padding: 28rpx 32rpx; margin-bottom: 24rpx; background: #fff; border-radius: 24rpx; }
-.context-title { color: #1d2129; font-size: 30rpx; font-weight: 650; }
-.context-copy { margin-top: 14rpx; color: #4e5969; font-size: 25rpx; line-height: 38rpx; }
-.link { align-self: flex-start; margin: 20rpx 0 0; padding: 0 24rpx; font-size: 25rpx; background: #eef8f0; color: #008f24; border-radius: 14rpx; }
+.context { display: flex; flex-direction: column; padding: 28rpx 32rpx; margin-bottom: 24rpx; background: #fcfbf8; border-radius: 24rpx; }
+.context-title { color: #1a1d18; font-size: 30rpx; font-weight: 650; }
+.context-copy { margin-top: 14rpx; color: #454a41; font-size: 25rpx; line-height: 38rpx; }
+.link { align-self: flex-start; margin: 20rpx 0 0; padding: 0 24rpx; font-size: 25rpx; background: #e9f2ec; color: #074d30; border-radius: 14rpx; }
 .thread { max-height: 720rpx; margin-bottom: 24rpx; }
 .bubble { display: flex; flex-direction: column; padding: 26rpx 28rpx; margin-bottom: 20rpx; border-radius: 20rpx; }
-.mine { margin-left: 96rpx; background: #00b42a; }
-.mine .body { color: #fff; }
-.theirs { margin-right: 96rpx; background: #fff; }
-.theirs .body { color: #1d2129; }
+.mine { margin-left: 96rpx; background: #0b6b43; }
+.mine .body { color: #fcfbf8; }
+.theirs { margin-right: 96rpx; background: #fcfbf8; }
+.theirs .body { color: #1a1d18; }
 .body { font-size: 28rpx; line-height: 44rpx; white-space: pre-wrap; }
-.tag { align-self: flex-start; margin-top: 16rpx; padding: 0 16rpx; font-size: 21rpx; line-height: 40rpx; color: #008f24; background: #eef8f0; border-radius: 10rpx; }
-.tag.muted { color: #86909c; background: #f2f3f5; }
+.tag { align-self: flex-start; margin-top: 16rpx; padding: 0 16rpx; font-size: 21rpx; line-height: 40rpx; color: #074d30; background: #e9f2ec; border-radius: 10rpx; }
+.tag.muted { color: #63685e; background: #efede6; }
 .starters { display: flex; flex-direction: column; margin-bottom: 24rpx; }
-.section { color: #4e5969; font-size: 24rpx; margin-bottom: 16rpx; }
-.starter { margin: 0 0 16rpx; padding: 24rpx 28rpx; text-align: left; font-size: 26rpx; line-height: 38rpx; color: #1d2129; background: #fff; border-radius: 18rpx; }
-.notice { padding: 20rpx 0; color: #4e5969; font-size: 26rpx; }
-.panel { display: flex; flex-direction: column; padding: 28rpx; margin-bottom: 20rpx; background: #fff; border-radius: 24rpx; }
-.error { color: #b42318; font-size: 26rpx; line-height: 40rpx; }
-.note { display: block; margin: 16rpx 0 0; color: #86909c; font-size: 23rpx; line-height: 36rpx; }
-.composer { display: flex; flex-direction: column; padding: 28rpx 32rpx; background: #fff; border-radius: 24rpx; }
-.input { width: 100%; min-height: 110rpx; font-size: 28rpx; line-height: 42rpx; color: #1d2129; }
+.section { color: #454a41; font-size: 24rpx; margin-bottom: 16rpx; }
+.starter { margin: 0 0 16rpx; padding: 24rpx 28rpx; text-align: left; font-size: 26rpx; line-height: 38rpx; color: #1a1d18; background: #fcfbf8; border-radius: 18rpx; }
+.notice { padding: 20rpx 0; color: #454a41; font-size: 26rpx; }
+.panel { display: flex; flex-direction: column; padding: 28rpx; margin-bottom: 20rpx; background: #fcfbf8; border-radius: 24rpx; }
+.error { color: #b3261e; font-size: 26rpx; line-height: 40rpx; }
+.note { display: block; margin: 16rpx 0 0; color: #63685e; font-size: 23rpx; line-height: 36rpx; }
+.composer { display: flex; flex-direction: column; padding: 28rpx 32rpx; background: #fcfbf8; border-radius: 24rpx; }
+.input { width: 100%; min-height: 110rpx; font-size: 28rpx; line-height: 42rpx; color: #1a1d18; }
 .composer-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 20rpx; }
-.counter { color: #86909c; font-size: 23rpx; }
+.counter { color: #63685e; font-size: 23rpx; }
 button { margin: 0; }
 button::after { border: 0; }
-.send { padding: 0 44rpx; min-height: 76rpx; line-height: 76rpx; font-size: 28rpx; background: #00b42a; color: #fff; border-radius: 16rpx; }
-.send[disabled] { background: #f2f3f5; color: #86909c; }
-.action { align-self: flex-start; margin: 22rpx 0 0; padding: 0 28rpx; min-height: 76rpx; line-height: 76rpx; font-size: 27rpx; background: #eef8f0; color: #008f24; border-radius: 14rpx; }
+.send { padding: 0 44rpx; min-height: 76rpx; line-height: 76rpx; font-size: 28rpx; background: #0b6b43; color: #fcfbf8; border-radius: 16rpx; }
+.send[disabled] { background: #efede6; color: #63685e; }
+.action { align-self: flex-start; margin: 22rpx 0 0; padding: 0 28rpx; min-height: 76rpx; line-height: 76rpx; font-size: 27rpx; background: #e9f2ec; color: #074d30; border-radius: 14rpx; }
 </style>

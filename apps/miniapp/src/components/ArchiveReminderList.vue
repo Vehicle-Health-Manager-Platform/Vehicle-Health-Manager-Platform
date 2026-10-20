@@ -20,13 +20,13 @@ function archive() { uni.switchTab({ url: '/pages/archive/index' }) }
 </template>
 
 <style scoped>
-.item { padding: 24rpx 0; border-top: 1rpx solid #e5e6eb; margin-top: 18rpx; }
+.item { padding: 24rpx 0; border-top: 1rpx solid #e0ded6; margin-top: 18rpx; }
 .line { display: flex; justify-content: space-between; align-items: center; }
-.name { color: #1d2129; font-size: 27rpx; font-weight: 600; }
-.status { color: #697585; font-size: 23rpx; }
-.due { color: #b42318; font-size: 24rpx; font-weight: 600; }
-.detail { display: block; margin-top: 12rpx; color: #697585; font-size: 24rpx; line-height: 36rpx; }
-.due-copy { display: block; margin-top: 12rpx; color: #b42318; font-size: 24rpx; line-height: 36rpx; }
-.action { margin: 18rpx 0 0; padding: 0 20rpx; background: #eef8f0; color: #008f24; border-radius: 12rpx; font-size: 24rpx; }
+.name { color: #1a1d18; font-size: 27rpx; font-weight: 600; }
+.status { color: #63685e; font-size: 23rpx; }
+.due { color: #b3261e; font-size: 24rpx; font-weight: 600; }
+.detail { display: block; margin-top: 12rpx; color: #63685e; font-size: 24rpx; line-height: 36rpx; }
+.due-copy { display: block; margin-top: 12rpx; color: #b3261e; font-size: 24rpx; line-height: 36rpx; }
+.action { margin: 18rpx 0 0; padding: 0 20rpx; background: #e9f2ec; color: #074d30; border-radius: 12rpx; font-size: 24rpx; }
 .action::after { border: 0; }
 </style>

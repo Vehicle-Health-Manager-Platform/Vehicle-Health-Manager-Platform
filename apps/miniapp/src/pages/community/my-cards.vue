@@ -56,5 +56,5 @@ onUnload(() => { visible = false; clear() })
 </template>
 
 <style scoped>
-.consent{display:flex;align-items:flex-start;gap:12rpx;font-size:26rpx;line-height:40rpx}.notice{padding:18rpx;background:#fff7e6;color:#805300;border-radius:12rpx}
+.consent{display:flex;align-items:flex-start;gap:12rpx;font-size:26rpx;line-height:40rpx}.notice{padding:18rpx;background:#f7ecdf;color:#9a4700;border-radius:12rpx}
 </style>

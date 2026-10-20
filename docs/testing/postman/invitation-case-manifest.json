@@ -1,0 +1,1368 @@
+{
+  "version": 1,
+  "cases": 136,
+  "operations": 14,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "owner_code",
+      "method": "GET",
+      "path": "/api/invite/qrcode",
+      "operation_id": "get_api_invite_qrcode",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "owner_code_boundary",
+      "method": "GET",
+      "path": "/api/invite/qrcode",
+      "operation_id": "get_api_invite_qrcode",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_code_error",
+      "method": "GET",
+      "path": "/api/invite/qrcode",
+      "operation_id": "get_api_invite_qrcode",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_code_anonymous",
+      "method": "GET",
+      "path": "/api/invite/qrcode",
+      "operation_id": "get_api_invite_qrcode",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "owner_code_wrong_role",
+      "method": "GET",
+      "path": "/api/invite/qrcode",
+      "operation_id": "get_api_invite_qrcode",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_code",
+      "method": "GET",
+      "path": "/api/merchant/invite/code",
+      "operation_id": "get_api_merchant_invite_code",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "merchant_code_boundary",
+      "method": "GET",
+      "path": "/api/merchant/invite/code",
+      "operation_id": "get_api_merchant_invite_code",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_code_error",
+      "method": "GET",
+      "path": "/api/merchant/invite/code",
+      "operation_id": "get_api_merchant_invite_code",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_code_anonymous",
+      "method": "GET",
+      "path": "/api/merchant/invite/code",
+      "operation_id": "get_api_merchant_invite_code",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_code_wrong_role",
+      "method": "GET",
+      "path": "/api/merchant/invite/code",
+      "operation_id": "get_api_merchant_invite_code",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_code_create",
+      "method": "POST",
+      "path": "/api/invite/code",
+      "operation_id": "post_api_invite_code",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "owner_code_create_replay",
+      "method": "POST",
+      "path": "/api/invite/code",
+      "operation_id": "post_api_invite_code",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "owner_code_create_malformed",
+      "method": "POST",
+      "path": "/api/invite/code",
+      "operation_id": "post_api_invite_code",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_code_create_anonymous",
+      "method": "POST",
+      "path": "/api/invite/code",
+      "operation_id": "post_api_invite_code",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "owner_code_create_wrong_role",
+      "method": "POST",
+      "path": "/api/invite/code",
+      "operation_id": "post_api_invite_code",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "owner_existing_code_new_key",
+      "method": "POST",
+      "path": "/api/invite/code",
+      "operation_id": "post_api_invite_code",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "merchant_code_create",
+      "method": "POST",
+      "path": "/api/merchant/invite/code",
+      "operation_id": "post_api_merchant_invite_code",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 5
+    },
+    {
+      "name": "merchant_code_create_replay",
+      "method": "POST",
+      "path": "/api/merchant/invite/code",
+      "operation_id": "post_api_merchant_invite_code",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "merchant_code_create_malformed",
+      "method": "POST",
+      "path": "/api/merchant/invite/code",
+      "operation_id": "post_api_merchant_invite_code",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_code_create_anonymous",
+      "method": "POST",
+      "path": "/api/merchant/invite/code",
+      "operation_id": "post_api_merchant_invite_code",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_code_create_wrong_role",
+      "method": "POST",
+      "path": "/api/merchant/invite/code",
+      "operation_id": "post_api_merchant_invite_code",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_existing_code_new_key",
+      "method": "POST",
+      "path": "/api/merchant/invite/code",
+      "operation_id": "post_api_merchant_invite_code",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "other_owner_empty_code",
+      "method": "GET",
+      "path": "/api/invite/qrcode",
+      "operation_id": "get_api_invite_qrcode",
+      "kind": "boundary",
+      "status": 200,
+      "role": "other",
+      "assertions": 4
+    },
+    {
+      "name": "other_owner_new_code",
+      "method": "POST",
+      "path": "/api/invite/code",
+      "operation_id": "post_api_invite_code",
+      "kind": "normal",
+      "status": 200,
+      "role": "other",
+      "assertions": 4
+    },
+    {
+      "name": "other_shop_empty_code",
+      "method": "GET",
+      "path": "/api/merchant/invite/code",
+      "operation_id": "get_api_merchant_invite_code",
+      "kind": "boundary",
+      "status": 200,
+      "role": "other_merchant",
+      "assertions": 4
+    },
+    {
+      "name": "other_shop_new_code",
+      "method": "POST",
+      "path": "/api/merchant/invite/code",
+      "operation_id": "post_api_merchant_invite_code",
+      "kind": "normal",
+      "status": 200,
+      "role": "other_merchant",
+      "assertions": 4
+    },
+    {
+      "name": "technician_cannot_create_merchant_code",
+      "method": "POST",
+      "path": "/api/merchant/invite/code",
+      "operation_id": "post_api_merchant_invite_code",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "technician",
+      "assertions": 3
+    },
+    {
+      "name": "owner_records",
+      "method": "GET",
+      "path": "/api/invite/records",
+      "operation_id": "get_api_invite_records",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "owner_records_boundary",
+      "method": "GET",
+      "path": "/api/invite/records",
+      "operation_id": "get_api_invite_records",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_records_error",
+      "method": "GET",
+      "path": "/api/invite/records",
+      "operation_id": "get_api_invite_records",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_records_anonymous",
+      "method": "GET",
+      "path": "/api/invite/records",
+      "operation_id": "get_api_invite_records",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "owner_records_wrong_role",
+      "method": "GET",
+      "path": "/api/invite/records",
+      "operation_id": "get_api_invite_records",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_records",
+      "method": "GET",
+      "path": "/api/merchant/invite/records",
+      "operation_id": "get_api_merchant_invite_records",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 5
+    },
+    {
+      "name": "merchant_records_boundary",
+      "method": "GET",
+      "path": "/api/merchant/invite/records",
+      "operation_id": "get_api_merchant_invite_records",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_records_error",
+      "method": "GET",
+      "path": "/api/merchant/invite/records",
+      "operation_id": "get_api_merchant_invite_records",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_records_anonymous",
+      "method": "GET",
+      "path": "/api/merchant/invite/records",
+      "operation_id": "get_api_merchant_invite_records",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_records_wrong_role",
+      "method": "GET",
+      "path": "/api/merchant/invite/records",
+      "operation_id": "get_api_merchant_invite_records",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "other_records_empty",
+      "method": "GET",
+      "path": "/api/invite/records",
+      "operation_id": "get_api_invite_records",
+      "kind": "unauthorized",
+      "status": 200,
+      "role": "other",
+      "assertions": 4
+    },
+    {
+      "name": "other_shop_records_empty",
+      "method": "GET",
+      "path": "/api/merchant/invite/records",
+      "operation_id": "get_api_merchant_invite_records",
+      "kind": "unauthorized",
+      "status": 200,
+      "role": "other_merchant",
+      "assertions": 4
+    },
+    {
+      "name": "owner_progress",
+      "method": "GET",
+      "path": "/api/invite/progress",
+      "operation_id": "get_api_invite_progress",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "owner_progress_boundary",
+      "method": "GET",
+      "path": "/api/invite/progress",
+      "operation_id": "get_api_invite_progress",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_progress_error",
+      "method": "GET",
+      "path": "/api/invite/progress",
+      "operation_id": "get_api_invite_progress",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "owner_progress_anonymous",
+      "method": "GET",
+      "path": "/api/invite/progress",
+      "operation_id": "get_api_invite_progress",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "owner_progress_wrong_role",
+      "method": "GET",
+      "path": "/api/invite/progress",
+      "operation_id": "get_api_invite_progress",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_progress",
+      "method": "GET",
+      "path": "/api/merchant/invite/progress",
+      "operation_id": "get_api_merchant_invite_progress",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "merchant_progress_boundary",
+      "method": "GET",
+      "path": "/api/merchant/invite/progress",
+      "operation_id": "get_api_merchant_invite_progress",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_progress_error",
+      "method": "GET",
+      "path": "/api/merchant/invite/progress",
+      "operation_id": "get_api_merchant_invite_progress",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_progress_anonymous",
+      "method": "GET",
+      "path": "/api/merchant/invite/progress",
+      "operation_id": "get_api_merchant_invite_progress",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_progress_wrong_role",
+      "method": "GET",
+      "path": "/api/merchant/invite/progress",
+      "operation_id": "get_api_merchant_invite_progress",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "other_progress_zero",
+      "method": "GET",
+      "path": "/api/invite/progress",
+      "operation_id": "get_api_invite_progress",
+      "kind": "unauthorized",
+      "status": 200,
+      "role": "other",
+      "assertions": 4
+    },
+    {
+      "name": "other_shop_progress_zero",
+      "method": "GET",
+      "path": "/api/merchant/invite/progress",
+      "operation_id": "get_api_merchant_invite_progress",
+      "kind": "unauthorized",
+      "status": 200,
+      "role": "other_merchant",
+      "assertions": 4
+    },
+    {
+      "name": "legacy_registration",
+      "method": "GET",
+      "path": "/api/invite/registration",
+      "operation_id": "get_api_invite_registration",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "legacy_registration_boundary",
+      "method": "GET",
+      "path": "/api/invite/registration",
+      "operation_id": "get_api_invite_registration",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "legacy_registration_error",
+      "method": "GET",
+      "path": "/api/invite/registration",
+      "operation_id": "get_api_invite_registration",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "legacy_registration_anonymous",
+      "method": "GET",
+      "path": "/api/invite/registration",
+      "operation_id": "get_api_invite_registration",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "legacy_registration_wrong_role",
+      "method": "GET",
+      "path": "/api/invite/registration",
+      "operation_id": "get_api_invite_registration",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "test_registration_stays_test",
+      "method": "GET",
+      "path": "/api/invite/registration",
+      "operation_id": "get_api_invite_registration",
+      "kind": "boundary",
+      "status": 200,
+      "role": "other",
+      "assertions": 5
+    },
+    {
+      "name": "empty_policies",
+      "method": "GET",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "get_api_admin_invite_diagnosis_policies",
+      "kind": "normal",
+      "status": 200,
+      "role": "invite",
+      "assertions": 4
+    },
+    {
+      "name": "empty_policies_boundary",
+      "method": "GET",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "get_api_admin_invite_diagnosis_policies",
+      "kind": "boundary",
+      "status": 200,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "empty_policies_error",
+      "method": "GET",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "get_api_admin_invite_diagnosis_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "empty_policies_anonymous",
+      "method": "GET",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "get_api_admin_invite_diagnosis_policies",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "empty_policies_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "get_api_admin_invite_diagnosis_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "reviewer_cannot_invite_policy",
+      "method": "GET",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "get_api_admin_invite_diagnosis_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "unknown_eligibility",
+      "method": "GET",
+      "path": "/api/invite/diagnosis-eligibility",
+      "operation_id": "get_api_invite_diagnosis_eligibility",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "unknown_eligibility_boundary",
+      "method": "GET",
+      "path": "/api/invite/diagnosis-eligibility",
+      "operation_id": "get_api_invite_diagnosis_eligibility",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "unknown_eligibility_error",
+      "method": "GET",
+      "path": "/api/invite/diagnosis-eligibility",
+      "operation_id": "get_api_invite_diagnosis_eligibility",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "unknown_eligibility_anonymous",
+      "method": "GET",
+      "path": "/api/invite/diagnosis-eligibility",
+      "operation_id": "get_api_invite_diagnosis_eligibility",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "unknown_eligibility_wrong_role",
+      "method": "GET",
+      "path": "/api/invite/diagnosis-eligibility",
+      "operation_id": "get_api_invite_diagnosis_eligibility",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create",
+      "method": "POST",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "post_api_admin_invite_diagnosis_policies",
+      "kind": "normal",
+      "status": 200,
+      "role": "invite",
+      "assertions": 4
+    },
+    {
+      "name": "policy_create_replay",
+      "method": "POST",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "post_api_admin_invite_diagnosis_policies",
+      "kind": "boundary",
+      "status": 200,
+      "role": "invite",
+      "assertions": 4
+    },
+    {
+      "name": "policy_create_malformed",
+      "method": "POST",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "post_api_admin_invite_diagnosis_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_anonymous",
+      "method": "POST",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "post_api_admin_invite_diagnosis_policies",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "post_api_admin_invite_diagnosis_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "policy_update",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/1",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "invite",
+      "assertions": 4
+    },
+    {
+      "name": "policy_update_replay",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/1",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "invite",
+      "assertions": 4
+    },
+    {
+      "name": "policy_update_malformed",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/1",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id",
+      "kind": "error",
+      "status": 400,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "policy_update_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/1",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_update_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/1",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "stale_policy_update",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/1",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id",
+      "kind": "boundary",
+      "status": 409,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "missing_policy_update",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/999999",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "zero_threshold",
+      "method": "POST",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "post_api_admin_invite_diagnosis_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "overflow_threshold",
+      "method": "POST",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "post_api_admin_invite_diagnosis_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "fraction_threshold",
+      "method": "POST",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "post_api_admin_invite_diagnosis_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "client_eligibility",
+      "method": "POST",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "post_api_admin_invite_diagnosis_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "bad_window",
+      "method": "POST",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "post_api_admin_invite_diagnosis_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "policy_publish",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/1/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "invite",
+      "assertions": 4
+    },
+    {
+      "name": "policy_publish_replay",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/1/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "invite",
+      "assertions": 4
+    },
+    {
+      "name": "policy_publish_malformed",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/1/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "policy_publish_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/1/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_publish_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/1/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "published_policy_immutable",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/1",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id",
+      "kind": "boundary",
+      "status": 409,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "threshold_locked",
+      "method": "GET",
+      "path": "/api/invite/diagnosis-eligibility",
+      "operation_id": "get_api_invite_diagnosis_eligibility",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "policy_stop",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/1/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "invite",
+      "assertions": 4
+    },
+    {
+      "name": "policy_stop_replay",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/1/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "invite",
+      "assertions": 4
+    },
+    {
+      "name": "policy_stop_malformed",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/1/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "policy_stop_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/1/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_stop_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/1/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "old_publish_receipt",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/1/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "invite",
+      "assertions": 4
+    },
+    {
+      "name": "old_receipt_not_resurrected",
+      "method": "GET",
+      "path": "/api/invite/diagnosis-eligibility",
+      "operation_id": "get_api_invite_diagnosis_eligibility",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "stopped_cannot_republish",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/1/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "boundary",
+      "status": 409,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_policy",
+      "method": "POST",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "post_api_admin_invite_diagnosis_policies",
+      "kind": "normal",
+      "status": 200,
+      "role": "invite",
+      "assertions": 4
+    },
+    {
+      "name": "replacement_policy_replay",
+      "method": "POST",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "post_api_admin_invite_diagnosis_policies",
+      "kind": "boundary",
+      "status": 200,
+      "role": "invite",
+      "assertions": 4
+    },
+    {
+      "name": "replacement_policy_malformed",
+      "method": "POST",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "post_api_admin_invite_diagnosis_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_policy_anonymous",
+      "method": "POST",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "post_api_admin_invite_diagnosis_policies",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_policy_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "post_api_admin_invite_diagnosis_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_publish",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/2/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "invite",
+      "assertions": 4
+    },
+    {
+      "name": "replacement_publish_replay",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/2/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "invite",
+      "assertions": 4
+    },
+    {
+      "name": "replacement_publish_malformed",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/2/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_publish_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/2/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_publish_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/2/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "eligible_not_service_available",
+      "method": "GET",
+      "path": "/api/invite/diagnosis-eligibility",
+      "operation_id": "get_api_invite_diagnosis_eligibility",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "other_owner_locked",
+      "method": "GET",
+      "path": "/api/invite/diagnosis-eligibility",
+      "operation_id": "get_api_invite_diagnosis_eligibility",
+      "kind": "unauthorized",
+      "status": 200,
+      "role": "other",
+      "assertions": 4
+    },
+    {
+      "name": "future_policy",
+      "method": "POST",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "post_api_admin_invite_diagnosis_policies",
+      "kind": "normal",
+      "status": 200,
+      "role": "invite",
+      "assertions": 4
+    },
+    {
+      "name": "future_policy_replay",
+      "method": "POST",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "post_api_admin_invite_diagnosis_policies",
+      "kind": "boundary",
+      "status": 200,
+      "role": "invite",
+      "assertions": 4
+    },
+    {
+      "name": "future_policy_malformed",
+      "method": "POST",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "post_api_admin_invite_diagnosis_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "future_policy_anonymous",
+      "method": "POST",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "post_api_admin_invite_diagnosis_policies",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "future_policy_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "post_api_admin_invite_diagnosis_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "unique_active_policy",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/3/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "boundary",
+      "status": 409,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_stop",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/2/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "invite",
+      "assertions": 4
+    },
+    {
+      "name": "replacement_stop_replay",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/2/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "invite",
+      "assertions": 4
+    },
+    {
+      "name": "replacement_stop_malformed",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/2/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_stop_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/2/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_stop_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/2/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "future_publish",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/3/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "invite",
+      "assertions": 4
+    },
+    {
+      "name": "future_publish_replay",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/3/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "invite",
+      "assertions": 4
+    },
+    {
+      "name": "future_publish_malformed",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/3/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "future_publish_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/3/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "future_publish_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/3/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "future_not_started",
+      "method": "GET",
+      "path": "/api/invite/diagnosis-eligibility",
+      "operation_id": "get_api_invite_diagnosis_eligibility",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "final_policies",
+      "method": "GET",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "get_api_admin_invite_diagnosis_policies",
+      "kind": "normal",
+      "status": 200,
+      "role": "invite",
+      "assertions": 4
+    },
+    {
+      "name": "records_duplicate_page",
+      "method": "GET",
+      "path": "/api/invite/records",
+      "operation_id": "get_api_invite_records",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_records_duplicate",
+      "method": "GET",
+      "path": "/api/merchant/invite/records",
+      "operation_id": "get_api_merchant_invite_records",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "policy_duplicate_page",
+      "method": "GET",
+      "path": "/api/admin/invite/diagnosis-policies",
+      "operation_id": "get_api_admin_invite_diagnosis_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "invite",
+      "assertions": 3
+    },
+    {
+      "name": "registration_duplicate_selector",
+      "method": "GET",
+      "path": "/api/invite/registration",
+      "operation_id": "get_api_invite_registration",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "code_write_query",
+      "method": "POST",
+      "path": "/api/invite/code",
+      "operation_id": "post_api_invite_code",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "policy_write_query",
+      "method": "PUT",
+      "path": "/api/admin/invite/diagnosis-policies/3/status",
+      "operation_id": "put_api_admin_invite_diagnosis_policies_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "invite",
+      "assertions": 3
+    }
+  ]
+}

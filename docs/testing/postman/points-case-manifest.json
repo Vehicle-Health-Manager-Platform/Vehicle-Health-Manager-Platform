@@ -1,0 +1,1168 @@
+{
+  "version": 1,
+  "cases": 116,
+  "operations": 8,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "empty_policies",
+      "method": "GET",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "get_api_admin_point_task_policies",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "empty_policies_boundary",
+      "method": "GET",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "get_api_admin_point_task_policies",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "empty_policies_error",
+      "method": "GET",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "get_api_admin_point_task_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "empty_policies_anonymous",
+      "method": "GET",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "get_api_admin_point_task_policies",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "empty_policies_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "get_api_admin_point_task_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "reviewer_cannot_manage",
+      "method": "GET",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "get_api_admin_point_task_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "empty_tasks",
+      "method": "GET",
+      "path": "/api/point/tasks",
+      "operation_id": "get_api_point_tasks",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "empty_tasks_boundary",
+      "method": "GET",
+      "path": "/api/point/tasks",
+      "operation_id": "get_api_point_tasks",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "empty_tasks_error",
+      "method": "GET",
+      "path": "/api/point/tasks",
+      "operation_id": "get_api_point_tasks",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "empty_tasks_anonymous",
+      "method": "GET",
+      "path": "/api/point/tasks",
+      "operation_id": "get_api_point_tasks",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "empty_tasks_wrong_role",
+      "method": "GET",
+      "path": "/api/point/tasks",
+      "operation_id": "get_api_point_tasks",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "empty_overview",
+      "method": "GET",
+      "path": "/api/point/overview",
+      "operation_id": "get_api_point_overview",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "empty_overview_boundary",
+      "method": "GET",
+      "path": "/api/point/overview",
+      "operation_id": "get_api_point_overview",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "empty_overview_error",
+      "method": "GET",
+      "path": "/api/point/overview",
+      "operation_id": "get_api_point_overview",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "empty_overview_anonymous",
+      "method": "GET",
+      "path": "/api/point/overview",
+      "operation_id": "get_api_point_overview",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "empty_overview_wrong_role",
+      "method": "GET",
+      "path": "/api/point/overview",
+      "operation_id": "get_api_point_overview",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "unverified_overview",
+      "method": "GET",
+      "path": "/api/point/overview",
+      "operation_id": "get_api_point_overview",
+      "kind": "boundary",
+      "status": 200,
+      "role": "other",
+      "assertions": 4
+    },
+    {
+      "name": "checkin_policy",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 6
+    },
+    {
+      "name": "checkin_policy_replay",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "checkin_policy_malformed",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "checkin_policy_anonymous",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "checkin_policy_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "zero_points",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "overflow_points",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "fraction_points",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "invalid_task",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "extra_privilege",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "invalid_period",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "update_policy",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1",
+      "operation_id": "put_api_admin_point_task_policies_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "update_policy_replay",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1",
+      "operation_id": "put_api_admin_point_task_policies_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "update_policy_malformed",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1",
+      "operation_id": "put_api_admin_point_task_policies_id",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "update_policy_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1",
+      "operation_id": "put_api_admin_point_task_policies_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "update_policy_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1",
+      "operation_id": "put_api_admin_point_task_policies_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "stale_update",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1",
+      "operation_id": "put_api_admin_point_task_policies_id",
+      "kind": "boundary",
+      "status": 409,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "missing_update",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/999999",
+      "operation_id": "put_api_admin_point_task_policies_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "publish_policy",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "publish_policy_replay",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "publish_policy_malformed",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "publish_policy_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "publish_policy_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "published_immutable",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1",
+      "operation_id": "put_api_admin_point_task_policies_id",
+      "kind": "boundary",
+      "status": 409,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "future_archive_policy",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "future_archive_policy_replay",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "future_archive_policy_malformed",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "future_archive_policy_anonymous",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "future_archive_policy_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "publish_archive",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/2/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "publish_archive_replay",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/2/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "publish_archive_malformed",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/2/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "publish_archive_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/2/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "publish_archive_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/2/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "ai_policy",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "ai_policy_replay",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "ai_policy_malformed",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "ai_policy_anonymous",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "ai_policy_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "publish_ai",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/3/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "publish_ai_replay",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/3/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "publish_ai_malformed",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/3/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "publish_ai_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/3/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "publish_ai_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/3/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_draft",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "replacement_draft_replay",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "replacement_draft_malformed",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_draft_anonymous",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_draft_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "one_published_rule_per_task",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/4/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "boundary",
+      "status": 409,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "configured_tasks",
+      "method": "GET",
+      "path": "/api/point/tasks",
+      "operation_id": "get_api_point_tasks",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "identity_and_source_states",
+      "method": "GET",
+      "path": "/api/point/overview",
+      "operation_id": "get_api_point_overview",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "unverified_tasks",
+      "method": "GET",
+      "path": "/api/point/overview",
+      "operation_id": "get_api_point_overview",
+      "kind": "unauthorized",
+      "status": 200,
+      "role": "other",
+      "assertions": 4
+    },
+    {
+      "name": "yesterday",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "invalid_date",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "wrong_revision",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "wrong_policy",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "client_points",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "identity_unverified",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "boundary",
+      "status": 409,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "checkin",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 6
+    },
+    {
+      "name": "checkin_replay",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "checkin_malformed",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "checkin_anonymous",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "checkin_wrong_role",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "changed_checkin_same_key",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "same_day_new_key",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "credited_overview",
+      "method": "GET",
+      "path": "/api/point/overview",
+      "operation_id": "get_api_point_overview",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "flow",
+      "method": "GET",
+      "path": "/api/point/flow",
+      "operation_id": "get_api_point_flow",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "flow_boundary",
+      "method": "GET",
+      "path": "/api/point/flow",
+      "operation_id": "get_api_point_flow",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "flow_error",
+      "method": "GET",
+      "path": "/api/point/flow",
+      "operation_id": "get_api_point_flow",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "flow_anonymous",
+      "method": "GET",
+      "path": "/api/point/flow",
+      "operation_id": "get_api_point_flow",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "flow_wrong_role",
+      "method": "GET",
+      "path": "/api/point/flow",
+      "operation_id": "get_api_point_flow",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "other_flow_empty",
+      "method": "GET",
+      "path": "/api/point/flow",
+      "operation_id": "get_api_point_flow",
+      "kind": "unauthorized",
+      "status": 200,
+      "role": "other",
+      "assertions": 4
+    },
+    {
+      "name": "stop_policy",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "stop_policy_replay",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "stop_policy_malformed",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "stop_policy_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "stop_policy_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "old_publish_receipt",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "stopped_republish",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "boundary",
+      "status": 409,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "stopped_new_checkin",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "old_checkin_receipt",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "publish_replacement",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/4/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "publish_replacement_replay",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/4/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "publish_replacement_malformed",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/4/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "publish_replacement_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/4/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "publish_replacement_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/4/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_no_second_reward",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "frozen_award_overview",
+      "method": "GET",
+      "path": "/api/point/overview",
+      "operation_id": "get_api_point_overview",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "new_rule_visible",
+      "method": "GET",
+      "path": "/api/point/tasks",
+      "operation_id": "get_api_point_tasks",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "final_policies",
+      "method": "GET",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "get_api_admin_point_task_policies",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 5
+    },
+    {
+      "name": "duplicate_page",
+      "method": "GET",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "get_api_admin_point_task_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "flow_duplicate_page",
+      "method": "GET",
+      "path": "/api/point/flow",
+      "operation_id": "get_api_point_flow",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "flow_owner_selector",
+      "method": "GET",
+      "path": "/api/point/flow",
+      "operation_id": "get_api_point_flow",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "task_duplicate_selector",
+      "method": "GET",
+      "path": "/api/point/tasks",
+      "operation_id": "get_api_point_tasks",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "write_query",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "policy_query",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/4",
+      "operation_id": "put_api_admin_point_task_policies_id",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "reviewer_create",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "reviewer",
+      "assertions": 3
+    },
+    {
+      "name": "other_final_balance",
+      "method": "GET",
+      "path": "/api/point/overview",
+      "operation_id": "get_api_point_overview",
+      "kind": "unauthorized",
+      "status": 200,
+      "role": "other",
+      "assertions": 4
+    }
+  ]
+}

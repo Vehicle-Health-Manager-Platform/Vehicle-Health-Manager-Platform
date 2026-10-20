@@ -107,16 +107,16 @@ onUnload(clear)
 </template>
 
 <style scoped>
-.page { padding: 52rpx 32rpx 96rpx; min-height: 100vh; box-sizing: border-box; background: #f2f3f5; display: flex; flex-direction: column; }
-.eyebrow { color: #008f24; font-size: 23rpx; }.title { color: #1d2129; font-size: 44rpx; font-weight: 700; margin-top: 16rpx; }
-.intro { color: #4e5969; font-size: 26rpx; line-height: 40rpx; margin: 16rpx 0 28rpx; }
-.panel { background: white; border-radius: 24rpx; padding: 32rpx; display: flex; flex-direction: column; }
-.label { color: #4e5969; font-size: 26rpx; margin: 24rpx 0 12rpx; }
-.field { height: 84rpx; line-height: 84rpx; padding: 0 20rpx; border: 1rpx solid #c9cdd4; border-radius: 12rpx; font-size: 27rpx; color: #1d2129; box-sizing: border-box; background: #fafafa; }
+.page { padding: 52rpx 32rpx 96rpx; min-height: 100vh; box-sizing: border-box; background: #efede6; display: flex; flex-direction: column; }
+.eyebrow { color: #074d30; font-size: 23rpx; }.title { color: #1a1d18; font-size: 44rpx; font-weight: 700; margin-top: 16rpx; }
+.intro { color: #454a41; font-size: 26rpx; line-height: 40rpx; margin: 16rpx 0 28rpx; }
+.panel { background: #fcfbf8; border-radius: 24rpx; padding: 32rpx; display: flex; flex-direction: column; }
+.label { color: #454a41; font-size: 26rpx; margin: 24rpx 0 12rpx; }
+.field { height: 84rpx; line-height: 84rpx; padding: 0 20rpx; border: 1rpx solid #d6d3c9; border-radius: 12rpx; font-size: 27rpx; color: #1a1d18; box-sizing: border-box; background: #fcfbf8; }
 .image-row { display: flex; align-items: center; flex-wrap: wrap; gap: 12rpx; margin-top: 14rpx; font-size: 24rpx; }
-button { margin: 24rpx 0 0; min-height: 80rpx; border-radius: 14rpx; font-size: 27rpx; background: #00b42a; color: white; }
-button::after { border: 0; }button[disabled] { background: #f2f3f5; color: #86909c; }
-.secondary { align-self: flex-start; min-height: 68rpx; padding: 0 24rpx; margin: 12rpx 0 0; background: #eef8f0; color: #008f24; font-size: 24rpx; }
-.status { margin-top: 20rpx; color: #008f24; font-size: 25rpx; }.error { color: #b42318; }
-.note { margin-top: 24rpx; color: #86909c; font-size: 23rpx; line-height: 36rpx; }
+button { margin: 24rpx 0 0; min-height: 80rpx; border-radius: 14rpx; font-size: 27rpx; background: #0b6b43; color: #fcfbf8; }
+button::after { border: 0; }button[disabled] { background: #efede6; color: #63685e; }
+.secondary { align-self: flex-start; min-height: 68rpx; padding: 0 24rpx; margin: 12rpx 0 0; background: #e9f2ec; color: #074d30; font-size: 24rpx; }
+.status { margin-top: 20rpx; color: #074d30; font-size: 25rpx; }.error { color: #b3261e; }
+.note { margin-top: 24rpx; color: #63685e; font-size: 23rpx; line-height: 36rpx; }
 </style>

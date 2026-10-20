@@ -24,11 +24,21 @@ public class UploadHttpService {
         if(org.springframework.transaction.support.TransactionSynchronizationManager.isActualTransactionActive()) throw UploadHttpException.unavailable();
         key=WriteIntegrityService.normalizeKey(key);
         var file=new FileValidator().validate(filename,input);
+        return uploadValidated(owner,key,file,null,null);
+    }
+    public JsonNode uploadMaterial(UploadOwner owner,String key,String filename,InputStream input,InputMaterialScope scope) {
+        if(org.springframework.transaction.support.TransactionSynchronizationManager.isActualTransactionActive()) throw UploadHttpException.unavailable();
+        key=WriteIntegrityService.normalizeKey(key);
+        requests.checkScope(owner,scope);
+        var material=new InputMaterialValidator().validate(filename,input);
+        return uploadValidated(owner,key,material.file(),scope,material);
+    }
+    private JsonNode uploadValidated(UploadOwner owner,String key,FileValidator.Validated file,InputMaterialScope scope,InputMaterialValidator.Validated material) {
         String hash;
         try {hash=AuthTokens.sha256(file.contentType()+":"+HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(file.bytes())));}
         catch(Exception e){throw UploadHttpException.unavailable();}
         if(!ready()) throw UploadHttpException.unavailable();
-        var reservation=requests.reserve(owner,key,hash);
+        var reservation=scope==null ? requests.reserve(owner,key,hash) : requests.reserve(owner,key,hash,scope);
         if(reservation.replay()!=null) return reservation.replay();
         boolean mayHaveObject=false;
         try {
@@ -37,9 +47,10 @@ public class UploadHttpService {
             if(scan==VirusScanner.Result.INFECTED) throw new UploadHttpException(422,"上传文件未通过病毒检查");
             if(scan!=VirusScanner.Result.CLEAN) throw UploadHttpException.unavailable();
             requests.checkOwner(owner);
+            if(scope!=null)requests.checkScope(owner,scope);
             mayHaveObject=true;
             store.put(reservation.key(),file.contentType(),file.bytes());
-            return requests.succeed(owner,reservation,file);
+            return material==null ? requests.succeed(owner,reservation,file) : requests.succeed(owner,reservation,file,material);
         } catch(RuntimeException e) {
             int status=e instanceof UploadHttpException error ? error.status() : 503;
             JsonNode recovered=requests.failed(reservation,status,mayHaveObject);

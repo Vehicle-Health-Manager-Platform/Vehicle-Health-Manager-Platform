@@ -18,7 +18,7 @@ function withUni(fake, run) {
   }
 }
 
-const REQUIRED = ['scanCode', 'chooseMedia', 'chooseImage', 'uploadFile', 'previewImage', 'openSetting', 'downloadFile', 'openDocument', 'request', 'login']
+const REQUIRED = ['scanCode', 'chooseMedia', 'chooseImage', 'chooseMessageFile', 'uploadFile', 'previewImage', 'openSetting', 'downloadFile', 'openDocument', 'request', 'login', 'getRecorderManager', 'createInnerAudioContext']
 
 test('同步存储透传所有参数、返回值和异常，不经过网络传输',()=>{
  const disk=new Map()
@@ -104,6 +104,15 @@ test('底层缺少能力时走 fail 回调而不是抛错', () => {
     assert.equal(apiRuntime.getFileSystemManager(), undefined)
     assert.equal(apiRuntime.userDataPath(), '')
   })
+})
+
+test('录音、试听和PDF选择的真实装配透传原始对象，不经过云请求',()=>{
+ const recorder={start(){}},audio={play(){}}
+ withUni({getRecorderManager:()=>recorder,createInnerAudioContext:()=>audio,chooseMessageFile:o=>o.success({tempFiles:[{path:'/tmp/record.pdf',name:'记录.pdf',size:10}]})},()=>{
+  assert.equal(apiRuntime.getRecorderManager(),recorder);assert.equal(apiRuntime.createInnerAudioContext(),audio)
+  let result;apiRuntime.chooseMessageFile({success:n=>result=n});assert.equal(result.tempFiles[0].name,'记录.pdf')
+ })
+ withUni({},()=>{assert.equal(apiRuntime.getRecorderManager(),undefined);assert.equal(apiRuntime.createInnerAudioContext(),undefined)})
 })
 
 test('没有运行时全局对象时降级为 fail 回调与真机判定', () => {

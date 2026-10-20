@@ -19,7 +19,7 @@ public class JdbcUploadRequests {
     public record Reservation(long id, String attempt, String key, JsonNode replay) {}
     public record Cleanup(long id, long request, String key, String claim, int attempts) {}
     private record Stored(long id, String hash, String attempt, String key, String state,
-                          String response, Integer error, boolean live, boolean processing) {}
+                          String response, Integer error, boolean live, boolean processing, String path) {}
     private final JdbcTemplate jdbc;
     private final TransactionTemplate tx;
     private final ObjectMapper mapper;
@@ -73,25 +73,39 @@ public class JdbcUploadRequests {
             return jdbc.queryForObject("SELECT attempts FROM auth_rate_limit WHERE scope=? AND key_hash=? AND window_start=?",
                 Integer.class,scope,hash,window);
         });
-        if(count>(upload?10:60)) throw new UploadHttpException(429,"图片操作过于频繁，请稍后重试",
+        if(count>(upload?10:60)) throw new UploadHttpException(429,"文件操作过于频繁，请稍后重试",
             Math.max(1,(int)(start+60-Instant.now().getEpochSecond())));
     }
     public void checkOwner(UploadOwner owner) { transaction(() -> { authorize(owner); return null; }); }
+    private void ownScope(UploadOwner owner, InputMaterialScope scope) {
+        if (scope == null) return;
+        if (!"user".equals(owner.type())) throw new UploadHttpException(403,"仅车主可上传辅助材料");
+        if (jdbc.queryForList("SELECT id FROM vehicle WHERE id=? AND user_id=? AND is_deleted=0 FOR UPDATE",
+            scope.vehicleId(),owner.id()).isEmpty()) throw new UploadHttpException(404,"车辆或辅助材料不可用");
+    }
+    public void checkScope(UploadOwner owner, InputMaterialScope scope) {
+        transaction(() -> { authorize(owner); ownScope(owner,scope); return null; });
+    }
     private Stored read(long id) {
         return jdbc.queryForObject("SELECT *,expires_at>UTC_TIMESTAMP() AS live,deadline>UTC_TIMESTAMP() AS processing "
             + "FROM upload_request WHERE id=? FOR UPDATE", (rs,n) -> new Stored(rs.getLong("id"),rs.getString("request_hash"),
             rs.getString("attempt_id"),rs.getString("object_key"),rs.getString("state"),rs.getString("response_body"),
-            (Integer)rs.getObject("error_status"),rs.getBoolean("live"),rs.getBoolean("processing")), id);
+            (Integer)rs.getObject("error_status"),rs.getBoolean("live"),rs.getBoolean("processing"),rs.getString("request_path")), id);
     }
     public Reservation reserve(UploadOwner owner, String key, String hash) {
+        return reserve(owner,key,hash,null);
+    }
+    public Reservation reserve(UploadOwner owner, String key, String hash, InputMaterialScope scope) {
         return transaction(() -> {
             authorize(owner);
+            ownScope(owner,scope);
+            String path = scope == null ? owner.path() : scope.path();
             String attempt = UUID.randomUUID().toString(), object = "uploads/" + UUID.randomUUID();
             jdbc.update("INSERT IGNORE INTO upload_request(owner_type,owner_id,request_path,idempotency_key,request_hash,attempt_id,object_key,state,deadline,expires_at) "
                 + "VALUES (?,?,?,?,?,?,?,'PROCESSING',DATE_ADD(UTC_TIMESTAMP(),INTERVAL 5 MINUTE),DATE_ADD(UTC_TIMESTAMP(),INTERVAL 24 HOUR))",
-                owner.type(), owner.id(), owner.path(), key, hash, attempt, object);
+                owner.type(), owner.id(), path, key, hash, attempt, object);
             long id = jdbc.queryForObject("SELECT id FROM upload_request WHERE owner_type=? AND owner_id=? AND request_path=? AND idempotency_key=?",
-                Long.class,owner.type(),owner.id(),owner.path(),key);
+                Long.class,owner.type(),owner.id(),path,key);
             Stored row = read(id);
             if (attempt.equals(row.attempt())) return new Reservation(id, attempt, object, null);
             boolean retryConfirmedFailure=row.state().equals("REJECTED") && Integer.valueOf(503).equals(row.error()) && row.hash().equals(hash);
@@ -101,7 +115,7 @@ public class JdbcUploadRequests {
                     hash,attempt,object,id);
                 return new Reservation(id,attempt,object,null);
             }
-            if (!row.hash().equals(hash)) throw new UploadHttpException(409,"同一幂等键不能用于不同图片");
+            if (!row.hash().equals(hash)) throw new UploadHttpException(409,"同一幂等键不能用于不同文件");
             if (row.state().equals("SUCCEEDED")) return new Reservation(id,row.attempt(),row.key(), readableReplay(owner,row));
             if (row.state().equals("REJECTED")) throw failure(row.error());
             if (row.state().equals("PROCESSING")) throw UploadHttpException.pending();
@@ -110,6 +124,15 @@ public class JdbcUploadRequests {
     }
     private JsonNode readableReplay(UploadOwner owner, Stored row) {
         JsonNode response = parse(row.response());
+        var scope = InputMaterialScope.fromPath(row.path());
+        if (scope != null) {
+            ownScope(owner,scope);
+            Integer count = jdbc.queryForObject("SELECT COUNT(*) FROM input_material WHERE id=? AND owner_id=? AND vehicle_id=? AND purpose=? "
+                + "AND object_key=? AND is_deleted=0 AND scan_status='CLEAN'",Integer.class,
+                response.path("data").path("material_id").asLong(),owner.id(),scope.vehicleId(),scope.purpose(),row.key());
+            if (count == null || count != 1) throw new UploadHttpException(404,"车辆或辅助材料不可用");
+            return response;
+        }
         long id = response.path("data").path("file_id").asLong();
         Integer count = jdbc.queryForObject("SELECT COUNT(*) FROM file_object WHERE id=? AND owner_type=? AND owner_id=? "
             + "AND object_key=? AND is_deleted=0 AND scan_status='CLEAN'",Integer.class,id,owner.type(),owner.id(),row.key());
@@ -117,12 +140,31 @@ public class JdbcUploadRequests {
         return response;
     }
     public JsonNode succeed(UploadOwner owner, Reservation reservation, FileValidator.Validated file) {
+        return succeed(owner,reservation,file,null);
+    }
+    public JsonNode succeed(UploadOwner owner, Reservation reservation, FileValidator.Validated file, InputMaterialValidator.Validated material) {
         return transaction(() -> {
             authorize(owner);
             Stored row=read(reservation.id());
+            var scope = InputMaterialScope.fromPath(row.path());
+            ownScope(owner,scope);
+            if ((scope == null) != (material == null)) throw UploadHttpException.unavailable();
             if (!row.attempt().equals(reservation.attempt()) || !row.state().equals("PROCESSING") || !row.processing())
                 throw UploadHttpException.unavailable();
             var holder=new GeneratedKeyHolder();
+            if (scope != null) {
+                jdbc.update(connection -> {
+                    var stmt=connection.prepareStatement("INSERT INTO input_material(owner_id,vehicle_id,purpose,object_key,content_type,size_bytes,duration_ms,pages,scan_status) VALUES (?,?,?,?,?,?,?,?,'CLEAN')",Statement.RETURN_GENERATED_KEYS);
+                    stmt.setLong(1,owner.id());stmt.setLong(2,scope.vehicleId());stmt.setString(3,scope.purpose());stmt.setString(4,row.key());
+                    stmt.setString(5,file.contentType());stmt.setLong(6,file.bytes().length);stmt.setInt(7,material.durationMs());stmt.setInt(8,material.pages());return stmt;
+                },holder);
+                Number id=holder.getKey();if(id==null)throw new IllegalStateException();
+                var data=Map.of("material_id",id.longValue(),"purpose",scope.purpose(),"vehicle_id",scope.vehicleId(),"content_type",file.contentType(),"size_bytes",file.bytes().length,"duration_ms",material.durationMs(),"pages",material.pages(),"scan_status","CLEAN");
+                JsonNode response=parse(json(ApiResponse.success(data)));
+                jdbc.update("INSERT INTO audit_log(actor_type,actor_id,action,resource_type,resource_id,before_state,after_state,request_id) VALUES ('user',?,'INPUT_MATERIAL_UPLOAD','input_material',?,NULL,?,?)",owner.id(),id.longValue(),json(data),response.path("request_id").asText());
+                jdbc.update("UPDATE upload_request SET state='SUCCEEDED',response_body=?,expires_at=DATE_ADD(UTC_TIMESTAMP(),INTERVAL 24 HOUR) WHERE id=?",json(response),row.id());
+                return response;
+            }
             jdbc.update(connection -> {
                 var stmt=connection.prepareStatement("INSERT INTO file_object(owner_type,owner_id,object_key,content_type,size_bytes,scan_status) "
                     + "VALUES (?,?,?,?,?,'CLEAN')",Statement.RETURN_GENERATED_KEYS);
@@ -191,6 +233,8 @@ public class JdbcUploadRequests {
             Stored row=read(task.request());
             // Terminal failure is a fence: the corresponding attempt can no longer succeed.
             if(row.key().equals(task.key()) && (row.state().equals("SUCCEEDED") || row.state().equals("PROCESSING"))) return false;
+            if (InputMaterialScope.fromPath(row.path()) != null
+                && jdbc.queryForObject("SELECT COUNT(*) FROM input_material WHERE object_key=?",Integer.class,task.key())!=0) return false;
             return jdbc.queryForObject("SELECT COUNT(*) FROM file_object WHERE object_key=?",Integer.class,task.key())==0;
         });
     }

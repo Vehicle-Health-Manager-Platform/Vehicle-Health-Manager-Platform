@@ -29,6 +29,7 @@ class UploadHttpTransportTest {
     @MockitoBean JwtDecoder decoder;
     @MockitoBean UploadHttpService service;
     @MockitoBean PrivateFileAccessService access;
+    @MockitoBean InputMaterialService materials;
     final HttpClient client=HttpClient.newHttpClient();
     final String boundary="autocare-test-boundary";
     @BeforeEach void setup() {
@@ -57,6 +58,33 @@ class UploadHttpTransportTest {
         return client.send(builder.POST(chunked?HttpRequest.BodyPublishers.ofInputStream(()->new ByteArrayInputStream(bytes)):HttpRequest.BodyPublishers.ofByteArray(bytes)).build(),HttpResponse.BodyHandlers.ofString());
     }
     String key(){return UUID.randomUUID().toString();}
+    HttpResponse<String> materialRequest(String token,String path,byte[] body,String kind,boolean withKey)throws Exception {
+        var builder=HttpRequest.newBuilder(URI.create("http://127.0.0.1:"+port+path)).header("Content-Type","multipart/form-data; boundary="+boundary);
+        if(token!=null)builder.header("Authorization","Bearer "+token);
+        if(withKey)builder.header("Idempotency-Key",key());if(kind!=null)builder.header("X-Material-Kind",kind);
+        return client.send(builder.POST(HttpRequest.BodyPublishers.ofByteArray(body)).build(),HttpResponse.BodyHandlers.ofString());
+    }
+    @Test void materialOwnerOnlyAdmissionAndMultipartContract()throws Exception {
+        String path="/api/input-materials/AI/11/upload";
+        for(String token:List.of("merchant","tech","local","staff"))assertEquals(403,materialRequest(token,path,multipart(11,""),"pdf",true).statusCode());
+        assertEquals(401,materialRequest(null,path,multipart(11,""),"pdf",true).statusCode());
+        assertEquals(400,materialRequest("owner",path,multipart(11,""),"pdf",false).statusCode());
+        assertEquals(400,materialRequest("owner",path,multipart(11,""),null,true).statusCode());
+        assertEquals(400,materialRequest("owner",path,multipart(11,"--"+boundary+"\r\nContent-Disposition: form-data; name=\"other\"\r\n\r\nprivate\r\n"),"pdf",true).statusCode());
+        when(materials.upload(any(),any(),anyString(),anyString(),any())).thenReturn(mapper.valueToTree(ApiResponse.success(Map.of("material_id",1))));
+        var result=materialRequest("owner",path,multipart(11,""),"audio",true);assertEquals(200,result.statusCode());assertEquals("no-store",result.headers().firstValue("cache-control").orElse(""));
+        verify(materials).upload(any(),eq(new InputMaterialScope("AI",11)),anyString(),eq("material.mp3"),any());
+    }
+    @Test void materialAdmissionRejectsBeforeMalformedMultipartAndUsesFixedErrors()throws Exception {
+        doThrow(UploadHttpException.unavailable()).when(materials).admission(any(),any(),anyBoolean());
+        var response=materialRequest("owner","/api/input-materials/ARCHIVE/11/upload","broken body".getBytes(),"pdf",true);
+        assertEquals(503,response.statusCode());verify(materials,never()).upload(any(),any(),anyString(),anyString(),any());
+    }
+    @Test void materialRoutesRejectUnknownPurposeVehicleAndOversizedBody()throws Exception {
+        assertEquals(400,materialRequest("owner","/api/input-materials/OTHER/11/upload",multipart(11,""),"pdf",true).statusCode());
+        assertEquals(400,materialRequest("owner","/api/input-materials/AI/0/upload",multipart(11,""),"pdf",true).statusCode());
+        assertEquals(413,materialRequest("owner","/api/input-materials/AI/11/upload",new byte[12*1024*1024],"pdf",true).statusCode());
+    }
     @Test void merchantMultipartUsesStaffIdentityAndRejectsOtherRoles()throws Exception {
         for(String token:List.of("owner","staff","merchant")){
             var request=HttpRequest.newBuilder(URI.create("http://127.0.0.1:"+port+"/api/merchant/files/upload"))
@@ -121,6 +149,15 @@ class UploadHttpTransportTest {
         try {assertTrue(entered.await(10,TimeUnit.SECONDS));assertEquals(429,post(multipart(11,""),"owner",false,key()).statusCode());}
         finally {release.countDown();}
         assertEquals(200,first.get(10,TimeUnit.SECONDS).statusCode());assertEquals(200,post(multipart(11,""),"owner",false,key()).statusCode());
+    }
+    @Test void signedAccessRejectsIgnoredQueryBeforeSigning() throws Exception {
+        for(String path:List.of("/api/file/1/access","/api/merchant/files/1/access","/api/tech/files/1/access")) {
+            String role=path.contains("/merchant/")?"merchant":path.contains("/tech/")?"tech":"owner";
+            var request=HttpRequest.newBuilder(URI.create("http://127.0.0.1:"+port+path+"?owner_id=1001&owner_id=1002")).header("Authorization","Bearer "+role).GET().build();
+            var response=client.send(request,HttpResponse.BodyHandlers.ofString());
+            assertEquals(400,response.statusCode());assertEquals("no-store",response.headers().firstValue("Cache-Control").orElseThrow());
+        }
+        verifyNoInteractions(access);
     }
     @Test void accessIsNotCachedAndFailureDoesNotExposeSignedUrl() throws Exception {
         var request=HttpRequest.newBuilder(URI.create("http://127.0.0.1:"+port+"/api/file/1/access")).header("Authorization","Bearer owner").GET().build();

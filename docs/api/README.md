@@ -1,5 +1,7 @@
 # API 文档
 
+> [本机录音与辅助材料边界](LOCAL_INPUT_MATERIALS.md)：A2a本机采集不新增HTTP接口，不把音频/PDF混入现有图片上传或文本AI正文；受控媒体上传属于下一A2b。
+
 > 2026-10-17当前：[R8图片公开](PUBLIC_IMAGES.md) · [许可资料与检索/AI引用](LICENSED_KNOWLEDGE.md)；实际公开问答页面与恢复已接通，独立权限/17字段、V061/130表，后续历史条目按当时状态保留。
 
 > [R8c1b3a独立公开问答后端](PUBLIC_COMMUNITY_QUESTIONS.md)：原消息指纹/身份来源、明确预览与公开授权、最小审核/撤回、当前本人同款读取；公开页面及恢复下一b3b。

@@ -12,11 +12,14 @@ export default {
 <style>
 /* Shared page classes must live in app.wxss: repeated page style-src imports
    are deduplicated by the WeChat build and disappear from later pages. */
+@import './styles/design-system.css';
 @import './styles/reservations.css';
 
 page {
-  background: #f2f3f5;
-  color: #1d2129;
-  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+  /* 工业实用 × 仪表盘语义：暖纸灰底、暖近黑文字，避免纯白压纯黑。 */
+  background: #f3f1eb;
+  color: #1a1d18;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'HarmonyOS Sans SC', sans-serif;
+  letter-spacing: 0.2rpx;
 }
 </style>

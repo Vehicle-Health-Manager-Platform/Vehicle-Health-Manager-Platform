@@ -1,0 +1,619 @@
+{
+  "version": 1,
+  "passed": true,
+  "full_api_acceptance_passed": false,
+  "finished_at": "2026-10-19T08:28:37.857435+00:00",
+  "duration_seconds": 349.594,
+  "source_sha256": "afc9e35cb8a3b112ec92e24ea1d42047b7efdeff86692a5f77627e4bbff71285",
+  "sources_unchanged": true,
+  "maven_exit_code": 0,
+  "execution_mode": "local-execution",
+  "proof": {
+    "requests": 53,
+    "operations": 8,
+    "coverage": {
+      "/api/file/upload": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "/api/file/{id}/access": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "/api/merchant/files/upload": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "/api/merchant/files/{id}/access": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "/api/tech/files/upload": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "/api/tech/files/{id}/access": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "/api/archive/add": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "/api/archive/{archiveId}/files/{fileId}/access": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ]
+    },
+    "checks": {
+      "anonymous_object_denied": true,
+      "tampered_signature_denied": true,
+      "expired_signature_denied": true,
+      "only_three_clean_files": true,
+      "three_successful_uploads": true,
+      "three_scan_rejections": true,
+      "one_owned_archive_attachment": true
+    },
+    "cleanup": {
+      "initializer": true,
+      "clamav": true,
+      "minio": true,
+      "mysql": true,
+      "network": true
+    },
+    "cases": [
+      {
+        "kind": "normal",
+        "path": "/api/file/upload",
+        "role": "owner",
+        "operation": "/api/file/upload",
+        "name": "owner_upload",
+        "passed": true,
+        "method": "POST",
+        "status": 200
+      },
+      {
+        "kind": "boundary",
+        "path": "/api/file/upload",
+        "role": "owner",
+        "operation": "/api/file/upload",
+        "name": "owner_replay",
+        "passed": true,
+        "method": "POST",
+        "status": 200
+      },
+      {
+        "kind": "error",
+        "path": "/api/file/upload",
+        "role": "owner",
+        "operation": "/api/file/upload",
+        "name": "owner_changed_body",
+        "passed": true,
+        "method": "POST",
+        "status": 409
+      },
+      {
+        "kind": "error",
+        "path": "/api/file/upload",
+        "role": "owner",
+        "operation": "/api/file/upload",
+        "name": "owner_infected",
+        "passed": true,
+        "method": "POST",
+        "status": 422
+      },
+      {
+        "kind": "error",
+        "path": "/api/file/upload",
+        "role": "owner",
+        "operation": "/api/file/upload",
+        "name": "owner_bad_magic",
+        "passed": true,
+        "method": "POST",
+        "status": 400
+      },
+      {
+        "kind": "boundary",
+        "path": "/api/file/upload",
+        "role": "owner",
+        "operation": "/api/file/upload",
+        "name": "owner_missing_key",
+        "passed": true,
+        "method": "POST",
+        "status": 400
+      },
+      {
+        "kind": "unauthorized",
+        "path": "/api/file/upload",
+        "role": "anonymous",
+        "operation": "/api/file/upload",
+        "name": "owner_anonymous",
+        "passed": true,
+        "method": "POST",
+        "status": 401
+      },
+      {
+        "kind": "unauthorized",
+        "path": "/api/file/upload",
+        "role": "merchant",
+        "operation": "/api/file/upload",
+        "name": "owner_wrong_role",
+        "passed": true,
+        "method": "POST",
+        "status": 403
+      },
+      {
+        "kind": "normal",
+        "path": "/api/file/1/access",
+        "role": "owner",
+        "operation": "/api/file/{id}/access",
+        "name": "owner_access",
+        "passed": true,
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "kind": "boundary",
+        "path": "/api/file/999999/access",
+        "role": "owner",
+        "operation": "/api/file/{id}/access",
+        "name": "owner_missing_file",
+        "passed": true,
+        "method": "GET",
+        "status": 404
+      },
+      {
+        "kind": "error",
+        "path": "/api/file/1/access?owner_id=1",
+        "role": "owner",
+        "operation": "/api/file/{id}/access",
+        "name": "owner_access_query",
+        "passed": true,
+        "method": "GET",
+        "status": 400
+      },
+      {
+        "kind": "unauthorized",
+        "path": "/api/file/1/access",
+        "role": "anonymous",
+        "operation": "/api/file/{id}/access",
+        "name": "owner_access_anonymous",
+        "passed": true,
+        "method": "GET",
+        "status": 401
+      },
+      {
+        "kind": "unauthorized",
+        "path": "/api/file/1/access",
+        "role": "merchant",
+        "operation": "/api/file/{id}/access",
+        "name": "owner_access_wrong_role",
+        "passed": true,
+        "method": "GET",
+        "status": 403
+      },
+      {
+        "kind": "normal",
+        "path": "/api/merchant/files/upload",
+        "role": "merchant",
+        "operation": "/api/merchant/files/upload",
+        "name": "merchant_upload",
+        "passed": true,
+        "method": "POST",
+        "status": 200
+      },
+      {
+        "kind": "boundary",
+        "path": "/api/merchant/files/upload",
+        "role": "merchant",
+        "operation": "/api/merchant/files/upload",
+        "name": "merchant_replay",
+        "passed": true,
+        "method": "POST",
+        "status": 200
+      },
+      {
+        "kind": "error",
+        "path": "/api/merchant/files/upload",
+        "role": "merchant",
+        "operation": "/api/merchant/files/upload",
+        "name": "merchant_changed_body",
+        "passed": true,
+        "method": "POST",
+        "status": 409
+      },
+      {
+        "kind": "error",
+        "path": "/api/merchant/files/upload",
+        "role": "merchant",
+        "operation": "/api/merchant/files/upload",
+        "name": "merchant_infected",
+        "passed": true,
+        "method": "POST",
+        "status": 422
+      },
+      {
+        "kind": "error",
+        "path": "/api/merchant/files/upload",
+        "role": "merchant",
+        "operation": "/api/merchant/files/upload",
+        "name": "merchant_bad_magic",
+        "passed": true,
+        "method": "POST",
+        "status": 400
+      },
+      {
+        "kind": "boundary",
+        "path": "/api/merchant/files/upload",
+        "role": "merchant",
+        "operation": "/api/merchant/files/upload",
+        "name": "merchant_missing_key",
+        "passed": true,
+        "method": "POST",
+        "status": 400
+      },
+      {
+        "kind": "unauthorized",
+        "path": "/api/merchant/files/upload",
+        "role": "anonymous",
+        "operation": "/api/merchant/files/upload",
+        "name": "merchant_anonymous",
+        "passed": true,
+        "method": "POST",
+        "status": 401
+      },
+      {
+        "kind": "unauthorized",
+        "path": "/api/merchant/files/upload",
+        "role": "owner",
+        "operation": "/api/merchant/files/upload",
+        "name": "merchant_wrong_role",
+        "passed": true,
+        "method": "POST",
+        "status": 403
+      },
+      {
+        "kind": "normal",
+        "path": "/api/merchant/files/2/access",
+        "role": "merchant",
+        "operation": "/api/merchant/files/{id}/access",
+        "name": "merchant_access",
+        "passed": true,
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "kind": "boundary",
+        "path": "/api/merchant/files/999999/access",
+        "role": "merchant",
+        "operation": "/api/merchant/files/{id}/access",
+        "name": "merchant_missing_file",
+        "passed": true,
+        "method": "GET",
+        "status": 404
+      },
+      {
+        "kind": "error",
+        "path": "/api/merchant/files/2/access?owner_id=1",
+        "role": "merchant",
+        "operation": "/api/merchant/files/{id}/access",
+        "name": "merchant_access_query",
+        "passed": true,
+        "method": "GET",
+        "status": 400
+      },
+      {
+        "kind": "unauthorized",
+        "path": "/api/merchant/files/2/access",
+        "role": "anonymous",
+        "operation": "/api/merchant/files/{id}/access",
+        "name": "merchant_access_anonymous",
+        "passed": true,
+        "method": "GET",
+        "status": 401
+      },
+      {
+        "kind": "unauthorized",
+        "path": "/api/merchant/files/2/access",
+        "role": "owner",
+        "operation": "/api/merchant/files/{id}/access",
+        "name": "merchant_access_wrong_role",
+        "passed": true,
+        "method": "GET",
+        "status": 403
+      },
+      {
+        "kind": "normal",
+        "path": "/api/tech/files/upload",
+        "role": "technician",
+        "operation": "/api/tech/files/upload",
+        "name": "technician_upload",
+        "passed": true,
+        "method": "POST",
+        "status": 200
+      },
+      {
+        "kind": "boundary",
+        "path": "/api/tech/files/upload",
+        "role": "technician",
+        "operation": "/api/tech/files/upload",
+        "name": "technician_replay",
+        "passed": true,
+        "method": "POST",
+        "status": 200
+      },
+      {
+        "kind": "error",
+        "path": "/api/tech/files/upload",
+        "role": "technician",
+        "operation": "/api/tech/files/upload",
+        "name": "technician_changed_body",
+        "passed": true,
+        "method": "POST",
+        "status": 409
+      },
+      {
+        "kind": "error",
+        "path": "/api/tech/files/upload",
+        "role": "technician",
+        "operation": "/api/tech/files/upload",
+        "name": "technician_infected",
+        "passed": true,
+        "method": "POST",
+        "status": 422
+      },
+      {
+        "kind": "error",
+        "path": "/api/tech/files/upload",
+        "role": "technician",
+        "operation": "/api/tech/files/upload",
+        "name": "technician_bad_magic",
+        "passed": true,
+        "method": "POST",
+        "status": 400
+      },
+      {
+        "kind": "boundary",
+        "path": "/api/tech/files/upload",
+        "role": "technician",
+        "operation": "/api/tech/files/upload",
+        "name": "technician_missing_key",
+        "passed": true,
+        "method": "POST",
+        "status": 400
+      },
+      {
+        "kind": "unauthorized",
+        "path": "/api/tech/files/upload",
+        "role": "anonymous",
+        "operation": "/api/tech/files/upload",
+        "name": "technician_anonymous",
+        "passed": true,
+        "method": "POST",
+        "status": 401
+      },
+      {
+        "kind": "unauthorized",
+        "path": "/api/tech/files/upload",
+        "role": "owner",
+        "operation": "/api/tech/files/upload",
+        "name": "technician_wrong_role",
+        "passed": true,
+        "method": "POST",
+        "status": 403
+      },
+      {
+        "kind": "normal",
+        "path": "/api/tech/files/3/access",
+        "role": "technician",
+        "operation": "/api/tech/files/{id}/access",
+        "name": "technician_access",
+        "passed": true,
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "kind": "boundary",
+        "path": "/api/tech/files/999999/access",
+        "role": "technician",
+        "operation": "/api/tech/files/{id}/access",
+        "name": "technician_missing_file",
+        "passed": true,
+        "method": "GET",
+        "status": 404
+      },
+      {
+        "kind": "error",
+        "path": "/api/tech/files/3/access?owner_id=1",
+        "role": "technician",
+        "operation": "/api/tech/files/{id}/access",
+        "name": "technician_access_query",
+        "passed": true,
+        "method": "GET",
+        "status": 400
+      },
+      {
+        "kind": "unauthorized",
+        "path": "/api/tech/files/3/access",
+        "role": "anonymous",
+        "operation": "/api/tech/files/{id}/access",
+        "name": "technician_access_anonymous",
+        "passed": true,
+        "method": "GET",
+        "status": 401
+      },
+      {
+        "kind": "unauthorized",
+        "path": "/api/tech/files/3/access",
+        "role": "owner",
+        "operation": "/api/tech/files/{id}/access",
+        "name": "technician_access_wrong_role",
+        "passed": true,
+        "method": "GET",
+        "status": 403
+      },
+      {
+        "kind": "unauthorized",
+        "path": "/api/file/1/access",
+        "role": "other",
+        "operation": "/api/file/{id}/access",
+        "name": "foreign_owner_file",
+        "passed": true,
+        "method": "GET",
+        "status": 404
+      },
+      {
+        "kind": "unauthorized",
+        "path": "/api/merchant/files/2/access",
+        "role": "other_merchant",
+        "operation": "/api/merchant/files/{id}/access",
+        "name": "foreign_shop_file",
+        "passed": true,
+        "method": "GET",
+        "status": 404
+      },
+      {
+        "kind": "normal",
+        "path": "/api/archive/add",
+        "role": "owner",
+        "operation": "/api/archive/add",
+        "name": "archive_create",
+        "passed": true,
+        "method": "POST",
+        "status": 200
+      },
+      {
+        "kind": "boundary",
+        "path": "/api/archive/add",
+        "role": "owner",
+        "operation": "/api/archive/add",
+        "name": "archive_replay",
+        "passed": true,
+        "method": "POST",
+        "status": 200
+      },
+      {
+        "kind": "error",
+        "path": "/api/archive/add",
+        "role": "owner",
+        "operation": "/api/archive/add",
+        "name": "archive_invalid",
+        "passed": true,
+        "method": "POST",
+        "status": 400
+      },
+      {
+        "kind": "unauthorized",
+        "path": "/api/archive/add",
+        "role": "anonymous",
+        "operation": "/api/archive/add",
+        "name": "archive_anonymous",
+        "passed": true,
+        "method": "POST",
+        "status": 401
+      },
+      {
+        "kind": "unauthorized",
+        "path": "/api/archive/add",
+        "role": "merchant",
+        "operation": "/api/archive/add",
+        "name": "archive_wrong_role",
+        "passed": true,
+        "method": "POST",
+        "status": 403
+      },
+      {
+        "kind": "normal",
+        "path": "/api/archive/1/files/1/access",
+        "role": "owner",
+        "operation": "/api/archive/{archiveId}/files/{fileId}/access",
+        "name": "attachment_access",
+        "passed": true,
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "kind": "boundary",
+        "path": "/api/archive/1/files/2/access",
+        "role": "owner",
+        "operation": "/api/archive/{archiveId}/files/{fileId}/access",
+        "name": "attachment_not_attached",
+        "passed": true,
+        "method": "GET",
+        "status": 404
+      },
+      {
+        "kind": "error",
+        "path": "/api/archive/1/files/1/access?owner_id=1",
+        "role": "owner",
+        "operation": "/api/archive/{archiveId}/files/{fileId}/access",
+        "name": "attachment_query",
+        "passed": true,
+        "method": "GET",
+        "status": 400
+      },
+      {
+        "kind": "unauthorized",
+        "path": "/api/archive/1/files/1/access",
+        "role": "anonymous",
+        "operation": "/api/archive/{archiveId}/files/{fileId}/access",
+        "name": "attachment_anonymous",
+        "passed": true,
+        "method": "GET",
+        "status": 401
+      },
+      {
+        "kind": "unauthorized",
+        "path": "/api/archive/1/files/1/access",
+        "role": "merchant",
+        "operation": "/api/archive/{archiveId}/files/{fileId}/access",
+        "name": "attachment_wrong_role",
+        "passed": true,
+        "method": "GET",
+        "status": 403
+      },
+      {
+        "kind": "unauthorized",
+        "path": "/api/archive/1/files/1/access",
+        "role": "other",
+        "operation": "/api/archive/{archiveId}/files/{fileId}/access",
+        "name": "attachment_foreign",
+        "passed": true,
+        "method": "GET",
+        "status": 404
+      },
+      {
+        "kind": "boundary",
+        "path": "/api/file/1/access",
+        "role": "owner",
+        "operation": "/api/file/{id}/access",
+        "name": "fresh_signature",
+        "passed": true,
+        "method": "GET",
+        "status": 200
+      }
+    ]
+  },
+  "error": null,
+  "boundaries": [
+    "synthetic identities; real HTTP/MySQL/MinIO/ClamAV",
+    "synthetic scan database injected only in test configuration; production freshness unchanged",
+    "no production malware coverage, real identity, external cloud supplier or device acceptance"
+  ]
+}

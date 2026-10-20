@@ -85,7 +85,7 @@ onShareAppMessage(() => {
     <text class="hint">仅分享创建时的只读摘要。不含车牌、VIN、标题备注、照片、签字或 PDF。链接可以转发，接收者须登录车主账号。</text>
     <view v-if="ownerSession.accessToken" class="card">
       <text class="heading">创建限时分享</text>
-      <view class="line"><text>指定日期范围</text><switch :checked="fields.range" :disabled="busy" color="#00b42a" @change="fields.range = $event.detail.value" /></view>
+      <view class="line"><text>指定日期范围</text><switch :checked="fields.range" :disabled="busy" color="#0b6b43" @change="fields.range = $event.detail.value" /></view>
       <view v-if="fields.range" class="dates">
         <picker mode="date" :value="fields.from" :disabled="busy" @change="fields.from = $event.detail.value"><text>{{ fields.from || '开始日期' }}</text></picker>
         <picker mode="date" :value="fields.to" :disabled="busy" @change="fields.to = $event.detail.value"><text>{{ fields.to || '结束日期' }}</text></picker>
@@ -115,15 +115,15 @@ onShareAppMessage(() => {
 <style scoped>
 .page { padding: 32rpx; }
 .title { display: block; font-size: 38rpx; font-weight: 700; }
-.hint { display: block; margin-top: 16rpx; font-size: 24rpx; line-height: 38rpx; color: #697585; }
-.card { margin-top: 24rpx; padding: 28rpx; border-radius: 20rpx; background: #fff; }
+.hint { display: block; margin-top: 16rpx; font-size: 24rpx; line-height: 38rpx; color: #63685e; }
+.card { margin-top: 24rpx; padding: 28rpx; border-radius: 20rpx; background: #fcfbf8; }
 .heading { font-size: 29rpx; font-weight: 600; }
 .line,.dates { display: flex; justify-content: space-between; align-items: center; margin: 24rpx 0; font-size: 26rpx; }
-.dates picker { padding: 16rpx; background: #f2f3f5; border-radius: 10rpx; }
-button { margin-top: 20rpx; font-size: 26rpx; border-radius: 14rpx; background: #00b42a; color: #fff; }
+.dates picker { padding: 16rpx; background: #efede6; border-radius: 10rpx; }
+button { margin-top: 20rpx; font-size: 26rpx; border-radius: 14rpx; background: #0b6b43; color: #fcfbf8; }
 button::after { border: 0; }
-.secondary { background: #eef8f0; color: #008f24; }
-.danger { background: #fff2e8; color: #b42318; }
-.message { display: block; margin-top: 22rpx; color: #008f24; font-size: 25rpx; line-height: 38rpx; }
-.error { color: #b42318; }
+.secondary { background: #e9f2ec; color: #074d30; }
+.danger { background: #f7ecdf; color: #b3261e; }
+.message { display: block; margin-top: 22rpx; color: #074d30; font-size: 25rpx; line-height: 38rpx; }
+.error { color: #b3261e; }
 </style>

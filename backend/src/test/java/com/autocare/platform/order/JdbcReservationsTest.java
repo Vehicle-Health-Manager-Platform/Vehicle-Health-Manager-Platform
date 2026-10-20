@@ -53,6 +53,27 @@ class JdbcReservationsTest {
         long slot=slot(1),id=order(a,slot);String k=key();jdbc.execute("CREATE TRIGGER reject_reservation_audit BEFORE INSERT ON service_notification_outbox FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='synthetic failure'");try{assertThrows(ResponseStatusException.class,()->orders.cancel(a,k,id));assertEquals("PENDING_PAYMENT",orders.detail(a,id).get("status"));assertEquals(1,jdbc.queryForObject("SELECT reserved_count FROM appointment_slot WHERE id=?",Integer.class,slot));}finally{jdbc.execute("DROP TRIGGER reject_reservation_audit");}orders.cancel(a,k,id);assertEquals("CLOSED",orders.detail(a,id).get("status"));assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM service_notification_outbox WHERE kind='ORDER_CLOSED'",Integer.class));
     }
     long slot(int capacity){Instant start=clock.value.atZone(ReservationInput.ZONE).toLocalDate().plusDays(1).atTime(10,0).atZone(ReservationInput.ZONE).toInstant();return slots.publish(shop,key(),new ReservationInput.Slot(1,start,start.plusSeconds(3600),capacity)).path("data").path("slot_id").asLong();}
+    // A4c-2: capacity is decided from the slot counter under the slot row lock, so racing
+    // creations must resolve to exactly `capacity` winners and business conflicts, never a
+    // lock timeout or a transient write failure.
+    @Test void capacityIsDecidedAtomicallyForRacingCreations()throws Exception{
+        long slot=slot(2);List<VehicleOwner> owners=new ArrayList<>();
+        for(int n=3;n<=10;n++){jdbc.update("INSERT INTO user(id,openid,status) VALUES(?,?,1)",n,"capacity-"+n);jdbc.update("INSERT INTO vehicle(id,user_id,model_id,vin,current_mileage) VALUES(?,?,1,?,0)",n,n,"CAP-"+n);owners.add(owner(n));}
+        var pool=Executors.newFixedThreadPool(owners.size());var start=new CountDownLatch(1);var outcomes=new java.util.concurrent.CopyOnWriteArrayList<String>();var tasks=new ArrayList<Future<?>>();
+        for(VehicleOwner o:owners)tasks.add(pool.submit(()->{try{start.await();orders.create(o,key(),booking(o,slot));outcomes.add("CREATED");}catch(ReservationConflict error){outcomes.add("CONFLICT:"+error.code);}return null;}));
+        start.countDown();try{for(var task:tasks)task.get(60,TimeUnit.SECONDS);}finally{pool.shutdownNow();}
+        assertEquals(2,java.util.Collections.frequency(outcomes,"CREATED"));assertEquals(6,java.util.Collections.frequency(outcomes,"CONFLICT:40903"));
+        assertEquals(2,reserved(slot));assertEquals(2,count("order"));
+        long released=jdbc.queryForObject("SELECT MIN(id) FROM `order` WHERE slot_id=?",Long.class,slot);long holder=jdbc.queryForObject("SELECT user_id FROM `order` WHERE id=?",Long.class,released);
+        orders.cancel(owners.get((int)holder-3),key(),released);assertEquals(1,reserved(slot));order(b,slot);assertEquals(2,reserved(slot));
+    }
+    @Test void expiredHoldReleasesTheSeatBeforeTheNextBooking(){
+        long slot=slot(1);long first=order(a,slot);assertEquals(1,reserved(slot));
+        assertEquals(40903,assertThrows(ReservationConflict.class,()->orders.create(b,key(),booking(b,slot))).code);
+        clock.value=clock.value.plusSeconds(901);long second=order(b,slot);
+        assertEquals("CLOSED",orders.detail(a,first).get("status"));assertEquals(1,reserved(slot));assertEquals(2,count("order"));assertTrue(second>first);
+    }
+    int reserved(long slot){return jdbc.queryForObject("SELECT reserved_count FROM appointment_slot WHERE id=?",Integer.class,slot);}
     ReservationInput.Booking booking(VehicleOwner o,long slot){return new ReservationInput.Booking(1,1,o.id(),slot);}
     long order(VehicleOwner o,long slot){return orders.create(o,key(),booking(o,slot)).path("data").path("order_id").asLong();}
     int count(String table){return jdbc.queryForObject("SELECT COUNT(*) FROM `"+table+"`",Integer.class);}

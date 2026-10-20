@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "metric": "LINE",
+  "minimum_percent": 70,
+  "minimum_method_percent": 70,
+  "groups": {
+    "coupons": ["order/CouponInventory", "order/CouponInput", "order/CouponTransactions", "order/CouponOrderInput", "order/CouponServiceRedemption", "order/CouponRecovery"],
+    "invitations": ["order/Invitations", "order/InvitationInput", "order/InvitationRegistration", "order/InvitationRewards", "order/InviteRewardPolicies", "order/InvitePolicyInput", "order/InviteDiagnosisPolicies"],
+    "assessment": ["order/AssessmentCalculation", "order/AssessmentFacts", "order/AssessmentPolicies", "order/AssessmentPolicyInput", "order/AssessmentSnapshots", "order/AssessmentViews"],
+    "mileage_and_vehicle": ["vehicle/LocalMileageService", "vehicle/VehicleService", "vehicle/VehicleInput"],
+    "order_states": ["order/ReservationOrders", "order/ReservationSlots", "order/ReservationInput", "order/ReservationExpiry", "order/ServiceWork", "order/ServiceWorkInput", "order/OrderRedemption", "order/PickupInspection", "order/PickupInput", "order/ServiceArchiveJobs"],
+    "write_integrity": ["common/write/WriteIntegrityService"]
+  },
+  "local_tests": ["CouponInputTest", "JdbcCouponInventoryTest", "JdbcCouponTransactionsTest", "JdbcInvitationsTest", "JdbcInvitationRewardsTest", "JdbcInviteRewardPoliciesTest", "JdbcInviteDiagnosisPoliciesTest", "AssessmentCalculationTest", "JdbcAssessmentPoliciesTest", "JdbcAssessmentSnapshotsTest", "JdbcAssessmentViewsTest", "JdbcWriteIntegrityTest", "JdbcVehicleTest", "JdbcReservationsTest", "ReservationTimeTest", "JdbcPickupInspectionTest", "JdbcServiceWorkTest", "JdbcOrderRedemptionTest", "JdbcServiceArchiveTest"]
+}

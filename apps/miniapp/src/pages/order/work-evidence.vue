@@ -22,5 +22,5 @@ onLoad(q=>{order.value=/^[1-9]\d*$/.test(String(q?.id||''))?Number(q.id):0});onS
 </view></template>
 
 <style scoped>
-.evidence-preview{position:fixed;top:0;right:0;bottom:0;left:0;z-index:9999;background:#fff;padding:24rpx;display:flex;flex-direction:column;gap:16rpx}.evidence-preview-scroll{flex:1;height:0;min-height:0}
+.evidence-preview{position:fixed;top:0;right:0;bottom:0;left:0;z-index:9999;background:#fcfbf8;padding:24rpx;display:flex;flex-direction:column;gap:16rpx}.evidence-preview-scroll{flex:1;height:0;min-height:0}
 </style>

@@ -6,6 +6,8 @@ import { vehicleApi } from '../../services/vehicles.js'
 import { imageRequestKey } from '../../services/private-images.js'
 import { createVehicleFlow, initialVehicleState } from '../../services/vehicle-flow.js'
 import { vehicleEntryPrefill } from '../../services/vehicle-entry-session.js'
+import InputCandidateReview from '../../components/InputCandidateReview.vue'
+import {candidateFields} from '../../services/input-candidates.js'
 const sourceMessage = ref('')
 const state = reactive(initialVehicleState())
 const flow = createVehicleFlow({ state, api: vehicleApi, token: () => ownerSession.accessToken, newKey: imageRequestKey })
@@ -41,6 +43,7 @@ function retryCatalog() { if (state.catalogRetry) flow.load(state.catalogRetry.k
     <view v-if="!ownerSession.accessToken" class="panel"><text>请先登录车主账号</text><button @tap="login">前往登录</button></view>
     <view v-else class="panel">
       <text v-if="sourceMessage" class="note">{{ sourceMessage }}</text>
+      <InputCandidateReview :actor="ownerSession.accessToken" :scope="'vehicle:new:'+state.modelId" scene="vehicle" :fields="candidateFields.vehicle" :values="state" :disabled="locked" @apply="Object.assign(state,$event)" />
       <text class="label">品牌</text>
       <picker :disabled="locked || !state.brand.length" :range="state.brand" range-key="name" @change="pickBrand"><view class="field">{{ state.brand.find(item => item.id === state.brandId)?.name || '请选择品牌' }}</view></picker>
       <button v-if="state.brand.length < state.totals.brand" class="more" :disabled="locked" @tap="flow.load('brand', true)">加载更多品牌</button>
@@ -69,20 +72,20 @@ function retryCatalog() { if (state.catalogRetry) flow.load(state.catalogRetry.k
 </template>
 
 <style scoped>
-.page { padding: 52rpx 32rpx 96rpx; min-height: 100vh; box-sizing: border-box; background: #f2f3f5; display: flex; flex-direction: column; }
-.eyebrow { color: #008f24; font-size: 23rpx; }
-.title { color: #1d2129; font-size: 44rpx; font-weight: 700; margin-top: 16rpx; }
-.intro { color: #4e5969; font-size: 26rpx; line-height: 40rpx; margin: 16rpx 0 28rpx; }
-.panel { background: white; border-radius: 24rpx; padding: 32rpx; display: flex; flex-direction: column; }
-.label { color: #4e5969; font-size: 26rpx; margin: 24rpx 0 12rpx; }
-.field { height: 84rpx; line-height: 84rpx; padding: 0 20rpx; border: 1rpx solid #c9cdd4; border-radius: 12rpx; font-size: 27rpx; color: #1d2129; box-sizing: border-box; background: #fafafa; }
-.field:focus { border-color: #00b42a; }
-input[disabled] { color: #86909c; }
-button { margin: 28rpx 0 0; min-height: 84rpx; font-size: 28rpx; border-radius: 14rpx; background: #00b42a; color: white; }
+.page { padding: 52rpx 32rpx 96rpx; min-height: 100vh; box-sizing: border-box; background: #efede6; display: flex; flex-direction: column; }
+.eyebrow { color: #074d30; font-size: 23rpx; }
+.title { color: #1a1d18; font-size: 44rpx; font-weight: 700; margin-top: 16rpx; }
+.intro { color: #454a41; font-size: 26rpx; line-height: 40rpx; margin: 16rpx 0 28rpx; }
+.panel { background: #fcfbf8; border-radius: 24rpx; padding: 32rpx; display: flex; flex-direction: column; }
+.label { color: #454a41; font-size: 26rpx; margin: 24rpx 0 12rpx; }
+.field { height: 84rpx; line-height: 84rpx; padding: 0 20rpx; border: 1rpx solid #d6d3c9; border-radius: 12rpx; font-size: 27rpx; color: #1a1d18; box-sizing: border-box; background: #fcfbf8; }
+.field:focus { border-color: #0b6b43; }
+input[disabled] { color: #63685e; }
+button { margin: 28rpx 0 0; min-height: 84rpx; font-size: 28rpx; border-radius: 14rpx; background: #0b6b43; color: #fcfbf8; }
 button::after { border: 0; }
-button[disabled] { background: #f2f3f5; color: #86909c; }
-.more { align-self: flex-start; background: #eef8f0; color: #008f24; font-size: 24rpx; min-height: 68rpx; }
-.status { color: #008f24; margin-top: 24rpx; font-size: 25rpx; line-height: 38rpx; }
-.error { color: #b42318; }
-.note { color: #86909c; margin-top: 24rpx; font-size: 23rpx; line-height: 36rpx; }
+button[disabled] { background: #efede6; color: #63685e; }
+.more { align-self: flex-start; background: #e9f2ec; color: #074d30; font-size: 24rpx; min-height: 68rpx; }
+.status { color: #074d30; margin-top: 24rpx; font-size: 25rpx; line-height: 38rpx; }
+.error { color: #b3261e; }
+.note { color: #63685e; margin-top: 24rpx; font-size: 23rpx; line-height: 36rpx; }
 </style>

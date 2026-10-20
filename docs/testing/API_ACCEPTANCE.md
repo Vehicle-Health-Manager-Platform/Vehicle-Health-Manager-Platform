@@ -1,0 +1,147 @@
+# 全API验收资产与匿名门禁（A4d-1）
+
+## 已有资产与未完成范围
+
+`docs/api/openapi.json` 是本轮来源。生成入口 `python scripts/generate_api_acceptance.py`，三个文件位于 [postman目录](postman/)：
+
+- `anonymous.postman_collection.json`：338项受保护契约，每项实际发送一次无令牌请求，检查HTTP401、JSON code40100、Cache-Control含no-store。
+- `prepared.postman_collection.json`：352项请求准备模板，默认全部禁发；需显式开启、配置具体业务案例才能发送。
+- `acceptance_inventory.json`：逐API四类案例清单。正常/边界/错误均为NOT_RUN；338项未授权初始也是NOT_RUN（生成文件不是执行证据）；14项公开接口标为另审。真实匿名结果另存实际报告，不篡改清单为“所有案例通过”。
+
+**匿名401不证明该控制器已实现**：全局安全过滤也会拒绝未实现路径。它验证匿名访问边界，不验证跨角色/跨用户/跨店授权，也不验证公开登录、回调验签、文件上传、正常保存或业务边界。352份模板不等于352项完整验收。原文Postman/Newman四类全量验收仍未完成。
+
+## 隔离复跑
+
+要求Docker Engine、Python3.11+、Node/npm。项目根目录：
+
+```powershell
+python scripts/run_api_acceptance.py
+```
+
+入口构建当前后端jar，复用性能阶段已经验证的容器归属检查封装，新建唯一标签的网络/MySQL/后端，执行62个迁移、确认131表；不使用已有库、业务凭据或真实用户，不接受远程base_url参数。匿名检查不灌入正向业务夹具。实例发布到随机本机环回端口，所有业务和外部开关沿用未配置默认。
+
+Newman固定6.2.1，通过npm exec安装在被忽略的.cache/npm-newman缓存，不修改项目依赖或全局安装。首次需能访问镜像/Maven/npm源。端点采用契约方法，路径参数用合成值1；无JWT时应在业务参数绑定前拒绝。不是用错误参数的400代替认证401。
+
+脚本验证实际请求方法与路径、338个唯一案例完整执行、每请求3条断言未失败/跳过；额外实际运行默认禁发模板，要求发送请求数为0。前后核对131表行数未变化；结束检查实现输入稳定性并回收本轮容器/网络。日志及Newman原始JSON只在本轮.cache目录；公开报告仅记录操作ID、计数、哈希、检查和清理结果，不含令牌或响应业务行。
+
+退出码0、最新本次report.json的passed=true才表示本轮匿名范围通过，full_api_acceptance_passed始终false。不能用历史成功报告、请求发送成功、案例数量或模板跳过来充当验收。
+
+CI：schema-and-ocr检查生成一致性及必要证据测试；backend在clean verify后运行同一Newman入口（CI专用--ci-built-jar，须先在无jar的新检出执行--record-ci-sources，再clean verify；核对构建后来源内容摘要一致与产物存在），上传api-acceptance-evidence报告。完整后端CI仍单独决定整套回归结果。
+
+## 使用业务模板
+
+在Postman导入prepared集合，初始base_url为不可用本机端口1，enable_prepared_requests=false。先复制到个人私有工作区，只选择本次案例，确认隔离环境和数据，再设enable_prepared_requests=true。
+
+每项请求需要配置：status_操作ID（明确预期HTTP状态）、路径/查询/请求头变量（含幂等编号）、受保护请求的access_token、JSON正文body_操作ID或multipart文件file_操作ID。所需变量未配置会跳过并报错，不能当成业务通过。可选查询项不用时请在个人副本中移除，不通过填错值伪造边界案例。不同角色需分别使用相应身份和归属数据，不能用同一令牌假装全部角色。
+
+模板只准备请求结构与明确状态断言，业务正文不会凭空生成“有效”样例；文件、签名回调、流式响应、PDF及特定用途请求还须按现有API专项文档补齐内容类型与专门断言。真实密钥、令牌、私有图片和环境文件不得提交仓库。
+
+## 下一阶段
+
+A4d-2先核定源草案中历史占位的适用性，以已确认软件范围为准，不恢复已取消的PC后台或正式H5。再按业务域补可复跑状态夹具及正常/边界/错误、跨角色/跨归属案例，优先车主车辆/档案→预约履约/券/资金本地协议→商家入驻与员工→运营治理/社区/知识，复用已有JDBC/HTTP测试证据但不冒充Newman执行。14项公开端点分别检查实现状态、未配置回退与验证协议；真实身份/正式资金/识别仍留B。性能延迟未达标事实继续保留，A4d-1不销掉该项。
+
+## A4d-2a 车辆与档案案例
+
+生成：`python scripts/owner_api_cases.py`。复跑：`python scripts/run_api_acceptance.py --owner-cases`。默认不传参数仍只执行原匿名范围。CI 使用 `--ci-built-jar --owner-cases`。新增集合默认关闭，只有隔离运行器灌入合成身份、归属数据后才执行。
+
+8 个接口各有正常、边界、错误、未授权案例，共 61 请求/204 断言。报告校验实际方法、路径、查询、身份令牌、状态与断言完整性，再检查车辆/档案/幂等记录/审计数量及其他用户数据未变。详见[阶段执行](../progress/R9_A4D2A_OWNER_API_CASES_EXECUTION.md)。私有 Newman JSON 与环境文件含合成 JWT，仅保留在 .cache，不上传。全 API 验收仍未完成。
+
+## A4d-2b1 预约到归档案例
+
+生成：`python scripts/fulfillment_api_cases.py`。复跑：`python scripts/run_api_acceptance.py --fulfillment-cases`。与 `--owner-cases` 分别执行，各使用全新隔离库；不能同时传入。CI 在同一 clean verify 后分别运行两次 `--ci-built-jar`，仅上传各自 `report.json`。
+
+16 接口共 102 请求/341 断言，每项有正常、边界、错误、未授权类别。夹具创建车主/另一车主/门店/另一门店/绑定技师会话、目录和两辆车及施工文件元数据，不直接植入已支付或已完成订单。席位、订单、支付、接车、派工、报工、签名、核销均由真实 HTTP 写入，服务归档由生产后台任务产生。
+
+LOCAL_TEST 回调在 Newman 中签署实际 JSON，验证无效签名、过期通知、签名正确但正文错误、成功及同一签名原文重放；报告审计重新计算 HMAC 并核对重放完全相同。仅隔离容器显式设置 local-payment-test profile、开关与随机测试密钥，真实 WECHAT 创建应 503。默认导入集合不发送请求。
+
+以本次退出码 0、脱敏报告 passed=true、数据库核对及清理通过为成功条件。证据目录中的 `fulfillment-environment.private.json`、`fulfillment-newman.private.json` 和日志含合成 JWT/预约码/签名，必须留在 .cache，不能作为共享 Postman 环境或 CI 附件上传。参考[阶段执行](../progress/R9_A4D2B1_FULFILLMENT_API_CASES_EXECUTION.md)。券交易生命周期下一 A4d-2b2 单独补齐，全部 API 验收仍未完成。
+
+## A4d-2b2 券交易生命周期
+
+生成：`python scripts/coupon_api_cases.py`。复跑：`python scripts/run_api_acceptance.py --coupon-cases`，CI 使用 `--ci-built-jar --coupon-cases`。与 owner/fulfillment 选项互斥，各自全新隔离数据库；默认无业务选项仍只检查匿名范围。加载/执行共用流程，原有集合和报告键保留。
+
+20 接口、160 请求/547 断言，包含现金券发布领取、预占与取消释放、服务端优惠后实付 7.34、签名支付消费、退款失败不返/成功返原券、再次预占；独立服务券授权、预览、核销与零佣金记录。正常/边界/错误/未授权均纳入，每次写入重放核对原回执，三组通知重放核对完全相同的正文/时间戳/随机数/签名，重新计算 HMAC。
+
+合成身份、目录和车辆夹具复用履约阶段，券与支付/退款等业务事实由真实 HTTP 创建。LOCAL_TEST 通知不需要真实资金；本轮不配置供应商查询/提交地址、不启用退款后台调度，不将通知处理通过当作外部退款完成。真实供应商调用继续留 B。开发态或哈希变化的报告不能作为最终成功证据。
+
+共享仅限本轮 `report.json` 与默认禁发脱敏摘要；`.cache` 内 `coupon-environment.private.json`、`coupon-newman.private.json` 及日志含 JWT/授权码/签名，不能上传。完整报告需 passed=true、来源稳定、数据库不变量与资源清理均通过。参考[执行记录](../progress/R9_A4D2B2_COUPON_API_CASES_EXECUTION.md)。下一商家入驻/员工与运营权限；全部 API 验收仍未完成。
+
+CI 构建来源采用内容摘要与新产物证据：`--record-ci-sources` 必须在 CI=true 且 jar 不存在时运行，在 clean verify 前写入 .cache/api-ci-build-input.json；三个 `--ci-built-jar` 验收均核对同一内容摘要。旧 jar、缺证明、缺产物、正文变化均拒绝，单纯文件时间戳变化不影响内容证明。
+
+## A4d-2c 商家管理与运营权限
+
+生成：`python scripts/merchant_api_cases.py`。复跑：`python scripts/run_api_acceptance.py --merchant-cases`。与其他业务选项互斥，各自新建隔离库；CI 使用 `--ci-built-jar --merchant-cases`，四组业务仍复用同一构建前内容摘要。新增来源哈希覆盖 merchant_api_cases.py。
+
+17 接口、119 请求/397 断言，覆盖申请/驳回重提/配额批准、独立运营权限、员工新增、禁用/启用与码轮换/撤销、店员/店长与跨店权限、门店资料白名单/空坐标/边界。员工码相关请求明确不带 Idempotency-Key，轮换须得到新码；正文与回执原始日志属于合成私有材料，不得上传。
+
+清理为唯一归属容器停止后等待自动删除，最多10秒，等待期间继续复核归属；仍存在、超时或归属变化均失败。仅将本轮 passed=true、源码稳定、数据库及资源回收全部通过的报告当作成功证据。详见[执行记录](../progress/R9_A4D2C_MERCHANT_API_CASES_EXECUTION.md)。正式激活/短信/微信绑定、真实资质上传与文件访问另行验收，全部 API 验收仍未完成。
+
+## A4d-2d1 私有问答与许可资料关键词检索
+
+生成：`python scripts/community_api_cases.py`。复跑：`python scripts/run_api_acceptance.py --community-cases`。与其他业务选项互斥，各用全新隔离数据库；CI复用同一已验证构建，加入第五套业务验收。新增来源哈希覆盖community_api_cases.py。
+
+23接口、176请求/590断言：私有问答16项，许可资料非AI7项。五个独立权限运营分别负责管理、第一/第二处理人、知识库、审核。私有问答重分配后旧处理者404（包括旧回执重放），管理员不能凭队列权限读正文；车主和处理者各关闭一条。政策停止后不得新建，原创建回执仍是原状态，必须GET读取现态。
+
+自写合成许可资料由真实HTTP创建/修订/发布，先验证未确认许可拒绝发布，再验证精确车型KEYWORD检索和公开引用详情，停止后旧引用不可读。详情路径必须绑定实际 knowledge_search 响应中的UUID；保留严格方法/查询/角色/断言核对。公用查询审计保留空值，q=不能被无声删除或当作缺参数充数。
+
+KNOWLEDGE_AI_ENABLED与COMMUNITY_PUBLICATION_ENABLED明确false，真实公开来源、正式语料、向量与外部AI另验。私有正文、许可凭证和JWT只留.cache原始材料，CI只上传report.json。只有本次passed=true、数据库/哈希及清理全部通过才可计本范围成功。见[执行记录](../progress/R9_A4D2D1_COMMUNITY_KNOWLEDGE_API_EXECUTION.md)。
+
+
+## A4d-2d2 公开问答授权治理
+
+独立执行 `python scripts/run_api_acceptance.py --publication-cases`；与其他业务套件互斥，分别使用新数据库。覆盖公开问答8接口及6项私有准备接口，134请求/456断言。详情证据绑定实际公开列表UUID，校验正常/边界/错误/未授权与实际令牌身份。脚本 `python scripts/publication_api_cases.py` 生成默认禁发集合与清单；`python -m unittest discover -s scripts -p test_publication_api_cases.py -v` 检查证据拒绝条件。
+
+仅隔离夹具将合成车主1测试会话设为VERIFIED_WECHAT，车主2保留未知来源以验证拒绝公开；不代表真实微信核验。问题、答复、授权与审核均通过HTTP生成。仅隔离服务开启公开问答，生产默认开关不变。原始环境/令牌/响应留在.cache，公共报告只保留数量、哈希与检查结果。下一经验卡授权与精选治理，再剩余车主接口。
+
+见[本阶段执行](../progress/R9_A4D2D2_PUBLIC_QA_API_EXECUTION.md)。
+
+
+## A4d-2d3 经验卡与精选治理
+
+独立执行 `python scripts/run_api_acceptance.py --experience-cases`；14接口、131请求/448断言。两组SQL合成已完成来源（WECHAT字段协议夹具与LOCAL_TEST排除对照）交由真实归档消费者生成卡片；准备钩子等待两卡完成后才冻结匿名表基线。治理写入全部经HTTP完成，公开详情绑定实际列表UUID，精选窗口以真实时间等待生效。
+
+包含授权、独立审核、撤回、同款投影、精选来源/配置/停止、旧UUID和旧精选不复活。此结果不代表真实微信身份、真实付款或供应商回调验签。原始JWT和私有响应仅留.cache，公开只提供脱敏报告。见[本阶段执行](../progress/R9_A4D2D3_EXPERIENCE_API_EXECUTION.md)。
+
+
+## A4d-2e1 车主档案、健康与提醒
+
+独立执行 `python scripts/run_api_acceptance.py --health-cases`：12项车主接口加2项规则接口，14接口、199请求/668断言。仅种合成身份与5条手动来源；目标资料、读数、历史、确认、规则、提醒和偏好全部真实HTTP写入。覆盖更正链、来源替换、清空、旧回执不恢复撤回状态及本人/运营权限，公开报告不保存原始私有响应。
+
+合成规则不是生产诊断阈值，本轮本地状态不代表外部消息送达。下一文件/PDF/分享，真实识别等供应商后置。见[执行文档](../progress/R9_A4D2E1_OWNER_HEALTH_API_EXECUTION.md)。
+
+
+## A4d-2e2a 私有PDF与摘要分享
+
+`python scripts/run_api_acceptance.py --export-cases` 覆盖PDF与分享6接口及快照冻结所需档案新增，共7接口、66请求/228断言。先安装固定的 `scripts/requirements-export-qa.txt`。实际解析二进制/规范Base64返回的PDF，检查中文和隐藏来源；能力令牌来自实际取链接响应并绑定接收正文，报告仅保留哈希、数量及通过标记。集合默认禁发，原始PDF/环境/令牌仅留.cache。
+
+修复分享未知/重复query校验。下一A4d-2e2b独立本地存储/扫描环境下的上传、签名访问、档案附件；本阶段不宣称它们完成。见[执行](../progress/R9_A4D2E2A_ARCHIVE_EXPORT_SHARE_EXECUTION.md)。
+
+
+## A4d-2e2b 私有上传与签名附件
+
+`python scripts/run_upload_acceptance.py --docker` 使用新的真实HTTP/Spring、MySQL、MinIO及ClamAV环境，8接口53场景。三角色上传/访问、扫描拒绝、重放/内容变化、越权、附件归属和签名实际下载/篡改/过期由Java旅程执行，Python核对独立清单、源码摘要、检查及资源清理。
+
+合成病毒库仅在测试配置注入真实引擎，主程序没有新鲜度绕过开关；不代表生产病毒库覆盖。CI full clean verify后使用 --check-only验证当前源码证据。只提交脱敏JSON，签名URL/JWT/原始日志不上传。见[执行](../progress/R9_A4D2E2B_PRIVATE_UPLOAD_API_EXECUTION.md)。
+
+## A4d-2e3 积分规则与本人账本
+
+`python scripts/run_api_acceptance.py --points-cases` 覆盖4项运营积分规则和4项车主任务/概览/流水/签到，共8接口116业务请求397断言。真实HTTP/MySQL及后台恢复任务，隔离SQL身份标记对照，不调用真实微信或外部AI。逐条审计实际正文、规则ID/版本/日期及幂等键，另核对冻结奖励、唯一分录、历史余额隔离和他人余额不变。集合默认禁发；真实身份获分与兑换事务另行验收。见[执行](../progress/R9_A4D2E3_POINTS_LEDGER_API_EXECUTION.md)。
+
+## A4d-2e4 积分兑换、扣分与券到账
+
+`python scripts/run_api_acceptance.py --exchange-cases` 覆盖8兑换本域及9串联支撑接口，17接口196请求668断言。真实签到获分→目录及两类券发布→兑换扣分/库存/到账→旧回执、停用及终身限额，正文源版本和幂等键严格审计，独立运营权限与另一车主对照。默认禁发；正式微信/外部服务及真机仍后置。见[执行](../progress/R9_A4D2E4_POINTS_EXCHANGE_API_EXECUTION.md)。
+
+## A4d-2f1 邀请关系与月度资格
+
+`python scripts/run_api_acceptance.py --invitation-cases` 覆盖9项推广码/本人归因/车主和员工记录进度、5项月度解锁政策及资格，共14接口136请求462断言。SQL合成19条归因/15条手机号证据与实际HTTP码/规则变更，核对唯一性、隐私、他人隔离、月度计数及政策CAS/停用/未来窗口。默认禁发；真实注册/电话核验和奖励发券另行验收。见[执行](../progress/R9_A4D2F1_INVITATION_MONTHLY_API_EXECUTION.md)。
+
+## A4d-2f2 奖励政策、资格冻结与定时发券
+
+`python scripts/run_reward_acceptance.py --docker` 使用真实Spring HTTP/MySQL旅程，14接口144请求及16项状态/事务/隐私不变量。HTTP发布政策前后调用生产资格bean接收明确合成的上游结果，真实定时worker执行审计失败回滚、退避到期重试、旧政策快照、缺库存不部分发券、停用来源及员工单边奖励。JUnit/Python绑定主程序与资源/测试/迁移/运行器源码，CI clean verify后--check-only只验本次证据，容器未移除不得通过。真实微信/电话供应商仍未验。见[执行](../progress/R9_A4D2F2_INVITATION_REWARD_API_EXECUTION.md)。
+
+
+## R9 A4d-2g1 人工诊断与本地消息
+
+2026-10-19：A4d-2g1 本地PASS（186.5秒）：20诊断接口169业务HTTP请求/566断言、338匿名请求/1014断言通过。2工单最终CLOSED/revision7及2，5正文/9事件/9已投递outbox/24接收目标及站内通知，2已读审计；转派立即撤销旧处理者正文与通知权限，管理者只可读队列，跨车主不可读/关闭/标已读。停用/暂停阻止新提交，历史答复保留，旧回执不重开工单或服务；通知ID绑定各接收者实际列表响应，正文/版本/角色/幂等键审计通过。143项Java定向（含继承事务回归）及10项新增/27项既有Python、默认新集合实际0请求0失败通过。源码前后稳定，后端/MySQL/网络清理成功。身份/月度资格仅SQL合成夹具，真实定时站内投递不代表微信消息送达；0奖励/积分/支付。前置PR179六项CI成功、后端待结束；全量API业务验收和性能延迟达标仍未完成。下一受控资料/档案授权与施工服务上下文→其他独立缺口→A5文档与交付核验→B微信/电话/外部服务→C真机。
+
+执行：`python scripts/diagnosis_api_cases.py`、`python -m unittest discover -s scripts -p test_diagnosis_api_cases.py -v`、`python scripts/run_api_acceptance.py --diagnosis-cases`。集合默认关闭；仅验收器新建全迁移数据库、合成身份和月度资格夹具后启用。CI先绑定构建前源文件，再clean verify，使用`--ci-built-jar --diagnosis-cases`执行；独立数据库，不能与其他业务suite共用。报告只上传脱敏summary，原始JWT/响应保留忽略目录。

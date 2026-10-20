@@ -13,4 +13,4 @@ onShow(()=>{visible=true;if(token())flow.load(1)});onHide(()=>{visible=false;flo
  <view v-for="row in rows" :key="row.user_coupon_id" class="expiry"><text>{{ row.terms.name }} · {{ couponAvailability[row.availability] }}</text><text>截止 {{ couponLocalTime(row.terms.valid_to) }}（北京时间）</text></view>
  <text v-if="state.message">{{ state.message }}</text><button v-if="state.message" :disabled="state.busy" @tap="flow.load(1)">重试有效期提醒</button><button @tap="uni.navigateTo({url:'/pages/coupon/mine'})">查看全部券与有效期</button>
 </view></template>
-<style scoped>.expiry{display:flex;flex-direction:column;gap:10rpx;margin-top:18rpx;font-size:25rpx;color:#4e5969}</style>
+<style scoped>.expiry{display:flex;flex-direction:column;gap:10rpx;margin-top:18rpx;font-size:25rpx;color:#454a41}</style>

@@ -1,0 +1,1968 @@
+{
+  "version": 1,
+  "cases": 196,
+  "operations": 17,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "empty_catalog",
+      "method": "GET",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "get_api_admin_point_exchange_catalog",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "empty_catalog_boundary",
+      "method": "GET",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "get_api_admin_point_exchange_catalog",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "empty_catalog_error",
+      "method": "GET",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "get_api_admin_point_exchange_catalog",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "empty_catalog_anonymous",
+      "method": "GET",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "get_api_admin_point_exchange_catalog",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "empty_catalog_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "get_api_admin_point_exchange_catalog",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "empty_sources",
+      "method": "GET",
+      "path": "/api/admin/point/exchange-sources",
+      "operation_id": "get_api_admin_point_exchange_sources",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "empty_sources_boundary",
+      "method": "GET",
+      "path": "/api/admin/point/exchange-sources",
+      "operation_id": "get_api_admin_point_exchange_sources",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "empty_sources_error",
+      "method": "GET",
+      "path": "/api/admin/point/exchange-sources",
+      "operation_id": "get_api_admin_point_exchange_sources",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "empty_sources_anonymous",
+      "method": "GET",
+      "path": "/api/admin/point/exchange-sources",
+      "operation_id": "get_api_admin_point_exchange_sources",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "empty_sources_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/point/exchange-sources",
+      "operation_id": "get_api_admin_point_exchange_sources",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "empty_offers",
+      "method": "GET",
+      "path": "/api/point/exchange-catalog",
+      "operation_id": "get_api_point_exchange_catalog",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "empty_offers_boundary",
+      "method": "GET",
+      "path": "/api/point/exchange-catalog",
+      "operation_id": "get_api_point_exchange_catalog",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "empty_offers_error",
+      "method": "GET",
+      "path": "/api/point/exchange-catalog",
+      "operation_id": "get_api_point_exchange_catalog",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "empty_offers_anonymous",
+      "method": "GET",
+      "path": "/api/point/exchange-catalog",
+      "operation_id": "get_api_point_exchange_catalog",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "empty_offers_wrong_role",
+      "method": "GET",
+      "path": "/api/point/exchange-catalog",
+      "operation_id": "get_api_point_exchange_catalog",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "coupon_operator_cannot_catalog",
+      "method": "GET",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "get_api_admin_point_exchange_catalog",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "coupon",
+      "assertions": 3
+    },
+    {
+      "name": "cash_create",
+      "method": "POST",
+      "path": "/api/merchant/coupons",
+      "operation_id": "post_api_merchant_coupons",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "cash_create_replay",
+      "method": "POST",
+      "path": "/api/merchant/coupons",
+      "operation_id": "post_api_merchant_coupons",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "cash_create_malformed",
+      "method": "POST",
+      "path": "/api/merchant/coupons",
+      "operation_id": "post_api_merchant_coupons",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "cash_create_anonymous",
+      "method": "POST",
+      "path": "/api/merchant/coupons",
+      "operation_id": "post_api_merchant_coupons",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "cash_create_wrong_role",
+      "method": "POST",
+      "path": "/api/merchant/coupons",
+      "operation_id": "post_api_merchant_coupons",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "cash_publish",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/1/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "cash_publish_replay",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/1/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "cash_publish_malformed",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/1/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "cash_publish_anonymous",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/1/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "cash_publish_wrong_role",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/1/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "cash_pool",
+      "method": "PUT",
+      "path": "/api/admin/coupons/1/pool",
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "kind": "normal",
+      "status": 200,
+      "role": "coupon",
+      "assertions": 4
+    },
+    {
+      "name": "cash_pool_replay",
+      "method": "PUT",
+      "path": "/api/admin/coupons/1/pool",
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "kind": "boundary",
+      "status": 200,
+      "role": "coupon",
+      "assertions": 4
+    },
+    {
+      "name": "cash_pool_malformed",
+      "method": "PUT",
+      "path": "/api/admin/coupons/1/pool",
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "kind": "error",
+      "status": 400,
+      "role": "coupon",
+      "assertions": 3
+    },
+    {
+      "name": "cash_pool_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/coupons/1/pool",
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "cash_pool_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/coupons/1/pool",
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "service_create",
+      "method": "POST",
+      "path": "/api/merchant/coupons",
+      "operation_id": "post_api_merchant_coupons",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "service_create_replay",
+      "method": "POST",
+      "path": "/api/merchant/coupons",
+      "operation_id": "post_api_merchant_coupons",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "service_create_malformed",
+      "method": "POST",
+      "path": "/api/merchant/coupons",
+      "operation_id": "post_api_merchant_coupons",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "service_create_anonymous",
+      "method": "POST",
+      "path": "/api/merchant/coupons",
+      "operation_id": "post_api_merchant_coupons",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "service_create_wrong_role",
+      "method": "POST",
+      "path": "/api/merchant/coupons",
+      "operation_id": "post_api_merchant_coupons",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "service_publish",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/2/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "service_publish_replay",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/2/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "service_publish_malformed",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/2/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "service_publish_anonymous",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/2/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "service_publish_wrong_role",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/2/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "service_pool",
+      "method": "PUT",
+      "path": "/api/admin/coupons/2/pool",
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "kind": "normal",
+      "status": 200,
+      "role": "coupon",
+      "assertions": 4
+    },
+    {
+      "name": "service_pool_replay",
+      "method": "PUT",
+      "path": "/api/admin/coupons/2/pool",
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "kind": "boundary",
+      "status": 200,
+      "role": "coupon",
+      "assertions": 4
+    },
+    {
+      "name": "service_pool_malformed",
+      "method": "PUT",
+      "path": "/api/admin/coupons/2/pool",
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "kind": "error",
+      "status": 400,
+      "role": "coupon",
+      "assertions": 3
+    },
+    {
+      "name": "service_pool_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/coupons/2/pool",
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "service_pool_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/coupons/2/pool",
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "points_cannot_pool",
+      "method": "PUT",
+      "path": "/api/admin/coupons/1/pool",
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "selected_sources",
+      "method": "GET",
+      "path": "/api/admin/point/exchange-sources",
+      "operation_id": "get_api_admin_point_exchange_sources",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 5
+    },
+    {
+      "name": "cash_catalog",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 6
+    },
+    {
+      "name": "cash_catalog_replay",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "cash_catalog_malformed",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "cash_catalog_anonymous",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "cash_catalog_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "invalid_cost",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "invalid_limit",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "invalid_source_revision",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "boundary",
+      "status": 409,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "invalid_pool_revision",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "boundary",
+      "status": 409,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "unknown_source",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "boundary",
+      "status": 404,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "client_privilege",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "cash_update",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/1",
+      "operation_id": "put_api_admin_point_exchange_catalog_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "cash_update_replay",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/1",
+      "operation_id": "put_api_admin_point_exchange_catalog_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "cash_update_malformed",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/1",
+      "operation_id": "put_api_admin_point_exchange_catalog_id",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "cash_update_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/1",
+      "operation_id": "put_api_admin_point_exchange_catalog_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "cash_update_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/1",
+      "operation_id": "put_api_admin_point_exchange_catalog_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "stale_catalog",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/1",
+      "operation_id": "put_api_admin_point_exchange_catalog_id",
+      "kind": "boundary",
+      "status": 409,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "missing_catalog",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/999999",
+      "operation_id": "put_api_admin_point_exchange_catalog_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "cash_catalog_publish",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/1/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "cash_catalog_publish_replay",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/1/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "cash_catalog_publish_malformed",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/1/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "cash_catalog_publish_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/1/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "cash_catalog_publish_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/1/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "published_immutable",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/1",
+      "operation_id": "put_api_admin_point_exchange_catalog_id",
+      "kind": "boundary",
+      "status": 409,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "service_catalog",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "service_catalog_replay",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "service_catalog_malformed",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "service_catalog_anonymous",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "service_catalog_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "service_catalog_publish",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/2/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "service_catalog_publish_replay",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/2/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "service_catalog_publish_malformed",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/2/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "service_catalog_publish_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/2/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "service_catalog_publish_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/2/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "unfunded_quote",
+      "method": "GET",
+      "path": "/api/point/exchange-catalog",
+      "operation_id": "get_api_point_exchange_catalog",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "unfunded_exchange",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "operation_id": "post_api_point_exchange",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "unverified_exchange",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "operation_id": "post_api_point_exchange",
+      "kind": "unauthorized",
+      "status": 409,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "earning_policy",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "earning_policy_replay",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "earning_policy_malformed",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "earning_policy_anonymous",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "earning_policy_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/point/task-policies",
+      "operation_id": "post_api_admin_point_task_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "earning_publish",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "earning_publish_replay",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "earning_publish_malformed",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "earning_publish_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "earning_publish_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/point/task-policies/1/status",
+      "operation_id": "put_api_admin_point_task_policies_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "earn_checkin",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "earn_checkin_replay",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "earn_checkin_malformed",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "earn_checkin_anonymous",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "earn_checkin_wrong_role",
+      "method": "POST",
+      "path": "/api/point/check-in",
+      "operation_id": "post_api_point_check_in",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "earned_overview",
+      "method": "GET",
+      "path": "/api/point/overview",
+      "operation_id": "get_api_point_overview",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "earned_overview_boundary",
+      "method": "GET",
+      "path": "/api/point/overview",
+      "operation_id": "get_api_point_overview",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "earned_overview_error",
+      "method": "GET",
+      "path": "/api/point/overview",
+      "operation_id": "get_api_point_overview",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "earned_overview_anonymous",
+      "method": "GET",
+      "path": "/api/point/overview",
+      "operation_id": "get_api_point_overview",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "earned_overview_wrong_role",
+      "method": "GET",
+      "path": "/api/point/overview",
+      "operation_id": "get_api_point_overview",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "eligible_quotes",
+      "method": "GET",
+      "path": "/api/point/exchange-catalog",
+      "operation_id": "get_api_point_exchange_catalog",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "other_quote",
+      "method": "GET",
+      "path": "/api/point/exchange-catalog",
+      "operation_id": "get_api_point_exchange_catalog",
+      "kind": "unauthorized",
+      "status": 200,
+      "role": "other",
+      "assertions": 4
+    },
+    {
+      "name": "wrong_catalog_revision",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "operation_id": "post_api_point_exchange",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "cash_exchange",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "operation_id": "post_api_point_exchange",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 6
+    },
+    {
+      "name": "cash_exchange_replay",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "operation_id": "post_api_point_exchange",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "cash_exchange_malformed",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "operation_id": "post_api_point_exchange",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "cash_exchange_anonymous",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "operation_id": "post_api_point_exchange",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "cash_exchange_wrong_role",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "operation_id": "post_api_point_exchange",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "same_key_changed_catalog",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "operation_id": "post_api_point_exchange",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "cash_lifetime_limit",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "operation_id": "post_api_point_exchange",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "cash_stop",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/1/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "cash_stop_replay",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/1/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "cash_stop_malformed",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/1/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "cash_stop_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/1/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "cash_stop_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/1/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "old_cash_publish",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/1/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "stopped_cannot_republish",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/1/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "boundary",
+      "status": 409,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_catalog",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "replacement_catalog_replay",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "replacement_catalog_malformed",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_catalog_anonymous",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_catalog_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_publish",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/3/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "replacement_publish_replay",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/3/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "replacement_publish_malformed",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/3/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_publish_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/3/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_publish_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/3/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_lifetime_limit",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "operation_id": "post_api_point_exchange",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_quote",
+      "method": "GET",
+      "path": "/api/point/exchange-catalog",
+      "operation_id": "get_api_point_exchange_catalog",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "service_exchange",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "operation_id": "post_api_point_exchange",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "service_exchange_replay",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "operation_id": "post_api_point_exchange",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "service_exchange_malformed",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "operation_id": "post_api_point_exchange",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "service_exchange_anonymous",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "operation_id": "post_api_point_exchange",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "service_exchange_wrong_role",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "operation_id": "post_api_point_exchange",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "service_sold_out",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "operation_id": "post_api_point_exchange",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "sold_out_quote",
+      "method": "GET",
+      "path": "/api/point/exchange-catalog",
+      "operation_id": "get_api_point_exchange_catalog",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "service_remove_pool",
+      "method": "PUT",
+      "path": "/api/admin/coupons/2/pool",
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "kind": "normal",
+      "status": 200,
+      "role": "coupon",
+      "assertions": 4
+    },
+    {
+      "name": "service_remove_pool_replay",
+      "method": "PUT",
+      "path": "/api/admin/coupons/2/pool",
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "kind": "boundary",
+      "status": 200,
+      "role": "coupon",
+      "assertions": 4
+    },
+    {
+      "name": "service_remove_pool_malformed",
+      "method": "PUT",
+      "path": "/api/admin/coupons/2/pool",
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "kind": "error",
+      "status": 400,
+      "role": "coupon",
+      "assertions": 3
+    },
+    {
+      "name": "service_remove_pool_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/coupons/2/pool",
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "service_remove_pool_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/coupons/2/pool",
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "source_changed_quote",
+      "method": "GET",
+      "path": "/api/point/exchange-catalog",
+      "operation_id": "get_api_point_exchange_catalog",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "service_restore_pool",
+      "method": "PUT",
+      "path": "/api/admin/coupons/2/pool",
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "kind": "normal",
+      "status": 200,
+      "role": "coupon",
+      "assertions": 4
+    },
+    {
+      "name": "service_restore_pool_replay",
+      "method": "PUT",
+      "path": "/api/admin/coupons/2/pool",
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "kind": "boundary",
+      "status": 200,
+      "role": "coupon",
+      "assertions": 4
+    },
+    {
+      "name": "service_restore_pool_malformed",
+      "method": "PUT",
+      "path": "/api/admin/coupons/2/pool",
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "kind": "error",
+      "status": 400,
+      "role": "coupon",
+      "assertions": 3
+    },
+    {
+      "name": "service_restore_pool_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/coupons/2/pool",
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "service_restore_pool_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/coupons/2/pool",
+      "operation_id": "put_api_admin_coupons_id_pool",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "old_pool_version_not_restored",
+      "method": "GET",
+      "path": "/api/point/exchange-catalog",
+      "operation_id": "get_api_point_exchange_catalog",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "changed_source_exchange",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "operation_id": "post_api_point_exchange",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "service_source_stop",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/2/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "service_source_stop_replay",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/2/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "service_source_stop_malformed",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/2/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "service_source_stop_anonymous",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/2/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "service_source_stop_wrong_role",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/2/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "cash_receipt_after_stop",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "operation_id": "post_api_point_exchange",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "service_receipt_after_source_stop",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "operation_id": "post_api_point_exchange",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "service_catalog_stop",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/2/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "service_catalog_stop_replay",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/2/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "service_catalog_stop_malformed",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/2/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "service_catalog_stop_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/2/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "service_catalog_stop_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/2/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_stop",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/3/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "replacement_stop_replay",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/3/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "replacement_stop_malformed",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/3/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_stop_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/3/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "replacement_stop_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/point/exchange-catalog/3/status",
+      "operation_id": "put_api_admin_point_exchange_catalog_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "no_active_offers",
+      "method": "GET",
+      "path": "/api/point/exchange-catalog",
+      "operation_id": "get_api_point_exchange_catalog",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "history",
+      "method": "GET",
+      "path": "/api/point/exchanges",
+      "operation_id": "get_api_point_exchanges",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "history_boundary",
+      "method": "GET",
+      "path": "/api/point/exchanges",
+      "operation_id": "get_api_point_exchanges",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "history_error",
+      "method": "GET",
+      "path": "/api/point/exchanges",
+      "operation_id": "get_api_point_exchanges",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "history_anonymous",
+      "method": "GET",
+      "path": "/api/point/exchanges",
+      "operation_id": "get_api_point_exchanges",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "history_wrong_role",
+      "method": "GET",
+      "path": "/api/point/exchanges",
+      "operation_id": "get_api_point_exchanges",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "other_history",
+      "method": "GET",
+      "path": "/api/point/exchanges",
+      "operation_id": "get_api_point_exchanges",
+      "kind": "unauthorized",
+      "status": 200,
+      "role": "other",
+      "assertions": 4
+    },
+    {
+      "name": "coupons_arrived",
+      "method": "GET",
+      "path": "/api/coupon/mine",
+      "operation_id": "get_api_coupon_mine",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "coupons_arrived_boundary",
+      "method": "GET",
+      "path": "/api/coupon/mine",
+      "operation_id": "get_api_coupon_mine",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "coupons_arrived_error",
+      "method": "GET",
+      "path": "/api/coupon/mine",
+      "operation_id": "get_api_coupon_mine",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "coupons_arrived_anonymous",
+      "method": "GET",
+      "path": "/api/coupon/mine",
+      "operation_id": "get_api_coupon_mine",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "coupons_arrived_wrong_role",
+      "method": "GET",
+      "path": "/api/coupon/mine",
+      "operation_id": "get_api_coupon_mine",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "other_coupons",
+      "method": "GET",
+      "path": "/api/coupon/mine",
+      "operation_id": "get_api_coupon_mine",
+      "kind": "unauthorized",
+      "status": 200,
+      "role": "other",
+      "assertions": 4
+    },
+    {
+      "name": "ledger",
+      "method": "GET",
+      "path": "/api/point/flow",
+      "operation_id": "get_api_point_flow",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "ledger_boundary",
+      "method": "GET",
+      "path": "/api/point/flow",
+      "operation_id": "get_api_point_flow",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "ledger_error",
+      "method": "GET",
+      "path": "/api/point/flow",
+      "operation_id": "get_api_point_flow",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "ledger_anonymous",
+      "method": "GET",
+      "path": "/api/point/flow",
+      "operation_id": "get_api_point_flow",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "ledger_wrong_role",
+      "method": "GET",
+      "path": "/api/point/flow",
+      "operation_id": "get_api_point_flow",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "final_catalog",
+      "method": "GET",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "get_api_admin_point_exchange_catalog",
+      "kind": "normal",
+      "status": 200,
+      "role": "points",
+      "assertions": 4
+    },
+    {
+      "name": "offers_duplicate",
+      "method": "GET",
+      "path": "/api/point/exchange-catalog",
+      "operation_id": "get_api_point_exchange_catalog",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "history_selector",
+      "method": "GET",
+      "path": "/api/point/exchanges",
+      "operation_id": "get_api_point_exchanges",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "sources_duplicate",
+      "method": "GET",
+      "path": "/api/admin/point/exchange-sources",
+      "operation_id": "get_api_admin_point_exchange_sources",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "exchange_query",
+      "method": "POST",
+      "path": "/api/point/exchange",
+      "operation_id": "post_api_point_exchange",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "catalog_query",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "error",
+      "status": 400,
+      "role": "points",
+      "assertions": 3
+    },
+    {
+      "name": "coupon_operator_cannot_create",
+      "method": "POST",
+      "path": "/api/admin/point/exchange-catalog",
+      "operation_id": "post_api_admin_point_exchange_catalog",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "coupon",
+      "assertions": 3
+    }
+  ]
+}

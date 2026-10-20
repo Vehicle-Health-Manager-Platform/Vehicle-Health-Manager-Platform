@@ -81,6 +81,6 @@ blank()
 </template>
 <style scoped>
 .field{display:flex;flex-direction:column;gap:12rpx;margin-top:24rpx}
-input,textarea{box-sizing:border-box;width:100%;background:#f7f8fa;border:1rpx solid #e5e6eb;border-radius:16rpx;padding:24rpx;margin:12rpx 0;font-size:26rpx}
+input,textarea{box-sizing:border-box;width:100%;background:#fcfbf8;border:1rpx solid #e0ded6;border-radius:16rpx;padding:24rpx;margin:12rpx 0;font-size:26rpx}
 input{height:88rpx}textarea{min-height:160rpx}
 </style>

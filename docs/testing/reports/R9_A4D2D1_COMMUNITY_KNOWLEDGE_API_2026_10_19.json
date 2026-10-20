@@ -1,0 +1,1780 @@
+{
+  "version": 1,
+  "passed": true,
+  "full_api_acceptance_passed": false,
+  "started_at": "2026-10-19T03:53:31.821200+00:00",
+  "scope": "anonymous authentication plus community business operations (synthetic identities; LOCAL_TEST funds only)",
+  "source_sha256": "892a19f92f889f2b402dde61e70306ea4c3572b921c632fa4817a3e87038e9aa",
+  "cleanup": [
+    {
+      "role": "backend",
+      "passed": true
+    },
+    {
+      "role": "mysql",
+      "passed": true
+    },
+    {
+      "role": "network",
+      "passed": true
+    }
+  ],
+  "contract_operations": 352,
+  "collection_sha256": "17d694318592e54bc139a122c5078cbe067084f710fc05cd05b5c953acf078a5",
+  "community_collection_sha256": "aa39b13d6db1fa02692741c055ffd274b2d55290d852b635d23e21b795cf40fa",
+  "jar_sha256": "5d5720f90ce9328711ae8afc93bc830036b361f8f9dbae28e455e77370475206",
+  "newman_exit_code": 0,
+  "evidence": {
+    "requests": 338,
+    "assertions": 1014,
+    "failures": 0,
+    "operations": [
+      "delete_api_merchant_staff_id_employee_code",
+      "generated_post_fe032ea229a821bb",
+      "get_api_admin_assessment",
+      "get_api_admin_assessment_history",
+      "get_api_admin_assessment_merchants",
+      "get_api_admin_assessment_month",
+      "get_api_admin_assessment_policies",
+      "get_api_admin_assessment_snapshots",
+      "get_api_admin_assessment_snapshots_id",
+      "get_api_admin_assessment_snapshots_id_facts",
+      "get_api_admin_business_dashboard",
+      "get_api_admin_business_merchants",
+      "get_api_admin_catalog_kind",
+      "get_api_admin_community_curation_sources",
+      "get_api_admin_community_curations",
+      "get_api_admin_community_curations_id",
+      "get_api_admin_community_images",
+      "get_api_admin_community_images_id_preview",
+      "get_api_admin_community_question_publications",
+      "get_api_admin_community_questions_cases",
+      "get_api_admin_community_questions_cases_id",
+      "get_api_admin_community_questions_handlers",
+      "get_api_admin_community_questions_policies",
+      "get_api_admin_coupons",
+      "get_api_admin_dashboard",
+      "get_api_admin_diagnosis_cases",
+      "get_api_admin_diagnosis_cases_id",
+      "get_api_admin_diagnosis_handlers",
+      "get_api_admin_diagnosis_notifications",
+      "get_api_admin_diagnosis_policies",
+      "get_api_admin_experience_cards",
+      "get_api_admin_health_policies_model_metric",
+      "get_api_admin_invite_diagnosis_policies",
+      "get_api_admin_invite_reward_coupons",
+      "get_api_admin_invite_reward_policies",
+      "get_api_admin_knowledge_documents",
+      "get_api_admin_knowledge_models",
+      "get_api_admin_merchant_applications",
+      "get_api_admin_merchant_applications_id",
+      "get_api_admin_merchant_applications_id_files_file_access",
+      "get_api_admin_merchant_quotas",
+      "get_api_admin_point_exchange_catalog",
+      "get_api_admin_point_exchange_sources",
+      "get_api_admin_point_task_policies",
+      "get_api_admin_price_monitor_comparisons",
+      "get_api_admin_price_monitor_comparisons_id",
+      "get_api_admin_price_monitor_policies",
+      "get_api_admin_price_monitor_policies_id",
+      "get_api_admin_price_monitor_quotes",
+      "get_api_admin_project_applicability_project_model",
+      "get_api_admin_reconciliation",
+      "get_api_admin_review_texts",
+      "get_api_admin_standard_project",
+      "get_api_ai_service_plan_catalog",
+      "get_api_archive_archiveId_files_fileId_access",
+      "get_api_archive_id_health_observation",
+      "get_api_archive_id_reminder",
+      "get_api_archive_id_structured",
+      "get_api_archive_list",
+      "get_api_archive_report",
+      "get_api_archive_shares",
+      "get_api_archive_shares_id_link",
+      "get_api_brand_list",
+      "get_api_check_pickup_context",
+      "get_api_check_pickup_order",
+      "get_api_check_pickup_order_files_file_access",
+      "get_api_community_experiences",
+      "get_api_community_experiences_id",
+      "get_api_community_hot",
+      "get_api_community_images",
+      "get_api_community_images_publicId",
+      "get_api_community_questions",
+      "get_api_community_questions_publicId",
+      "get_api_coupon_id_service_redemption",
+      "get_api_coupon_mine",
+      "get_api_coupon_offers",
+      "get_api_demo_vehicles_id",
+      "get_api_experience_cards",
+      "get_api_file_id_access",
+      "get_api_home_dashboard",
+      "get_api_home_reminders",
+      "get_api_input_materials_purpose_vehicleId_id_access",
+      "get_api_invite_diagnosis_eligibility",
+      "get_api_invite_progress",
+      "get_api_invite_qrcode",
+      "get_api_invite_records",
+      "get_api_invite_registration",
+      "get_api_invite_reward_policy",
+      "get_api_invite_rewards",
+      "get_api_knowledge_documents_reference",
+      "get_api_knowledge_search",
+      "get_api_merchant_applications_mine",
+      "get_api_merchant_assessment_history",
+      "get_api_merchant_assessment_month",
+      "get_api_merchant_assessment_policy",
+      "get_api_merchant_assessment_snapshots_id",
+      "get_api_merchant_assessment_snapshots_id_facts",
+      "get_api_merchant_assessment_staff",
+      "get_api_merchant_business_dashboard",
+      "get_api_merchant_commissions",
+      "get_api_merchant_coupons",
+      "get_api_merchant_coupons_service_redemptions",
+      "get_api_merchant_customer_relations",
+      "get_api_merchant_customer_relations_id",
+      "get_api_merchant_files_id_access",
+      "get_api_merchant_id",
+      "get_api_merchant_id_reviews_summary",
+      "get_api_merchant_invite_code",
+      "get_api_merchant_invite_progress",
+      "get_api_merchant_invite_records",
+      "get_api_merchant_invite_rewards",
+      "get_api_merchant_location",
+      "get_api_merchant_notifications",
+      "get_api_merchant_orders",
+      "get_api_merchant_orders_id",
+      "get_api_merchant_orders_id_assignment",
+      "get_api_merchant_orders_id_redemption",
+      "get_api_merchant_orders_id_refund",
+      "get_api_merchant_orders_id_service_context",
+      "get_api_merchant_orders_id_service_context_archives_archive_files_file_access",
+      "get_api_merchant_orders_id_work",
+      "get_api_merchant_orders_id_work_files_file_access",
+      "get_api_merchant_profile",
+      "get_api_merchant_projects",
+      "get_api_merchant_slots",
+      "get_api_merchant_staff",
+      "get_api_merchant_standard_projects",
+      "get_api_merchant_technicians",
+      "get_api_merchant_workbench",
+      "get_api_model_list",
+      "get_api_notifications",
+      "get_api_order_id",
+      "get_api_order_id_archive_grants",
+      "get_api_order_id_archive_grants_archive_files_file_preview",
+      "get_api_order_id_public_review_text",
+      "get_api_order_id_redemption",
+      "get_api_order_id_refund",
+      "get_api_order_id_review",
+      "get_api_order_id_review_publication",
+      "get_api_order_id_review_summary_consent",
+      "get_api_order_id_work",
+      "get_api_order_id_work_files_file_access",
+      "get_api_order_list",
+      "get_api_order_quote_id",
+      "get_api_order_slots",
+      "get_api_owner_community_image_sources",
+      "get_api_owner_community_images",
+      "get_api_owner_community_images_id_preview",
+      "get_api_owner_community_questions_cases",
+      "get_api_owner_community_questions_cases_caseId_publications",
+      "get_api_owner_community_questions_cases_id",
+      "get_api_owner_community_questions_context",
+      "get_api_owner_diagnosis_cases",
+      "get_api_owner_diagnosis_cases_id",
+      "get_api_owner_diagnosis_context",
+      "get_api_owner_diagnosis_notifications",
+      "get_api_owner_notifications",
+      "get_api_payments_id",
+      "get_api_point_exchange_catalog",
+      "get_api_point_exchanges",
+      "get_api_point_flow",
+      "get_api_point_overview",
+      "get_api_point_tasks",
+      "get_api_series_list",
+      "get_api_service_merchant_id",
+      "get_api_service_merchant_id_ratings",
+      "get_api_service_merchant_id_review_texts",
+      "get_api_service_project_id",
+      "get_api_service_project_id_merchants",
+      "get_api_service_project_id_rating_quotes",
+      "get_api_service_projects",
+      "get_api_tech_files_id_access",
+      "get_api_tech_notifications",
+      "get_api_tech_orders",
+      "get_api_tech_orders_id",
+      "get_api_tech_orders_id_service_context",
+      "get_api_tech_orders_id_service_context_archives_archive_files_file_access",
+      "get_api_tech_orders_id_work",
+      "get_api_tech_orders_id_work_files_file_access",
+      "get_api_tech_workbench",
+      "get_api_vehicle_health_observation_history",
+      "get_api_vehicle_health_observations",
+      "get_api_vehicle_list",
+      "get_api_vehicle_ocr_license",
+      "get_api_vehicle_reminders",
+      "get_api_vehicle_vehicle_health_dashboard",
+      "get_api_vehicle_vin_decode",
+      "post_api_admin_assessment_policies",
+      "post_api_admin_assessment_snapshots",
+      "post_api_admin_catalog_kind",
+      "post_api_admin_community_curations",
+      "post_api_admin_community_images_id_moderate",
+      "post_api_admin_community_question_publications_id_moderate",
+      "post_api_admin_community_questions_cases_id_close",
+      "post_api_admin_community_questions_cases_id_reply",
+      "post_api_admin_community_questions_policies",
+      "post_api_admin_diagnosis_cases_id_close",
+      "post_api_admin_diagnosis_cases_id_reply",
+      "post_api_admin_diagnosis_policies",
+      "post_api_admin_experience_cards_id_moderate",
+      "post_api_admin_invite_diagnosis_policies",
+      "post_api_admin_invite_reward_policies",
+      "post_api_admin_knowledge_documents",
+      "post_api_admin_knowledge_documents_id_status",
+      "post_api_admin_merchant_applications_id_moderate",
+      "post_api_admin_merchant_audit",
+      "post_api_admin_point_exchange_catalog",
+      "post_api_admin_point_task_policies",
+      "post_api_admin_price_monitor_policies",
+      "post_api_admin_review_texts_id_moderate",
+      "post_api_ai_chat",
+      "post_api_ai_plan",
+      "post_api_ai_service_plan",
+      "post_api_ai_service_plan_vehicle_evidence",
+      "post_api_archive_add",
+      "post_api_archive_share_view",
+      "post_api_archive_shares",
+      "post_api_archive_shares_id_revoke",
+      "post_api_auth_logout",
+      "post_api_auth_operator_logout",
+      "post_api_auth_phone_bind",
+      "post_api_auth_technician_bind",
+      "post_api_check_delivery_compare",
+      "post_api_check_pickup_confirm",
+      "post_api_check_pickup_dispute_review",
+      "post_api_check_pickup_submit",
+      "post_api_check_protection_upload",
+      "post_api_coupon_id_service_authorization",
+      "post_api_coupon_receive",
+      "post_api_coupon_release",
+      "post_api_coupon_reserve",
+      "post_api_demo_vehicles_id_mileage",
+      "post_api_experience_cards_id_consent",
+      "post_api_experience_cards_id_withdraw",
+      "post_api_file_upload",
+      "post_api_input_materials_purpose_vehicleId_upload",
+      "post_api_invite_code",
+      "post_api_knowledge_answer",
+      "post_api_merchant_applications",
+      "post_api_merchant_apply",
+      "post_api_merchant_coupons",
+      "post_api_merchant_coupons_service_preview",
+      "post_api_merchant_coupons_service_redeem",
+      "post_api_merchant_files_upload",
+      "post_api_merchant_invite_code",
+      "post_api_merchant_orders_id_actions",
+      "post_api_merchant_orders_id_assign",
+      "post_api_merchant_orders_id_dispute_handle",
+      "post_api_merchant_orders_id_redeem",
+      "post_api_merchant_orders_id_refund_decision",
+      "post_api_merchant_orders_id_refund_reconcile",
+      "post_api_merchant_projects",
+      "post_api_merchant_slots",
+      "post_api_merchant_slots_id_close",
+      "post_api_merchant_staff",
+      "post_api_merchant_staff_id_disable",
+      "post_api_merchant_staff_id_employee_code",
+      "post_api_merchant_staff_id_enable",
+      "post_api_order_cancel",
+      "post_api_order_coupon_create",
+      "post_api_order_coupon_preview",
+      "post_api_order_create",
+      "post_api_order_id_public_review_text_preview",
+      "post_api_order_id_refund",
+      "post_api_order_id_refund_withdraw",
+      "post_api_order_plan_booking_context",
+      "post_api_order_review",
+      "post_api_order_verify",
+      "post_api_owner_community_images",
+      "post_api_owner_community_images_id_withdraw",
+      "post_api_owner_community_images_preview",
+      "post_api_owner_community_question_publications_id_withdraw",
+      "post_api_owner_community_questions_cases",
+      "post_api_owner_community_questions_cases_caseId_publication_preview",
+      "post_api_owner_community_questions_cases_caseId_publications",
+      "post_api_owner_community_questions_cases_id_close",
+      "post_api_owner_community_questions_cases_id_message",
+      "post_api_owner_diagnosis_cases",
+      "post_api_owner_diagnosis_cases_id_close",
+      "post_api_owner_diagnosis_cases_id_message",
+      "post_api_payments_create",
+      "post_api_payments_id_reconcile",
+      "post_api_point_check_in",
+      "post_api_point_exchange",
+      "post_api_refunds_create",
+      "post_api_service_merchant_id_distance",
+      "post_api_service_merchant_id_review_summary",
+      "post_api_service_project_id_nearby_merchants",
+      "post_api_service_project_search",
+      "post_api_tech_files_upload",
+      "post_api_tech_orders_id_accept",
+      "post_api_tech_report_submit",
+      "post_api_tech_sign",
+      "post_api_vehicle_add",
+      "put_api_admin_assessment_policies_id",
+      "put_api_admin_assessment_policies_id_status",
+      "put_api_admin_catalog_kind_id",
+      "put_api_admin_community_curations_id",
+      "put_api_admin_community_curations_id_status",
+      "put_api_admin_community_questions_cases_id_assignment",
+      "put_api_admin_community_questions_policies_id",
+      "put_api_admin_community_questions_policies_id_status",
+      "put_api_admin_coupons_id_pool",
+      "put_api_admin_diagnosis_cases_id_assignment",
+      "put_api_admin_diagnosis_notifications_id_read",
+      "put_api_admin_diagnosis_policies_id",
+      "put_api_admin_diagnosis_policies_id_status",
+      "put_api_admin_health_policies_model_metric",
+      "put_api_admin_invite_diagnosis_policies_id",
+      "put_api_admin_invite_diagnosis_policies_id_status",
+      "put_api_admin_invite_reward_policies_id",
+      "put_api_admin_invite_reward_policies_id_status",
+      "put_api_admin_knowledge_documents_id",
+      "put_api_admin_merchant_quotas",
+      "put_api_admin_point_exchange_catalog_id",
+      "put_api_admin_point_exchange_catalog_id_status",
+      "put_api_admin_point_task_policies_id",
+      "put_api_admin_point_task_policies_id_status",
+      "put_api_admin_price_monitor_policies_id",
+      "put_api_admin_price_monitor_policies_id_status",
+      "put_api_admin_project_applicability_project_model",
+      "put_api_archive_id_health_observation",
+      "put_api_archive_id_reminder",
+      "put_api_archive_id_structured",
+      "put_api_merchant_coupons_id",
+      "put_api_merchant_coupons_id_status",
+      "put_api_merchant_location",
+      "put_api_merchant_notifications_id_read",
+      "put_api_merchant_profile",
+      "put_api_order_id_archive_grants_archive",
+      "put_api_order_id_public_review_text",
+      "put_api_order_id_review_publication",
+      "put_api_order_id_review_summary_consent",
+      "put_api_owner_diagnosis_notifications_id_read",
+      "put_api_owner_notifications_id_read",
+      "put_api_tech_notifications_id_read",
+      "put_api_vehicle_vehicle_health_metric_confirmation",
+      "put_api_vehicle_vehicle_reminder_preference"
+    ]
+  },
+  "prepared_default_disabled_verified": true,
+  "business_table_counts_unchanged": true,
+  "community_newman_exit_code": 0,
+  "community_evidence": {
+    "requests": 176,
+    "assertions": 590,
+    "failures": 0,
+    "coverage": {
+      "get_api_owner_community_questions_context": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_admin_community_questions_policies": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "get_api_admin_community_questions_policies": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "put_api_admin_community_questions_policies_id": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "put_api_admin_community_questions_policies_id_status": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "get_api_admin_community_questions_handlers": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_owner_community_questions_cases": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "get_api_owner_community_questions_cases": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "get_api_owner_community_questions_cases_id": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "get_api_admin_community_questions_cases": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "get_api_admin_community_questions_cases_id": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "put_api_admin_community_questions_cases_id_assignment": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_admin_community_questions_cases_id_reply": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_owner_community_questions_cases_id_message": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_owner_community_questions_cases_id_close": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_admin_community_questions_cases_id_close": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "get_api_admin_knowledge_models": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_admin_knowledge_documents": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "get_api_admin_knowledge_documents": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_admin_knowledge_documents_id_status": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "get_api_knowledge_search": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "put_api_admin_knowledge_documents_id": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "get_api_knowledge_documents_reference": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ]
+    },
+    "cases": [
+      {
+        "name": "context_unconfigured",
+        "operation_id": "get_api_owner_community_questions_context",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "policy_create",
+        "operation_id": "post_api_admin_community_questions_policies",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "policy_create_replay",
+        "operation_id": "post_api_admin_community_questions_policies",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "policy_create_malformed",
+        "operation_id": "post_api_admin_community_questions_policies",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "policy_create_anonymous",
+        "operation_id": "post_api_admin_community_questions_policies",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "policy_create_wrong_role",
+        "operation_id": "post_api_admin_community_questions_policies",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "policy_list",
+        "operation_id": "get_api_admin_community_questions_policies",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "policy_list_boundary",
+        "operation_id": "get_api_admin_community_questions_policies",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "policy_list_error",
+        "operation_id": "get_api_admin_community_questions_policies",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "policy_list_anonymous",
+        "operation_id": "get_api_admin_community_questions_policies",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "policy_list_wrong_role",
+        "operation_id": "get_api_admin_community_questions_policies",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "handler_cannot_manage_policy",
+        "operation_id": "get_api_admin_community_questions_policies",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "policy_update",
+        "operation_id": "put_api_admin_community_questions_policies_id",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "policy_update_replay",
+        "operation_id": "put_api_admin_community_questions_policies_id",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "policy_update_malformed",
+        "operation_id": "put_api_admin_community_questions_policies_id",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "policy_update_anonymous",
+        "operation_id": "put_api_admin_community_questions_policies_id",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "policy_update_wrong_role",
+        "operation_id": "put_api_admin_community_questions_policies_id",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "policy_publish",
+        "operation_id": "put_api_admin_community_questions_policies_id_status",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "policy_publish_replay",
+        "operation_id": "put_api_admin_community_questions_policies_id_status",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "policy_publish_malformed",
+        "operation_id": "put_api_admin_community_questions_policies_id_status",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "policy_publish_anonymous",
+        "operation_id": "put_api_admin_community_questions_policies_id_status",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "policy_publish_wrong_role",
+        "operation_id": "put_api_admin_community_questions_policies_id_status",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "context_open",
+        "operation_id": "get_api_owner_community_questions_context",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "context_open_error",
+        "operation_id": "get_api_owner_community_questions_context",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "context_open_anonymous",
+        "operation_id": "get_api_owner_community_questions_context",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "context_open_wrong_role",
+        "operation_id": "get_api_owner_community_questions_context",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "handlers",
+        "operation_id": "get_api_admin_community_questions_handlers",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "handlers_boundary",
+        "operation_id": "get_api_admin_community_questions_handlers",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "handlers_error",
+        "operation_id": "get_api_admin_community_questions_handlers",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "handlers_anonymous",
+        "operation_id": "get_api_admin_community_questions_handlers",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "handlers_wrong_role",
+        "operation_id": "get_api_admin_community_questions_handlers",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "question_create",
+        "operation_id": "post_api_owner_community_questions_cases",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "question_create_replay",
+        "operation_id": "post_api_owner_community_questions_cases",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "question_create_malformed",
+        "operation_id": "post_api_owner_community_questions_cases",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "question_create_anonymous",
+        "operation_id": "post_api_owner_community_questions_cases",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "question_create_wrong_role",
+        "operation_id": "post_api_owner_community_questions_cases",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "question_changed_intent",
+        "operation_id": "post_api_owner_community_questions_cases",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "question_foreign_vehicle",
+        "operation_id": "post_api_owner_community_questions_cases",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "question_without_consent",
+        "operation_id": "post_api_owner_community_questions_cases",
+        "kind": "boundary",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "owner_cases",
+        "operation_id": "get_api_owner_community_questions_cases",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "owner_cases_boundary",
+        "operation_id": "get_api_owner_community_questions_cases",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "owner_cases_error",
+        "operation_id": "get_api_owner_community_questions_cases",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "owner_cases_anonymous",
+        "operation_id": "get_api_owner_community_questions_cases",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "owner_cases_wrong_role",
+        "operation_id": "get_api_owner_community_questions_cases",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "owner_detail",
+        "operation_id": "get_api_owner_community_questions_cases_id",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "owner_detail_boundary",
+        "operation_id": "get_api_owner_community_questions_cases_id",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "owner_detail_error",
+        "operation_id": "get_api_owner_community_questions_cases_id",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "owner_detail_anonymous",
+        "operation_id": "get_api_owner_community_questions_cases_id",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "owner_detail_wrong_role",
+        "operation_id": "get_api_owner_community_questions_cases_id",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "owner_detail_foreign",
+        "operation_id": "get_api_owner_community_questions_cases_id",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "queue",
+        "operation_id": "get_api_admin_community_questions_cases",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "queue_boundary",
+        "operation_id": "get_api_admin_community_questions_cases",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "queue_error",
+        "operation_id": "get_api_admin_community_questions_cases",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "queue_anonymous",
+        "operation_id": "get_api_admin_community_questions_cases",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "queue_wrong_role",
+        "operation_id": "get_api_admin_community_questions_cases",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "handler_cannot_read_queue",
+        "operation_id": "get_api_admin_community_questions_cases",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "manager_cannot_read_private_detail",
+        "operation_id": "get_api_admin_community_questions_cases_id",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "unassigned_handler_cannot_read",
+        "operation_id": "get_api_admin_community_questions_cases_id",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "assign_first",
+        "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "assign_first_replay",
+        "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "assign_first_malformed",
+        "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "assign_first_anonymous",
+        "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "assign_first_wrong_role",
+        "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "handler_detail",
+        "operation_id": "get_api_admin_community_questions_cases_id",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "handler_detail_boundary",
+        "operation_id": "get_api_admin_community_questions_cases_id",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "handler_detail_error",
+        "operation_id": "get_api_admin_community_questions_cases_id",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "handler_detail_anonymous",
+        "operation_id": "get_api_admin_community_questions_cases_id",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "handler_detail_wrong_role",
+        "operation_id": "get_api_admin_community_questions_cases_id",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "handler_mine",
+        "operation_id": "get_api_admin_community_questions_cases",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "manager_cannot_read_mine",
+        "operation_id": "get_api_admin_community_questions_cases",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "reply_first",
+        "operation_id": "post_api_admin_community_questions_cases_id_reply",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "reply_first_replay",
+        "operation_id": "post_api_admin_community_questions_cases_id_reply",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "reply_first_malformed",
+        "operation_id": "post_api_admin_community_questions_cases_id_reply",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "reply_first_anonymous",
+        "operation_id": "post_api_admin_community_questions_cases_id_reply",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "reply_first_wrong_role",
+        "operation_id": "post_api_admin_community_questions_cases_id_reply",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "owner_followup",
+        "operation_id": "post_api_owner_community_questions_cases_id_message",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "owner_followup_replay",
+        "operation_id": "post_api_owner_community_questions_cases_id_message",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "owner_followup_malformed",
+        "operation_id": "post_api_owner_community_questions_cases_id_message",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "owner_followup_anonymous",
+        "operation_id": "post_api_owner_community_questions_cases_id_message",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "owner_followup_wrong_role",
+        "operation_id": "post_api_owner_community_questions_cases_id_message",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "followup_stale_revision",
+        "operation_id": "post_api_owner_community_questions_cases_id_message",
+        "kind": "boundary",
+        "status": 409,
+        "passed": true
+      },
+      {
+        "name": "other_owner_cannot_follow",
+        "operation_id": "post_api_owner_community_questions_cases_id_message",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "reassign_second",
+        "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "reassign_second_replay",
+        "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "reassign_second_malformed",
+        "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "reassign_second_anonymous",
+        "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "reassign_second_wrong_role",
+        "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "former_handler_cannot_read",
+        "operation_id": "get_api_admin_community_questions_cases_id",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "former_handler_cannot_replay_reply",
+        "operation_id": "post_api_admin_community_questions_cases_id_reply",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "reply_second",
+        "operation_id": "post_api_admin_community_questions_cases_id_reply",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "reply_second_replay",
+        "operation_id": "post_api_admin_community_questions_cases_id_reply",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "reply_second_malformed",
+        "operation_id": "post_api_admin_community_questions_cases_id_reply",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "reply_second_anonymous",
+        "operation_id": "post_api_admin_community_questions_cases_id_reply",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "reply_second_wrong_role",
+        "operation_id": "post_api_admin_community_questions_cases_id_reply",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "owner_close",
+        "operation_id": "post_api_owner_community_questions_cases_id_close",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "owner_close_replay",
+        "operation_id": "post_api_owner_community_questions_cases_id_close",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "owner_close_malformed",
+        "operation_id": "post_api_owner_community_questions_cases_id_close",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "owner_close_anonymous",
+        "operation_id": "post_api_owner_community_questions_cases_id_close",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "owner_close_wrong_role",
+        "operation_id": "post_api_owner_community_questions_cases_id_close",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "closed_owner_case",
+        "operation_id": "get_api_owner_community_questions_cases_id",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "second_question",
+        "operation_id": "post_api_owner_community_questions_cases",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "second_question_replay",
+        "operation_id": "post_api_owner_community_questions_cases",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "second_question_malformed",
+        "operation_id": "post_api_owner_community_questions_cases",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "second_question_anonymous",
+        "operation_id": "post_api_owner_community_questions_cases",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "second_question_wrong_role",
+        "operation_id": "post_api_owner_community_questions_cases",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "assign_second_case",
+        "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "assign_second_case_replay",
+        "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "assign_second_case_malformed",
+        "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "assign_second_case_anonymous",
+        "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "assign_second_case_wrong_role",
+        "operation_id": "put_api_admin_community_questions_cases_id_assignment",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "handler_close",
+        "operation_id": "post_api_admin_community_questions_cases_id_close",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "handler_close_replay",
+        "operation_id": "post_api_admin_community_questions_cases_id_close",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "handler_close_malformed",
+        "operation_id": "post_api_admin_community_questions_cases_id_close",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "handler_close_anonymous",
+        "operation_id": "post_api_admin_community_questions_cases_id_close",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "handler_close_wrong_role",
+        "operation_id": "post_api_admin_community_questions_cases_id_close",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "policy_stop",
+        "operation_id": "put_api_admin_community_questions_policies_id_status",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "policy_stop_replay",
+        "operation_id": "put_api_admin_community_questions_policies_id_status",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "policy_stop_malformed",
+        "operation_id": "put_api_admin_community_questions_policies_id_status",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "policy_stop_anonymous",
+        "operation_id": "put_api_admin_community_questions_policies_id_status",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "policy_stop_wrong_role",
+        "operation_id": "put_api_admin_community_questions_policies_id_status",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "context_stopped",
+        "operation_id": "get_api_owner_community_questions_context",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "new_question_after_stop",
+        "operation_id": "post_api_owner_community_questions_cases",
+        "kind": "boundary",
+        "status": 409,
+        "passed": true
+      },
+      {
+        "name": "original_create_receipt_after_close",
+        "operation_id": "post_api_owner_community_questions_cases",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "knowledge_models",
+        "operation_id": "get_api_admin_knowledge_models",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "knowledge_models_boundary",
+        "operation_id": "get_api_admin_knowledge_models",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "knowledge_models_error",
+        "operation_id": "get_api_admin_knowledge_models",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "knowledge_models_anonymous",
+        "operation_id": "get_api_admin_knowledge_models",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "knowledge_models_wrong_role",
+        "operation_id": "get_api_admin_knowledge_models",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "community_manager_not_knowledge",
+        "operation_id": "get_api_admin_knowledge_models",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "reviewer_not_knowledge",
+        "operation_id": "get_api_admin_knowledge_models",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "knowledge_create",
+        "operation_id": "post_api_admin_knowledge_documents",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "knowledge_create_replay",
+        "operation_id": "post_api_admin_knowledge_documents",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "knowledge_create_malformed",
+        "operation_id": "post_api_admin_knowledge_documents",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "knowledge_create_anonymous",
+        "operation_id": "post_api_admin_knowledge_documents",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "knowledge_create_wrong_role",
+        "operation_id": "post_api_admin_knowledge_documents",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "knowledge_admin",
+        "operation_id": "get_api_admin_knowledge_documents",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "knowledge_admin_boundary",
+        "operation_id": "get_api_admin_knowledge_documents",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "knowledge_admin_error",
+        "operation_id": "get_api_admin_knowledge_documents",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "knowledge_admin_anonymous",
+        "operation_id": "get_api_admin_knowledge_documents",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "knowledge_admin_wrong_role",
+        "operation_id": "get_api_admin_knowledge_documents",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "knowledge_cannot_manage_questions",
+        "operation_id": "get_api_admin_community_questions_policies",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "knowledge_cannot_read_private_question",
+        "operation_id": "get_api_admin_community_questions_cases_id",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "knowledge_publish_without_license",
+        "operation_id": "post_api_admin_knowledge_documents_id_status",
+        "kind": "boundary",
+        "status": 409,
+        "passed": true
+      },
+      {
+        "name": "knowledge_search_draft_hidden",
+        "operation_id": "get_api_knowledge_search",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "knowledge_update",
+        "operation_id": "put_api_admin_knowledge_documents_id",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "knowledge_update_replay",
+        "operation_id": "put_api_admin_knowledge_documents_id",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "knowledge_update_malformed",
+        "operation_id": "put_api_admin_knowledge_documents_id",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "knowledge_update_anonymous",
+        "operation_id": "put_api_admin_knowledge_documents_id",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "knowledge_update_wrong_role",
+        "operation_id": "put_api_admin_knowledge_documents_id",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "knowledge_publish",
+        "operation_id": "post_api_admin_knowledge_documents_id_status",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "knowledge_publish_replay",
+        "operation_id": "post_api_admin_knowledge_documents_id_status",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "knowledge_publish_malformed",
+        "operation_id": "post_api_admin_knowledge_documents_id_status",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "knowledge_publish_anonymous",
+        "operation_id": "post_api_admin_knowledge_documents_id_status",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "knowledge_publish_wrong_role",
+        "operation_id": "post_api_admin_knowledge_documents_id_status",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "knowledge_update_frozen",
+        "operation_id": "put_api_admin_knowledge_documents_id",
+        "kind": "boundary",
+        "status": 409,
+        "passed": true
+      },
+      {
+        "name": "knowledge_search",
+        "operation_id": "get_api_knowledge_search",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "knowledge_search_boundary",
+        "operation_id": "get_api_knowledge_search",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "knowledge_search_error",
+        "operation_id": "get_api_knowledge_search",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "knowledge_search_anonymous",
+        "operation_id": "get_api_knowledge_search",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "knowledge_search_wrong_role",
+        "operation_id": "get_api_knowledge_search",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "knowledge_search_foreign_vehicle",
+        "operation_id": "get_api_knowledge_search",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "other_owner_own_model_can_search",
+        "operation_id": "get_api_knowledge_search",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "knowledge_detail",
+        "operation_id": "get_api_knowledge_documents_reference",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "knowledge_detail_boundary",
+        "operation_id": "get_api_knowledge_documents_reference",
+        "kind": "boundary",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "knowledge_detail_error",
+        "operation_id": "get_api_knowledge_documents_reference",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "knowledge_detail_anonymous",
+        "operation_id": "get_api_knowledge_documents_reference",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "knowledge_detail_wrong_role",
+        "operation_id": "get_api_knowledge_documents_reference",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "knowledge_detail_foreign_vehicle",
+        "operation_id": "get_api_knowledge_documents_reference",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "knowledge_stop",
+        "operation_id": "post_api_admin_knowledge_documents_id_status",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "knowledge_stop_replay",
+        "operation_id": "post_api_admin_knowledge_documents_id_status",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "knowledge_stop_malformed",
+        "operation_id": "post_api_admin_knowledge_documents_id_status",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "knowledge_stop_anonymous",
+        "operation_id": "post_api_admin_knowledge_documents_id_status",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "knowledge_stop_wrong_role",
+        "operation_id": "post_api_admin_knowledge_documents_id_status",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "knowledge_stopped_reference_hidden",
+        "operation_id": "get_api_knowledge_documents_reference",
+        "kind": "boundary",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "knowledge_stopped_search_empty",
+        "operation_id": "get_api_knowledge_search",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "knowledge_stopped_cannot_republish",
+        "operation_id": "post_api_admin_knowledge_documents_id_status",
+        "kind": "boundary",
+        "status": 409,
+        "passed": true
+      }
+    ],
+    "detail_reference_bound_to_actual_search": true
+  },
+  "community_database": {
+    "row_counts": {
+      "policies": 1,
+      "cases": 2,
+      "messages": 5,
+      "case_events": 10,
+      "documents": 1,
+      "document_events": 4,
+      "publications": 0,
+      "diagnoses": 0,
+      "payments": 0
+    },
+    "checks": {
+      "cases_closed_at_expected_revisions": true,
+      "policy_stopped": true,
+      "document_stopped": true,
+      "no_private_text_in_audit": true,
+      "no_foreign_questions": true,
+      "ai_use_not_permitted": true,
+      "independent_operator_permissions": true
+    }
+  },
+  "sources_unchanged": true,
+  "finished_at": "2026-10-19T03:56:57.530418+00:00",
+  "duration_seconds": 205.641
+}

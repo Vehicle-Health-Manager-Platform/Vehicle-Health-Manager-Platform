@@ -8,6 +8,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.HexFormat;
+import java.nio.charset.StandardCharsets;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.pdmodel.common.PDStream;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -66,7 +73,37 @@ public class ArchiveReportPdfRenderer {
                 pages.paragraph("说明：本报告仅汇总已有且本人可见的车辆档案。未提供的证件材料、健康评分、六项指标和趋势不会推算。照片原件请在微信小程序的本人档案中查看。", 9, 4);
                 pages.close();
                 document.save(output);
+                // The font cmap has aliases (e.g. 车 and a CJK radical). Subsetting may
+                // pick the alias for ToUnicode; preserve the actual written characters.
+                return withWrittenUnicode(output.toByteArray(), pages.unicode);
             }
+        }
+    }
+
+    private static byte[] withWrittenUnicode(byte[] pdf, Map<String,String> unicode) throws IOException {
+        StringBuilder cmap = new StringBuilder("/CIDInit /ProcSet findresource begin\n12 dict begin\nbegincmap\n"
+            + "/CIDSystemInfo << /Registry (Adobe) /Ordering (UCS) /Supplement 0 >> def\n"
+            + "/CMapName /OwnerArchiveUnicode def\n/CMapType 2 def\n"
+            + "1 begincodespacerange\n<0000> <FFFF>\nendcodespacerange\n");
+        var entries = new ArrayList<>(unicode.entrySet());
+        for (int offset=0; offset<entries.size(); offset+=100) {
+            int end=Math.min(offset+100,entries.size());
+            cmap.append(end-offset).append(" beginbfchar\n");
+            for (var entry : entries.subList(offset,end))
+                cmap.append('<').append(entry.getKey()).append("> <").append(entry.getValue()).append(">\n");
+            cmap.append("endbfchar\n");
+        }
+        cmap.append("endcmap\nCMapName currentdict /CMap defineresource pop\nend\nend\n");
+        // Apply after subsetting so the font writer cannot overwrite this map.
+        try (var document=Loader.loadPDF(pdf);var output=new ByteArrayOutputStream()) {
+            var stream=new PDStream(document);
+            try (var target=stream.createOutputStream(COSName.FLATE_DECODE)) {
+                target.write(cmap.toString().getBytes(StandardCharsets.US_ASCII));
+            }
+            for (var page : document.getPages())
+                for (var name : page.getResources().getFontNames())
+                    page.getResources().getFont(name).getCOSObject().setItem(COSName.TO_UNICODE,stream);
+            document.save(output);
             return output.toByteArray();
         }
     }
@@ -119,6 +156,7 @@ public class ArchiveReportPdfRenderer {
     private static final class PageWriter {
         private final PDDocument document;
         private final PDType0Font font;
+        private final Map<String,String> unicode = new TreeMap<>();
         private PDPageContentStream stream;
         private float y;
 
@@ -162,6 +200,12 @@ public class ArchiveReportPdfRenderer {
             stream.beginText();
             stream.setFont(font, size);
             stream.newLineAtOffset(LEFT, y);
+            for (int offset=0; offset<value.length();) {
+                int point=value.codePointAt(offset);offset+=Character.charCount(point);
+                String character=new String(Character.toChars(point));
+                String code=HexFormat.of().formatHex(font.encode(character));
+                unicode.putIfAbsent(code,HexFormat.of().formatHex(character.getBytes(StandardCharsets.UTF_16BE)));
+            }
             stream.showText(value);
             stream.endText();
             y -= size + 4;

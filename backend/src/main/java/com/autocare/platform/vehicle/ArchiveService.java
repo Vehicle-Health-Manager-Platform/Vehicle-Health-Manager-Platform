@@ -6,6 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Date;
 import java.sql.Statement;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,8 +102,6 @@ public class ArchiveService {
                 if (content == null || !content.isObject())
                     throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "档案暂不可用，请稍后重试");
                 long archiveId = rs.getLong("id");
-                List<Long> files = jdbc.query("SELECT file_id FROM vehicle_archive_file WHERE archive_id=? ORDER BY position",
-                    (file, i) -> file.getLong(1), archiveId);
                 Map<String, Object> row = new LinkedHashMap<>();
                 row.put("archive_id", archiveId); row.put("vehicle_id", vehicleId);
                 row.put("archive_type", rs.getInt("archive_type"));
@@ -109,7 +110,7 @@ public class ArchiveService {
                 row.put("title", content.path("title").asText(""));
                 row.put("notes", content.path("notes").asText(""));
                 row.put("mileage", content.path("mileage").isNumber() ? content.path("mileage").intValue() : null);
-                row.put("file_ids", files); row.put("created_at", rs.getTimestamp("created_at").toInstant().toString());
+                row.put("file_ids", List.of()); row.put("created_at", rs.getTimestamp("created_at").toInstant().toString());
                 if (rs.getInt("input_type") == 4) {
                     var source = content.path("source");
                     var sourceView = new java.util.LinkedHashMap<String,Object>();
@@ -123,6 +124,20 @@ public class ArchiveService {
                 }
                 return row;
             }, vehicleId, owner.id(), size, (page - 1) * size);
+        // One batched lookup instead of one query per archive: the page view used to issue
+        // page_size extra round trips, which made the owner home the slowest read path.
+        if (!rows.isEmpty()) {
+            List<Long> ids = new ArrayList<>();
+            for (Map<String, Object> row : rows) ids.add(((Number) row.get("archive_id")).longValue());
+            Map<Long, List<Long>> files = new HashMap<>();
+            String placeholders = String.join(",", Collections.nCopies(ids.size(), "?"));
+            jdbc.query("SELECT archive_id,file_id FROM vehicle_archive_file WHERE archive_id IN (" + placeholders
+                    + ") ORDER BY archive_id,position",
+                rs -> { files.computeIfAbsent(rs.getLong(1), key -> new ArrayList<>()).add(rs.getLong(2)); },
+                ids.toArray());
+            for (Map<String, Object> row : rows)
+                row.put("file_ids", files.getOrDefault(((Number) row.get("archive_id")).longValue(), List.of()));
+        }
         long total = jdbc.queryForObject("SELECT COUNT(*) FROM vehicle_archive a WHERE a.vehicle_id=? AND a.is_deleted=0 AND (a.input_type IN (1,3) OR (a.input_type=4 AND JSON_EXTRACT(a.content,'$.source.user_id')=?))",
             Long.class, vehicleId, owner.id());
         return Map.of("list", rows, "total", total, "page", page, "page_size", size);
@@ -130,6 +145,13 @@ public class ArchiveService {
 
     public com.autocare.platform.file.FileMetadataRepository.Actor fileOwner(VehicleOwner owner, long archiveId, long fileId) {
         authorize(owner, false);
+        var ownFiles = jdbc.queryForList("SELECT f.id FROM vehicle_archive a "
+            + "JOIN vehicle v ON v.id=a.vehicle_id AND v.user_id=? AND v.is_deleted=0 "
+            + "JOIN vehicle_archive_file af ON af.archive_id=a.id AND af.file_id=? "
+            + "JOIN file_object f ON f.id=af.file_id AND f.owner_type='user' AND f.owner_id=? "
+            + "AND f.scan_status='CLEAN' AND f.is_deleted=0 AND f.content_type IN ('image/jpeg','image/png') AND f.size_bytes BETWEEN 1 AND 10485760 "
+            + "WHERE a.id=? AND a.is_deleted=0 AND a.input_type IN (1,3)", owner.id(), fileId, owner.id(), archiveId);
+        if (ownFiles.size() == 1) return new com.autocare.platform.file.FileMetadataRepository.Actor("user", owner.id());
         var rows = jdbc.queryForList("SELECT f.owner_type,f.owner_id FROM vehicle_archive a "
             + "JOIN vehicle v ON v.id=a.vehicle_id AND v.user_id=? AND v.is_deleted=0 "
             + "JOIN service_archive_job j ON j.archive_id=a.id AND j.status='DONE' "

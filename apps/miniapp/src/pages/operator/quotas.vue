@@ -72,8 +72,8 @@ onUnload(clear)
 </template>
 
 <style scoped>
-input { padding: 20rpx; border: 1rpx solid #e5e6eb; border-radius: 12rpx; min-height: 48rpx; }
-.field { padding: 22rpx; border: 1rpx solid #e5e6eb; border-radius: 12rpx; font-size: 28rpx; }
-.secondary { align-self: flex-start; min-height: 68rpx; padding: 0 24rpx; margin: 12rpx 0 0; background: #eef8f0; color: #008f24; font-size: 24rpx; }
-.error { color: #b42318; }
+input { padding: 20rpx; border: 1rpx solid #e0ded6; border-radius: 12rpx; min-height: 48rpx; }
+.field { padding: 22rpx; border: 1rpx solid #e0ded6; border-radius: 12rpx; font-size: 28rpx; }
+.secondary { align-self: flex-start; min-height: 68rpx; padding: 0 24rpx; margin: 12rpx 0 0; background: #e9f2ec; color: #074d30; font-size: 24rpx; }
+.error { color: #b3261e; }
 </style>

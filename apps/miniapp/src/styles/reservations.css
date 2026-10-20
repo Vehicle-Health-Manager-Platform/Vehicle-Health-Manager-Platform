@@ -1,1 +1,14 @@
-.reservation-page{min-height:100vh;box-sizing:border-box;padding:40rpx 32rpx 80rpx;background:#f2f3f5;color:#1d2129}.reservation-title{display:block;font-size:40rpx;font-weight:700;margin:12rpx 0 20rpx}.reservation-copy{display:block;font-size:26rpx;line-height:40rpx;color:#4e5969}.reservation-panel{display:flex;flex-direction:column;gap:18rpx;padding:28rpx;background:white;border-radius:24rpx;margin-top:24rpx;font-size:27rpx;line-height:40rpx}.reservation-heading{font-size:30rpx;font-weight:600}.reservation-price{color:#008f24;font-size:30rpx}.reservation-field{background:#f2f3f5;padding:20rpx;border-radius:12rpx;margin-top:14rpx}.reservation-page button{margin:16rpx 0 0;border-radius:14rpx;font-size:26rpx;background:#eef8f0;color:#008f24}.reservation-page button::after{border:0}.reservation-page .reservation-primary{background:#00b42a;color:white}
+/* 旧共享层升级为设计系统同款视觉：保留全部选择器与布局契约（80 个页面复用，
+ * 原生冒烟门禁要求 .reservation-page 有非零内边距），仅替换视觉值并改用 ux-* 令牌。 */
+.reservation-page{min-height:100vh;box-sizing:border-box;padding:40rpx 32rpx 96rpx;background:var(--ux-bg,#f3f1eb);color:var(--ux-ink,#1a1d18)}
+.reservation-title{display:block;font-size:44rpx;line-height:1.2;font-weight:700;letter-spacing:1rpx;margin:12rpx 0 22rpx}
+.reservation-copy{display:block;font-size:26rpx;line-height:1.7;color:var(--ux-muted,#63685e)}
+.reservation-panel{display:flex;flex-direction:column;gap:18rpx;padding:28rpx;background:var(--ux-surface,#fcfbf8);border:1rpx solid var(--ux-line,rgba(26,29,24,.14));border-radius:20rpx;box-shadow:var(--ux-shadow-1,0 2rpx 10rpx rgba(26,29,24,.07));margin-top:24rpx;font-size:27rpx;line-height:1.65}
+.reservation-heading{font-size:30rpx;font-weight:650}
+.reservation-price{color:var(--ux-primary-ink,#074d30);font-size:30rpx;font-weight:600;font-variant-numeric:tabular-nums}
+.reservation-field{background:var(--ux-surface-sunk,#efede6);border:1rpx solid var(--ux-line,rgba(26,29,24,.14));padding:20rpx;border-radius:12rpx;margin-top:14rpx}
+.reservation-page button{margin:16rpx 0 0;min-height:76rpx;box-sizing:border-box;border-radius:12rpx;font-size:26rpx;font-weight:600;border:1rpx solid var(--ux-line-strong,rgba(26,29,24,.3));background:var(--ux-surface,#fcfbf8);color:var(--ux-ink,#1a1d18);transition:transform var(--ux-dur-fast,160ms) var(--ux-ease,cubic-bezier(.16,1,.3,1))}
+.reservation-page button::after{border:0}
+.reservation-page button[disabled]{color:var(--ux-faint,#8a8f84);border-color:var(--ux-line,rgba(26,29,24,.14));background:var(--ux-surface-sunk,#efede6);opacity:1}
+.reservation-page button:active{transform:translateY(2rpx)}
+.reservation-page .reservation-primary{border-color:var(--ux-primary,#0b6b43);background:var(--ux-primary,#0b6b43);color:#fcfbf8}

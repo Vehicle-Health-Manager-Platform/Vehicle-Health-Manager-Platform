@@ -10,6 +10,8 @@
 
 ## 从源码生成可导入的小程序
 
+如需先跳过登录查看车主、商家和技师页面，可在根目录运行 `npm run preview:miniapp`，导入 `.cache/local-preview/mp-weixin`。该工程只使用合成数据，所有业务写操作均拒绝，详情见[本地只读演示说明](../../docs/operations/LOCAL_ROLE_PREVIEW.md)。普通构建的登录与服务端权限保持原样。
+
 源码位于 `apps/miniapp/src`。微信开发者工具需要 uni-app 编译生成的 `app.json` 等文件；源码仓库根目录没有这些文件。C 盘或其他盘都可以构建，产物总是在**执行构建的那份仓库**的 `apps/miniapp/dist` 下。
 
 在包含根 `package.json` 的仓库目录运行（项目 CI 使用 Node.js 22）：

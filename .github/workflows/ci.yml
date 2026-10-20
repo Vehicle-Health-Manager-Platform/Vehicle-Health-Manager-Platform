@@ -31,8 +31,8 @@ jobs:
       - run: test -f apps/miniapp/dist/build/h5/index.html
   backend:
     runs-on: ubuntu-latest
-    # Full real-MySQL regression suite now includes the R8 scenarios.
-    timeout-minutes: 45
+    # Full real-MySQL regression plus independently seeded Newman stacks.
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -41,13 +41,85 @@ jobs:
           java-version: '17'
           cache: maven
           cache-dependency-path: backend/pom.xml
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
       - name: Build real upload test images
         timeout-minutes: 5
         run: |
           docker build --progress=plain --tag autocare-upload-minio-ci deploy/minio
           docker build --progress=plain --tag autocare-upload-init-ci deploy/upload-init
-      - run: mvn -B -Dupload.test.images.prebuilt=true test
+      - name: Record fresh backend source content before building
+        run: python scripts/run_api_acceptance.py --record-ci-sources
+      - run: mvn -B -Pcore-coverage -Dupload.test.images.prebuilt=true clean verify
         working-directory: backend
+      - name: Check declared core business coverage
+        if: always()
+        run: python scripts/check_core_coverage.py
+      - name: Check isolated HTTP journey evidence
+        if: always()
+        run: python scripts/run_isolated_journeys.py --check-only
+      - name: Check real private upload and signed attachment journey
+        if: always()
+        run: python scripts/run_upload_acceptance.py --check-only
+      - name: Check invitation qualification freeze and scheduled reward delivery
+        if: always()
+        run: python scripts/run_reward_acceptance.py --check-only
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify anonymous and owner API cases through Newman on an isolated stack
+        run: python scripts/run_api_acceptance.py --ci-built-jar --owner-cases
+      - name: Verify reservation to archive cases with isolated LOCAL_TEST payments
+        run: python scripts/run_api_acceptance.py --ci-built-jar --fulfillment-cases
+      - name: Verify coupon lifecycle with isolated LOCAL_TEST notices
+        run: python scripts/run_api_acceptance.py --ci-built-jar --coupon-cases
+      - name: Verify merchant onboarding staff and operator permissions
+        run: python scripts/run_api_acceptance.py --ci-built-jar --merchant-cases
+      - name: Verify private community questions and licensed KEYWORD retrieval
+        run: python scripts/run_api_acceptance.py --ci-built-jar --community-cases
+      - name: Verify public Q&A consent review and withdrawal
+        run: python scripts/run_api_acceptance.py --ci-built-jar --publication-cases
+      - name: Verify experience consent review withdrawal and curation
+        run: python scripts/run_api_acceptance.py --ci-built-jar --experience-cases
+      - name: Verify owner structured archives health and reminders
+        run: python scripts/run_api_acceptance.py --ci-built-jar --health-cases
+      - name: Install PDF evidence reader
+        run: python -m pip install -r scripts/requirements-export-qa.txt
+      - name: Verify private PDF export and frozen share summaries
+        run: python scripts/run_api_acceptance.py --ci-built-jar --export-cases
+      - name: Verify point policies check-in and isolated verified ledger
+        run: python scripts/run_api_acceptance.py --ci-built-jar --points-cases
+      - name: Verify earned points and atomic coupon exchanges
+        run: python scripts/run_api_acceptance.py --ci-built-jar --exchange-cases
+      - name: Verify invitation codes and monthly qualification policies
+        run: python scripts/run_api_acceptance.py --ci-built-jar --invitation-cases
+      - name: Verify human diagnosis assignment and local notifications
+        run: python scripts/run_api_acceptance.py --ci-built-jar --diagnosis-cases
+      - name: Save sanitized API evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-acceptance-evidence
+          retention-days: 14
+          include-hidden-files: true
+          if-no-files-found: warn
+          path: |
+            .cache/api-acceptance-*/report.json
+            backend/target/private-upload-acceptance.json
+            backend/target/invitation-reward-acceptance.json
+      - name: Save coverage and test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: core-coverage-and-tests
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            backend/target/site/core-coverage/
+            backend/target/core-coverage-summary.json
+            backend/target/isolated-journeys-run.json
+            backend/target/surefire-reports/TEST-*.xml
   schema-and-ocr:
     runs-on: ubuntu-latest
     steps:
@@ -55,6 +127,44 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - run: python -m unittest discover -s scripts -p test_core_coverage.py -v
+      - run: python -m unittest discover -s scripts -p test_isolated_journeys.py -v
+      - run: python -m unittest discover -s scripts -p test_database_recovery.py -v
+      - run: python -m unittest discover -s scripts -p test_performance_baseline.py -v
+      - run: python -m unittest discover -s scripts -p test_api_acceptance.py -v
+      - run: python scripts/generate_api_acceptance.py
+      - run: python scripts/owner_api_cases.py
+      - run: python -m unittest discover -s scripts -p test_owner_api_cases.py -v
+      - run: python scripts/fulfillment_api_cases.py
+      - run: python -m unittest discover -s scripts -p test_fulfillment_api_cases.py -v
+      - run: python scripts/coupon_api_cases.py
+      - run: python -m unittest discover -s scripts -p test_coupon_api_cases.py -v
+      - run: python -m unittest discover -s scripts -p test_ci_build_evidence.py -v
+      - run: python scripts/merchant_api_cases.py
+      - run: python -m unittest discover -s scripts -p test_merchant_api_cases.py -v
+      - run: python -m unittest discover -s scripts -p test_owned_cleanup.py -v
+      - run: python scripts/community_api_cases.py
+      - run: python -m unittest discover -s scripts -p test_community_api_cases.py -v
+      - run: python scripts/publication_api_cases.py
+      - run: python -m unittest discover -s scripts -p test_publication_api_cases.py -v
+      - run: python scripts/experience_api_cases.py
+      - run: python -m unittest discover -s scripts -p test_experience_api_cases.py -v
+      - run: python scripts/health_api_cases.py
+      - run: python -m unittest discover -s scripts -p test_health_api_cases.py -v
+      - run: python scripts/points_api_cases.py
+      - run: python -m unittest discover -s scripts -p test_points_api_cases.py -v
+      - run: python scripts/exchange_api_cases.py
+      - run: python -m unittest discover -s scripts -p test_exchange_api_cases.py -v
+      - run: python scripts/diagnosis_api_cases.py
+      - run: python -m unittest discover -s scripts -p test_diagnosis_api_cases.py -v
+      - run: python scripts/invitation_api_cases.py
+      - run: python -m unittest discover -s scripts -p test_invitation_api_cases.py -v
+      - run: python -m pip install -r scripts/requirements-export-qa.txt
+      - run: python -m unittest discover -s scripts -p test_upload_acceptance.py -v
+      - run: python -m unittest discover -s scripts -p test_reward_acceptance.py -v
+      - run: python scripts/export_api_cases.py
+      - run: python -m unittest discover -s scripts -p test_export_api_cases.py -v
+      - run: git diff --exit-code -- docs/testing/postman/
       - run: python scripts/generate_traceability.py
       - run: python scripts/build_init_sql.py
       - run: python scripts/generate_openapi.py
@@ -66,6 +176,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: bash scripts/verify_mysql_schema.sh
+  database-recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Exercise isolated backup restore and upgrade rollback
+        run: python scripts/run_database_recovery.py
+      - name: Save recovery evidence without SQL dumps
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: database-recovery-evidence
+          retention-days: 14
+          if-no-files-found: error
+          include-hidden-files: true
+          path: .cache/database-recovery-*/report.json
   compose-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -79,3 +208,27 @@ jobs:
       - run: npm ci
       - run: npm run build:legacy-web
       - run: bash scripts/verify_compose.sh
+  performance-baseline:
+    runs-on: ubuntu-latest
+    # Builds the jar in a Maven container, then measures 500-concurrency reads and writes.
+    # The runner size is not controlled, so CI enforces the error budget only; latency is
+    # measured and published, and the recorded acceptance run is the fixed-hardware report.
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Measure 500-concurrency core baseline
+        run: python scripts/run_performance_baseline.py --gates errors --report performance-baseline.json
+      - name: Check baseline evidence consistency
+        if: success()
+        run: python scripts/run_performance_baseline.py --check-only performance-baseline.json
+      - name: Save performance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-baseline-evidence
+          retention-days: 14
+          if-no-files-found: warn
+          path: performance-baseline.json

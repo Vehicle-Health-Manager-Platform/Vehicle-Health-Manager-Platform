@@ -15,6 +15,10 @@ import org.springframework.core.env.Environment;
 @EnableScheduling
 public class UploadHttpConfiguration {
     @Bean @ConditionalOnProperty("MYSQL_HOST")
+    InputMaterialService inputMaterialService(UploadHttpService uploads,JdbcUploadRequests requests,JdbcTemplate jdbc,ObjectProvider<SignedObjectStore> stores,Environment env) {
+        return new InputMaterialService(uploads,requests,jdbc,stores.getIfAvailable(),env.getProperty("INPUT_MATERIAL_UPLOAD_ENABLED",Boolean.class,false));
+    }
+    @Bean @ConditionalOnProperty("MYSQL_HOST")
     JdbcUploadRequests uploadRequests(JdbcTemplate jdbc,PlatformTransactionManager manager,ObjectMapper mapper) {
         return new JdbcUploadRequests(jdbc,manager,mapper);
     }

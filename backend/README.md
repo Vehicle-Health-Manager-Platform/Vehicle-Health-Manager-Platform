@@ -1,3 +1,5 @@
+> **隔离核心旅程（A4b）**：见[复跑与验收边界](../docs/testing/ISOLATED_CORE_JOURNEYS.md)。数据库连接支持可选 `MYSQL_PORT`，默认3306；随机端口用于全新 Testcontainers 测试库，不复用历史业务库。
+
 # 后端
 
 Java 17 + Spring Boot 3.x 模块化单体。`src/main/java/com/autocare/platform/` 下的子包对应交付文档 §6.5。设置至少 32 字节的 `JWT_SECRET` 后执行 `mvn test` 和 `mvn spring-boot:run`，默认监听 8080；`GET /actuator/health` 用于健康检查。

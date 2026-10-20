@@ -21,6 +21,7 @@ public class UploadAdmissionFilter extends OncePerRequestFilter {
     private final ObjectProvider<UploadHttpService> services;
     private final ObjectMapper mapper;
     private final Semaphore slots;
+    @org.springframework.beans.factory.annotation.Autowired private ObjectProvider<InputMaterialService> materials;
     @org.springframework.beans.factory.annotation.Value("${WECHAT_APP_ID:}") private String appId="";
     public UploadAdmissionFilter(ObjectProvider<UploadHttpService> services,ObjectMapper mapper,int maximum) {
         if(maximum<1) throw new IllegalArgumentException("Upload concurrency must be positive");
@@ -28,6 +29,7 @@ public class UploadAdmissionFilter extends OncePerRequestFilter {
     }
     @Override protected boolean shouldNotFilter(HttpServletRequest request) {
         String path=request.getServletPath();
+        if (path.startsWith("/api/input-materials/")) return false;
         return !("POST".equals(request.getMethod()) && (path.equals("/api/file/upload") || path.equals("/api/merchant/files/upload") || path.equals("/api/tech/files/upload")))
             && !("GET".equals(request.getMethod()) && (path.matches("/api/file/[^/]+/access") || path.matches("/api/merchant/files/[^/]+/access") || path.matches("/api/tech/files/[^/]+/access")));
     }
@@ -41,8 +43,19 @@ public class UploadAdmissionFilter extends OncePerRequestFilter {
                 ? UploadOwner.merchant(token.getToken()) : request.getServletPath().startsWith("/api/tech/files/") ? UploadOwner.technician(token.getToken(),appId) : UploadOwner.from(token.getToken());
             boolean upload="POST".equals(request.getMethod());
             if(upload) WriteIntegrityService.normalizeKey(request.getHeader("Idempotency-Key"));
-            var service=services.getIfAvailable(); if(service==null) throw UploadHttpException.unavailable();
-            service.admission(owner,upload);
+            String path=request.getServletPath();
+            if(path.startsWith("/api/input-materials/")) {
+                String[] parts=path.split("/");
+                boolean valid=upload && parts.length==6 && "upload".equals(parts[5])
+                    || "GET".equals(request.getMethod()) && parts.length==7 && "access".equals(parts[6]);
+                if(!valid)throw new UploadHttpException(400,"辅助材料请求无效");
+                long vehicle;try{vehicle=Long.parseLong(parts[4]);}catch(NumberFormatException e){throw new UploadHttpException(400,"车辆无效");}
+                var service=materials==null?null:materials.getIfAvailable();if(service==null)throw UploadHttpException.unavailable();
+                service.admission(owner,new InputMaterialScope(parts[3],vehicle),upload);
+            } else {
+                var service=services.getIfAvailable(); if(service==null) throw UploadHttpException.unavailable();
+                service.admission(owner,upload);
+            }
             response.setHeader("Cache-Control","no-store");
             if(upload) {
                 if(request.getContentLengthLong()>11L*1024*1024) throw new UploadHttpException(413,"上传请求过大");

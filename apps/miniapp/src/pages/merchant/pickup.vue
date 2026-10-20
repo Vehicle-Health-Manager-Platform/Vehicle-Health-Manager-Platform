@@ -80,12 +80,12 @@ function sheet(){uni.redirectTo({url:`/pages/check/pickup-detail?id=${order}&rol
       <text>车主提供的六位预约码</text><input v-model="form.code" type="number" maxlength="6" :disabled="disabled" placeholder="保留前导零" />
       <text v-if="message" role="status">{{message}}</text><button v-if="permission" @tap="images.authorize">去开启相机 / 相册权限</button>
       <text v-if="write.message" role="status">{{write.message}}</text><button v-if="['unauthorized','forbidden'].includes(write.failureKind)" @tap="login">重新登录</button>
-      <button v-if="write.saved" @tap="sheet">查看接车单</button><button v-else :disabled="disabled||!complete" :loading="write.busy" @tap="submit">提交完整接车单</button>
+      <button v-if="write.saved" @tap="sheet">查看接车单</button><button v-else class="reservation-primary" :disabled="disabled||!complete" :loading="write.busy" @tap="submit">提交完整接车单</button>
       <text>提交后仍需车主确认和派工，本步不能开始施工。</text>
     </view>
   </view>
 </template>
 
 <style scoped>
-.photo-block{display:flex;flex-direction:column;gap:12rpx;padding:20rpx 0;border-bottom:1px solid #e5e6eb}.photo-canvas{position:relative}.photo-canvas image{display:block;width:100%}.damage-dot{position:absolute;transform:translate(-50%,-50%);width:36rpx;height:36rpx;border-radius:50%;background:#d33;color:white;text-align:center;pointer-events:none}.picker-value,input,textarea{padding:16rpx;background:#f2f3f5;border-radius:8rpx}textarea{width:auto}
+.photo-block{display:flex;flex-direction:column;gap:12rpx;padding:20rpx 0;border-bottom:1px solid #e0ded6}.photo-canvas{position:relative}.photo-canvas image{display:block;width:100%}.damage-dot{position:absolute;transform:translate(-50%,-50%);width:36rpx;height:36rpx;border-radius:50%;background:#b3261e;color:#fcfbf8;text-align:center;pointer-events:none}.picker-value,input,textarea{padding:16rpx;background:#efede6;border-radius:8rpx}textarea{width:auto}
 </style>

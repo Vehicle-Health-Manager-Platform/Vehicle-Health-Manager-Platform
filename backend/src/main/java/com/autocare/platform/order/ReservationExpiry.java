@@ -10,15 +10,33 @@ public class ReservationExpiry {
     final ReservationStore db;
     public ReservationExpiry(ReservationStore db){this.db=db;}
     // Caller holds merchant and slot locks. All order locks follow those locks.
-    void expireSlot(long slot,Instant now){
-        var rows=db.jdbc.queryForList("SELECT * FROM `order` WHERE slot_id=? AND status='PENDING_PAYMENT' AND expires_at<=? AND is_deleted=0 ORDER BY id FOR UPDATE",slot,ReservationStore.time(now));
-        for(var row:rows){long id=ReservationStore.number(row,"id");var before=db.orderRow(row,true);closeOrder(id,slot,"PAYMENT_EXPIRED",now);var after=db.orderRow(db.one("SELECT * FROM `order` WHERE id=?",id),true);
+    // Candidates are read without locks and then locked one primary key at a time: a single
+    // range `FOR UPDATE` over `order` also takes a gap lock on the neighbouring slot range,
+    // even when nothing is expired, and concurrent creations in adjacent slots deadlocked on
+    // it (A4c-2 evidence: idx_slot_status_expiry gap lock vs INSERT INTO `order`).
+    // A hold that commits after this transaction's snapshot is not closed here; the seat
+    // counter still counts it, so the miss costs availability, never overbooking, and the
+    // next expiry pass closes it.
+    // Returns how many holds were closed so callers can keep the slot counter in step
+    // without re-reading the order table inside the same transaction.
+    int expireSlot(long slot,Instant now){
+        var candidates=db.jdbc.queryForList("SELECT id FROM `order` WHERE slot_id=? AND status='PENDING_PAYMENT' AND expires_at<=? AND is_deleted=0 ORDER BY id",slot,ReservationStore.time(now));
+        int closed=0;
+        for(var candidate:candidates){
+            long id=((Number)candidate.get("id")).longValue();var row=db.one("SELECT * FROM `order` WHERE id=? FOR UPDATE",id);
+            if(!"PENDING_PAYMENT".equals(row.get("status")) || row.get("expires_at")==null || ReservationStore.instant(row.get("expires_at")).isAfter(now))continue;
+            var before=db.orderRow(row,true);if(closeOrder(id,slot,"PAYMENT_EXPIRED",now)==0)continue;closed++;var after=db.orderRow(db.one("SELECT * FROM `order` WHERE id=?",id),true);
             db.jdbc.update("INSERT INTO audit_log(actor_type,actor_id,action,resource_type,resource_id,before_state,after_state,request_id) VALUES('system',0,'ORDER_EXPIRE','order',?,?,?,?)",id,db.json(before),db.json(after),UUID.randomUUID().toString());
         }
+        return closed;
     }
-    void closeOrder(long id,long slot,String reason,Instant now){
+    int closeOrder(long id,long slot,String reason,Instant now){
         int changed=db.jdbc.update("UPDATE `order` SET status='CLOSED',close_reason=?,closed_at=? WHERE id=? AND status='PENDING_PAYMENT'",reason,ReservationStore.time(now),id);
-        if(changed==1){ServiceNotifications.enqueue(db,id,"ORDER_CLOSED");db.jdbc.update("UPDATE payment SET status='CLOSED',closed_at=? WHERE order_id=? AND status IN ('CREATED','PENDING')",ReservationStore.time(now),id);CouponTransactions.release(db,id);long occupied=db.occupied(slot,now);db.jdbc.update("UPDATE appointment_slot SET reserved_count=? WHERE id=?",occupied,slot);}
+        // The seat counter is decremented, never recomputed: a recompute needs a read over
+        // `order`, and every caller already holds the slot row lock, which is what makes
+        // the counter authoritative (see ReservationStore.occupied).
+        if(changed==1){ServiceNotifications.enqueue(db,id,"ORDER_CLOSED");db.jdbc.update("UPDATE payment SET status='CLOSED',closed_at=? WHERE order_id=? AND status IN ('CREATED','PENDING')",ReservationStore.time(now),id);CouponTransactions.release(db,id);db.jdbc.update("UPDATE appointment_slot SET reserved_count=GREATEST(reserved_count-1,0) WHERE id=?",slot);}
+        return changed;
     }
     @Scheduled(fixedDelayString="${ORDER_EXPIRY_INTERVAL_MS:30000}")
     public void sweep(){

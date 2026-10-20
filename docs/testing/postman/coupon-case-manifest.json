@@ -1,0 +1,1632 @@
+{
+  "version": 1,
+  "cases": 160,
+  "operations": 20,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "cash_draft",
+      "method": "POST",
+      "path": "/api/merchant/coupons",
+      "operation_id": "post_api_merchant_coupons",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 5
+    },
+    {
+      "name": "cash_draft_replay",
+      "method": "POST",
+      "path": "/api/merchant/coupons",
+      "operation_id": "post_api_merchant_coupons",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "cash_draft_malformed",
+      "method": "POST",
+      "path": "/api/merchant/coupons",
+      "operation_id": "post_api_merchant_coupons",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "cash_draft_anonymous",
+      "method": "POST",
+      "path": "/api/merchant/coupons",
+      "operation_id": "post_api_merchant_coupons",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "cash_draft_wrong_role",
+      "method": "POST",
+      "path": "/api/merchant/coupons",
+      "operation_id": "post_api_merchant_coupons",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "cash_publish",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/1/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "cash_publish_replay",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/1/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "cash_publish_malformed",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/1/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "cash_publish_anonymous",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/1/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "cash_publish_wrong_role",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/1/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "cash_publish_stale",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/1/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "error",
+      "status": 409,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "cash_publish_foreign",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/1/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other_merchant",
+      "assertions": 3
+    },
+    {
+      "name": "cash_receive",
+      "method": "POST",
+      "path": "/api/coupon/receive",
+      "operation_id": "post_api_coupon_receive",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "cash_receive_replay",
+      "method": "POST",
+      "path": "/api/coupon/receive",
+      "operation_id": "post_api_coupon_receive",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "cash_receive_malformed",
+      "method": "POST",
+      "path": "/api/coupon/receive",
+      "operation_id": "post_api_coupon_receive",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "cash_receive_anonymous",
+      "method": "POST",
+      "path": "/api/coupon/receive",
+      "operation_id": "post_api_coupon_receive",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "cash_receive_wrong_role",
+      "method": "POST",
+      "path": "/api/coupon/receive",
+      "operation_id": "post_api_coupon_receive",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "cash_receive_lifetime_limit",
+      "method": "POST",
+      "path": "/api/coupon/receive",
+      "operation_id": "post_api_coupon_receive",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "mine",
+      "method": "GET",
+      "path": "/api/coupon/mine",
+      "operation_id": "get_api_coupon_mine",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "mine_boundary",
+      "method": "GET",
+      "path": "/api/coupon/mine",
+      "operation_id": "get_api_coupon_mine",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "mine_error",
+      "method": "GET",
+      "path": "/api/coupon/mine",
+      "operation_id": "get_api_coupon_mine",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "mine_anonymous",
+      "method": "GET",
+      "path": "/api/coupon/mine",
+      "operation_id": "get_api_coupon_mine",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "mine_wrong_role",
+      "method": "GET",
+      "path": "/api/coupon/mine",
+      "operation_id": "get_api_coupon_mine",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "mine_other_owner",
+      "method": "GET",
+      "path": "/api/coupon/mine",
+      "operation_id": "get_api_coupon_mine",
+      "kind": "unauthorized",
+      "status": 200,
+      "role": "other",
+      "assertions": 4
+    },
+    {
+      "name": "slot",
+      "method": "POST",
+      "path": "/api/merchant/slots",
+      "operation_id": "post_api_merchant_slots",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "slot_replay",
+      "method": "POST",
+      "path": "/api/merchant/slots",
+      "operation_id": "post_api_merchant_slots",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "slot_malformed",
+      "method": "POST",
+      "path": "/api/merchant/slots",
+      "operation_id": "post_api_merchant_slots",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "slot_anonymous",
+      "method": "POST",
+      "path": "/api/merchant/slots",
+      "operation_id": "post_api_merchant_slots",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "slot_wrong_role",
+      "method": "POST",
+      "path": "/api/merchant/slots",
+      "operation_id": "post_api_merchant_slots",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "coupon_preview",
+      "method": "POST",
+      "path": "/api/order/coupon-preview",
+      "operation_id": "post_api_order_coupon_preview",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "coupon_preview_last_page",
+      "method": "POST",
+      "path": "/api/order/coupon-preview",
+      "operation_id": "post_api_order_coupon_preview",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "coupon_preview_financial_override",
+      "method": "POST",
+      "path": "/api/order/coupon-preview",
+      "operation_id": "post_api_order_coupon_preview",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "coupon_preview_anonymous",
+      "method": "POST",
+      "path": "/api/order/coupon-preview",
+      "operation_id": "post_api_order_coupon_preview",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "coupon_preview_wrong_role",
+      "method": "POST",
+      "path": "/api/order/coupon-preview",
+      "operation_id": "post_api_order_coupon_preview",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "coupon_preview_foreign",
+      "method": "POST",
+      "path": "/api/order/coupon-preview",
+      "operation_id": "post_api_order_coupon_preview",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "first_booking",
+      "method": "POST",
+      "path": "/api/order/coupon-create",
+      "operation_id": "post_api_order_coupon_create",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "first_booking_replay",
+      "method": "POST",
+      "path": "/api/order/coupon-create",
+      "operation_id": "post_api_order_coupon_create",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "first_booking_malformed",
+      "method": "POST",
+      "path": "/api/order/coupon-create",
+      "operation_id": "post_api_order_coupon_create",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "first_booking_anonymous",
+      "method": "POST",
+      "path": "/api/order/coupon-create",
+      "operation_id": "post_api_order_coupon_create",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "first_booking_wrong_role",
+      "method": "POST",
+      "path": "/api/order/coupon-create",
+      "operation_id": "post_api_order_coupon_create",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "coupon_stale_publication",
+      "method": "POST",
+      "path": "/api/order/coupon-create",
+      "operation_id": "post_api_order_coupon_create",
+      "kind": "error",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "coupon_changed_intent",
+      "method": "POST",
+      "path": "/api/order/coupon-create",
+      "operation_id": "post_api_order_coupon_create",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "coupon_already_reserved",
+      "method": "POST",
+      "path": "/api/order/coupon-create",
+      "operation_id": "post_api_order_coupon_create",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "coupon_foreign_create",
+      "method": "POST",
+      "path": "/api/order/coupon-create",
+      "operation_id": "post_api_order_coupon_create",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "order_reserved",
+      "method": "GET",
+      "path": "/api/order/1",
+      "operation_id": "get_api_order_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "order_reserved_boundary",
+      "method": "GET",
+      "path": "/api/order/999999",
+      "operation_id": "get_api_order_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "order_reserved_error",
+      "method": "GET",
+      "path": "/api/order/0",
+      "operation_id": "get_api_order_id",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "order_reserved_anonymous",
+      "method": "GET",
+      "path": "/api/order/1",
+      "operation_id": "get_api_order_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "order_reserved_wrong_role",
+      "method": "GET",
+      "path": "/api/order/1",
+      "operation_id": "get_api_order_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "cancel_first",
+      "method": "POST",
+      "path": "/api/order/cancel",
+      "operation_id": "post_api_order_cancel",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "cancel_first_replay",
+      "method": "POST",
+      "path": "/api/order/cancel",
+      "operation_id": "post_api_order_cancel",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "cancel_first_malformed",
+      "method": "POST",
+      "path": "/api/order/cancel",
+      "operation_id": "post_api_order_cancel",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "cancel_first_anonymous",
+      "method": "POST",
+      "path": "/api/order/cancel",
+      "operation_id": "post_api_order_cancel",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "cancel_first_wrong_role",
+      "method": "POST",
+      "path": "/api/order/cancel",
+      "operation_id": "post_api_order_cancel",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "first_released",
+      "method": "GET",
+      "path": "/api/order/1",
+      "operation_id": "get_api_order_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "paid_booking",
+      "method": "POST",
+      "path": "/api/order/coupon-create",
+      "operation_id": "post_api_order_coupon_create",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "paid_booking_replay",
+      "method": "POST",
+      "path": "/api/order/coupon-create",
+      "operation_id": "post_api_order_coupon_create",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "paid_booking_malformed",
+      "method": "POST",
+      "path": "/api/order/coupon-create",
+      "operation_id": "post_api_order_coupon_create",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "paid_booking_anonymous",
+      "method": "POST",
+      "path": "/api/order/coupon-create",
+      "operation_id": "post_api_order_coupon_create",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "paid_booking_wrong_role",
+      "method": "POST",
+      "path": "/api/order/coupon-create",
+      "operation_id": "post_api_order_coupon_create",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "payment",
+      "method": "POST",
+      "path": "/api/payments/create",
+      "operation_id": "post_api_payments_create",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "payment_replay",
+      "method": "POST",
+      "path": "/api/payments/create",
+      "operation_id": "post_api_payments_create",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "payment_malformed",
+      "method": "POST",
+      "path": "/api/payments/create",
+      "operation_id": "post_api_payments_create",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "payment_anonymous",
+      "method": "POST",
+      "path": "/api/payments/create",
+      "operation_id": "post_api_payments_create",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "payment_wrong_role",
+      "method": "POST",
+      "path": "/api/payments/create",
+      "operation_id": "post_api_payments_create",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "payment_bad_signature",
+      "method": "POST",
+      "path": "/api/payments/callback/LOCAL_TEST",
+      "operation_id": "post_api_payments_callback_LOCAL_TEST",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3,
+      "callback_mode": "bad_signature",
+      "notice_status": "SUCCEEDED"
+    },
+    {
+      "name": "payment_expired",
+      "method": "POST",
+      "path": "/api/payments/callback/LOCAL_TEST",
+      "operation_id": "post_api_payments_callback_LOCAL_TEST",
+      "kind": "boundary",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3,
+      "callback_mode": "expired",
+      "notice_status": "SUCCEEDED"
+    },
+    {
+      "name": "payment_bad_body",
+      "method": "POST",
+      "path": "/api/payments/callback/LOCAL_TEST",
+      "operation_id": "post_api_payments_callback_LOCAL_TEST",
+      "kind": "error",
+      "status": 400,
+      "role": "anonymous",
+      "assertions": 3,
+      "callback_mode": "bad_body",
+      "notice_status": "SUCCEEDED"
+    },
+    {
+      "name": "payment_paid",
+      "method": "POST",
+      "path": "/api/payments/callback/LOCAL_TEST",
+      "operation_id": "post_api_payments_callback_LOCAL_TEST",
+      "kind": "normal",
+      "status": 200,
+      "role": "anonymous",
+      "assertions": 3,
+      "callback_mode": "valid",
+      "notice_status": "SUCCEEDED"
+    },
+    {
+      "name": "payment_notice_replay",
+      "method": "POST",
+      "path": "/api/payments/callback/LOCAL_TEST",
+      "operation_id": "post_api_payments_callback_LOCAL_TEST",
+      "kind": "boundary",
+      "status": 200,
+      "role": "anonymous",
+      "assertions": 3,
+      "callback_mode": "valid",
+      "notice_status": "SUCCEEDED"
+    },
+    {
+      "name": "coupon_consumed",
+      "method": "GET",
+      "path": "/api/order/2",
+      "operation_id": "get_api_order_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "coupon_used",
+      "method": "GET",
+      "path": "/api/coupon/mine",
+      "operation_id": "get_api_coupon_mine",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "refund_request",
+      "method": "POST",
+      "path": "/api/order/2/refund",
+      "operation_id": "post_api_order_id_refund",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "refund_request_replay",
+      "method": "POST",
+      "path": "/api/order/2/refund",
+      "operation_id": "post_api_order_id_refund",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "refund_request_malformed",
+      "method": "POST",
+      "path": "/api/order/2/refund",
+      "operation_id": "post_api_order_id_refund",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "refund_request_anonymous",
+      "method": "POST",
+      "path": "/api/order/2/refund",
+      "operation_id": "post_api_order_id_refund",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "refund_request_wrong_role",
+      "method": "POST",
+      "path": "/api/order/2/refund",
+      "operation_id": "post_api_order_id_refund",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "refund_request_foreign",
+      "method": "POST",
+      "path": "/api/order/2/refund",
+      "operation_id": "post_api_order_id_refund",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "coupon_not_returned_requested",
+      "method": "GET",
+      "path": "/api/coupon/mine",
+      "operation_id": "get_api_coupon_mine",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "refund_detail",
+      "method": "GET",
+      "path": "/api/order/2/refund",
+      "operation_id": "get_api_order_id_refund",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "refund_detail_boundary",
+      "method": "GET",
+      "path": "/api/order/999999/refund",
+      "operation_id": "get_api_order_id_refund",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "refund_detail_error",
+      "method": "GET",
+      "path": "/api/order/0/refund",
+      "operation_id": "get_api_order_id_refund",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "refund_detail_anonymous",
+      "method": "GET",
+      "path": "/api/order/2/refund",
+      "operation_id": "get_api_order_id_refund",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "refund_detail_wrong_role",
+      "method": "GET",
+      "path": "/api/order/2/refund",
+      "operation_id": "get_api_order_id_refund",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "refund_decision_foreign",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/decision",
+      "operation_id": "post_api_merchant_orders_id_refund_decision",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other_merchant",
+      "assertions": 3
+    },
+    {
+      "name": "refund_decision",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/decision",
+      "operation_id": "post_api_merchant_orders_id_refund_decision",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 5
+    },
+    {
+      "name": "refund_decision_replay",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/decision",
+      "operation_id": "post_api_merchant_orders_id_refund_decision",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "refund_decision_malformed",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/decision",
+      "operation_id": "post_api_merchant_orders_id_refund_decision",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "refund_decision_anonymous",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/decision",
+      "operation_id": "post_api_merchant_orders_id_refund_decision",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "refund_decision_wrong_role",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/decision",
+      "operation_id": "post_api_merchant_orders_id_refund_decision",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "coupon_not_returned_pending",
+      "method": "GET",
+      "path": "/api/coupon/mine",
+      "operation_id": "get_api_coupon_mine",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "refund_bad_signature",
+      "method": "POST",
+      "path": "/api/refunds/callback/LOCAL_TEST",
+      "operation_id": "post_api_refunds_callback_LOCAL_TEST",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3,
+      "callback_mode": "bad_signature",
+      "notice_status": "SUCCEEDED"
+    },
+    {
+      "name": "refund_expired",
+      "method": "POST",
+      "path": "/api/refunds/callback/LOCAL_TEST",
+      "operation_id": "post_api_refunds_callback_LOCAL_TEST",
+      "kind": "boundary",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3,
+      "callback_mode": "expired",
+      "notice_status": "SUCCEEDED"
+    },
+    {
+      "name": "refund_bad_body",
+      "method": "POST",
+      "path": "/api/refunds/callback/LOCAL_TEST",
+      "operation_id": "post_api_refunds_callback_LOCAL_TEST",
+      "kind": "error",
+      "status": 400,
+      "role": "anonymous",
+      "assertions": 3,
+      "callback_mode": "bad_body",
+      "notice_status": "SUCCEEDED"
+    },
+    {
+      "name": "refund_failed",
+      "method": "POST",
+      "path": "/api/refunds/callback/LOCAL_TEST",
+      "operation_id": "post_api_refunds_callback_LOCAL_TEST",
+      "kind": "normal",
+      "status": 200,
+      "role": "anonymous",
+      "assertions": 3,
+      "callback_mode": "valid",
+      "notice_status": "FAILED"
+    },
+    {
+      "name": "refund_failed_replay",
+      "method": "POST",
+      "path": "/api/refunds/callback/LOCAL_TEST",
+      "operation_id": "post_api_refunds_callback_LOCAL_TEST",
+      "kind": "boundary",
+      "status": 200,
+      "role": "anonymous",
+      "assertions": 3,
+      "callback_mode": "valid",
+      "notice_status": "FAILED"
+    },
+    {
+      "name": "refund_failed_detail",
+      "method": "GET",
+      "path": "/api/order/2/refund",
+      "operation_id": "get_api_order_id_refund",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "coupon_not_returned_failed",
+      "method": "GET",
+      "path": "/api/coupon/mine",
+      "operation_id": "get_api_coupon_mine",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "refund_succeeded",
+      "method": "POST",
+      "path": "/api/refunds/callback/LOCAL_TEST",
+      "operation_id": "post_api_refunds_callback_LOCAL_TEST",
+      "kind": "normal",
+      "status": 200,
+      "role": "anonymous",
+      "assertions": 3,
+      "callback_mode": "valid",
+      "notice_status": "SUCCEEDED"
+    },
+    {
+      "name": "refund_succeeded_replay",
+      "method": "POST",
+      "path": "/api/refunds/callback/LOCAL_TEST",
+      "operation_id": "post_api_refunds_callback_LOCAL_TEST",
+      "kind": "boundary",
+      "status": 200,
+      "role": "anonymous",
+      "assertions": 3,
+      "callback_mode": "valid",
+      "notice_status": "SUCCEEDED"
+    },
+    {
+      "name": "refund_success_detail",
+      "method": "GET",
+      "path": "/api/order/2/refund",
+      "operation_id": "get_api_order_id_refund",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "coupon_returned",
+      "method": "GET",
+      "path": "/api/coupon/mine",
+      "operation_id": "get_api_coupon_mine",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "returned_contract",
+      "method": "GET",
+      "path": "/api/order/2",
+      "operation_id": "get_api_order_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "returned_booking",
+      "method": "POST",
+      "path": "/api/order/coupon-create",
+      "operation_id": "post_api_order_coupon_create",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "returned_booking_replay",
+      "method": "POST",
+      "path": "/api/order/coupon-create",
+      "operation_id": "post_api_order_coupon_create",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "returned_booking_malformed",
+      "method": "POST",
+      "path": "/api/order/coupon-create",
+      "operation_id": "post_api_order_coupon_create",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "returned_booking_anonymous",
+      "method": "POST",
+      "path": "/api/order/coupon-create",
+      "operation_id": "post_api_order_coupon_create",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "returned_booking_wrong_role",
+      "method": "POST",
+      "path": "/api/order/coupon-create",
+      "operation_id": "post_api_order_coupon_create",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "cancel_returned",
+      "method": "POST",
+      "path": "/api/order/cancel",
+      "operation_id": "post_api_order_cancel",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "cancel_returned_replay",
+      "method": "POST",
+      "path": "/api/order/cancel",
+      "operation_id": "post_api_order_cancel",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "cancel_returned_malformed",
+      "method": "POST",
+      "path": "/api/order/cancel",
+      "operation_id": "post_api_order_cancel",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "cancel_returned_anonymous",
+      "method": "POST",
+      "path": "/api/order/cancel",
+      "operation_id": "post_api_order_cancel",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "cancel_returned_wrong_role",
+      "method": "POST",
+      "path": "/api/order/cancel",
+      "operation_id": "post_api_order_cancel",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "service_draft",
+      "method": "POST",
+      "path": "/api/merchant/coupons",
+      "operation_id": "post_api_merchant_coupons",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 5
+    },
+    {
+      "name": "service_draft_replay",
+      "method": "POST",
+      "path": "/api/merchant/coupons",
+      "operation_id": "post_api_merchant_coupons",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "service_draft_malformed",
+      "method": "POST",
+      "path": "/api/merchant/coupons",
+      "operation_id": "post_api_merchant_coupons",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "service_draft_anonymous",
+      "method": "POST",
+      "path": "/api/merchant/coupons",
+      "operation_id": "post_api_merchant_coupons",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "service_draft_wrong_role",
+      "method": "POST",
+      "path": "/api/merchant/coupons",
+      "operation_id": "post_api_merchant_coupons",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "service_publish",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/2/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "service_publish_replay",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/2/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "service_publish_malformed",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/2/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "service_publish_anonymous",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/2/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "service_publish_wrong_role",
+      "method": "PUT",
+      "path": "/api/merchant/coupons/2/status",
+      "operation_id": "put_api_merchant_coupons_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "service_receive",
+      "method": "POST",
+      "path": "/api/coupon/receive",
+      "operation_id": "post_api_coupon_receive",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "service_receive_replay",
+      "method": "POST",
+      "path": "/api/coupon/receive",
+      "operation_id": "post_api_coupon_receive",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "service_receive_malformed",
+      "method": "POST",
+      "path": "/api/coupon/receive",
+      "operation_id": "post_api_coupon_receive",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "service_receive_anonymous",
+      "method": "POST",
+      "path": "/api/coupon/receive",
+      "operation_id": "post_api_coupon_receive",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "service_receive_wrong_role",
+      "method": "POST",
+      "path": "/api/coupon/receive",
+      "operation_id": "post_api_coupon_receive",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "service_detail",
+      "method": "GET",
+      "path": "/api/coupon/2/service-redemption",
+      "operation_id": "get_api_coupon_id_service_redemption",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "service_detail_boundary",
+      "method": "GET",
+      "path": "/api/coupon/999999/service-redemption",
+      "operation_id": "get_api_coupon_id_service_redemption",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "service_detail_error",
+      "method": "GET",
+      "path": "/api/coupon/0/service-redemption",
+      "operation_id": "get_api_coupon_id_service_redemption",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "service_detail_anonymous",
+      "method": "GET",
+      "path": "/api/coupon/2/service-redemption",
+      "operation_id": "get_api_coupon_id_service_redemption",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "service_detail_wrong_role",
+      "method": "GET",
+      "path": "/api/coupon/2/service-redemption",
+      "operation_id": "get_api_coupon_id_service_redemption",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "service_detail_foreign",
+      "method": "GET",
+      "path": "/api/coupon/2/service-redemption",
+      "operation_id": "get_api_coupon_id_service_redemption",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "cash_cannot_authorize_service",
+      "method": "POST",
+      "path": "/api/coupon/1/service-authorization",
+      "operation_id": "post_api_coupon_id_service_authorization",
+      "kind": "error",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "service_authorize",
+      "method": "POST",
+      "path": "/api/coupon/2/service-authorization",
+      "operation_id": "post_api_coupon_id_service_authorization",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "service_authorize_replay",
+      "method": "POST",
+      "path": "/api/coupon/2/service-authorization",
+      "operation_id": "post_api_coupon_id_service_authorization",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "service_authorize_malformed",
+      "method": "POST",
+      "path": "/api/coupon/2/service-authorization",
+      "operation_id": "post_api_coupon_id_service_authorization",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "service_authorize_anonymous",
+      "method": "POST",
+      "path": "/api/coupon/2/service-authorization",
+      "operation_id": "post_api_coupon_id_service_authorization",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "service_authorize_wrong_role",
+      "method": "POST",
+      "path": "/api/coupon/2/service-authorization",
+      "operation_id": "post_api_coupon_id_service_authorization",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "service_stale_revision",
+      "method": "POST",
+      "path": "/api/coupon/2/service-authorization",
+      "operation_id": "post_api_coupon_id_service_authorization",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "service_preview",
+      "method": "POST",
+      "path": "/api/merchant/coupons/service-preview",
+      "operation_id": "post_api_merchant_coupons_service_preview",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "service_preview_wrong_code",
+      "method": "POST",
+      "path": "/api/merchant/coupons/service-preview",
+      "operation_id": "post_api_merchant_coupons_service_preview",
+      "kind": "boundary",
+      "status": 422,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "service_preview_malformed",
+      "method": "POST",
+      "path": "/api/merchant/coupons/service-preview",
+      "operation_id": "post_api_merchant_coupons_service_preview",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "service_preview_foreign_shop",
+      "method": "POST",
+      "path": "/api/merchant/coupons/service-preview",
+      "operation_id": "post_api_merchant_coupons_service_preview",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other_merchant",
+      "assertions": 3
+    },
+    {
+      "name": "service_preview_anonymous",
+      "method": "POST",
+      "path": "/api/merchant/coupons/service-preview",
+      "operation_id": "post_api_merchant_coupons_service_preview",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "service_preview_wrong_role",
+      "method": "POST",
+      "path": "/api/merchant/coupons/service-preview",
+      "operation_id": "post_api_merchant_coupons_service_preview",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "service_redeem_foreign_shop",
+      "method": "POST",
+      "path": "/api/merchant/coupons/service-redeem",
+      "operation_id": "post_api_merchant_coupons_service_redeem",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other_merchant",
+      "assertions": 3
+    },
+    {
+      "name": "service_redeem",
+      "method": "POST",
+      "path": "/api/merchant/coupons/service-redeem",
+      "operation_id": "post_api_merchant_coupons_service_redeem",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 5
+    },
+    {
+      "name": "service_redeem_replay",
+      "method": "POST",
+      "path": "/api/merchant/coupons/service-redeem",
+      "operation_id": "post_api_merchant_coupons_service_redeem",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "service_redeem_malformed",
+      "method": "POST",
+      "path": "/api/merchant/coupons/service-redeem",
+      "operation_id": "post_api_merchant_coupons_service_redeem",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "service_redeem_anonymous",
+      "method": "POST",
+      "path": "/api/merchant/coupons/service-redeem",
+      "operation_id": "post_api_merchant_coupons_service_redeem",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "service_redeem_wrong_role",
+      "method": "POST",
+      "path": "/api/merchant/coupons/service-redeem",
+      "operation_id": "post_api_merchant_coupons_service_redeem",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "service_redeem_new_key",
+      "method": "POST",
+      "path": "/api/merchant/coupons/service-redeem",
+      "operation_id": "post_api_merchant_coupons_service_redeem",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "service_redemptions",
+      "method": "GET",
+      "path": "/api/merchant/coupons/service-redemptions",
+      "operation_id": "get_api_merchant_coupons_service_redemptions",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "service_redemptions_boundary",
+      "method": "GET",
+      "path": "/api/merchant/coupons/service-redemptions",
+      "operation_id": "get_api_merchant_coupons_service_redemptions",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "service_redemptions_error",
+      "method": "GET",
+      "path": "/api/merchant/coupons/service-redemptions",
+      "operation_id": "get_api_merchant_coupons_service_redemptions",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "service_redemptions_anonymous",
+      "method": "GET",
+      "path": "/api/merchant/coupons/service-redemptions",
+      "operation_id": "get_api_merchant_coupons_service_redemptions",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "service_redemptions_wrong_role",
+      "method": "GET",
+      "path": "/api/merchant/coupons/service-redemptions",
+      "operation_id": "get_api_merchant_coupons_service_redemptions",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "service_redemptions_other_shop",
+      "method": "GET",
+      "path": "/api/merchant/coupons/service-redemptions",
+      "operation_id": "get_api_merchant_coupons_service_redemptions",
+      "kind": "unauthorized",
+      "status": 200,
+      "role": "other_merchant",
+      "assertions": 4
+    }
+  ]
+}
