@@ -61,3 +61,15 @@
 ## 合并结果核验
 
 以PR180的merged状态、实际merge commit和54个原提交及25个PR头可从origin/main到达为最终证据；核对完成后在会话中报告。
+
+
+## 最终执行结果
+
+2026-10-20：已按用户授权通过PR180将PR156–PR180共25个阶段完整合入main；合并提交`1a62644`，汇总head`943aa41`八项CI全部成功。54个原始阶段提交、25个原PR头和汇总文档均已逐项确认可从origin/main到达，合并树与审核head一致。初始184个本地分支与182个远程分支均无独有遗漏，未推送分支提交0；近期关闭但未合并的PR151–153也已包含。旧快照53文件中51个原始blob已上传，另2个忽略的微信工具本机配置保留本地；源码/文档无意外遗漏。原阶段PR已按内容包含证据收口，未删除本地分支、快照或配置。此次只合并仓库，不部署。后续仍先档案授权、商家/技师施工上下文和撤销/改派权限；正式外部接口、全量API业务验收、性能延迟达标及真机仍未全部完成。
+
+- 八项检查：compose-smoke=SUCCESS, schema-mysql=SUCCESS, web=SUCCESS, schema-and-ocr=SUCCESS, miniapp=SUCCESS, performance-baseline=SUCCESS, database-recovery=SUCCESS, backend=SUCCESS。
+- PR165旧失败已下载脱敏归档确认：`CI jar predates source inputs`；后续`f28bb0e`改为构建前源码内容哈希绑定并增加回归，最新汇总CI完整通过。
+- [合并与祖先核对脱敏报告](../testing/reports/MERGE_RECONCILIATION_2026_10_19.json)。
+- 汇总PR的合并结果、后续仅文档提交的主分支CI分别记录；仅文档更新不改变已验收生产源码、测试、接口契约和部署配置。
+
+- 2026-10-20补充核验：源码/文档目录的79个忽略项全部是Python缓存；本机2个微信开发者工具配置仍存在。PR156及PR180显示MERGED，其余23个旧PR因内容已被PR180完整包含而关闭；原分支均保留。
