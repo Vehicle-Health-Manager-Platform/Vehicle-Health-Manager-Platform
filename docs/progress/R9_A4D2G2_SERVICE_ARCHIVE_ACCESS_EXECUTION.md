@@ -33,3 +33,8 @@
 - CI clean verify自然运行新增旅程，随后`--check-only`只接受当前源码和本次JUnit/清理证据；公开artifact只上传脱敏summary。
 - 本轮未重复全量338匿名探测，10个接口均包含正常/边界/错误/越权场景；完整业务验收和远程全量CI分别记录。
 - 撤销/改派/关闭禁止新的访问签发，既有bearer URL不承诺即时撤销，按短TTL自然到期；测试10秒配置不改变生产默认值。
+
+
+## GitHub交付
+
+本阶段已上传 [PR181](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/181)，验收代码`008ecd6`，基于main；本轮完整远程CI待结束，保持草稿，不合并或部署。
