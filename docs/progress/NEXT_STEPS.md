@@ -1,3 +1,9 @@
+## 2026-10-20 A4d-3b：商家时段与派工
+
+本阶段成果已上传 [PR190](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/190)（依赖PR189）；远程CI待结果，保持草稿，不合并或部署。
+
+A4d-3b 本地PASS：商家时段与派工两页统一到设计系统，新增 10 个映射（时段行/列表/项目选项/发布表单、派工六阶段/候选行/候选列表/已有派工/提交文案/候选加载时机）与11项单测；小程序单测957/957（0失败/0跳过）、微信构建与H5构建均exit 0、10个共享选择器逐项在app.wxss。修掉四处缺陷：约满没有独立状态、发布表单不说差什么、派工 4 层 v-if 链不可断言、候选加载挂在 order watcher 上而 ready 依赖后到的派工结果（可能永不加载，改监听阶段）。另记录一条工具事实：绑定形式的 data-testid 会被 mp-weixin 压成 {{O}}，编译产物里搜不到原文，行级锚点只能靠源码扫描。后端与接口零改动；真机与模拟器未执行，不声明渲染通过。 下一商家接车检查与防护→A5交付→B外部接入→C真机。
+
 ## 2026-10-20 A4d-3a：商家订单阅读面
 
 本阶段成果已上传 [PR189](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/189)（依赖PR188）；远程CI待结果，保持草稿，不合并或部署。
