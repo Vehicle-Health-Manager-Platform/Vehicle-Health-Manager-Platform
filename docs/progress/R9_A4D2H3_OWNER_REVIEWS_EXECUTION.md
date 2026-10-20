@@ -46,6 +46,7 @@ A4d-2h3 本地PASS（218.992秒）：4条评价/公开链路共14接口139业务
 - Java 九组共 62 项：`OrderReviewsHttpTest`、`OrderReviewsNoDatabaseTest`、`PublicRatingsHttpTest`、`PublicReviewTextsHttpTest`、`ReviewSummariesHttpTest`、`JdbcOrderReviewsTest`、`JdbcPublicRatingsTest`、`JdbcPublicReviewTextsTest`、`JdbcReviewSummariesTest`。
 - 默认 reviews 集合另行不提供环境或令牌执行 Newman，exit0/requests0/failures0，且集合哈希与验收报告记录的一致；352 模板默认禁发由隔离运行器另测。
 - 三份脱敏报告：`R9_A4D2H3_OWNER_REVIEWS_2026_10_20.json`、`R9_A4D2H3_JAVA_REGRESSION_2026_10_20.json`、`R9_A4D2H3_DEFAULT_DISABLED_2026_10_20.json`，位于 `docs/testing/reports/`。
+- 远程 CI（PR186，提交 `7dbdf25`）八项 job 全部成功：`web`/`miniapp`/`backend`/`schema-and-ocr`/`schema-mysql`/`database-recovery`/`compose-smoke`/`performance-baseline`；其中 `backend` 的 “Verify owner review and four independent public grants” 步骤即 `--ci-built-jar --reviews-cases`，实际跑了这 139 条用例。
 - 原始 Newman/JWT/环境/日志只落忽略目录；没有在失败后放宽状态码预期或生产开关。
 
 ## 本轮修正的用例认知错误
