@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "scope": "商家订单列表与详情展示层；不含真机与视觉回归截图",
+  "tests": {
+    "command": "node --test test/*.test.js",
+    "exit_code": 0,
+    "tests": 946,
+    "pass": 946,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 1957.8765,
+    "log_sha256": "15ec8a89898660cf84630caacfd53f418e53d911d876fe402c907cc0d292fdc2"
+  },
+  "builds": {
+    "mp_weixin": {
+      "command": "npm run build:mp-weixin",
+      "exit_code": 0,
+      "build_complete": true,
+      "shared_selector_gate": true,
+      "no_test_bridge_gate": true,
+      "log_sha256": "530b37b51b54d65a5ce9db48258e8a2424cb8abfcdd7085c2b554081ca5746f4"
+    },
+    "h5": {
+      "command": "npm run build:h5",
+      "exit_code": 0,
+      "build_complete": true,
+      "log_sha256": "47fa3930c94797e17705cfa2fa39ce65c16747d5b34144af0ad4054ecd37c979"
+    }
+  },
+  "shared_selectors_in_app_wxss": {
+    "reservation-page": true,
+    "reservation-primary": true,
+    "ux-hero": true,
+    "ux-card": true,
+    "ux-metric-value": true,
+    "ux-badge": true,
+    "ux-row": true,
+    "ux-empty": true,
+    "ux-card-note": true,
+    "ux-divider": true
+  },
+  "compiled_pages": {
+    "merchant/orders.wxml": {
+      "ux_hero": true,
+      "ux_badge": true,
+      "ux_empty": true,
+      "order_status_anchor": false,
+      "order_entries_anchor": false,
+      "row_button": true
+    },
+    "merchant/order-detail.wxml": {
+      "ux_hero": true,
+      "ux_badge": true,
+      "ux_empty": false,
+      "order_status_anchor": true,
+      "order_entries_anchor": true,
+      "row_button": false
+    }
+  },
+  "sources_sha256": {
+    "apps/miniapp/src/services/ui-tone.js": "2dd6556a95ad3ae83432dc8bb2bc831e9007cff2096c669039b0ea57c61ed1de",
+    "apps/miniapp/src/services/merchant-order-display.js": "198eddad13b58020c8e57ccc99ac1b23b250e347b72759d8a805c7e2b034743d",
+    "apps/miniapp/src/pages/merchant/orders.vue": "f07648d8539a2950bf6652a93e7eb3bfdac4d778e607c856e979e24bd79c5665",
+    "apps/miniapp/src/pages/merchant/order-detail.vue": "a26b6092e64549720118eeeee0b86aebe109eeced5e20d5a9ba99a900d70238d",
+    "apps/miniapp/test/merchant-order-display.test.js": "2d653041a2837cbc6b8193ec6d960ce6bb703e570cc0d2b31d96a7a928e29348"
+  },
+  "passed": true
+}
