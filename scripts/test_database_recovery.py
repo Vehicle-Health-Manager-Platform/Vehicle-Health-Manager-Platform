@@ -56,15 +56,47 @@ class RecoveryGuardTest(unittest.TestCase):
 
     def test_cleanup_only_stops_verified_full_id_and_checks_removal(self):
         with patch.object(self.server, 'docker', side_effect=[self.response(self.info),
-                subprocess.CompletedProcess([], 0, b'', b''), subprocess.CompletedProcess([], 1, b'', b'not found')]) as docker:
+                subprocess.CompletedProcess([], 0, b'', b''), subprocess.CompletedProcess([], 1, b'', b'Error: No such object: ' + b'b' * 64)]) as docker:
             self.server.close()
             self.assertIsNone(self.server.container_id)
             self.assertEqual(['stop', '--time', '10', 'b' * 64], docker.call_args_list[1].args[0])
+
+    def test_cleanup_waits_for_auto_removal_and_stops_only_once(self):
+        gone = subprocess.CompletedProcess([], 1, b'', b'error: no such object: ' + b'b' * 64)
+        with patch.object(self.server, 'docker', side_effect=[self.response(self.info),
+                subprocess.CompletedProcess([], 0, b'', b''), self.response(self.info), self.response(self.info), gone]) as docker, \
+                patch.object(recovery.time, 'sleep'):
+            self.server.close()
+        self.assertIsNone(self.server.container_id)
+        self.assertEqual(1, sum(c.args[0][0] == 'stop' for c in docker.call_args_list))
+
+    def test_cleanup_retains_id_on_timeout_changed_ownership_or_daemon_error(self):
+        cases = [self.response(self.info), self.response({'Id': 'foreign'}),
+                 subprocess.CompletedProcess([], 1, b'', b'Cannot connect to Docker daemon'),
+                 subprocess.CompletedProcess([], 1, b'', b'error: no such object: ' + b'c' * 64),
+                 subprocess.CompletedProcess([], 2, b'', b'error: no such object: ' + b'b' * 64)]
+        for last in cases:
+            with self.subTest(last=last), patch.object(self.server, 'docker', side_effect=[self.response(self.info),
+                    subprocess.CompletedProcess([], 0, b'', b''), last]), \
+                    patch.object(recovery.time, 'monotonic', side_effect=[0, 11]):
+                with self.assertRaises(recovery.RecoveryError): self.server.close()
+                self.assertEqual('b' * 64, self.server.container_id)
 
     def test_no_container_means_no_cleanup_command(self):
         self.server.container_id = None
         with patch.object(self.server, 'docker') as docker:
             self.server.close(); docker.assert_not_called()
+
+    def test_cleanup_failure_does_not_replace_original_execution_failure(self):
+        report = {}
+        with patch.object(recovery.OwnedMySQL, 'start', side_effect=recovery.RecoveryError('synthetic original failure')), \
+                patch.object(recovery.OwnedMySQL, 'close', side_effect=recovery.RecoveryError('synthetic cleanup failure')), \
+                contextlib.redirect_stdout(io.StringIO()):
+            with self.assertRaisesRegex(recovery.RecoveryError, '^synthetic original failure$'):
+                recovery.run_recovery(report, self.work)
+        self.assertEqual('start_owned_source', report['active_step'])
+        self.assertTrue(report['cleanup'])
+        self.assertTrue(all(x['passed'] is False for x in report['cleanup']))
 
     def test_database_and_identifier_boundaries(self):
         with patch.object(self.server, 'guard'), patch.object(self.server, 'docker') as docker:

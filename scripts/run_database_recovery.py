@@ -138,9 +138,24 @@ class OwnedMySQL:
         if self.container_id is not None:
             self.guard()
             self.docker(['stop', '--time', '10', self.container_id], timeout=45)
-            result = self.docker(['inspect', self.container_id], allow_failure=True)
-            require(result.returncode != 0, 'Owned --rm container still exists after cleanup')
-            self.container_id = None
+            # Docker stop may return before asynchronous --rm finishes. Observe the
+            # same full ID, checking ownership on each surviving snapshot.
+            deadline = time.monotonic() + 10
+            while True:
+                result = self.docker(['inspect', '--format', '{{json .}}', self.container_id], allow_failure=True)
+                if result.returncode:
+                    require(result.returncode == 1 and
+                            b'no such object: ' + self.container_id.encode() in result.stderr.lower(),
+                            'Cannot verify owned container removal')
+                    self.container_id = None
+                    return
+                info = json.loads(result.stdout)
+                labels = info.get('Config', {}).get('Labels') or {}
+                require(info.get('Id') == self.container_id and info.get('Name') == '/' + self.name
+                        and labels.get(LABEL) == self.run and labels.get('autocare.recovery.role') == self.role,
+                        'Container ownership changed during cleanup')
+                require(time.monotonic() < deadline, 'Owned container removal deadline exceeded')
+                time.sleep(0.2)
 
 
 def normalize_schema(value):
@@ -277,6 +292,7 @@ def run_recovery(report, work):
         require(manifest(files) == report['migrations'], 'Migration files changed during execution')
         report['migration_sources_unchanged'] = True
     finally:
+        failed_before_cleanup = sys.exc_info()[0] is not None
         report['cleanup'] = []
         for server in reversed(servers):
             try:
@@ -284,7 +300,9 @@ def run_recovery(report, work):
                 report['cleanup'].append({'role': server.role, 'passed': True})
             except Exception:
                 report['cleanup'].append({'role': server.role, 'passed': False})
-        require(all(x['passed'] for x in report['cleanup']), 'Owned container cleanup failed; inspect this run before retrying')
+        # Preserve the original migration/restore failure if cleanup also fails.
+        if not failed_before_cleanup:
+            require(all(x['passed'] for x in report['cleanup']), 'Owned container cleanup failed; inspect this run before retrying')
 
 
 def main():
