@@ -1,3 +1,9 @@
+## 2026-10-20 A4d-3d：商家施工防护
+
+本阶段成果已上传 [PR192](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/192)（依赖PR191）；远程CI待结果，保持草稿，不合并或部署。
+
+A4d-3d 本地PASS：商家施工防护页统一到设计系统，新增 11 个导出（必选项与常量、五阶段、勾选行、提交缺口、提交卡、已提交记录、报工两态三组、读取失败、写入状态、照片状态）与10项单测；小程序单测980/980（0失败/0跳过）、微信构建与H5构建均exit 0、10个共享选择器逐项在app.wxss。修掉六处缺陷：四层v-if链不可断言、未知状态可能被当成可提交、勾选行靠下标、提交按钮不说原因、报工记录条件散在模板里、读取失败只有重试没有重新登录。保留 protectionBody + confirmStillHolds 的二次确认与幂等、WorkPhotos 四个事件；照片只认 PROTECTION 那一张，未知报工状态当待签字。后端与接口零改动；真机与模拟器未执行，不声明渲染通过。 商家侧接车→防护→订单→时段→派工五个主流程页已收口；下一核销退款等缺口→A5交付→B外部接入→C真机。
+
 ## 2026-10-20 A4d-3c：商家接车检查
 
 本阶段成果已上传 [PR191](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/191)（依赖PR190）；远程CI待结果，保持草稿，不合并或部署。
@@ -12,7 +18,7 @@ A4d-3b 本地PASS：商家时段与派工两页统一到设计系统，新增 10
 
 ## 2026-10-20 A4d-3a：商家订单阅读面
 
-本阶段成果已上传 [PR189](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/189)（依赖PR188）；远程CI待结果，保持草稿，不合并或部署。
+本阶段成果已上传 [PR189](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/189)（依赖PR188）；八项远程CI全部成功（web / miniapp / backend / schema-and-ocr / schema-mysql / database-recovery / compose-smoke / performance-baseline；`backend` 48 分 11 秒、38 步全部通过），保持草稿，不合并或部署。
 
 A4d-3a 本地PASS：商家订单列表与详情统一到设计系统，新增 9 个映射（状态/支付/行/筛选/空态/价格/入口矩阵/动作提示）与11项单测，并把徽标色调抽成评价域与商家域共用的 ui-tone；小程序单测946/946（0失败/0跳过）、微信构建与H5构建均exit 0、10个共享选择器逐项在app.wxss、两页编译产物保留既有锚点。修掉三类真实缺陷：列表把RECEIVED/IN_SERVICE等后端枚举直接渲染、详情把支付码SUCCEEDED直出、7组状态数组被复制进模板。既有端到端流程的四条断言（行内按钮、预约日期文案、已支付子串、付款异常原文）逐条保留。后端与接口零改动；真机与模拟器未执行，不声明渲染通过。 下一商家工位与派工→其他独立缺口→A5交付→B外部接入→C真机。
 

@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "scope": "商家施工防护展示层；不含真机与视觉回归截图",
+  "tests": {
+    "command": "node --test test/*.test.js",
+    "exit_code": 0,
+    "tests": 980,
+    "pass": 980,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 2365.0895,
+    "log_sha256": "5df6ad6c4b470185305595a3bc0b66747bb5eadbd6081f46fb527dd731e49ba9"
+  },
+  "builds": {
+    "mp_weixin": {
+      "command": "npm run build:mp-weixin",
+      "exit_code": 0,
+      "build_complete": true,
+      "shared_selector_gate": true,
+      "no_test_bridge_gate": true,
+      "log_sha256": "530b37b51b54d65a5ce9db48258e8a2424cb8abfcdd7085c2b554081ca5746f4"
+    },
+    "h5": {
+      "command": "npm run build:h5",
+      "exit_code": 0,
+      "build_complete": true,
+      "log_sha256": "47fa3930c94797e17705cfa2fa39ce65c16747d5b34144af0ad4054ecd37c979"
+    }
+  },
+  "shared_selectors_in_app_wxss": {
+    "reservation-page": true,
+    "reservation-primary": true,
+    "ux-hero": true,
+    "ux-card": true,
+    "ux-metric-value": true,
+    "ux-badge": true,
+    "ux-row": true,
+    "ux-empty": true,
+    "ux-card-note": true,
+    "ux-divider": true
+  },
+  "compiled_pages": {
+    "merchant/protection.wxml": {
+      "ux_hero": true,
+      "ux_badge": true,
+      "form_anchor": true,
+      "stage_anchor": true,
+      "items_anchor": true,
+      "submit_anchor": true,
+      "existing_anchor": true,
+      "report_anchor": true,
+      "read_error_anchor": true,
+      "title_copy": true,
+      "hero_copy": true
+    }
+  },
+  "sources_sha256": {
+    "apps/miniapp/src/services/merchant-protection-display.js": "5de975497ded51883040873a14c863f2d3a5907ffa58a99bece219acc2a32b00",
+    "apps/miniapp/src/pages/merchant/protection.vue": "708a03d8b155cd384fa7b88ba751f079352bd9dfd71ec07662d866411b9b22ec",
+    "apps/miniapp/test/merchant-protection-display.test.js": "1daa19b0908766a6180dcb834f128c86a9189291ae42dbc74ebf6a595ed32205"
+  },
+  "passed": true
+}
