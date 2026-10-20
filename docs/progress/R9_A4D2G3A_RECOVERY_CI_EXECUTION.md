@@ -1,5 +1,7 @@
 # A4d-2g3a：恢复 CI 阻塞修复
 
+本阶段成果已上传 [PR182](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/182)，修复及验收提交 `98c3f1d`，依赖PR181；远程CI待新提交结果，保持草稿，不合并或部署。
+
 ## 计划与范围
 
 上一阶段 PR181 的数据库恢复 CI 失败，先修复并重跑，再继续辅助材料上传/访问和商家/技师工作台验收。仅对本次创建、完整 ID 和标签核验的两台合成 MySQL 执行操作。
