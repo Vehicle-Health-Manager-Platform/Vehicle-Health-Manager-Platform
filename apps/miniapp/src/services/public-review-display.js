@@ -1,12 +1,11 @@
 /** 评价与公开展示面的纯展示映射：状态 → 文案/色调，绝不把 null/undefined 直接渲染到页面。
  * 与 service 层无关：只吃已校验过的响应对象，任何字段缺失都退化为可读文案而不是抛错。 */
+import { TONE_CLASS, toneClass } from './ui-tone.js'
+/** 徽标色调映射统一放在 ui-tone，评价域与商家域共用一份。 */
+export { TONE_CLASS, toneClass }
 const say = (v, fallback) => (typeof v === 'string' && v.trim() ? v : fallback)
 const num = (v, fallback = 0) => (Number.isFinite(v) ? v : fallback)
 const clamp = (v, min, max) => Math.min(max, Math.max(min, v))
-
-/** 徽标色调 → design-system 的 ux-badge-* 后缀。 */
-export const TONE_CLASS = { ok: 'ux-badge-ok', warn: 'ux-badge-warn', risk: 'ux-badge-risk', muted: 'ux-badge-muted' }
-export const toneClass = tone => TONE_CLASS[tone] || TONE_CLASS.muted
 
 /** 公开星级头部读数：空样本给破折号而不是 null/NaN。 */
 export function ratingHeadline(summary) {
