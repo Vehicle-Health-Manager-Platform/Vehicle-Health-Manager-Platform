@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "scope": "运营审核台（入口分组 + 待审文字审核）展示层；不含真机与视觉回归截图",
+  "tests": {
+    "command": "node --test test/*.test.js",
+    "exit_code": 0,
+    "tests": 935,
+    "pass": 935,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 1826.2972,
+    "log_sha256": "52039828247b3dfd1c6694c2a215ab4d2e3ecca17f7993358c5c3697c2aa4b3d"
+  },
+  "builds": {
+    "mp_weixin": {
+      "command": "npm run build:mp-weixin",
+      "exit_code": 0,
+      "build_complete": true,
+      "shared_selector_gate": true,
+      "no_test_bridge_gate": true,
+      "log_sha256": "530b37b51b54d65a5ce9db48258e8a2424cb8abfcdd7085c2b554081ca5746f4"
+    },
+    "h5": {
+      "command": "npm run build:h5",
+      "exit_code": 0,
+      "build_complete": true,
+      "log_sha256": "47fa3930c94797e17705cfa2fa39ce65c16747d5b34144af0ad4054ecd37c979"
+    }
+  },
+  "shared_selectors_in_app_wxss": {
+    "reservation-page": true,
+    "reservation-primary": true,
+    "ux-hero": true,
+    "ux-card": true,
+    "ux-metric-value": true,
+    "ux-badge": true,
+    "ux-row": true,
+    "ux-empty": true,
+    "ux-card-note": true,
+    "ux-divider": true
+  },
+  "compiled_pages": {
+    "operator/review.wxml": {
+      "ux_hero": true,
+      "ux_badge": true,
+      "ux_empty": true,
+      "operator_entry": true,
+      "moderation_row": false
+    },
+    "operator/review-texts.wxml": {
+      "ux_hero": true,
+      "ux_badge": true,
+      "ux_empty": true,
+      "operator_entry": false,
+      "moderation_row": true
+    }
+  },
+  "sources_sha256": {
+    "apps/miniapp/src/services/public-review-display.js": "d02d7f03d46324e9ab8f5bdb0857f15c607052597087d62c6b7790d64a30f57b",
+    "apps/miniapp/src/pages/operator/review.vue": "08ff1a2a7824f51cb4f19ba16bfbe0379a407942fac42ca579672ffc7ae79002",
+    "apps/miniapp/src/pages/operator/review-texts.vue": "614fe2647fcc46125fa2b6990e6ea718d5f69c25973cf495887e528aec20e33d",
+    "apps/miniapp/test/operator-review-console.test.js": "3246887941234920a79ecabbeeace3dab3e0204a11e7a2888d684ca06808d445",
+    "apps/miniapp/test/community-questions.test.js": "afea75506cb3eaa1222691c06530454e98875afbf48506799efa8d07d98dc8b5"
+  },
+  "passed": true
+}
