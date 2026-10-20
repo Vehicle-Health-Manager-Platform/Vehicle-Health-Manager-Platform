@@ -145,3 +145,10 @@ KNOWLEDGE_AI_ENABLED与COMMUNITY_PUBLICATION_ENABLED明确false，真实公开�
 2026-10-19：A4d-2g1 本地PASS（186.5秒）：20诊断接口169业务HTTP请求/566断言、338匿名请求/1014断言通过。2工单最终CLOSED/revision7及2，5正文/9事件/9已投递outbox/24接收目标及站内通知，2已读审计；转派立即撤销旧处理者正文与通知权限，管理者只可读队列，跨车主不可读/关闭/标已读。停用/暂停阻止新提交，历史答复保留，旧回执不重开工单或服务；通知ID绑定各接收者实际列表响应，正文/版本/角色/幂等键审计通过。143项Java定向（含继承事务回归）及10项新增/27项既有Python、默认新集合实际0请求0失败通过。源码前后稳定，后端/MySQL/网络清理成功。身份/月度资格仅SQL合成夹具，真实定时站内投递不代表微信消息送达；0奖励/积分/支付。前置PR179六项CI成功、后端待结束；全量API业务验收和性能延迟达标仍未完成。下一受控资料/档案授权与施工服务上下文→其他独立缺口→A5文档与交付核验→B微信/电话/外部服务→C真机。
 
 执行：`python scripts/diagnosis_api_cases.py`、`python -m unittest discover -s scripts -p test_diagnosis_api_cases.py -v`、`python scripts/run_api_acceptance.py --diagnosis-cases`。集合默认关闭；仅验收器新建全迁移数据库、合成身份和月度资格夹具后启用。CI先绑定构建前源文件，再clean verify，使用`--ci-built-jar --diagnosis-cases`执行；独立数据库，不能与其他业务suite共用。报告只上传脱敏summary，原始JWT/响应保留忽略目录。
+
+
+## R9 A4d-2g2 授权与施工资料
+
+2026-10-20：前置main八项CI全绿。A4d-2g2 本地PASS（347.016秒）：7授权/施工本域+3支撑接口，共10接口105真实HTTP请求、18项状态/隐私/事务/有效期检查通过。实际上传1个CLEAN文件并创建2份档案，唯一授权最终REVOKED/revision5、5次授权审计；默认不共享，未选档案不外泄，撤销后旧回执不复活；结构化内容更新改变源哈希，重新确认前正文和附件隐藏。审计失败整笔回滚、当前指派/已接单/车辆归属/扫描状态/订单关闭均重新核验；真实签名下载逐字节一致，已签发URL按10秒合成配置自然到期，新签发入口立即受当前权限约束。38项Java定向（含继承回归）及10项新增/27项既有Python、编译/diff通过，源码含资源配置前后稳定；4容器和网络实际移除。身份/已接受任务及后续改派/归属/关闭变化仅SQL合成夹具，授权/档案/结构化写入为HTTP；不是正式派工履约或微信接入验收。原始正文/JWT/签名URL仅留忽略目录。本阶段补齐可复现验收和CI门禁，生产逻辑沿用既有实现；全量API业务验收、性能延迟目标、正式外部服务与真机仍未全部完成。下一本地辅助材料上传/访问与商家/技师工作台→其他独立缺口→A5文档与交付核验→B外部接入→C真机。
+
+运行：`python -m unittest discover -s scripts -p test_service_archive_acceptance.py -v`、`python scripts/run_service_archive_acceptance.py --docker`；CI在本次clean verify后执行`--check-only`。原始日志/响应不上传；源码、JUnit、18项检查和自有资源实际移除缺一不可。

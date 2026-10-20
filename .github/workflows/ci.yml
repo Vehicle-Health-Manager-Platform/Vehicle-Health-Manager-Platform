@@ -62,6 +62,9 @@ jobs:
       - name: Check real private upload and signed attachment journey
         if: always()
         run: python scripts/run_upload_acceptance.py --check-only
+      - name: Check real service archive consent context and signed attachments
+        if: always()
+        run: python scripts/run_service_archive_acceptance.py --check-only
       - name: Check invitation qualification freeze and scheduled reward delivery
         if: always()
         run: python scripts/run_reward_acceptance.py --check-only
@@ -107,6 +110,7 @@ jobs:
           path: |
             .cache/api-acceptance-*/report.json
             backend/target/private-upload-acceptance.json
+            backend/target/service-archive-access-acceptance.json
             backend/target/invitation-reward-acceptance.json
       - name: Save coverage and test evidence
         if: always()
@@ -155,6 +159,7 @@ jobs:
       - run: python -m unittest discover -s scripts -p test_points_api_cases.py -v
       - run: python scripts/exchange_api_cases.py
       - run: python -m unittest discover -s scripts -p test_exchange_api_cases.py -v
+      - run: python -m unittest discover -s scripts -p test_service_archive_acceptance.py -v
       - run: python scripts/diagnosis_api_cases.py
       - run: python -m unittest discover -s scripts -p test_diagnosis_api_cases.py -v
       - run: python scripts/invitation_api_cases.py

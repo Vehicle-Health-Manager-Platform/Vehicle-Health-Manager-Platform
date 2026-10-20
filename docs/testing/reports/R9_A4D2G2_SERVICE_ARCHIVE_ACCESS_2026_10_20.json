@@ -1,0 +1,1163 @@
+{
+  "version": 1,
+  "passed": true,
+  "full_api_acceptance_passed": false,
+  "finished_at": "2026-10-20T04:14:35.032386+00:00",
+  "duration_seconds": 347.016,
+  "source_sha256": "a6aa68f5b514bc797a51f525eed0b383e63fd43eedacd20047657c1595df0b37",
+  "sources_unchanged": true,
+  "maven_exit_code": 0,
+  "execution_mode": "local-execution",
+  "proof": {
+    "requests": 105,
+    "operations": 10,
+    "coverage": {
+      "POST /api/file/upload": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "POST /api/archive/add": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/order/{id}/archive-grants": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/order/{id}/archive-grants/{archive}/files/{file}/preview": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/merchant/orders/{id}/service-context": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/tech/orders/{id}/service-context": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/merchant/orders/{id}/service-context/archives/{archive}/files/{file}/access": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/tech/orders/{id}/service-context/archives/{archive}/files/{file}/access": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "PUT /api/order/{id}/archive-grants/{archive}": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "PUT /api/archive/{id}/structured": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ]
+    },
+    "checks": {
+      "no_default_grants": true,
+      "only_selected_archive_shared": true,
+      "audit_failure_rolls_back_grant": true,
+      "old_receipt_never_revives_grant": true,
+      "source_hash_changes_with_fields": true,
+      "changed_source_hidden": true,
+      "updated_safe_fields_visible": true,
+      "current_assignment_required": true,
+      "vehicle_owner_rechecked": true,
+      "scan_status_rechecked": true,
+      "closed_task_denies_new_access": true,
+      "issued_bearer_url_has_bounded_lease": true,
+      "old_url_expires_naturally": true,
+      "one_final_revoked_grant": true,
+      "exact_five_grant_audits": true,
+      "one_scanned_upload_two_archives": true,
+      "grant_audit_contains_no_source_text": true,
+      "no_payment_or_rewards": true
+    },
+    "cleanup": {
+      "initializer": true,
+      "clamav": true,
+      "minio": true,
+      "mysql": true,
+      "network": true
+    },
+    "cases": [
+      {
+        "role": "owner",
+        "operation": "/api/file/upload",
+        "name": "owner_upload",
+        "passed": true,
+        "method": "POST",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/file/upload"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/file/upload",
+        "name": "owner_upload_replay",
+        "passed": true,
+        "method": "POST",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/file/upload"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/file/upload",
+        "name": "owner_upload_invalid",
+        "passed": true,
+        "method": "POST",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/file/upload"
+      },
+      {
+        "role": "anonymous",
+        "operation": "/api/file/upload",
+        "name": "owner_upload_anonymous",
+        "passed": true,
+        "method": "POST",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/file/upload"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/file/upload",
+        "name": "owner_upload_wrong_role",
+        "passed": true,
+        "method": "POST",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/file/upload"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/archive/add",
+        "name": "archive_create",
+        "passed": true,
+        "method": "POST",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/archive/add"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/archive/add",
+        "name": "archive_create_replay",
+        "passed": true,
+        "method": "POST",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/archive/add"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/archive/add",
+        "name": "archive_create_invalid",
+        "passed": true,
+        "method": "POST",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/archive/add"
+      },
+      {
+        "role": "anonymous",
+        "operation": "/api/archive/add",
+        "name": "archive_create_anonymous",
+        "passed": true,
+        "method": "POST",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/archive/add"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/archive/add",
+        "name": "archive_create_wrong_role",
+        "passed": true,
+        "method": "POST",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/archive/add"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/archive/add",
+        "name": "archive_unselected",
+        "passed": true,
+        "method": "POST",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/archive/add"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants",
+        "name": "candidates",
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/order/1/archive-grants"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants",
+        "name": "candidates_missing",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "boundary",
+        "path": "/api/order/999999/archive-grants"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants",
+        "name": "candidates_query",
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/order/1/archive-grants?owner_id=2"
+      },
+      {
+        "role": "anonymous",
+        "operation": "/api/order/{id}/archive-grants",
+        "name": "candidates_anonymous",
+        "passed": true,
+        "method": "GET",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/order/1/archive-grants"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/order/{id}/archive-grants",
+        "name": "candidates_wrong_role",
+        "passed": true,
+        "method": "GET",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/order/1/archive-grants"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}/files/{file}/preview",
+        "name": "preview",
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/order/1/archive-grants/1/files/1/preview"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}/files/{file}/preview",
+        "name": "preview_missing",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "boundary",
+        "path": "/api/order/1/archive-grants/1/files/999999/preview"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}/files/{file}/preview",
+        "name": "preview_query",
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/order/1/archive-grants/1/files/1/preview?owner_id=2"
+      },
+      {
+        "role": "anonymous",
+        "operation": "/api/order/{id}/archive-grants/{archive}/files/{file}/preview",
+        "name": "preview_anonymous",
+        "passed": true,
+        "method": "GET",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/order/1/archive-grants/1/files/1/preview"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/order/{id}/archive-grants/{archive}/files/{file}/preview",
+        "name": "preview_wrong_role",
+        "passed": true,
+        "method": "GET",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/order/1/archive-grants/1/files/1/preview"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/merchant/orders/{id}/service-context",
+        "name": "merchant_context",
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/merchant/orders/1/service-context"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/merchant/orders/{id}/service-context",
+        "name": "merchant_context_missing",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "boundary",
+        "path": "/api/merchant/orders/999999/service-context"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/merchant/orders/{id}/service-context",
+        "name": "merchant_context_query",
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/merchant/orders/1/service-context?owner_id=2"
+      },
+      {
+        "role": "anonymous",
+        "operation": "/api/merchant/orders/{id}/service-context",
+        "name": "merchant_context_anonymous",
+        "passed": true,
+        "method": "GET",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/merchant/orders/1/service-context"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/merchant/orders/{id}/service-context",
+        "name": "merchant_context_wrong_role",
+        "passed": true,
+        "method": "GET",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/merchant/orders/1/service-context"
+      },
+      {
+        "role": "technician",
+        "operation": "/api/tech/orders/{id}/service-context",
+        "name": "tech_context",
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/tech/orders/1/service-context"
+      },
+      {
+        "role": "technician",
+        "operation": "/api/tech/orders/{id}/service-context",
+        "name": "tech_context_missing",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "boundary",
+        "path": "/api/tech/orders/999999/service-context"
+      },
+      {
+        "role": "technician",
+        "operation": "/api/tech/orders/{id}/service-context",
+        "name": "tech_context_query",
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/tech/orders/1/service-context?owner_id=2"
+      },
+      {
+        "role": "anonymous",
+        "operation": "/api/tech/orders/{id}/service-context",
+        "name": "tech_context_anonymous",
+        "passed": true,
+        "method": "GET",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/tech/orders/1/service-context"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/tech/orders/{id}/service-context",
+        "name": "tech_context_wrong_role",
+        "passed": true,
+        "method": "GET",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/tech/orders/1/service-context"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/merchant/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+        "name": "ungranted_merchant_file",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/merchant/orders/1/service-context/archives/1/files/1/access"
+      },
+      {
+        "role": "technician",
+        "operation": "/api/tech/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+        "name": "ungranted_tech_file",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/tech/orders/1/service-context/archives/1/files/1/access"
+      },
+      {
+        "role": "other",
+        "operation": "/api/order/{id}/archive-grants",
+        "name": "foreign_candidates",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/order/1/archive-grants"
+      },
+      {
+        "role": "other",
+        "operation": "/api/order/{id}/archive-grants/{archive}/files/{file}/preview",
+        "name": "foreign_preview",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/order/1/archive-grants/1/files/1/preview"
+      },
+      {
+        "role": "other_merchant",
+        "operation": "/api/merchant/orders/{id}/service-context",
+        "name": "foreign_shop_context",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/merchant/orders/1/service-context"
+      },
+      {
+        "role": "peer",
+        "operation": "/api/tech/orders/{id}/service-context",
+        "name": "unassigned_peer_context",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/tech/orders/1/service-context"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_activate",
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_activate_replay",
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_activate_invalid",
+        "passed": true,
+        "method": "PUT",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "anonymous",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_activate_anonymous",
+        "passed": true,
+        "method": "PUT",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_activate_wrong_role",
+        "passed": true,
+        "method": "PUT",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_changed_intent",
+        "passed": true,
+        "method": "PUT",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "other",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_foreign_owner",
+        "passed": true,
+        "method": "PUT",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_stale_revision",
+        "passed": true,
+        "method": "PUT",
+        "status": 409,
+        "kind": "boundary",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_write_query",
+        "passed": true,
+        "method": "PUT",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/order/1/archive-grants/1?owner_id=2"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/merchant/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+        "name": "merchant_file",
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/merchant/orders/1/service-context/archives/1/files/1/access"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/merchant/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+        "name": "merchant_file_missing",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "boundary",
+        "path": "/api/merchant/orders/1/service-context/archives/1/files/999999/access"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/merchant/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+        "name": "merchant_file_query",
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/merchant/orders/1/service-context/archives/1/files/1/access?owner_id=2"
+      },
+      {
+        "role": "anonymous",
+        "operation": "/api/merchant/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+        "name": "merchant_file_anonymous",
+        "passed": true,
+        "method": "GET",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/merchant/orders/1/service-context/archives/1/files/1/access"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/merchant/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+        "name": "merchant_file_wrong_role",
+        "passed": true,
+        "method": "GET",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/merchant/orders/1/service-context/archives/1/files/1/access"
+      },
+      {
+        "role": "technician",
+        "operation": "/api/tech/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+        "name": "tech_file",
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/tech/orders/1/service-context/archives/1/files/1/access"
+      },
+      {
+        "role": "technician",
+        "operation": "/api/tech/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+        "name": "tech_file_missing",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "boundary",
+        "path": "/api/tech/orders/1/service-context/archives/1/files/999999/access"
+      },
+      {
+        "role": "technician",
+        "operation": "/api/tech/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+        "name": "tech_file_query",
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/tech/orders/1/service-context/archives/1/files/1/access?owner_id=2"
+      },
+      {
+        "role": "anonymous",
+        "operation": "/api/tech/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+        "name": "tech_file_anonymous",
+        "passed": true,
+        "method": "GET",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/tech/orders/1/service-context/archives/1/files/1/access"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/tech/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+        "name": "tech_file_wrong_role",
+        "passed": true,
+        "method": "GET",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/tech/orders/1/service-context/archives/1/files/1/access"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/merchant/orders/{id}/service-context",
+        "name": "shared_context",
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/merchant/orders/1/service-context"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/merchant/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+        "name": "unselected_archive_file",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/merchant/orders/1/service-context/archives/2/files/1/access"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_audit_failure",
+        "passed": true,
+        "method": "PUT",
+        "status": 503,
+        "kind": "error",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_revoke",
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_revoke_replay",
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_revoke_invalid",
+        "passed": true,
+        "method": "PUT",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "anonymous",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_revoke_anonymous",
+        "passed": true,
+        "method": "PUT",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_revoke_wrong_role",
+        "passed": true,
+        "method": "PUT",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "old_receipt_after_revoke",
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/merchant/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+        "name": "revoked_merchant_file",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/merchant/orders/1/service-context/archives/1/files/1/access"
+      },
+      {
+        "role": "technician",
+        "operation": "/api/tech/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+        "name": "revoked_tech_file",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/tech/orders/1/service-context/archives/1/files/1/access"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_reactivate",
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_reactivate_replay",
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_reactivate_invalid",
+        "passed": true,
+        "method": "PUT",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "anonymous",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_reactivate_anonymous",
+        "passed": true,
+        "method": "PUT",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_reactivate_wrong_role",
+        "passed": true,
+        "method": "PUT",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/archive/{id}/structured",
+        "name": "structured_save",
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/archive/1/structured"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/archive/{id}/structured",
+        "name": "structured_save_replay",
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/archive/1/structured"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/archive/{id}/structured",
+        "name": "structured_save_invalid",
+        "passed": true,
+        "method": "PUT",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/archive/1/structured"
+      },
+      {
+        "role": "anonymous",
+        "operation": "/api/archive/{id}/structured",
+        "name": "structured_save_anonymous",
+        "passed": true,
+        "method": "PUT",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/archive/1/structured"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/archive/{id}/structured",
+        "name": "structured_save_wrong_role",
+        "passed": true,
+        "method": "PUT",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/archive/1/structured"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants",
+        "name": "source_changed_candidates",
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/order/1/archive-grants"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/merchant/orders/{id}/service-context",
+        "name": "source_unavailable_context",
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/merchant/orders/1/service-context"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/merchant/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+        "name": "changed_source_file",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/merchant/orders/1/service-context/archives/1/files/1/access"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "old_source_reconfirm",
+        "passed": true,
+        "method": "PUT",
+        "status": 409,
+        "kind": "boundary",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_reconfirm",
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_reconfirm_replay",
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_reconfirm_invalid",
+        "passed": true,
+        "method": "PUT",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "anonymous",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_reconfirm_anonymous",
+        "passed": true,
+        "method": "PUT",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_reconfirm_wrong_role",
+        "passed": true,
+        "method": "PUT",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "technician",
+        "operation": "/api/tech/orders/{id}/service-context",
+        "name": "updated_context",
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/tech/orders/1/service-context"
+      },
+      {
+        "role": "technician",
+        "operation": "/api/tech/orders/{id}/service-context",
+        "name": "former_tech_context",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/tech/orders/1/service-context"
+      },
+      {
+        "role": "technician",
+        "operation": "/api/tech/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+        "name": "former_tech_file",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/tech/orders/1/service-context/archives/1/files/1/access"
+      },
+      {
+        "role": "peer",
+        "operation": "/api/tech/orders/{id}/service-context",
+        "name": "peer_not_accepted",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/tech/orders/1/service-context"
+      },
+      {
+        "role": "peer",
+        "operation": "/api/tech/orders/{id}/service-context",
+        "name": "peer_context",
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/tech/orders/1/service-context"
+      },
+      {
+        "role": "peer",
+        "operation": "/api/tech/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+        "name": "peer_file",
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/tech/orders/1/service-context/archives/1/files/1/access"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/merchant/orders/{id}/service-context",
+        "name": "transferred_vehicle_context",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/merchant/orders/1/service-context"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/merchant/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+        "name": "infected_file_denied",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/merchant/orders/1/service-context/archives/1/files/1/access"
+      },
+      {
+        "role": "peer",
+        "operation": "/api/tech/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+        "name": "lease_before_close",
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/tech/orders/1/service-context/archives/1/files/1/access"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/merchant/orders/{id}/service-context",
+        "name": "closed_merchant_context",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/merchant/orders/1/service-context"
+      },
+      {
+        "role": "peer",
+        "operation": "/api/tech/orders/{id}/service-context",
+        "name": "closed_peer_context",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/tech/orders/1/service-context"
+      },
+      {
+        "role": "peer",
+        "operation": "/api/tech/orders/{id}/service-context/archives/{archive}/files/{file}/access",
+        "name": "closed_peer_file",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/tech/orders/1/service-context/archives/1/files/1/access"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "closed_old_grant_receipt",
+        "passed": true,
+        "method": "PUT",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}/files/{file}/preview",
+        "name": "owner_history_preview",
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/order/1/archive-grants/1/files/1/preview"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_final_revoke",
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_final_revoke_replay",
+        "passed": true,
+        "method": "PUT",
+        "status": 200,
+        "kind": "boundary",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "owner",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_final_revoke_invalid",
+        "passed": true,
+        "method": "PUT",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "anonymous",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_final_revoke_anonymous",
+        "passed": true,
+        "method": "PUT",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/order/1/archive-grants/1"
+      },
+      {
+        "role": "merchant",
+        "operation": "/api/order/{id}/archive-grants/{archive}",
+        "name": "grant_final_revoke_wrong_role",
+        "passed": true,
+        "method": "PUT",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/order/1/archive-grants/1"
+      }
+    ]
+  },
+  "error": null,
+  "boundaries": [
+    "synthetic identities; real HTTP/MySQL/MinIO/ClamAV",
+    "synthetic scan database injected only in test configuration; production freshness unchanged",
+    "synthetic task/dispatch/closure fixtures; HTTP consent/archive/source writes; issued bearer URLs live only until short TTL",
+    "no production malware coverage, real identity, external cloud supplier or device acceptance"
+  ]
+}
