@@ -425,3 +425,5 @@ R7c3 诊断消息首轮127项126通过、1失败：新已读测试将不同幂�
 - 尚未执行真机、模拟器渲染、正式资金；不更改后端/API契约。
 
 - A4d-4c 本地验证完成：1030项全通过，微信/H5构建与原生两门禁通过；报告和当前状态已整理，准备提交推送。
+
+- A4d-4c已上传：6a8835b推送至origin/codex/r9-a4d4c-refunds；草稿PR195：https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/195。阶段规划及实现/本地验证/上传完成；远程CI独立跟踪，未合并或上线。

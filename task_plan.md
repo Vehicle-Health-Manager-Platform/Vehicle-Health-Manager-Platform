@@ -565,3 +565,5 @@ R8b3b用户已确认最小服务关系方案，开始后端/API、实际页面�
 - 环境记录：默认沙箱禁止git ref写入与网络，经执行权限升级已成功创建分支、读取远端并确认认证；并非用户授权缺失。一次apply_patch同文件删除/新增失败，已用单次文件写入纠正。writing-plans技能未在当前技能目录找到，以现有文件规划记录具体步骤。
 
 - A4d-4c 本地验证完成：1030项全通过，微信/H5构建与原生两门禁通过；报告和当前状态已整理，准备提交推送。
+
+- A4d-4c已上传：6a8835b推送至origin/codex/r9-a4d4c-refunds；草稿PR195：https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/195。阶段规划及实现/本地验证/上传完成；远程CI独立跟踪，未合并或上线。

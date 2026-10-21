@@ -38,4 +38,4 @@
 
 ## GitHub
 
-阶段本地验证已完成；推送、PR及远程CI结果单独记录，不将本地完成或push当作已合并或已上线。
+阶段实现提交 `6a8835b` 已推送至 `origin/codex/r9-a4d4c-refunds`，已创建[草稿PR195](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/195)，目标分支main。远程CI结果待完成；未合并、未上线。上传记录回填作为单独文档提交，不重新运行未改变的业务测试。
