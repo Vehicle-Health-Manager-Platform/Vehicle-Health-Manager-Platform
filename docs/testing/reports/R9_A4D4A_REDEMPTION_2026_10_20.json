@@ -1,0 +1,124 @@
+{
+  "version": 1,
+  "scope": "商家到店核销（预约核销 + 服务券核销）展示层；不含真机与视觉回归截图",
+  "tests": {
+    "command": "node --test test/*.test.js",
+    "exit_code": 0,
+    "tests": 997,
+    "pass": 997,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 2179.8339,
+    "log_sha256": "c3c0045f367ff149729a11c8fff6c9d132bf5402b071c506346a2522a6a89d25"
+  },
+  "builds": {
+    "mp_weixin": {
+      "command": "npm run build:mp-weixin",
+      "exit_code": 0,
+      "build_complete": true,
+      "shared_selector_gate": true,
+      "no_test_bridge_gate": true,
+      "log_sha256": "530b37b51b54d65a5ce9db48258e8a2424cb8abfcdd7085c2b554081ca5746f4"
+    },
+    "h5": {
+      "command": "npm run build:h5",
+      "exit_code": 0,
+      "build_complete": true,
+      "log_sha256": "47fa3930c94797e17705cfa2fa39ce65c16747d5b34144af0ad4054ecd37c979"
+    }
+  },
+  "shared_selectors_in_app_wxss": {
+    "reservation-page": true,
+    "reservation-primary": true,
+    "ux-hero": true,
+    "ux-card": true,
+    "ux-metric-value": true,
+    "ux-badge": true,
+    "ux-row": true,
+    "ux-empty": true,
+    "ux-card-note": true,
+    "ux-divider": true
+  },
+  "mapping_text_in_compiled_module": {
+    "验码并核销": true,
+    "测试核销已完成": true,
+    "测试核销，未真实扣款，不可作为收款凭据": true,
+    "确认交付并核销服务券": true,
+    "核对本店服务券与授权": true,
+    "重试原核销请求": true
+  },
+  "compiled_pages": {
+    "merchant/redeem.wxml": {
+      "ux_hero": true,
+      "ux_badge": true,
+      "redeem_form_anchor": true,
+      "redeem_order_anchor": true,
+      "redeem_stage_anchor": true,
+      "redemption_receipt_anchor": true,
+      "redeem_form_card_anchor": true,
+      "redeem_code_anchor": true,
+      "redeem_submit_anchor": true,
+      "redeem_test_warning_anchor": true,
+      "redeem_error_anchor": true,
+      "redeem_login_anchor": true,
+      "input_count": 1,
+      "module_imported": true,
+      "mapping_text_expected_absent": {
+        "验码并核销": true,
+        "测试核销已完成": true,
+        "测试核销，未真实扣款，不可作为收款凭据": true,
+        "确认交付并核销服务券": true,
+        "核对本店服务券与授权": true,
+        "重试原核销请求": true
+      },
+      "static_text_present": {
+        "门店工作台": true,
+        "核销验码": true,
+        "输入六位核销码": true
+      }
+    },
+    "merchant/coupon-redeem.wxml": {
+      "ux_hero": true,
+      "ux_badge": true,
+      "coupon_redeem_form_anchor": true,
+      "coupon_form_anchor": true,
+      "coupon_scan_anchor": true,
+      "coupon_id_anchor": true,
+      "coupon_revision_anchor": true,
+      "coupon_code_anchor": true,
+      "coupon_preview_anchor": true,
+      "coupon_preview_card_anchor": true,
+      "coupon_redeem_anchor": true,
+      "coupon_saved_anchor": true,
+      "coupon_error_anchor": true,
+      "coupon_records_anchor": true,
+      "coupon_empty_anchor": true,
+      "coupon_retry_anchor": true,
+      "input_count": 3,
+      "module_imported": true,
+      "scan_wired": true,
+      "mapping_text_expected_absent": {
+        "验码并核销": true,
+        "测试核销已完成": true,
+        "测试核销，未真实扣款，不可作为收款凭据": true,
+        "确认交付并核销服务券": true,
+        "核对本店服务券与授权": true,
+        "重试原核销请求": true
+      },
+      "static_text_present": {
+        "门店工作台": true,
+        "服务券独立核销": true,
+        "本店服务券核销记录": true
+      }
+    }
+  },
+  "sources_sha256": {
+    "apps/miniapp/src/services/merchant-redemption-display.js": "0bd6e5042bcd7f4e410d456a061cc9b8f57f77e1a3174acf07e139fd2cd339ad",
+    "apps/miniapp/src/pages/merchant/redeem.vue": "e1c0bb8a2367dd5c2a8d9f0779b644123d9853df774af283f4bf8a19d39223ea",
+    "apps/miniapp/src/pages/merchant/coupon-redeem.vue": "b60c2a1754cee68219ff4883b0a9e31c3c2002709da557bc148666182b305590",
+    "apps/miniapp/test/merchant-redemption-display.test.js": "d8e2b64fc6b0aa963896ab9b90214d8c3ba49f080376156578d2edd3ec14f13e"
+  },
+  "passed": true
+}
