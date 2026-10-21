@@ -112,6 +112,8 @@ jobs:
         run: python scripts/run_api_acceptance.py --ci-built-jar --finance-cases
       - name: Workflow reads and three-role notification fanout
         run: python scripts/run_api_acceptance.py --ci-built-jar --workflow-cases
+      - name: Pickup dispute and resumed fulfillment
+        run: python scripts/run_api_acceptance.py --ci-built-jar --dispute-cases
       - name: Save sanitized API evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -188,6 +190,8 @@ jobs:
       - run: python scripts/invitation_api_cases.py
       - run: python -m unittest discover -s scripts -p test_invitation_api_cases.py -v
       - run: python scripts/reviews_api_cases.py
+      - run: python scripts/dispute_api_cases.py
+      - run: python -m unittest discover -s scripts -p test_dispute_api_cases.py -v
       - run: python scripts/workflow_api_cases.py
       - run: python -m unittest discover -s scripts -p test_workflow_api_cases.py -v
       - run: python scripts/finance_api_cases.py

@@ -1,0 +1,5979 @@
+{
+  "info": {
+    "name": "Autocare isolated dispute and resumed fulfillment",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:1"
+    },
+    {
+      "key": "isolated_dispute_cases",
+      "value": "false"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "if(pm.variables.get(\"isolated_dispute_cases\")!==\"true\"){pm.execution.skipRequest();throw new Error(\"Use the isolated fulfillment runner\");}"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "slot_publish",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/slots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "8eb41b20-4857-5fa4-80a0-faf406db5721"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"standard_project_id\": 1, \"starts_at\": \"{{slot_start}}\", \"ends_at\": \"{{slot_end}}\", \"capacity\": 2}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.slot_id).to.eql(1);});",
+              "pm.test(\"business 1\",()=>{pm.collectionVariables.set(\"receipt_slot_publish\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "slot_publish_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/slots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "8eb41b20-4857-5fa4-80a0-faf406db5721"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"standard_project_id\": 1, \"starts_at\": \"{{slot_start}}\", \"ends_at\": \"{{slot_end}}\", \"capacity\": 2}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_slot_publish\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "slot_publish_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/slots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "308c224b-f5f5-56f6-a226-22b1b9663056"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "slot_publish_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/slots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "68335d95-bd16-57ee-a088-024ecafc88d7"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"standard_project_id\": 1, \"starts_at\": \"{{slot_start}}\", \"ends_at\": \"{{slot_end}}\", \"capacity\": 2}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "slot_publish_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/slots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "d0551e8b-1e21-5723-bd6e-445d0e8f3ee1"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"standard_project_id\": 1, \"starts_at\": \"{{slot_start}}\", \"ends_at\": \"{{slot_end}}\", \"capacity\": 2}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "slot_capacity_overflow",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/slots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "a69c231a-fb78-56d4-a4ac-0ebc74d2570d"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"standard_project_id\": 1, \"starts_at\": \"{{slot_start}}\", \"ends_at\": \"{{slot_end}}\", \"capacity\": 101}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quote",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/order/quote/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.price).to.eql(\"12.34\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quote_missing",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/order/quote/999999",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quote_invalid",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/order/quote/0",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quote_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/order/quote/1",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quote_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/order/quote/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "booking_foreign_vehicle",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/create",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "bdcd7498-cbfc-5f98-ae21-e9a8aacfe3c5"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_project_id\": 1, \"quote_version_id\": 1, \"vehicle_id\": 2, \"slot_id\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "booking_stale_quote",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/create",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "9a36dfcb-e542-58dc-a132-07005f7e41ca"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_project_id\": 1, \"quote_version_id\": 999999, \"vehicle_id\": 1, \"slot_id\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "booking",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/create",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "16b5faa2-4827-54c8-9842-02fd47009be7"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_project_id\": 1, \"quote_version_id\": 1, \"vehicle_id\": 1, \"slot_id\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data; pm.expect(d.order_id).to.eql(1); pm.expect(d.amount_due).to.eql(\"12.34\"); pm.expect(d.status).to.eql(\"PENDING_PAYMENT\"); pm.collectionVariables.set(\"order_no\",d.order_no);});",
+              "pm.test(\"business 1\",()=>{pm.collectionVariables.set(\"receipt_booking\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "booking_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/create",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "16b5faa2-4827-54c8-9842-02fd47009be7"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_project_id\": 1, \"quote_version_id\": 1, \"vehicle_id\": 1, \"slot_id\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_booking\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "booking_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/create",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "288878e7-7aa4-5277-9be9-ad1dbea48cf3"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "booking_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/create",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "6a94549c-a013-57e3-b679-0142f4d2420c"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_project_id\": 1, \"quote_version_id\": 1, \"vehicle_id\": 1, \"slot_id\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "booking_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/create",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "e3c6af14-5b04-5916-80b1-c32984a6d4b8"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_project_id\": 1, \"quote_version_id\": 1, \"vehicle_id\": 1, \"slot_id\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "booking_changed_intent",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/create",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "16b5faa2-4827-54c8-9842-02fd47009be7"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_project_id\": 1, \"quote_version_id\": 1, \"vehicle_id\": 2, \"slot_id\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "owner_order",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/order/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.status).to.eql(\"PENDING_PAYMENT\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "owner_order_missing",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/order/999999",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "owner_order_invalid",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/order/0",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "owner_order_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/order/1",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "owner_order_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/order/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "owner_order_foreign",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/order/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_order",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/orders/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.order_id).to.eql(1);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_order_missing",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/orders/999999",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_order_invalid",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/orders/0",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_order_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/orders/1",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_order_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/orders/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_order_foreign",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/orders/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "wechat_payment_unconfigured",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/create",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "bb39f163-1cca-5c14-8feb-5fbf2de3b9b4"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"channel\": \"WECHAT\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(503));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_foreign_owner",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/create",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "d179e740-51d0-538c-930f-778c4a030b09"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"channel\": \"LOCAL_TEST\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/create",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "06d27239-bff9-511e-a344-69f2fc94992c"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"channel\": \"LOCAL_TEST\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data; pm.expect(d.payment_id).to.eql(1); pm.expect(d.test_mode).to.eql(true);});",
+              "pm.test(\"business 1\",()=>{pm.collectionVariables.set(\"receipt_payment\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/create",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "06d27239-bff9-511e-a344-69f2fc94992c"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"channel\": \"LOCAL_TEST\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_payment\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/create",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "4b73aa69-a648-549d-9f74-17310e7bea81"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/create",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "f34f3434-30df-577f-8465-a6a193cec625"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"channel\": \"LOCAL_TEST\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/create",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "948a3732-9fbb-5693-9793-6f9c400e6885"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"channel\": \"LOCAL_TEST\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "callback_bad_signature",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/callback/LOCAL_TEST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{{callback_body}}"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const C=require(\"crypto-js\");",
+              "if (!pm.collectionVariables.get(\"callback_occurred\")) pm.collectionVariables.set(\"callback_occurred\",new Date().toISOString());",
+              "const body={event_id:\"33333333-3333-4333-8333-333333333333\",payment_id:1,channel_payment_no:\"synthetic-fulfillment-1\",status:\"SUCCEEDED\",amount:\"12.34\",currency:\"CNY\",order_no:pm.collectionVariables.get(\"order_no\"),occurred_at:pm.collectionVariables.get(\"callback_occurred\")};",
+              "const mode=\"bad_signature\";",
+              "if(mode===\"bad_body\") body.amount=\"invalid\";",
+              "const raw=JSON.stringify(body); pm.variables.set(\"callback_body\",raw);",
+              "let timestamp=pm.collectionVariables.get(\"callback_timestamp\"); if(!timestamp){timestamp=String(Math.floor(Date.now()/1000));pm.collectionVariables.set(\"callback_timestamp\",timestamp);}",
+              "if(mode===\"expired\") timestamp=\"1\";",
+              "const nonce=\"44444444-4444-4444-8444-444444444444\";",
+              "let signature=C.HmacSHA256(timestamp+\"\\n\"+nonce+\"\\n\"+raw+\"\\n\",pm.environment.get(\"payment_secret\")).toString(C.enc.Hex);",
+              "if(mode===\"bad_signature\") signature=\"0\".repeat(64);",
+              "pm.request.headers.upsert({key:\"X-Test-Timestamp\",value:timestamp}); pm.request.headers.upsert({key:\"X-Test-Nonce\",value:nonce}); pm.request.headers.upsert({key:\"X-Test-Signature\",value:signature});"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "callback_expired",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/callback/LOCAL_TEST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{{callback_body}}"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const C=require(\"crypto-js\");",
+              "if (!pm.collectionVariables.get(\"callback_occurred\")) pm.collectionVariables.set(\"callback_occurred\",new Date().toISOString());",
+              "const body={event_id:\"33333333-3333-4333-8333-333333333333\",payment_id:1,channel_payment_no:\"synthetic-fulfillment-1\",status:\"SUCCEEDED\",amount:\"12.34\",currency:\"CNY\",order_no:pm.collectionVariables.get(\"order_no\"),occurred_at:pm.collectionVariables.get(\"callback_occurred\")};",
+              "const mode=\"expired\";",
+              "if(mode===\"bad_body\") body.amount=\"invalid\";",
+              "const raw=JSON.stringify(body); pm.variables.set(\"callback_body\",raw);",
+              "let timestamp=pm.collectionVariables.get(\"callback_timestamp\"); if(!timestamp){timestamp=String(Math.floor(Date.now()/1000));pm.collectionVariables.set(\"callback_timestamp\",timestamp);}",
+              "if(mode===\"expired\") timestamp=\"1\";",
+              "const nonce=\"44444444-4444-4444-8444-444444444444\";",
+              "let signature=C.HmacSHA256(timestamp+\"\\n\"+nonce+\"\\n\"+raw+\"\\n\",pm.environment.get(\"payment_secret\")).toString(C.enc.Hex);",
+              "if(mode===\"bad_signature\") signature=\"0\".repeat(64);",
+              "pm.request.headers.upsert({key:\"X-Test-Timestamp\",value:timestamp}); pm.request.headers.upsert({key:\"X-Test-Nonce\",value:nonce}); pm.request.headers.upsert({key:\"X-Test-Signature\",value:signature});"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "callback_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/callback/LOCAL_TEST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{{callback_body}}"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const C=require(\"crypto-js\");",
+              "if (!pm.collectionVariables.get(\"callback_occurred\")) pm.collectionVariables.set(\"callback_occurred\",new Date().toISOString());",
+              "const body={event_id:\"33333333-3333-4333-8333-333333333333\",payment_id:1,channel_payment_no:\"synthetic-fulfillment-1\",status:\"SUCCEEDED\",amount:\"12.34\",currency:\"CNY\",order_no:pm.collectionVariables.get(\"order_no\"),occurred_at:pm.collectionVariables.get(\"callback_occurred\")};",
+              "const mode=\"bad_body\";",
+              "if(mode===\"bad_body\") body.amount=\"invalid\";",
+              "const raw=JSON.stringify(body); pm.variables.set(\"callback_body\",raw);",
+              "let timestamp=pm.collectionVariables.get(\"callback_timestamp\"); if(!timestamp){timestamp=String(Math.floor(Date.now()/1000));pm.collectionVariables.set(\"callback_timestamp\",timestamp);}",
+              "if(mode===\"expired\") timestamp=\"1\";",
+              "const nonce=\"44444444-4444-4444-8444-444444444444\";",
+              "let signature=C.HmacSHA256(timestamp+\"\\n\"+nonce+\"\\n\"+raw+\"\\n\",pm.environment.get(\"payment_secret\")).toString(C.enc.Hex);",
+              "if(mode===\"bad_signature\") signature=\"0\".repeat(64);",
+              "pm.request.headers.upsert({key:\"X-Test-Timestamp\",value:timestamp}); pm.request.headers.upsert({key:\"X-Test-Nonce\",value:nonce}); pm.request.headers.upsert({key:\"X-Test-Signature\",value:signature});"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "callback_paid",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/callback/LOCAL_TEST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{{callback_body}}"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const C=require(\"crypto-js\");",
+              "if (!pm.collectionVariables.get(\"callback_occurred\")) pm.collectionVariables.set(\"callback_occurred\",new Date().toISOString());",
+              "const body={event_id:\"33333333-3333-4333-8333-333333333333\",payment_id:1,channel_payment_no:\"synthetic-fulfillment-1\",status:\"SUCCEEDED\",amount:\"12.34\",currency:\"CNY\",order_no:pm.collectionVariables.get(\"order_no\"),occurred_at:pm.collectionVariables.get(\"callback_occurred\")};",
+              "const mode=\"valid\";",
+              "if(mode===\"bad_body\") body.amount=\"invalid\";",
+              "const raw=JSON.stringify(body); pm.variables.set(\"callback_body\",raw);",
+              "let timestamp=pm.collectionVariables.get(\"callback_timestamp\"); if(!timestamp){timestamp=String(Math.floor(Date.now()/1000));pm.collectionVariables.set(\"callback_timestamp\",timestamp);}",
+              "if(mode===\"expired\") timestamp=\"1\";",
+              "const nonce=\"44444444-4444-4444-8444-444444444444\";",
+              "let signature=C.HmacSHA256(timestamp+\"\\n\"+nonce+\"\\n\"+raw+\"\\n\",pm.environment.get(\"payment_secret\")).toString(C.enc.Hex);",
+              "if(mode===\"bad_signature\") signature=\"0\".repeat(64);",
+              "pm.request.headers.upsert({key:\"X-Test-Timestamp\",value:timestamp}); pm.request.headers.upsert({key:\"X-Test-Nonce\",value:nonce}); pm.request.headers.upsert({key:\"X-Test-Signature\",value:signature});"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(\"SUCCESS\");});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "callback_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/callback/LOCAL_TEST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{{callback_body}}"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const C=require(\"crypto-js\");",
+              "if (!pm.collectionVariables.get(\"callback_occurred\")) pm.collectionVariables.set(\"callback_occurred\",new Date().toISOString());",
+              "const body={event_id:\"33333333-3333-4333-8333-333333333333\",payment_id:1,channel_payment_no:\"synthetic-fulfillment-1\",status:\"SUCCEEDED\",amount:\"12.34\",currency:\"CNY\",order_no:pm.collectionVariables.get(\"order_no\"),occurred_at:pm.collectionVariables.get(\"callback_occurred\")};",
+              "const mode=\"valid\";",
+              "if(mode===\"bad_body\") body.amount=\"invalid\";",
+              "const raw=JSON.stringify(body); pm.variables.set(\"callback_body\",raw);",
+              "let timestamp=pm.collectionVariables.get(\"callback_timestamp\"); if(!timestamp){timestamp=String(Math.floor(Date.now()/1000));pm.collectionVariables.set(\"callback_timestamp\",timestamp);}",
+              "if(mode===\"expired\") timestamp=\"1\";",
+              "const nonce=\"44444444-4444-4444-8444-444444444444\";",
+              "let signature=C.HmacSHA256(timestamp+\"\\n\"+nonce+\"\\n\"+raw+\"\\n\",pm.environment.get(\"payment_secret\")).toString(C.enc.Hex);",
+              "if(mode===\"bad_signature\") signature=\"0\".repeat(64);",
+              "pm.request.headers.upsert({key:\"X-Test-Timestamp\",value:timestamp}); pm.request.headers.upsert({key:\"X-Test-Nonce\",value:nonce}); pm.request.headers.upsert({key:\"X-Test-Signature\",value:signature});"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(\"SUCCESS\");});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "order_paid",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/order/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data; pm.expect(d.status).to.eql(\"PAID\"); pm.expect(d.payment_summary.test_mode).to.eql(true); pm.expect(d.appointment_code).to.match(/^[0-9]{6}$/); pm.collectionVariables.set(\"appointment_code\",d.appointment_code);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "pickup_foreign_merchant",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/submit",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "3075e930-eefe-5e54-b8cc-5e4962d49941"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"appointment_code\": \"{{appointment_code}}\", \"photos\": {\"FRONT\": 1, \"REAR\": 2, \"LEFT\": 3, \"RIGHT\": 4, \"ROOF\": 5, \"DASHBOARD\": 6, \"INTERIOR\": 7}, \"mileage\": 110, \"fuel_level\": \"HALF\", \"damage_status\": \"NONE\", \"damages\": [], \"arrival_reason\": \"合成测试提前到店\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "pickup_negative_mileage",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/submit",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "4052e0dd-72ae-52ce-8ab6-5712a5c58fe4"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"appointment_code\": \"{{appointment_code}}\", \"photos\": {\"FRONT\": 1, \"REAR\": 2, \"LEFT\": 3, \"RIGHT\": 4, \"ROOF\": 5, \"DASHBOARD\": 6, \"INTERIOR\": 7}, \"mileage\": -1, \"fuel_level\": \"HALF\", \"damage_status\": \"NONE\", \"damages\": [], \"arrival_reason\": \"合成测试提前到店\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "pickup",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/submit",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "23b306f6-feac-5d2d-bd25-5f45836f0fe3"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"appointment_code\": \"{{appointment_code}}\", \"photos\": {\"FRONT\": 1, \"REAR\": 2, \"LEFT\": 3, \"RIGHT\": 4, \"ROOF\": 5, \"DASHBOARD\": 6, \"INTERIOR\": 7}, \"mileage\": 110, \"fuel_level\": \"HALF\", \"damage_status\": \"NONE\", \"damages\": [], \"arrival_reason\": \"合成测试提前到店\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.collectionVariables.set(\"receipt_pickup\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "pickup_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/submit",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "23b306f6-feac-5d2d-bd25-5f45836f0fe3"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"appointment_code\": \"{{appointment_code}}\", \"photos\": {\"FRONT\": 1, \"REAR\": 2, \"LEFT\": 3, \"RIGHT\": 4, \"ROOF\": 5, \"DASHBOARD\": 6, \"INTERIOR\": 7}, \"mileage\": 110, \"fuel_level\": \"HALF\", \"damage_status\": \"NONE\", \"damages\": [], \"arrival_reason\": \"合成测试提前到店\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_pickup\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "pickup_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/submit",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "f86af5fa-d5e2-5de7-aefc-b75cbebbb3f9"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "pickup_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/submit",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "48550a42-9a03-5a45-b0c0-acfd638ad45c"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"appointment_code\": \"{{appointment_code}}\", \"photos\": {\"FRONT\": 1, \"REAR\": 2, \"LEFT\": 3, \"RIGHT\": 4, \"ROOF\": 5, \"DASHBOARD\": 6, \"INTERIOR\": 7}, \"mileage\": 110, \"fuel_level\": \"HALF\", \"damage_status\": \"NONE\", \"damages\": [], \"arrival_reason\": \"合成测试提前到店\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "pickup_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/submit",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "8ee7d804-9099-5bd9-9e12-c0aded638a20"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"appointment_code\": \"{{appointment_code}}\", \"photos\": {\"FRONT\": 1, \"REAR\": 2, \"LEFT\": 3, \"RIGHT\": 4, \"ROOF\": 5, \"DASHBOARD\": 6, \"INTERIOR\": 7}, \"mileage\": 110, \"fuel_level\": \"HALF\", \"damage_status\": \"NONE\", \"damages\": [], \"arrival_reason\": \"合成测试提前到店\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "assignment_before_confirmation",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/assign",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "a256e088-c1f0-5cef-abd8-466bd79341fa"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"technician_id\": 3}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "dispute_open",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/confirm",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "c67e0d0a-0d3c-53be-a6a6-ef2a409089fb"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"decision\": \"DISPUTE\", \"reason\": \"合成接车异议\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.status).to.eql(\"DISPUTED\");});",
+              "pm.test(\"business 1\",()=>{pm.collectionVariables.set(\"receipt_dispute_open\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "dispute_open_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/confirm",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "c67e0d0a-0d3c-53be-a6a6-ef2a409089fb"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"decision\": \"DISPUTE\", \"reason\": \"合成接车异议\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_dispute_open\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "dispute_open_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/confirm",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "c5491400-2fa7-570b-9fe0-2083de44cb19"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "dispute_open_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/confirm",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "68ad43cf-9daf-581e-b5fe-e7aa398a84aa"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"decision\": \"DISPUTE\", \"reason\": \"合成接车异议\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "dispute_open_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/confirm",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "77dba129-182b-5fb0-b503-e2b8a1ad4a26"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"decision\": \"DISPUTE\", \"reason\": \"合成接车异议\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "dispute_open_other_owner",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/confirm",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "6dbf3df3-9634-57fc-99a9-b43c19e85081"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"decision\": \"DISPUTE\", \"reason\": \"合成接车异议\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "review_before_handling",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/dispute/review",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "639a7113-409f-5695-9bae-944855682255"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"decision\": \"ACCEPT\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().code).to.eql(43008);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "assignment_disputed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/assign",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "a32e2428-b5bd-5bac-aed2-9282edbf79d9"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"technician_id\": 3}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().code).to.eql(43007);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "disputed_order",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/order/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.status).to.eql(\"DISPUTED\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "handle_first",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/dispute/handle",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "e8c60915-b724-56fa-8622-b1e8acd4761c"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"note\": \"x\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data; pm.expect(d.dispute_status).to.eql(\"OPEN\"); pm.expect(d.order_status).to.eql(\"DISPUTED\"); pm.expect(d.record_count).to.eql(1); pm.expect(d.last_action).to.eql(\"HANDLE\"); pm.expect(d).not.to.have.property(\"actor_id\");});",
+              "pm.test(\"business 1\",()=>{pm.collectionVariables.set(\"receipt_handle_first\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "handle_first_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/dispute/handle",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "e8c60915-b724-56fa-8622-b1e8acd4761c"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"note\": \"x\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_handle_first\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "handle_first_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/dispute/handle",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "b0cd9fee-936e-54d5-acc9-411a8448e0c5"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "handle_first_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/dispute/handle",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "8ac4a5e4-38a4-5ba9-b21e-1083203bdaee"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"note\": \"x\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "handle_first_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/dispute/handle",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "41b814d6-5dc3-5cbd-b9f7-c854a7d06524"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"note\": \"x\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "handle_blank",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/dispute/handle",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "182a739a-97b3-53da-bb84-2009789b578f"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"note\": \" \"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "handle_too_long",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/dispute/handle",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "0f8928e1-0e28-5f8e-9153-502c31f1e15f"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"note\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "handle_injected",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/dispute/handle",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "b3992df5-242e-53cd-8ad0-a84fcfe14df0"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"note\": \"x\", \"status\": \"RESOLVED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "handle_other_shop",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/dispute/handle",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "83bee5fe-ce6c-595a-96c7-41c2506bcbad"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"note\": \"foreign\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "handle_missing_order",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/999999/dispute/handle",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "d886f788-241a-5e06-afd4-13247c50359e"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"note\": \"missing\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "handle_invalid_id",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/0/dispute/handle",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "680290d2-652c-5111-9b71-752ef3f0bb39"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"note\": \"invalid\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "handle_changed_intent",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/dispute/handle",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "e8c60915-b724-56fa-8622-b1e8acd4761c"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"note\": \"different\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "review_reject",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/dispute/review",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "f16dc28c-fd7c-5bf4-9cbd-2f72e6480edd"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"decision\": \"REJECT\", \"note\": \"合成车主要求再次核对\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data; pm.expect(d.dispute_status).to.eql(\"OPEN\"); pm.expect(d.order_status).to.eql(\"DISPUTED\"); pm.expect(d.owner_confirm).to.eql(2); pm.expect(d.record_count).to.eql(2); pm.expect(d.last_action).to.eql(\"REJECT\");});",
+              "pm.test(\"business 1\",()=>{pm.collectionVariables.set(\"receipt_review_reject\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "review_reject_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/dispute/review",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "f16dc28c-fd7c-5bf4-9cbd-2f72e6480edd"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"decision\": \"REJECT\", \"note\": \"合成车主要求再次核对\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_review_reject\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "review_reject_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/dispute/review",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "66094173-5b9e-5178-9563-f85f68d237a9"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "review_reject_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/dispute/review",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "f650dc43-6c75-5594-b22a-7256c0479fa0"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"decision\": \"REJECT\", \"note\": \"合成车主要求再次核对\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "review_reject_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/dispute/review",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "3ac6697c-ac9e-5e47-a829-fd5aebe0ec69"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"decision\": \"REJECT\", \"note\": \"合成车主要求再次核对\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "review_reject_without_note",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/dispute/review",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "7b7dcc23-bf50-582c-861d-e4b1e7819c12"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"decision\": \"REJECT\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "review_decision",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/dispute/review",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "026b7197-1c9d-5623-8f74-955f208507d7"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"decision\": \"CONFIRM\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "review_too_long",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/dispute/review",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "04305c45-6da8-56d0-84bb-76680f527795"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"decision\": \"ACCEPT\", \"note\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "review_injected",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/dispute/review",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "e4c6305b-0da6-5bd5-a747-78a14fef8146"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"decision\": \"ACCEPT\", \"status\": \"RECEIVED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "review_other_owner",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/dispute/review",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "1b98fb6c-0fa3-51b1-bbcc-0897675204ab"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"decision\": \"ACCEPT\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "review_missing_order",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/dispute/review",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "0019df43-5c82-5f8e-9b6b-59bd3719eeab"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 999999, \"decision\": \"ACCEPT\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "review_invalid_id",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/dispute/review",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "f266573b-cecd-57dc-8b90-53f751d2c585"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 0, \"decision\": \"ACCEPT\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "review_changed_intent",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/dispute/review",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "f16dc28c-fd7c-5bf4-9cbd-2f72e6480edd"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"decision\": \"ACCEPT\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "assignment_after_rejection",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/assign",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "b42095f2-adc8-5eda-bde5-2bfc78c7f989"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"technician_id\": 3}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().code).to.eql(43007);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "handle_second",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/dispute/handle",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "96a85fb9-1ffc-5a9a-bbb1-d634759ea530"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"note\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.record_count).to.eql(3);});",
+              "pm.test(\"business 1\",()=>{pm.collectionVariables.set(\"receipt_handle_second\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "handle_second_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/dispute/handle",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "96a85fb9-1ffc-5a9a-bbb1-d634759ea530"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"note\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_handle_second\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "handle_second_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/dispute/handle",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "f9f12c5a-89f1-57ba-834b-1851c4acb1f6"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "handle_second_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/dispute/handle",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "675de90d-8d25-57ee-917a-12911207dbdd"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"note\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "handle_second_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/dispute/handle",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "21d746dd-cd71-5784-a58e-a6fcc273a2a6"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"note\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "review_accept",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/dispute/review",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "8c22070f-f51c-5d90-a0b4-3a30f6797e8b"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"decision\": \"ACCEPT\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data; pm.expect(d.dispute_status).to.eql(\"RESOLVED\"); pm.expect(d.order_status).to.eql(\"RECEIVED\"); pm.expect(d.owner_confirm).to.eql(3); pm.expect(d.record_count).to.eql(4); pm.expect(d.last_action).to.eql(\"ACCEPT\");});",
+              "pm.test(\"business 1\",()=>{pm.collectionVariables.set(\"receipt_review_accept\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "review_accept_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/dispute/review",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "8c22070f-f51c-5d90-a0b4-3a30f6797e8b"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"decision\": \"ACCEPT\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_review_accept\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "review_accept_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/dispute/review",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "6165e4e7-75f5-5f63-bf6c-d6322d3d8a12"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "review_accept_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/dispute/review",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "b3a5bb73-e164-543b-9987-387d9009a5f7"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"decision\": \"ACCEPT\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "review_accept_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/dispute/review",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "5103cb49-8ed5-5b96-bec2-8b9e5794cceb"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"decision\": \"ACCEPT\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "review_already_resolved",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/dispute/review",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "4cc8b464-884f-5a32-ac63-b05398605b78"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"decision\": \"ACCEPT\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "handle_already_resolved",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/dispute/handle",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "ea76665f-f407-5ade-b407-81c777b2a058"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"note\": \"late\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "resumed_order",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/order/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.status).to.eql(\"RECEIVED\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "assignment_foreign_merchant",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/assign",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "1d4a3a1c-691c-5a0f-a5e9-97bd3feaf84f"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"technician_id\": 3}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "assignment",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/assign",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "a9195100-7f21-5ae5-8a7a-f3dcaf0116e6"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"technician_id\": 3}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.collectionVariables.set(\"receipt_assignment\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "assignment_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/assign",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "a9195100-7f21-5ae5-8a7a-f3dcaf0116e6"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"technician_id\": 3}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_assignment\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "assignment_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/assign",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "d29d96a5-60c6-53e7-86c9-043f18d2926d"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "assignment_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/assign",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "8b32dfc1-26d7-5728-bdeb-61cde07b4910"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"technician_id\": 3}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "assignment_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/assign",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "9ddf5833-fb27-5e75-84e5-7cc85731ebb4"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"technician_id\": 3}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "accept",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/tech/orders/1/accept",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "9204c2ca-b6f8-5e11-9eb8-351fd1e1e6c6"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{technician_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.order_status).to.eql(\"IN_SERVICE\");});",
+              "pm.test(\"business 1\",()=>{pm.collectionVariables.set(\"receipt_accept\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "accept_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/tech/orders/1/accept",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "9204c2ca-b6f8-5e11-9eb8-351fd1e1e6c6"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{technician_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_accept\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "accept_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/tech/orders/1/accept",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "b304f482-234e-5bb6-aa5b-9cef6800c194"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{technician_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"injected\": true}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "accept_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/tech/orders/1/accept",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "43c7d9b3-0168-53e7-b113-12731c70c298"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "accept_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/tech/orders/1/accept",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "8fa7fb45-00eb-55f9-8db2-b30cbe9bea6d"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "report_before_protection",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/tech/report/submit",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "94cfb5e2-6d6c-5f56-b64e-bee2a6b04c36"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{technician_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"process_photos\": [9], \"fault_part_photos\": [], \"finish_photos\": [10], \"no_fault_parts\": true, \"repair_plan\": \"合成检查清洁\", \"fault_analysis\": \"合成无故障\", \"parts_used\": [], \"no_parts\": true, \"work_hours\": 30}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().code).to.eql(43002);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "protection_foreign_merchant",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/protection/upload",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "7435edc2-dba9-5c1c-ba86-71e983f4c2cd"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"items\": [\"SEAT_COVER\", \"STEERING_COVER\"], \"photo_file_id\": 8}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "protection",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/protection/upload",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "cfc451c5-6bf4-58ad-be74-bd97bbeff8bc"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"items\": [\"SEAT_COVER\", \"STEERING_COVER\"], \"photo_file_id\": 8}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.collectionVariables.set(\"receipt_protection\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "protection_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/protection/upload",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "cfc451c5-6bf4-58ad-be74-bd97bbeff8bc"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"items\": [\"SEAT_COVER\", \"STEERING_COVER\"], \"photo_file_id\": 8}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_protection\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "protection_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/protection/upload",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "bd6e9e7f-11a1-5799-8034-67874489fe3e"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "protection_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/protection/upload",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "7b871b5d-f949-5717-bef6-90710eae178a"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"items\": [\"SEAT_COVER\", \"STEERING_COVER\"], \"photo_file_id\": 8}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "protection_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/protection/upload",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "dcab70ae-7292-5120-bd1a-031f37f53698"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"items\": [\"SEAT_COVER\", \"STEERING_COVER\"], \"photo_file_id\": 8}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "report_foreign_file",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/tech/report/submit",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "5bfdf5ec-e3a8-5a62-9fda-af4744e9b888"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{technician_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"process_photos\": [12], \"fault_part_photos\": [], \"finish_photos\": [10], \"no_fault_parts\": true, \"repair_plan\": \"合成检查清洁\", \"fault_analysis\": \"合成无故障\", \"parts_used\": [], \"no_parts\": true, \"work_hours\": 30}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(422));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "report_negative_hours",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/tech/report/submit",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "8bf34a19-a391-598b-93ea-39b670b55f84"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{technician_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"process_photos\": [9], \"fault_part_photos\": [], \"finish_photos\": [10], \"no_fault_parts\": true, \"repair_plan\": \"合成检查清洁\", \"fault_analysis\": \"合成无故障\", \"parts_used\": [], \"no_parts\": true, \"work_hours\": -1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "report",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/tech/report/submit",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "e22c1397-ef15-5254-9435-ba0d1c347ccb"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{technician_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"process_photos\": [9], \"fault_part_photos\": [], \"finish_photos\": [10], \"no_fault_parts\": true, \"repair_plan\": \"合成检查清洁\", \"fault_analysis\": \"合成无故障\", \"parts_used\": [], \"no_parts\": true, \"work_hours\": 30}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.collectionVariables.set(\"receipt_report\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "report_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/tech/report/submit",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "e22c1397-ef15-5254-9435-ba0d1c347ccb"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{technician_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"process_photos\": [9], \"fault_part_photos\": [], \"finish_photos\": [10], \"no_fault_parts\": true, \"repair_plan\": \"合成检查清洁\", \"fault_analysis\": \"合成无故障\", \"parts_used\": [], \"no_parts\": true, \"work_hours\": 30}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_report\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "report_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/tech/report/submit",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "7da0ccc6-c6d4-5455-b46f-364d0cc2f604"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{technician_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "report_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/tech/report/submit",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "2ba0ab84-ce24-5688-8219-e5edf86621e8"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"process_photos\": [9], \"fault_part_photos\": [], \"finish_photos\": [10], \"no_fault_parts\": true, \"repair_plan\": \"合成检查清洁\", \"fault_analysis\": \"合成无故障\", \"parts_used\": [], \"no_parts\": true, \"work_hours\": 30}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "report_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/tech/report/submit",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "a6f1b0f1-089c-51d8-912a-f8eb381fd127"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"process_photos\": [9], \"fault_part_photos\": [], \"finish_photos\": [10], \"no_fault_parts\": true, \"repair_plan\": \"合成检查清洁\", \"fault_analysis\": \"合成无故障\", \"parts_used\": [], \"no_parts\": true, \"work_hours\": 30}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "signature",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/tech/sign",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "38c6515d-c61b-559b-a2df-24e554ed24ac"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{technician_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"signature_file_id\": 11}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.order_status).to.eql(\"PENDING_VERIFY\");});",
+              "pm.test(\"business 1\",()=>{pm.collectionVariables.set(\"receipt_signature\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "signature_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/tech/sign",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "38c6515d-c61b-559b-a2df-24e554ed24ac"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{technician_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"signature_file_id\": 11}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_signature\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "signature_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/tech/sign",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "6d6801f7-7adb-5f70-8b75-eb7134ad1deb"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{technician_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "signature_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/tech/sign",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "2b6f667b-a5b0-5cb5-81b1-00fbc284ce2e"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"signature_file_id\": 11}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "signature_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/tech/sign",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "ef9f4709-31ed-5998-968c-7621c99ff4fa"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"signature_file_id\": 11}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "signature_foreign_file",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/tech/sign",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "4c4a1c95-cf64-5c12-a343-e1fcc5925447"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{technician_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"order_id\": 1, \"signature_file_id\": 12}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "redemption_foreign_merchant",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/redeem",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "edef93ac-b08c-5a39-8d49-ce3cf04a1532"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"code\": \"{{appointment_code}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "redemption",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/redeem",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "1994c36d-51be-5f32-b401-13dde10e4ebe"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"code\": \"{{appointment_code}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.collectionVariables.set(\"receipt_redemption\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "redemption_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/redeem",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "1994c36d-51be-5f32-b401-13dde10e4ebe"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"code\": \"{{appointment_code}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_redemption\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "redemption_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/redeem",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "f3662e13-993e-5fda-9f93-043dbcdd4bfb"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "redemption_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/redeem",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "adf0b632-7384-544c-9b77-8413ebd24993"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"code\": \"{{appointment_code}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "redemption_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/1/redeem",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "ca7775eb-039b-560a-881a-38a9fc048155"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"code\": \"{{appointment_code}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "order_completed",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/order/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.status).to.eql(\"COMPLETED\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archives",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/archive/list?vehicle_id=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.total).to.eql(1); pm.expect(pm.response.text()).to.include(\"test_mode\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archives_empty_page",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/archive/list?vehicle_id=1&page=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.list).to.have.lengthOf(0);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archives_missing_vehicle",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/archive/list",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archives_foreign_owner",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/archive/list?vehicle_id=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archives_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/archive/list?vehicle_id=1",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "archives_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/archive/list?vehicle_id=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

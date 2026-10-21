@@ -28,6 +28,7 @@ POSTMAN = {
     'reviews': 'R9_A4D2H3_OWNER_REVIEWS_2026_10_20.json',
     'finance': 'R9_A4D6_FINANCIAL_RECOVERY_2026_10_21.json',
     'workflow': 'R9_A4D7_WORKFLOW_NOTIFICATIONS_2026_10_21.json',
+    'dispute': 'R9_A4D8_DISPUTE_RECOVERY_2026_10_21.json',
 }
 JOURNEYS = {
     'upload': ('run_upload_acceptance', 'R9_A4D2E2B_PRIVATE_UPLOAD_API_2026_10_19.json'),
@@ -37,6 +38,7 @@ JOURNEYS = {
 UPLOAD_CHECKS = set('anonymous_object_denied tampered_signature_denied expired_signature_denied only_three_clean_files three_successful_uploads three_scan_rejections one_owned_archive_attachment'.split())
 FINANCE_CHECKS = set('payment_recovered_once invalid_amount_not_paid one_recovered_payment_event fresh_refund_success failed_refund_success unique_refunds two_success_events commission_reversed_once uncompleted_refund_no_charge commission_test_only foreign_payment_unchanged foreign_shop_no_commission lease_cleared appointment_capacity_released'.split())
 WORKFLOW_CHECKS = set('six_unique_order_events outbox_delivered exact_recipient_fanout three_read_notifications three_read_audits no_foreign_notifications'.split())
+DISPUTE_CHECKS = set('resolved_once four_append_only_records original_received_state one_open_and_resume_transition resolution_confirmed five_dispute_audits eleven_unique_events exact_notification_fanout no_foreign_dispute'.split())
 OUTPUT = ROOT / 'docs/testing/api-coverage.json'
 SUMMARY = ROOT / 'docs/testing/API_COVERAGE.md'
 
@@ -153,6 +155,16 @@ def newman_evidence(suite, manifest, collection, collection_hash, report, catalo
         checks = report.get('workflow_database', {}).get('notification_checks', {})
         require(set(checks) == WORKFLOW_CHECKS and all(v is True for v in checks.values()),
                 'Workflow notification database invariants are incomplete')
+    if suite == 'dispute':
+        require(evidence.get('signed_callback_and_exact_replay_verified') is True and
+                evidence.get('dispute_write_intents_verified') is True,
+                'Dispute signed callback or original write intent evidence missing')
+        checks = report.get('dispute_database', {}).get('dispute_checks', {})
+        require(set(checks) == DISPUTE_CHECKS and all(v is True for v in checks.values()),
+                'Dispute recovery database invariants are incomplete')
+        fulfilled = report.get('dispute_database', {}).get('checks', {})
+        require(set(fulfilled) == set('order_completed local_payment_only redemption_test_mode report_signed foreign_vehicle_unchanged no_foreign_orders'.split()) and
+                all(v is True for v in fulfilled.values()), 'Resumed fulfillment evidence is incomplete')
     return definitions, definitions
 
 

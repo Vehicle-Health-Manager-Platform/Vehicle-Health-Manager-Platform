@@ -7,11 +7,11 @@
   "counts": {
     "contract_operations": 352,
     "protected_operations": 338,
-    "four_kind_definitions": 232,
-    "historical_four_kind_operations": 232,
-    "without_complete_historical_evidence": 120,
+    "four_kind_definitions": 234,
+    "historical_four_kind_operations": 234,
+    "without_complete_historical_evidence": 118,
     "current_run_operations": 0,
-    "suites": 21
+    "suites": 22
   },
   "suites": [
     {
@@ -56,6 +56,17 @@
         "docs/testing/postman/discovery-case-manifest.json": "c314ea649d557b1456bb60079fdca76f9ab4a7d3cac16aebba3c35772973acdc",
         "docs/testing/postman/discovery-cases.postman_collection.json": "d3d8b2489a3399228acef3da3987a8a1393f39b2fba0213f28396f04e319a34d",
         "docs/testing/reports/R9_A4D2H1_SERVICE_DISCOVERY_2026_10_20.json": "cdff78c9bfb67a04002fa727025c7a81641365709c37ef256bf3c41a54f84824"
+      }
+    },
+    {
+      "name": "dispute",
+      "type": "postman",
+      "evidence_status": "HISTORICAL_RECONCILED",
+      "recorded_source_sha256": "a5db1532d27f5810434ada73c77c62b10097b3ce286b5faabcaa36f272f5fc11",
+      "inputs": {
+        "docs/testing/postman/dispute-case-manifest.json": "236ce75a3c2f4abd4a74007f75650baec781b66f0d7ed3b89e79f93ebe3811e9",
+        "docs/testing/postman/dispute-cases.postman_collection.json": "f7519f64c28f8bd9c727dcb372c7b5839df6299a3577e07ce6159211564d54d4",
+        "docs/testing/reports/R9_A4D8_DISPUTE_RECOVERY_2026_10_21.json": "575a4acedf62176feba992057423d4b8f249dfb83ac148586468fd215bbd8f91"
       }
     },
     {
@@ -3947,6 +3958,21 @@
       "current_acceptance": "NOT_RUN",
       "sources": [
         {
+          "suite": "dispute",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "fulfillment",
           "defined_kinds": [
             "boundary",
@@ -4928,6 +4954,21 @@
       "current_acceptance": "NOT_RUN",
       "sources": [
         {
+          "suite": "dispute",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "fulfillment",
           "defined_kinds": [
             "boundary",
@@ -5006,22 +5047,38 @@
       "roles": "OWNER",
       "protected": true,
       "implementation_status": "dispute-resolution-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "dispute",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_check_pickup_submit",
@@ -5046,6 +5103,21 @@
       "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
       "sources": [
+        {
+          "suite": "dispute",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
         {
           "suite": "fulfillment",
           "defined_kinds": [
@@ -5165,6 +5237,21 @@
       "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
       "sources": [
+        {
+          "suite": "dispute",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
         {
           "suite": "fulfillment",
           "defined_kinds": [
@@ -7625,6 +7712,21 @@
       "current_acceptance": "NOT_RUN",
       "sources": [
         {
+          "suite": "dispute",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "fulfillment",
           "defined_kinds": [
             "boundary",
@@ -7704,6 +7806,21 @@
       "current_acceptance": "NOT_RUN",
       "sources": [
         {
+          "suite": "dispute",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "fulfillment",
           "defined_kinds": [
             "boundary",
@@ -7766,22 +7883,38 @@
       "roles": "MERCHANT",
       "protected": true,
       "implementation_status": "dispute-resolution-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "dispute",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_merchant_orders_id_redeem",
@@ -7806,6 +7939,21 @@
       "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
       "sources": [
+        {
+          "suite": "dispute",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
         {
           "suite": "fulfillment",
           "defined_kinds": [
@@ -8334,6 +8482,21 @@
       "sources": [
         {
           "suite": "coupon",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
+          "suite": "dispute",
           "defined_kinds": [
             "boundary",
             "error",
@@ -9003,6 +9166,21 @@
       "current_acceptance": "NOT_RUN",
       "sources": [
         {
+          "suite": "dispute",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "fulfillment",
           "defined_kinds": [
             "boundary",
@@ -9105,6 +9283,21 @@
       "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
       "sources": [
+        {
+          "suite": "dispute",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
         {
           "suite": "fulfillment",
           "defined_kinds": [
@@ -9250,6 +9443,21 @@
       "sources": [
         {
           "suite": "coupon",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
+          "suite": "dispute",
           "defined_kinds": [
             "boundary",
             "error",
@@ -10955,6 +11163,21 @@
           ]
         },
         {
+          "suite": "dispute",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "fulfillment",
           "defined_kinds": [
             "boundary",
@@ -11035,6 +11258,21 @@
       "sources": [
         {
           "suite": "coupon",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
+          "suite": "dispute",
           "defined_kinds": [
             "boundary",
             "error",
@@ -12316,6 +12554,21 @@
       "current_acceptance": "NOT_RUN",
       "sources": [
         {
+          "suite": "dispute",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "fulfillment",
           "defined_kinds": [
             "boundary",
@@ -12515,6 +12768,21 @@
       "current_acceptance": "NOT_RUN",
       "sources": [
         {
+          "suite": "dispute",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "fulfillment",
           "defined_kinds": [
             "boundary",
@@ -12569,6 +12837,21 @@
       "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
       "sources": [
+        {
+          "suite": "dispute",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
         {
           "suite": "fulfillment",
           "defined_kinds": [
