@@ -1,3 +1,5 @@
+> [接口覆盖核对](API_COVERAGE.md)：当前契约与19套所选历史证据逐项核对；本轮不等于重跑业务接口，全量验收仍未通过。
+
 # 测试资料
 
 > 2026-10-18最新：[R8验收](LOCAL_R8_COMPLETION_ACCEPTANCE.md)已补齐[PR155](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/155)实际结果：2117后端/868前端、六项CI及[main复验](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/39045134951)成功。下方待CI/仅本地文字为历史记录。
