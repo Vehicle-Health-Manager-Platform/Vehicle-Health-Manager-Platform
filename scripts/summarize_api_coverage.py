@@ -27,6 +27,7 @@ POSTMAN = {
     'quotes': 'R9_A4D2H2_MERCHANT_QUOTES_2026_10_20.json',
     'reviews': 'R9_A4D2H3_OWNER_REVIEWS_2026_10_20.json',
     'finance': 'R9_A4D6_FINANCIAL_RECOVERY_2026_10_21.json',
+    'workflow': 'R9_A4D7_WORKFLOW_NOTIFICATIONS_2026_10_21.json',
 }
 JOURNEYS = {
     'upload': ('run_upload_acceptance', 'R9_A4D2E2B_PRIVATE_UPLOAD_API_2026_10_19.json'),
@@ -35,6 +36,7 @@ JOURNEYS = {
 }
 UPLOAD_CHECKS = set('anonymous_object_denied tampered_signature_denied expired_signature_denied only_three_clean_files three_successful_uploads three_scan_rejections one_owned_archive_attachment'.split())
 FINANCE_CHECKS = set('payment_recovered_once invalid_amount_not_paid one_recovered_payment_event fresh_refund_success failed_refund_success unique_refunds two_success_events commission_reversed_once uncompleted_refund_no_charge commission_test_only foreign_payment_unchanged foreign_shop_no_commission lease_cleared appointment_capacity_released'.split())
+WORKFLOW_CHECKS = set('six_unique_order_events outbox_delivered exact_recipient_fanout three_read_notifications three_read_audits no_foreign_notifications'.split())
 OUTPUT = ROOT / 'docs/testing/api-coverage.json'
 SUMMARY = ROOT / 'docs/testing/API_COVERAGE.md'
 
@@ -144,6 +146,13 @@ def newman_evidence(suite, manifest, collection, collection_hash, report, catalo
             'invalid_submissions': 0}, 'Financial supplier calls do not prove recovery/unique submission')
         checks = report.get('finance_database', {}).get('checks', {})
         require(set(checks) == FINANCE_CHECKS and all(v is True for v in checks.values()), 'Financial database invariants are incomplete')
+    if suite == 'workflow':
+        require(evidence.get('signed_callback_and_exact_replay_verified') is True and
+                evidence.get('inbox_ids_and_read_receipts_verified') is True,
+                'Workflow callback or inbox/read receipt evidence missing')
+        checks = report.get('workflow_database', {}).get('notification_checks', {})
+        require(set(checks) == WORKFLOW_CHECKS and all(v is True for v in checks.values()),
+                'Workflow notification database invariants are incomplete')
     return definitions, definitions
 
 
