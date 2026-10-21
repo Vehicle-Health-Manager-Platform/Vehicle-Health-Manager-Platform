@@ -3,32 +3,19 @@
 本文件由 `python scripts/summarize_api_coverage.py` 生成。
 
 - 当前契约：352 项；受保护接口：338 项。
-- 四类用例定义覆盖：238 项；有匹配历史四类执行记录：238 项（接口去重）。
-- 所选记录中未获完整四类证据：114 项；汇总过程新发起接口：0 项（各套实际执行见来源报告）。
+- 四类用例定义覆盖：258 项；有匹配历史四类执行记录：258 项（接口去重）。
+- 所选记录中未获完整四类证据：94 项；汇总过程新发起接口：0 项（各套实际执行见来源报告）。
 
 历史证据不等于当前版本重跑通过，不等于完整权限矩阵或真实身份/资金验收。
 匿名401不算业务四类覆盖；未列历史证据不等于功能未开发。
-本工具只索引明确选定的23套记录，不否认其他单元、HTTP或历史验证；后续可增加经过校验的证据适配器。
+本工具只索引明确选定的24套记录，不否认其他单元、HTTP或历史验证；后续可增加经过校验的证据适配器。
 全API验收仍为false。结构化来源、哈希及逐项状态见 [api-coverage.json](api-coverage.json)。
 
 ## 历史证据缺口（按领域分组）
 
-### api/admin（41项）
+### api/admin（28项）
 
 - `GET /api/admin/assessment`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。
-- `GET /api/admin/assessment/history`：缺 boundary, error, normal, unauthorized；实现标记 `r8b2b-monthly-read-ui-implemented`。
-- `GET /api/admin/assessment/merchants`：缺 boundary, error, normal, unauthorized；实现标记 `r8b1-source-policy-implemented`。
-- `GET /api/admin/assessment/month`：缺 boundary, error, normal, unauthorized；实现标记 `r8b2b-monthly-read-ui-implemented`。
-- `GET /api/admin/assessment/policies`：缺 boundary, error, normal, unauthorized；实现标记 `r8b1-source-policy-implemented`。
-- `POST /api/admin/assessment/policies`：缺 boundary, error, normal, unauthorized；实现标记 `r8b1-source-policy-implemented`。
-- `PUT /api/admin/assessment/policies/{id}`：缺 boundary, error, normal, unauthorized；实现标记 `r8b1-source-policy-implemented`。
-- `PUT /api/admin/assessment/policies/{id}/status`：缺 boundary, error, normal, unauthorized；实现标记 `r8b1-source-policy-implemented`。
-- `GET /api/admin/assessment/snapshots`：缺 boundary, error, normal, unauthorized；实现标记 `r8b2a-monthly-snapshot-implemented`。
-- `POST /api/admin/assessment/snapshots`：缺 boundary, error, normal, unauthorized；实现标记 `r8b2a-monthly-snapshot-implemented`。
-- `GET /api/admin/assessment/snapshots/{id}`：缺 boundary, error, normal, unauthorized；实现标记 `r8b2a-monthly-snapshot-implemented`。
-- `GET /api/admin/assessment/snapshots/{id}/facts`：缺 boundary, error, normal, unauthorized；实现标记 `r8b2a-monthly-snapshot-implemented`。
-- `GET /api/admin/business/dashboard`：缺 boundary, error, normal, unauthorized；实现标记 `r8b3a-business-dashboard-implemented`。
-- `GET /api/admin/business/merchants`：缺 boundary, error, normal, unauthorized；实现标记 `r8b3a-business-dashboard-implemented`。
 - `GET /api/admin/catalog/{kind}`：缺 boundary, error, normal, unauthorized；实现标记 `catalog-governance-implemented`。
 - `POST /api/admin/catalog/{kind}`：缺 boundary, error, normal, unauthorized；实现标记 `catalog-governance-implemented`。
 - `PUT /api/admin/catalog/{kind}/{id}`：缺 boundary, error, normal, unauthorized；实现标记 `catalog-governance-implemented`。
@@ -119,16 +106,9 @@
 
 - `POST /api/knowledge/answer`：缺 boundary, error, normal, unauthorized；实现标记 `r8-remaining-implemented`。
 
-### api/merchant（22项）
+### api/merchant（15项）
 
 - `POST /api/merchant/apply`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。
-- `GET /api/merchant/assessment/history`：缺 boundary, error, normal, unauthorized；实现标记 `r8b2b-monthly-read-ui-implemented`。
-- `GET /api/merchant/assessment/month`：缺 boundary, error, normal, unauthorized；实现标记 `r8b2b-monthly-read-ui-implemented`。
-- `GET /api/merchant/assessment/policy`：缺 boundary, error, normal, unauthorized；实现标记 `r8b1-source-policy-implemented`。
-- `GET /api/merchant/assessment/snapshots/{id}`：缺 boundary, error, normal, unauthorized；实现标记 `r8b2b-monthly-read-ui-implemented`。
-- `GET /api/merchant/assessment/snapshots/{id}/facts`：缺 boundary, error, normal, unauthorized；实现标记 `r8b2b-monthly-read-ui-implemented`。
-- `GET /api/merchant/assessment/staff`：缺 boundary, error, normal, unauthorized；实现标记 `r8b2b-monthly-read-ui-implemented`。
-- `GET /api/merchant/business/dashboard`：缺 boundary, error, normal, unauthorized；实现标记 `r8b3a-business-dashboard-implemented`。
 - `GET /api/merchant/coupons`：缺 boundary, error, normal, unauthorized；实现标记 `r5a-inventory-claim-implemented`。
 - `PUT /api/merchant/coupons/{id}`：缺 boundary, error, normal, unauthorized；实现标记 `r5a-inventory-claim-implemented`。
 - `GET /api/merchant/customer-relations`：缺 boundary, error, normal, unauthorized；实现标记 `r8b3b-local-customer-relations-implemented`。

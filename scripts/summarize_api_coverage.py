@@ -29,6 +29,7 @@ POSTMAN = {
     'finance': 'R9_A4D6_FINANCIAL_RECOVERY_2026_10_21.json',
     'workflow': 'R9_A4D7_WORKFLOW_NOTIFICATIONS_2026_10_21.json',
     'dispute': 'R9_A4D8_DISPUTE_RECOVERY_2026_10_21.json',
+    'assessment': 'R9_A4D10_ASSESSMENT_READS_2026_10_21.json',
 }
 JOURNEYS = {
     'upload': ('run_upload_acceptance', 'R9_A4D2E2B_PRIVATE_UPLOAD_API_2026_10_19.json'),
