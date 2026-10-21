@@ -15,7 +15,7 @@ R9 期间形成的整条栈（#181 → #192，12 支）已按链式顺序全部�
 
 ## 2026-10-20 A4d-4a：商家到店核销
 
-本阶段成果已上传 [PRNUM](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/PRNUM)（base=`main`，从 `main` 直开、不再叠栈）。
+本阶段成果已上传 [193](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/193)（base=`main`，从 `main` 直开、不再叠栈）。
 
 A4d-4a 本地PASS：商家到店核销两页（预约核销 + 服务券独立核销）统一到设计系统，新增 15 个导出（两个码长常量、核销码视图、七阶段、订单事实、提交按钮、凭据、读取失败、服务券三格表单、预览三态、凭据三行、记录空态与页脚、冷却、失败口径、两个按钮）与17项单测；小程序单测997/997（0失败/0跳过）、微信构建与H5构建均exit 0、10个共享选择器逐项在app.wxss、两页编译产物的锚点齐全且只读态input计数1与3。修掉十处缺陷：三层v-if链不可断言、读不到核销记录时整块空白、提交成功到重新读取之间验码框会重现、未知状态可能被当成可核销、码校验各写一遍、金额原样插值（改为只认契约格式且不Number化）、服务券三格校验内联且不说缺哪格、已核销被误显示成"不可核销"、越权只给重试、记录卡空态与页脚在模板拼。保留 redemptionBody/createRedemptionFlow 的二次确认与幂等、couponTransactionsApi 的券状态机与扫码解析；三条端到端依赖文案（"验码并核销"、"测试核销已完成"、"测试核销，未真实扣款，不可作为收款凭据"）一字未改，并反向断言它们在wxml里搜不到、只存在于编译后的映射模块。后端与接口零改动；真机与模拟器未执行，不声明渲染通过。 商家侧接车→防护→核销→订单→时段→派工六个主流程页已收口；下一 merchant/coupons 与 merchant/staff 等独立缺口→A5交付→B外部接入→C真机。
 
