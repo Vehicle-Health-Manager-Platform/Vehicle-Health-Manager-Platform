@@ -34,7 +34,7 @@
 
 A4d-4a 本地 PASS：小程序单测 **997 / 997 通过**（0 失败 / 0 跳过，新增 17 项）；`npm run build:miniapp` exit 0 且"共享选择器""无测试身份桥"两项门禁 PASS；`npm run build:h5 --workspace @autocare/miniapp` exit 0。10 个共享选择器在 `app.wxss` 中逐项存在；`merchant/redeem.wxml` 含 10 个静态锚点、`input` 计数 1；`merchant/coupon-redeem.wxml` 含 14 个静态锚点、`input` 计数 3。六条映射文案在 wxml 中**均搜不到**（模板只剩绑定），同时全部出现在编译后的 `services/merchant-redemption-display.js`——接线成立。报告：`docs/testing/reports/R9_A4D4A_REDEMPTION_2026_10_20.json`（`passed: true`）。
 
-**已上传并合并**：[PR193](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/193)（base=`main`，从 `main` 直开、不再叠栈）。八项 CI 全部成功——`web` / `miniapp` / `schema-and-ocr` / `schema-mysql` 约 1 分钟内完成，`performance-baseline` 2 分钟，`database-recovery` 3 分钟，`backend` 47 分钟（38 步 Testcontainers 全过），`compose-smoke` 2 分钟。合并方式 `merge`，合并后 `main` = `a90a6c51`，`open PR = 0`。
+**已上传并合并**：[PR193](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/193)（base=`main`，从 `main` 直开、不再叠栈）。八项 CI 全部成功——`web` / `miniapp` / `schema-and-ocr` / `schema-mysql` 约 1 分钟内完成，`performance-baseline` 2 分钟，`database-recovery` 3 分钟，`backend` 47 分钟（38 步 Testcontainers 全过），`compose-smoke` 2 分钟。合并方式 `merge`，合并后 `main` = `a90a6c51`，`open PR = 0`；随后 `main` 上的两次推送（合并提交与文档回填提交 `71ac0fc`）各自触发的 8 项 CI 也全部 success。
 
 ## 未覆盖
 
