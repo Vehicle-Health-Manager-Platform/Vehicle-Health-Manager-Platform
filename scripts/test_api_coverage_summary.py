@@ -10,7 +10,7 @@ from unittest import mock
 import summarize_api_coverage as coverage_module
 
 from summarize_api_coverage import (ROOT, OUTPUT, SUMMARY, KINDS, build, case_coverage,
-                                    journey_evidence, matches, newman_evidence, render, summarize, FINANCE_CHECKS)
+                                    journey_evidence, matches, newman_evidence, render, summarize, FINANCE_CHECKS, WORKFLOW_CHECKS)
 
 
 class CoverageSummaryTest(unittest.TestCase):
@@ -163,6 +163,22 @@ class CoverageSummaryTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             newman_evidence('finance',self.manifest,self.collection,'b'*64,report,self.catalog)
 
+    def test_workflow_requires_bound_receipts_and_notification_invariants(self):
+        report=copy.deepcopy(self.report)
+        for suffix in ['collection_sha256','newman_exit_code','evidence']:
+            report['workflow_'+suffix]=report.pop('tiny_'+suffix)
+        report['workflow_evidence'].update(signed_callback_and_exact_replay_verified=True,inbox_ids_and_read_receipts_verified=True)
+        report['workflow_database']={'notification_checks':{k:True for k in WORKFLOW_CHECKS}}
+        verify=lambda:newman_evidence('workflow',self.manifest,self.collection,'b'*64,report,self.catalog)
+        self.assertEqual(self.coverage,verify()[1])
+        original=copy.deepcopy(report)
+        for key in WORKFLOW_CHECKS:
+            report.clear();report.update(copy.deepcopy(original));report['workflow_database']['notification_checks'][key]=False
+            with self.subTest(key=key),self.assertRaises(ValueError):verify()
+        for key in ('signed_callback_and_exact_replay_verified','inbox_ids_and_read_receipts_verified'):
+            report.clear();report.update(copy.deepcopy(original));del report['workflow_evidence'][key]
+            with self.subTest(key=key),self.assertRaises(ValueError):verify()
+
 
 class JourneySummaryTest(unittest.TestCase):
     def setUp(self):
@@ -262,9 +278,9 @@ class TrackedCoverageTest(unittest.TestCase):
     def test_all_selected_repository_sources_reconcile_without_current_pass_claim(self):
         result = build()
         self.assertEqual(352, result['counts']['contract_operations'])
-        self.assertEqual(20, result['counts']['suites'])
-        self.assertEqual(222, result['counts']['historical_four_kind_operations'])
-        self.assertEqual(130, result['counts']['without_complete_historical_evidence'])
+        self.assertEqual(21, result['counts']['suites'])
+        self.assertEqual(232, result['counts']['historical_four_kind_operations'])
+        self.assertEqual(120, result['counts']['without_complete_historical_evidence'])
         self.assertFalse(result['full_api_acceptance_passed'])
         self.assertEqual(result, json.loads(OUTPUT.read_text(encoding='utf-8')))
         self.assertEqual(render(result), SUMMARY.read_text(encoding='utf-8'))

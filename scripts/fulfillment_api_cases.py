@@ -204,9 +204,9 @@ def environment(tokens):
             ('SERVICE_ARCHIVE_ENABLED','true'),('SERVICE_ARCHIVE_INTERVAL_MS','250')]
 
 
-def audit(path, collection, manifest, tokens):
+def audit(path, collection, manifest, tokens, expected_operations=OPERATION_COUNT):
     from run_api_acceptance import audit_owner_cases
-    result=audit_owner_cases(path,collection,manifest,tokens,expected_operations=OPERATION_COUNT)
+    result=audit_owner_cases(path,collection,manifest,tokens,expected_operations=expected_operations)
     executions=json.loads(path.read_text(encoding='utf-8'))['run']['executions']
     definitions={x['name']:x for x in manifest['items']}
     signed=[]
