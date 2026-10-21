@@ -1,0 +1,2207 @@
+{
+  "info": {
+    "name": "Autocare isolated catalog governance and price source evidence",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:1"
+    },
+    {
+      "key": "isolated_governance_cases",
+      "value": "false"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "if(pm.variables.get(\"isolated_governance_cases\")!==\"true\"){pm.execution.skipRequest();throw new Error(\"Use the isolated fulfillment runner\");}"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "quotes_unknown_source",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/quotes",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.total).to.eql(1);pm.expect(d.page).to.eql(1);pm.expect(d.page_size).to.eql(20);});",
+              "pm.test(\"business 1\",()=>{const q=pm.response.json().data.items[0];pm.expect(q.quote_id).to.eql(1);pm.expect(q.state).to.eql(\"UNKNOWN\");pm.expect(q.source_hash).to.eql(null);});",
+              "pm.test(\"business 2\",()=>{const q=pm.response.json().data.items[0];pm.expect(q.source.price).to.eql(\"12.34\");pm.expect(q.source.quote_version).to.eql(1);pm.expect(q.source.project.source_note).to.eql(\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "projects_list",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/catalog/projects?page=1&page_size=20",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{catalog_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.total).to.eql(1);pm.expect(d.page).to.eql(1);pm.expect(d.page_size).to.eql(20);});",
+              "pm.test(\"business 1\",()=>{const p=pm.response.json().data.items[0];pm.expect(p.id).to.eql(1);pm.expect(p.project_name).to.eql(\"synthetic service\");pm.expect(p.category).to.eql(1);});",
+              "pm.test(\"business 2\",()=>{const p=pm.response.json().data.items[0];pm.expect(p.status).to.eql(1);pm.expect(p.revision).to.eql(1);pm.expect(p.sort_order).to.eql(0);pm.expect(p.source_note).to.eql(\"\");});",
+              "pm.test(\"business 3\",()=>{const p=pm.response.json().data.items[0];pm.expect(p.base_price_low).to.eql(\"1.00\");pm.expect(p.base_price_high).to.eql(\"100.00\");pm.expect(p.quality_standard).to.eql(\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "projects_list_last_page",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/catalog/projects?page=999999",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{catalog_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.items).to.eql([]);pm.expect(d.total).to.eql(1);pm.expect(d.page).to.eql(999999);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "projects_list_page_size",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/catalog/projects?page_size=51",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{catalog_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "projects_list_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/catalog/projects",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "projects_list_monitor_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/catalog/projects",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "brand_create",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/catalog/brands",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "6805fa56-3d23-56d0-8cdd-c2764f818f70"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{catalog_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \"synthetic governed brand\", \"sort_order\": 1, \"source_note\": \"合成目录新增来源\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.id).to.eql(2);pm.expect(d.name).to.eql(\"synthetic governed brand\");pm.expect(d.status).to.eql(0);pm.expect(d.revision).to.eql(1);});",
+              "pm.test(\"business 1\",()=>{const d=pm.response.json().data;pm.expect(d.source_note).to.eql(\"合成目录新增来源\");pm.expect(d.sort_order).to.eql(1);});",
+              "pm.test(\"business 2\",()=>{pm.expect(pm.response.json().data.data).to.eql(undefined);});",
+              "pm.test(\"business 3\",()=>{pm.collectionVariables.set(\"receipt_brand\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "brand_create_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/catalog/brands",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "6805fa56-3d23-56d0-8cdd-c2764f818f70"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{catalog_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \"synthetic governed brand\", \"sort_order\": 1, \"source_note\": \"合成目录新增来源\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_brand\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "brand_create_changed_body",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/catalog/brands",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "6805fa56-3d23-56d0-8cdd-c2764f818f70"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{catalog_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \"synthetic changed brand\", \"sort_order\": 1, \"source_note\": \"合成目录新增来源\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "series_create_duplicate",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/catalog/series",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "aa8c4244-82f4-5d90-ac7c-f538773d53b3"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{catalog_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"brand_id\": 1, \"name\": \"synthetic series\", \"sort_order\": 2, \"source_note\": \"合成目录重复来源\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "brand_create_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/catalog/brands",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "774179ef-f467-535c-985a-d938ed4a453f"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \"synthetic governed brand\", \"sort_order\": 1, \"source_note\": \"合成目录新增来源\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "brand_create_plain_denied",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/catalog/brands",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "96bf94f5-68e6-5ea8-b38f-08932ec5d5f8"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{plain_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \"synthetic governed brand\", \"sort_order\": 1, \"source_note\": \"合成目录新增来源\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "project_update",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/catalog/projects/1",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "93d261f7-edd0-5914-b157-017283070028"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{catalog_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"project_name\": \"synthetic service\", \"category\": 1, \"service_content\": \"synthetic inspection\", \"quality_standard\": \"\", \"base_price_low\": \"1.00\", \"base_price_high\": \"100.00\", \"sort_order\": 0, \"source_note\": \"合成目录来源说明\", \"status\": 1, \"revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.id).to.eql(1);pm.expect(d.revision).to.eql(2);pm.expect(d.status).to.eql(1);});",
+              "pm.test(\"business 1\",()=>{const d=pm.response.json().data;pm.expect(d.source_note).to.eql(\"合成目录来源说明\");pm.expect(d.project_name).to.eql(\"synthetic service\");pm.expect(d.base_price_low).to.eql(\"1.00\");});",
+              "pm.test(\"business 2\",()=>{pm.expect(pm.response.json().data.data).to.eql(undefined);});",
+              "pm.test(\"business 3\",()=>{pm.collectionVariables.set(\"receipt_project\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "project_update_replay",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/catalog/projects/1",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "93d261f7-edd0-5914-b157-017283070028"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{catalog_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"project_name\": \"synthetic service\", \"category\": 1, \"service_content\": \"synthetic inspection\", \"quality_standard\": \"\", \"base_price_low\": \"1.00\", \"base_price_high\": \"100.00\", \"sort_order\": 0, \"source_note\": \"合成目录来源说明\", \"status\": 1, \"revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_project\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "project_update_stale_revision",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/catalog/projects/1",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "bce56e44-5ed2-5b79-b85d-a0164596acff"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{catalog_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"project_name\": \"synthetic service\", \"category\": 1, \"service_content\": \"synthetic inspection\", \"quality_standard\": \"\", \"base_price_low\": \"1.00\", \"base_price_high\": \"100.00\", \"sort_order\": 0, \"source_note\": \"合成目录来源说明\", \"status\": 1, \"revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "project_update_bad_money",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/catalog/projects/1",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "129baafb-f34c-541f-bb19-7c81b9af42d8"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{catalog_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"project_name\": \"synthetic service\", \"category\": 1, \"service_content\": \"synthetic inspection\", \"quality_standard\": \"\", \"base_price_low\": \"1\", \"base_price_high\": \"100.00\", \"sort_order\": 0, \"source_note\": \"合成目录来源说明\", \"status\": 1, \"revision\": 2}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "project_update_anonymous",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/catalog/projects/1",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "bd99cc9a-feb6-55f9-a73c-dcc835cbc32a"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"project_name\": \"synthetic service\", \"category\": 1, \"service_content\": \"synthetic inspection\", \"quality_standard\": \"\", \"base_price_low\": \"1.00\", \"base_price_high\": \"100.00\", \"sort_order\": 0, \"source_note\": \"合成目录来源说明\", \"status\": 1, \"revision\": 2}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "project_update_merchant_denied",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/catalog/projects/1",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "27e3e1b9-021e-5439-a64b-28e5d8e453af"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"project_name\": \"synthetic service\", \"category\": 1, \"service_content\": \"synthetic inspection\", \"quality_standard\": \"\", \"base_price_low\": \"1.00\", \"base_price_high\": \"100.00\", \"sort_order\": 0, \"source_note\": \"合成目录来源说明\", \"status\": 1, \"revision\": 2}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_ready_source",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/quotes",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const q=pm.response.json().data.items[0];pm.expect(q.state).to.eql(\"READY\");pm.expect(q.source_hash).to.match(/^[0-9a-f]{64}$/);});",
+              "pm.test(\"business 1\",()=>{const q=pm.response.json().data.items[0];pm.expect(q.source.price).to.eql(\"12.34\");pm.expect(q.source.quote_version_id).to.eql(1);pm.expect(q.source.quote_version).to.eql(1);});",
+              "pm.test(\"business 2\",()=>{const q=pm.response.json().data.items[0];pm.expect(q.source.project.source_note).to.eql(\"合成目录来源说明\");pm.expect(q.source.project.quality_standard).to.eql(\"\");pm.expect(q.source.merchant.id).to.eql(1);});",
+              "pm.test(\"business 3\",()=>{pm.collectionVariables.set(\"quote_hash\",pm.response.json().data.items[0].source_hash);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_last_page",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/quotes?page=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.items).to.eql([]);pm.expect(d.total).to.eql(1);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_page_size",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/quotes?page_size=10",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/quotes",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_catalog_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/quotes",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{catalog_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/price-monitor/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "70a15f08-5c34-545f-a6b3-81bb34ccf64a"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"quote_id\": 1, \"source_hash\": \"{{quote_hash}}\", \"lower_price\": \"12.00\", \"upper_price\": \"13.00\", \"price_unit\": \"元/次\", \"applicability_note\": \"合成适用说明\", \"source_note\": \"合成价格依据说明\", \"scope_confirmed\": true, \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.id).to.eql(1);pm.expect(d.quote_id).to.eql(1);pm.expect(d.status).to.eql(\"DRAFT\");pm.expect(d.revision).to.eql(1);});",
+              "pm.test(\"business 1\",()=>{const d=pm.response.json().data;pm.expect(d.lower_price).to.eql(\"12.00\");pm.expect(d.upper_price).to.eql(\"13.00\");pm.expect(d.price_unit).to.eql(\"元/次\");pm.expect(d.scope_confirmed).to.eql(true);});",
+              "pm.test(\"business 2\",()=>{const d=pm.response.json().data;pm.expect(d.rule_version).to.eql(\"R8B_PRICE_SOURCE_V1\");pm.expect(d.comparison_available).to.eql(true);pm.expect(d.published_at).to.eql(null);pm.expect(d.stopped_at).to.eql(null);});",
+              "pm.test(\"business 3\",()=>{const d=pm.response.json().data;pm.expect(d.source_hash).to.eql(pm.collectionVariables.get(\"quote_hash\"));pm.expect(d.source_snapshot.quote_version).to.eql(1);pm.expect(d.source_snapshot.price).to.eql(\"12.34\");});",
+              "pm.test(\"business 4\",()=>{const d=pm.response.json().data;pm.expect(d.valid_from).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$/);pm.expect(d.valid_to).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$/);pm.expect(d.created_at).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$/);});",
+              "pm.test(\"business 5\",()=>{pm.expect(pm.response.json().data.data).to.eql(undefined);});",
+              "pm.test(\"business 6\",()=>{pm.collectionVariables.set(\"receipt_policy\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/price-monitor/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "70a15f08-5c34-545f-a6b3-81bb34ccf64a"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"quote_id\": 1, \"source_hash\": \"{{quote_hash}}\", \"lower_price\": \"12.00\", \"upper_price\": \"13.00\", \"price_unit\": \"元/次\", \"applicability_note\": \"合成适用说明\", \"source_note\": \"合成价格依据说明\", \"scope_confirmed\": true, \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_policy\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_changed_body",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/price-monitor/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "70a15f08-5c34-545f-a6b3-81bb34ccf64a"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"quote_id\": 1, \"source_hash\": \"{{quote_hash}}\", \"lower_price\": \"12.00\", \"upper_price\": \"13.00\", \"price_unit\": \"元/次\", \"applicability_note\": \"同键改正文\", \"source_note\": \"合成价格依据说明\", \"scope_confirmed\": true, \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_stale_hash",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/price-monitor/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "4d48d61a-f04e-5b4c-ab19-5d7bfd3f3659"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"quote_id\": 1, \"source_hash\": \"0000000000000000000000000000000000000000000000000000000000000000\", \"lower_price\": \"12.00\", \"upper_price\": \"13.00\", \"price_unit\": \"元/次\", \"applicability_note\": \"合成适用说明\", \"source_note\": \"合成价格依据说明\", \"scope_confirmed\": true, \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_past_window",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/price-monitor/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "4c82c3a6-6f9e-5ba8-8003-ec0d8ad708f7"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"quote_id\": 1, \"source_hash\": \"{{quote_hash}}\", \"lower_price\": \"12.00\", \"upper_price\": \"13.00\", \"price_unit\": \"元/次\", \"applicability_note\": \"合成适用说明\", \"source_note\": \"合成价格依据说明\", \"scope_confirmed\": true, \"valid_from\": \"2023-12-31T16:00:00Z\", \"valid_to\": \"2024-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_bad_range",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/price-monitor/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "1e19d3c5-f549-55a0-a21b-0c2bac7c4c13"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"quote_id\": 1, \"source_hash\": \"{{quote_hash}}\", \"lower_price\": \"13.00\", \"upper_price\": \"12.00\", \"price_unit\": \"元/次\", \"applicability_note\": \"合成适用说明\", \"source_note\": \"合成价格依据说明\", \"scope_confirmed\": true, \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/price-monitor/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "473703e1-5c76-5226-8101-5a90dc0bca31"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"quote_id\": 1, \"source_hash\": \"{{quote_hash}}\", \"lower_price\": \"12.00\", \"upper_price\": \"13.00\", \"price_unit\": \"元/次\", \"applicability_note\": \"合成适用说明\", \"source_note\": \"合成价格依据说明\", \"scope_confirmed\": true, \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_catalog_denied",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/price-monitor/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "c836c0d3-93e7-56c2-b6d8-bf96a3b97529"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{catalog_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"quote_id\": 1, \"source_hash\": \"{{quote_hash}}\", \"lower_price\": \"12.00\", \"upper_price\": \"13.00\", \"price_unit\": \"元/次\", \"applicability_note\": \"合成适用说明\", \"source_note\": \"合成价格依据说明\", \"scope_confirmed\": true, \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policies_list",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/policies",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.total).to.eql(1);pm.expect(d.items.length).to.eql(1);pm.expect(d.page).to.eql(1);pm.expect(d.page_size).to.eql(20);});",
+              "pm.test(\"business 1\",()=>{const p=pm.response.json().data.items[0];pm.expect(p.id).to.eql(1);pm.expect(p.quote_id).to.eql(1);pm.expect(p.status).to.eql(\"DRAFT\");pm.expect(p.revision).to.eql(1);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policies_list_last_page",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/policies?page=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.items).to.eql([]);pm.expect(d.total).to.eql(1);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policies_list_page_size",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/policies?page_size=10",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policies_list_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/policies",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policies_list_plain_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/policies",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{plain_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_detail",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/policies/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.id).to.eql(1);pm.expect(d.quote_id).to.eql(1);pm.expect(d.status).to.eql(\"DRAFT\");pm.expect(d.source_note).to.eql(\"合成价格依据说明\");});",
+              "pm.test(\"business 1\",()=>{const d=pm.response.json().data;pm.expect(d.source_snapshot.project.source_note).to.eql(\"合成目录来源说明\");pm.expect(d.source_snapshot.merchant.name).to.eql(\"synthetic shop\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_detail_missing",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/policies/2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_detail_bad_id",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/policies/0",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_detail_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/policies/1",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_detail_catalog_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/policies/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{catalog_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_update",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/price-monitor/policies/1",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "262175c8-6068-5f15-8b84-e1eaa04deb23"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"quote_id\": 1, \"source_hash\": \"{{quote_hash}}\", \"lower_price\": \"12.00\", \"upper_price\": \"13.00\", \"price_unit\": \"元/次\", \"applicability_note\": \"合成修订适用说明\", \"source_note\": \"合成价格依据说明\", \"scope_confirmed\": true, \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\", \"expected_revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.revision).to.eql(2);pm.expect(d.status).to.eql(\"DRAFT\");pm.expect(d.applicability_note).to.eql(\"合成修订适用说明\");});",
+              "pm.test(\"business 1\",()=>{pm.expect(pm.response.json().data.data).to.eql(undefined);});",
+              "pm.test(\"business 2\",()=>{pm.collectionVariables.set(\"receipt_policy_update\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_update_replay",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/price-monitor/policies/1",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "262175c8-6068-5f15-8b84-e1eaa04deb23"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"quote_id\": 1, \"source_hash\": \"{{quote_hash}}\", \"lower_price\": \"12.00\", \"upper_price\": \"13.00\", \"price_unit\": \"元/次\", \"applicability_note\": \"合成修订适用说明\", \"source_note\": \"合成价格依据说明\", \"scope_confirmed\": true, \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\", \"expected_revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_policy_update\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_update_stale_revision",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/price-monitor/policies/1",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "eea8cfe0-ddfe-57ef-9e25-52e3d73b1660"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"quote_id\": 1, \"source_hash\": \"{{quote_hash}}\", \"lower_price\": \"12.00\", \"upper_price\": \"13.00\", \"price_unit\": \"元/次\", \"applicability_note\": \"合成旧版修订\", \"source_note\": \"合成价格依据说明\", \"scope_confirmed\": true, \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\", \"expected_revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_update_missing_revision",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/price-monitor/policies/1",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "580471c1-d9bf-50ce-b760-df00c88b6daa"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"quote_id\": 1, \"source_hash\": \"{{quote_hash}}\", \"lower_price\": \"12.00\", \"upper_price\": \"13.00\", \"price_unit\": \"元/次\", \"applicability_note\": \"合成适用说明\", \"source_note\": \"合成价格依据说明\", \"scope_confirmed\": true, \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_update_anonymous",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/price-monitor/policies/1",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "cf38c9a8-38ca-5f83-b8b9-147b03081acf"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"quote_id\": 1, \"source_hash\": \"{{quote_hash}}\", \"lower_price\": \"12.00\", \"upper_price\": \"13.00\", \"price_unit\": \"元/次\", \"applicability_note\": \"合成适用说明\", \"source_note\": \"合成价格依据说明\", \"scope_confirmed\": true, \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\", \"expected_revision\": 2}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_update_catalog_denied",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/price-monitor/policies/1",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "1faa2dbc-2c27-5847-8f4d-bbfd9c34b5e3"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{catalog_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"quote_id\": 1, \"source_hash\": \"{{quote_hash}}\", \"lower_price\": \"12.00\", \"upper_price\": \"13.00\", \"price_unit\": \"元/次\", \"applicability_note\": \"合成适用说明\", \"source_note\": \"合成价格依据说明\", \"scope_confirmed\": true, \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\", \"expected_revision\": 2}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_publish",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/price-monitor/policies/1/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "3eab0bb2-ae69-56cd-bf10-185449271ef1"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"expected_revision\": 2, \"status\": \"PUBLISHED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.status).to.eql(\"PUBLISHED\");pm.expect(d.revision).to.eql(3);pm.expect(d.stopped_at).to.eql(null);});",
+              "pm.test(\"business 1\",()=>{const d=pm.response.json().data;pm.expect(d.published_at).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$/);});",
+              "pm.test(\"business 2\",()=>{pm.expect(pm.response.json().data.data).to.eql(undefined);});",
+              "pm.test(\"business 3\",()=>{pm.collectionVariables.set(\"receipt_policy_publish\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_publish_replay",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/price-monitor/policies/1/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "3eab0bb2-ae69-56cd-bf10-185449271ef1"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"expected_revision\": 2, \"status\": \"PUBLISHED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_policy_publish\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_publish_again",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/price-monitor/policies/1/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "267f14c8-18f3-58da-a8a3-53be60ff54b3"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"expected_revision\": 3, \"status\": \"PUBLISHED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_stop",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/price-monitor/policies/1/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "8cbecd6e-225e-5c27-b11a-5476eb790ee4"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"expected_revision\": 3, \"status\": \"STOPPED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.status).to.eql(\"STOPPED\");pm.expect(d.revision).to.eql(4);});",
+              "pm.test(\"business 1\",()=>{const d=pm.response.json().data;pm.expect(d.stopped_at).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$/);pm.expect(d.published_at).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$/);});",
+              "pm.test(\"business 2\",()=>{pm.expect(pm.response.json().data.data).to.eql(undefined);});",
+              "pm.test(\"business 3\",()=>{pm.collectionVariables.set(\"receipt_policy_stop\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_stop_replay",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/price-monitor/policies/1/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "8cbecd6e-225e-5c27-b11a-5476eb790ee4"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"expected_revision\": 3, \"status\": \"STOPPED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_policy_stop\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_stop_again",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/price-monitor/policies/1/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "6509dae8-26e1-5321-9cda-e0b59fc6850c"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"expected_revision\": 4, \"status\": \"STOPPED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_status_bad_value",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/price-monitor/policies/1/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "ea440221-bdab-50fc-be2c-867705ac262b"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"expected_revision\": 4, \"status\": \"PAUSED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_status_anonymous",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/price-monitor/policies/1/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "35133c81-fee3-5875-a3ef-2799a0d0bcd5"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"expected_revision\": 4, \"status\": \"STOPPED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_status_catalog_denied",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/price-monitor/policies/1/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "c2e6fd70-f134-5bc1-aa4f-52e8dfb7282c"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{catalog_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"expected_revision\": 4, \"status\": \"STOPPED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

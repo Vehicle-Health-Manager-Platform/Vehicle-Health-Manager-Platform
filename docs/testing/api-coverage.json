@@ -7,11 +7,11 @@
   "counts": {
     "contract_operations": 352,
     "protected_operations": 338,
-    "four_kind_definitions": 258,
-    "historical_four_kind_operations": 258,
-    "without_complete_historical_evidence": 94,
+    "four_kind_definitions": 267,
+    "historical_four_kind_operations": 267,
+    "without_complete_historical_evidence": 85,
     "current_run_operations": 0,
-    "suites": 24
+    "suites": 25
   },
   "suites": [
     {
@@ -133,6 +133,17 @@
         "docs/testing/postman/fulfillment-case-manifest.json": "84a2fd4e305cda880fb7b3af971c7715649b4794fb232e3cc2a31ca9ad0565e2",
         "docs/testing/postman/fulfillment-cases.postman_collection.json": "eaaea3143dc6c043a22b9c035a123aff15b6b78f189d4dbceed5fbe38e58b37a",
         "docs/testing/reports/R9_A4D2B1_FULFILLMENT_API_CASES_2026_10_19.json": "01f584e3b9c1de5ff5617df55387189b8dfa5579260c7c4e32b6a3ee3ddb9511"
+      }
+    },
+    {
+      "name": "governance",
+      "type": "postman",
+      "evidence_status": "HISTORICAL_RECONCILED",
+      "recorded_source_sha256": "51aa0a0f7eeed5b7887e969d3391918ad10fb9507959b1c7909a326738cd1daf",
+      "inputs": {
+        "docs/testing/postman/governance-case-manifest.json": "89010b9d34c524c932e002e97be35daa95de172a24f5453dfdf792f0ee68180a",
+        "docs/testing/postman/governance-cases.postman_collection.json": "46100b7c958fccfc0395fca01f3d58bd1ae4767d7bb76de59f2c5c55dcfb4027",
+        "docs/testing/reports/R9_A4D11_CATALOG_GOVERNANCE_2026_10_21.json": "a3528dc363eca60aca760735d74f9668b150b37e07cf9eb96f21007538e809d3"
       }
     },
     {
@@ -827,22 +838,38 @@
       "roles": "OPERATOR with can_catalog",
       "protected": true,
       "implementation_status": "catalog-governance-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "governance",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_admin_catalog_kind",
@@ -851,22 +878,38 @@
       "roles": "OPERATOR with can_catalog",
       "protected": true,
       "implementation_status": "catalog-governance-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "governance",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "put_api_admin_catalog_kind_id",
@@ -875,22 +918,38 @@
       "roles": "OPERATOR with can_catalog",
       "protected": true,
       "implementation_status": "catalog-governance-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "governance",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_admin_community_curation_sources",
@@ -3645,22 +3704,38 @@
       "roles": "OPERATOR(can_price_monitor)",
       "protected": true,
       "implementation_status": "r8b3c1-price-source-config-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "governance",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_admin_price_monitor_policies",
@@ -3669,22 +3744,38 @@
       "roles": "OPERATOR(can_price_monitor)",
       "protected": true,
       "implementation_status": "r8b3c1-price-source-config-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "governance",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_admin_price_monitor_policies_id",
@@ -3693,22 +3784,38 @@
       "roles": "OPERATOR(can_price_monitor)",
       "protected": true,
       "implementation_status": "r8b3c1-price-source-config-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "governance",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "put_api_admin_price_monitor_policies_id",
@@ -3717,22 +3824,38 @@
       "roles": "OPERATOR(can_price_monitor)",
       "protected": true,
       "implementation_status": "r8b3c1-price-source-config-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "governance",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "put_api_admin_price_monitor_policies_id_status",
@@ -3741,22 +3864,38 @@
       "roles": "OPERATOR(can_price_monitor)",
       "protected": true,
       "implementation_status": "r8b3c1-price-source-config-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "governance",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_admin_price_monitor_quotes",
@@ -3765,22 +3904,38 @@
       "roles": "OPERATOR(can_price_monitor)",
       "protected": true,
       "implementation_status": "r8b3c1-price-source-config-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "governance",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_admin_project_applicability_project_model",

@@ -1,12 +1,18 @@
+## 2026-10-21 A4d-11：运营目录治理与价格监测证据链（已上传 PR202）
+
+本阶段成果已上传[草稿PR202](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/202)（base=`codex/r9-a4d10-assessment-reads`，依赖PR201），远程CI已启动、结论以该PR实际结果为准。
+
+本阶段补齐 9 个已实现但无四类证据的运营接口：目录治理 3 项（`GET`/`POST`/`PUT /api/admin/catalog/*`）、价格监测政策 6 项（报价证据读、政策清单/明细/创建/修订/状态），生产代码零变更。真实隔离 HTTP/MySQL PASS（205.068 秒）：56 个业务请求 / 218 条断言 / 0 失败，9 接口各覆盖正常/边界/错误/未授权；匿名 338 请求 / 1014 断言通过且业务表行数不变；6 个幂等作用域重放逐字节相等、2 组"同键异体"被 400 拒绝；14 项数据库不变量全真（行数 `brand=2 / standard_project=1 / price_monitor_policy=1 / idempotency=6 / audit_log=7`）；默认关闭开关时该套件 0 请求。核心是证据链：目录来源说明为空时同一报价只能 `UNKNOWN`，补齐后变 `READY` 并给出 64 位哈希，政策只允许引用这次读取得到的哈希（伪造哈希与过去窗口均 409）。仅 SQL 合成身份、报价版本与同形审计夹具，不代表商家写入、正式资金或真机验收。[执行记录](R9_A4D11_GOVERNANCE_WRITES_EXECUTION.md) / [验收说明](../testing/GOVERNANCE_WRITES_ACCEPTANCE.md)。覆盖核对 25 套来源、267/352 项历史四类完整、缺口 85 项；全 API 验收仍为 false。
+
 ## 2026-10-21 A4d-10：考核政策、月结与经营看板读接口（已上传 PR201）
 
-本阶段成果已上传[草稿PR201](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/201)（base=`codex/r9-a4d9-pickup-work-files`，依赖PR200），远程CI已启动、结论以该PR实际结果为准。
+本阶段成果已上传[PR201](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/201)（base=`codex/r9-a4d9-pickup-work-files`，依赖PR200）；8 项远程CI全部 success（`backend` 约 34 分钟、`compose-smoke` 约 2 分钟，其余并行 job 3 分钟内），仍为草稿、未合并。
 
 本阶段补齐 20 个已实现但无四类证据的接口（考核政策 5、月结与读取 11、员工考核 1、经营看板 3），契约里无映射的 `GET /api/admin/assessment` 明确排除。真实隔离 HTTP/MySQL PASS（228.873 秒）：153 个业务请求 / 530 条断言 / 0 失败，20 接口各覆盖正常/边界/错误/未授权；匿名 338 请求 / 1014 断言通过且前后表行数不变；7 个幂等作用域与 2 组"同键异体"实测被拒；13 项数据库不变量全部为真——3 份快照摘要全为 `UNKNOWN` 且分数与等级为 JSON null、无政策月份 `policy_snapshot` 为 JSON null、事实明细从不进入审计。固定月份夹具为 `2024-01`/`2999-01`/`3000-01`，因为审计要求实际 query 与声明 query 逐字相同。仅 SQL 合成身份与历史政策夹具，不代表正式资金或真机验收。[执行记录](R9_A4D10_ASSESSMENT_READS_EXECUTION.md) / [验收说明](../testing/ASSESSMENT_READS_ACCEPTANCE.md)。覆盖核对 24 套来源、258/352 项历史四类完整、缺口 94 项；全 API 验收仍为 false。
 
 ## 2026-10-21 A4d-9：接车与施工私有附件访问（已上传 PR200）
 
-本阶段成果已上传[草稿PR200](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/200)（base=`codex/r9-a4d8-dispute-recovery`，依赖PR199），远程CI已启动、结论以该PR实际结果为准。
+本阶段成果已上传[PR200](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/200)（base=`codex/r9-a4d8-dispute-recovery`，依赖PR199）；8 项远程CI全部 success（`backend`、`compose-smoke`、`performance-baseline`、`database-recovery`、`web`、`miniapp`、`schema-and-ocr`、`schema-mysql`），仍为草稿、未合并。
 
 真实MySQL/MinIO/ClamAV旅程PASS（282.656秒）：4个附件读接口（接车、商家/技师/车主三侧施工证据）各覆盖正常/边界/错误/未授权，39个业务请求0失败；19个真实上传全部CLEAN，14条接车附件与5条施工证据关联核对通过；签名下载逐字节一致，去签名/篡改/6.1秒自然过期均403，租期5秒有界。修掉接车附件访问忽略未知/重复query的真实缺口。源码执行前后一致，4个容器与网络实际移除；同批回归PickupHttpTest/ServiceWorkHttpTest/PrivateFileAccessTest共17项通过。身份/订单/支付为SQL合成夹具，正式身份、资金、真机与外部存储未验收。[执行记录](R9_A4D9_PICKUP_WORK_FILES_EXECUTION.md) / [验收说明](../testing/PICKUP_WORK_PRIVATE_FILES_ACCEPTANCE.md)。覆盖核对23套来源、238/352项历史四类完整、缺口114项；全API验收仍为false。
 
