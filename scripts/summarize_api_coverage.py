@@ -34,6 +34,7 @@ JOURNEYS = {
     'upload': ('run_upload_acceptance', 'R9_A4D2E2B_PRIVATE_UPLOAD_API_2026_10_19.json'),
     'service_archive': ('run_service_archive_acceptance', 'R9_A4D2G2_SERVICE_ARCHIVE_ACCESS_2026_10_20.json'),
     'material_workbench': ('run_material_workbench_acceptance', 'R9_A4D2G3_MATERIAL_WORKBENCH_2026_10_20.json'),
+    'pickup_work_files': ('run_pickup_work_files_acceptance', 'R9_A4D9_PICKUP_WORK_FILES_2026_10_21.json'),
 }
 UPLOAD_CHECKS = set('anonymous_object_denied tampered_signature_denied expired_signature_denied only_three_clean_files three_successful_uploads three_scan_rejections one_owned_archive_attachment'.split())
 FINANCE_CHECKS = set('payment_recovered_once invalid_amount_not_paid one_recovered_payment_event fresh_refund_success failed_refund_success unique_refunds two_success_events commission_reversed_once uncompleted_refund_no_charge commission_test_only foreign_payment_unchanged foreign_shop_no_commission lease_cleared appointment_capacity_released'.split())

@@ -7,11 +7,11 @@
   "counts": {
     "contract_operations": 352,
     "protected_operations": 338,
-    "four_kind_definitions": 234,
-    "historical_four_kind_operations": 234,
-    "without_complete_historical_evidence": 118,
+    "four_kind_definitions": 238,
+    "historical_four_kind_operations": 238,
+    "without_complete_historical_evidence": 114,
     "current_run_operations": 0,
-    "suites": 22
+    "suites": 23
   },
   "suites": [
     {
@@ -231,6 +231,16 @@
       "inputs": {
         "scripts/run_material_workbench_acceptance.py": "145d432c8fcf258f9ac31027e8f8dc87b7452aaa4f93f636aca60f92416d612a",
         "docs/testing/reports/R9_A4D2G3_MATERIAL_WORKBENCH_2026_10_20.json": "9b4a46aec4e92cee9d8a0f53f37f05f09e8d8ca9018ebd37f68d5b8c6a2c4545"
+      }
+    },
+    {
+      "name": "pickup_work_files",
+      "type": "http-journey",
+      "evidence_status": "HISTORICAL_RECONCILED",
+      "recorded_source_sha256": "51244e554cfc7dd0db863fe3d7729f25ac06778cfbf41265ddc286a6e76d5d30",
+      "inputs": {
+        "scripts/run_pickup_work_files_acceptance.py": "2020723c3cff373dda5a09d09d5905b693060ecea3e5f30075ecc0faae0babac",
+        "docs/testing/reports/R9_A4D9_PICKUP_WORK_FILES_2026_10_21.json": "f72826dd255268f3a93e8dc8afa29e463b364136c21537978e4e30c7bf913de8"
       }
     },
     {
@@ -5197,22 +5207,38 @@
       "roles": "OWNER,MERCHANT,STAFF",
       "protected": true,
       "implementation_status": "pickup-inspection-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "pickup_work_files",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_check_protection_upload",
@@ -8256,22 +8282,38 @@
       "roles": "MERCHANT",
       "protected": true,
       "implementation_status": "service-work-backend-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "pickup_work_files",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_merchant_profile",
@@ -10133,22 +10175,38 @@
       "roles": "OWNER",
       "protected": true,
       "implementation_status": "r7a-owner-evidence-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "pickup_work_files",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_owner_community_image_sources",
@@ -12727,22 +12785,38 @@
       "roles": "TECHNICIAN",
       "protected": true,
       "implementation_status": "service-work-backend-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "pickup_work_files",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_tech_report_submit",

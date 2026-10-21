@@ -1,0 +1,457 @@
+{
+  "version": 1,
+  "passed": true,
+  "full_api_acceptance_passed": false,
+  "finished_at": "2026-10-21T14:30:37.029995+00:00",
+  "duration_seconds": 282.656,
+  "source_sha256": "51244e554cfc7dd0db863fe3d7729f25ac06778cfbf41265ddc286a6e76d5d30",
+  "sources_unchanged": true,
+  "maven_exit_code": 0,
+  "execution_mode": "local-execution",
+  "proof": {
+    "requests": 39,
+    "operations": 4,
+    "coverage": {
+      "GET /api/check/pickup/{order}/files/{file}/access": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/merchant/orders/{id}/work/files/{file}/access": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/tech/orders/{id}/work/files/{file}/access": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/order/{id}/work/files/{file}/access": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ]
+    },
+    "checks": {
+      "nineteen_clean_uploads": true,
+      "pickup_and_work_links_exact": true,
+      "files_owned_by_this_shop_only": true,
+      "unsigned_object_denied": true,
+      "tampered_signature_denied": true,
+      "expired_signature_denied": true,
+      "signature_lease_bounded": true,
+      "two_orders_only": true,
+      "orders_keep_expected_states": true
+    },
+    "cleanup": {
+      "initializer": true,
+      "clamav": true,
+      "minio": true,
+      "mysql": true,
+      "network": true
+    },
+    "cases": [
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/check/pickup/1/files/1/access",
+        "role": "owner",
+        "operation": "/api/check/pickup/{order}/files/{file}/access",
+        "name": "pickup_owner_photo"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/check/pickup/1/files/2/access",
+        "role": "merchant",
+        "operation": "/api/check/pickup/{order}/files/{file}/access",
+        "name": "pickup_merchant_photo"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/check/pickup/2/files/13/access",
+        "role": "owner",
+        "operation": "/api/check/pickup/{order}/files/{file}/access",
+        "name": "pickup_own_second_order"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "boundary",
+        "path": "/api/check/pickup/2/files/1/access",
+        "role": "owner",
+        "operation": "/api/check/pickup/{order}/files/{file}/access",
+        "name": "pickup_cross_order"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "boundary",
+        "path": "/api/check/pickup/1/files/8/access",
+        "role": "owner",
+        "operation": "/api/check/pickup/{order}/files/{file}/access",
+        "name": "pickup_unattached_work_file"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/check/pickup/1/files/1/access?owner_id=1",
+        "role": "owner",
+        "operation": "/api/check/pickup/{order}/files/{file}/access",
+        "name": "pickup_query"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/check/pickup/1/files/0/access",
+        "role": "owner",
+        "operation": "/api/check/pickup/{order}/files/{file}/access",
+        "name": "pickup_zero_file"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/check/pickup/1/files/1/access",
+        "role": "anonymous",
+        "operation": "/api/check/pickup/{order}/files/{file}/access",
+        "name": "pickup_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/check/pickup/1/files/1/access",
+        "role": "technician",
+        "operation": "/api/check/pickup/{order}/files/{file}/access",
+        "name": "pickup_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/check/pickup/1/files/1/access",
+        "role": "other",
+        "operation": "/api/check/pickup/{order}/files/{file}/access",
+        "name": "pickup_other_owner"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/check/pickup/1/files/1/access",
+        "role": "other_merchant",
+        "operation": "/api/check/pickup/{order}/files/{file}/access",
+        "name": "pickup_other_shop"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/merchant/orders/1/work/files/8/access",
+        "role": "merchant",
+        "operation": "/api/merchant/orders/{id}/work/files/{file}/access",
+        "name": "merchant_work_protection"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/merchant/orders/1/work/files/9/access",
+        "role": "merchant",
+        "operation": "/api/merchant/orders/{id}/work/files/{file}/access",
+        "name": "merchant_work_process"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "boundary",
+        "path": "/api/merchant/orders/1/work/files/1/access",
+        "role": "merchant",
+        "operation": "/api/merchant/orders/{id}/work/files/{file}/access",
+        "name": "merchant_work_pickup_file"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "boundary",
+        "path": "/api/merchant/orders/999999/work/files/8/access",
+        "role": "merchant",
+        "operation": "/api/merchant/orders/{id}/work/files/{file}/access",
+        "name": "merchant_work_missing_order"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/merchant/orders/1/work/files/8/access?page=1",
+        "role": "merchant",
+        "operation": "/api/merchant/orders/{id}/work/files/{file}/access",
+        "name": "merchant_work_query"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/merchant/orders/0/work/files/8/access",
+        "role": "merchant",
+        "operation": "/api/merchant/orders/{id}/work/files/{file}/access",
+        "name": "merchant_work_zero_order"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/merchant/orders/1/work/files/8/access",
+        "role": "anonymous",
+        "operation": "/api/merchant/orders/{id}/work/files/{file}/access",
+        "name": "merchant_work_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/merchant/orders/1/work/files/8/access",
+        "role": "owner",
+        "operation": "/api/merchant/orders/{id}/work/files/{file}/access",
+        "name": "merchant_work_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/merchant/orders/1/work/files/8/access",
+        "role": "other_merchant",
+        "operation": "/api/merchant/orders/{id}/work/files/{file}/access",
+        "name": "merchant_work_other_shop"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/tech/orders/1/work/files/8/access",
+        "role": "technician",
+        "operation": "/api/tech/orders/{id}/work/files/{file}/access",
+        "name": "tech_work_protection"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/tech/orders/1/work/files/11/access",
+        "role": "technician",
+        "operation": "/api/tech/orders/{id}/work/files/{file}/access",
+        "name": "tech_work_finish"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "boundary",
+        "path": "/api/tech/orders/1/work/files/1/access",
+        "role": "technician",
+        "operation": "/api/tech/orders/{id}/work/files/{file}/access",
+        "name": "tech_work_pickup_file"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "boundary",
+        "path": "/api/tech/orders/999999/work/files/8/access",
+        "role": "technician",
+        "operation": "/api/tech/orders/{id}/work/files/{file}/access",
+        "name": "tech_work_missing_order"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/tech/orders/1/work/files/8/access?page=1",
+        "role": "technician",
+        "operation": "/api/tech/orders/{id}/work/files/{file}/access",
+        "name": "tech_work_query"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/tech/orders/0/work/files/8/access",
+        "role": "technician",
+        "operation": "/api/tech/orders/{id}/work/files/{file}/access",
+        "name": "tech_work_zero_order"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/tech/orders/1/work/files/8/access",
+        "role": "anonymous",
+        "operation": "/api/tech/orders/{id}/work/files/{file}/access",
+        "name": "tech_work_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/tech/orders/1/work/files/8/access",
+        "role": "owner",
+        "operation": "/api/tech/orders/{id}/work/files/{file}/access",
+        "name": "tech_work_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/tech/orders/1/work/files/8/access",
+        "role": "peer",
+        "operation": "/api/tech/orders/{id}/work/files/{file}/access",
+        "name": "tech_work_peer"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/order/1/work/files/8/access",
+        "role": "owner",
+        "operation": "/api/order/{id}/work/files/{file}/access",
+        "name": "owner_work_protection"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/order/1/work/files/9/access",
+        "role": "owner",
+        "operation": "/api/order/{id}/work/files/{file}/access",
+        "name": "owner_work_process"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/order/1/work/files/12/access",
+        "role": "owner",
+        "operation": "/api/order/{id}/work/files/{file}/access",
+        "name": "owner_work_signature"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "boundary",
+        "path": "/api/order/1/work/files/13/access",
+        "role": "owner",
+        "operation": "/api/order/{id}/work/files/{file}/access",
+        "name": "owner_work_cross_order"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "boundary",
+        "path": "/api/order/999999/work/files/8/access",
+        "role": "owner",
+        "operation": "/api/order/{id}/work/files/{file}/access",
+        "name": "owner_work_missing_order"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/order/1/work/files/8/access?owner_id=1",
+        "role": "owner",
+        "operation": "/api/order/{id}/work/files/{file}/access",
+        "name": "owner_work_query"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/order/1/work/files/0/access",
+        "role": "owner",
+        "operation": "/api/order/{id}/work/files/{file}/access",
+        "name": "owner_work_zero_file"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/order/1/work/files/8/access",
+        "role": "anonymous",
+        "operation": "/api/order/{id}/work/files/{file}/access",
+        "name": "owner_work_anonymous"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/order/1/work/files/8/access",
+        "role": "merchant",
+        "operation": "/api/order/{id}/work/files/{file}/access",
+        "name": "owner_work_wrong_role"
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "unauthorized",
+        "path": "/api/order/1/work/files/8/access",
+        "role": "other",
+        "operation": "/api/order/{id}/work/files/{file}/access",
+        "name": "owner_work_other_owner"
+      }
+    ]
+  },
+  "error": null,
+  "boundaries": [
+    "synthetic identities, order and payment rows; real HTTP uploads, pickup, dispatch acceptance, protection, report signing and signed object downloads",
+    "synthetic scan database injected only in test configuration; production freshness unchanged",
+    "signature lease is 5 seconds and one natural expiry was measured; no production malware coverage, real identity, external cloud supplier or device acceptance"
+  ]
+}
