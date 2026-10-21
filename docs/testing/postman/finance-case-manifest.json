@@ -1,0 +1,728 @@
+{
+  "version": 1,
+  "cases": 72,
+  "operations": 8,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "payment_detail",
+      "method": "GET",
+      "path": "/api/payments/1",
+      "operation_id": "get_api_payments_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "payment_detail_boundary",
+      "method": "GET",
+      "path": "/api/payments/999999",
+      "operation_id": "get_api_payments_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "payment_detail_error",
+      "method": "GET",
+      "path": "/api/payments/0",
+      "operation_id": "get_api_payments_id",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "payment_detail_anonymous",
+      "method": "GET",
+      "path": "/api/payments/1",
+      "operation_id": "get_api_payments_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "payment_detail_wrong_role",
+      "method": "GET",
+      "path": "/api/payments/1",
+      "operation_id": "get_api_payments_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "payment_other_owner",
+      "method": "GET",
+      "path": "/api/payments/1",
+      "operation_id": "get_api_payments_id",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "payment_detail_foreign",
+      "method": "GET",
+      "path": "/api/payments/6",
+      "operation_id": "get_api_payments_id",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "payment_recover",
+      "method": "POST",
+      "path": "/api/payments/1/reconcile",
+      "operation_id": "post_api_payments_id_reconcile",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "payment_terminal_repeat",
+      "method": "POST",
+      "path": "/api/payments/1/reconcile",
+      "operation_id": "post_api_payments_id_reconcile",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "payment_recover_injected_status",
+      "method": "POST",
+      "path": "/api/payments/1/reconcile",
+      "operation_id": "post_api_payments_id_reconcile",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "payment_recover_anonymous",
+      "method": "POST",
+      "path": "/api/payments/1/reconcile",
+      "operation_id": "post_api_payments_id_reconcile",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "payment_recover_wrong_role",
+      "method": "POST",
+      "path": "/api/payments/1/reconcile",
+      "operation_id": "post_api_payments_id_reconcile",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "payment_recover_foreign",
+      "method": "POST",
+      "path": "/api/payments/6/reconcile",
+      "operation_id": "post_api_payments_id_reconcile",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "payment_bad_receipt",
+      "method": "POST",
+      "path": "/api/payments/4/reconcile",
+      "operation_id": "post_api_payments_id_reconcile",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "payment_query_lease",
+      "method": "POST",
+      "path": "/api/payments/4/reconcile",
+      "operation_id": "post_api_payments_id_reconcile",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "payment_formal_unconfigured",
+      "method": "POST",
+      "path": "/api/payments/5/reconcile",
+      "operation_id": "post_api_payments_id_reconcile",
+      "kind": "error",
+      "status": 503,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "payment_missing_recover",
+      "method": "POST",
+      "path": "/api/payments/999999/reconcile",
+      "operation_id": "post_api_payments_id_reconcile",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "payment_bad_id",
+      "method": "POST",
+      "path": "/api/payments/0/reconcile",
+      "operation_id": "post_api_payments_id_reconcile",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "refund_merchant_detail",
+      "method": "GET",
+      "path": "/api/merchant/orders/2/refund",
+      "operation_id": "get_api_merchant_orders_id_refund",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "refund_merchant_detail_boundary",
+      "method": "GET",
+      "path": "/api/merchant/orders/999999/refund",
+      "operation_id": "get_api_merchant_orders_id_refund",
+      "kind": "boundary",
+      "status": 404,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "refund_merchant_detail_error",
+      "method": "GET",
+      "path": "/api/merchant/orders/0/refund",
+      "operation_id": "get_api_merchant_orders_id_refund",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "refund_merchant_detail_anonymous",
+      "method": "GET",
+      "path": "/api/merchant/orders/2/refund",
+      "operation_id": "get_api_merchant_orders_id_refund",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "refund_merchant_detail_wrong_role",
+      "method": "GET",
+      "path": "/api/merchant/orders/2/refund",
+      "operation_id": "get_api_merchant_orders_id_refund",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "refund_detail_other_shop",
+      "method": "GET",
+      "path": "/api/merchant/orders/2/refund",
+      "operation_id": "get_api_merchant_orders_id_refund",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other_merchant",
+      "assertions": 3
+    },
+    {
+      "name": "refund_detail_staff",
+      "method": "GET",
+      "path": "/api/merchant/orders/2/refund",
+      "operation_id": "get_api_merchant_orders_id_refund",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "staff",
+      "assertions": 3
+    },
+    {
+      "name": "refund_apply",
+      "method": "POST",
+      "path": "/api/order/2/refund",
+      "operation_id": "post_api_order_id_refund",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "refund_apply_replay",
+      "method": "POST",
+      "path": "/api/order/2/refund",
+      "operation_id": "post_api_order_id_refund",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "refund_apply_malformed",
+      "method": "POST",
+      "path": "/api/order/2/refund",
+      "operation_id": "post_api_order_id_refund",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "refund_apply_anonymous",
+      "method": "POST",
+      "path": "/api/order/2/refund",
+      "operation_id": "post_api_order_id_refund",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "refund_apply_wrong_role",
+      "method": "POST",
+      "path": "/api/order/2/refund",
+      "operation_id": "post_api_order_id_refund",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "refund_apply_foreign",
+      "method": "POST",
+      "path": "/api/order/2/refund",
+      "operation_id": "post_api_order_id_refund",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "withdraw_stale",
+      "method": "POST",
+      "path": "/api/order/2/refund/withdraw",
+      "operation_id": "post_api_order_id_refund_withdraw",
+      "kind": "error",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "withdraw",
+      "method": "POST",
+      "path": "/api/order/2/refund/withdraw",
+      "operation_id": "post_api_order_id_refund_withdraw",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "withdraw_replay",
+      "method": "POST",
+      "path": "/api/order/2/refund/withdraw",
+      "operation_id": "post_api_order_id_refund_withdraw",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "withdraw_malformed",
+      "method": "POST",
+      "path": "/api/order/2/refund/withdraw",
+      "operation_id": "post_api_order_id_refund_withdraw",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "withdraw_anonymous",
+      "method": "POST",
+      "path": "/api/order/2/refund/withdraw",
+      "operation_id": "post_api_order_id_refund_withdraw",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "withdraw_wrong_role",
+      "method": "POST",
+      "path": "/api/order/2/refund/withdraw",
+      "operation_id": "post_api_order_id_refund_withdraw",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "withdraw_other_owner",
+      "method": "POST",
+      "path": "/api/order/2/refund/withdraw",
+      "operation_id": "post_api_order_id_refund_withdraw",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "withdraw_new_key_after_withdraw",
+      "method": "POST",
+      "path": "/api/order/2/refund/withdraw",
+      "operation_id": "post_api_order_id_refund_withdraw",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "refund_reapply",
+      "method": "POST",
+      "path": "/api/order/2/refund",
+      "operation_id": "post_api_order_id_refund",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "withdraw_old_version",
+      "method": "POST",
+      "path": "/api/order/2/refund/withdraw",
+      "operation_id": "post_api_order_id_refund_withdraw",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "refund_current_detail",
+      "method": "GET",
+      "path": "/api/merchant/orders/2/refund",
+      "operation_id": "get_api_merchant_orders_id_refund",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "decision_bad_revision",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/decision",
+      "operation_id": "post_api_merchant_orders_id_refund_decision",
+      "kind": "error",
+      "status": 409,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "decision_wrong_role",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/decision",
+      "operation_id": "post_api_merchant_orders_id_refund_decision",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "decision_anonymous",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/decision",
+      "operation_id": "post_api_merchant_orders_id_refund_decision",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "decision_other_shop",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/decision",
+      "operation_id": "post_api_merchant_orders_id_refund_decision",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other_merchant",
+      "assertions": 3
+    },
+    {
+      "name": "refund_accept",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/decision",
+      "operation_id": "post_api_merchant_orders_id_refund_decision",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 5
+    },
+    {
+      "name": "refund_accept_replay",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/decision",
+      "operation_id": "post_api_merchant_orders_id_refund_decision",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "refund_accept_malformed",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/decision",
+      "operation_id": "post_api_merchant_orders_id_refund_decision",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "refund_accept_anonymous",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/decision",
+      "operation_id": "post_api_merchant_orders_id_refund_decision",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "refund_accept_wrong_role",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/decision",
+      "operation_id": "post_api_merchant_orders_id_refund_decision",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "withdraw_approved",
+      "method": "POST",
+      "path": "/api/order/2/refund/withdraw",
+      "operation_id": "post_api_order_id_refund_withdraw",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "refund_reconcile_client_state",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/reconcile",
+      "operation_id": "post_api_merchant_orders_id_refund_reconcile",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "refund_reconcile_anonymous",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/reconcile",
+      "operation_id": "post_api_merchant_orders_id_refund_reconcile",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "refund_reconcile_owner",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/reconcile",
+      "operation_id": "post_api_merchant_orders_id_refund_reconcile",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "refund_reconcile_staff",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/reconcile",
+      "operation_id": "post_api_merchant_orders_id_refund_reconcile",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "staff",
+      "assertions": 3
+    },
+    {
+      "name": "refund_reconcile_foreign",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/reconcile",
+      "operation_id": "post_api_merchant_orders_id_refund_reconcile",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other_merchant",
+      "assertions": 3
+    },
+    {
+      "name": "refund_reconcile_missing",
+      "method": "POST",
+      "path": "/api/merchant/orders/999999/refund/reconcile",
+      "operation_id": "post_api_merchant_orders_id_refund_reconcile",
+      "kind": "boundary",
+      "status": 404,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "refund_reconcile",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/reconcile",
+      "operation_id": "post_api_merchant_orders_id_refund_reconcile",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "refund_terminal_repeat",
+      "method": "POST",
+      "path": "/api/merchant/orders/2/refund/reconcile",
+      "operation_id": "post_api_merchant_orders_id_refund_reconcile",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "refund_failed_recover",
+      "method": "POST",
+      "path": "/api/merchant/orders/3/refund/reconcile",
+      "operation_id": "post_api_merchant_orders_id_refund_reconcile",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "refund_failed_repeat",
+      "method": "POST",
+      "path": "/api/merchant/orders/3/refund/reconcile",
+      "operation_id": "post_api_merchant_orders_id_refund_reconcile",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "commissions",
+      "method": "GET",
+      "path": "/api/merchant/commissions",
+      "operation_id": "get_api_merchant_commissions",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "commissions_boundary",
+      "method": "GET",
+      "path": "/api/merchant/commissions",
+      "operation_id": "get_api_merchant_commissions",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "commissions_error",
+      "method": "GET",
+      "path": "/api/merchant/commissions",
+      "operation_id": "get_api_merchant_commissions",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "commissions_anonymous",
+      "method": "GET",
+      "path": "/api/merchant/commissions",
+      "operation_id": "get_api_merchant_commissions",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "commissions_wrong_role",
+      "method": "GET",
+      "path": "/api/merchant/commissions",
+      "operation_id": "get_api_merchant_commissions",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "commissions_staff",
+      "method": "GET",
+      "path": "/api/merchant/commissions",
+      "operation_id": "get_api_merchant_commissions",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "staff",
+      "assertions": 3
+    },
+    {
+      "name": "commissions_other_shop",
+      "method": "GET",
+      "path": "/api/merchant/commissions",
+      "operation_id": "get_api_merchant_commissions",
+      "kind": "unauthorized",
+      "status": 200,
+      "role": "other_merchant",
+      "assertions": 4
+    },
+    {
+      "name": "commissions_unknown",
+      "method": "GET",
+      "path": "/api/merchant/commissions",
+      "operation_id": "get_api_merchant_commissions",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "commissions_duplicate",
+      "method": "GET",
+      "path": "/api/merchant/commissions",
+      "operation_id": "get_api_merchant_commissions",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "commissions_size",
+      "method": "GET",
+      "path": "/api/merchant/commissions",
+      "operation_id": "get_api_merchant_commissions",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    }
+  ]
+}

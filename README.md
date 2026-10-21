@@ -1,3 +1,7 @@
+## 2026-10-21 A4d-6：支付退款恢复与佣金验收（本地完成）
+
+本轮真实隔离HTTP/MySQL/本机签名供应商通过：8接口（六重点+两支撑）72业务请求/238断言，338匿名请求/1014断言，14项数据库检查；新退款只提交一次、FAILED退款只查询、重复核对不增加供应商调用，坏金额不记成功、佣金只冲销一次。源码稳定且资源实际清理；默认禁用0请求，192项相关Python测试通过。仅SQL合成身份/历史事实及LOCAL_TEST，不代表正式资金或真机验收。[执行记录](docs/progress/R9_A4D6_FINANCIAL_RECOVERY_EXECUTION.md) / [覆盖清单](docs/testing/API_COVERAGE.md)。20套来源去重为222项历史四类完整，所选来源缺口130项；全API仍未通过。分支承接尚未合并的PR196，上传与远程CI另记。
+
 ## 2026-10-21 A4d-5：接口覆盖核对工具（已上传PR196）
 
 新增可复跑核对工具与CI漂移门禁，统一当前352项契约及所选19套历史业务记录，去重确认216项四类历史证据，136项尚未在这些记录中完整覆盖。当前版本业务HTTP本轮未执行，全API验收仍false；不能把缺口数等同未开发功能。新增19项及既有186项相关Python测试全部通过（共205项），LF/CRLF报告一致且内容变化拒绝。[覆盖清单](docs/testing/API_COVERAGE.md) / [执行记录](docs/progress/R9_A4D5_API_COVERAGE_EXECUTION.md)。下一批优先支付/退款恢复与佣金六接口，正式渠道继续后置。实现提交e94cb60已上传[草稿PR196](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/196)，远程CI待完成；独立分支基于main，退款页PR195保留原分支和检查。
