@@ -10,7 +10,7 @@ from unittest import mock
 import summarize_api_coverage as coverage_module
 
 from summarize_api_coverage import (ROOT, OUTPUT, SUMMARY, KINDS, build, case_coverage,
-                                    journey_evidence, matches, newman_evidence, render, summarize, FINANCE_CHECKS, WORKFLOW_CHECKS)
+                                    journey_evidence, matches, newman_evidence, render, summarize, FINANCE_CHECKS, WORKFLOW_CHECKS, DISPUTE_CHECKS)
 
 
 class CoverageSummaryTest(unittest.TestCase):
@@ -180,6 +180,23 @@ class CoverageSummaryTest(unittest.TestCase):
             with self.subTest(key=key),self.assertRaises(ValueError):verify()
 
 
+    def test_dispute_requires_write_proof_recovery_invariants_and_completed_fulfillment(self):
+        report=copy.deepcopy(self.report)
+        for suffix in ['collection_sha256','newman_exit_code','evidence']:
+            report['dispute_'+suffix]=report.pop('tiny_'+suffix)
+        report['dispute_evidence'].update(signed_callback_and_exact_replay_verified=True,dispute_write_intents_verified=True)
+        report['dispute_database']={'dispute_checks':{k:True for k in DISPUTE_CHECKS},'checks':{k:True for k in 'order_completed local_payment_only redemption_test_mode report_signed foreign_vehicle_unchanged no_foreign_orders'.split()}}
+        verify=lambda:newman_evidence('dispute',self.manifest,self.collection,'b'*64,report,self.catalog)
+        self.assertEqual(self.coverage,verify()[1]);original=copy.deepcopy(report)
+        for group in ('dispute_checks','checks'):
+            for key in original['dispute_database'][group]:
+                report.clear();report.update(copy.deepcopy(original));report['dispute_database'][group][key]=False
+                with self.subTest(group=group,key=key),self.assertRaises(ValueError):verify()
+        for key in ('signed_callback_and_exact_replay_verified','dispute_write_intents_verified'):
+            report.clear();report.update(copy.deepcopy(original));del report['dispute_evidence'][key]
+            with self.subTest(key=key),self.assertRaises(ValueError):verify()
+
+
 class JourneySummaryTest(unittest.TestCase):
     def setUp(self):
         self.catalog = {'read': {'method': 'GET', 'path': '/api/file/{id}/access'}}
@@ -278,9 +295,9 @@ class TrackedCoverageTest(unittest.TestCase):
     def test_all_selected_repository_sources_reconcile_without_current_pass_claim(self):
         result = build()
         self.assertEqual(352, result['counts']['contract_operations'])
-        self.assertEqual(21, result['counts']['suites'])
-        self.assertEqual(232, result['counts']['historical_four_kind_operations'])
-        self.assertEqual(120, result['counts']['without_complete_historical_evidence'])
+        self.assertEqual(22, result['counts']['suites'])
+        self.assertEqual(234, result['counts']['historical_four_kind_operations'])
+        self.assertEqual(118, result['counts']['without_complete_historical_evidence'])
         self.assertFalse(result['full_api_acceptance_passed'])
         self.assertEqual(result, json.loads(OUTPUT.read_text(encoding='utf-8')))
         self.assertEqual(render(result), SUMMARY.read_text(encoding='utf-8'))
