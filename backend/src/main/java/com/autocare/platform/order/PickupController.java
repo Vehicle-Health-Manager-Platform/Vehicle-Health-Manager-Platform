@@ -32,7 +32,10 @@ public class PickupController {
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(service().decide(owner,key,id,body.get("decision").asText(),body.has("reason")?body.get("reason").asText():null));
     }
     @GetMapping("/{order}")public ResponseEntity<?> detail(@AuthenticationPrincipal Jwt jwt,@PathVariable long order){ServiceCatalog.validateId(order);return ok(service().detail(actor(jwt),order));}
-    @GetMapping("/{order}/files/{file}/access")public ResponseEntity<?> file(@AuthenticationPrincipal Jwt jwt,@PathVariable long order,@PathVariable long file){ServiceCatalog.validateId(order);ServiceCatalog.validateId(file);var signed=access.sign(service().fileOwner(actor(jwt),order,file),file);return ok(Map.of("url",signed.url(),"expires_at",signed.expiresAt()));}
+    /** 附件访问只认路径参数；未知或重复 query 一律拒绝，避免不同调用方看到两套语义。 */
+    @GetMapping("/{order}/files/{file}/access")public ResponseEntity<?> file(@AuthenticationPrincipal Jwt jwt,@PathVariable long order,@PathVariable long file,@RequestParam org.springframework.util.MultiValueMap<String,String> query){
+        if(!query.isEmpty())throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"接车附件请求参数无效");
+        ServiceCatalog.validateId(order);ServiceCatalog.validateId(file);var signed=access.sign(service().fileOwner(actor(jwt),order,file),file);return ok(Map.of("url",signed.url(),"expires_at",signed.expiresAt()));}
     @ExceptionHandler(ResponseStatusException.class)ResponseEntity<?> failure(ResponseStatusException e){int status=e.getStatusCode().value();int code=e instanceof FulfillmentConflict conflict?conflict.code:status==400?40001:status*100;return ResponseEntity.status(status).cacheControl(CacheControl.noStore()).body(ApiResponse.error(code,e.getReason()));}
     @ExceptionHandler(UploadHttpException.class)ResponseEntity<?> upload(UploadHttpException e){var response=ResponseEntity.status(e.status()).cacheControl(CacheControl.noStore());if(e.retry()>0)response.header("Retry-After",String.valueOf(e.retry()));return response.body(ApiResponse.error(e.status()*100,e.getMessage()));}
     @ExceptionHandler({org.springframework.dao.DataAccessException.class,UploadException.class})ResponseEntity<?> unavailable(){return ResponseEntity.status(503).cacheControl(CacheControl.noStore()).body(ApiResponse.error(50300,"接车服务暂不可用，请使用原幂等键重试"));}

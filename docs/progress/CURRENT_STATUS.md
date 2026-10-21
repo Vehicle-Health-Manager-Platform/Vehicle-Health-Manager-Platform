@@ -1,3 +1,9 @@
+## 2026-10-21 A4d-9：接车与施工私有附件访问（已上传 PR200）
+
+本阶段成果已上传[草稿PR200](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/200)（base=`codex/r9-a4d8-dispute-recovery`，依赖PR199），远程CI已启动、结论以该PR实际结果为准。
+
+真实MySQL/MinIO/ClamAV旅程PASS（282.656秒）：4个附件读接口（接车、商家/技师/车主三侧施工证据）各覆盖正常/边界/错误/未授权，39个业务请求0失败；19个真实上传全部CLEAN，14条接车附件与5条施工证据关联核对通过；签名下载逐字节一致，去签名/篡改/6.1秒自然过期均403，租期5秒有界。修掉接车附件访问忽略未知/重复query的真实缺口。源码执行前后一致，4个容器与网络实际移除；同批回归PickupHttpTest/ServiceWorkHttpTest/PrivateFileAccessTest共17项通过。身份/订单/支付为SQL合成夹具，正式身份、资金、真机与外部存储未验收。[执行记录](R9_A4D9_PICKUP_WORK_FILES_EXECUTION.md) / [验收说明](../testing/PICKUP_WORK_PRIVATE_FILES_ACCEPTANCE.md)。覆盖核对23套来源、238/352项历史四类完整、缺口114项；全API验收仍为false。
+
 ## 2026-10-21 A4d-6：支付退款恢复与佣金验收（本地完成）
 
 本轮真实隔离HTTP/MySQL/本机签名供应商通过：8接口（六重点+两支撑）72业务请求/238断言，338匿名请求/1014断言，14项数据库检查；新退款只提交一次、FAILED退款只查询、重复核对不增加供应商调用，坏金额不记成功、佣金只冲销一次。源码稳定且资源实际清理；默认禁用0请求，192项相关Python测试通过。仅SQL合成身份/历史事实及LOCAL_TEST，不代表正式资金或真机验收。[执行记录](R9_A4D6_FINANCIAL_RECOVERY_EXECUTION.md) / [覆盖清单](../testing/API_COVERAGE.md)。20套来源去重为222项历史四类完整，所选来源缺口130项；全API仍未通过。分支承接尚未合并的PR196，上传与远程CI另记。
