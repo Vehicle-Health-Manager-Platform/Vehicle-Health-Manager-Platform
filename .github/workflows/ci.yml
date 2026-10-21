@@ -147,6 +147,10 @@ jobs:
       - run: python -m unittest discover -s scripts -p test_performance_baseline.py -v
       - run: python -m unittest discover -s scripts -p test_api_acceptance.py -v
       - run: python scripts/generate_api_acceptance.py
+      - name: Reconcile API coverage without claiming a new business run
+        run: |
+          python -m unittest discover -s scripts -p test_api_coverage_summary.py -v
+          python scripts/summarize_api_coverage.py --check
       - run: python scripts/owner_api_cases.py
       - run: python -m unittest discover -s scripts -p test_owner_api_cases.py -v
       - run: python scripts/fulfillment_api_cases.py
