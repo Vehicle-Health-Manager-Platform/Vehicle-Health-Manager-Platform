@@ -1,0 +1,5423 @@
+{
+  "info": {
+    "name": "Autocare assessment policy monthly settlement and business dashboard",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:1"
+    },
+    {
+      "key": "isolated_assessment_cases",
+      "value": "false"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "if(pm.variables.get(\"isolated_assessment_cases\")!==\"true\"){pm.execution.skipRequest();throw new Error(\"Use the isolated fulfillment runner\");}"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "policies_seeded",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/policies",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.total).to.eql(1);pm.expect(d.items.length).to.eql(1);});",
+              "pm.test(\"business 1\",()=>{const d=pm.response.json().data;const p=d.items[0];pm.expect(p.id).to.eql(1);pm.expect(p.merchant_id).to.eql(1);pm.expect(p.status).to.eql(\"PUBLISHED\");pm.expect(p.revision).to.eql(1);pm.expect(p.rule_version).to.eql(\"R8B_POLICY_V1\");});",
+              "pm.test(\"business 2\",()=>{const p=pm.response.json().data.items[0];pm.expect(p.scope).to.eql(\"MERCHANT\");pm.expect(p.period).to.eql(\"BEIJING_MONTH\");pm.expect(p.timezone).to.eql(\"Asia/Shanghai\");pm.expect(p.weights).to.eql({acquisition:40,coupon:40,process:20});pm.expect(p.metric_source_version).to.eql(\"R8B_FACTS_V1\");});",
+              "pm.test(\"business 3\",()=>{const p=pm.response.json().data.items[0];pm.expect(p.merchant).to.eql({id:1,name:\"synthetic shop\",address:\"synthetic address\"});pm.expect(p.process_requirements.length).to.eql(4);pm.expect(p.grade_thresholds.length).to.eql(2);pm.expect(p.grade_thresholds[1].min_score).to.eql(\"0.00\");pm.expect(p.grade_thresholds[0].code).to.eql(\"A\");});",
+              "pm.test(\"business 4\",()=>{const p=pm.response.json().data.items[0];pm.expect(p.valid_from).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$/);pm.expect(p.valid_to).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$/);pm.expect(p.published_at).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$/);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policies_last_page",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/policies?page=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.items).to.eql([]);pm.expect(d.total).to.eql(1);pm.expect(d.page).to.eql(2);pm.expect(d.page_size).to.eql(20);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policies_page_size",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/policies?page_size=10",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policies_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/policies",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policies_analyst_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/policies",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{analyst_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policies_merchant_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/policies",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchants_list",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/merchants",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.total).to.eql(2);pm.expect(d.items.map(i=>i.id)).to.eql([2,1]);pm.expect(Object.keys(d.items[0]).sort()).to.eql([\"address\",\"id\",\"name\"]);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchants_last_page",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/merchants?page=1000000",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.items).to.eql([]);pm.expect(d.total).to.eql(2);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchants_page_zero",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/merchants?page=0",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchants_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/merchants",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchants_analyst_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/merchants",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{analyst_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_policy_absent",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/policy",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.state).to.eql(\"UNKNOWN\");pm.expect(d.policy).to.eql(null);pm.expect(d.scoring_available).to.eql(true);pm.expect(d.timezone).to.eql(\"Asia/Shanghai\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "70a15f08-5c34-545f-a6b3-81bb34ccf64a"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"acquisition_target\": 10, \"coupon_target\": 10, \"process_requirements\": [\"CHECK_IN_CONFIRMED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"90.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"0.00\"}], \"source_note\": \"合成考核政策\", \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.id).to.eql(2);pm.expect(d.merchant_id).to.eql(2);pm.expect(d.status).to.eql(\"DRAFT\");pm.expect(d.revision).to.eql(1);pm.expect(d.published_at).to.eql(null);});",
+              "pm.test(\"business 1\",()=>{const d=pm.response.json().data;pm.expect(d.merchant).to.eql({id:2,name:\"synthetic other shop\",address:\"synthetic address\"});pm.expect(d.source_note).to.eql(\"合成考核政策\");pm.expect(d.process_requirements).to.eql([\"CHECK_IN_CONFIRMED\",\"REPORT_SUBMITTED\"]);pm.expect(d.grade_thresholds[0].code).to.eql(\"A\");});",
+              "pm.test(\"business 2\",()=>{pm.collectionVariables.set(\"receipt_policy_create\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "70a15f08-5c34-545f-a6b3-81bb34ccf64a"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"acquisition_target\": 10, \"coupon_target\": 10, \"process_requirements\": [\"CHECK_IN_CONFIRMED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"90.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"0.00\"}], \"source_note\": \"合成考核政策\", \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_policy_create\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "5fcba1e2-c793-57b8-9174-d9af39cd8ce3"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "473703e1-5c76-5226-8101-5a90dc0bca31"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"acquisition_target\": 10, \"coupon_target\": 10, \"process_requirements\": [\"CHECK_IN_CONFIRMED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"90.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"0.00\"}], \"source_note\": \"合成考核政策\", \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "22d1e625-fee2-5974-b11e-39fa932c9649"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"acquisition_target\": 10, \"coupon_target\": 10, \"process_requirements\": [\"CHECK_IN_CONFIRMED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"90.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"0.00\"}], \"source_note\": \"合成考核政策\", \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_changed_body",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "70a15f08-5c34-545f-a6b3-81bb34ccf64a"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"acquisition_target\": 10, \"coupon_target\": 10, \"process_requirements\": [\"CHECK_IN_CONFIRMED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"90.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"0.00\"}], \"source_note\": \"同键改正文\", \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_past_window",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "4c82c3a6-6f9e-5ba8-8003-ec0d8ad708f7"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"acquisition_target\": 10, \"coupon_target\": 10, \"process_requirements\": [\"CHECK_IN_CONFIRMED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"90.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"0.00\"}], \"source_note\": \"合成考核政策\", \"valid_from\": \"2023-12-31T16:00:00Z\", \"valid_to\": \"2024-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_zero_target",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "aba56c1f-797b-5e5b-b86b-6985c9474c7b"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"acquisition_target\": 0, \"coupon_target\": 10, \"process_requirements\": [\"CHECK_IN_CONFIRMED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"90.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"0.00\"}], \"source_note\": \"合成考核政策\", \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_duplicate_requirement",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "4e22b5c2-e589-5abf-8c48-a431485397d2"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"acquisition_target\": 10, \"coupon_target\": 10, \"process_requirements\": [\"REPORT_SUBMITTED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"90.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"0.00\"}], \"source_note\": \"合成考核政策\", \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_grade_not_zero",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "abe29432-c6e5-550b-82da-30e1d46c215e"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"acquisition_target\": 10, \"coupon_target\": 10, \"process_requirements\": [\"CHECK_IN_CONFIRMED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"90.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"10.00\"}], \"source_note\": \"合成考核政策\", \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_grade_not_declining",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "a9f1805f-14cf-5ab7-84f7-9e7411ff9440"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"acquisition_target\": 10, \"coupon_target\": 10, \"process_requirements\": [\"CHECK_IN_CONFIRMED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"10.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"20.00\"}], \"source_note\": \"合成考核政策\", \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_mid_month",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "c2cdcf9b-ace6-5def-9d21-d74e85bf3e1e"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"acquisition_target\": 10, \"coupon_target\": 10, \"process_requirements\": [\"CHECK_IN_CONFIRMED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"90.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"0.00\"}], \"source_note\": \"合成考核政策\", \"valid_from\": \"2999-01-15T16:00:00Z\", \"valid_to\": \"2999-03-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_unknown_field",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "15bccf89-6065-5ea3-a7f3-a8162d37819c"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"acquisition_target\": 10, \"coupon_target\": 10, \"process_requirements\": [\"CHECK_IN_CONFIRMED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"90.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"0.00\"}], \"source_note\": \"合成考核政策\", \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\", \"merchant_name\": \"x\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_query",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/policies?merchant_id=2",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "7fc8c2ac-7888-5a31-9b54-a4cb4166854c"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"acquisition_target\": 10, \"coupon_target\": 10, \"process_requirements\": [\"CHECK_IN_CONFIRMED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"90.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"0.00\"}], \"source_note\": \"合成考核政策\", \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_unknown_merchant",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "6047450b-d9f4-56c0-95db-dc590a3c9ee2"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 999, \"acquisition_target\": 10, \"coupon_target\": 10, \"process_requirements\": [\"CHECK_IN_CONFIRMED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"90.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"0.00\"}], \"source_note\": \"合成考核政策\", \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_create_analyst_denied",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/policies",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "4c440230-605c-5b71-83cc-f417c7e5d973"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{analyst_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"acquisition_target\": 10, \"coupon_target\": 10, \"process_requirements\": [\"CHECK_IN_CONFIRMED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"90.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"0.00\"}], \"source_note\": \"合成考核政策\", \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_update",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/2",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "262175c8-6068-5f15-8b84-e1eaa04deb23"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"acquisition_target\": 10, \"coupon_target\": 10, \"process_requirements\": [\"CHECK_IN_CONFIRMED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"90.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"0.00\"}], \"source_note\": \"合成考核政策（修订）\", \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\", \"expected_revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.revision).to.eql(2);pm.expect(d.status).to.eql(\"DRAFT\");pm.expect(d.source_note).to.eql(\"合成考核政策（修订）\");});",
+              "pm.test(\"business 1\",()=>{pm.collectionVariables.set(\"receipt_policy_update\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_update_replay",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/2",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "262175c8-6068-5f15-8b84-e1eaa04deb23"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"acquisition_target\": 10, \"coupon_target\": 10, \"process_requirements\": [\"CHECK_IN_CONFIRMED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"90.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"0.00\"}], \"source_note\": \"合成考核政策（修订）\", \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\", \"expected_revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_policy_update\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_update_malformed",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/2",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "a0f7f6aa-d9e4-52b4-9f56-71b8a9949b25"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_update_anonymous",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/2",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "cf38c9a8-38ca-5f83-b8b9-147b03081acf"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"acquisition_target\": 10, \"coupon_target\": 10, \"process_requirements\": [\"CHECK_IN_CONFIRMED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"90.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"0.00\"}], \"source_note\": \"合成考核政策（修订）\", \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\", \"expected_revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_update_wrong_role",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/2",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "256f5af0-0b6f-5aae-90a8-8c01c9fcb9c3"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"acquisition_target\": 10, \"coupon_target\": 10, \"process_requirements\": [\"CHECK_IN_CONFIRMED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"90.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"0.00\"}], \"source_note\": \"合成考核政策（修订）\", \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\", \"expected_revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_update_stale",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/2",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "927a6e5f-d7d9-5d72-852b-cc82733537eb"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"acquisition_target\": 10, \"coupon_target\": 10, \"process_requirements\": [\"CHECK_IN_CONFIRMED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"90.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"0.00\"}], \"source_note\": \"合成考核政策（旧修订）\", \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\", \"expected_revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_update_unknown",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/999",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "f592d9eb-e0bc-5196-9b76-0393851a132e"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"acquisition_target\": 10, \"coupon_target\": 10, \"process_requirements\": [\"CHECK_IN_CONFIRMED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"90.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"0.00\"}], \"source_note\": \"合成考核政策\", \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\", \"expected_revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_update_zero_id",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/0",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "cc1c36f7-8b80-57ab-ab50-182de6141f43"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"acquisition_target\": 10, \"coupon_target\": 10, \"process_requirements\": [\"CHECK_IN_CONFIRMED\", \"REPORT_SUBMITTED\"], \"grade_thresholds\": [{\"code\": \"A\", \"label\": \"优秀\", \"min_score\": \"90.00\"}, {\"code\": \"B\", \"label\": \"合格\", \"min_score\": \"0.00\"}], \"source_note\": \"合成考核政策\", \"valid_from\": \"2998-12-31T16:00:00Z\", \"valid_to\": \"2999-01-31T16:00:00Z\", \"expected_revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_publish",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/2/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "3eab0bb2-ae69-56cd-bf10-185449271ef1"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"expected_revision\": 2, \"status\": \"PUBLISHED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.status).to.eql(\"PUBLISHED\");pm.expect(d.revision).to.eql(3);pm.expect(d.published_at).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$/);});",
+              "pm.test(\"business 1\",()=>{pm.collectionVariables.set(\"receipt_policy_publish\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_publish_replay",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/2/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "3eab0bb2-ae69-56cd-bf10-185449271ef1"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"expected_revision\": 2, \"status\": \"PUBLISHED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_policy_publish\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_publish_malformed",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/2/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "516f00d2-31f2-5346-b5a0-06ceaac6349c"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_publish_anonymous",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/2/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "fb51857f-563b-5e79-9331-fc0a84bda827"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"expected_revision\": 2, \"status\": \"PUBLISHED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_publish_wrong_role",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/2/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "bd18055d-e169-5e36-a35f-2f7252c2dc9a"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"expected_revision\": 2, \"status\": \"PUBLISHED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_publish_again",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/2/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "267f14c8-18f3-58da-a8a3-53be60ff54b3"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"expected_revision\": 3, \"status\": \"PUBLISHED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_status_draft",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/2/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "b1afccbd-da69-5453-91bd-fd5377f5e158"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"expected_revision\": 3, \"status\": \"DRAFT\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_publish_unknown",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/999/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "f7cd646e-1eee-54ba-8e06-708f754a2ba6"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"expected_revision\": 1, \"status\": \"PUBLISHED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_policy_not_started",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/policy",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.state).to.eql(\"NOT_STARTED\");pm.expect(d.policy.id).to.eql(2);pm.expect(d.policy.status).to.eql(\"PUBLISHED\");pm.expect(d.policy.acquisition_target).to.eql(10);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_policy",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/policy",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.state).to.eql(\"CONFIGURED\");pm.expect(d.policy.id).to.eql(1);pm.expect(d.policy.merchant.id).to.eql(1);pm.expect(d.scoring_available).to.eql(true);pm.expect(d.policy.source_note).to.eql(\"合成历史考核政策\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_policy_error",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/policy?merchant_id=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_policy_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/policy",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_policy_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/policy",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_policy_staff_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/policy",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{staff_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_month_ready",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/month?period_month=2024-01&merchant_id=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.state).to.eql(\"READY\");pm.expect(d.can_settle).to.eql(true);pm.expect(d.revision).to.eql(0);pm.expect(d.latest).to.eql(null);pm.expect(d.policy.id).to.eql(1);pm.expect(d.period_month).to.eql(\"2024-01\");pm.expect(d.timezone).to.eql(\"Asia/Shanghai\");});",
+              "pm.test(\"business 1\",()=>{const d=pm.response.json().data;pm.expect(d.month_end).to.eql(\"2024-01-31T16:00:00Z\");pm.expect(d.merchant).to.eql({id:1,name:\"synthetic shop\",address:\"synthetic address\"});pm.expect(d.server_now).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$/);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_month_open",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/month?period_month=2999-01&merchant_id=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.state).to.eql(\"MONTH_OPEN\");pm.expect(d.can_settle).to.eql(false);pm.expect(d.revision).to.eql(0);pm.expect(d.policy.id).to.eql(2);pm.expect(d.month_end).to.eql(\"2999-01-31T16:00:00Z\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_month_missing_month",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/month?merchant_id=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_month_missing_merchant",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/month?period_month=2024-01",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_month_bad_month",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/month?period_month=2024-13&merchant_id=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_month_unknown_merchant",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/month?period_month=2024-01&merchant_id=999",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_month_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/month?period_month=2024-01&merchant_id=1",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_month_analyst_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/month?period_month=2024-01&merchant_id=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{analyst_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "settle",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "8f00e2f6-54eb-56e6-a193-a842a3b53334"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 1, \"period_month\": \"2024-01\", \"expected_revision\": 0}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.id).to.eql(1);pm.expect(d.revision).to.eql(1);pm.expect(d.merchant_id).to.eql(1);pm.expect(d.period_month).to.eql(\"2024-01\");pm.expect(d.calculation_version).to.eql(\"R8B_CALC_V1\");pm.expect(d.timezone).to.eql(\"Asia/Shanghai\");pm.expect(d.facts_hash).to.match(/^[a-f0-9]{64}$/);});",
+              "pm.test(\"business 1\",()=>{const s=pm.response.json().data.summary;pm.expect(s.state).to.eql(\"UNKNOWN\");pm.expect(s.total_score).to.eql(null);pm.expect(s.grade).to.eql(null);pm.expect(s.fact_count).to.eql(2);});",
+              "pm.test(\"business 2\",()=>{const m=pm.response.json().data.summary.metrics;pm.expect(m.acquisition).to.eql({numerator:0,denominator:10,state:\"KNOWN\",score:\"0.00\",reason:\"VERIFIED\"});pm.expect(m.coupon.state).to.eql(\"KNOWN\");pm.expect(m.coupon.score).to.eql(\"0.00\");pm.expect(m.coupon.denominator).to.eql(10);});",
+              "pm.test(\"business 3\",()=>{const m=pm.response.json().data.summary.metrics;pm.expect(m.process).to.eql({numerator:0,denominator:1,state:\"UNKNOWN\",score:null,reason:\"SOURCE_UNKNOWN\"});});",
+              "pm.test(\"business 4\",()=>{const d=pm.response.json().data;pm.expect(d.policy.id).to.eql(1);pm.expect(d.policy.acquisition_target).to.eql(10);pm.expect(d.captured_from).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$/);pm.expect(d.captured_to).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$/);});",
+              "pm.test(\"business 5\",()=>{pm.collectionVariables.set(\"receipt_settle\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "settle_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "8f00e2f6-54eb-56e6-a193-a842a3b53334"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 1, \"period_month\": \"2024-01\", \"expected_revision\": 0}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_settle\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "settle_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "e2906ce1-1078-59e6-a2d6-b074ca9a4b88"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "settle_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "fb0f23fd-f60d-5ee0-b05d-33132435b169"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 1, \"period_month\": \"2024-01\", \"expected_revision\": 0}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "settle_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "8087237a-4813-5fc6-9a26-8eb18313696e"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 1, \"period_month\": \"2024-01\", \"expected_revision\": 0}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "settle_stale_revision",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "c865219e-7c8f-5281-8bbf-d0910e88c159"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 1, \"period_month\": \"2024-01\", \"expected_revision\": 0}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "settle_changed_body",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "8f00e2f6-54eb-56e6-a193-a842a3b53334"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 1, \"period_month\": \"2024-01\", \"expected_revision\": 2}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "settle_future_month",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "3923f0c1-e3cc-5327-ae63-9c869f1fb357"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 1, \"period_month\": \"2999-01\", \"expected_revision\": 0}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "settle_unknown_merchant",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "9b778078-59c6-58a2-85d0-428b29b83212"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 999, \"period_month\": \"2024-01\", \"expected_revision\": 0}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "settle_again",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "029a0adb-b66e-5c30-9e5b-23d3c6491277"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 1, \"period_month\": \"2024-01\", \"expected_revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.id).to.eql(2);pm.expect(d.revision).to.eql(2);pm.expect(d.summary.state).to.eql(\"UNKNOWN\");pm.expect(d.summary.fact_count).to.eql(2);});",
+              "pm.test(\"business 1\",()=>{pm.collectionVariables.set(\"receipt_settle_again\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "settle_again_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "029a0adb-b66e-5c30-9e5b-23d3c6491277"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 1, \"period_month\": \"2024-01\", \"expected_revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_settle_again\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "settle_again_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "1a72ce69-0609-5415-909c-7063a70d40f3"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "settle_again_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "b8463265-82d1-50b5-aa5b-486f5490c20a"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 1, \"period_month\": \"2024-01\", \"expected_revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "settle_again_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "be89b3ef-ab40-56f7-ad50-8ee093d999d1"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 1, \"period_month\": \"2024-01\", \"expected_revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "settle_other_shop",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "ee4c692f-bd7f-51ef-b30a-1d82ae57243e"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"period_month\": \"2024-01\", \"expected_revision\": 0}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.id).to.eql(3);pm.expect(d.merchant_id).to.eql(2);pm.expect(d.revision).to.eql(1);pm.expect(d.policy).to.eql(null);});",
+              "pm.test(\"business 1\",()=>{const s=pm.response.json().data.summary;pm.expect(s.state).to.eql(\"UNKNOWN\");pm.expect(s.fact_count).to.eql(0);pm.expect(s.total_score).to.eql(null);pm.expect(s.metrics.acquisition).to.eql({numerator:0,denominator:0,state:\"UNKNOWN\",score:null,reason:\"POLICY_UNKNOWN\"});});",
+              "pm.test(\"business 2\",()=>{pm.collectionVariables.set(\"receipt_settle_other_shop\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "settle_other_shop_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "ee4c692f-bd7f-51ef-b30a-1d82ae57243e"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"period_month\": \"2024-01\", \"expected_revision\": 0}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_settle_other_shop\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "settle_other_shop_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "fbc2244b-8106-5bc8-9017-3e0f82450da9"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "settle_other_shop_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "1a8c88c5-b92e-5682-b89c-45dfa85333c9"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"period_month\": \"2024-01\", \"expected_revision\": 0}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "settle_other_shop_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "498fc7c7-1c38-5370-a202-dced951215a0"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"merchant_id\": 2, \"period_month\": \"2024-01\", \"expected_revision\": 0}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_snapshots",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.total).to.eql(3);pm.expect(d.items.map(i=>i.id)).to.eql([3,2,1]);pm.expect(d.items[1].revision).to.eql(2);pm.expect(d.items[2].revision).to.eql(1);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_snapshots_boundary",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/snapshots?page=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_snapshots_error",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/snapshots?page=0",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_snapshots_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_snapshots_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/snapshots",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_snapshot",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/snapshots/2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.revision).to.eql(2);pm.expect(d.period_month).to.eql(\"2024-01\");pm.expect(d.summary.state).to.eql(\"UNKNOWN\");pm.expect(d.policy.id).to.eql(1);pm.expect(d.timezone).to.eql(\"Asia/Shanghai\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_snapshot_boundary",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/snapshots/999999",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_snapshot_error",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/snapshots/0",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_snapshot_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/snapshots/2",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_snapshot_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/snapshots/2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_snapshot_facts",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/snapshots/2/facts",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.total).to.eql(2);pm.expect(d.items.length).to.eql(2);});",
+              "pm.test(\"business 1\",()=>{const i=pm.response.json().data.items[0];pm.expect(i.dimension).to.eql(\"PROCESS\");pm.expect(i.source_type).to.eql(\"ORDER\");pm.expect(i.source_id).to.eql(\"100\");pm.expect(i.state).to.eql(\"EXCLUDED\");pm.expect(i.reason).to.eql(\"TEST_SOURCE\");pm.expect(i.evidence).to.eql({});pm.expect(i.proof_hash).to.match(/^[a-f0-9]{64}$/);pm.expect(Object.keys(i).sort()).to.eql([\"dimension\",\"evidence\",\"occurred_at\",\"proof_hash\",\"reason\",\"source_id\",\"source_type\",\"staff_id\",\"state\"]);});",
+              "pm.test(\"business 2\",()=>{const i=pm.response.json().data.items[1];pm.expect(i.source_type).to.eql(\"UNPROVEN_ORDER\");pm.expect(i.source_id).to.eql(\"101\");pm.expect(i.state).to.eql(\"UNKNOWN\");pm.expect(i.reason).to.eql(\"COMPLETION_RECEIPT_MISSING\");pm.expect(i.occurred_at).to.eql(null);pm.expect(i.staff_id).to.eql(null);});",
+              "pm.test(\"business 3\",()=>{const t=pm.response.text();pm.expect(t).not.to.include(\"SYNTH-ASSESS-000100\");pm.expect(t).not.to.include(\"SYN-ASSESS\");pm.expect(t).not.to.include(\"1380000\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_snapshot_facts_boundary",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/snapshots/2/facts?page=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_snapshot_facts_error",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/snapshots/2/facts?page=0",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_snapshot_facts_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/snapshots/2/facts",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_snapshot_facts_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/snapshots/2/facts",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_history",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/history?period_month=2024-01&merchant_id=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.total).to.eql(2);pm.expect(d.items.map(i=>i.revision)).to.eql([2,1]);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_history_boundary",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/history?period_month=2024-01&merchant_id=1&page=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_history_error",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/history?period_month=2024-01&merchant_id=1&page_size=10",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_history_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/history?period_month=2024-01&merchant_id=1",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_history_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/assessment/history?period_month=2024-01&merchant_id=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_month",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/month?period_month=2024-01",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.state).to.eql(\"READY\");pm.expect(d.can_settle).to.eql(false);pm.expect(d.revision).to.eql(2);pm.expect(d.latest.revision).to.eql(2);pm.expect(d.policy.id).to.eql(1);pm.expect(d.month_end).to.eql(\"2024-01-31T16:00:00Z\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_month_boundary",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/month?period_month=2999-01",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_month_error",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/month",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_month_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/month?period_month=2024-01",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_month_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/month?period_month=2024-01",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_month_staff_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/month?period_month=2024-01",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{staff_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_history",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/history?period_month=2024-01",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.total).to.eql(2);pm.expect(d.items.map(i=>i.revision)).to.eql([2,1]);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_history_boundary",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/history?period_month=2024-01&page=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_history_error",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/history?period_month=2024-01&page=0",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_history_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/history?period_month=2024-01",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_history_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/history?period_month=2024-01",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_history_staff_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/history?period_month=2024-01",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{staff_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_snapshot",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/snapshots/2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.id).to.eql(2);pm.expect(d.revision).to.eql(2);pm.expect(d.merchant_id).to.eql(1);pm.expect(d.summary.state).to.eql(\"UNKNOWN\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_snapshot_boundary",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/snapshots/3",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_snapshot_error",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/snapshots/0",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_snapshot_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/snapshots/2",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_snapshot_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/snapshots/2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_snapshot_staff_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/snapshots/2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{staff_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_snapshot_facts",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/snapshots/2/facts",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.total).to.eql(2);pm.expect(d.items.map(i=>i.source_type)).to.eql([\"ORDER\",\"UNPROVEN_ORDER\"]);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_snapshot_facts_boundary",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/snapshots/2/facts?page=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_snapshot_facts_error",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/snapshots/2/facts?page=0",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_snapshot_facts_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/snapshots/2/facts",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_snapshot_facts_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/snapshots/2/facts",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_facts_staff_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/snapshots/2/facts",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{staff_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_staff_frozen",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/staff?period_month=2024-01",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.state).to.eql(\"FROZEN\");pm.expect(d.role).to.eql(\"MERCHANT\");pm.expect(d.staff_id).to.eql(1);pm.expect(d.merchant_id).to.eql(1);pm.expect(d.period_month).to.eql(\"2024-01\");pm.expect(d.revision).to.eql(2);});",
+              "pm.test(\"business 1\",()=>{const d=pm.response.json().data;pm.expect(d.attribution).to.eql({included:0,excluded:0,unknown:0});pm.expect(d.captured_from).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$/);pm.expect(d.captured_to).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$/);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_staff_self",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/staff?period_month=2024-01",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{staff_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.role).to.eql(\"STAFF\");pm.expect(d.staff_id).to.eql(4);pm.expect(d.state).to.eql(\"FROZEN\");pm.expect(d.attribution.included).to.eql(0);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_staff_no_snapshot",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/staff?period_month=3000-01",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.state).to.eql(\"NO_SNAPSHOT\");pm.expect(d.revision).to.eql(0);pm.expect(d.captured_from).to.eql(null);pm.expect(d.captured_to).to.eql(null);pm.expect(d.attribution).to.eql({included:0,excluded:0,unknown:0});});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_staff_missing_month",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/staff",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_staff_merchant_param",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/staff?period_month=2024-01&merchant_id=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_staff_owner_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/staff?period_month=2024-01",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_staff_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/staff?period_month=2024-01",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "business_merchants",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/business/merchants",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{analyst_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.total).to.eql(2);pm.expect(d.items.map(i=>i.id)).to.eql([2,1]);pm.expect(Object.keys(d.items[0]).sort()).to.eql([\"address\",\"id\",\"name\"]);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "business_merchants_boundary",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/business/merchants?page=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{analyst_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "business_merchants_error",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/business/merchants?page=0",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{analyst_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "business_merchants_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/business/merchants",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "business_merchants_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/business/merchants",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "business_merchants_assessor_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/business/merchants",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_dashboard",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/business/dashboard?period_month=2024-01&merchant_id=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{analyst_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.period_month).to.eql(\"2024-01\");pm.expect(d.currency).to.eql(\"CNY\");pm.expect(d.timezone).to.eql(\"Asia/Shanghai\");pm.expect(d.source_version).to.eql(\"R8B_BUSINESS_V1\");pm.expect(d.window_from).to.eql(\"2023-12-31T16:00:00Z\");pm.expect(d.window_to).to.eql(\"2024-01-31T16:00:00Z\");pm.expect(d.merchant).to.eql({id:1,name:\"synthetic shop\",address:\"synthetic address\"});});",
+              "pm.test(\"business 1\",()=>{const d=pm.response.json().data;pm.expect(Object.keys(d.metrics).sort()).to.eql([\"cash_coupon_uses\",\"commission_accrual\",\"new_customers\",\"orders_completed\",\"orders_created\",\"payments\",\"refunds\",\"service_coupon_uses\"]);});",
+              "pm.test(\"business 2\",()=>{const m=pm.response.json().data.metrics;pm.expect(m.payments.test).to.eql({state:\"KNOWN\",count:1,unknown_count:0,excluded_count:0,amount:\"10.00\"});pm.expect(m.payments.formal).to.eql({state:\"KNOWN\",count:0,unknown_count:0,excluded_count:0,amount:\"0.00\"});pm.expect(m.payments.unclassified_count).to.eql(0);});",
+              "pm.test(\"business 3\",()=>{const m=pm.response.json().data.metrics;pm.expect(m.orders_created.unclassified_count).to.eql(2);pm.expect(m.orders_created.formal.state).to.eql(\"UNKNOWN\");pm.expect(m.orders_created.test.state).to.eql(\"UNKNOWN\");});",
+              "pm.test(\"business 4\",()=>{const m=pm.response.json().data.metrics;pm.expect(m.orders_completed.test).to.eql({state:\"UNKNOWN\",count:1,unknown_count:0,excluded_count:0,amount:null});pm.expect(m.orders_completed.unclassified_count).to.eql(1);pm.expect(m.commission_accrual.test.unknown_count).to.eql(1);});",
+              "pm.test(\"business 5\",()=>{const d=pm.response.json().data;pm.expect(d.metrics.cash_coupon_uses.test).to.eql({state:\"KNOWN\",count:0,unknown_count:0,excluded_count:0,amount:null});pm.expect(d.metrics.service_coupon_uses.formal.count).to.eql(0);pm.expect(d.metrics.new_customers.formal.count).to.eql(0);});",
+              "pm.test(\"business 6\",()=>{const d=pm.response.json().data;pm.expect(d.cash_difference.test.amount).to.eql(\"10.00\");pm.expect(d.cash_difference.formal.amount).to.eql(\"0.00\");pm.expect(d.cash_difference.test.state).to.eql(\"KNOWN\");});",
+              "pm.test(\"business 7\",()=>{const a=pm.response.json().data.assessment;pm.expect(a.snapshot_id).to.eql(2);pm.expect(a.revision).to.eql(2);pm.expect(a.state).to.eql(\"UNKNOWN\");pm.expect(a.total_score).to.eql(null);pm.expect(a.grade).to.eql(null);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_dashboard_no_sources",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/business/dashboard?period_month=2024-01&merchant_id=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{analyst_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.metrics.payments.test).to.eql({state:\"KNOWN\",count:0,unknown_count:0,excluded_count:0,amount:\"0.00\"});pm.expect(d.metrics.orders_created.unclassified_count).to.eql(0);pm.expect(d.cash_difference.test.amount).to.eql(\"0.00\");});",
+              "pm.test(\"business 1\",()=>{const a=pm.response.json().data.assessment;pm.expect(a.snapshot_id).to.eql(3);pm.expect(a.revision).to.eql(1);pm.expect(a.state).to.eql(\"UNKNOWN\");pm.expect(a.total_score).to.eql(null);pm.expect(a.grade).to.eql(null);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_dashboard_future",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/business/dashboard?period_month=2999-01&merchant_id=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{analyst_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_dashboard_missing_merchant",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/business/dashboard?period_month=2024-01",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{analyst_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_dashboard_assessor_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/business/dashboard?period_month=2024-01&merchant_id=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "admin_dashboard_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/business/dashboard?period_month=2024-01&merchant_id=1",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_dashboard",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/business/dashboard?period_month=2024-01",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.merchant.id).to.eql(1);pm.expect(d.window_from).to.eql(\"2023-12-31T16:00:00Z\");pm.expect(d.metrics.payments.test.amount).to.eql(\"10.00\");pm.expect(d.cash_difference.test.amount).to.eql(\"10.00\");pm.expect(d.assessment.revision).to.eql(2);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_dashboard_no_sources",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/business/dashboard?period_month=2024-01",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.merchant.id).to.eql(2);pm.expect(d.metrics.orders_completed.formal.count).to.eql(0);pm.expect(d.metrics.new_customers.test.count).to.eql(0);});",
+              "pm.test(\"business 1\",()=>{const a=pm.response.json().data.assessment;pm.expect(a.snapshot_id).to.eql(3);pm.expect(a.state).to.eql(\"UNKNOWN\");pm.expect(a.total_score).to.eql(null);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_dashboard_merchant_param",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/business/dashboard?period_month=2024-01&merchant_id=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_dashboard_staff_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/business/dashboard?period_month=2024-01",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{staff_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_dashboard_owner_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/business/dashboard?period_month=2024-01",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_dashboard_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/business/dashboard?period_month=2024-01",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_stop",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/2/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "8cbecd6e-225e-5c27-b11a-5476eb790ee4"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"expected_revision\": 3, \"status\": \"STOPPED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.status).to.eql(\"STOPPED\");pm.expect(d.revision).to.eql(4);});",
+              "pm.test(\"business 1\",()=>{pm.collectionVariables.set(\"receipt_policy_stop\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_stop_replay",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/2/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "8cbecd6e-225e-5c27-b11a-5476eb790ee4"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"expected_revision\": 3, \"status\": \"STOPPED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_policy_stop\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_stop_malformed",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/2/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "88bfea67-c897-56be-838d-122e01032bd0"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_stop_anonymous",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/2/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "f40335d3-9b4b-55b4-8022-30e536876641"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"expected_revision\": 3, \"status\": \"STOPPED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_stop_wrong_role",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/2/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "f8df0952-ee8d-543e-ac0e-738014d06760"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"expected_revision\": 3, \"status\": \"STOPPED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "policy_stop_again",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/api/admin/assessment/policies/2/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "6509dae8-26e1-5321-9cda-e0b59fc6850c"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{assessor_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"expected_revision\": 4, \"status\": \"STOPPED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "merchant_policy_stopped",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/assessment/policy",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.state).to.eql(\"UNKNOWN\");pm.expect(d.policy).to.eql(null);});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

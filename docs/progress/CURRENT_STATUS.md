@@ -1,3 +1,9 @@
+## 2026-10-21 A4d-10：考核政策、月结与经营看板读接口（已上传 PR201）
+
+本阶段成果已上传[草稿PR201](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/201)（base=`codex/r9-a4d9-pickup-work-files`，依赖PR200），远程CI已启动、结论以该PR实际结果为准。
+
+本阶段补齐 20 个已实现但无四类证据的接口（考核政策 5、月结与读取 11、员工考核 1、经营看板 3），契约里无映射的 `GET /api/admin/assessment` 明确排除。真实隔离 HTTP/MySQL PASS（228.873 秒）：153 个业务请求 / 530 条断言 / 0 失败，20 接口各覆盖正常/边界/错误/未授权；匿名 338 请求 / 1014 断言通过且前后表行数不变；7 个幂等作用域与 2 组"同键异体"实测被拒；13 项数据库不变量全部为真——3 份快照摘要全为 `UNKNOWN` 且分数与等级为 JSON null、无政策月份 `policy_snapshot` 为 JSON null、事实明细从不进入审计。固定月份夹具为 `2024-01`/`2999-01`/`3000-01`，因为审计要求实际 query 与声明 query 逐字相同。仅 SQL 合成身份与历史政策夹具，不代表正式资金或真机验收。[执行记录](R9_A4D10_ASSESSMENT_READS_EXECUTION.md) / [验收说明](../testing/ASSESSMENT_READS_ACCEPTANCE.md)。覆盖核对 24 套来源、258/352 项历史四类完整、缺口 94 项；全 API 验收仍为 false。
+
 ## 2026-10-21 A4d-9：接车与施工私有附件访问（已上传 PR200）
 
 本阶段成果已上传[草稿PR200](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/200)（base=`codex/r9-a4d8-dispute-recovery`，依赖PR199），远程CI已启动、结论以该PR实际结果为准。
