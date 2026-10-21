@@ -2,7 +2,7 @@
 
 ## 结果与范围
 
-2026-10-21 完成实施和本地隔离验收。分支 `codex/r9-a4d10-assessment-reads`，基于 A4d-9 的 `codex/r9-a4d9-pickup-work-files`。本阶段补齐 20 个已实现但尚无四类证据的接口：考核政策（`/api/admin/assessment/policies`、`/api/admin/assessment/merchants`、`/api/merchant/assessment/policy`）、月结（`/api/admin/assessment/snapshots`、`/api/admin/assessment|merchant/assessment/month|history|snapshots/{id}|snapshots/{id}/facts`）、员工考核（`/api/merchant/assessment/staff`）与经营看板（`/api/admin/business/merchants|dashboard`、`/api/merchant/business/dashboard`）。
+2026-10-21 完成实施和本地隔离验收。分支 `codex/r9-a4d10-assessment-reads`，基于 A4d-9 的 `codex/r9-a4d9-pickup-work-files`；成果上传[草稿PR201](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/201)，远程CI结论以该PR实际结果为准。本阶段补齐 20 个已实现但尚无四类证据的接口：考核政策（`/api/admin/assessment/policies`、`/api/admin/assessment/merchants`、`/api/merchant/assessment/policy`）、月结（`/api/admin/assessment/snapshots`、`/api/admin/assessment|merchant/assessment/month|history|snapshots/{id}|snapshots/{id}/facts`）、员工考核（`/api/merchant/assessment/staff`）与经营看板（`/api/admin/business/merchants|dashboard`、`/api/merchant/business/dashboard`）。
 
 契约里的 `GET /api/admin/assessment` 既无 `x-roles` 也无实现标记，代码中没有映射，本阶段排除：给它造业务用例只会得到 404，而不是权限拒绝。
 
