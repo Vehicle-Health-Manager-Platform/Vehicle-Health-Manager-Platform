@@ -40,3 +40,7 @@ CI的schema-and-ocr增加测试与 `--check` 门禁；契约、用例或证据�
 补齐跨平台测试：当前Windows文件实际为CRLF，Git存储为LF；输入指纹规范化换行、历史集合哈希严格匹配LF或CRLF表示。模拟两种文件树输出一致，修改集合内容仍被拒绝，避免仅本地通过而Linux CI失败。
 
 此次不修改小程序或后端，不把前阶段1030项测试算作本阶段实测，也不把汇总工具通过描述为接口验收通过。阶段提交和PR在上传后回填；远程CI、合并与上线独立记录。
+
+## GitHub上传
+
+实现提交 `e94cb60` 已推送至 `origin/codex/r9-a4d5-api-coverage`，已创建[草稿PR196](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/196)，base为main；远程CI待完成，未合并或部署。上传结果回填使用独立文档提交，不重复未变化的业务测试。
