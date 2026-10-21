@@ -1,4 +1,6 @@
-## 2026-10-21 A4d-9：接车与施工私有附件访问（本地完成）
+## 2026-10-21 A4d-9：接车与施工私有附件访问（已上传 PR200）
+
+本阶段成果已上传[草稿PR200](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/200)（base=`codex/r9-a4d8-dispute-recovery`，依赖PR199），远程CI已启动、结论以该PR实际结果为准。
 
 真实MySQL/MinIO/ClamAV旅程PASS（282.656秒）：4个附件读接口（接车、商家/技师/车主三侧施工证据）各覆盖正常/边界/错误/未授权，39个业务请求0失败；19个真实上传全部CLEAN，14条接车附件与5条施工证据关联核对通过；签名下载逐字节一致，去签名/篡改/6.1秒自然过期均403，租期5秒有界。修掉接车附件访问忽略未知/重复query的真实缺口。源码执行前后一致，4个容器与网络实际移除；同批回归PickupHttpTest/ServiceWorkHttpTest/PrivateFileAccessTest共17项通过。身份/订单/支付为SQL合成夹具，正式身份、资金、真机与外部存储未验收。[执行记录](R9_A4D9_PICKUP_WORK_FILES_EXECUTION.md) / [验收说明](../testing/PICKUP_WORK_PRIVATE_FILES_ACCEPTANCE.md)。覆盖核对23套来源、238/352项历史四类完整、缺口114项；全API验收仍为false。
 

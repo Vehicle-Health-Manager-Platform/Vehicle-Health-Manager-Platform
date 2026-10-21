@@ -2,7 +2,7 @@
 
 ## 结果与范围
 
-2026-10-21 完成实施和本地隔离验收。分支 `codex/r9-a4d9-pickup-work-files`，基于 A4d-8 的 `codex/r9-a4d8-dispute-recovery`。本阶段补齐四个既有读接口的四类执行证据：接车检查附件、商家/技师/车主三侧施工证据附件访问，并修掉一个真实缺口——接车附件访问此前忽略未知与重复 query。
+2026-10-21 完成实施和本地隔离验收。分支 `codex/r9-a4d9-pickup-work-files`，基于 A4d-8 的 `codex/r9-a4d8-dispute-recovery`；成果上传[草稿PR200](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/200)，远程CI结论以该PR实际结果为准。本阶段补齐四个既有读接口的四类执行证据：接车检查附件、商家/技师/车主三侧施工证据附件访问，并修掉一个真实缺口——接车附件访问此前忽略未知与重复 query。
 
 采用 Java 真实旅程 + Python 证据审计（沿用 A4d-2e2b 私有上传、A4d-2g3 辅助材料的形态），因为 Newman 套件无法在真实对象存储中放文件、也无法真正下载签名 URL 验证字节一致与自然过期。
 
