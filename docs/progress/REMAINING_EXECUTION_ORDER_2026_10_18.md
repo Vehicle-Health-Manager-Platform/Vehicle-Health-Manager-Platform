@@ -13,6 +13,12 @@ R9 期间形成的整条栈（#181 → #192，12 支）已按链式顺序全部�
 
 分支未删除（合并时保留原分支），各 PR 的 `merged=true` 记录可追溯。后续阶段直接从 `main` 开分支，不再叠栈。
 
+## 2026-10-21 A4d-4b：商家券发行与员工管理
+
+本阶段成果已上传 [194](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/194)（base=`main`，从 `main` 直开、不再叠栈）。
+
+A4d-4b 本地PASS：商家券发行与员工管理两页统一到设计系统，新增两个映射模块（券发行 9 个导出：类型单一来源、行状态机、空态、分页、写入结果、表单缺口、项目可选性、UTC 日期拆分；员工管理 10 个导出：三段筛选、行事实、行内动作与 loading、一次性员工码、新增表单缺口、失败口径、空态分岔、权限视图、分页、操作结果）与18项单测；小程序单测1015/1015（0失败/0跳过）、微信构建与H5构建均exit 0、10个共享选择器逐项在app.wxss、券发行页18个锚点且input 4/picker 6、员工页17个锚点且input 3/picker 1。修掉十处缺陷：券状态机写在模板且未知状态无提示、类型靠下标反推、表单一次只报一条错、空态与翻页判断散落、项目下拉不说为何选不上、权限与文案耦合、行内动作三元表达式、停用提示藏在插值里、新增表单缺口不可见、一次性员工码判断在模板。保留 createCouponFlow 的幂等与 UTC 互转、CouponTerms 组件、三支 staff 流程与 can_edit 权限来源；未知券状态零动作、retryWrite 只锁按钮不藏翻页、没读到 can_edit 就按只读。后端与接口零改动；真机与模拟器未执行，不声明渲染通过。 商家侧接车→防护→核销→券发行→员工→订单→时段→派工八个主流程页已统一（108 页中 19 页接入）；下一退款页与其余域缺口→A5交付→B外部接入→C真机。
+
 ## 2026-10-20 A4d-4a：商家到店核销
 
 本阶段成果已上传 [PR193](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/193)（base=`main`，从 `main` 直开、不再叠栈）；八项 CI 全部成功（`backend` 47 分钟、`compose-smoke` 2 分钟，其余并行 job 20 分钟内）后已合并进 `main`，合并后 `main` = `a90a6c51`。

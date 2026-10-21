@@ -1,0 +1,156 @@
+{
+  "version": 1,
+  "scope": "商家券发行（coupons）+ 员工管理（staff）展示层；不含真机与视觉回归截图",
+  "tests": {
+    "command": "node --test test/*.test.js",
+    "exit_code": 0,
+    "tests": 1015,
+    "pass": 1015,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 1805.7301,
+    "log_sha256": "1dcd8262c40c3f422f4eb74a761b9be8c32284dd79ddfa0b4cc741b12b18228a"
+  },
+  "builds": {
+    "mp_weixin": {
+      "command": "npm run build:mp-weixin",
+      "exit_code": 0,
+      "build_complete": true,
+      "shared_selector_gate": true,
+      "no_test_bridge_gate": true,
+      "log_sha256": "530b37b51b54d65a5ce9db48258e8a2424cb8abfcdd7085c2b554081ca5746f4"
+    },
+    "h5": {
+      "command": "npm run build:h5",
+      "exit_code": 0,
+      "build_complete": true,
+      "log_sha256": "47fa3930c94797e17705cfa2fa39ce65c16747d5b34144af0ad4054ecd37c979"
+    }
+  },
+  "shared_selectors_in_app_wxss": {
+    "reservation-page": true,
+    "reservation-primary": true,
+    "ux-hero": true,
+    "ux-card": true,
+    "ux-metric-value": true,
+    "ux-badge": true,
+    "ux-row": true,
+    "ux-empty": true,
+    "ux-card-note": true,
+    "ux-divider": true
+  },
+  "mapping_text_in_compiled_module": {
+    "coupon": {
+      "金额优惠券": true,
+      "指定项目服务兑换券": true,
+      "发布并冻结条款": true,
+      "停止新领取": true,
+      "本店还没有新发行券": true,
+      "还需填写：": true,
+      "券类型未提供": true
+    },
+    "staff": {
+      "停用": true,
+      "签发员工码": true,
+      "重新签发员工码": true,
+      "撤销员工码": true,
+      "一次性员工码（只显示这一次）": true,
+      "只有店长可以新增、启停员工或签发员工码；本页对店员只读。": true,
+      "请联系店长添加。": true,
+      "加载更多员工": true
+    }
+  },
+  "compiled_pages": {
+    "merchant/coupons.wxml": {
+      "ux_hero": true,
+      "ux_badge": true,
+      "coupon_issue_form_anchor": true,
+      "coupon_issue_login_anchor": true,
+      "coupon_issue_create_anchor": true,
+      "coupon_terms_card_anchor": true,
+      "coupon_name_anchor": true,
+      "coupon_type_anchor": true,
+      "coupon_project_anchor": true,
+      "coupon_amount_anchor": true,
+      "coupon_min_spend_anchor": true,
+      "coupon_quantity_anchor": true,
+      "coupon_valid_from_anchor": true,
+      "coupon_valid_to_anchor": true,
+      "coupon_save_anchor": true,
+      "coupon_close_anchor": true,
+      "coupon_board_anchor": true,
+      "coupon_issue_empty_anchor": true,
+      "coupon_issue_message_anchor": true,
+      "coupon_issue_retry_anchor": true,
+      "row_anchor_expected_absent": true,
+      "input_count": 4,
+      "picker_count": 6,
+      "module_imported": true,
+      "terms_component_used": true,
+      "mapping_text_expected_absent": {
+        "金额优惠券": true,
+        "指定项目服务兑换券": true,
+        "发布并冻结条款": true,
+        "停止新领取": true,
+        "本店还没有新发行券": true,
+        "还需填写：": true,
+        "券类型未提供": true
+      },
+      "static_text_present": {
+        "门店工作台": true,
+        "本店券库存与发行": true,
+        "本店已发行券": true
+      }
+    },
+    "merchant/staff.wxml": {
+      "ux_hero": true,
+      "ux_badge": true,
+      "staff_page_anchor": true,
+      "staff_login_anchor": true,
+      "staff_readonly_notice_anchor": true,
+      "staff_create_anchor": true,
+      "staff_form_anchor": true,
+      "staff_form_hint_anchor": true,
+      "staff_form_message_anchor": true,
+      "staff_role_anchor": true,
+      "staff_display_name_anchor": true,
+      "staff_phone_anchor": true,
+      "staff_password_anchor": true,
+      "staff_save_anchor": true,
+      "staff_close_anchor": true,
+      "staff_list_message_anchor": true,
+      "staff_action_message_anchor": true,
+      "staff_empty_anchor": true,
+      "staff_issued_code_anchor": true,
+      "row_anchor_expected_absent": true,
+      "input_count": 3,
+      "picker_count": 1,
+      "module_imported": true,
+      "mapping_text_expected_absent": {
+        "停用": true,
+        "签发员工码": true,
+        "重新签发员工码": true,
+        "撤销员工码": true,
+        "一次性员工码（只显示这一次）": true,
+        "只有店长可以新增、启停员工或签发员工码；本页对店员只读。": true,
+        "请联系店长添加。": true,
+        "加载更多员工": true
+      },
+      "static_text_present": {
+        "门店端": true,
+        "本店员工与员工码": true
+      }
+    }
+  },
+  "sources_sha256": {
+    "apps/miniapp/src/services/merchant-coupon-issue-display.js": "625ac924ed9a83f20c80daeec6feb29c215fc2f0623b0b284b379c24e39324ce",
+    "apps/miniapp/src/services/merchant-staff-display.js": "a4f5d8f1f9c1d1463ff270b291353da8d0686f069c4220abfb2492e11b69e50f",
+    "apps/miniapp/src/pages/merchant/coupons.vue": "c9de849b93db4c47fb2e2687978715045dc747c8a3b38bb91decdb0f44482352",
+    "apps/miniapp/src/pages/merchant/staff.vue": "e14ea144fbe59e6281f1c86ddcd94401588d9d2abe7232f8c10a8d6a8b35ea4b",
+    "apps/miniapp/test/merchant-coupon-issue-display.test.js": "633f6cfe131f72cf1c1f318a979670861552a93fade183b870df7476803b120c",
+    "apps/miniapp/test/merchant-staff-display.test.js": "c3baf029b7c29dac7f217a6a46cdd7467775f9e4b0da29c3c3e3de31ed2752cf"
+  },
+  "passed": true
+}

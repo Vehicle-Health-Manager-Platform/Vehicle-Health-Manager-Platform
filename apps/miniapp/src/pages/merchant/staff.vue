@@ -1,12 +1,17 @@
 <script setup>
-import { reactive, ref, watch } from 'vue'
+import { reactive, ref, computed, watch } from 'vue'
 import { onHide, onShow, onUnload } from '@dcloudio/uni-app'
 import { clearMerchantSession, merchantSession } from '../../services/merchant-session.js'
-import { STAFF_ROLES, merchantStaffApi, staffRoleLabel, staffStatusLabel } from '../../services/merchant-staff.js'
+import { STAFF_ROLES, merchantStaffApi } from '../../services/merchant-staff.js'
 import { merchantProfileApi } from '../../services/merchant-profile.js'
 import { createStaffActionFlow, createStaffCreateFlow, createStaffListFlow,
   initialStaffActionState, initialStaffCreateState, initialStaffListState } from '../../services/staff-flow.js'
 import { imageRequestKey } from '../../services/private-images.js'
+import {
+  staffActionView, staffCreateFormView, staffEmptyView, staffFilterRows, staffIssuedView,
+  staffListFailureView, staffPagingView, staffPermissionView, staffRowActions, staffRowView,
+} from '../../services/merchant-staff-display.js'
+import { toneClass } from '../../services/ui-tone.js'
 
 const list = reactive(initialStaffListState())
 const form = reactive(initialStaffCreateState())
@@ -22,6 +27,21 @@ const staff = createStaffListFlow({ state: list, token,
   fetchPage: (actor, page, role) => merchantStaffApi.list(actor, role, page) })
 const create = createStaffCreateFlow({ state: form, api: merchantStaffApi, token, newKey: imageRequestKey })
 const mutate = createStaffActionFlow({ state: actions, api: merchantStaffApi, token, newKey: imageRequestKey })
+
+// 权限、表单缺口、行内动作、空态、分页与失败口径都来自映射；模板不再拼判断与文案。
+const permission = computed(() => staffPermissionView(canManage.value))
+const formView = computed(() => staffCreateFormView(form))
+const filters = computed(() => staffFilterRows(list.role))
+const emptyView = computed(() => staffEmptyView(list, permission.value.canManage))
+const failureView = computed(() => staffListFailureView(list))
+const actionView = computed(() => staffActionView(actions))
+const pagingView = computed(() => staffPagingView(list))
+const rowsView = computed(() => list.items.map(item => ({
+  item,
+  view: staffRowView(item),
+  actions: staffRowActions(item, { busyId: actions.busyId, action: actions.action }),
+  issued: staffIssuedView(actions.issued, item.staff_id),
+})))
 
 // 每条异步返回都要重新核对身份与页面可见性：切了账号或离开页面后，旧响应必须作废。
 async function loadPermission() {
@@ -52,97 +72,115 @@ function done() { create.reset(); editing.value = false }
 function openProfile() { uni.navigateTo({ url: '/pages/merchant/profile' }) }
 function openOrders() { uni.navigateTo({ url: '/pages/merchant/orders' }) }
 function openProjects() { uni.navigateTo({ url: '/pages/merchant/projects' }) }
+function runAction(row, key) {
+  if (key === 'toggle') return act(mutate.toggle, row.item)
+  if (key === 'issue') return act(mutate.issue, row.item)
+  if (key === 'revoke') return act(mutate.revoke, row.item)
+  return undefined
+}
 </script>
 
 <template>
-  <view class="page">
-    <text class="eyebrow">门店端</text>
-    <text class="title">本店员工与员工码</text>
-    <view v-if="!merchantSession.accessToken" class="panel">
-      <text>请先登录门店账号。</text>
-      <button @tap="login">前往门店登录</button>
+  <view class="reservation-page" data-testid="staff-page">
+    <view class="ux-hero ux-in">
+      <text class="ux-eyebrow">门店端</text>
+      <text class="ux-title">本店员工与员工码</text>
+      <text class="ux-lead">店长可新增店员与技师、启停账号并签发一次性员工码；技师用员工码绑定微信后，此码立即失效。</text>
     </view>
+
+    <view v-if="!merchantSession.accessToken" class="ux-card ux-in ux-r2" data-testid="staff-login">
+      <text class="ux-card-title">需要门店账号</text>
+      <text class="ux-card-note">员工与员工码只能由本店账号维护。</text>
+      <button class="reservation-primary" @tap="login">前往门店登录</button>
+    </view>
+
     <template v-else>
-      <view class="links">
-        <button @tap="openProfile">门店资料</button>
-        <button @tap="openOrders">本店订单</button>
-        <button @tap="openProjects">本店服务与报价</button>
-      </view>
-      <text v-if="!canManage" class="copy" data-testid="staff-readonly-notice">
-        只有店长可以新增、启停员工或签发员工码；本页对店员只读。
-      </text>
-      <button v-if="canManage" class="primary" :disabled="form.busy" @tap="start">新增店员或技师</button>
-      <view v-if="editing" class="panel" data-testid="staff-form">
-        <text class="heading">新增员工</text>
-        <picker :range="STAFF_ROLES" :value="STAFF_ROLES.indexOf(form.role)" :disabled="form.busy || !!form.saved"
-          @change="form.role = STAFF_ROLES[Number($event.detail.value)]">
-          <view class="field">身份：{{ staffRoleLabel(form.role) }}</view>
-        </picker>
-        <input v-model="form.displayName" class="field" :disabled="form.busy || !!form.saved" maxlength="32" placeholder="姓名（2–32 字）" />
-        <input v-model="form.phone" class="field" :disabled="form.busy || !!form.saved" type="number" maxlength="11"
-          :placeholder="form.role === 'STAFF' ? '本人手机号（店员必填）' : '手机号（可选）'" />
-        <input v-model="form.password" class="field" :disabled="form.busy || !!form.saved" password maxlength="64" placeholder="初始密码（8–64 位，含字母与数字）" />
-        <text class="copy">账号由系统生成；短信登录需要本人手机号，因此店员必须填写。密码只在本次请求里出现，不会回显、不写日志。</text>
-        <text v-if="form.message" :class="form.saved ? 'success' : 'error'" role="status" data-testid="staff-form-message">{{ form.message }}</text>
-        <button v-if="!form.saved" class="primary" :disabled="form.busy" :loading="form.busy" @tap="create.save">创建员工</button>
-        <button :disabled="form.busy" @tap="done">{{ form.saved ? '返回本店员工' : '取消' }}</button>
+      <view class="ux-card ux-in ux-r2">
+        <view class="links">
+          <button @tap="openProfile">门店资料</button>
+          <button @tap="openOrders">本店订单</button>
+          <button @tap="openProjects">本店服务与报价</button>
+        </view>
+        <text v-if="!permission.canManage" class="ux-card-note" data-testid="staff-readonly-notice">{{ permission.readOnlyNotice }}</text>
+        <button v-if="permission.canManage" class="reservation-primary" :disabled="form.busy" data-testid="staff-create" @tap="start">新增店员或技师</button>
       </view>
 
-      <view class="filters">
-        <button :class="{ selected: list.role === '' }" @tap="staff.filter('')">全部</button>
-        <button :class="{ selected: list.role === 'STAFF' }" @tap="staff.filter('STAFF')">店员</button>
-        <button :class="{ selected: list.role === 'TECHNICIAN' }" @tap="staff.filter('TECHNICIAN')">技师</button>
-      </view>
-      <text v-if="list.busy" class="copy" role="status">正在加载本店员工…</text>
-      <view v-if="list.message" class="panel" role="status">
-        <text class="error" data-testid="staff-list-message">{{ list.message }}</text>
-        <button v-if="['unauthorized', 'forbidden'].includes(list.failureKind)" @tap="login">重新登录</button>
-        <button v-else :disabled="list.busy" @tap="staff.retry">重试加载</button>
-      </view>
-      <view v-if="actions.message" class="panel" role="status">
-        <text data-testid="staff-action-message">{{ actions.message }}</text>
-      </view>
-      <view v-if="list.loaded && !list.items.length && !list.busy" class="panel" data-testid="staff-empty">
-        本店还没有店员或技师；{{ canManage ? '可先新增。' : '请联系店长添加。' }}
-      </view>
-      <view v-for="item in list.items" :key="item.staff_id" class="panel" :data-testid="`staff-row-${item.staff_id}`">
-        <text class="heading">{{ item.display_name }} · {{ staffRoleLabel(item.role) }}</text>
-        <text class="copy">账号 {{ item.account }} · {{ staffStatusLabel(item.status) }}</text>
-        <text class="copy">
-          {{ item.phone_masked ? `手机 ${item.phone_masked}` : '未登记手机号' }}
-          · 员工码{{ item.employee_code_issued ? '已签发' : '未签发' }}
-          · 微信{{ item.wechat_bound ? '已绑定' : '未绑定' }}
-        </text>
-        <view v-if="canManage" class="row-actions">
-          <button :disabled="!!actions.busyId"
-            :loading="actions.busyId === item.staff_id && ['disable', 'enable'].includes(actions.action)"
-            @tap="act(mutate.toggle, item)">{{ item.status === 'ACTIVE' ? '停用' : '启用' }}</button>
-          <template v-if="item.role === 'TECHNICIAN'">
-            <button :disabled="!!actions.busyId" :loading="actions.busyId === item.staff_id && actions.action === 'issue'"
-              @tap="act(mutate.issue, item)">{{ item.employee_code_issued ? '重新签发员工码' : '签发员工码' }}</button>
-            <button v-if="item.employee_code_issued" :disabled="!!actions.busyId"
-              :loading="actions.busyId === item.staff_id && actions.action === 'revoke'"
-              @tap="act(mutate.revoke, item)">撤销员工码</button>
-          </template>
+      <view v-if="editing && permission.canManage" class="ux-card ux-in ux-r3" data-testid="staff-form">
+        <view class="head">
+          <text class="ux-card-title">新增员工</text>
+          <view class="ux-badge" :class="toneClass(formView.ready ? 'ok' : 'muted')"><text>{{ formView.ready ? '信息齐全' : '待填写' }}</text></view>
         </view>
-        <view v-if="actions.issued && actions.issued.staffId === item.staff_id" class="issued" data-testid="staff-issued-code">
-          <text class="issued-label">一次性员工码（只显示这一次）</text>
-          <text class="issued-code">{{ actions.issued.code }}</text>
-          <text class="copy">请当面转达给技师；技师绑定后此码立即失效，刷新或离开页面后不再显示。</text>
-        </view>
-        <text v-if="item.status === 'DISABLED'" class="copy warning">已停用：原登录会话立即失效{{ item.role === 'TECHNICIAN' ? '，微信绑定同时撤销' : '' }}。</text>
+        <picker :range="STAFF_ROLES" :value="STAFF_ROLES.indexOf(formView.role)" :disabled="formView.locked" data-testid="staff-role" @change="form.role = STAFF_ROLES[Number($event.detail.value)]">
+          <view class="field">身份：{{ formView.roleLabel }} ›</view>
+        </picker>
+        <input class="field" :value="form.displayName" :disabled="formView.locked" maxlength="32" placeholder="姓名（2–32 字）" data-testid="staff-display-name" @input="form.displayName = $event.detail.value" />
+        <input class="field" :value="form.phone" :disabled="formView.locked" type="number" maxlength="11" :placeholder="formView.phonePlaceholder" data-testid="staff-phone" @input="form.phone = $event.detail.value" />
+        <input class="field" :value="form.password" :disabled="formView.locked" password maxlength="64" placeholder="初始密码（8–64 位，含字母与数字）" data-testid="staff-password" @input="form.password = $event.detail.value" />
+        <text class="ux-card-note">{{ formView.passwordNotice }}</text>
+        <text v-if="formView.hint" class="ux-card-note" data-testid="staff-form-hint">{{ formView.hint }}</text>
+        <text v-if="formView.message" :class="formView.messageTone === 'ok' ? 'ok-line' : 'risk-line'" role="status" data-testid="staff-form-message">{{ formView.message }}</text>
+        <button v-if="!form.saved" class="reservation-primary" :disabled="!formView.canSubmit" :loading="form.busy" data-testid="staff-save" @tap="create.save">{{ formView.submitLabel }}</button>
+        <button :disabled="form.busy" data-testid="staff-close" @tap="done">{{ formView.closeLabel }}</button>
       </view>
-      <button v-if="list.items.length < list.total" :disabled="list.busy" @tap="staff.load(true)">加载更多员工</button>
+
+      <view class="ux-card ux-in ux-r3">
+        <view class="filters">
+          <button v-for="row in filters" :key="row.role" :class="row.selected ? 'selected' : ''" @tap="staff.filter(row.role)">{{ row.label }}</button>
+        </view>
+        <text v-if="list.busy" class="status-line" role="status">正在加载本店员工…</text>
+        <view v-if="failureView.visible" class="error-block" role="status">
+          <text class="risk-line" data-testid="staff-list-message">{{ failureView.message }}</text>
+          <button v-if="failureView.canRelogin" class="reservation-primary" @tap="login">重新登录</button>
+          <button v-else :disabled="list.busy" @tap="staff.retry">{{ failureView.retryLabel }}</button>
+        </view>
+        <view v-if="actionView.visible" class="error-block" role="status">
+          <text :class="actionView.tone === 'ok' ? 'ok-line' : 'risk-line'" data-testid="staff-action-message">{{ actionView.message }}</text>
+          <button v-if="actionView.canRelogin" class="reservation-primary" @tap="login">重新登录</button>
+        </view>
+        <view v-if="emptyView.visible" class="ux-empty" data-testid="staff-empty">
+          <text class="ux-empty-copy">{{ emptyView.copy }}</text>
+        </view>
+
+        <view v-for="row in rowsView" :key="row.item.staff_id" class="record" :data-testid="`staff-row-${row.item.staff_id}`">
+          <view class="head">
+            <text class="ux-card-title">{{ row.view.titleCopy }}</text>
+            <view class="ux-badge" :class="toneClass(row.view.tone)"><text>{{ row.view.codeIssued ? '已签发' : '未签发' }}</text></view>
+          </view>
+          <text class="ux-card-note">{{ row.view.accountCopy }}</text>
+          <text class="ux-card-note">{{ row.view.detailCopy }}</text>
+          <view v-if="permission.canManage" class="row-actions">
+            <button v-for="action in row.actions" :key="action.key" :disabled="action.disabled" :loading="action.loading" @tap="runAction(row, action.key)">{{ action.label }}</button>
+          </view>
+          <view v-if="row.issued.visible" class="issued" data-testid="staff-issued-code">
+            <text class="issued-label">{{ row.issued.label }}</text>
+            <text class="issued-code">{{ row.issued.code }}</text>
+            <text class="ux-card-note">{{ row.issued.hint }}</text>
+          </view>
+          <text v-if="row.view.disabledCopy" class="risk-line">{{ row.view.disabledCopy }}</text>
+        </view>
+
+        <button v-if="pagingView.visible" :disabled="pagingView.disabled" @tap="staff.load(true)">{{ pagingView.label }}</button>
+      </view>
     </template>
   </view>
 </template>
 
 <style scoped>
-.page { min-height:100vh;box-sizing:border-box;padding:52rpx 32rpx 96rpx;background:#efede6; }.eyebrow { display:block;color:#074d30;font-size:23rpx; }.title { display:block;font-size:42rpx;font-weight:700;margin:14rpx 0 28rpx;color:#1a1d18; }
-.panel { display:flex;flex-direction:column;background:#fcfbf8;padding:30rpx;border-radius:24rpx;margin:24rpx 0; }.heading { font-size:30rpx;font-weight:600;color:#1a1d18; }.copy { font-size:25rpx;color:#454a41;margin-top:16rpx;line-height:38rpx; }.error { color:#b3261e;margin-top:16rpx; }.success { color:#074d30;margin-top:16rpx; }.warning { color:#b3261e; }
-.field { padding:22rpx;background:#efede6;border-radius:12rpx;margin-top:20rpx;font-size:28rpx; }.links { display:flex;flex-wrap:wrap;gap:8rpx; }.links button { font-size:24rpx; }
-.filters { display:flex;flex-wrap:wrap;gap:8rpx;margin-top:16rpx; }.filters button { font-size:24rpx;margin:8rpx 0; }.filters .selected { background:#0b6b43;color:#fcfbf8; }
-.row-actions { display:flex;flex-wrap:wrap;gap:8rpx; }.row-actions button { font-size:24rpx; }
-.issued { margin-top:20rpx;padding:24rpx;border-radius:16rpx;background:#f7ecdf; }.issued-label { display:block;color:#9a4700;font-size:23rpx; }.issued-code { display:block;margin-top:10rpx;font-size:36rpx;font-weight:700;color:#1a1d18;word-break:break-all; }
-button { margin:22rpx 0 0;background:#e9f2ec;color:#074d30;font-size:27rpx;border-radius:14rpx; }button::after { border:0; }.primary { background:#0b6b43;color:#fcfbf8; }
+.head { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
+.field { padding: 22rpx; background: #efede6; border-radius: 12rpx; margin-top: 20rpx; font-size: 28rpx; }
+.links { display: flex; flex-wrap: wrap; gap: 8rpx; }
+.links button { font-size: 24rpx; }
+.filters { display: flex; flex-wrap: wrap; gap: 8rpx; }
+.filters button { font-size: 24rpx; }
+.filters .selected { background: #0b6b43; color: #fcfbf8; }
+.row-actions { display: flex; flex-wrap: wrap; gap: 8rpx; margin-top: 12rpx; }
+.row-actions button { font-size: 24rpx; }
+.record { display: flex; flex-direction: column; gap: 8rpx; padding: 20rpx 0; border-top: 1rpx solid #e0ded6; }
+.error-block { display: flex; flex-direction: column; gap: 10rpx; margin-top: 14rpx; }
+.issued { margin-top: 16rpx; padding: 24rpx; border-radius: 16rpx; background: #f7ecdf; }
+.issued-label { display: block; color: #9a4700; font-size: 23rpx; }
+.issued-code { display: block; margin-top: 10rpx; font-size: 36rpx; font-weight: 700; color: #1a1d18; word-break: break-all; }
+.risk-line { display: block; margin-top: 12rpx; color: #b3261e; font-size: 25rpx; }
+.ok-line { display: block; margin-top: 12rpx; color: #074d30; font-size: 25rpx; }
+.status-line { display: block; margin-top: 20rpx; color: #63685e; font-size: 26rpx; }
 </style>
