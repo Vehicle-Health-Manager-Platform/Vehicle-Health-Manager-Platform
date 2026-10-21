@@ -26,6 +26,7 @@ POSTMAN = {
     'discovery': 'R9_A4D2H1_SERVICE_DISCOVERY_2026_10_20.json',
     'quotes': 'R9_A4D2H2_MERCHANT_QUOTES_2026_10_20.json',
     'reviews': 'R9_A4D2H3_OWNER_REVIEWS_2026_10_20.json',
+    'finance': 'R9_A4D6_FINANCIAL_RECOVERY_2026_10_21.json',
 }
 JOURNEYS = {
     'upload': ('run_upload_acceptance', 'R9_A4D2E2B_PRIVATE_UPLOAD_API_2026_10_19.json'),
@@ -33,6 +34,7 @@ JOURNEYS = {
     'material_workbench': ('run_material_workbench_acceptance', 'R9_A4D2G3_MATERIAL_WORKBENCH_2026_10_20.json'),
 }
 UPLOAD_CHECKS = set('anonymous_object_denied tampered_signature_denied expired_signature_denied only_three_clean_files three_successful_uploads three_scan_rejections one_owned_archive_attachment'.split())
+FINANCE_CHECKS = set('payment_recovered_once invalid_amount_not_paid one_recovered_payment_event fresh_refund_success failed_refund_success unique_refunds two_success_events commission_reversed_once uncompleted_refund_no_charge commission_test_only foreign_payment_unchanged foreign_shop_no_commission lease_cleared appointment_capacity_released'.split())
 OUTPUT = ROOT / 'docs/testing/api-coverage.json'
 SUMMARY = ROOT / 'docs/testing/API_COVERAGE.md'
 
@@ -134,6 +136,14 @@ def newman_evidence(suite, manifest, collection, collection_hash, report, catalo
             type(evidence.get('assertions')) is int and
             evidence['assertions'] == sum(c['assertions'] for c in cases.values()), 'Recorded counts differ')
     require(evidence.get('coverage') == definitions, 'Recorded category summary differs from cases')
+    if suite == 'finance':
+        supplier = report.get('finance_supplier', {})
+        require(supplier.get('passed') is True and supplier.get('counts') == {
+            'payment_1_queries': 1, 'payment_4_queries': 1, 'fresh_refund_queries': 1,
+            'fresh_refund_posts': 1, 'failed_refund_queries': 1, 'failed_refund_posts': 0,
+            'invalid_submissions': 0}, 'Financial supplier calls do not prove recovery/unique submission')
+        checks = report.get('finance_database', {}).get('checks', {})
+        require(set(checks) == FINANCE_CHECKS and all(v is True for v in checks.values()), 'Financial database invariants are incomplete')
     return definitions, definitions
 
 
@@ -194,7 +204,7 @@ def summarize(spec, suites):
     historical = sum(set(r['historical_kinds']) == set(KINDS) for r in rows)
     return {'version': 1, 'reconciliation_passed': True, 'full_api_acceptance_passed': False,
             'current_backend_revalidated': False,
-            'scope': 'Selected 19 recorded synthetic-identity/LOCAL_TEST suites only; other tests are not indexed. Reconciled with current definitions; no new HTTP execution or production acceptance.',
+            'scope': 'Selected recorded synthetic-identity/LOCAL_TEST suites only; other tests are not indexed. Reconciled with current definitions; no new HTTP execution or production acceptance.',
             'counts': {'contract_operations': len(rows), 'protected_operations': sum(r['protected'] for r in rows),
                        'four_kind_definitions': sum(set(r['defined_kinds']) == set(KINDS) for r in rows),
                        'historical_four_kind_operations': historical,
@@ -246,10 +256,10 @@ def render(summary):
              '本文件由 `python scripts/summarize_api_coverage.py` 生成。', '',
              f"- 当前契约：{c['contract_operations']} 项；受保护接口：{c['protected_operations']} 项。",
              f"- 四类用例定义覆盖：{c['four_kind_definitions']} 项；有匹配历史四类执行记录：{c['historical_four_kind_operations']} 项（接口去重）。",
-             f"- 所选记录中未获完整四类证据：{c['without_complete_historical_evidence']} 项；本次实际执行接口：0 项。", '',
+             f"- 所选记录中未获完整四类证据：{c['without_complete_historical_evidence']} 项；汇总过程新发起接口：0 项（各套实际执行见来源报告）。", '',
              '历史证据不等于当前版本重跑通过，不等于完整权限矩阵或真实身份/资金验收。',
              '匿名401不算业务四类覆盖；未列历史证据不等于功能未开发。',
-             '本工具只索引明确选定的19套记录，不否认其他单元、HTTP或历史验证；后续可增加经过校验的证据适配器。',
+             f"本工具只索引明确选定的{c['suites']}套记录，不否认其他单元、HTTP或历史验证；后续可增加经过校验的证据适配器。",
              '全API验收仍为false。结构化来源、哈希及逐项状态见 [api-coverage.json](api-coverage.json)。', '',
              '## 历史证据缺口（按领域分组）', '']
     groups = {}

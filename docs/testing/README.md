@@ -1,3 +1,5 @@
+> [金融恢复实际验收](../progress/R9_A4D6_FINANCIAL_RECOVERY_EXECUTION.md)：支付/退款恢复及佣金六重点接口，签名本机替身、真实HTTP和MySQL；正式资金仍待验。
+
 > [接口覆盖核对](API_COVERAGE.md)：当前契约与19套所选历史证据逐项核对；本轮不等于重跑业务接口，全量验收仍未通过。
 
 # 测试资料

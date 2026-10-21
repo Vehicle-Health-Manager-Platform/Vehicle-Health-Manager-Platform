@@ -50,6 +50,7 @@ def source_hash():
     paths += [ROOT / 'scripts/merchant_api_cases.py']
     paths += [ROOT / 'scripts/community_api_cases.py', ROOT / 'scripts/publication_api_cases.py', ROOT / 'scripts/experience_api_cases.py', ROOT / 'scripts/health_api_cases.py', ROOT / 'scripts/export_api_cases.py', ROOT / 'scripts/requirements-export-qa.txt']
     paths += [ROOT / 'scripts/points_api_cases.py', ROOT / 'scripts/exchange_api_cases.py']
+    paths += [ROOT / 'scripts/finance_api_cases.py', ROOT / 'scripts/FinanceTestSupplier.java']
     paths += [ROOT / 'scripts/invitation_api_cases.py', ROOT / 'scripts/diagnosis_api_cases.py', ROOT / 'scripts/discovery_api_cases.py', ROOT / 'scripts/quotes_api_cases.py', ROOT / 'scripts/reviews_api_cases.py']
     value = hashlib.sha256()
     for path in paths:
@@ -139,12 +140,13 @@ def main():
     parser.add_argument('--discovery-cases', action='store_true', help='Run local service discovery search and merchant location scenarios.')
     parser.add_argument('--quotes-cases', action='store_true', help='Run merchant selection quote version and shelving scenarios.')
     parser.add_argument('--reviews-cases', action='store_true', help='Run owner review, public star, public text and summary consent scenarios.')
+    parser.add_argument('--finance-cases', action='store_true', help='Run isolated signed supplier financial recovery and commission cases.')
     args = parser.parse_args()
     if args.record_ci_sources:
-        if any((args.ci_built_jar,args.owner_cases,args.fulfillment_cases,args.coupon_cases,args.merchant_cases,args.community_cases,args.publication_cases,args.experience_cases,args.health_cases,args.export_cases,args.points_cases,args.exchange_cases,args.invitation_cases,args.diagnosis_cases,args.discovery_cases,args.quotes_cases,args.reviews_cases)):
+        if any((args.ci_built_jar,args.owner_cases,args.fulfillment_cases,args.coupon_cases,args.merchant_cases,args.community_cases,args.publication_cases,args.experience_cases,args.health_cases,args.export_cases,args.points_cases,args.exchange_cases,args.invitation_cases,args.diagnosis_cases,args.discovery_cases,args.quotes_cases,args.reviews_cases,args.finance_cases)):
             parser.error('Record CI inputs separately before the build')
         record_ci_sources(); print('API acceptance: recorded fresh CI build inputs',flush=True); return 0
-    if sum((args.owner_cases, args.fulfillment_cases, args.coupon_cases, args.merchant_cases, args.community_cases,args.publication_cases,args.experience_cases,args.health_cases,args.export_cases,args.points_cases,args.exchange_cases,args.invitation_cases,args.diagnosis_cases,args.discovery_cases,args.quotes_cases,args.reviews_cases)) > 1:
+    if sum((args.owner_cases, args.fulfillment_cases, args.coupon_cases, args.merchant_cases, args.community_cases,args.publication_cases,args.experience_cases,args.health_cases,args.export_cases,args.points_cases,args.exchange_cases,args.invitation_cases,args.diagnosis_cases,args.discovery_cases,args.quotes_cases,args.reviews_cases,args.finance_cases)) > 1:
         parser.error('Business suites require separate fresh databases; select one per run')
     run = uuid.uuid4().hex
     work = ROOT / '.cache' / ('api-acceptance-' + run[:12]); work.mkdir(parents=True)
@@ -164,7 +166,7 @@ def main():
         if len(expected) != 338: raise ValueError('Review changed anonymous acceptance scope')
         report['contract_operations'] = assets['acceptance_inventory.json']['operations']
         report['collection_sha256'] = hashlib.sha256((OUTPUT / 'anonymous.postman_collection.json').read_bytes()).hexdigest()
-        suite = 'owner' if args.owner_cases else 'fulfillment' if args.fulfillment_cases else 'coupon' if args.coupon_cases else 'merchant' if args.merchant_cases else 'community' if args.community_cases else 'publication' if args.publication_cases else 'experience' if args.experience_cases else 'health' if args.health_cases else 'export' if args.export_cases else 'points' if args.points_cases else 'exchange' if args.exchange_cases else 'invitation' if args.invitation_cases else 'diagnosis' if args.diagnosis_cases else 'discovery' if args.discovery_cases else 'quotes' if args.quotes_cases else 'reviews' if args.reviews_cases else None
+        suite = 'owner' if args.owner_cases else 'fulfillment' if args.fulfillment_cases else 'coupon' if args.coupon_cases else 'merchant' if args.merchant_cases else 'community' if args.community_cases else 'publication' if args.publication_cases else 'experience' if args.experience_cases else 'health' if args.health_cases else 'export' if args.export_cases else 'points' if args.points_cases else 'exchange' if args.exchange_cases else 'invitation' if args.invitation_cases else 'diagnosis' if args.diagnosis_cases else 'discovery' if args.discovery_cases else 'quotes' if args.quotes_cases else 'reviews' if args.reviews_cases else 'finance' if args.finance_cases else None
         business_module = importlib.import_module(suite+'_api_cases') if suite else None
         if business_module:
             business_collection, business_manifest = business_module.assets()
@@ -185,6 +187,8 @@ def main():
         before = counts(mysql)
         port = free_port(); backend = Backend(run, network, port, secret, 10)
         backend.start(mysql, extra_env=extra_env); backend.wait_healthy()
+        if business_module and hasattr(business_module,'prepare_backend'):
+            business_module.prepare_backend(backend)
         if business_module and hasattr(business_module,'prepare'):
             business_module.prepare(mysql)
             before = counts(mysql)
@@ -228,6 +232,8 @@ def main():
             check = getattr(business_module,'audit',audit_owner_cases)
             report[suite+'_evidence'] = check(business_raw,business_collection,business_manifest,business_tokens)
             report[suite+'_database'] = business_module.verify_database(mysql)
+            if hasattr(business_module,'verify_supplier'):
+                report[suite+'_supplier'] = business_module.verify_supplier(backend)
             report['scope'] = 'anonymous authentication plus '+suite+' business operations (synthetic identities; LOCAL_TEST funds only)'
         report['sources_unchanged'] = report['source_sha256'] == source_hash()
         if not report['sources_unchanged']: raise ValueError('Acceptance sources changed during execution')

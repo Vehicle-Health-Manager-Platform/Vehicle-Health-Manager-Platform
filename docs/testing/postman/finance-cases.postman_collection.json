@@ -1,0 +1,2747 @@
+{
+  "info": {
+    "name": "Autocare isolated financial recovery LOCAL_TEST",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:1"
+    },
+    {
+      "key": "isolated_finance_cases",
+      "value": "false"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "if(pm.variables.get(\"isolated_finance_cases\")!==\"true\"){pm.execution.skipRequest();throw new Error(\"Use the isolated fulfillment runner\");}"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "payment_detail",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/payments/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.status).to.eql(\"PENDING\");pm.expect(d.test_mode).to.eql(true);pm.expect(d.amount).to.eql(\"12.34\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_detail_boundary",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/payments/999999",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_detail_error",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/payments/0",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_detail_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/payments/1",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_detail_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/payments/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_other_owner",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/payments/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_detail_foreign",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/payments/6",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_recover",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/1/reconcile",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.status).to.eql(\"SUCCEEDED\");pm.expect(d.paid_at).to.be.a(\"string\");pm.expect(d.requires_review).to.eql(false);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_terminal_repeat",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/1/reconcile",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.status).to.eql(\"SUCCEEDED\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_recover_injected_status",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/1/reconcile",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"status\": \"SUCCEEDED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_recover_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/1/reconcile",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_recover_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/1/reconcile",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_recover_foreign",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/6/reconcile",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_bad_receipt",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/4/reconcile",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.status).to.eql(\"PENDING\");pm.expect(pm.response.json().data.paid_at).to.eql(null);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_query_lease",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/4/reconcile",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.status).to.eql(\"PENDING\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_formal_unconfigured",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/5/reconcile",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(503));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_missing_recover",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/999999/reconcile",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "payment_bad_id",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/payments/0/reconcile",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_merchant_detail",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/orders/2/refund",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.refund).to.eql(null);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_merchant_detail_boundary",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/orders/999999/refund",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_merchant_detail_error",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/orders/0/refund",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_merchant_detail_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/orders/2/refund",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_merchant_detail_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/orders/2/refund",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_detail_other_shop",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/orders/2/refund",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_detail_staff",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/orders/2/refund",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{staff_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_apply",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/2/refund",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "cfcbc2ae-1f89-5d7a-a99a-da5d404081dc"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"reason\": \"合成退款申请\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.refund.status).to.eql(\"REQUESTED\");pm.expect(pm.response.json().data.refund.revision).to.eql(1);});",
+              "pm.test(\"business 1\",()=>{pm.collectionVariables.set(\"receipt_refund_apply\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_apply_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/2/refund",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "cfcbc2ae-1f89-5d7a-a99a-da5d404081dc"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"reason\": \"合成退款申请\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_refund_apply\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_apply_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/2/refund",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "439ee8ba-87f1-5d7d-b8df-2b38f0256dbe"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_apply_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/2/refund",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "82007357-bbd3-5845-b350-0e0dfe41767b"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"reason\": \"合成退款申请\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_apply_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/2/refund",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "9bb7ac32-14d1-5a98-b123-da4a6d25c2af"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"reason\": \"合成退款申请\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_apply_foreign",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/2/refund",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "db2467bb-fdd7-5d7a-8b18-c8e8e6c3b499"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"reason\": \"合成退款申请\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "withdraw_stale",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/2/refund/withdraw",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "b5772b59-4ed5-54b3-a8dd-9a60b700121e"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"revision\": 2}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "withdraw",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/2/refund/withdraw",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "597d0c35-0508-57d0-8fae-d05c4c943be8"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.refund.status).to.eql(\"WITHDRAWN\");pm.expect(d.refund.revision).to.eql(2);pm.expect(d.order_status).to.eql(\"PAID\");pm.expect(d.can_request).to.eql(true);});",
+              "pm.test(\"business 1\",()=>{pm.collectionVariables.set(\"receipt_withdraw\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "withdraw_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/2/refund/withdraw",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "597d0c35-0508-57d0-8fae-d05c4c943be8"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_withdraw\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "withdraw_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/2/refund/withdraw",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "fec5c457-9386-59f7-9b93-e5017984a583"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "withdraw_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/2/refund/withdraw",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "8d8e20b1-f173-5588-bab2-9c03a689746f"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "withdraw_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/2/refund/withdraw",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "d480629e-4fbc-5d58-9467-c0a2a4b121be"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "withdraw_other_owner",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/2/refund/withdraw",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "82d99ac2-5fa0-5820-bfb2-7fb315574dd4"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"revision\": 2}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "withdraw_new_key_after_withdraw",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/2/refund/withdraw",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "a0e90c6b-935f-5799-8ee3-856f9bd10095"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_reapply",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/2/refund",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "a1dfb220-eaaa-584e-b5e6-ef6eba09c798"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"reason\": \"确认全额取消\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.refund.revision).to.eql(3);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "withdraw_old_version",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/2/refund/withdraw",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "d24ab4a5-f8b1-5291-a45d-72c39e79aa62"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"revision\": 1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_current_detail",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/orders/2/refund",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.refund.revision).to.eql(3);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "decision_bad_revision",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/2/refund/decision",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "d41d8c20-efa9-5daf-9027-96163bc2c7d3"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"revision\": 1, \"decision\": \"ACCEPT\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "decision_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/2/refund/decision",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "c8941a68-b85d-5190-8ef9-a03b299a13b9"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"revision\": 3, \"decision\": \"ACCEPT\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "decision_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/2/refund/decision",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "677e5cc7-3f1f-51df-a69a-1ecd413f1db5"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"revision\": 3, \"decision\": \"ACCEPT\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "decision_other_shop",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/2/refund/decision",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "3b7d050f-54c1-583b-9ac6-772fbf5e909c"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"revision\": 3, \"decision\": \"ACCEPT\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_accept",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/2/refund/decision",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "f742b95e-d8d3-56d8-9cee-cfff20aeee5d"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"revision\": 3, \"decision\": \"ACCEPT\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.order_status).to.eql(\"CLOSED\");pm.expect(d.refund.status).to.eql(\"PENDING\");pm.expect(d.refund.test_mode).to.eql(true);});",
+              "pm.test(\"business 1\",()=>{pm.collectionVariables.set(\"receipt_refund_accept\",JSON.stringify(pm.response.json()));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_accept_replay",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/2/refund/decision",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "f742b95e-d8d3-56d8-9cee-cfff20aeee5d"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"revision\": 3, \"decision\": \"ACCEPT\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get(\"receipt_refund_accept\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_accept_malformed",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/2/refund/decision",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "151a32d4-5040-5573-8159-2bf89157a29a"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_accept_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/2/refund/decision",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "97a8bdd4-bce5-5be3-9f5d-201af87af04b"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"revision\": 3, \"decision\": \"ACCEPT\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_accept_wrong_role",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/2/refund/decision",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "85082e46-c675-55e8-af5d-d00f17e19009"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"revision\": 3, \"decision\": \"ACCEPT\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "withdraw_approved",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/order/2/refund/withdraw",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "0cf8f131-4142-5918-b7ee-537473ce1c65"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"revision\": 4}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_reconcile_client_state",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/2/refund/reconcile",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"status\": \"SUCCEEDED\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_reconcile_anonymous",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/2/refund/reconcile",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_reconcile_owner",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/2/refund/reconcile",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_reconcile_staff",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/2/refund/reconcile",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{staff_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_reconcile_foreign",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/2/refund/reconcile",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_reconcile_missing",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/999999/refund/reconcile",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_reconcile",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/2/refund/reconcile",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.order_status).to.eql(\"CLOSED\");pm.expect(d.refund.status).to.eql(\"SUCCEEDED\");pm.expect(d.refund.amount).to.eql(\"12.34\");pm.expect(d.refund.refunded_at).to.be.a(\"string\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_terminal_repeat",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/2/refund/reconcile",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.refund.status).to.eql(\"SUCCEEDED\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_failed_recover",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/3/refund/reconcile",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.refund.status).to.eql(\"SUCCEEDED\");pm.expect(pm.response.json().data.refund.amount).to.eql(\"20.00\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund_failed_repeat",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/merchant/orders/3/refund/reconcile",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "commissions",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/commissions",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.total).to.eql(3);pm.expect(d.summary.real.net).to.eql(\"0.00\");pm.expect(d.summary.test.accrued).to.eql(\"0.60\");pm.expect(d.summary.test.reversed).to.eql(\"-0.60\");pm.expect(d.summary.test.net).to.eql(\"0.00\");pm.expect(d.items.every(x=>x.test_mode===true)).to.eql(true);pm.expect(d.items.some(x=>x.kind===\"REFUND_REVERSAL\"&&x.amount===\"-0.60\")).to.eql(true);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "commissions_boundary",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/commissions?page=2&page_size=50",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "commissions_error",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/commissions?page=0",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "commissions_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/commissions",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "commissions_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/commissions",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "commissions_staff",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/commissions",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{staff_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "commissions_other_shop",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/commissions",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.merchant_id).to.eql(2);pm.expect(d.total).to.eql(0);pm.expect(d.summary.test.net).to.eql(\"0.00\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "commissions_unknown",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/commissions?owner_id=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "commissions_duplicate",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/commissions?page=1&page=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "commissions_size",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/commissions?page_size=51",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -3,15 +3,15 @@
   "reconciliation_passed": true,
   "full_api_acceptance_passed": false,
   "current_backend_revalidated": false,
-  "scope": "Selected 19 recorded synthetic-identity/LOCAL_TEST suites only; other tests are not indexed. Reconciled with current definitions; no new HTTP execution or production acceptance.",
+  "scope": "Selected recorded synthetic-identity/LOCAL_TEST suites only; other tests are not indexed. Reconciled with current definitions; no new HTTP execution or production acceptance.",
   "counts": {
     "contract_operations": 352,
     "protected_operations": 338,
-    "four_kind_definitions": 216,
-    "historical_four_kind_operations": 216,
-    "without_complete_historical_evidence": 136,
+    "four_kind_definitions": 222,
+    "historical_four_kind_operations": 222,
+    "without_complete_historical_evidence": 130,
     "current_run_operations": 0,
-    "suites": 19
+    "suites": 20
   },
   "suites": [
     {
@@ -89,6 +89,17 @@
         "docs/testing/postman/export-case-manifest.json": "bc32ad3eb600cb4dab3ac0d2dc483d820ade35e843ac21d9f83fa6d62beebc31",
         "docs/testing/postman/export-cases.postman_collection.json": "3df8ad9b0507172b75a0a8250f50716f74b1e483368bfa8f52fe811bf1b72b31",
         "docs/testing/reports/R9_A4D2E2A_ARCHIVE_EXPORT_SHARE_API_2026_10_19.json": "6921b307b3e0ffd3fc3c43a970cdc3070493ff69a12c9c46e4ba142e00fb550f"
+      }
+    },
+    {
+      "name": "finance",
+      "type": "postman",
+      "evidence_status": "HISTORICAL_RECONCILED",
+      "recorded_source_sha256": "eeafd7e956ed81da9ce25f962debec7a19bf8471babd3bc097abfcfa9ddc7b00",
+      "inputs": {
+        "docs/testing/postman/finance-case-manifest.json": "541886d136b3accd8a5eb1e0a43f265fb3a91e994f3cd2063a35c1447be63529",
+        "docs/testing/postman/finance-cases.postman_collection.json": "0d55930fb06ad9a50482be1d30e11c5b9616cabc4474c433cbba0dc7eb70a4b6",
+        "docs/testing/reports/R9_A4D6_FINANCIAL_RECOVERY_2026_10_21.json": "4a55bf5601578c0ecec0096b3d0475c94cafadbe828e7c6076f3aa6f455943c3"
       }
     },
     {
@@ -6664,22 +6675,38 @@
       "roles": "MERCHANT",
       "protected": true,
       "implementation_status": "commission-ledger-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "finance",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_merchant_coupons",
@@ -7662,22 +7689,38 @@
       "roles": "MERCHANT",
       "protected": true,
       "implementation_status": "order-refunds-local-test-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "finance",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_merchant_orders_id_refund_decision",
@@ -7716,6 +7759,21 @@
             "normal",
             "unauthorized"
           ]
+        },
+        {
+          "suite": "finance",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
         }
       ]
     },
@@ -7726,22 +7784,38 @@
       "roles": "MERCHANT",
       "protected": true,
       "implementation_status": "order-refunds-local-test-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "finance",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_merchant_orders_id_service_context",
@@ -9322,6 +9396,21 @@
             "normal",
             "unauthorized"
           ]
+        },
+        {
+          "suite": "finance",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
         }
       ]
     },
@@ -9332,22 +9421,38 @@
       "roles": "OWNER",
       "protected": true,
       "implementation_status": "order-refunds-local-test-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "finance",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_order_id_review",
@@ -10680,22 +10785,38 @@
       "roles": "OWNER",
       "protected": true,
       "implementation_status": "payment-foundation-local-test-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "finance",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_payments_id_reconcile",
@@ -10704,22 +10825,38 @@
       "roles": "OWNER",
       "protected": true,
       "implementation_status": "payment-query-recovery-local-test-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "finance",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_point_check_in",
