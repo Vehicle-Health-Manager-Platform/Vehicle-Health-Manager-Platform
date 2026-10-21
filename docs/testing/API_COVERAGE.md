@@ -3,22 +3,19 @@
 本文件由 `python scripts/summarize_api_coverage.py` 生成。
 
 - 当前契约：352 项；受保护接口：338 项。
-- 四类用例定义覆盖：258 项；有匹配历史四类执行记录：258 项（接口去重）。
-- 所选记录中未获完整四类证据：94 项；汇总过程新发起接口：0 项（各套实际执行见来源报告）。
+- 四类用例定义覆盖：267 项；有匹配历史四类执行记录：267 项（接口去重）。
+- 所选记录中未获完整四类证据：85 项；汇总过程新发起接口：0 项（各套实际执行见来源报告）。
 
 历史证据不等于当前版本重跑通过，不等于完整权限矩阵或真实身份/资金验收。
 匿名401不算业务四类覆盖；未列历史证据不等于功能未开发。
-本工具只索引明确选定的24套记录，不否认其他单元、HTTP或历史验证；后续可增加经过校验的证据适配器。
+本工具只索引明确选定的25套记录，不否认其他单元、HTTP或历史验证；后续可增加经过校验的证据适配器。
 全API验收仍为false。结构化来源、哈希及逐项状态见 [api-coverage.json](api-coverage.json)。
 
 ## 历史证据缺口（按领域分组）
 
-### api/admin（28项）
+### api/admin（19项）
 
 - `GET /api/admin/assessment`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。
-- `GET /api/admin/catalog/{kind}`：缺 boundary, error, normal, unauthorized；实现标记 `catalog-governance-implemented`。
-- `POST /api/admin/catalog/{kind}`：缺 boundary, error, normal, unauthorized；实现标记 `catalog-governance-implemented`。
-- `PUT /api/admin/catalog/{kind}/{id}`：缺 boundary, error, normal, unauthorized；实现标记 `catalog-governance-implemented`。
 - `GET /api/admin/community/images`：缺 boundary, error, normal, unauthorized；实现标记 `r8-remaining-implemented`。
 - `POST /api/admin/community/images/{id}/moderate`：缺 boundary, error, normal, unauthorized；实现标记 `r8-remaining-implemented`。
 - `GET /api/admin/community/images/{id}/preview`：缺 boundary, error, normal, unauthorized；实现标记 `r8-remaining-implemented`。
@@ -33,12 +30,6 @@
 - `POST /api/admin/merchant/audit`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。
 - `GET /api/admin/price-monitor/comparisons`：缺 boundary, error, normal, unauthorized；实现标记 `r8b3c2-price-comparison-implemented`。
 - `GET /api/admin/price-monitor/comparisons/{id}`：缺 boundary, error, normal, unauthorized；实现标记 `r8b3c2-price-comparison-implemented`。
-- `GET /api/admin/price-monitor/policies`：缺 boundary, error, normal, unauthorized；实现标记 `r8b3c1-price-source-config-implemented`。
-- `POST /api/admin/price-monitor/policies`：缺 boundary, error, normal, unauthorized；实现标记 `r8b3c1-price-source-config-implemented`。
-- `GET /api/admin/price-monitor/policies/{id}`：缺 boundary, error, normal, unauthorized；实现标记 `r8b3c1-price-source-config-implemented`。
-- `PUT /api/admin/price-monitor/policies/{id}`：缺 boundary, error, normal, unauthorized；实现标记 `r8b3c1-price-source-config-implemented`。
-- `PUT /api/admin/price-monitor/policies/{id}/status`：缺 boundary, error, normal, unauthorized；实现标记 `r8b3c1-price-source-config-implemented`。
-- `GET /api/admin/price-monitor/quotes`：缺 boundary, error, normal, unauthorized；实现标记 `r8b3c1-price-source-config-implemented`。
 - `GET /api/admin/project-applicability/{project}/{model}`：缺 boundary, error, normal, unauthorized；实现标记 `vehicle-plan-evidence-implemented`。
 - `PUT /api/admin/project-applicability/{project}/{model}`：缺 boundary, error, normal, unauthorized；实现标记 `vehicle-plan-evidence-implemented`。
 - `GET /api/admin/reconciliation`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。

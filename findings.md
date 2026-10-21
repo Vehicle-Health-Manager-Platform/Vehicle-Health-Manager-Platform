@@ -552,3 +552,6 @@ PR197 八项 CI 均成功。剩余覆盖缺口包括接车上下文/详情、技
 ## R9 A4d10 验证结论
 
 固定月份字面量（2024-01 / 2999-01 / 3000-01）是必须的：审计要求实际 query 与声明 query 逐字相同，模板变量会让证据核对失败。摘要口径实测确认"证据不全不出分"——过程维度分母只数非 EXCLUDED（=1），存在 UNKNOWN 事实即整体 UNKNOWN、score 与总分为 null；拉新与券月用政策目标作分母，无事实也给 KNOWN/0.00。看板把无法验证来源的订单计入 unclassified_count，正式与测试桶同时 UNKNOWN。首次执行失败两处：Newman 每条 extra 是独立 pm.test 作用域（跨条引用 const d 报 is not defined），以及看板"无来源门店"其实引用了那份 UNKNOWN 月结快照（应为断言 snapshot_id 而非 null）。
+## R9 A4d11 验证结论
+
+目录列表与订单域的分页规则不同：`CatalogGovernance.list` 只拒绝 `page_size>50`，`InvitationController.query` 才把 `page_size` 锁死为 20，所以"目录 `page_size=10` 会 400"的直觉是错的（首跑唯一失败点）。幂等键必须让主写与重放共用同一个 `uuid5('...:replay:'+name)`，否则审计里"重放作用域"会数少（自查时 6 个只统计到 2 个），已把审计收紧为"`_replay`/`_changed_body` 必须与唯一主写同键"。价格政策确认报价时要求 `standard_project.source_note` 非空、`merchant_project_version` 与当前价格一致、且存在唯一一条 `MERCHANT_PROJECT_SAVE` 审计，所以"先证明 UNKNOWN 再证明 READY"必须靠目录修订接口来翻转，而不能靠改夹具。

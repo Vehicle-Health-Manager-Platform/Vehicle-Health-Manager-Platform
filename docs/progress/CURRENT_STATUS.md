@@ -1,3 +1,7 @@
+## 2026-10-21 A4d-11：运营目录治理与价格监测证据链（本地完成）
+
+本阶段补齐 9 个已实现但无四类证据的运营接口：目录治理 3 项（`GET`/`POST`/`PUT /api/admin/catalog/*`）、价格监测政策 6 项（报价证据读、政策清单/明细/创建/修订/状态），生产代码零变更。真实隔离 HTTP/MySQL PASS（205.068 秒）：56 个业务请求 / 218 条断言 / 0 失败，9 接口各覆盖正常/边界/错误/未授权；匿名 338 请求 / 1014 断言通过且业务表行数不变；6 个幂等作用域重放逐字节相等、2 组"同键异体"被 400 拒绝；14 项数据库不变量全真（行数 `brand=2 / standard_project=1 / price_monitor_policy=1 / idempotency=6 / audit_log=7`）；默认关闭开关时该套件 0 请求。核心是证据链：目录来源说明为空时同一报价只能 `UNKNOWN`，补齐后变 `READY` 并给出 64 位哈希，政策只允许引用这次读取得到的哈希（伪造哈希与过去窗口均 409）。仅 SQL 合成身份、报价版本与同形审计夹具，不代表商家写入、正式资金或真机验收。[执行记录](R9_A4D11_GOVERNANCE_WRITES_EXECUTION.md) / [验收说明](../testing/GOVERNANCE_WRITES_ACCEPTANCE.md)。覆盖核对 25 套来源、267/352 项历史四类完整、缺口 85 项；全 API 验收仍为 false。
+
 ## 2026-10-21 A4d-10：考核政策、月结与经营看板读接口（已上传 PR201）
 
 本阶段成果已上传[草稿PR201](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/201)（base=`codex/r9-a4d9-pickup-work-files`，依赖PR200），远程CI已启动、结论以该PR实际结果为准。
