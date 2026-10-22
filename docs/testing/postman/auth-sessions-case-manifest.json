@@ -1,0 +1,458 @@
+{
+  "version": 1,
+  "cases": 45,
+  "operations": 4,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "session_vehicle",
+      "method": "GET",
+      "path": "/api/vehicle/list",
+      "operation_id": "get_api_vehicle_list",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "session_vehicle_boundary",
+      "method": "GET",
+      "path": "/api/vehicle/list",
+      "operation_id": "get_api_vehicle_list",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "session_vehicle_error",
+      "method": "GET",
+      "path": "/api/vehicle/list",
+      "operation_id": "get_api_vehicle_list",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "session_vehicle_anonymous",
+      "method": "GET",
+      "path": "/api/vehicle/list",
+      "operation_id": "get_api_vehicle_list",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "session_vehicle_wrong_role",
+      "method": "GET",
+      "path": "/api/vehicle/list",
+      "operation_id": "get_api_vehicle_list",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "refresh_malformed",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "operation_id": "post_api_auth_refresh",
+      "kind": "error",
+      "status": 400,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "refresh_missing",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "operation_id": "post_api_auth_refresh",
+      "kind": "boundary",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "refresh_short",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "operation_id": "post_api_auth_refresh",
+      "kind": "error",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "refresh_long",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "operation_id": "post_api_auth_refresh",
+      "kind": "error",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "refresh_unknown",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "operation_id": "post_api_auth_refresh",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "refresh_expired",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "operation_id": "post_api_auth_refresh",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "refresh_revoked",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "operation_id": "post_api_auth_refresh",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "refresh_wrong_app",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "operation_id": "post_api_auth_refresh",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "refresh_disabled_owner",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "operation_id": "post_api_auth_refresh",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "refresh_disabled_tech",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "operation_id": "post_api_auth_refresh",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "refresh_operator",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "operation_id": "post_api_auth_refresh",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "refresh_owner",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "operation_id": "post_api_auth_refresh",
+      "kind": "normal",
+      "status": 200,
+      "role": "anonymous",
+      "assertions": 5
+    },
+    {
+      "name": "refresh_owner_old_rejected",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "operation_id": "post_api_auth_refresh",
+      "kind": "boundary",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "refresh_merchant",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "operation_id": "post_api_auth_refresh",
+      "kind": "normal",
+      "status": 200,
+      "role": "anonymous",
+      "assertions": 5
+    },
+    {
+      "name": "refresh_merchant_old_rejected",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "operation_id": "post_api_auth_refresh",
+      "kind": "boundary",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "refresh_technician",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "operation_id": "post_api_auth_refresh",
+      "kind": "normal",
+      "status": 200,
+      "role": "anonymous",
+      "assertions": 5
+    },
+    {
+      "name": "refresh_technician_old_rejected",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "operation_id": "post_api_auth_refresh",
+      "kind": "boundary",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "new_owner_access",
+      "method": "GET",
+      "path": "/api/vehicle/list",
+      "operation_id": "get_api_vehicle_list",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner_new",
+      "assertions": 4
+    },
+    {
+      "name": "old_owner_access_before_logout",
+      "method": "GET",
+      "path": "/api/vehicle/list",
+      "operation_id": "get_api_vehicle_list",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "logout_bad_credential",
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "operation_id": "post_api_auth_logout",
+      "kind": "error",
+      "status": 401,
+      "role": "bad",
+      "assertions": 3
+    },
+    {
+      "name": "logout_anonymous",
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "operation_id": "post_api_auth_logout",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "logout_operator_denied",
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "operation_id": "post_api_auth_logout",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "operator_logout_owner_denied",
+      "method": "POST",
+      "path": "/api/auth/operator/logout",
+      "operation_id": "post_api_auth_operator_logout",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "operator_logout_bad_body",
+      "method": "POST",
+      "path": "/api/auth/operator/logout",
+      "operation_id": "post_api_auth_operator_logout",
+      "kind": "error",
+      "status": 400,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "operator_logout_bad_query",
+      "method": "POST",
+      "path": "/api/auth/operator/logout",
+      "operation_id": "post_api_auth_operator_logout",
+      "kind": "error",
+      "status": 400,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "operator_logout_anonymous",
+      "method": "POST",
+      "path": "/api/auth/operator/logout",
+      "operation_id": "post_api_auth_operator_logout",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "operator_logout",
+      "method": "POST",
+      "path": "/api/auth/operator/logout",
+      "operation_id": "post_api_auth_operator_logout",
+      "kind": "normal",
+      "status": 200,
+      "role": "operator",
+      "assertions": 4
+    },
+    {
+      "name": "operator_logout_repeat",
+      "method": "POST",
+      "path": "/api/auth/operator/logout",
+      "operation_id": "post_api_auth_operator_logout",
+      "kind": "boundary",
+      "status": 401,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "logout_merchant",
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "operation_id": "post_api_auth_logout",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant_new",
+      "assertions": 4
+    },
+    {
+      "name": "logout_merchant_repeat",
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "operation_id": "post_api_auth_logout",
+      "kind": "boundary",
+      "status": 401,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "refresh_merchant_after_logout",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "operation_id": "post_api_auth_refresh",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "logout_technician",
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "operation_id": "post_api_auth_logout",
+      "kind": "normal",
+      "status": 200,
+      "role": "technician_new",
+      "assertions": 4
+    },
+    {
+      "name": "logout_technician_repeat",
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "operation_id": "post_api_auth_logout",
+      "kind": "boundary",
+      "status": 401,
+      "role": "technician",
+      "assertions": 3
+    },
+    {
+      "name": "refresh_technician_after_logout",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "operation_id": "post_api_auth_refresh",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "logout_owner",
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "operation_id": "post_api_auth_logout",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner_new",
+      "assertions": 4
+    },
+    {
+      "name": "logout_owner_repeat",
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "operation_id": "post_api_auth_logout",
+      "kind": "boundary",
+      "status": 401,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "refresh_owner_after_logout",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "operation_id": "post_api_auth_refresh",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "old_owner_after_logout",
+      "method": "GET",
+      "path": "/api/vehicle/list",
+      "operation_id": "get_api_vehicle_list",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "new_owner_after_logout",
+      "method": "GET",
+      "path": "/api/vehicle/list",
+      "operation_id": "get_api_vehicle_list",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "owner_new",
+      "assertions": 3
+    },
+    {
+      "name": "other_owner_survives",
+      "method": "GET",
+      "path": "/api/vehicle/list",
+      "operation_id": "get_api_vehicle_list",
+      "kind": "boundary",
+      "status": 200,
+      "role": "other",
+      "assertions": 4
+    }
+  ]
+}

@@ -10,6 +10,7 @@ from generate_api_acceptance import ROOT, operations
 
 KINDS = ('normal', 'boundary', 'error', 'unauthorized')
 POSTMAN = {
+    'auth_sessions': 'R9_A4D18_AUTH_SESSIONS_2026_10_22.json',
     'coupon_catalog': 'R9_A4D17_COUPON_CATALOG_2026_10_22.json',
     'relations_price': 'R9_A4D16_RELATIONS_PRICE_READS_2026_10_22.json',
     'owner': 'R9_A4D2A_OWNER_API_CASES_2026_10_19.json',
@@ -186,6 +187,12 @@ def newman_evidence(suite, manifest, collection, collection_hash, report, catalo
         completed = report.get('fulfillment_reads_database', {}).get('checks', {})
         require(set(completed) == set('order_completed local_payment_only redemption_test_mode report_signed foreign_vehicle_unchanged no_foreign_orders'.split()) and
                 all(v is True for v in completed.values()), 'Fulfillment completion evidence incomplete')
+    if suite == 'auth_sessions':
+        from auth_sessions_api_cases import CHECKS
+        require(evidence.get('auth_request_bindings_verified') is True, 'Auth response/request credential binding proof missing')
+        database=report.get('auth_sessions_database', {})
+        checks=database.get('checks', {})
+        require(set(checks)==CHECKS and all(v is True for v in checks.values()) and type(database.get('concurrent_refresh_requests')) is int and database['concurrent_refresh_requests']==2 and type(database.get('additional_http_requests')) is int and database['additional_http_requests']==7, 'Auth rotation/rollback/concurrency proof missing')
     if suite == 'coupon_catalog':
         from coupon_catalog_api_cases import CHECKS
         require(evidence.get('coupon_catalog_intents_verified') is True, 'Coupon catalog original request proof missing')
