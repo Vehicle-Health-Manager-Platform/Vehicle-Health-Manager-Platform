@@ -1,3 +1,7 @@
+## 2026-10-22 A4d19：商家入驻资质附件授权访问（本地完成）
+
+补齐1接口四类证据：12业务请求/1接口四类覆盖/0失败，11项检查全真。3次真实上传经ClamAV判CLEAN且只归属两位申请人；两份申请快照精确为`[1,2]`与`[3]`，跨申请引用双向为0，且未激活门店（`merchant_id`/`reviewed_at`为NULL）。签名下载逐字节一致、`X-Amz-Expires=5`，去签名/篡改/6.1秒自然过期均403；只有`can_review`的运营403，车主与商家403。源码前后一致且4容器与网络实际移除；同批回归`MerchantOnboardingHttpTest`(6)/`MerchantOnboardingMySqlTest`(9)与113项Python回归通过。生产代码零变更。合成身份/门店/运营账号与申请夹具，不含审核决策、配额与建店，不计真实微信身份或真机。历史覆盖314/352，缺口38，全API验收仍false。[执行记录](R9_A4D19_MERCHANT_ONBOARDING_FILES_EXECUTION.md) / [验收说明](../testing/MERCHANT_ONBOARDING_PRIVATE_FILES_ACCEPTANCE.md)。下一优先商家订单履约动作与车主评分报价读取（两项已实现缺口；认证组需真实短信/微信上游，27项`unspecified`条目代码无映射）；已上传[草稿PR210](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/210)，依赖PR209，实现提交 `a1ea4ad`；远程CI已触发，未合并。
+
 ## 2026-10-22 A4d18：认证会话轮换与退出（本地完成）
 
 补齐3接口证据，连同车辆列表共45业务请求/149断言；338匿名请求/1014断言、13不变量及89项相关Python回归通过。额外7次HTTP证明双请求刷新恰一成功、赢家及原access在退出后失效；失败刷新回滚，其他会话不变。动态JWT/refresh绑定真实响应，归档不含凭证；源码稳定且隔离资源清理。合成已登录会话，不计真实微信/短信登录。历史覆盖313/352，缺口39，全API验收仍false。[执行记录](R9_A4D18_AUTH_SESSIONS_EXECUTION.md)。下一优先入驻材料附件授权访问；已上传[草稿PR209](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/209)，依赖PR208，实现提交 `3895f3d`；远程CI已触发，未合并。

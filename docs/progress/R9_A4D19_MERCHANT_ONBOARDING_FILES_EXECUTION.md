@@ -31,3 +31,6 @@
 下一步继续按缺口清单处理剩余业务域（AI 与首页读接口、运营剩余读接口、社区审核等），并保持每阶段独立运行、独立上传。
 
 本阶段身份与附件元数据为隔离夹具；审核决策、区域品类配额与建店事务不在本阶段范围（已由 `MerchantOnboardingMySqlTest` 与 `--merchant-cases` 覆盖）。正式微信身份、真实资金、生产扫描鲜度、真机与外部云存储仍未验收。新 PR 的 GitHub CI 状态以该 PR 实际结果为准。
+
+
+阶段已上传[草稿PR210](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/210)，实现提交 `a1ea4ad`，base=`codex/r9-a4d18-auth-sessions`，依赖PR209；远程CI已触发，结果以PR实际检查为准，未合并。
