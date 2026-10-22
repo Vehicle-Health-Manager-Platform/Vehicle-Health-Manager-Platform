@@ -7,11 +7,11 @@
   "counts": {
     "contract_operations": 352,
     "protected_operations": 338,
-    "four_kind_definitions": 314,
-    "historical_four_kind_operations": 314,
-    "without_complete_historical_evidence": 38,
+    "four_kind_definitions": 315,
+    "historical_four_kind_operations": 315,
+    "without_complete_historical_evidence": 37,
     "current_run_operations": 0,
-    "suites": 33
+    "suites": 34
   },
   "suites": [
     {
@@ -265,6 +265,17 @@
         "docs/testing/postman/quotes-case-manifest.json": "542180cf38662a5a32b8699a12d9a34c53f642795f80283336b611469a2298f5",
         "docs/testing/postman/quotes-cases.postman_collection.json": "8a78651d6a3dac4dd948b72f121e9a35416394b2eb32b68d0d49380140977ab2",
         "docs/testing/reports/R9_A4D2H2_MERCHANT_QUOTES_2026_10_20.json": "0508cd1999281131505e99f5853d8795272534b5f35c9acc3b5f037c98f547b0"
+      }
+    },
+    {
+      "name": "rating_quotes",
+      "type": "postman",
+      "evidence_status": "HISTORICAL_RECONCILED",
+      "recorded_source_sha256": "6f2bce605c54cbe784f0e67b1fb41cb065424d9d4989aec31239346826b2b808",
+      "inputs": {
+        "docs/testing/postman/rating-quotes-case-manifest.json": "f77b771c00431de06a22cd5143b8bf5e4bf7b439fa5a6ab262d5fee96e246f4c",
+        "docs/testing/postman/rating-quotes-cases.postman_collection.json": "b3d529a83c260761fb3e603cba4b080bad3c1e8fa9cd80f3da9374d2a32ccdb0",
+        "docs/testing/reports/R9_A4D20_RATING_QUOTES_2026_10_22.json": "22011fd9cdfe296fa10a13b89ee571c2b2cda388005cc327c052eb2481da64fd"
       }
     },
     {
@@ -13989,22 +14000,38 @@
       "roles": "OWNER",
       "protected": true,
       "implementation_status": "r4-completion-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "rating_quotes",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_service_projects",

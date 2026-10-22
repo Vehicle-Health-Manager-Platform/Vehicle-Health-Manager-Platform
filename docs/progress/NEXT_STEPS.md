@@ -1,3 +1,7 @@
+## 2026-10-22 A4d20：车主公开星级项目评分报价读取（本地完成）
+
+补齐1接口四类证据：18业务请求/67断言/0失败，1接口覆盖normal/boundary/error/unauthorized；338匿名请求/1014断言0失败，14张业务表前后内容摘要逐字节不变。排序与评分如实：在架且最新价>0的三家按「有评价优先→平均分降序→价格升序」返回`[1,3,2]`，评分`5.00`/`2.00`/`null`；下架报价、最新版本价0、项目`status=0`三类夹具均被正确排除（后者整体404）。生产业务代码零变更，只把`POST /api/merchant/orders/{id}/actions`的契约与实现偏差写清：四个动作分别409 `43001`/`43004`/`43005`/`43006`，该接口无200路径，不以伪造200补证据。剩余37项缺口按成因登记：27项契约映射`unspecified`无实现、7项需真实微信/短信上游、1项无成功路径、1项需大模型供应商、1项本地示例端点。新增10项套件单测与32项覆盖单测通过。合成身份/订单/支付/核销/评价与授权夹具，不计真实资金、评价链路或真机。历史覆盖315/352，缺口37，全API验收仍false。[执行记录](R9_A4D20_RATING_QUOTES_EXECUTION.md) / [验收说明](../testing/RATING_QUOTES_ACCEPTANCE.md)。下一优先把剩余缺口转成功能缺口逐项立项（是否仍在路线图内），而不是继续在证据清单里找可跑项。
+
 ## 2026-10-22 A4d19：商家入驻资质附件授权访问（本地完成）
 
 补齐1接口四类证据：12业务请求/1接口四类覆盖/0失败，11项检查全真。3次真实上传经ClamAV判CLEAN且只归属两位申请人；两份申请快照精确为`[1,2]`与`[3]`，跨申请引用双向为0，且未激活门店（`merchant_id`/`reviewed_at`为NULL）。签名下载逐字节一致、`X-Amz-Expires=5`，去签名/篡改/6.1秒自然过期均403；只有`can_review`的运营403，车主与商家403。源码前后一致且4容器与网络实际移除；同批回归`MerchantOnboardingHttpTest`(6)/`MerchantOnboardingMySqlTest`(9)与125项Python回归（78执行器/32覆盖/3清理/12CI与隔离旅程）通过。生产代码零变更。合成身份/门店/运营账号与申请夹具，不含审核决策、配额与建店，不计真实微信身份或真机。历史覆盖314/352，缺口38，全API验收仍false。[执行记录](R9_A4D19_MERCHANT_ONBOARDING_FILES_EXECUTION.md) / [验收说明](../testing/MERCHANT_ONBOARDING_PRIVATE_FILES_ACCEPTANCE.md)。下一优先商家订单履约动作与车主评分报价读取（两项已实现缺口；认证组需真实短信/微信上游，27项`unspecified`条目代码无映射）；已上传[草稿PR210](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/210)，依赖PR209，实现提交 `a1ea4ad`；远程CI已触发，未合并。

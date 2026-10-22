@@ -579,3 +579,13 @@ run_reward_acceptance --docker通过，281.36秒：144HTTP/14接口四类，17�
 
 
 阶段已上传[草稿PR210](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/210)，实现提交 `a1ea4ad`，base=`codex/r9-a4d18-auth-sessions`，依赖PR209；远程CI已触发，结果以PR实际检查为准，未合并。
+
+
+## A4d20 开始
+
+已建 codex/r9-a4d20-rating-quotes；先把 38 项缺口逐条查实现，确认只有 GET /api/service/project/{id}/rating-quotes 四类全可达，另三项分别是"无 200 路径""需大模型供应商""本地示例端点"。
+
+
+## A4d20 本地完成
+
+201.923秒实际PASS：1接口18业务请求/67断言四类覆盖、338匿名请求/1014断言、14张业务表前后摘要不变；排序[1,3,2]与评分5.00/2.00/null如实，下架/最新价0/项目status=0均被排除。首轮因 extra 断言跨 pm.test 作用域复用 const 而 FAIL，改为每条自取响应后通过。历史覆盖315/352，缺口37。
