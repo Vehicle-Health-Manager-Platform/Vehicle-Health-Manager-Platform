@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {validDeliveryCompare,MISSING_CODES,createDeliveryCompareApi} from '../src/services/delivery-compare.js'
-import {deliveryResultView,deliveryBaselineView,deliveryWorkView,deliveryMissingView,deliveryFailureView} from '../src/services/delivery-compare-display.js'
+import {deliveryPageView,deliveryResultView,deliveryBaselineView,deliveryWorkView,deliveryMissingView,deliveryFailureView} from '../src/services/delivery-compare-display.js'
 
 const ready=()=>({
   order_id:301,order_status:'PENDING_VERIFY',result:'READY',deliverable:true,
@@ -128,4 +128,19 @@ test('failure view routes a missing baseline to the pickup sheet and auth errors
   const offline=deliveryFailureView({failureKind:'network',message:'网络异常'})
   assert.equal(offline.retryLabel,'重试加载');assert.equal(offline.canLogin,false)
   assert.equal(deliveryFailureView(undefined).message,'')
+})
+
+test('merchant and owner read the same projection with different wording',()=>{
+  const owner=deliveryPageView('owner'),merchant=deliveryPageView('merchant')
+  assert.equal(owner.title,'取车对比');assert.equal(merchant.title,'取车对比（核销前核对）')
+  assert.match(merchant.hint,/再决定是否核销/);assert.equal(owner.hint.includes('核销'),false)
+  assert.match(deliveryResultView(ready(),'merchant').deliverableCopy,/核销前无需再补/)
+  assert.match(deliveryResultView(ready()).deliverableCopy,/商家核销完成交付/)
+  assert.match(deliveryResultView(incomplete(),'merchant').deliverableCopy,/核销前请先按缺口补齐/)
+  assert.match(deliveryResultView(incomplete()).deliverableCopy,/补齐后商家才能核销交付/)
+  const readyNotDeliverable=ready();readyNotDeliverable.deliverable=false
+  assert.match(deliveryResultView(readyNotDeliverable,'merchant').deliverableCopy,/暂不能核销/)
+  // 未知角色按车主口径，绝不因为参数写错就说成商家视角。
+  assert.equal(deliveryResultView(ready(),'nobody').deliverableCopy,deliveryResultView(ready()).deliverableCopy)
+  assert.equal(deliveryPageView('nobody').title,'取车对比')
 })

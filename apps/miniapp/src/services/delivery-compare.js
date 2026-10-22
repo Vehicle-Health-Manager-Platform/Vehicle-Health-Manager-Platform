@@ -56,7 +56,7 @@ export function validDeliveryCompare(n){
 /** 取车对比是只读投影：没有幂等键、没有正文以外的参数，交付动作仍由核销完成。 */
 export function createDeliveryCompareApi({runtime=()=>apiRuntime,baseUrl=apiOrigin}={}){
   function call(token,order){
-    if(!token)throw new ServiceError('unauthorized','请先登录车主账号')
+    if(!token)throw new ServiceError('unauthorized','请先登录账号')
     if(!safeId(order))throw new ServiceError('invalid','订单信息无效')
     return new Promise((resolve,reject)=>{
       try{

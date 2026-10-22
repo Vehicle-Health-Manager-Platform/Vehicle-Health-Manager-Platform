@@ -29,6 +29,7 @@ const receiptView = computed(() => redeemReceiptView(receiptRow.value))
 const failure = computed(() => redeemQueryFailureView(detail, receipt))
 const submitView = computed(() => redeemSubmitView(state.code, state, remaining.value))
 function login() { clearMerchantSession(); uni.navigateTo({ url: '/pages/merchant/index' }) }
+function openDeliveryCompare() { const target = detail.value?.order_id || id; if (target > 0) uni.navigateTo({ url: `/pages/order/delivery-compare?id=${target}&role=merchant` }) }
 function stop() { visible = false; clearInterval(timer); submit.suspend(); order.reset(); record.reset() }
 watch(token, () => { submit.reset(); order.reset(); record.reset(); if (visible && token()) { submit.resume(); refresh() } }, { flush: 'sync' })
 onLoad(q => { id = Number(q?.id) || 0 })
@@ -42,6 +43,8 @@ onHide(stop); onUnload(stop)
       <text class="ux-title">核销验码</text>
       <text class="ux-lead">核对车主出示的六位核销码后再提交；核销即完成订单，测试订单不会真实扣款。</text>
     </view>
+
+    <button v-if="detail.value?.order_id" class="ux-card ux-in ux-r2" data-testid="redeem-delivery-compare" @tap="openDeliveryCompare">取车对比（核销前核对证据）</button>
 
     <view v-if="!merchantSession.accessToken" class="ux-card ux-in ux-r2" data-testid="redeem-login">
       <text class="ux-card-title">需要门店账号</text>
