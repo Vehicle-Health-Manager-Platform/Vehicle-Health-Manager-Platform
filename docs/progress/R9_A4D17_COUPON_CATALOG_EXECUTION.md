@@ -33,3 +33,6 @@ CI新增独立数据库业务验收与Python反例回归，复用原有证据归
 登录身份、门店和项目来自明确的合成上游夹具；券的创建、修订、发布、入池、发行与停止使用生产HTTP实现。没有真实微信、短信、资金、相机或真机验收，不对政策商业来源作结论。
 
 下一阶段优先认证会话刷新、退出与失效控制的核心接口证据，正式身份/短信接入继续单列依赖；每阶段验证、文档及GitHub草稿PR收口，不自动合并。
+
+
+阶段已上传[草稿PR208](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/208)，实现提交 `aabe4b9`，base=`codex/r9-a4d16-relations-price-reads`，依赖PR207；远程CI已触发，结果以PR实际检查为准，未合并。
