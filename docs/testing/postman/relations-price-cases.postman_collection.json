@@ -1,0 +1,1841 @@
+{
+  "info": {
+    "name": "Autocare isolated customer relations and price comparisons",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:1"
+    },
+    {
+      "key": "isolated_relations_price_cases",
+      "value": "false"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "if(pm.variables.get(\"isolated_relations_price_cases\")!==\"true\"){pm.execution.skipRequest();throw new Error(\"Use the isolated fulfillment runner\");}"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "relations",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.observed_at).to.match(/^\\d{4}-\\d{2}-\\d{2}T/);const p=d.relationships;pm.expect(p.total).to.eql(23);pm.expect(p.page_size).to.eql(20);pm.expect(p.items).to.have.lengthOf(20);pm.expect(p.items[0].relationship_order_id).to.eql(120);});",
+              "pm.test(\"business 1\",()=>{for(const k of [\"user_id\",\"owner_id\",\"phone\",\"openid\",\"plate_no\",\"vin\",\"vehicle_id\",\"order_no\",\"amount\",\"archives\",\"object_key\"])pm.expect(JSON.stringify(pm.response.json().data)).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relations_boundary",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations?page=1000000",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relations_error",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations?page=0",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relations_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relations_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relations_second_page",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations?page=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const p=pm.response.json().data.relationships;pm.expect(p.total).to.eql(23);pm.expect(p.items.map(i=>i.relationship_order_id)).to.eql([100,8,1]);});",
+              "pm.test(\"business 1\",()=>{for(const k of [\"user_id\",\"owner_id\",\"phone\",\"openid\",\"plate_no\",\"vin\",\"vehicle_id\",\"order_no\",\"amount\",\"archives\",\"object_key\"])pm.expect(JSON.stringify(pm.response.json().data)).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relations_empty_page",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations?page=1000000&page_size=20",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.relationships.items).to.eql([]);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relations_other_store",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const p=pm.response.json().data.relationships;pm.expect(p.total).to.eql(1);pm.expect(p.items.map(i=>i.relationship_order_id)).to.eql([4]);});",
+              "pm.test(\"business 1\",()=>{for(const k of [\"user_id\",\"owner_id\",\"phone\",\"openid\",\"plate_no\",\"vin\",\"vehicle_id\",\"order_no\",\"amount\",\"archives\",\"object_key\"])pm.expect(JSON.stringify(pm.response.json().data)).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relations_technician",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{technician_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relations_size",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations?page_size=21",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relations_duplicate",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations?page=1&page=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relations_injected",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations?merchant_id=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relation",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;const r=d.relationship;pm.expect(r.relationship_order_id).to.eql(1);pm.expect(r.order_count).to.eql(4);pm.expect(r.identity_source).to.eql(\"UNKNOWN\");pm.expect(r.last_service_at).to.eql(\"2026-10-03T10:30:00Z\");pm.expect(Object.keys(r).sort()).to.eql([\"identity_source\",\"last_order_at\",\"last_service_at\",\"latest_vehicle\",\"order_count\",\"relationship_order_id\"]);});",
+              "pm.test(\"business 1\",()=>{const p=pm.response.json().data.orders;pm.expect(p.total).to.eql(4);pm.expect(p.items.map(i=>i.order_id)).to.eql([7,3,2,1]);pm.expect(p.items.map(i=>i.service_context_available)).to.eql([false,true,false,false]);pm.expect(p.items.find(i=>i.order_id===1).service_at).to.eql(null);pm.expect(p.items.find(i=>i.order_id===3).service_at).to.eql(\"2026-10-03T10:30:00Z\");});",
+              "pm.test(\"business 2\",()=>{for(const k of [\"user_id\",\"owner_id\",\"phone\",\"openid\",\"plate_no\",\"vin\",\"vehicle_id\",\"order_no\",\"amount\",\"archives\",\"object_key\"])pm.expect(JSON.stringify(pm.response.json().data)).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relation_boundary",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations/999999",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relation_error",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations/0",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relation_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations/1",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relation_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relation_empty",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations/1?page=1000000",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const p=pm.response.json().data.orders;pm.expect(p.total).to.eql(4);pm.expect(p.items).to.eql([]);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relation_noncanonical",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations/3",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relation_foreign",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relation_other_anchor",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations/4",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relation_technician",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{technician_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relation_test_identity",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations/8",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const r=pm.response.json().data.relationship;pm.expect(r.identity_source).to.eql(\"TEST\");pm.expect(r.last_service_at).to.eql(null);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relation_synthetic_verified_identity",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations/100",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{pm.expect(pm.response.json().data.relationship.identity_source).to.eql(\"VERIFIED_WECHAT\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relation_inactive_owner",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations/124",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relation_moved_vehicle",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations/125",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relation_query",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations/1?user_id=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "relation_bad_page",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/merchant/customer-relations/1?page=0",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparisons",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const p=pm.response.json().data.comparisons;pm.expect(p.total).to.eql(13);pm.expect(p.page_size).to.eql(20);pm.expect(p.items.map(i=>i.quote_id)).to.eql([13,12,11,10,9,8,7,6,5,4,3,2,1]);});",
+              "pm.test(\"business 1\",()=>{for(const k of [\"actor_staff_id\",\"submission_key\",\"audit_id\",\"phone\",\"after_state\"])pm.expect(JSON.stringify(pm.response.json().data)).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparisons_boundary",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons?page=1000000",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparisons_error",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons?page_size=50",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparisons_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparisons_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparisons_empty",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons?page=1000000",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const p=pm.response.json().data.comparisons;pm.expect(p.items).to.eql([]);pm.expect(p.total).to.eql(13);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparison",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons/5",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const r=pm.response.json().data.comparison;pm.expect(r.state).to.eql(\"WITHIN_RANGE\");pm.expect(r.reason).to.eql(\"VERIFIED\");pm.expect(r.review_required).to.eql(false);pm.expect(r.current.source.price).to.eql(\"12.34\");pm.expect(r.policy.lower_price).to.eql(\"12.34\");pm.expect(r.policy.upper_price).to.eql(\"12.34\");});",
+              "pm.test(\"business 1\",()=>{for(const k of [\"actor_staff_id\",\"submission_key\",\"audit_id\",\"phone\",\"after_state\"])pm.expect(JSON.stringify(pm.response.json().data)).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparison_boundary",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons/999999",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparison_error",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons/0",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparison_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons/5",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparison_wrong_role",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons/5",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparisons_catalog_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{catalog_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparisons_plain_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{plain_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparison_catalog_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons/5",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{catalog_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparison_plain_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons/5",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{plain_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparisons_duplicate",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons?page=1&page=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparisons_injected",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons?quote_id=5",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparison_query",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons/5?page=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparison_state_1",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons/1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const r=pm.response.json().data.comparison;pm.expect(r.quote_id).to.eql(1);pm.expect(r.state).to.eql(\"UNKNOWN\");pm.expect(r.reason).to.eql(\"POLICY_MISSING\");pm.expect(r.review_required).to.eql(false);});",
+              "pm.test(\"business 1\",()=>{for(const k of [\"actor_staff_id\",\"submission_key\",\"audit_id\",\"phone\",\"after_state\"])pm.expect(JSON.stringify(pm.response.json().data)).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparison_state_2",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons/2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const r=pm.response.json().data.comparison;pm.expect(r.quote_id).to.eql(2);pm.expect(r.state).to.eql(\"UNKNOWN\");pm.expect(r.reason).to.eql(\"SOURCE_UNKNOWN\");pm.expect(r.review_required).to.eql(false);});",
+              "pm.test(\"business 1\",()=>{for(const k of [\"actor_staff_id\",\"submission_key\",\"audit_id\",\"phone\",\"after_state\"])pm.expect(JSON.stringify(pm.response.json().data)).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparison_state_3",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons/3",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const r=pm.response.json().data.comparison;pm.expect(r.quote_id).to.eql(3);pm.expect(r.state).to.eql(\"UNKNOWN\");pm.expect(r.reason).to.eql(\"POLICY_NOT_PUBLISHED\");pm.expect(r.review_required).to.eql(false);});",
+              "pm.test(\"business 1\",()=>{for(const k of [\"actor_staff_id\",\"submission_key\",\"audit_id\",\"phone\",\"after_state\"])pm.expect(JSON.stringify(pm.response.json().data)).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparison_state_4",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons/4",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const r=pm.response.json().data.comparison;pm.expect(r.quote_id).to.eql(4);pm.expect(r.state).to.eql(\"UNKNOWN\");pm.expect(r.reason).to.eql(\"NOT_STARTED\");pm.expect(r.review_required).to.eql(false);});",
+              "pm.test(\"business 1\",()=>{for(const k of [\"actor_staff_id\",\"submission_key\",\"audit_id\",\"phone\",\"after_state\"])pm.expect(JSON.stringify(pm.response.json().data)).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparison_state_6",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons/6",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const r=pm.response.json().data.comparison;pm.expect(r.quote_id).to.eql(6);pm.expect(r.state).to.eql(\"BELOW_RANGE\");pm.expect(r.reason).to.eql(\"VERIFIED\");pm.expect(r.review_required).to.eql(true);});",
+              "pm.test(\"business 1\",()=>{for(const k of [\"actor_staff_id\",\"submission_key\",\"audit_id\",\"phone\",\"after_state\"])pm.expect(JSON.stringify(pm.response.json().data)).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparison_state_7",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons/7",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const r=pm.response.json().data.comparison;pm.expect(r.quote_id).to.eql(7);pm.expect(r.state).to.eql(\"ABOVE_RANGE\");pm.expect(r.reason).to.eql(\"VERIFIED\");pm.expect(r.review_required).to.eql(true);});",
+              "pm.test(\"business 1\",()=>{for(const k of [\"actor_staff_id\",\"submission_key\",\"audit_id\",\"phone\",\"after_state\"])pm.expect(JSON.stringify(pm.response.json().data)).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparison_state_8",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons/8",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const r=pm.response.json().data.comparison;pm.expect(r.quote_id).to.eql(8);pm.expect(r.state).to.eql(\"UNKNOWN\");pm.expect(r.reason).to.eql(\"EXPIRED\");pm.expect(r.review_required).to.eql(false);});",
+              "pm.test(\"business 1\",()=>{for(const k of [\"actor_staff_id\",\"submission_key\",\"audit_id\",\"phone\",\"after_state\"])pm.expect(JSON.stringify(pm.response.json().data)).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparison_state_9",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons/9",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const r=pm.response.json().data.comparison;pm.expect(r.quote_id).to.eql(9);pm.expect(r.state).to.eql(\"UNKNOWN\");pm.expect(r.reason).to.eql(\"POLICY_STOPPED\");pm.expect(r.review_required).to.eql(false);});",
+              "pm.test(\"business 1\",()=>{for(const k of [\"actor_staff_id\",\"submission_key\",\"audit_id\",\"phone\",\"after_state\"])pm.expect(JSON.stringify(pm.response.json().data)).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparison_state_10",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons/10",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const r=pm.response.json().data.comparison;pm.expect(r.quote_id).to.eql(10);pm.expect(r.state).to.eql(\"UNKNOWN\");pm.expect(r.reason).to.eql(\"SOURCE_UNAVAILABLE\");pm.expect(r.review_required).to.eql(false);});",
+              "pm.test(\"business 1\",()=>{for(const k of [\"actor_staff_id\",\"submission_key\",\"audit_id\",\"phone\",\"after_state\"])pm.expect(JSON.stringify(pm.response.json().data)).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparison_state_11",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons/11",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const r=pm.response.json().data.comparison;pm.expect(r.quote_id).to.eql(11);pm.expect(r.state).to.eql(\"UNKNOWN\");pm.expect(r.reason).to.eql(\"SOURCE_CHANGED\");pm.expect(r.review_required).to.eql(false);});",
+              "pm.test(\"business 1\",()=>{for(const k of [\"actor_staff_id\",\"submission_key\",\"audit_id\",\"phone\",\"after_state\"])pm.expect(JSON.stringify(pm.response.json().data)).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparison_state_12",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons/12",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const r=pm.response.json().data.comparison;pm.expect(r.quote_id).to.eql(12);pm.expect(r.state).to.eql(\"UNKNOWN\");pm.expect(r.reason).to.eql(\"POLICY_SOURCE_UNKNOWN\");pm.expect(r.review_required).to.eql(false);});",
+              "pm.test(\"business 1\",()=>{for(const k of [\"actor_staff_id\",\"submission_key\",\"audit_id\",\"phone\",\"after_state\"])pm.expect(JSON.stringify(pm.response.json().data)).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparison_state_13",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/price-monitor/comparisons/13",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{monitor_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const r=pm.response.json().data.comparison;pm.expect(r.quote_id).to.eql(13);pm.expect(r.state).to.eql(\"UNKNOWN\");pm.expect(r.reason).to.eql(\"POLICY_SOURCE_UNKNOWN\");pm.expect(r.review_required).to.eql(false);});",
+              "pm.test(\"business 1\",()=>{for(const k of [\"actor_staff_id\",\"submission_key\",\"audit_id\",\"phone\",\"after_state\"])pm.expect(JSON.stringify(pm.response.json().data)).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

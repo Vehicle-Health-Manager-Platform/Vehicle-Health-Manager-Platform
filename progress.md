@@ -527,3 +527,13 @@ run_reward_acceptance --docker通过，281.36秒：144HTTP/14接口四类，17�
 
 
 本阶段已上传[草稿PR206](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/206)，实现提交 `fe713cf`，base=`codex/r9-a4d14-invitation-rewards`，依赖PR205；远程CI已触发，结论以PR实际检查为准，未合并。
+
+
+## A4d16 开始
+
+已建 codex/r9-a4d16-relations-price-reads 分支，设计客户关系及价格比较独立只读验收。
+
+
+## A4d16 本地完成
+
+236.968秒实际PASS，4接口58业务请求/216断言、338匿名请求/1014断言，13张业务表完整内容摘要无变化；源码稳定且自有后端/MySQL/网络清理。84项相关Python回归及新集合默认禁发0请求通过。历史覆盖306/352，缺口46；准备上传依赖PR206的草稿PR。
