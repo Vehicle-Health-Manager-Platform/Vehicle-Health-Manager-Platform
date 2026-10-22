@@ -1,6 +1,7 @@
 package com.autocare.platform;
 
 import com.autocare.platform.order.InvitationRegistration;
+import com.autocare.platform.order.InvitationRewards;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.dockerjava.api.exception.NotFoundException;
@@ -56,6 +57,7 @@ class RealInvitationRewardJourneyTest {
     @LocalServerPort int port;
     @Autowired JdbcTemplate jdbc;@Autowired ObjectMapper mapper;@Autowired JwtEncoder encoder;
     @Autowired ConfigurableApplicationContext app;@Autowired InvitationRegistration registration;
+    @Autowired InvitationRewards rewards;
     final HttpClient client=HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     final Map<String,String> tokens=new HashMap<>(),keys=new HashMap<>();
     static final String POLICY="/api/admin/invite/reward-policies";
@@ -89,7 +91,8 @@ class RealInvitationRewardJourneyTest {
     }
     JsonNode read(String name,String path,String role,boolean paged)throws Exception{
         var result=call(name,"normal",role,"GET",path,null,null,200);
-        call(name+"_boundary","boundary",role,"GET",paged?path+"?page=1000000":path.replace("scope=OWNER","scope=STAFF"),null,null,200);
+        var boundary=call(name+"_boundary","boundary",role,"GET",paged?path+"?page=1000000":path.replace("scope=OWNER","scope=STAFF"),null,null,200);
+        if(paged){assertTrue(boundary.path("data").path("items").isArray(),name);assertEquals(0,boundary.path("data").path("items").size(),name);}
         call(name+"_invalid","error",role,"GET",path+(path.contains("?")?"&":"?")+"user_id=2",null,null,400);
         call(name+"_anonymous","unauthorized","anonymous","GET",path,null,null,401);
         call(name+"_wrong_role","unauthorized",role.equals("owner")?"merchant":"owner","GET",path,null,null,403);return result;
@@ -165,6 +168,7 @@ class RealInvitationRewardJourneyTest {
         check("stopped_source_does_not_issue",count("coupon_issue")==3&&jdbc.queryForObject("SELECT COUNT(*) FROM coupon_issue WHERE coupon_id=2",Integer.class)==0);
         assertEquals("SOURCE_UNAVAILABLE",call("current_source_unavailable","boundary","owner","GET","/api/invite/reward-policy?scope=OWNER",null,null,200).path("data").path("state").asText());
         write("replacement_stop","PUT",POLICY+"/2/status","invite",status(2,"STOPPED").toString());write("staff_stop","PUT",POLICY+"/3/status","invite",status(2,"STOPPED").toString());
+        int issuedBeforeReads=count("coupon_issue"),stockBeforeReads=count("coupon_stock_event"),batchesBeforeReads=count("invite_reward_batch");
         var own=read("owner_rewards","/api/invite/rewards","owner",true).path("data");assertEquals(3,own.path("total").asInt());
         var recipientRewards=call("recipient_rewards","normal","recipient","GET","/api/invite/rewards",null,null,200).path("data").path("items").get(0).path("rewards");
         int visible=0;for(var item:recipientRewards){if(item.path("own").asBoolean()){visible++;assertTrue(item.path("user_coupon_id").asLong()>0);}else assertTrue(item.path("user_coupon_id").isNull());}check("recipient_sees_only_own_coupon_id",visible==1);
@@ -180,11 +184,12 @@ class RealInvitationRewardJourneyTest {
         assertEquals("UNKNOWN",call("current_after_stop","boundary","owner","GET","/api/invite/reward-policy?scope=OWNER",null,null,200).path("data").path("state").asText());
         call("duplicate_scope","error","owner","GET","/api/invite/reward-policy?scope=OWNER&scope=STAFF",null,null,400);
         call("duplicate_page","error","owner","GET","/api/invite/rewards?page=1&page=2",null,null,400);
+        check("reads_never_issue_rewards",count("coupon_issue")==issuedBeforeReads&&count("coupon_stock_event")==stockBeforeReads&&count("invite_reward_batch")==batchesBeforeReads);
         check("unknown_policy_not_backfilled",state(unknownBatch).equals("UNKNOWN_POLICY"));
         check("final_inventory_and_audit_unique",count("user_coupon")==3&&count("coupon_issue")==3&&count("coupon_stock_event")==3&&jdbc.queryForObject("SELECT issued_quantity FROM coupon WHERE id=1",Integer.class)==3&&jdbc.queryForObject("SELECT issued_quantity FROM coupon WHERE id=2",Integer.class)==0&&jdbc.queryForObject("SELECT COUNT(*) FROM audit_log WHERE action='INVITE_REWARD_COMPLETE'",Integer.class)==2);
         check("no_money_or_points",count("payment")==0&&count("point_task_event")==0);
         check("policy_stops_not_undone",jdbc.queryForObject("SELECT COUNT(*) FROM invite_reward_policy WHERE status='STOPPED'",Integer.class)==3);
-        int before=count("coupon_issue");Thread.sleep(600);check("completed_batches_never_issue_twice",count("coupon_issue")==before);
+        int before=count("coupon_issue");rewards.process(frozen);rewards.process(staffBatch);Thread.sleep(600);check("completed_batches_never_issue_twice",count("coupon_issue")==before);
         for(var response:List.of(own,staffView)){String text=response.toString();check("public_projection_has_no_identity_evidence",!text.contains("identity_session")&&!text.contains("phone_hash")&&!text.contains("source_id")&&!text.contains("openid"));}
         completed=true;
     }

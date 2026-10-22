@@ -46,9 +46,12 @@ class RewardAcceptanceTest(unittest.TestCase):
             with self.assertRaises(ValueError):self.check()
     def test_rollbacks_freeze_retry_and_staff_privacy_checks_required(self):
         original=copy.deepcopy(self.data)
-        for key in ['audit_failure_rolls_back_entire_pair','retry_uses_old_snapshot_once','insufficient_stock_never_partially_issues','staff_owner_id_overlap_does_not_leak_coupon','unknown_policy_not_backfilled']:
-            self.data=copy.deepcopy(original);self.data['checks'][key]=False
-            with self.assertRaises(ValueError):self.check()
+        for key in CHECKS:
+            for missing in (False,True):
+                self.data=copy.deepcopy(original)
+                if missing:self.data['checks'].pop(key)
+                else:self.data['checks'][key]=False
+                with self.subTest(key=key,missing=missing),self.assertRaises(ValueError):self.check()
     def test_cleanup_failure_or_missing_proof_rejected(self):
         for value in [{'mysql':False},{}]:
             self.data['cleanup']=value
@@ -56,6 +59,10 @@ class RewardAcceptanceTest(unittest.TestCase):
     def test_private_fields_cannot_be_added_to_public_cases(self):
         self.data['cases'][0]['jwt']='synthetic-private-value'
         with self.assertRaises(ValueError):self.check()
+    def test_cleanup_exact_owned_roles_and_boolean_are_required(self):
+        for value in ({'mysql':1},{'mysql':True,'network':True},None):
+            self.data['cleanup']=value
+            with self.subTest(value=value),self.assertRaises(ValueError):self.check()
 
 
 if __name__=='__main__':unittest.main()

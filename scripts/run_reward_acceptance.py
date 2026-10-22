@@ -9,7 +9,8 @@ CLASS='com.autocare.platform.RealInvitationRewardJourneyTest'
 JUNIT=ROOT/'backend/target/surefire-reports'/('TEST-'+CLASS+'.xml')
 EVIDENCE=ROOT/'backend/target/invitation-reward-evidence.json'
 OUTPUT=ROOT/'backend/target/invitation-reward-acceptance.json'
-CHECKS={'missing_policy_is_terminal','audit_failure_rolls_back_entire_pair','policy_snapshot_frozen','retry_uses_old_snapshot_once','insufficient_stock_never_partially_issues','staff_reward_is_invitee_only','test_unknown_and_unverified_phone_have_no_rewards','stopped_source_does_not_issue','recipient_sees_only_own_coupon_id','staff_owner_id_overlap_does_not_leak_coupon','unknown_policy_not_backfilled','final_inventory_and_audit_unique','no_money_or_points','policy_stops_not_undone','completed_batches_never_issue_twice','public_projection_has_no_identity_evidence'}
+CLEANUP_ROLES=frozenset({'mysql'})
+CHECKS={'missing_policy_is_terminal','audit_failure_rolls_back_entire_pair','policy_snapshot_frozen','retry_uses_old_snapshot_once','insufficient_stock_never_partially_issues','staff_reward_is_invitee_only','test_unknown_and_unverified_phone_have_no_rewards','stopped_source_does_not_issue','recipient_sees_only_own_coupon_id','staff_owner_id_overlap_does_not_leak_coupon','unknown_policy_not_backfilled','final_inventory_and_audit_unique','no_money_or_points','policy_stops_not_undone','completed_batches_never_issue_twice','public_projection_has_no_identity_evidence','reads_never_issue_rewards'}
 
 
 def inventory():
@@ -59,7 +60,8 @@ def audit(junit,evidence):
     if d.get('source_sha256')!=source_digest():raise ValueError('Reward proof belongs to different source content')
     if d.get('passed') is not True or d.get('cases')!=inventory():raise ValueError('Actual reward HTTP method/path/query/role/status changed')
     if set(d.get('checks',{}))!=CHECKS or not all(v is True for v in d['checks'].values()):raise ValueError('Reward freeze/atomicity/worker/privacy checks missing')
-    if d.get('cleanup')!={'mysql':True}:raise ValueError('Owned reward database not removed')
+    cleanup=d.get('cleanup',{})
+    if not isinstance(cleanup,dict) or set(cleanup)!=CLEANUP_ROLES or not all(v is True for v in cleanup.values()):raise ValueError('Owned reward database not removed')
     coverage={}
     for c in d['cases']:coverage.setdefault(c['method']+' '+c['operation'],set()).add(c['kind'])
     if len(coverage)!=14 or any(v!={'normal','boundary','error','unauthorized'} for v in coverage.values()):raise ValueError('Reward HTTP four-category coverage incomplete')

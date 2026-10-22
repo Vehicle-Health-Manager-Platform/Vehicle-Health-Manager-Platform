@@ -7,11 +7,11 @@
   "counts": {
     "contract_operations": 352,
     "protected_operations": 338,
-    "four_kind_definitions": 283,
-    "historical_four_kind_operations": 283,
-    "without_complete_historical_evidence": 69,
+    "four_kind_definitions": 291,
+    "historical_four_kind_operations": 291,
+    "without_complete_historical_evidence": 61,
     "current_run_operations": 0,
-    "suites": 27
+    "suites": 28
   },
   "suites": [
     {
@@ -265,6 +265,16 @@
         "docs/testing/postman/workflow-case-manifest.json": "df399eb61b6bf72968166de3013a344d815f8a83953d19fbfe480a959fc66e2f",
         "docs/testing/postman/workflow-cases.postman_collection.json": "a7e58d9309e85967ca3e863a58e1cfd096f2b044e1f33d6ef0f53ea12f5b6960",
         "docs/testing/reports/R9_A4D7_WORKFLOW_NOTIFICATIONS_2026_10_21.json": "0dbe12306825e76cb018013d1d2a81568fcb482d670bd4b9bec50e79a7a3bdcc"
+      }
+    },
+    {
+      "name": "invitation_rewards",
+      "type": "http-journey",
+      "evidence_status": "HISTORICAL_RECONCILED",
+      "recorded_source_sha256": "82f407cce35ba5d2b33926349f2932e9643065bb5b1491c4e460243f202e32ae",
+      "inputs": {
+        "scripts/run_reward_acceptance.py": "a75216db03436d826f7735f4ec330357cca19c79e83ae9fa2fd9bb0b4e4242fb",
+        "docs/testing/reports/R9_A4D14_INVITATION_REWARDS_2026_10_22.json": "4b549119317f48c41093ee869d14192a056cc96ecb1bde8932025980be7cab88"
       }
     },
     {
@@ -1886,6 +1896,21 @@
             "normal",
             "unauthorized"
           ]
+        },
+        {
+          "suite": "invitation_rewards",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
         }
       ]
     },
@@ -2720,22 +2745,38 @@
       "roles": "OPERATOR(can_invite)",
       "protected": true,
       "implementation_status": "r6b1-reward-policy-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "invitation_rewards",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_admin_invite_reward_policies",
@@ -2744,22 +2785,38 @@
       "roles": "OPERATOR(can_invite)",
       "protected": true,
       "implementation_status": "r6b1-reward-policy-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "invitation_rewards",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_admin_invite_reward_policies",
@@ -2768,22 +2825,38 @@
       "roles": "OPERATOR(can_invite)",
       "protected": true,
       "implementation_status": "r6b1-reward-policy-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "invitation_rewards",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "put_api_admin_invite_reward_policies_id",
@@ -2792,22 +2865,38 @@
       "roles": "OPERATOR(can_invite)",
       "protected": true,
       "implementation_status": "r6b1-reward-policy-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "invitation_rewards",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "put_api_admin_invite_reward_policies_id_status",
@@ -2816,22 +2905,38 @@
       "roles": "OPERATOR(can_invite)",
       "protected": true,
       "implementation_status": "r6b1-reward-policy-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "invitation_rewards",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_admin_knowledge_documents",
@@ -6146,6 +6251,21 @@
             "normal",
             "unauthorized"
           ]
+        },
+        {
+          "suite": "invitation_rewards",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
         }
       ]
     },
@@ -6793,6 +6913,21 @@
             "normal",
             "unauthorized"
           ]
+        },
+        {
+          "suite": "invitation_rewards",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
         }
       ]
     },
@@ -7003,22 +7138,38 @@
       "roles": "OWNER",
       "protected": true,
       "implementation_status": "r6b1-reward-policy-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "invitation_rewards",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_invite_rewards",
@@ -7027,22 +7178,38 @@
       "roles": "OWNER",
       "protected": true,
       "implementation_status": "r6b2-reward-delivery-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "invitation_rewards",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_knowledge_answer",
@@ -7648,6 +7815,21 @@
             "normal",
             "unauthorized"
           ]
+        },
+        {
+          "suite": "invitation_rewards",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
         }
       ]
     },
@@ -7835,6 +8017,21 @@
         },
         {
           "suite": "exchange",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
+          "suite": "invitation_rewards",
           "defined_kinds": [
             "boundary",
             "error",
@@ -8055,6 +8252,21 @@
             "normal",
             "unauthorized"
           ]
+        },
+        {
+          "suite": "invitation_rewards",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
         }
       ]
     },
@@ -8145,22 +8357,38 @@
       "roles": "MERCHANT,STAFF",
       "protected": true,
       "implementation_status": "r6b2-reward-delivery-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "invitation_rewards",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_merchant_location",
