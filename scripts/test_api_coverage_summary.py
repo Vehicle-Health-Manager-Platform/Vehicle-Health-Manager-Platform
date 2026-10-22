@@ -278,6 +278,10 @@ class JourneySummaryTest(unittest.TestCase):
         self.expected[0]['operation'] = '/api/unknown'
         with self.assertRaises(ValueError): self.verify()
 
+    def test_journey_boolean_marker_cannot_be_replaced_with_integer(self):
+        self.report['proof']['cases'][0]['passed']=1
+        with self.assertRaises(ValueError):self.verify()
+
     def test_mysql_only_journey_requires_explicit_trusted_cleanup_scope(self):
         self.report['proof']['cleanup']={'mysql':True}
         with self.assertRaises(ValueError):self.verify()
@@ -336,12 +340,21 @@ class TrackedCoverageTest(unittest.TestCase):
         output.write_text.assert_not_called()
         summary.write_text.assert_not_called()
 
+    def test_community_images_require_response_binding_proof(self):
+        original=coverage_module.load
+        def altered(path):
+            result=original(path)
+            if path.name=='R9_A4D15_COMMUNITY_IMAGES_2026_10_22.json':
+                result['proof'].pop('actual_requests_bound_to_responses',None)
+            return result
+        with mock.patch.object(coverage_module,'load',side_effect=altered),self.assertRaises(ValueError):build()
+
     def test_all_selected_repository_sources_reconcile_without_current_pass_claim(self):
         result = build()
         self.assertEqual(352, result['counts']['contract_operations'])
-        self.assertEqual(28, result['counts']['suites'])
-        self.assertEqual(291, result['counts']['historical_four_kind_operations'])
-        self.assertEqual(61, result['counts']['without_complete_historical_evidence'])
+        self.assertEqual(29, result['counts']['suites'])
+        self.assertEqual(302, result['counts']['historical_four_kind_operations'])
+        self.assertEqual(50, result['counts']['without_complete_historical_evidence'])
         self.assertFalse(result['full_api_acceptance_passed'])
         self.assertEqual(result, json.loads(OUTPUT.read_text(encoding='utf-8')))
         self.assertEqual(render(result), SUMMARY.read_text(encoding='utf-8'))

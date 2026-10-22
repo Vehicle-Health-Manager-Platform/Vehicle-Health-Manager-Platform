@@ -135,3 +135,5 @@
 - [R7c1 本地验收](LOCAL_R7C1_NOTIFICATIONS_ACCEPTANCE.md)：本地阶段，整R7完成后代码与文档统一上传。
 
 - [R7c2 本地验收](LOCAL_R7C2_DIAGNOSIS_ACCEPTANCE.md)：本地完成，整R7完成后代码与文档统一上传。
+
+- [A4d15 社区图片真实验收](../progress/R9_A4D15_COMMUNITY_IMAGES_EXECUTION.md)：11接口/85请求，12不变量，元数据、审核、撤回与旧ID失效；真实存储与扫描引擎、明确合成身份/支付/扫描库边界。
