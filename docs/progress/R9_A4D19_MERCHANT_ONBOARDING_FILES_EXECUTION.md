@@ -23,7 +23,7 @@
 - 业务请求 12 个、1 个接口四类覆盖，0 失败；验收说明见 `docs/testing/MERCHANT_ONBOARDING_PRIVATE_FILES_ACCEPTANCE.md`。
 - 11 项检查（3 个 CLEAN 上传、文件归属申请人、两份申请、快照精确、每申请人一份、未激活门店、跨申请零引用、去签名/篡改/过期拒绝、租期有界）全部为真。
 - 自有 MySQL / ClamAV / MinIO / 初始化容器与网络实际移除，源码哈希执行前后一致。
-- 回归：同一 maven 调用的 `MerchantOnboardingHttpTest`(6)、`MerchantOnboardingMySqlTest`(9) 全部通过；Python 侧 113 项相关回归通过（78 项执行器单测 + 32 项覆盖核对 + 3 项清理证据）。
+- 回归：同一 maven 调用的 `MerchantOnboardingHttpTest`(6)、`MerchantOnboardingMySqlTest`(9) 全部通过；Python 侧 125 项相关回归通过（78 项执行器单测 + 32 项覆盖核对 + 3 项清理证据 + 6 项 CI 构建证据 + 6 项隔离旅程）。
 - 覆盖核对：33 套所选记录、352 项契约中 314 项具备完整四类历史证据、缺口 38 项；全 API 验收仍为 false。
 
 ## 下一阶段与边界
