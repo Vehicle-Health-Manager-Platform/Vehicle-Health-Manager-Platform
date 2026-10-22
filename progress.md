@@ -566,3 +566,16 @@ run_reward_acceptance --docker通过，281.36秒：144HTTP/14接口四类，17�
 
 
 阶段已上传[草稿PR209](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/209)，实现提交 `3895f3d`，base=`codex/r9-a4d17-coupon-catalog`，依赖PR208；远程CI已触发，结果以PR实际检查为准，未合并。
+
+
+## A4d19 开始
+
+已建 codex/r9-a4d19-onboarding-files；先核对覆盖缺口清单确认入驻附件授权访问是唯一未覆盖的入驻读接口，再读通 MerchantOnboardingAdminController.access、MerchantOnboarding.fileOwner 与 MerchantOnboardingInput 的校验边界，准备独立合成申请的 HTTP 旅程。
+
+
+## A4d19 本地完成
+
+307.395秒实际PASS：1接口12业务请求四类覆盖/0失败，11项检查全真；3次真实上传CLEAN且只归属申请人，两份申请快照精确、跨申请零引用且未激活门店；签名下载逐字节一致，去签名/篡改/6.1秒过期均403。源码一致且4容器与网络移除，同批回归15项Java与125项Python通过。历史覆盖314/352，缺口38。
+
+
+阶段已上传[草稿PR210](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/210)，实现提交 `a1ea4ad`，base=`codex/r9-a4d18-auth-sessions`，依赖PR209；远程CI已触发，结果以PR实际检查为准，未合并。
