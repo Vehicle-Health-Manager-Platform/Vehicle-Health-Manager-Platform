@@ -266,6 +266,26 @@ class CoverageSummaryTest(unittest.TestCase):
         with self.assertRaises(ValueError):verify()
 
 
+    def test_auth_sessions_require_binding_concurrency_and_each_invariant(self):
+        from auth_sessions_api_cases import CHECKS
+        report=copy.deepcopy(self.report)
+        for suffix in ('collection_sha256','newman_exit_code','evidence'):
+            report['auth_sessions_'+suffix]=report.pop('tiny_'+suffix)
+        report['auth_sessions_evidence']['auth_request_bindings_verified']=True
+        report['auth_sessions_database']={'checks':{k:True for k in CHECKS},'concurrent_refresh_requests':2,'additional_http_requests':7}
+        verify=lambda:newman_evidence('auth_sessions',self.manifest,self.collection,'b'*64,report,self.catalog)
+        self.assertEqual(self.coverage,verify()[1]);original=copy.deepcopy(report)
+        for key in CHECKS:
+            for value in (False,1):
+                report.clear();report.update(copy.deepcopy(original));report['auth_sessions_database']['checks'][key]=value
+                with self.subTest(key=key,value=value),self.assertRaises(ValueError):verify()
+        for key in ('concurrent_refresh_requests','additional_http_requests'):
+            report.clear();report.update(copy.deepcopy(original));report['auth_sessions_database'][key]=0
+            with self.assertRaises(ValueError):verify()
+        report.clear();report.update(copy.deepcopy(original));report['auth_sessions_evidence'].pop('auth_request_bindings_verified')
+        with self.assertRaises(ValueError):verify()
+
+
 class JourneySummaryTest(unittest.TestCase):
     def setUp(self):
         self.catalog = {'read': {'method': 'GET', 'path': '/api/file/{id}/access'}}
@@ -388,9 +408,9 @@ class TrackedCoverageTest(unittest.TestCase):
     def test_all_selected_repository_sources_reconcile_without_current_pass_claim(self):
         result = build()
         self.assertEqual(352, result['counts']['contract_operations'])
-        self.assertEqual(31, result['counts']['suites'])
-        self.assertEqual(310, result['counts']['historical_four_kind_operations'])
-        self.assertEqual(42, result['counts']['without_complete_historical_evidence'])
+        self.assertEqual(32, result['counts']['suites'])
+        self.assertEqual(313, result['counts']['historical_four_kind_operations'])
+        self.assertEqual(39, result['counts']['without_complete_historical_evidence'])
         self.assertFalse(result['full_api_acceptance_passed'])
         self.assertEqual(result, json.loads(OUTPUT.read_text(encoding='utf-8')))
         self.assertEqual(render(result), SUMMARY.read_text(encoding='utf-8'))

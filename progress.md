@@ -553,3 +553,13 @@ run_reward_acceptance --docker通过，281.36秒：144HTTP/14接口四类，17�
 
 
 阶段已上传[草稿PR208](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/208)，实现提交 `aabe4b9`，base=`codex/r9-a4d16-relations-price-reads`，依赖PR207；远程CI已触发，结果以PR实际检查为准，未合并。
+
+
+## A4d18 开始
+
+已建 codex/r9-a4d18-auth-sessions；PR208部分CI成功，后端及性能仍运行。读取生产认证与会话实现，准备独立合成会话HTTP验收。
+
+
+## A4d18 本地完成
+
+214.766秒实际PASS：4接口45请求/149断言、338匿名/1014断言，13不变量及89项相关Python回归通过；额外7次HTTP验证并发刷新单次成功及退出失效。源码一致、资源清理且公开报告不含凭证。历史覆盖313/352，缺口39；准备上传依赖PR208的阶段草稿PR。

@@ -7,11 +7,11 @@
   "counts": {
     "contract_operations": 352,
     "protected_operations": 338,
-    "four_kind_definitions": 310,
-    "historical_four_kind_operations": 310,
-    "without_complete_historical_evidence": 42,
+    "four_kind_definitions": 313,
+    "historical_four_kind_operations": 313,
+    "without_complete_historical_evidence": 39,
     "current_run_operations": 0,
-    "suites": 31
+    "suites": 32
   },
   "suites": [
     {
@@ -23,6 +23,17 @@
         "docs/testing/postman/assessment-case-manifest.json": "e34b4ae7fc277a16452ca8f2470264caa73f0a214314a252d36a123acbdc535d",
         "docs/testing/postman/assessment-cases.postman_collection.json": "75b8205674b3e3294175ddd5991b8fbd011b871b30dd5c66e713b37bf245b084",
         "docs/testing/reports/R9_A4D10_ASSESSMENT_READS_2026_10_21.json": "1d072eec168ba01dbb51cdf5e7095c430c18bbb5f2c1f478b485fdedcbb8976b"
+      }
+    },
+    {
+      "name": "auth_sessions",
+      "type": "postman",
+      "evidence_status": "HISTORICAL_RECONCILED",
+      "recorded_source_sha256": "55aa3184f7959d6ab8ee592ef7257f0a1e1de54695a444ef9e40d4170070ffd2",
+      "inputs": {
+        "docs/testing/postman/auth-sessions-case-manifest.json": "64f120b5798bd7d709fda6dc73999ffc1e6400e0b0774ded83ba09e1a33d6e9d",
+        "docs/testing/postman/auth-sessions-cases.postman_collection.json": "974715261bf9321f9bb4fb380938adbf056b8fe46b70d64b5e9d59de3117ff1d",
+        "docs/testing/reports/R9_A4D18_AUTH_SESSIONS_2026_10_22.json": "f5fec5b060c8385c4c2b956ea4c8b2c0244bd2c17c327d0f2a130e8125a03340"
       }
     },
     {
@@ -5334,22 +5345,38 @@
       "roles": "车主/商家/技师",
       "protected": true,
       "implementation_status": "core-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "auth_sessions",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_auth_merchant_code",
@@ -5454,22 +5481,38 @@
       "roles": "OPERATOR",
       "protected": true,
       "implementation_status": "operator-auth-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "auth_sessions",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_auth_phone_bind",
@@ -5502,22 +5545,38 @@
       "roles": "车主/商家/技师",
       "protected": false,
       "implementation_status": "core-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "auth_sessions",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_auth_sms_code",
@@ -14799,6 +14858,21 @@
       "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
       "sources": [
+        {
+          "suite": "auth_sessions",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
         {
           "suite": "owner",
           "defined_kinds": [

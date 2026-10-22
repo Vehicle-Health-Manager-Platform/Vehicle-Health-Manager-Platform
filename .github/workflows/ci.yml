@@ -122,6 +122,8 @@ jobs:
         run: python scripts/run_api_acceptance.py --ci-built-jar --dispute-cases
       - name: Assessment policy monthly settlement and business dashboard
         run: python scripts/run_api_acceptance.py --ci-built-jar --assessment-cases
+      - name: Session rotation revocation and concurrent refresh
+        run: python scripts/run_api_acceptance.py --ci-built-jar --auth-sessions-cases
       - name: Coupon catalog frozen draft revisions and offers eligibility
         run: python scripts/run_api_acceptance.py --ci-built-jar --coupon-catalog-cases
       - name: Store-local customer relations and conservative price comparison reads
@@ -225,6 +227,8 @@ jobs:
       - run: python -m unittest discover -s scripts -p test_plan_evidence_api_cases.py -v
       - run: python scripts/fulfillment_reads_api_cases.py
       - run: python -m unittest discover -s scripts -p test_fulfillment_reads_api_cases.py -v
+      - run: python scripts/auth_sessions_api_cases.py
+      - run: python -m unittest discover -s scripts -p test_auth_sessions_api_cases.py -v
       - run: python scripts/coupon_catalog_api_cases.py
       - run: python -m unittest discover -s scripts -p test_coupon_catalog_api_cases.py -v
       - run: python scripts/relations_price_api_cases.py

@@ -141,3 +141,5 @@
 - [A4d16 客户关系与价格比较](../progress/R9_A4D16_RELATIONS_PRICE_READS_EXECUTION.md)：4接口/58请求，门店隐私、稳定锚点、UNKNOWN判定与13表内容不变。
 
 - [A4d17 券清单与草稿修订](../progress/R9_A4D17_COUPON_CATALOG_EXECUTION.md)：4个新增证据接口，9接口旅程/96请求，发布冻结、领取去重与退池/停用。
+
+- [A4d18 认证会话](../progress/R9_A4D18_AUTH_SESSIONS_EXECUTION.md)：3个新增证据接口，45请求、失败回滚、双请求刷新单次成功及退出失效，公开证据不含凭证。
