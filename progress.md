@@ -641,3 +641,6 @@ run_reward_acceptance --docker通过，281.36秒：144HTTP/14接口四类，17�
 ## A4d24 本地完成
 
 小程序单测 1024/1024（新增/更新 2 项）；微信与 H5 构建均 DONE；6 组商家/角色文案在编译后 wxml 为 0 次、映射模块里存在。不在前端阻止核销（后端守卫是唯一权威）。接口与覆盖数字未变（316/352，缺口 36）。
+
+
+阶段已上传[草稿PR215](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/215)，实现提交 `0641389`，base=`codex/r9-a4d23-delivery-compare-page`，依赖PR214；远程CI已触发，结果以PR实际检查为准，未合并。

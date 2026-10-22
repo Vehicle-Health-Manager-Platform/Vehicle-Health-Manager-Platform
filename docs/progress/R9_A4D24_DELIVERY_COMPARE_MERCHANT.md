@@ -29,3 +29,6 @@ R7a 的取车对比已形成"后端 + 车主页 + 商家核销前核对"闭环�
 3. 剩余 5 项 `not-implemented` 中可离线实现的部分（当前都已判断为核心依赖外部条件）。
 
 **未执行**：开发者工具与真机走查、视觉回归、真实账号登录；未接入"核销前强制确认已看对比"（当前无此业务要求）。接口与覆盖数字未变（316/352，缺口 36）。新 PR 的 GitHub CI 状态以该 PR 实际结果为准。
+
+
+阶段已上传[草稿PR215](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/215)，实现提交 `0641389`，base=`codex/r9-a4d23-delivery-compare-page`，依赖PR214；远程CI已触发，结果以PR实际检查为准，未合并。
