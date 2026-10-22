@@ -42,3 +42,6 @@
 3. OCR/VIN、真实渠道回调、云托管登录继续等外部条件，不以夹具冒充。
 
 本阶段夹具为合成订单、接车单、防护与报工证据；无图像识别、无仪表盘 OCR，未做真机与页面渲染验收。新 PR 的 GitHub CI 状态以该 PR 实际结果为准。
+
+
+阶段已上传[草稿PR213](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/213)，实现提交 `5f22023`，base=`codex/r9-a4d21-contract-verdicts`，依赖PR212；远程CI已触发，结果以PR实际检查为准，未合并。

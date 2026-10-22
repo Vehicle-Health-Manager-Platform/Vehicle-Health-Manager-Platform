@@ -615,3 +615,6 @@ run_reward_acceptance --docker通过，281.36秒：144HTTP/14接口四类，17�
 ## A4d22 本地完成
 
 319.130秒实际PASS：16业务请求/60断言/1接口四类，338匿名/1014断言，13项不变量全真（12表摘要不变 + delivery_compare 0行）。缺口逐项算出（[OWNER_CONFIRM,PROTECTION_PHOTO,FINISH,FAULT]），已完成订单可回看不可交付，无接车单 409 43001。契约改真实 schema 并去掉幂等键要求。历史覆盖316/352，缺口36。
+
+
+阶段已上传[草稿PR213](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/213)，实现提交 `5f22023`，base=`codex/r9-a4d21-contract-verdicts`，依赖PR212；远程CI已触发，结果以PR实际检查为准，未合并。
