@@ -7,11 +7,11 @@
   "counts": {
     "contract_operations": 352,
     "protected_operations": 338,
-    "four_kind_definitions": 277,
-    "historical_four_kind_operations": 277,
-    "without_complete_historical_evidence": 75,
+    "four_kind_definitions": 283,
+    "historical_four_kind_operations": 283,
+    "without_complete_historical_evidence": 69,
     "current_run_operations": 0,
-    "suites": 26
+    "suites": 27
   },
   "suites": [
     {
@@ -199,6 +199,17 @@
         "docs/testing/postman/owner-case-manifest.json": "d3f3ee13d2177e0f6081b864cb2ab227faee49e24888b29978ce7274ddc9e801",
         "docs/testing/postman/owner-cases.postman_collection.json": "7950c48e6f5198b645701a2ef60f362fc3a286c944e59908dd409f8a5d7e134c",
         "docs/testing/reports/R9_A4D2A_OWNER_API_CASES_2026_10_19.json": "863316104af12fed646890467336fc1b0732e192ade130bedbf0e213e1c56000"
+      }
+    },
+    {
+      "name": "plan_evidence",
+      "type": "postman",
+      "evidence_status": "HISTORICAL_RECONCILED",
+      "recorded_source_sha256": "8a29d2b43f4161a63a2f154c748c3146def866ae3e229c7987c0c98dab92606a",
+      "inputs": {
+        "docs/testing/postman/plan-evidence-case-manifest.json": "e24a09f1e4ae907d1b64b24cd07d1611883f50d12645c86b0bbd0d88c622622c",
+        "docs/testing/postman/plan-evidence-cases.postman_collection.json": "91612974de4afcf2d0c7f995a7867aa22e99e88ddd040c1b5178e2ef3177bf42",
+        "docs/testing/reports/R9_A4D13_PLAN_EVIDENCE_2026_10_22.json": "4b6078b24a87dec18d166634c6583d9778ecf4a66b5d7089eac554ab9cee1e74"
       }
     },
     {
@@ -3955,22 +3966,38 @@
       "roles": "OPERATOR(can_catalog)",
       "protected": true,
       "implementation_status": "vehicle-plan-evidence-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "plan_evidence",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "put_api_admin_project_applicability_project_model",
@@ -3979,22 +4006,38 @@
       "roles": "OPERATOR(can_catalog)",
       "protected": true,
       "implementation_status": "vehicle-plan-evidence-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "plan_evidence",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_admin_reconciliation",
@@ -4179,22 +4222,38 @@
       "roles": "OWNER",
       "protected": true,
       "implementation_status": "catalog-based-service-plan-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "plan_evidence",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_ai_service_plan_catalog",
@@ -4203,22 +4262,38 @@
       "roles": "OWNER",
       "protected": true,
       "implementation_status": "catalog-based-service-plan-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "plan_evidence",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_ai_service_plan_vehicle_evidence",
@@ -4227,22 +4302,38 @@
       "roles": "OWNER",
       "protected": true,
       "implementation_status": "vehicle-plan-evidence-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "plan_evidence",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_archive_add",
@@ -9249,6 +9340,21 @@
           ]
         },
         {
+          "suite": "plan_evidence",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "workflow",
           "defined_kinds": [
             "boundary",
@@ -10029,22 +10135,38 @@
       "roles": "OWNER",
       "protected": true,
       "implementation_status": "plan-booking-context-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "plan_evidence",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_order_quote_id",

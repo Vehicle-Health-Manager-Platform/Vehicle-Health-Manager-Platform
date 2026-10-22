@@ -1,0 +1,708 @@
+{
+  "version": 1,
+  "cases": 70,
+  "operations": 7,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "rule_initial",
+      "method": "GET",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "get_api_admin_project_applicability_project_model",
+      "kind": "normal",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 4
+    },
+    {
+      "name": "rule_initial_boundary",
+      "method": "GET",
+      "path": "/api/admin/project-applicability/999999/1",
+      "operation_id": "get_api_admin_project_applicability_project_model",
+      "kind": "boundary",
+      "status": 404,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "rule_initial_error",
+      "method": "GET",
+      "path": "/api/admin/project-applicability/1/0",
+      "operation_id": "get_api_admin_project_applicability_project_model",
+      "kind": "error",
+      "status": 400,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "rule_initial_anonymous",
+      "method": "GET",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "get_api_admin_project_applicability_project_model",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "rule_initial_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "get_api_admin_project_applicability_project_model",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "rule_read_no_permission",
+      "method": "GET",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "get_api_admin_project_applicability_project_model",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "plain",
+      "assertions": 3
+    },
+    {
+      "name": "plan_catalog",
+      "method": "GET",
+      "path": "/api/ai/service-plan/catalog",
+      "operation_id": "get_api_ai_service_plan_catalog",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "plan_catalog_error",
+      "method": "GET",
+      "path": "/api/ai/service-plan/catalog",
+      "operation_id": "get_api_ai_service_plan_catalog",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "plan_catalog_anonymous",
+      "method": "GET",
+      "path": "/api/ai/service-plan/catalog",
+      "operation_id": "get_api_ai_service_plan_catalog",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "plan_catalog_wrong_role",
+      "method": "GET",
+      "path": "/api/ai/service-plan/catalog",
+      "operation_id": "get_api_ai_service_plan_catalog",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "plan_catalog_repeat",
+      "method": "GET",
+      "path": "/api/ai/service-plan/catalog",
+      "operation_id": "get_api_ai_service_plan_catalog",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "manual_plan",
+      "method": "POST",
+      "path": "/api/ai/service-plan",
+      "operation_id": "post_api_ai_service_plan",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "manual_plan_boundary",
+      "method": "POST",
+      "path": "/api/ai/service-plan",
+      "operation_id": "post_api_ai_service_plan",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "manual_plan_invalid",
+      "method": "POST",
+      "path": "/api/ai/service-plan",
+      "operation_id": "post_api_ai_service_plan",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "manual_plan_anonymous",
+      "method": "POST",
+      "path": "/api/ai/service-plan",
+      "operation_id": "post_api_ai_service_plan",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "manual_plan_wrong_role",
+      "method": "POST",
+      "path": "/api/ai/service-plan",
+      "operation_id": "post_api_ai_service_plan",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "plan_consent",
+      "method": "POST",
+      "path": "/api/ai/service-plan",
+      "operation_id": "post_api_ai_service_plan",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "plan_duplicate",
+      "method": "POST",
+      "path": "/api/ai/service-plan",
+      "operation_id": "post_api_ai_service_plan",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "plan_long_question",
+      "method": "POST",
+      "path": "/api/ai/service-plan",
+      "operation_id": "post_api_ai_service_plan",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "plan_injected",
+      "method": "POST",
+      "path": "/api/ai/service-plan",
+      "operation_id": "post_api_ai_service_plan",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "plan_inactive_project",
+      "method": "POST",
+      "path": "/api/ai/service-plan",
+      "operation_id": "post_api_ai_service_plan",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "vehicle_unknown",
+      "method": "POST",
+      "path": "/api/ai/service-plan/vehicle-evidence",
+      "operation_id": "post_api_ai_service_plan_vehicle_evidence",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "vehicle_unknown_boundary",
+      "method": "POST",
+      "path": "/api/ai/service-plan/vehicle-evidence",
+      "operation_id": "post_api_ai_service_plan_vehicle_evidence",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "vehicle_unknown_invalid",
+      "method": "POST",
+      "path": "/api/ai/service-plan/vehicle-evidence",
+      "operation_id": "post_api_ai_service_plan_vehicle_evidence",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "vehicle_unknown_anonymous",
+      "method": "POST",
+      "path": "/api/ai/service-plan/vehicle-evidence",
+      "operation_id": "post_api_ai_service_plan_vehicle_evidence",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "vehicle_unknown_wrong_role",
+      "method": "POST",
+      "path": "/api/ai/service-plan/vehicle-evidence",
+      "operation_id": "post_api_ai_service_plan_vehicle_evidence",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "vehicle_foreign",
+      "method": "POST",
+      "path": "/api/ai/service-plan/vehicle-evidence",
+      "operation_id": "post_api_ai_service_plan_vehicle_evidence",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "vehicle_duplicate_projects",
+      "method": "POST",
+      "path": "/api/ai/service-plan/vehicle-evidence",
+      "operation_id": "post_api_ai_service_plan_vehicle_evidence",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "vehicle_query_injection",
+      "method": "POST",
+      "path": "/api/ai/service-plan/vehicle-evidence",
+      "operation_id": "post_api_ai_service_plan_vehicle_evidence",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "rule_applicable",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "kind": "normal",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 5
+    },
+    {
+      "name": "rule_applicable_replay",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "kind": "boundary",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 4
+    },
+    {
+      "name": "rule_applicable_malformed",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "kind": "error",
+      "status": 400,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "rule_applicable_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "rule_applicable_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "rule_write_no_permission",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "plain",
+      "assertions": 3
+    },
+    {
+      "name": "rule_stale",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "kind": "error",
+      "status": 409,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "rule_changed_intent",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "kind": "error",
+      "status": 400,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "vehicle_applicable",
+      "method": "POST",
+      "path": "/api/ai/service-plan/vehicle-evidence",
+      "operation_id": "post_api_ai_service_plan_vehicle_evidence",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "same_series_different_model",
+      "method": "POST",
+      "path": "/api/ai/service-plan/vehicle-evidence",
+      "operation_id": "post_api_ai_service_plan_vehicle_evidence",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "rule_not_applicable",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "kind": "normal",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 5
+    },
+    {
+      "name": "rule_not_applicable_replay",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "kind": "boundary",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 4
+    },
+    {
+      "name": "rule_not_applicable_malformed",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "kind": "error",
+      "status": 400,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "rule_not_applicable_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "rule_not_applicable_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "vehicle_not_applicable",
+      "method": "POST",
+      "path": "/api/ai/service-plan/vehicle-evidence",
+      "operation_id": "post_api_ai_service_plan_vehicle_evidence",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "rule_withdraw",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "kind": "normal",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 5
+    },
+    {
+      "name": "rule_withdraw_replay",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "kind": "boundary",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 4
+    },
+    {
+      "name": "rule_withdraw_malformed",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "kind": "error",
+      "status": 400,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "rule_withdraw_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "rule_withdraw_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "rule_reuse_old_version",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "kind": "error",
+      "status": 409,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "rule_withdraw_with_source",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "kind": "error",
+      "status": 400,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "rule_old_receipt",
+      "method": "PUT",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "put_api_admin_project_applicability_project_model",
+      "kind": "boundary",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 4
+    },
+    {
+      "name": "rule_final",
+      "method": "GET",
+      "path": "/api/admin/project-applicability/1/1",
+      "operation_id": "get_api_admin_project_applicability_project_model",
+      "kind": "normal",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 4
+    },
+    {
+      "name": "vehicle_after_old_receipt",
+      "method": "POST",
+      "path": "/api/ai/service-plan/vehicle-evidence",
+      "operation_id": "post_api_ai_service_plan_vehicle_evidence",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "plan_slot",
+      "method": "POST",
+      "path": "/api/merchant/slots",
+      "operation_id": "post_api_merchant_slots",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "plan_slot_replay",
+      "method": "POST",
+      "path": "/api/merchant/slots",
+      "operation_id": "post_api_merchant_slots",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "plan_slot_malformed",
+      "method": "POST",
+      "path": "/api/merchant/slots",
+      "operation_id": "post_api_merchant_slots",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "plan_slot_anonymous",
+      "method": "POST",
+      "path": "/api/merchant/slots",
+      "operation_id": "post_api_merchant_slots",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "plan_slot_wrong_role",
+      "method": "POST",
+      "path": "/api/merchant/slots",
+      "operation_id": "post_api_merchant_slots",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "booking_context",
+      "method": "POST",
+      "path": "/api/order/plan-booking-context",
+      "operation_id": "post_api_order_plan_booking_context",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "booking_context_boundary",
+      "method": "POST",
+      "path": "/api/order/plan-booking-context",
+      "operation_id": "post_api_order_plan_booking_context",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "booking_context_invalid",
+      "method": "POST",
+      "path": "/api/order/plan-booking-context",
+      "operation_id": "post_api_order_plan_booking_context",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "booking_context_anonymous",
+      "method": "POST",
+      "path": "/api/order/plan-booking-context",
+      "operation_id": "post_api_order_plan_booking_context",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "booking_context_wrong_role",
+      "method": "POST",
+      "path": "/api/order/plan-booking-context",
+      "operation_id": "post_api_order_plan_booking_context",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "booking_foreign_vehicle",
+      "method": "POST",
+      "path": "/api/order/plan-booking-context",
+      "operation_id": "post_api_order_plan_booking_context",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "booking_project_mismatch",
+      "method": "POST",
+      "path": "/api/order/plan-booking-context",
+      "operation_id": "post_api_order_plan_booking_context",
+      "kind": "error",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "booking_bad_page",
+      "method": "POST",
+      "path": "/api/order/plan-booking-context",
+      "operation_id": "post_api_order_plan_booking_context",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "booking_unknown_selected",
+      "method": "POST",
+      "path": "/api/order/plan-booking-context",
+      "operation_id": "post_api_order_plan_booking_context",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "booking_query",
+      "method": "POST",
+      "path": "/api/order/plan-booking-context",
+      "operation_id": "post_api_order_plan_booking_context",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    }
+  ]
+}

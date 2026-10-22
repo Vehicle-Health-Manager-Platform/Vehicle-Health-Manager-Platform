@@ -32,6 +32,7 @@ POSTMAN = {
     'assessment': 'R9_A4D10_ASSESSMENT_READS_2026_10_21.json',
     'governance': 'R9_A4D11_CATALOG_GOVERNANCE_2026_10_21.json',
     'fulfillment_reads': 'R9_A4D12_FULFILLMENT_READS_2026_10_22.json',
+    'plan_evidence': 'R9_A4D13_PLAN_EVIDENCE_2026_10_22.json',
 }
 JOURNEYS = {
     'upload': ('run_upload_acceptance', 'R9_A4D2E2B_PRIVATE_UPLOAD_API_2026_10_19.json'),
@@ -44,6 +45,7 @@ FINANCE_CHECKS = set('payment_recovered_once invalid_amount_not_paid one_recover
 WORKFLOW_CHECKS = set('six_unique_order_events outbox_delivered exact_recipient_fanout three_read_notifications three_read_audits no_foreign_notifications'.split())
 DISPUTE_CHECKS = set('resolved_once four_append_only_records original_received_state one_open_and_resume_transition resolution_confirmed five_dispute_audits eleven_unique_events exact_notification_fanout no_foreign_dispute'.split())
 FULFILLMENT_READ_CHECKS = set('single_closed_slot closure_audited_once one_published_slot no_foreign_slots accepted_assignment_preserved completed_order_keeps_slot'.split())
+PLAN_CHECKS = set('withdrawn_rule_keeps_version three_rule_audits four_receipts one_slot no_orders_or_payments no_observation_inference no_private_source_writes no_foreign_rule registered_vehicle_unchanged'.split())
 OUTPUT = ROOT / 'docs/testing/api-coverage.json'
 SUMMARY = ROOT / 'docs/testing/API_COVERAGE.md'
 
@@ -179,6 +181,12 @@ def newman_evidence(suite, manifest, collection, collection_hash, report, catalo
         completed = report.get('fulfillment_reads_database', {}).get('checks', {})
         require(set(completed) == set('order_completed local_payment_only redemption_test_mode report_signed foreign_vehicle_unchanged no_foreign_orders'.split()) and
                 all(v is True for v in completed.values()), 'Fulfillment completion evidence incomplete')
+    if suite == 'plan_evidence':
+        require(evidence.get('plan_request_intents_verified') is True,
+                'Plan consent/version/date/write intent evidence missing')
+        checks = report.get('plan_evidence_database', {}).get('checks', {})
+        require(set(checks) == PLAN_CHECKS and all(v is True for v in checks.values()),
+                'Plan applicability/read-only invariants incomplete')
     return definitions, definitions
 
 
