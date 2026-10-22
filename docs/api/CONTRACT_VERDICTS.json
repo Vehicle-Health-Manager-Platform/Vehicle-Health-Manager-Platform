@@ -1,0 +1,206 @@
+{
+  "version": 1,
+  "scope": "每一个没有四类历史证据的契约操作,必须在这里给出唯一结论之一:已被具名实现替代、由服务内部事务完成、依赖外部上游、尚未实现、实现无成功路径、仅本地演示。本文件不含证据,只做结案登记;证据仍在 docs/testing/API_COVERAGE.md。",
+  "verdicts": [
+    {
+      "operation": "GET /api/admin/assessment",
+      "verdict": "superseded",
+      "replacement": "GET /api/admin/assessment/snapshots",
+      "reason": "早期\"考核列表\"占位。现行读取是月结快照列表(含 policy_snapshot 与 UNKNOWN 摘要),政策与事实明细各有独立入口。"
+    },
+    {
+      "operation": "GET /api/admin/dashboard",
+      "verdict": "superseded",
+      "replacement": "GET /api/admin/business/dashboard",
+      "reason": "运营看板已由 R8b3a 的经营看板接口承担,含授权运营口径与空月份处理。"
+    },
+    {
+      "operation": "POST /api/admin/merchant/audit",
+      "verdict": "superseded",
+      "replacement": "POST /api/admin/merchant-applications/{id}/moderate",
+      "reason": "商家审核已收敛到入驻申请审核:带 revision 乐观锁、固定驳回码、单事务开店。早期\"audit\"占位不含任何入参定义。"
+    },
+    {
+      "operation": "GET /api/admin/standard-project",
+      "verdict": "superseded",
+      "replacement": "GET /api/admin/catalog/{kind}",
+      "reason": "标准项目读写并入目录治理(kind=standard-project),新增只写草稿、修订带 revision。"
+    },
+    {
+      "operation": "POST /api/ai/plan",
+      "verdict": "superseded",
+      "replacement": "POST /api/ai/service-plan",
+      "reason": "AI 方案改为基于目录与车辆证据的保守方案接口;该占位无请求/响应定义。"
+    },
+    {
+      "operation": "POST /api/coupon/reserve",
+      "verdict": "superseded",
+      "replacement": "POST /api/order/coupon-create",
+      "reason": "券与订单的冻结改为\"订单/时段/单券原子冻结创建\",在创建订单时一次完成,不再有先 reserve 再下单的两步路径。"
+    },
+    {
+      "operation": "GET /api/home/dashboard",
+      "verdict": "superseded",
+      "replacement": "GET /api/vehicle/{vehicle}/health-dashboard",
+      "reason": "车主首页数据由健康驾驶舱按车辆提供;早期\"首页驾驶舱\"无字段定义,且与车辆维度冲突。"
+    },
+    {
+      "operation": "GET /api/home/reminders",
+      "verdict": "superseded",
+      "replacement": "GET /api/vehicle/reminders",
+      "reason": "强提醒流由车辆提醒接口承担,偏好另有 reminder-preference;单条手写提醒在 /api/archive/{id}/reminder。"
+    },
+    {
+      "operation": "POST /api/merchant/apply",
+      "verdict": "superseded",
+      "replacement": "POST /api/merchant-applications",
+      "reason": "入驻申请改为独立资源:严格六字段、资质文件快照、一个申请人一行并可重提。"
+    },
+    {
+      "operation": "GET /api/merchant/{id}",
+      "verdict": "superseded",
+      "replacement": "GET /api/service/merchant/{id}",
+      "reason": "公开商家详情走 service 前缀,并区分距离与附近商家;该占位没有身份与字段口径。"
+    },
+    {
+      "operation": "GET /api/merchant/{id}/reviews/summary",
+      "verdict": "superseded",
+      "replacement": "POST /api/service/merchant/{id}/review-summary",
+      "reason": "评价摘要改为独立资源并以车主授权快照为前提;另有 ratings 提供星级报价聚合。"
+    },
+    {
+      "operation": "GET /api/notifications",
+      "verdict": "superseded",
+      "replacement": "GET /api/owner/notifications",
+      "reason": "通知按收件角色拆分(owner/merchant/tech 与 diagnosis 两类),避免单入口混合三类投影与已读状态。"
+    },
+    {
+      "operation": "POST /api/order/verify",
+      "verdict": "superseded",
+      "replacement": "POST /api/merchant/orders/{id}/redeem",
+      "reason": "核销改为本店商家对订单的显式核销,带幂等键与免佣事实;早期 verify 只有 order_id/verify_code 两个字段。"
+    },
+    {
+      "operation": "POST /api/refunds/create",
+      "verdict": "superseded",
+      "replacement": "POST /api/order/{id}/refund",
+      "reason": "退款申请改为订单维度资源,含撤销、商家决策与与支付对账,不再是独立 create。"
+    },
+    {
+      "operation": "POST /api/auth/staff-login",
+      "verdict": "superseded",
+      "replacement": "POST /api/auth/merchant/login",
+      "reason": "店员/技师不再有独立账号密码登录:店主走 merchant/login,技师走工号绑定(technician/bind)。"
+    },
+    {
+      "operation": "POST /api/coupon/release",
+      "verdict": "internal-only",
+      "reason": "订单取消/退款时的券释放由事务内的 CouponRecovery 完成,不存在独立 HTTP 入口;单独暴露会被滥用为手动改券状态。"
+    },
+    {
+      "operation": "GET /api/admin/reconciliation",
+      "verdict": "not-implemented",
+      "reason": "按日按渠道的本地/渠道金额差异报表未实现;目前只有单笔支付的 /api/payments/{id}/reconcile。需要财务口径与渠道账单来源后才能立项。"
+    },
+    {
+      "operation": "POST /api/auth/cloud-login",
+      "verdict": "not-implemented",
+      "reason": "云托管登录只有 SecurityConfig 的 permitAll 占位,没有控制器;正式登录走 wx-login/手机号绑定。"
+    },
+    {
+      "operation": "POST /api/check/delivery/compare",
+      "verdict": "not-implemented",
+      "reason": "取车对比(交车前后的车况比对)未实现;现有附件与接车检查不含该聚合。"
+    },
+    {
+      "operation": "GET /api/vehicle/ocr-license",
+      "verdict": "not-implemented",
+      "reason": "行驶证 OCR 未实现,需要外部 OCR 供应商与合规存储方案;当前车辆信息由车主手填。"
+    },
+    {
+      "operation": "GET /api/vehicle/vin-decode",
+      "verdict": "not-implemented",
+      "reason": "VIN 解码未实现,需要外部 VIN 库供应商;车型由品牌/车系/配置枚举录入。"
+    },
+    {
+      "operation": "POST /api/payments/callback/{channel}",
+      "verdict": "not-implemented",
+      "reason": "真实渠道回调未接入;当前只有 LOCAL_TEST 渠道回调用于隔离验收。接入需渠道证书、验签密钥与生产商户号。"
+    },
+    {
+      "operation": "POST /api/refunds/callback/{channel}",
+      "verdict": "not-implemented",
+      "reason": "同上:退款回调只有 LOCAL_TEST,真实渠道回调未接入。"
+    },
+    {
+      "operation": "POST /api/ai/chat",
+      "verdict": "blocked-external",
+      "reason": "实现存在(AiChatController,含车辆档案上下文与积分钩子),但必须配置 DeepSeek 供应商才能返回 200;本地不可验收,也不允许用假响应替代。"
+    },
+    {
+      "operation": "POST /api/knowledge/answer",
+      "verdict": "blocked-external",
+      "reason": "实现存在(LicensedKnowledge.answer),未配置 AI 即 503,配置后需真实上游生成并复核来源未变更。"
+    },
+    {
+      "operation": "POST /api/auth/merchant/code",
+      "verdict": "blocked-external",
+      "reason": "商家登录验证码需要生产短信适配器;本地只能用已登录会话夹具,不计真实短信。"
+    },
+    {
+      "operation": "POST /api/auth/merchant/login",
+      "verdict": "blocked-external",
+      "reason": "依赖 merchant/code 下发的验证码,因此同受生产短信适配器阻塞。"
+    },
+    {
+      "operation": "POST /api/auth/operator/code",
+      "verdict": "blocked-external",
+      "reason": "运营验证码同需生产短信适配器。"
+    },
+    {
+      "operation": "POST /api/auth/operator/login",
+      "verdict": "blocked-external",
+      "reason": "依赖 operator/code 下发的验证码,同受生产短信适配器阻塞。"
+    },
+    {
+      "operation": "POST /api/auth/sms-code",
+      "verdict": "blocked-external",
+      "reason": "早期短信验证码占位,语义已被 merchant/code 与 operator/code 覆盖,且同样需要生产短信适配器。"
+    },
+    {
+      "operation": "POST /api/auth/phone/bind",
+      "verdict": "blocked-external",
+      "reason": "手机号绑定需要真实短信验证码;本地用已登录会话夹具验证绑定后的投影。"
+    },
+    {
+      "operation": "POST /api/auth/technician/bind",
+      "verdict": "blocked-external",
+      "reason": "技师绑定需要真实微信上游下发绑定凭证。"
+    },
+    {
+      "operation": "POST /api/auth/wx-login",
+      "verdict": "blocked-external",
+      "reason": "微信登录需要真实 code2session 上游;本地用自签会话夹具,不计真实微信登录。"
+    },
+    {
+      "operation": "POST /api/merchant/orders/{id}/actions",
+      "verdict": "no-success-path",
+      "reason": "四个动作分别被拦截为 43001/43004/43005/43006,未知动作 40001,没有 200 路径;已在 docs/api/MERCHANT_ORDERS.md 逐动作登记正确入口。"
+    },
+    {
+      "operation": "POST /api/dev/token",
+      "verdict": "dev-only",
+      "reason": "仅本地 profile 的演示令牌入口(SecurityConfig permitAll),不构成生产契约。"
+    },
+    {
+      "operation": "GET /api/demo/vehicles/{id}",
+      "verdict": "dev-only",
+      "reason": "本地 profile 的车辆归属校验样例,用于演示与联调,不是生产接口。"
+    },
+    {
+      "operation": "POST /api/demo/vehicles/{id}/mileage",
+      "verdict": "dev-only",
+      "reason": "本地 profile 的里程写入样例(local-example),生产里程由接车检查写入。"
+    }
+  ]
+}

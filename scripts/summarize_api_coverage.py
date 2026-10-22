@@ -332,7 +332,8 @@ def render(summary):
              '历史证据不等于当前版本重跑通过，不等于完整权限矩阵或真实身份/资金验收。',
              '匿名401不算业务四类覆盖；未列历史证据不等于功能未开发。',
              f"本工具只索引明确选定的{c['suites']}套记录，不否认其他单元、HTTP或历史验证；后续可增加经过校验的证据适配器。",
-             '全API验收仍为false。结构化来源、哈希及逐项状态见 [api-coverage.json](api-coverage.json)。', '',
+             '全API验收仍为false。结构化来源、哈希及逐项状态见 [api-coverage.json](api-coverage.json)。',
+             '下方每一项缺口的结案结论（已被替代/内部完成/外部阻塞/未实现/无成功路径/仅演示）见 [契约逐项结论](../api/CONTRACT_RECONCILIATION.md)，由 `python scripts/reconcile_contract.py` 生成。', '',
              '## 历史证据缺口（按领域分组）', '']
     groups = {}
     for row in summary['operations']:
