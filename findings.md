@@ -640,3 +640,15 @@ SQL合成13种价格来源/政策状态与23名当前客户；真实HTTP证明�
 ## A4d19 结果
 
 3个CLEAN文件全部 user 归属且无第三方行；两份申请 revision=1、快照 [1,2] 与 [3]，跨申请 JSON_CONTAINS 双向为 0；运营A三个附件均200并逐字节取回，运营B(can_review=1) 与车主/商家均403，跨申请与不存在申请均404，query/id=0 均40001。签名租期5秒、expires_at有界，去签名/篡改/6.1秒重放均403。MINIO_PUBLIC_ENDPOINT 指向测试内回环转发，从而不放宽生产公网HTTP端点限制。审核决策、配额与建店不在本阶段，由既有 MySqlTest 与 --merchant-cases 覆盖。
+
+
+## A4d20 设计边界
+
+评分报价是只读投影，证据价值全在"排除规则"而不是"能返回数据"：必须同时满足项目 status=1、门店 status=1、报价 on_shelf=1、最新版本价>0；评分只认已完成订单+WECHAT 成功支付+非测试核销+test_mode=0 评价+consented=1 授权，且无支付异常/未结争议/退款。零样本时 average_rating 必须是 null 而不是 0。夹具要刻意造"应被排除"的行，否则数据恰好正确也证明不了过滤生效。
+
+
+## A4d20 结果
+
+18请求/67断言/0失败，一人一接口四类齐备；三家在架报价按有评价优先→平均分降序→价格升序返回[1,3,2]，5.00/2.00/null；下架报价、最新版本价0、项目 status=0 均未进入结果（后者 404）；region_code 过滤把两家降到 1 家。14 张表执行前后摘要逐字节不变，行数 order=2/payment=2/order_review=2/review_publication=2/merchant_project=6。
+
+顺带核实两处契约偏差：POST /api/merchant/orders/{id}/actions 四个动作分别 43001/43004/43005/43006，200 不可达；POST /api/knowledge/answer 未配置 AI 即 503。前者已改契约文档，后者登记为外部依赖阻塞。剩余 37 项缺口=27 无实现+7 需真实上游+2 设计封堵+1 示例端点。

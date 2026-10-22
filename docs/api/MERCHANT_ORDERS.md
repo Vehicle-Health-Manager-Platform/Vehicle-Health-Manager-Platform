@@ -20,7 +20,19 @@
 
 ## 状态操作
 
-`POST /api/merchant/orders/{id}/actions` 正文为 `{"action":"RECEIVE"|"START_SERVICE"|"FINISH_SERVICE"|"COMPLETE"}`，可选 `note`（去空白后 1–200 字），必须带 UUID `Idempotency-Key`。成功返回本店订单详情投影加 `action`、`from_status`、`changed`；`changed=false` 表示此前已生效、本次为幂等重放。
+`POST /api/merchant/orders/{id}/actions` 正文为 `{"action":"RECEIVE"|"START_SERVICE"|"FINISH_SERVICE"|"COMPLETE"}`，可选 `note`（去空白后 1–200 字），必须带 UUID `Idempotency-Key`。设计意图是成功返回本店订单详情投影加 `action`、`from_status`、`changed`；`changed=false` 表示此前已生效、本次为幂等重放。
+
+**但当前实现里这个接口没有任何 200 路径**（契约与实现偏差，2026-10-22 实测核对）：四个动作分别在控制器与服务层被拦截，全部落到 `409`，未知动作名落 `400`。
+
+| 动作 | 实际结果 | 正确入口 |
+| --- | --- | --- |
+| `RECEIVE` | `409` `43001` 请通过接车检查提交完整接车单 | 接车检查提交 |
+| `START_SERVICE` | `409` `43004` 请由被派工技师本人接单并开始施工 | 技师接单 |
+| `FINISH_SERVICE` | `409` `43005` 请由被派工技师本人提交完整报工并质检签字 | 报工与质检签字 |
+| `COMPLETE` | `409` `43006` 请通过核销验码入口完成订单 | 核销验码 |
+| 其它值 | `400` `40001` | — |
+
+因此 `allowed_actions`（详情接口返回）仍可用于渲染按钮与解释"下一步该走哪个专用入口"，但**不得**据此断言通用动作接口可写。该接口的验收证据因此只有 `boundary`/`error`/`unauthorized`，`normal` 不可达；四类证据缺口由契约偏差登记，不以伪造 200 补齐（见[覆盖清单](../testing/API_COVERAGE.md)）。
 
 矩阵判定、前置校验、行锁、幂等与双审计（`order_status_transition` 与 `audit_log`，同事务）全部在服务端完成。当前状态不支持该动作返回 `40905`；前置未满足返回 `43001`/`43003`/`43004`/`43005`/`43006`，其中 `43006` 表示核销校验尚未接入（A7 接入后不再出现）。完整规则、动作与目标状态映射、错误码见[订单履约状态机契约](ORDER_FULFILLMENT.md)。
 

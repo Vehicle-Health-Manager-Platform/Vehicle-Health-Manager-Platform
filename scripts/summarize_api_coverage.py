@@ -10,6 +10,7 @@ from generate_api_acceptance import ROOT, operations
 
 KINDS = ('normal', 'boundary', 'error', 'unauthorized')
 POSTMAN = {
+    'rating_quotes': 'R9_A4D20_RATING_QUOTES_2026_10_22.json',
     'auth_sessions': 'R9_A4D18_AUTH_SESSIONS_2026_10_22.json',
     'coupon_catalog': 'R9_A4D17_COUPON_CATALOG_2026_10_22.json',
     'relations_price': 'R9_A4D16_RELATIONS_PRICE_READS_2026_10_22.json',
