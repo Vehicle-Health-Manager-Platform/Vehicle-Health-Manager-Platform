@@ -278,6 +278,17 @@ class JourneySummaryTest(unittest.TestCase):
         self.expected[0]['operation'] = '/api/unknown'
         with self.assertRaises(ValueError): self.verify()
 
+    def test_mysql_only_journey_requires_explicit_trusted_cleanup_scope(self):
+        self.report['proof']['cleanup']={'mysql':True}
+        with self.assertRaises(ValueError):self.verify()
+        self.assertEqual({'read':sorted(KINDS)},journey_evidence(self.expected,self.report,self.catalog,{'signature'},{'mysql'})[1])
+
+    def test_mysql_only_journey_rejects_extra_missing_and_non_boolean_cleanup(self):
+        for cleanup in ({'mysql':True,'network':True},{},{'mysql':1}):
+            self.report['proof']['cleanup']=cleanup
+            with self.subTest(cleanup=cleanup),self.assertRaises(ValueError):
+                journey_evidence(self.expected,self.report,self.catalog,{'signature'},{'mysql'})
+
 
 class TrackedCoverageTest(unittest.TestCase):
     def test_linux_lf_checkout_and_windows_crlf_produce_identical_summary(self):
@@ -328,9 +339,9 @@ class TrackedCoverageTest(unittest.TestCase):
     def test_all_selected_repository_sources_reconcile_without_current_pass_claim(self):
         result = build()
         self.assertEqual(352, result['counts']['contract_operations'])
-        self.assertEqual(27, result['counts']['suites'])
-        self.assertEqual(283, result['counts']['historical_four_kind_operations'])
-        self.assertEqual(69, result['counts']['without_complete_historical_evidence'])
+        self.assertEqual(28, result['counts']['suites'])
+        self.assertEqual(291, result['counts']['historical_four_kind_operations'])
+        self.assertEqual(61, result['counts']['without_complete_historical_evidence'])
         self.assertFalse(result['full_api_acceptance_passed'])
         self.assertEqual(result, json.loads(OUTPUT.read_text(encoding='utf-8')))
         self.assertEqual(render(result), SUMMARY.read_text(encoding='utf-8'))

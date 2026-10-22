@@ -504,3 +504,13 @@ R7c3 诊断消息首轮127项126通过、1失败：新已读测试将不同幂�
 ## A4d13 本地验收通过
 
 运行377fc68a422d，219秒；70业务请求/237断言及338匿名请求/1014断言通过，9项DB不变量、源文件哈希及资源清理通过。255项相关Python校验通过、默认关闭零请求。累计283项历史四类证据，缺口69项。详见docs/progress/R9_A4D13_PLAN_EVIDENCE_EXECUTION.md，准备GitHub阶段上传。
+
+
+## A4d14 开始
+
+创建codex/r9-a4d14-invitation-rewards，复用真实奖励旅程，强化只读和重复发放断言，准备全新数据库运行。
+
+
+## A4d14 本地验收通过
+
+run_reward_acceptance --docker通过，281.36秒：144HTTP/14接口四类，17项检查、8项Java测试、75项Python校验通过；源文件一致、自有MySQL实际移除。累计291项历史证据，缺口61项。执行记录docs/progress/R9_A4D14_INVITATION_REWARDS_EXECUTION.md，准备阶段GitHub上传。

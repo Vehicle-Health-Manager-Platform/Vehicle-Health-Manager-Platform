@@ -39,7 +39,9 @@ JOURNEYS = {
     'service_archive': ('run_service_archive_acceptance', 'R9_A4D2G2_SERVICE_ARCHIVE_ACCESS_2026_10_20.json'),
     'material_workbench': ('run_material_workbench_acceptance', 'R9_A4D2G3_MATERIAL_WORKBENCH_2026_10_20.json'),
     'pickup_work_files': ('run_pickup_work_files_acceptance', 'R9_A4D9_PICKUP_WORK_FILES_2026_10_21.json'),
+    'invitation_rewards': ('run_reward_acceptance', 'R9_A4D14_INVITATION_REWARDS_2026_10_22.json'),
 }
+DEFAULT_JOURNEY_CLEANUP=frozenset({'initializer','clamav','minio','mysql','network'})
 UPLOAD_CHECKS = set('anonymous_object_denied tampered_signature_denied expired_signature_denied only_three_clean_files three_successful_uploads three_scan_rejections one_owned_archive_attachment'.split())
 FINANCE_CHECKS = set('payment_recovered_once invalid_amount_not_paid one_recovered_payment_event fresh_refund_success failed_refund_success unique_refunds two_success_events commission_reversed_once uncompleted_refund_no_charge commission_test_only foreign_payment_unchanged foreign_shop_no_commission lease_cleared appointment_capacity_released'.split())
 WORKFLOW_CHECKS = set('six_unique_order_events outbox_delivered exact_recipient_fanout three_read_notifications three_read_audits no_foreign_notifications'.split())
@@ -190,7 +192,7 @@ def newman_evidence(suite, manifest, collection, collection_hash, report, catalo
     return definitions, definitions
 
 
-def journey_evidence(expected, report, catalog, expected_checks=None):
+def journey_evidence(expected, report, catalog, expected_checks=None, expected_cleanup=None):
     normalized = []
     for case in expected:
         require(case.get('passed') is True, 'Journey inventory has a nonpassing case marker')
@@ -212,7 +214,8 @@ def journey_evidence(expected, report, catalog, expected_checks=None):
                 'Incomplete journey checks/cleanup')
     if expected_checks is not None:
         require(set(proof['checks']) == set(expected_checks), 'Missing or unexpected journey check')
-    require(set(proof['cleanup']) == {'initializer', 'clamav', 'minio', 'mysql', 'network'}, 'Missing journey cleanup role')
+    cleanup_roles=DEFAULT_JOURNEY_CLEANUP if expected_cleanup is None else set(expected_cleanup)
+    require(set(proof['cleanup']) == cleanup_roles, 'Missing or unexpected journey cleanup role')
     # Earlier upload report keys omit the method; each key still must resolve uniquely.
     summary = {}
     for key, kinds in proof.get('coverage', {}).items():
@@ -283,7 +286,7 @@ def build(root=ROOT):
         inventory = module.inventory()
         report_path = path('docs/testing/reports/' + filename)
         report = load(report_path) if report_path.is_file() else None
-        defined, historical = journey_evidence(inventory, report, catalog, getattr(module, 'CHECKS', UPLOAD_CHECKS))
+        defined, historical = journey_evidence(inventory, report, catalog, getattr(module, 'CHECKS', UPLOAD_CHECKS), getattr(module, 'CLEANUP_ROLES', None))
         suites.append({'name': name, 'type': 'http-journey', 'defined': defined, 'historical': historical,
                        'evidence_status': 'HISTORICAL_RECONCILED' if report else 'MISSING_REPORT',
                        'recorded_source_sha256': report.get('source_sha256') if report else None,
