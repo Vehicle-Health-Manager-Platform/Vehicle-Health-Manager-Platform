@@ -1,0 +1,1198 @@
+{
+  "version": 1,
+  "passed": true,
+  "full_api_acceptance_passed": false,
+  "finished_at": "2026-10-22T11:00:30.585737+00:00",
+  "duration_seconds": 258.203,
+  "source_sha256": "2693e625eb1c50e18243dfbd07a06c1990587e5ea287cfdd1103779f69db8333",
+  "sources_unchanged": true,
+  "maven_exit_code": 0,
+  "execution_mode": "local-execution",
+  "proof": {
+    "requests": 85,
+    "operations": 11,
+    "coverage": {
+      "GET /api/owner/community/image-sources": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "POST /api/owner/community/images/preview": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "POST /api/owner/community/images": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/owner/community/images": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/owner/community/images/{id}/preview": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/admin/community/images": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/admin/community/images/{id}/preview": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/community/images": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "POST /api/admin/community/images/{id}/moderate": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/community/images/{publicId}": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "POST /api/owner/community/images/{id}/withdraw": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ]
+    },
+    "checks": {
+      "two_real_scanned_uploads": true,
+      "metadata_removed_pixels_preserved": true,
+      "approval_failure_rolls_back": true,
+      "public_projection_minimal": true,
+      "new_uuid_never_revives_old": true,
+      "private_original_unsigned_denied": true,
+      "three_withdrawn_applications": true,
+      "nine_events_and_audits": true,
+      "only_independent_copy_persisted": true,
+      "stored_png_bytes_match_preview": true,
+      "parent_approval_and_withdrawal_real": true,
+      "bindings_from_real_responses": true
+    },
+    "cleanup": {
+      "initializer": true,
+      "clamav": true,
+      "minio": true,
+      "mysql": true,
+      "network": true
+    },
+    "cases": [
+      {
+        "name": "sources",
+        "operation": "/api/owner/community/image-sources",
+        "kind": "normal",
+        "role": "owner",
+        "method": "GET",
+        "path": "/api/owner/community/image-sources?experience_id={{experience_id}}",
+        "status": 200,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "sources_boundary",
+        "operation": "/api/owner/community/image-sources",
+        "kind": "boundary",
+        "role": "owner",
+        "method": "GET",
+        "path": "/api/owner/community/image-sources?experience_id={{experience_id}}&page=1000000",
+        "status": 200,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "sources_invalid",
+        "operation": "/api/owner/community/image-sources",
+        "kind": "error",
+        "role": "owner",
+        "method": "GET",
+        "path": "/api/owner/community/image-sources?experience_id={{experience_id}}&user_id=2",
+        "status": 400,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "sources_anonymous",
+        "operation": "/api/owner/community/image-sources",
+        "kind": "unauthorized",
+        "role": "anonymous",
+        "method": "GET",
+        "path": "/api/owner/community/image-sources?experience_id={{experience_id}}",
+        "status": 401,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "sources_wrong_role",
+        "operation": "/api/owner/community/image-sources",
+        "kind": "unauthorized",
+        "role": "merchant",
+        "method": "GET",
+        "path": "/api/owner/community/image-sources?experience_id={{experience_id}}",
+        "status": 403,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "sources_foreign",
+        "operation": "/api/owner/community/image-sources",
+        "kind": "unauthorized",
+        "role": "foreign",
+        "method": "GET",
+        "path": "/api/owner/community/image-sources?experience_id={{experience_id}}",
+        "status": 404,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "preview",
+        "operation": "/api/owner/community/images/preview",
+        "kind": "normal",
+        "role": "owner",
+        "method": "POST",
+        "path": "/api/owner/community/images/preview",
+        "status": 200,
+        "passed": true,
+        "body": {
+          "experience_id": "{{experience_id}}",
+          "archive_id": "{{archive_id}}",
+          "source_file_id": 1,
+          "copy_file_id": 2
+        }
+      },
+      {
+        "name": "preview_repeat",
+        "operation": "/api/owner/community/images/preview",
+        "kind": "boundary",
+        "role": "owner",
+        "method": "POST",
+        "path": "/api/owner/community/images/preview",
+        "status": 200,
+        "passed": true,
+        "body": {
+          "experience_id": "{{experience_id}}",
+          "archive_id": "{{archive_id}}",
+          "source_file_id": 1,
+          "copy_file_id": 2
+        }
+      },
+      {
+        "name": "preview_original_as_copy",
+        "operation": "/api/owner/community/images/preview",
+        "kind": "error",
+        "role": "owner",
+        "method": "POST",
+        "path": "/api/owner/community/images/preview",
+        "status": 400,
+        "passed": true,
+        "body": {
+          "experience_id": "{{experience_id}}",
+          "archive_id": "{{archive_id}}",
+          "source_file_id": 1,
+          "copy_file_id": 1
+        }
+      },
+      {
+        "name": "preview_anonymous",
+        "operation": "/api/owner/community/images/preview",
+        "kind": "unauthorized",
+        "role": "anonymous",
+        "method": "POST",
+        "path": "/api/owner/community/images/preview",
+        "status": 401,
+        "passed": true,
+        "body": {
+          "experience_id": "{{experience_id}}",
+          "archive_id": "{{archive_id}}",
+          "source_file_id": 1,
+          "copy_file_id": 2
+        }
+      },
+      {
+        "name": "preview_wrong_role",
+        "operation": "/api/owner/community/images/preview",
+        "kind": "unauthorized",
+        "role": "merchant",
+        "method": "POST",
+        "path": "/api/owner/community/images/preview",
+        "status": 403,
+        "passed": true,
+        "body": {
+          "experience_id": "{{experience_id}}",
+          "archive_id": "{{archive_id}}",
+          "source_file_id": 1,
+          "copy_file_id": 2
+        }
+      },
+      {
+        "name": "preview_foreign",
+        "operation": "/api/owner/community/images/preview",
+        "kind": "unauthorized",
+        "role": "foreign",
+        "method": "POST",
+        "path": "/api/owner/community/images/preview",
+        "status": 404,
+        "passed": true,
+        "body": {
+          "experience_id": "{{experience_id}}",
+          "archive_id": "{{archive_id}}",
+          "source_file_id": 1,
+          "copy_file_id": 2
+        }
+      },
+      {
+        "name": "submit",
+        "operation": "/api/owner/community/images",
+        "kind": "normal",
+        "role": "owner",
+        "method": "POST",
+        "path": "/api/owner/community/images",
+        "status": 200,
+        "passed": true,
+        "body": {
+          "experience_id": "{{experience_id}}",
+          "archive_id": "{{archive_id}}",
+          "source_file_id": 1,
+          "copy_file_id": 2,
+          "preview_hash": "{{preview_hash}}",
+          "consent_version": "R8C_IMAGE_V1",
+          "consent": true
+        }
+      },
+      {
+        "name": "submit_replay",
+        "operation": "/api/owner/community/images",
+        "kind": "boundary",
+        "role": "owner",
+        "method": "POST",
+        "path": "/api/owner/community/images",
+        "status": 200,
+        "passed": true,
+        "body": {
+          "experience_id": "{{experience_id}}",
+          "archive_id": "{{archive_id}}",
+          "source_file_id": 1,
+          "copy_file_id": 2,
+          "preview_hash": "{{preview_hash}}",
+          "consent_version": "R8C_IMAGE_V1",
+          "consent": true
+        }
+      },
+      {
+        "name": "submit_invalid",
+        "operation": "/api/owner/community/images",
+        "kind": "error",
+        "role": "owner",
+        "method": "POST",
+        "path": "/api/owner/community/images",
+        "status": 400,
+        "passed": true,
+        "body": {}
+      },
+      {
+        "name": "submit_anonymous",
+        "operation": "/api/owner/community/images",
+        "kind": "unauthorized",
+        "role": "anonymous",
+        "method": "POST",
+        "path": "/api/owner/community/images",
+        "status": 401,
+        "passed": true,
+        "body": {
+          "experience_id": "{{experience_id}}",
+          "archive_id": "{{archive_id}}",
+          "source_file_id": 1,
+          "copy_file_id": 2,
+          "preview_hash": "{{preview_hash}}",
+          "consent_version": "R8C_IMAGE_V1",
+          "consent": true
+        }
+      },
+      {
+        "name": "submit_wrong_role",
+        "operation": "/api/owner/community/images",
+        "kind": "unauthorized",
+        "role": "merchant",
+        "method": "POST",
+        "path": "/api/owner/community/images",
+        "status": 403,
+        "passed": true,
+        "body": {
+          "experience_id": "{{experience_id}}",
+          "archive_id": "{{archive_id}}",
+          "source_file_id": 1,
+          "copy_file_id": 2,
+          "preview_hash": "{{preview_hash}}",
+          "consent_version": "R8C_IMAGE_V1",
+          "consent": true
+        }
+      },
+      {
+        "name": "submit_no_consent",
+        "operation": "/api/owner/community/images",
+        "kind": "error",
+        "role": "owner",
+        "method": "POST",
+        "path": "/api/owner/community/images",
+        "status": 400,
+        "passed": true,
+        "body": {
+          "experience_id": "{{experience_id}}",
+          "archive_id": "{{archive_id}}",
+          "source_file_id": 1,
+          "copy_file_id": 2,
+          "preview_hash": "{{preview_hash}}",
+          "consent_version": "R8C_IMAGE_V1",
+          "consent": false
+        }
+      },
+      {
+        "name": "submit_changed_hash",
+        "operation": "/api/owner/community/images",
+        "kind": "error",
+        "role": "owner",
+        "method": "POST",
+        "path": "/api/owner/community/images",
+        "status": 409,
+        "passed": true,
+        "body": {
+          "experience_id": "{{experience_id}}",
+          "archive_id": "{{archive_id}}",
+          "source_file_id": 1,
+          "copy_file_id": 2,
+          "preview_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+          "consent_version": "R8C_IMAGE_V1",
+          "consent": true
+        }
+      },
+      {
+        "name": "own",
+        "operation": "/api/owner/community/images",
+        "kind": "normal",
+        "role": "owner",
+        "method": "GET",
+        "path": "/api/owner/community/images",
+        "status": 200,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "own_boundary",
+        "operation": "/api/owner/community/images",
+        "kind": "boundary",
+        "role": "owner",
+        "method": "GET",
+        "path": "/api/owner/community/images?page=1000000",
+        "status": 200,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "own_invalid",
+        "operation": "/api/owner/community/images",
+        "kind": "error",
+        "role": "owner",
+        "method": "GET",
+        "path": "/api/owner/community/images?page=0",
+        "status": 400,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "own_anonymous",
+        "operation": "/api/owner/community/images",
+        "kind": "unauthorized",
+        "role": "anonymous",
+        "method": "GET",
+        "path": "/api/owner/community/images",
+        "status": 401,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "own_wrong_role",
+        "operation": "/api/owner/community/images",
+        "kind": "unauthorized",
+        "role": "merchant",
+        "method": "GET",
+        "path": "/api/owner/community/images",
+        "status": 403,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "owner_preview",
+        "operation": "/api/owner/community/images/{id}/preview",
+        "kind": "normal",
+        "role": "owner",
+        "method": "GET",
+        "path": "/api/owner/community/images/1/preview?format=base64",
+        "status": 200,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "owner_preview_boundary",
+        "operation": "/api/owner/community/images/{id}/preview",
+        "kind": "boundary",
+        "role": "owner",
+        "method": "GET",
+        "path": "/api/owner/community/images/999999/preview?format=base64",
+        "status": 404,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "owner_preview_invalid",
+        "operation": "/api/owner/community/images/{id}/preview",
+        "kind": "error",
+        "role": "owner",
+        "method": "GET",
+        "path": "/api/owner/community/images/1/preview?format=bad",
+        "status": 400,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "owner_preview_anonymous",
+        "operation": "/api/owner/community/images/{id}/preview",
+        "kind": "unauthorized",
+        "role": "anonymous",
+        "method": "GET",
+        "path": "/api/owner/community/images/1/preview?format=base64",
+        "status": 401,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "owner_preview_wrong_role",
+        "operation": "/api/owner/community/images/{id}/preview",
+        "kind": "unauthorized",
+        "role": "merchant",
+        "method": "GET",
+        "path": "/api/owner/community/images/1/preview?format=base64",
+        "status": 403,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "owner_png",
+        "operation": "/api/owner/community/images/{id}/preview",
+        "kind": "normal",
+        "role": "owner",
+        "method": "GET",
+        "path": "/api/owner/community/images/1/preview",
+        "status": 200,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "owner_preview_foreign",
+        "operation": "/api/owner/community/images/{id}/preview",
+        "kind": "unauthorized",
+        "role": "foreign",
+        "method": "GET",
+        "path": "/api/owner/community/images/1/preview?format=base64",
+        "status": 404,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "pending",
+        "operation": "/api/admin/community/images",
+        "kind": "normal",
+        "role": "reviewer",
+        "method": "GET",
+        "path": "/api/admin/community/images",
+        "status": 200,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "pending_boundary",
+        "operation": "/api/admin/community/images",
+        "kind": "boundary",
+        "role": "reviewer",
+        "method": "GET",
+        "path": "/api/admin/community/images?page=1000000",
+        "status": 200,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "pending_invalid",
+        "operation": "/api/admin/community/images",
+        "kind": "error",
+        "role": "reviewer",
+        "method": "GET",
+        "path": "/api/admin/community/images?page=0",
+        "status": 400,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "pending_anonymous",
+        "operation": "/api/admin/community/images",
+        "kind": "unauthorized",
+        "role": "anonymous",
+        "method": "GET",
+        "path": "/api/admin/community/images",
+        "status": 401,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "pending_wrong_role",
+        "operation": "/api/admin/community/images",
+        "kind": "unauthorized",
+        "role": "owner",
+        "method": "GET",
+        "path": "/api/admin/community/images",
+        "status": 403,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "pending_no_permission",
+        "operation": "/api/admin/community/images",
+        "kind": "unauthorized",
+        "role": "plain",
+        "method": "GET",
+        "path": "/api/admin/community/images",
+        "status": 403,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "review_preview",
+        "operation": "/api/admin/community/images/{id}/preview",
+        "kind": "normal",
+        "role": "reviewer",
+        "method": "GET",
+        "path": "/api/admin/community/images/1/preview?format=base64",
+        "status": 200,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "review_preview_boundary",
+        "operation": "/api/admin/community/images/{id}/preview",
+        "kind": "boundary",
+        "role": "reviewer",
+        "method": "GET",
+        "path": "/api/admin/community/images/999999/preview?format=base64",
+        "status": 404,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "review_preview_invalid",
+        "operation": "/api/admin/community/images/{id}/preview",
+        "kind": "error",
+        "role": "reviewer",
+        "method": "GET",
+        "path": "/api/admin/community/images/1/preview?format=bad",
+        "status": 400,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "review_preview_anonymous",
+        "operation": "/api/admin/community/images/{id}/preview",
+        "kind": "unauthorized",
+        "role": "anonymous",
+        "method": "GET",
+        "path": "/api/admin/community/images/1/preview?format=base64",
+        "status": 401,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "review_preview_wrong_role",
+        "operation": "/api/admin/community/images/{id}/preview",
+        "kind": "unauthorized",
+        "role": "owner",
+        "method": "GET",
+        "path": "/api/admin/community/images/1/preview?format=base64",
+        "status": 403,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "review_png",
+        "operation": "/api/admin/community/images/{id}/preview",
+        "kind": "normal",
+        "role": "reviewer",
+        "method": "GET",
+        "path": "/api/admin/community/images/1/preview",
+        "status": 200,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "review_preview_no_permission",
+        "operation": "/api/admin/community/images/{id}/preview",
+        "kind": "unauthorized",
+        "role": "plain",
+        "method": "GET",
+        "path": "/api/admin/community/images/1/preview?format=base64",
+        "status": 403,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "unapproved_hidden",
+        "operation": "/api/community/images",
+        "kind": "boundary",
+        "role": "viewer",
+        "method": "GET",
+        "path": "/api/community/images?vehicle_id=2&experience_id={{experience_id}}",
+        "status": 200,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "approval_audit_failure",
+        "operation": "/api/admin/community/images/{id}/moderate",
+        "kind": "error",
+        "role": "reviewer",
+        "method": "POST",
+        "path": "/api/admin/community/images/1/moderate",
+        "status": 503,
+        "passed": true,
+        "body": {
+          "expected_revision": 1,
+          "decision": "APPROVE",
+          "reason_code": null
+        }
+      },
+      {
+        "name": "approve",
+        "operation": "/api/admin/community/images/{id}/moderate",
+        "kind": "normal",
+        "role": "reviewer",
+        "method": "POST",
+        "path": "/api/admin/community/images/1/moderate",
+        "status": 200,
+        "passed": true,
+        "body": {
+          "expected_revision": 1,
+          "decision": "APPROVE",
+          "reason_code": null
+        }
+      },
+      {
+        "name": "approve_replay",
+        "operation": "/api/admin/community/images/{id}/moderate",
+        "kind": "boundary",
+        "role": "reviewer",
+        "method": "POST",
+        "path": "/api/admin/community/images/1/moderate",
+        "status": 200,
+        "passed": true,
+        "body": {
+          "expected_revision": 1,
+          "decision": "APPROVE",
+          "reason_code": null
+        }
+      },
+      {
+        "name": "approve_invalid",
+        "operation": "/api/admin/community/images/{id}/moderate",
+        "kind": "error",
+        "role": "reviewer",
+        "method": "POST",
+        "path": "/api/admin/community/images/1/moderate",
+        "status": 400,
+        "passed": true,
+        "body": {}
+      },
+      {
+        "name": "approve_anonymous",
+        "operation": "/api/admin/community/images/{id}/moderate",
+        "kind": "unauthorized",
+        "role": "anonymous",
+        "method": "POST",
+        "path": "/api/admin/community/images/1/moderate",
+        "status": 401,
+        "passed": true,
+        "body": {
+          "expected_revision": 1,
+          "decision": "APPROVE",
+          "reason_code": null
+        }
+      },
+      {
+        "name": "approve_wrong_role",
+        "operation": "/api/admin/community/images/{id}/moderate",
+        "kind": "unauthorized",
+        "role": "owner",
+        "method": "POST",
+        "path": "/api/admin/community/images/1/moderate",
+        "status": 403,
+        "passed": true,
+        "body": {
+          "expected_revision": 1,
+          "decision": "APPROVE",
+          "reason_code": null
+        }
+      },
+      {
+        "name": "approve_no_permission",
+        "operation": "/api/admin/community/images/{id}/moderate",
+        "kind": "unauthorized",
+        "role": "plain",
+        "method": "POST",
+        "path": "/api/admin/community/images/1/moderate",
+        "status": 403,
+        "passed": true,
+        "body": {
+          "expected_revision": 1,
+          "decision": "APPROVE",
+          "reason_code": null
+        }
+      },
+      {
+        "name": "approved_binding",
+        "operation": "/api/owner/community/images",
+        "kind": "normal",
+        "role": "owner",
+        "method": "GET",
+        "path": "/api/owner/community/images",
+        "status": 200,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "public_list",
+        "operation": "/api/community/images",
+        "kind": "normal",
+        "role": "viewer",
+        "method": "GET",
+        "path": "/api/community/images?vehicle_id=2&experience_id={{experience_id}}",
+        "status": 200,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "public_list_boundary",
+        "operation": "/api/community/images",
+        "kind": "boundary",
+        "role": "viewer",
+        "method": "GET",
+        "path": "/api/community/images?vehicle_id=999999&experience_id={{experience_id}}",
+        "status": 404,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "public_list_invalid",
+        "operation": "/api/community/images",
+        "kind": "error",
+        "role": "viewer",
+        "method": "GET",
+        "path": "/api/community/images?vehicle_id=2&experience_id={{experience_id}}&user_id=2",
+        "status": 400,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "public_list_anonymous",
+        "operation": "/api/community/images",
+        "kind": "unauthorized",
+        "role": "anonymous",
+        "method": "GET",
+        "path": "/api/community/images?vehicle_id=2&experience_id={{experience_id}}",
+        "status": 401,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "public_list_wrong_role",
+        "operation": "/api/community/images",
+        "kind": "unauthorized",
+        "role": "merchant",
+        "method": "GET",
+        "path": "/api/community/images?vehicle_id=2&experience_id={{experience_id}}",
+        "status": 403,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "public_bytes",
+        "operation": "/api/community/images/{publicId}",
+        "kind": "normal",
+        "role": "viewer",
+        "method": "GET",
+        "path": "/api/community/images/{{public_id}}?vehicle_id=2&format=base64",
+        "status": 200,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "public_bytes_boundary",
+        "operation": "/api/community/images/{publicId}",
+        "kind": "boundary",
+        "role": "viewer",
+        "method": "GET",
+        "path": "/api/community/images/00000000-0000-4000-8000-000000999999?vehicle_id=2&format=base64",
+        "status": 404,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "public_bytes_invalid",
+        "operation": "/api/community/images/{publicId}",
+        "kind": "error",
+        "role": "viewer",
+        "method": "GET",
+        "path": "/api/community/images/{{public_id}}?vehicle_id=2&format=bad",
+        "status": 400,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "public_bytes_anonymous",
+        "operation": "/api/community/images/{publicId}",
+        "kind": "unauthorized",
+        "role": "anonymous",
+        "method": "GET",
+        "path": "/api/community/images/{{public_id}}?vehicle_id=2&format=base64",
+        "status": 401,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "public_bytes_wrong_role",
+        "operation": "/api/community/images/{publicId}",
+        "kind": "unauthorized",
+        "role": "merchant",
+        "method": "GET",
+        "path": "/api/community/images/{{public_id}}?vehicle_id=2&format=base64",
+        "status": 403,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "public_png",
+        "operation": "/api/community/images/{publicId}",
+        "kind": "normal",
+        "role": "viewer",
+        "method": "GET",
+        "path": "/api/community/images/{{public_id}}?vehicle_id=2",
+        "status": 200,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "public_wrong_model",
+        "operation": "/api/community/images/{publicId}",
+        "kind": "unauthorized",
+        "role": "viewer",
+        "method": "GET",
+        "path": "/api/community/images/{{public_id}}?vehicle_id=4&format=base64",
+        "status": 404,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "public_foreign_vehicle",
+        "operation": "/api/community/images/{publicId}",
+        "kind": "unauthorized",
+        "role": "owner",
+        "method": "GET",
+        "path": "/api/community/images/{{public_id}}?vehicle_id=2&format=base64",
+        "status": 404,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "withdraw",
+        "operation": "/api/owner/community/images/{id}/withdraw",
+        "kind": "normal",
+        "role": "owner",
+        "method": "POST",
+        "path": "/api/owner/community/images/1/withdraw",
+        "status": 200,
+        "passed": true,
+        "body": {
+          "expected_revision": 2
+        }
+      },
+      {
+        "name": "withdraw_replay",
+        "operation": "/api/owner/community/images/{id}/withdraw",
+        "kind": "boundary",
+        "role": "owner",
+        "method": "POST",
+        "path": "/api/owner/community/images/1/withdraw",
+        "status": 200,
+        "passed": true,
+        "body": {
+          "expected_revision": 2
+        }
+      },
+      {
+        "name": "withdraw_invalid",
+        "operation": "/api/owner/community/images/{id}/withdraw",
+        "kind": "error",
+        "role": "owner",
+        "method": "POST",
+        "path": "/api/owner/community/images/1/withdraw",
+        "status": 400,
+        "passed": true,
+        "body": {}
+      },
+      {
+        "name": "withdraw_anonymous",
+        "operation": "/api/owner/community/images/{id}/withdraw",
+        "kind": "unauthorized",
+        "role": "anonymous",
+        "method": "POST",
+        "path": "/api/owner/community/images/1/withdraw",
+        "status": 401,
+        "passed": true,
+        "body": {
+          "expected_revision": 2
+        }
+      },
+      {
+        "name": "withdraw_wrong_role",
+        "operation": "/api/owner/community/images/{id}/withdraw",
+        "kind": "unauthorized",
+        "role": "merchant",
+        "method": "POST",
+        "path": "/api/owner/community/images/1/withdraw",
+        "status": 403,
+        "passed": true,
+        "body": {
+          "expected_revision": 2
+        }
+      },
+      {
+        "name": "old_public_hidden",
+        "operation": "/api/community/images/{publicId}",
+        "kind": "boundary",
+        "role": "viewer",
+        "method": "GET",
+        "path": "/api/community/images/{{public_id}}?vehicle_id=2&format=base64",
+        "status": 404,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "old_approval_conflict",
+        "operation": "/api/admin/community/images/{id}/moderate",
+        "kind": "boundary",
+        "role": "reviewer",
+        "method": "POST",
+        "path": "/api/admin/community/images/1/moderate",
+        "status": 409,
+        "passed": true,
+        "body": {
+          "expected_revision": 1,
+          "decision": "APPROVE",
+          "reason_code": null
+        }
+      },
+      {
+        "name": "old_submission_receipt",
+        "operation": "/api/owner/community/images",
+        "kind": "boundary",
+        "role": "owner",
+        "method": "POST",
+        "path": "/api/owner/community/images",
+        "status": 200,
+        "passed": true,
+        "body": {
+          "experience_id": "{{experience_id}}",
+          "archive_id": "{{archive_id}}",
+          "source_file_id": 1,
+          "copy_file_id": 2,
+          "preview_hash": "{{preview_hash}}",
+          "consent_version": "R8C_IMAGE_V1",
+          "consent": true
+        }
+      },
+      {
+        "name": "submit_second",
+        "operation": "/api/owner/community/images",
+        "kind": "normal",
+        "role": "owner",
+        "method": "POST",
+        "path": "/api/owner/community/images",
+        "status": 200,
+        "passed": true,
+        "body": {
+          "experience_id": "{{experience_id}}",
+          "archive_id": "{{archive_id}}",
+          "source_file_id": 1,
+          "copy_file_id": 2,
+          "preview_hash": "{{preview_hash}}",
+          "consent_version": "R8C_IMAGE_V1",
+          "consent": true
+        }
+      },
+      {
+        "name": "reject_second",
+        "operation": "/api/admin/community/images/{id}/moderate",
+        "kind": "normal",
+        "role": "reviewer",
+        "method": "POST",
+        "path": "/api/admin/community/images/2/moderate",
+        "status": 200,
+        "passed": true,
+        "body": {
+          "expected_revision": 1,
+          "decision": "REJECT",
+          "reason_code": "PRIVACY"
+        }
+      },
+      {
+        "name": "withdraw_second",
+        "operation": "/api/owner/community/images/{id}/withdraw",
+        "kind": "normal",
+        "role": "owner",
+        "method": "POST",
+        "path": "/api/owner/community/images/2/withdraw",
+        "status": 200,
+        "passed": true,
+        "body": {
+          "expected_revision": 2
+        }
+      },
+      {
+        "name": "submit_third",
+        "operation": "/api/owner/community/images",
+        "kind": "normal",
+        "role": "owner",
+        "method": "POST",
+        "path": "/api/owner/community/images",
+        "status": 200,
+        "passed": true,
+        "body": {
+          "experience_id": "{{experience_id}}",
+          "archive_id": "{{archive_id}}",
+          "source_file_id": 1,
+          "copy_file_id": 2,
+          "preview_hash": "{{preview_hash}}",
+          "consent_version": "R8C_IMAGE_V1",
+          "consent": true
+        }
+      },
+      {
+        "name": "approve_third",
+        "operation": "/api/admin/community/images/{id}/moderate",
+        "kind": "normal",
+        "role": "reviewer",
+        "method": "POST",
+        "path": "/api/admin/community/images/3/moderate",
+        "status": 200,
+        "passed": true,
+        "body": {
+          "expected_revision": 1,
+          "decision": "APPROVE",
+          "reason_code": null
+        }
+      },
+      {
+        "name": "new_public_binding",
+        "operation": "/api/owner/community/images",
+        "kind": "normal",
+        "role": "owner",
+        "method": "GET",
+        "path": "/api/owner/community/images",
+        "status": 200,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "old_public_still_hidden",
+        "operation": "/api/community/images/{publicId}",
+        "kind": "boundary",
+        "role": "viewer",
+        "method": "GET",
+        "path": "/api/community/images/{{public_id}}?vehicle_id=2&format=base64",
+        "status": 404,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "new_public_visible",
+        "operation": "/api/community/images/{publicId}",
+        "kind": "normal",
+        "role": "viewer",
+        "method": "GET",
+        "path": "/api/community/images/{{next_public_id}}?vehicle_id=2&format=base64",
+        "status": 200,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "parent_withdrawal_hides_image",
+        "operation": "/api/community/images/{publicId}",
+        "kind": "unauthorized",
+        "role": "viewer",
+        "method": "GET",
+        "path": "/api/community/images/{{next_public_id}}?vehicle_id=2&format=base64",
+        "status": 404,
+        "passed": true,
+        "body": null
+      },
+      {
+        "name": "withdraw_after_parent_loss",
+        "operation": "/api/owner/community/images/{id}/withdraw",
+        "kind": "normal",
+        "role": "owner",
+        "method": "POST",
+        "path": "/api/owner/community/images/3/withdraw",
+        "status": 200,
+        "passed": true,
+        "body": {
+          "expected_revision": 2
+        }
+      },
+      {
+        "name": "owner_history_after_withdrawal",
+        "operation": "/api/owner/community/images/{id}/preview",
+        "kind": "boundary",
+        "role": "owner",
+        "method": "GET",
+        "path": "/api/owner/community/images/3/preview?format=base64",
+        "status": 200,
+        "passed": true,
+        "body": null
+      }
+    ],
+    "actual_requests_bound_to_responses": true
+  },
+  "error": null,
+  "boundaries": [
+    "synthetic identities, prior orders/payments/reports; no real payment acceptance",
+    "real MySQL, private MinIO, scanner engine, HTTP consent/moderation/withdrawal and immutable PNG bytes",
+    "synthetic scan database; metadata removal preserves supplied pixels, no automatic visual redaction or production malware acceptance"
+  ]
+}
