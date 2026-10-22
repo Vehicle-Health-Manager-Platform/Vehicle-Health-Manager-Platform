@@ -139,3 +139,5 @@
 - [A4d15 社区图片真实验收](../progress/R9_A4D15_COMMUNITY_IMAGES_EXECUTION.md)：11接口/85请求，12不变量，元数据、审核、撤回与旧ID失效；真实存储与扫描引擎、明确合成身份/支付/扫描库边界。
 
 - [A4d16 客户关系与价格比较](../progress/R9_A4D16_RELATIONS_PRICE_READS_EXECUTION.md)：4接口/58请求，门店隐私、稳定锚点、UNKNOWN判定与13表内容不变。
+
+- [A4d17 券清单与草稿修订](../progress/R9_A4D17_COUPON_CATALOG_EXECUTION.md)：4个新增证据接口，9接口旅程/96请求，发布冻结、领取去重与退池/停用。

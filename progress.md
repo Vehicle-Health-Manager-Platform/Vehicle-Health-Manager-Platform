@@ -540,3 +540,13 @@ run_reward_acceptance --docker通过，281.36秒：144HTTP/14接口四类，17�
 
 
 阶段已上传[草稿PR207](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/207)，实现提交 `e5559e9`，base=`codex/r9-a4d15-community-images`，依赖PR206；远程CI已触发，结果以PR实际检查为准，未合并。
+
+
+## A4d17 开始
+
+新建 codex/r9-a4d17-coupon-catalog，设计复用独立HTTP验收框架；前置PR207部分CI成功，后端/性能仍运行。
+
+
+## A4d17 本地完成
+
+195.422秒真实PASS：9接口96业务请求/354断言、338匿名请求/1014断言；13项不变量及99项Python回归通过。额外4次列表读取所选11表完整内容摘要无变化，源码稳定且自有后端/MySQL/网络移除。历史覆盖310/352，缺口42；准备上传依赖PR207的阶段草稿PR。
