@@ -90,4 +90,4 @@ FUEL 与 DASHBOARD 必须不同文件，沿用 CLEAN、上传员工本人、未�
 
 `FAULT` 仅在既无故障件照片、也未声明 `no_fault_parts=true` 时出现。没有接车单时返回 `409` `43001`（没有基线无法对比），不返回空对比。响应不含车主/员工/技师 id、对象键或文件列表。
 
-未接入页面：车主端取车对比页仍在 R7a 剩余范围，本接口先提供可复现的后端与四类证据（见[验收](../testing/DELIVERY_COMPARE_ACCEPTANCE.md)）。
+车主端页面已接入：`pages/order/delivery-compare.vue`（入口在订单详情，仅 `PENDING_VERIFY`/`COMPLETED` 显示），文案与缺口语义集中在 `services/delivery-compare-display.js`。契约与四类证据见[验收](../testing/DELIVERY_COMPARE_ACCEPTANCE.md)，页面设计见[取车对比页规格](../superpowers/specs/2026-10-22-delivery-compare-page-design.md)。

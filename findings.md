@@ -672,3 +672,13 @@ SQL合成13种价格来源/政策状态与23名当前客户；真实HTTP证明�
 ## A4d22 结果
 
 POST /api/check/delivery/compare 实测：齐备订单 READY/deliverable=true、七槽位排序正确、mileage_delta 0、防护 {submitted,item_count:2,photo}、报工 SIGNED 且四类证据各 1；缺证据订单 INCOMPLETE + [OWNER_CONFIRM,PROTECTION_PHOTO,FINISH,FAULT]；已完成订单 READY 但 deliverable=false；无接车单 409/43001；订单不存在 404；空正文/多余字段/字符串 id/数组/query 全 400；匿名 401、技师 403、他人车主与他店 404。契约去掉 Idempotency-Key（读操作不该要），补 schema 与 200/400/401/403/404/409/503。
+
+
+## A4d23 设计边界
+
+页面最容易出的错不是样式，是"把可疑数据渲染成结论"：投影自带 result 与 missing，如果前端只做字段存在性检查，"说齐备却列着缺口"也会显示出去。所以校验里加了三条自洽断言（result 与 missing 必须互推、deliverable 只能在 READY、报工 submitted/status/signed_at 自洽），并绑定 order_id 回指请求订单——拿到别的订单的对比等于展示错误车况。
+
+
+## A4d23 结果
+
+1023/1023 单测通过（新增 8 项：schema 矛盾 29 种被拒形态、认证只读 POST 与订单绑定、六类状态码映射、四组展示映射、失败三路分流）。微信构建 DONE 且原生样式/无测试身份桥 PASS，H5 构建 DONE。静态提示与映射标签撞词（"证据齐备"）会让"wxml 搜不到、映射模块里有"的配对检查失效，已改写为"证据是否齐全"。渲染未在开发者工具与真机执行，不声明通过。
