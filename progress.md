@@ -618,3 +618,13 @@ run_reward_acceptance --docker通过，281.36秒：144HTTP/14接口四类，17�
 
 
 阶段已上传[草稿PR213](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/213)，实现提交 `5f22023`，base=`codex/r9-a4d21-contract-verdicts`，依赖PR212；远程CI已触发，结果以PR实际检查为准，未合并。
+
+
+## A4d23 开始
+
+已建 codex/r9-a4d23-delivery-compare-page；A4d22 只做了后端，本阶段补 R7a 的页面：先照接车详情/施工证据页的分层（协议/展示/页面）定结构，再定"入口只在待核销与已完成显示""409 不给重试"两条规则。
+
+
+## A4d23 本地完成
+
+小程序单测 1023/1023（新增 8 项），微信构建 DONE（原生样式与无测试身份桥 PASS），H5 构建 DONE。校验含结论与缺口一致、deliverable 依赖 READY、槽位数一致、报工状态自洽、order_id 回指请求订单。文案成对验证通过（wxml 无映射文案、编译后映射模块有）。接口与覆盖数字未变（316/352，缺口 36）。
