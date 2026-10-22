@@ -7,11 +7,11 @@
   "counts": {
     "contract_operations": 352,
     "protected_operations": 338,
-    "four_kind_definitions": 315,
-    "historical_four_kind_operations": 315,
-    "without_complete_historical_evidence": 37,
+    "four_kind_definitions": 316,
+    "historical_four_kind_operations": 316,
+    "without_complete_historical_evidence": 36,
     "current_run_operations": 0,
-    "suites": 34
+    "suites": 35
   },
   "suites": [
     {
@@ -67,6 +67,17 @@
         "docs/testing/postman/coupon-catalog-case-manifest.json": "b4be1df7cef4b1185634522bd52e5754ed106398f40fb4cb175a110486f77ad9",
         "docs/testing/postman/coupon-catalog-cases.postman_collection.json": "78dd59bf8e159857cd1363444f40444c2afbec29368d348eeb7bbb2c834ff097",
         "docs/testing/reports/R9_A4D17_COUPON_CATALOG_2026_10_22.json": "286f2cd799257a8b510f6a3950a2f946054bc3392c573d76d167f34e1cfe35e0"
+      }
+    },
+    {
+      "name": "delivery_compare",
+      "type": "postman",
+      "evidence_status": "HISTORICAL_RECONCILED",
+      "recorded_source_sha256": "17f05415f927b2ae93c39126171102e9442f4b297e439c66259d458c25a9e032",
+      "inputs": {
+        "docs/testing/postman/delivery-compare-case-manifest.json": "1cec0c64820712a76f51e2c154797389d8b09b8b7cff8d1c0714b6c169b4023a",
+        "docs/testing/postman/delivery-compare-cases.postman_collection.json": "cc830fc14866cfeee3ef70ed89c475bc1e9fbb5b0bf498c51c187eacd4b07c5a",
+        "docs/testing/reports/R9_A4D22_DELIVERY_COMPARE_2026_10_22.json": "8aa732b645ff6896fe4cacf365b48c83a96f60f8aa10ff4ba45f73cb04b945be"
       }
     },
     {
@@ -5755,25 +5766,41 @@
       "operation_id": "post_api_check_delivery_compare",
       "method": "POST",
       "path": "/api/check/delivery/compare",
-      "roles": null,
+      "roles": "本单车主或本店 MERCHANT/STAFF",
       "protected": true,
-      "implementation_status": "unspecified",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "implementation_status": "delivery-compare-implemented",
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "delivery_compare",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_check_pickup_confirm",
@@ -15192,6 +15219,6 @@
       ]
     }
   ],
-  "contract_sha256": "96a4993acd4b6fb41eb182d36d9a59d7d0fb020db57fb7a3458eb255d15eca11",
+  "contract_sha256": "616e74f27400aa4dda710fd8a248e1c9618e1d0e2ec7fee62f12c5ba98285174",
   "input_hash_policy": "Input SHA256 uses CRLF-to-LF normalization. Historical raw collection digests must match its LF or CRLF byte form; content changes are rejected."
 }

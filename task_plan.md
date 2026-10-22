@@ -769,3 +769,18 @@ R8b3b用户已确认最小服务关系方案，开始后端/API、实际页面�
 ## A4d21 本地完成
 
 352 = 315 有证据 + 37 有结论，未解释 0 项；分布 superseded=15 / internal-only=1 / blocked-external=10 / not-implemented=7 / no-success-path=1 / dev-only=3。门禁 11 项单测与覆盖 32 项单测通过，--check 逐字节一致；覆盖口径不变（仍 315/37）。顺带修正 3 处契约元数据（ai/chat 与辅助材料上传/访问），不改路径与行为。
+
+
+## 2026-10-22 A4d22 计划
+
+实现取车对比（R7a 遗留缺口），把结论表里一项 not-implemented 变成功能。
+1. 设计只读投影：不写 delivery_compare、不改订单状态，交付仍由核销完成。
+2. 服务聚合基线/防护/报工证据，算 READY|INCOMPLETE、deliverable 与逐项 missing。
+3. 控制器严格正文 {order_id}、拒绝 query、六类错误码、单层信封 + no-store。
+4. 契约补真实 schema 与状态码并移除幂等键；新增只读 Newman 套件 16 用例四类 + 9 项单测。
+5. 数据库不变量证明只读（12 表摘要不变 + delivery_compare 0 行），归档报告与文档后上传草稿 PR。
+
+
+## A4d22 本地完成
+
+319.130秒实际PASS：16业务请求/60断言/1接口四类，338匿名/1014断言，13项不变量全真（12表摘要不变 + delivery_compare 0行）。缺口逐项算出（[OWNER_CONFIRM,PROTECTION_PHOTO,FINISH,FAULT]），已完成订单可回看不可交付，无接车单 409 43001。契约改真实 schema 并去掉幂等键要求。历史覆盖316/352，缺口36。

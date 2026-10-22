@@ -6685,15 +6685,11 @@
         "url": "{{base_url}}/api/check/delivery/compare",
         "header": [
           {
-            "key": "Idempotency-Key",
-            "value": "{{post_api_check_delivery_compare_Idempotency_Key}}"
-          },
-          {
             "key": "Content-Type",
             "value": "application/json"
           }
         ],
-        "description": "取车对比\nRoles: UNSPECIFIED",
+        "description": "取车对比:接车基线与完工证据的只读对照(交付仍由核销完成)\nRoles: 本单车主或本店 MERCHANT/STAFF",
         "auth": {
           "type": "bearer",
           "bearer": [
@@ -6717,7 +6713,7 @@
             "exec": [
               "if (pm.variables.get(\"enable_prepared_requests\") !== \"true\") { pm.execution.skipRequest(); }",
               "else {",
-              "  const missing = [\"status_post_api_check_delivery_compare\", \"post_api_check_delivery_compare_Idempotency_Key\", \"access_token\", \"body_post_api_check_delivery_compare\"].filter(k => !pm.variables.get(k));",
+              "  const missing = [\"status_post_api_check_delivery_compare\", \"access_token\", \"body_post_api_check_delivery_compare\"].filter(k => !pm.variables.get(k));",
               "  if (missing.length) { pm.execution.skipRequest(); throw new Error(\"Configure fixture variables before sending: \" + missing.join(\",\")); }",
               "}"
             ]

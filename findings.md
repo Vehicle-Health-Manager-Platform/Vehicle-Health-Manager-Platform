@@ -662,3 +662,13 @@ SQL合成13种价格来源/政策状态与23名当前客户；真实HTTP证明�
 ## A4d21 结果
 
 37 项全部结案：15 项已被具名实现替代（如 home/dashboard→health-dashboard、notifications→owner/notifications、order/verify→merchant/orders/{id}/redeem）、1 项由 CouponRecovery 内部完成、10 项依赖大模型或微信/短信上游、7 项未实现（对账报表、取车对比、OCR、VIN、真实渠道回调、cloud-login）、1 项无 200 路径、3 项仅本地演示。契约总数 352 与证据下限 315 写入门禁；`/api/ai/chat` 与两项辅助材料上传/访问补上实现标记（探针数 338 与证据数 315 不变）。结论会过期：替代下线、上游接入、功能立项都必须同步改 CONTRACT_VERDICTS.json，否则门禁报"未解析操作"。
+
+
+## A4d22 设计边界
+
+取车对比的诱惑是顺手写 delivery_compare 并推进状态，但交付已经由核销承担（带支付/免佣/争议语义），第二条写路径会与核销争同一订单状态，锁序与幂等都要重做。所以做成只读投影：不写库、不改状态、不要幂等键，用"12 表摘要不变 + delivery_compare 0 行"证明没有偷偷写。缺口必须逐项算（FAULT 只在既无照片又未声明无故障件时出现），不能返回固定文案。
+
+
+## A4d22 结果
+
+POST /api/check/delivery/compare 实测：齐备订单 READY/deliverable=true、七槽位排序正确、mileage_delta 0、防护 {submitted,item_count:2,photo}、报工 SIGNED 且四类证据各 1；缺证据订单 INCOMPLETE + [OWNER_CONFIRM,PROTECTION_PHOTO,FINISH,FAULT]；已完成订单 READY 但 deliverable=false；无接车单 409/43001；订单不存在 404；空正文/多余字段/字符串 id/数组/query 全 400；匿名 401、技师 403、他人车主与他店 404。契约去掉 Idempotency-Key（读操作不该要），补 schema 与 200/400/401/403/404/409/503。

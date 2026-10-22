@@ -2,7 +2,7 @@
 
 本文件由 `python scripts/reconcile_contract.py` 生成，请勿手工编辑；结论数据在 [CONTRACT_VERDICTS.json](CONTRACT_VERDICTS.json)。
 
-- 契约操作：**352** 项；具备四类历史证据：**315** 项；有明确结论但**不计证据**：**37** 项。
+- 契约操作：**352** 项；具备四类历史证据：**316** 项；有明确结论但**不计证据**：**36** 项。
 - 未解释的操作：**0** 项（脚本 `--check` 会在出现未结案条目时失败）。
 
 结论只回答"这一项为什么没有四类证据"，**不等于**该功能已验收、已上线或已可用。真实执行证据见 [API_COVERAGE.md](../testing/API_COVERAGE.md)，全 API 验收仍为 `false`。
@@ -14,7 +14,7 @@
 | `superseded` | 已被具名实现替代 | 15 |
 | `internal-only` | 由服务内部事务完成 | 1 |
 | `blocked-external` | 依赖未接入的外部上游 | 10 |
-| `not-implemented` | 尚未实现(需先立项) | 7 |
+| `not-implemented` | 尚未实现(需先立项) | 6 |
 | `no-success-path` | 实现存在但无成功路径 | 1 |
 | `dev-only` | 仅本地演示或开发端点 | 3 |
 
@@ -61,13 +61,12 @@
 | `POST /api/auth/wx-login` | `core-implemented` | 微信登录需要真实 code2session 上游;本地用自签会话夹具,不计真实微信登录。 |
 | `POST /api/knowledge/answer` | `r8-remaining-implemented` | 实现存在(LicensedKnowledge.answer),未配置 AI 即 503,配置后需真实上游生成并复核来源未变更。 |
 
-### 尚未实现(需先立项)（7 项）
+### 尚未实现(需先立项)（6 项）
 
 | 操作 | 当前实现标记 | 说明 |
 | --- | --- | --- |
 | `GET /api/admin/reconciliation` | `未标记` | 按日按渠道的本地/渠道金额差异报表未实现;目前只有单笔支付的 /api/payments/{id}/reconcile。需要财务口径与渠道账单来源后才能立项。 |
 | `POST /api/auth/cloud-login` | `未标记` | 云托管登录只有 SecurityConfig 的 permitAll 占位,没有控制器;正式登录走 wx-login/手机号绑定。 |
-| `POST /api/check/delivery/compare` | `未标记` | 取车对比(交车前后的车况比对)未实现;现有附件与接车检查不含该聚合。 |
 | `POST /api/payments/callback/{channel}` | `未标记` | 真实渠道回调未接入;当前只有 LOCAL_TEST 渠道回调用于隔离验收。接入需渠道证书、验签密钥与生产商户号。 |
 | `POST /api/refunds/callback/{channel}` | `未标记` | 同上:退款回调只有 LOCAL_TEST,真实渠道回调未接入。 |
 | `GET /api/vehicle/ocr-license` | `未标记` | 行驶证 OCR 未实现,需要外部 OCR 供应商与合规存储方案;当前车辆信息由车主手填。 |
