@@ -31,6 +31,7 @@ POSTMAN = {
     'dispute': 'R9_A4D8_DISPUTE_RECOVERY_2026_10_21.json',
     'assessment': 'R9_A4D10_ASSESSMENT_READS_2026_10_21.json',
     'governance': 'R9_A4D11_CATALOG_GOVERNANCE_2026_10_21.json',
+    'fulfillment_reads': 'R9_A4D12_FULFILLMENT_READS_2026_10_22.json',
 }
 JOURNEYS = {
     'upload': ('run_upload_acceptance', 'R9_A4D2E2B_PRIVATE_UPLOAD_API_2026_10_19.json'),
@@ -42,6 +43,7 @@ UPLOAD_CHECKS = set('anonymous_object_denied tampered_signature_denied expired_s
 FINANCE_CHECKS = set('payment_recovered_once invalid_amount_not_paid one_recovered_payment_event fresh_refund_success failed_refund_success unique_refunds two_success_events commission_reversed_once uncompleted_refund_no_charge commission_test_only foreign_payment_unchanged foreign_shop_no_commission lease_cleared appointment_capacity_released'.split())
 WORKFLOW_CHECKS = set('six_unique_order_events outbox_delivered exact_recipient_fanout three_read_notifications three_read_audits no_foreign_notifications'.split())
 DISPUTE_CHECKS = set('resolved_once four_append_only_records original_received_state one_open_and_resume_transition resolution_confirmed five_dispute_audits eleven_unique_events exact_notification_fanout no_foreign_dispute'.split())
+FULFILLMENT_READ_CHECKS = set('single_closed_slot closure_audited_once one_published_slot no_foreign_slots accepted_assignment_preserved completed_order_keeps_slot'.split())
 OUTPUT = ROOT / 'docs/testing/api-coverage.json'
 SUMMARY = ROOT / 'docs/testing/API_COVERAGE.md'
 
@@ -168,6 +170,15 @@ def newman_evidence(suite, manifest, collection, collection_hash, report, catalo
         fulfilled = report.get('dispute_database', {}).get('checks', {})
         require(set(fulfilled) == set('order_completed local_payment_only redemption_test_mode report_signed foreign_vehicle_unchanged no_foreign_orders'.split()) and
                 all(v is True for v in fulfilled.values()), 'Resumed fulfillment evidence is incomplete')
+    if suite == 'fulfillment_reads':
+        require(all(evidence.get(k) is True for k in ('signed_callback_and_exact_replay_verified', 'slot_close_intent_verified', 'slot_date_query_verified')),
+                'Fulfillment callback, closure intent or seed-date query evidence missing')
+        checks = report.get('fulfillment_reads_database', {}).get('read_checks', {})
+        require(set(checks) == FULFILLMENT_READ_CHECKS and all(v is True for v in checks.values()),
+                'Fulfillment closure/read invariants incomplete')
+        completed = report.get('fulfillment_reads_database', {}).get('checks', {})
+        require(set(completed) == set('order_completed local_payment_only redemption_test_mode report_signed foreign_vehicle_unchanged no_foreign_orders'.split()) and
+                all(v is True for v in completed.values()), 'Fulfillment completion evidence incomplete')
     return definitions, definitions
 
 
@@ -249,8 +260,9 @@ def build(root=ROOT):
                for method, route, op, _ in operations(spec)}
     suites = []
     for name, filename in sorted(POSTMAN.items()):
-        manifest = path('docs/testing/postman/' + name + '-case-manifest.json')
-        collection = path('docs/testing/postman/' + name + '-cases.postman_collection.json')
+        asset_name = name.replace('_', '-')
+        manifest = path('docs/testing/postman/' + asset_name + '-case-manifest.json')
+        collection = path('docs/testing/postman/' + asset_name + '-cases.postman_collection.json')
         report_path = path('docs/testing/reports/' + filename)
         report = load(report_path) if report_path.is_file() else None
         defined, historical = newman_evidence(name, load(manifest), load(collection), collection_digests(collection), report, catalog)
