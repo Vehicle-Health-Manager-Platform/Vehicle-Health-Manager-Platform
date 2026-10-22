@@ -2944,7 +2944,7 @@
     },
     "/api/check/delivery/compare": {
       "post": {
-        "summary": "取车对比",
+        "summary": "取车对比:接车基线与完工证据的只读对照(交付仍由核销完成)",
         "operationId": "post_api_check_delivery_compare",
         "tags": [
           "check"
@@ -2952,20 +2952,9 @@
         "x-feature-ids": [
           "F14"
         ],
-        "parameters": [
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
         "responses": {
           "200": {
-            "description": "统一成功响应",
+            "description": "对照投影:order_id/order_status/result(READY|INCOMPLETE)/deliverable/baseline/work/missing",
             "content": {
               "application/json": {
                 "schema": {
@@ -2975,7 +2964,7 @@
             }
           },
           "400": {
-            "description": "参数或业务状态错误",
+            "description": "正文不是 {\"order_id\":正整数} 或携带 query,code=40001",
             "content": {
               "application/json": {
                 "schema": {
@@ -2988,7 +2977,37 @@
             "description": "认证失败，code=40100"
           },
           "403": {
-            "description": "无权访问，code=40300"
+            "description": "角色不符，code=40300"
+          },
+          "404": {
+            "description": "订单不存在或不属于当前身份，code=40400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "接车检查未完成，code=43001",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "数据库不可用，code=50300",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -3002,11 +3021,23 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "additionalProperties": true
+                "additionalProperties": false,
+                "required": [
+                  "order_id"
+                ],
+                "properties": {
+                  "order_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  }
+                }
               }
             }
           }
-        }
+        },
+        "x-implementation-status": "delivery-compare-implemented",
+        "x-roles": "本单车主或本店 MERCHANT/STAFF"
       }
     },
     "/api/tech/orders": {

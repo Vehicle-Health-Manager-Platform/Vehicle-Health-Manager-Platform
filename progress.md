@@ -605,3 +605,13 @@ run_reward_acceptance --docker通过，281.36秒：144HTTP/14接口四类，17�
 
 
 阶段已上传[草稿PR212](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/212)，实现提交 `062347d`，base=`codex/r9-a4d20-rating-quotes`，依赖PR211；远程CI已触发，结果以PR实际检查为准，未合并。
+
+
+## A4d22 开始
+
+已建 codex/r9-a4d22-delivery-compare；从结论表的 not-implemented 里挑出唯一可离线实现且审计点名欠着的取车对比，先定"只读投影、不写 delivery_compare、交付仍归核销"的设计，再写服务与控制器。
+
+
+## A4d22 本地完成
+
+319.130秒实际PASS：16业务请求/60断言/1接口四类，338匿名/1014断言，13项不变量全真（12表摘要不变 + delivery_compare 0行）。缺口逐项算出（[OWNER_CONFIRM,PROTECTION_PHOTO,FINISH,FAULT]），已完成订单可回看不可交付，无接车单 409 43001。契约改真实 schema 并去掉幂等键要求。历史覆盖316/352，缺口36。

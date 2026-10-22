@@ -408,9 +408,9 @@ class TrackedCoverageTest(unittest.TestCase):
     def test_all_selected_repository_sources_reconcile_without_current_pass_claim(self):
         result = build()
         self.assertEqual(352, result['counts']['contract_operations'])
-        self.assertEqual(34, result['counts']['suites'])
-        self.assertEqual(315, result['counts']['historical_four_kind_operations'])
-        self.assertEqual(37, result['counts']['without_complete_historical_evidence'])
+        self.assertEqual(35, result['counts']['suites'])
+        self.assertEqual(316, result['counts']['historical_four_kind_operations'])
+        self.assertEqual(36, result['counts']['without_complete_historical_evidence'])
         self.assertFalse(result['full_api_acceptance_passed'])
         self.assertEqual(result, json.loads(OUTPUT.read_text(encoding='utf-8')))
         self.assertEqual(render(result), SUMMARY.read_text(encoding='utf-8'))
