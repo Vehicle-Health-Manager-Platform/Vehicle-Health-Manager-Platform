@@ -43,3 +43,6 @@
 剩余 37 项按上表分类：27 项需先补实现或修订契约，7 项需真实上游，2 项受实现设计封堵，1 项是本地示例。下一阶段建议把这些"缺口"转成**功能缺口**逐项立项（例如 `/api/home/dashboard`、`/api/notifications`、`/api/refunds/create` 是否仍在路线图内），而不是继续在证据清单上找可跑项。
 
 本阶段夹具全部合成；未覆盖真实评价/支付/核销链路、真实行政区划、真机与外部云存储。新 PR 的 GitHub CI 状态以该 PR 实际结果为准。
+
+
+阶段已上传[草稿PR211](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/211)，实现提交 `38ad29f`，base=`codex/r9-a4d19-onboarding-files`，依赖PR210；远程CI已触发，结果以PR实际检查为准，未合并。
