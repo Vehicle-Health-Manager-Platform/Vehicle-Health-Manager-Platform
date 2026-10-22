@@ -2,23 +2,26 @@
 import {computed,reactive,ref,watch} from 'vue'
 import {onLoad,onShow,onHide,onUnload} from '@dcloudio/uni-app'
 import {ownerSession,clearOwnerSession} from '../../services/owner-session.js'
+import {merchantSession,clearMerchantSession} from '../../services/merchant-session.js'
 import {initialReservationReadState,createReservationReadFlow} from '../../services/reservations.js'
 import {deliveryCompareApi} from '../../services/delivery-compare.js'
-import {deliveryResultView,deliveryBaselineView,deliveryWorkView,deliveryMissingView,deliveryFailureView} from '../../services/delivery-compare-display.js'
-const state=reactive(initialReservationReadState()),order=ref(0),token=()=>ownerSession.accessToken
+import {deliveryPageView,deliveryResultView,deliveryBaselineView,deliveryWorkView,deliveryMissingView,deliveryFailureView} from '../../services/delivery-compare-display.js'
+const state=reactive(initialReservationReadState()),order=ref(0),role=ref('owner')
+// 车主与商家看的是同一份投影：授权在服务端按身份判定，页面只切会话与文案。
+const token=()=>role.value==='merchant'?merchantSession.accessToken:ownerSession.accessToken
 const flow=createReservationReadFlow({state,token,request:t=>deliveryCompareApi.compare(t,order.value)})
 // 映射吃载荷：流程把投影放在 state.value，直接把 state 传进去会静默拿到 undefined。
-const result=computed(()=>deliveryResultView(state.value)),baseline=computed(()=>deliveryBaselineView(state.value)),work=computed(()=>deliveryWorkView(state.value)),missing=computed(()=>deliveryMissingView(state.value)),failure=computed(()=>deliveryFailureView(state))
+const page=computed(()=>deliveryPageView(role.value)),result=computed(()=>deliveryResultView(state.value,role.value)),baseline=computed(()=>deliveryBaselineView(state.value)),work=computed(()=>deliveryWorkView(state.value)),missing=computed(()=>deliveryMissingView(state.value)),failure=computed(()=>deliveryFailureView(state))
 let visible=false
-function login(){clearOwnerSession();uni.navigateTo({url:'/pages/owner/index'})}
-function open(path){if(order.value>0)uni.navigateTo({url:`${path}?id=${order.value}`})}
+function login(){if(role.value==='merchant'){clearMerchantSession();uni.navigateTo({url:'/pages/merchant/index'})}else{clearOwnerSession();uni.navigateTo({url:'/pages/owner/index'})}}
+function open(path){if(order.value>0)uni.navigateTo({url:`${path}?id=${order.value}${role.value==='merchant'?'&role=merchant':''}`})}
 watch(()=>[token(),order.value],()=>{flow.reset();if(visible&&token())flow.load()},{flush:'sync'})
-onLoad(q=>{order.value=/^[1-9]\d*$/.test(String(q?.id||''))?Number(q.id):0})
+onLoad(q=>{order.value=/^[1-9]\d*$/.test(String(q?.id||''))?Number(q.id):0;role.value=q?.role==='merchant'?'merchant':'owner'})
 onShow(()=>{visible=true;if(token()&&order.value>0)flow.load()})
 onHide(()=>{visible=false;flow.reset()})
 onUnload(()=>{visible=false;flow.reset()})
 </script>
-<template><view class="reservation-page"><text class="reservation-title">取车对比</text><text>把接车时的记录与完工证据放在一起核对。这里只判断证据是否齐全，不做车况差异识别。</text>
+<template><view class="reservation-page"><text class="reservation-title">{{page.title}}</text><text>{{page.hint}}</text>
   <button v-if="!token()" @tap="login">车主登录</button>
   <text v-if="state.busy">正在核对取车对比…</text>
   <view v-if="state.message" class="reservation-panel" data-testid="delivery-compare-failure"><text>{{failure.title}}</text><text role="status">{{failure.message}}</text><button v-if="failure.conflict" @tap="open('/pages/check/pickup-detail')">先查看接车单</button><button v-if="failure.canLogin" @tap="login">重新登录</button><button v-else @tap="flow.load">{{failure.retryLabel}}</button></view>

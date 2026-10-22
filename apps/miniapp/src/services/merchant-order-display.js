@@ -108,6 +108,7 @@ const ENTRY_DEFS = [
   { key: 'pickup', label: '接车检查', route: '/pages/merchant/pickup', params: {}, when: s => s.status === 'PAID' },
   { key: 'dispatch', label: s => (s.status === 'RECEIVED' ? '派工给本店技师' : '查看派工结果'), route: '/pages/merchant/dispatch', params: {}, when: s => ['RECEIVED', 'IN_SERVICE', 'PENDING_VERIFY', 'COMPLETED'].includes(s.status) },
   { key: 'protection', label: '施工防护与记录', route: '/pages/merchant/protection', params: {}, when: s => ['RECEIVED', 'IN_SERVICE', 'PENDING_VERIFY', 'COMPLETED', 'DISPUTED'].includes(s.status) },
+  { key: 'delivery-compare', label: s => (s.status === 'PENDING_VERIFY' ? '取车对比（核销前核对）' : '查看取车对比'), route: '/pages/order/delivery-compare', params: { role: 'merchant' }, when: s => ['PENDING_VERIFY', 'COMPLETED'].includes(s.status) },
   { key: 'redeem', label: s => (s.status === 'PENDING_VERIFY' ? '核销验码' : '查看核销记录'), route: '/pages/merchant/redeem', params: {}, when: s => ['PENDING_VERIFY', 'COMPLETED'].includes(s.status) },
   { key: 'pickup-detail', label: '查看接车单', route: '/pages/check/pickup-detail', params: { role: 'merchant' }, when: s => ['RECEIVED', 'IN_SERVICE', 'PENDING_VERIFY', 'COMPLETED', 'DISPUTED'].includes(s.status) },
   { key: 'refund', label: '店长取消退款处理', route: '/pages/order/refund', params: { role: 'merchant' }, when: s => ['PAID', 'RECEIVED', 'IN_SERVICE', 'PENDING_VERIFY', 'DISPUTED'].includes(s.status) || s.closeReason === 'REFUND_CANCELLED' },
