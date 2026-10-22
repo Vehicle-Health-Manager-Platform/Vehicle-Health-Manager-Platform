@@ -7,11 +7,11 @@
   "counts": {
     "contract_operations": 352,
     "protected_operations": 338,
-    "four_kind_definitions": 306,
-    "historical_four_kind_operations": 306,
-    "without_complete_historical_evidence": 46,
+    "four_kind_definitions": 310,
+    "historical_four_kind_operations": 310,
+    "without_complete_historical_evidence": 42,
     "current_run_operations": 0,
-    "suites": 30
+    "suites": 31
   },
   "suites": [
     {
@@ -45,6 +45,17 @@
         "docs/testing/postman/coupon-case-manifest.json": "5d2aa670ab910ef0060e75e40c740b053e5bb204694b2c2a28faee37d79e712b",
         "docs/testing/postman/coupon-cases.postman_collection.json": "eaf82c4cb69d695d3552ad49000775772366c9eddfbb22b70a9026746aa7c049",
         "docs/testing/reports/R9_A4D2B2_COUPON_API_CASES_2026_10_19.json": "dbdc4084835abde6e69872415bab7fdb333fa92319400a5acb7af60af965b704"
+      }
+    },
+    {
+      "name": "coupon_catalog",
+      "type": "postman",
+      "evidence_status": "HISTORICAL_RECONCILED",
+      "recorded_source_sha256": "34f722b52550dbf3dea70a0b4a37c466524ef7e6dacb1ab18df6b2afe7c38cef",
+      "inputs": {
+        "docs/testing/postman/coupon-catalog-case-manifest.json": "b4be1df7cef4b1185634522bd52e5754ed106398f40fb4cb175a110486f77ad9",
+        "docs/testing/postman/coupon-catalog-cases.postman_collection.json": "78dd59bf8e159857cd1363444f40444c2afbec29368d348eeb7bbb2c834ff097",
+        "docs/testing/reports/R9_A4D17_COUPON_CATALOG_2026_10_22.json": "286f2cd799257a8b510f6a3950a2f946054bc3392c573d76d167f34e1cfe35e0"
       }
     },
     {
@@ -1911,22 +1922,38 @@
       "roles": "OPERATOR(can_coupon)",
       "protected": true,
       "implementation_status": "r5a-inventory-claim-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "coupon_catalog",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "put_api_admin_coupons_id_pool",
@@ -1951,6 +1978,21 @@
       "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
       "sources": [
+        {
+          "suite": "coupon_catalog",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
         {
           "suite": "exchange",
           "defined_kinds": [
@@ -6371,6 +6413,21 @@
           ]
         },
         {
+          "suite": "coupon_catalog",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "exchange",
           "defined_kinds": [
             "boundary",
@@ -6409,22 +6466,38 @@
       "roles": "OWNER",
       "protected": true,
       "implementation_status": "r5a-inventory-claim-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "coupon_catalog",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_coupon_receive",
@@ -6451,6 +6524,21 @@
       "sources": [
         {
           "suite": "coupon",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
+          "suite": "coupon_catalog",
           "defined_kinds": [
             "boundary",
             "error",
@@ -7879,22 +7967,38 @@
       "roles": "MERCHANT(manager)",
       "protected": true,
       "implementation_status": "r5a-inventory-claim-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "coupon_catalog",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_merchant_coupons",
@@ -7921,6 +8025,21 @@
       "sources": [
         {
           "suite": "coupon",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
+          "suite": "coupon_catalog",
           "defined_kinds": [
             "boundary",
             "error",
@@ -8093,22 +8212,38 @@
       "roles": "MERCHANT(manager)",
       "protected": true,
       "implementation_status": "r5a-inventory-claim-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "coupon_catalog",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "put_api_merchant_coupons_id_status",
@@ -8135,6 +8270,21 @@
       "sources": [
         {
           "suite": "coupon",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
+          "suite": "coupon_catalog",
           "defined_kinds": [
             "boundary",
             "error",

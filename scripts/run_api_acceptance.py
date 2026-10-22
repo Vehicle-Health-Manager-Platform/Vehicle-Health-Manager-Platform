@@ -54,7 +54,7 @@ def source_hash():
     paths += [ROOT / 'scripts/invitation_api_cases.py', ROOT / 'scripts/diagnosis_api_cases.py', ROOT / 'scripts/discovery_api_cases.py', ROOT / 'scripts/quotes_api_cases.py', ROOT / 'scripts/reviews_api_cases.py']
     paths += [ROOT / 'scripts/assessment_api_cases.py']
     paths += [ROOT / 'scripts/governance_api_cases.py', ROOT / 'scripts/fulfillment_reads_api_cases.py', ROOT / 'scripts/plan_evidence_api_cases.py']
-    paths += [ROOT / 'scripts/relations_price_api_cases.py']
+    paths += [ROOT / 'scripts/relations_price_api_cases.py', ROOT / 'scripts/coupon_catalog_api_cases.py']
     value = hashlib.sha256()
     for path in paths:
         if path.is_file(): value.update(path.relative_to(ROOT).as_posix().encode()); value.update(path.read_bytes())
@@ -151,12 +151,13 @@ def main():
     parser.add_argument('--fulfillment-reads-cases', action='store_true', help='Run remaining reservation and fulfillment views and slot closure.')
     parser.add_argument('--governance-cases', action='store_true', help='Run isolated catalog governance and price monitor evidence cases.')
     parser.add_argument('--relations-price-cases', action='store_true', help='Run isolated store customer relations and price comparisons read-only evidence.')
+    parser.add_argument('--coupon-catalog-cases', action='store_true', help='Run coupon catalog, frozen draft edits and offers eligibility.')
     args = parser.parse_args()
     if args.record_ci_sources:
-        if any((args.ci_built_jar,args.owner_cases,args.fulfillment_cases,args.coupon_cases,args.merchant_cases,args.community_cases,args.publication_cases,args.experience_cases,args.health_cases,args.export_cases,args.points_cases,args.exchange_cases,args.invitation_cases,args.diagnosis_cases,args.discovery_cases,args.quotes_cases,args.reviews_cases,args.finance_cases,args.workflow_cases,args.dispute_cases,args.assessment_cases,args.governance_cases,args.fulfillment_reads_cases,args.plan_evidence_cases,args.relations_price_cases)):
+        if any((args.ci_built_jar,args.owner_cases,args.fulfillment_cases,args.coupon_cases,args.merchant_cases,args.community_cases,args.publication_cases,args.experience_cases,args.health_cases,args.export_cases,args.points_cases,args.exchange_cases,args.invitation_cases,args.diagnosis_cases,args.discovery_cases,args.quotes_cases,args.reviews_cases,args.finance_cases,args.workflow_cases,args.dispute_cases,args.assessment_cases,args.governance_cases,args.fulfillment_reads_cases,args.plan_evidence_cases,args.relations_price_cases,args.coupon_catalog_cases)):
             parser.error('Record CI inputs separately before the build')
         record_ci_sources(); print('API acceptance: recorded fresh CI build inputs',flush=True); return 0
-    if sum((args.owner_cases, args.fulfillment_cases, args.coupon_cases, args.merchant_cases, args.community_cases,args.publication_cases,args.experience_cases,args.health_cases,args.export_cases,args.points_cases,args.exchange_cases,args.invitation_cases,args.diagnosis_cases,args.discovery_cases,args.quotes_cases,args.reviews_cases,args.finance_cases,args.workflow_cases,args.dispute_cases,args.assessment_cases,args.governance_cases,args.fulfillment_reads_cases,args.plan_evidence_cases,args.relations_price_cases)) > 1:
+    if sum((args.owner_cases, args.fulfillment_cases, args.coupon_cases, args.merchant_cases, args.community_cases,args.publication_cases,args.experience_cases,args.health_cases,args.export_cases,args.points_cases,args.exchange_cases,args.invitation_cases,args.diagnosis_cases,args.discovery_cases,args.quotes_cases,args.reviews_cases,args.finance_cases,args.workflow_cases,args.dispute_cases,args.assessment_cases,args.governance_cases,args.fulfillment_reads_cases,args.plan_evidence_cases,args.relations_price_cases,args.coupon_catalog_cases)) > 1:
         parser.error('Business suites require separate fresh databases; select one per run')
     run = uuid.uuid4().hex
     work = ROOT / '.cache' / ('api-acceptance-' + run[:12]); work.mkdir(parents=True)
@@ -176,7 +177,7 @@ def main():
         if len(expected) != 338: raise ValueError('Review changed anonymous acceptance scope')
         report['contract_operations'] = assets['acceptance_inventory.json']['operations']
         report['collection_sha256'] = hashlib.sha256((OUTPUT / 'anonymous.postman_collection.json').read_bytes()).hexdigest()
-        suite = 'owner' if args.owner_cases else 'fulfillment' if args.fulfillment_cases else 'coupon' if args.coupon_cases else 'merchant' if args.merchant_cases else 'community' if args.community_cases else 'publication' if args.publication_cases else 'experience' if args.experience_cases else 'health' if args.health_cases else 'export' if args.export_cases else 'points' if args.points_cases else 'exchange' if args.exchange_cases else 'invitation' if args.invitation_cases else 'diagnosis' if args.diagnosis_cases else 'discovery' if args.discovery_cases else 'quotes' if args.quotes_cases else 'reviews' if args.reviews_cases else 'finance' if args.finance_cases else 'workflow' if args.workflow_cases else 'dispute' if args.dispute_cases else 'assessment' if args.assessment_cases else 'governance' if args.governance_cases else 'fulfillment_reads' if args.fulfillment_reads_cases else 'plan_evidence' if args.plan_evidence_cases else 'relations_price' if args.relations_price_cases else None
+        suite = 'owner' if args.owner_cases else 'fulfillment' if args.fulfillment_cases else 'coupon' if args.coupon_cases else 'merchant' if args.merchant_cases else 'community' if args.community_cases else 'publication' if args.publication_cases else 'experience' if args.experience_cases else 'health' if args.health_cases else 'export' if args.export_cases else 'points' if args.points_cases else 'exchange' if args.exchange_cases else 'invitation' if args.invitation_cases else 'diagnosis' if args.diagnosis_cases else 'discovery' if args.discovery_cases else 'quotes' if args.quotes_cases else 'reviews' if args.reviews_cases else 'finance' if args.finance_cases else 'workflow' if args.workflow_cases else 'dispute' if args.dispute_cases else 'assessment' if args.assessment_cases else 'governance' if args.governance_cases else 'fulfillment_reads' if args.fulfillment_reads_cases else 'plan_evidence' if args.plan_evidence_cases else 'relations_price' if args.relations_price_cases else 'coupon_catalog' if args.coupon_catalog_cases else None
         business_module = importlib.import_module(suite+'_api_cases') if suite else None
         if business_module:
             business_collection, business_manifest = business_module.assets()
