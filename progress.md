@@ -563,3 +563,6 @@ run_reward_acceptance --docker通过，281.36秒：144HTTP/14接口四类，17�
 ## A4d18 本地完成
 
 214.766秒实际PASS：4接口45请求/149断言、338匿名/1014断言，13不变量及89项相关Python回归通过；额外7次HTTP验证并发刷新单次成功及退出失效。源码一致、资源清理且公开报告不含凭证。历史覆盖313/352，缺口39；准备上传依赖PR208的阶段草稿PR。
+
+
+阶段已上传[草稿PR209](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/209)，实现提交 `3895f3d`，base=`codex/r9-a4d17-coupon-catalog`，依赖PR208；远程CI已触发，结果以PR实际检查为准，未合并。

@@ -33,3 +33,6 @@ CI增加独立数据库真实认证验收和Python反例回归，复用原报告
 没有调用微信、短信或正式登录供应商，不能将合成会话刷新等同真实登录验收。停用员工场景设置员工状态，不扩大为所有员工绑定撤销组合；并发验证一轮双请求，不作为压力/性能结论。数据库种子中各身份与密钥只服务独立本机测试，未改生产行为。
 
 下一阶段优先商家入驻材料附件授权访问，并继续核对剩余契约与实现差异。每阶段完成后提交GitHub草稿PR，不自动合并。
+
+
+阶段已上传[草稿PR209](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/209)，实现提交 `3895f3d`，base=`codex/r9-a4d17-coupon-catalog`，依赖PR208；远程CI已触发，结果以PR实际检查为准，未合并。
