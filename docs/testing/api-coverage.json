@@ -7,11 +7,11 @@
   "counts": {
     "contract_operations": 352,
     "protected_operations": 338,
-    "four_kind_definitions": 313,
-    "historical_four_kind_operations": 313,
-    "without_complete_historical_evidence": 39,
+    "four_kind_definitions": 314,
+    "historical_four_kind_operations": 314,
+    "without_complete_historical_evidence": 38,
     "current_run_operations": 0,
-    "suites": 32
+    "suites": 33
   },
   "suites": [
     {
@@ -328,6 +328,16 @@
       "inputs": {
         "scripts/run_material_workbench_acceptance.py": "145d432c8fcf258f9ac31027e8f8dc87b7452aaa4f93f636aca60f92416d612a",
         "docs/testing/reports/R9_A4D2G3_MATERIAL_WORKBENCH_2026_10_20.json": "9b4a46aec4e92cee9d8a0f53f37f05f09e8d8ca9018ebd37f68d5b8c6a2c4545"
+      }
+    },
+    {
+      "name": "merchant_onboarding_files",
+      "type": "http-journey",
+      "evidence_status": "HISTORICAL_RECONCILED",
+      "recorded_source_sha256": "3b485ed35130c29df046921abe367a10740b9f33313a9a81bb8c7d84d539629d",
+      "inputs": {
+        "scripts/run_merchant_onboarding_files_acceptance.py": "ff847a1808ecf324047fd3059571e69ede5aa3f82240c9f6adf7766074b18ba8",
+        "docs/testing/reports/R9_A4D19_MERCHANT_ONBOARDING_FILES_2026_10_22.json": "461d294b21823bdf11c06104bb91e49f7bf2ee8df74542b01339cb34485c15b2"
       }
     },
     {
@@ -3347,22 +3357,38 @@
       "roles": "OPERATOR with can_onboard",
       "protected": true,
       "implementation_status": "merchant-onboarding-backend-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "merchant_onboarding_files",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_admin_merchant_applications_id_moderate",

@@ -42,6 +42,7 @@ JOURNEYS = {
     'service_archive': ('run_service_archive_acceptance', 'R9_A4D2G2_SERVICE_ARCHIVE_ACCESS_2026_10_20.json'),
     'material_workbench': ('run_material_workbench_acceptance', 'R9_A4D2G3_MATERIAL_WORKBENCH_2026_10_20.json'),
     'pickup_work_files': ('run_pickup_work_files_acceptance', 'R9_A4D9_PICKUP_WORK_FILES_2026_10_21.json'),
+    'merchant_onboarding_files': ('run_merchant_onboarding_files_acceptance', 'R9_A4D19_MERCHANT_ONBOARDING_FILES_2026_10_22.json'),
     'community_images': ('run_community_images_acceptance', 'R9_A4D15_COMMUNITY_IMAGES_2026_10_22.json'),
     'invitation_rewards': ('run_reward_acceptance', 'R9_A4D14_INVITATION_REWARDS_2026_10_22.json'),
 }

@@ -630,3 +630,13 @@ SQL合成13种价格来源/政策状态与23名当前客户；真实HTTP证明�
 ## A4d18 结果
 
 数据库12会话不增，4份成功轮换，失败刷新整行/哈希不变，6份指定会话最终撤销，其他会话整行不变。并发双刷新恰一200一401，赢家退出后三份凭证均失效。停用员工检查不扩大为所有绑定撤销组合，一轮竞争不计性能验收；真实微信/短信另列。
+
+
+## A4d19 设计边界
+
+入驻附件授权与审核权限是两个位：can_review 只有审核权限时读附件必须 403，不能借用 can_onboard。归属判定吃的是申请里的 qualification_files 快照，不是文件的 owner_id 反查，所以"同一申请人另一个申请里的文件"也必须 404。越权读统一 404、角色不符统一 403（OperatorActor.from 只认 operator_type + OPERATOR + operator-account）。读附件不得顺带推进审核：断言 merchant 行数不变且 merchant_id/reviewed_at 仍为 NULL。
+
+
+## A4d19 结果
+
+3个CLEAN文件全部 user 归属且无第三方行；两份申请 revision=1、快照 [1,2] 与 [3]，跨申请 JSON_CONTAINS 双向为 0；运营A三个附件均200并逐字节取回，运营B(can_review=1) 与车主/商家均403，跨申请与不存在申请均404，query/id=0 均40001。签名租期5秒、expires_at有界，去签名/篡改/6.1秒重放均403。MINIO_PUBLIC_ENDPOINT 指向测试内回环转发，从而不放宽生产公网HTTP端点限制。审核决策、配额与建店不在本阶段，由既有 MySqlTest 与 --merchant-cases 覆盖。
