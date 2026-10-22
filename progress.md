@@ -524,3 +524,6 @@ run_reward_acceptance --docker通过，281.36秒：144HTTP/14接口四类，17�
 ## A4d15 本地完成
 
 真实旅程258.203秒PASS：85图片业务请求、11接口四类证据、12不变量；8项Java和87项相关Python校验通过。源码一致且五类资源实际移除。所选历史覆盖302/352项，缺口50项；合成身份/前序支付和扫描库不计外部验收，PNG元数据剥离不等于自动视觉遮挡。CI门禁、报告及执行文档已完成，准备提交推送依赖PR205的草稿PR。
+
+
+本阶段已上传[草稿PR206](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/206)，实现提交 `fe713cf`，base=`codex/r9-a4d14-invitation-rewards`，依赖PR205；远程CI已触发，结论以PR实际检查为准，未合并。
