@@ -215,6 +215,21 @@ class CoverageSummaryTest(unittest.TestCase):
             with self.subTest(key=key),self.assertRaises(ValueError):verify()
 
 
+    def test_plan_evidence_requires_intent_and_each_conservative_database_check(self):
+        report=copy.deepcopy(self.report)
+        for suffix in ('collection_sha256','newman_exit_code','evidence'):
+            report['plan_evidence_'+suffix]=report.pop('tiny_'+suffix)
+        report['plan_evidence_evidence']['plan_request_intents_verified']=True
+        report['plan_evidence_database']={'checks':{k:True for k in coverage_module.PLAN_CHECKS}}
+        verify=lambda:newman_evidence('plan_evidence',self.manifest,self.collection,'b'*64,report,self.catalog)
+        self.assertEqual(self.coverage,verify()[1]);original=copy.deepcopy(report)
+        for key in coverage_module.PLAN_CHECKS:
+            report.clear();report.update(copy.deepcopy(original));report['plan_evidence_database']['checks'][key]=False
+            with self.subTest(key=key),self.assertRaises(ValueError):verify()
+        report.clear();report.update(copy.deepcopy(original));del report['plan_evidence_evidence']['plan_request_intents_verified']
+        with self.assertRaises(ValueError):verify()
+
+
 class JourneySummaryTest(unittest.TestCase):
     def setUp(self):
         self.catalog = {'read': {'method': 'GET', 'path': '/api/file/{id}/access'}}
@@ -313,9 +328,9 @@ class TrackedCoverageTest(unittest.TestCase):
     def test_all_selected_repository_sources_reconcile_without_current_pass_claim(self):
         result = build()
         self.assertEqual(352, result['counts']['contract_operations'])
-        self.assertEqual(26, result['counts']['suites'])
-        self.assertEqual(277, result['counts']['historical_four_kind_operations'])
-        self.assertEqual(75, result['counts']['without_complete_historical_evidence'])
+        self.assertEqual(27, result['counts']['suites'])
+        self.assertEqual(283, result['counts']['historical_four_kind_operations'])
+        self.assertEqual(69, result['counts']['without_complete_historical_evidence'])
         self.assertFalse(result['full_api_acceptance_passed'])
         self.assertEqual(result, json.loads(OUTPUT.read_text(encoding='utf-8')))
         self.assertEqual(render(result), SUMMARY.read_text(encoding='utf-8'))
