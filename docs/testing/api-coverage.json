@@ -7,11 +7,11 @@
   "counts": {
     "contract_operations": 352,
     "protected_operations": 338,
-    "four_kind_definitions": 267,
-    "historical_four_kind_operations": 267,
-    "without_complete_historical_evidence": 85,
+    "four_kind_definitions": 277,
+    "historical_four_kind_operations": 277,
+    "without_complete_historical_evidence": 75,
     "current_run_operations": 0,
-    "suites": 25
+    "suites": 26
   },
   "suites": [
     {
@@ -133,6 +133,17 @@
         "docs/testing/postman/fulfillment-case-manifest.json": "84a2fd4e305cda880fb7b3af971c7715649b4794fb232e3cc2a31ca9ad0565e2",
         "docs/testing/postman/fulfillment-cases.postman_collection.json": "eaaea3143dc6c043a22b9c035a123aff15b6b78f189d4dbceed5fbe38e58b37a",
         "docs/testing/reports/R9_A4D2B1_FULFILLMENT_API_CASES_2026_10_19.json": "01f584e3b9c1de5ff5617df55387189b8dfa5579260c7c4e32b6a3ee3ddb9511"
+      }
+    },
+    {
+      "name": "fulfillment_reads",
+      "type": "postman",
+      "evidence_status": "HISTORICAL_RECONCILED",
+      "recorded_source_sha256": "bc5ae30eab73f2010f82891950a2f7bbab5cc1662311a1929dae5575532a95b9",
+      "inputs": {
+        "docs/testing/postman/fulfillment-reads-case-manifest.json": "e521ab46be70e7847f246dbc347351325228988235cf3bf3455bd7d42fd04c11",
+        "docs/testing/postman/fulfillment-reads-cases.postman_collection.json": "e56ae5da8474e204bf3bb4052b5f1e23f3eb99613fae1a5c9ee8b45e8023c720",
+        "docs/testing/reports/R9_A4D12_FULFILLMENT_READS_2026_10_22.json": "6ad74547ce452682fc598ed37305970c4054d16f05bc5c559b8fe4f9f43848ac"
       }
     },
     {
@@ -4372,6 +4383,21 @@
           ]
         },
         {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "owner",
           "defined_kinds": [
             "boundary",
@@ -5368,6 +5394,21 @@
           ]
         },
         {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "workflow",
           "defined_kinds": [
             "boundary",
@@ -5518,6 +5559,21 @@
           ]
         },
         {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "workflow",
           "defined_kinds": [
             "boundary",
@@ -5654,6 +5710,21 @@
         },
         {
           "suite": "fulfillment",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
+          "suite": "fulfillment_reads",
           "defined_kinds": [
             "boundary",
             "error",
@@ -8254,6 +8325,21 @@
           ]
         },
         {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "workflow",
           "defined_kinds": [
             "boundary",
@@ -8348,6 +8434,21 @@
           ]
         },
         {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "workflow",
           "defined_kinds": [
             "boundary",
@@ -8371,22 +8472,38 @@
       "roles": "MERCHANT",
       "protected": true,
       "implementation_status": "technician-dispatch-backend-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_merchant_orders_id_dispute_handle",
@@ -8482,6 +8599,21 @@
           ]
         },
         {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "workflow",
           "defined_kinds": [
             "boundary",
@@ -8505,22 +8637,38 @@
       "roles": "MERCHANT",
       "protected": true,
       "implementation_status": "redemption-backend-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_merchant_orders_id_refund",
@@ -8744,22 +8892,38 @@
       "roles": "MERCHANT",
       "protected": true,
       "implementation_status": "service-work-backend-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_merchant_orders_id_work_files_file_access",
@@ -8968,22 +9132,38 @@
       "roles": "MERCHANT",
       "protected": true,
       "implementation_status": "local-reservations-core-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_merchant_slots",
@@ -9054,6 +9234,21 @@
           ]
         },
         {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "workflow",
           "defined_kinds": [
             "boundary",
@@ -9077,22 +9272,38 @@
       "roles": "MERCHANT",
       "protected": true,
       "implementation_status": "local-reservations-core-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_merchant_staff",
@@ -9381,22 +9592,38 @@
       "roles": "MERCHANT",
       "protected": true,
       "implementation_status": "technician-dispatch-backend-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_merchant_workbench",
@@ -9724,6 +9951,21 @@
           ]
         },
         {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "workflow",
           "defined_kinds": [
             "boundary",
@@ -9747,22 +9989,38 @@
       "roles": "OWNER",
       "protected": true,
       "implementation_status": "local-reservations-core-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_order_plan_booking_context",
@@ -9842,6 +10100,21 @@
           ]
         },
         {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "workflow",
           "defined_kinds": [
             "boundary",
@@ -9905,22 +10178,38 @@
       "roles": "OWNER",
       "protected": true,
       "implementation_status": "local-reservations-core-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_order_verify",
@@ -10001,6 +10290,21 @@
         },
         {
           "suite": "fulfillment",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
+          "suite": "fulfillment_reads",
           "defined_kinds": [
             "boundary",
             "error",
@@ -10278,22 +10582,38 @@
       "roles": "OWNER",
       "protected": true,
       "implementation_status": "redemption-backend-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_order_id_refund",
@@ -10637,22 +10957,38 @@
       "roles": "OWNER",
       "protected": true,
       "implementation_status": "r7a-owner-evidence-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_order_id_work_files_file_access",
@@ -11737,6 +12073,21 @@
           ]
         },
         {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "workflow",
           "defined_kinds": [
             "boundary",
@@ -11832,6 +12183,21 @@
         },
         {
           "suite": "fulfillment",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
+          "suite": "fulfillment_reads",
           "defined_kinds": [
             "boundary",
             "error",
@@ -13128,6 +13494,21 @@
           ]
         },
         {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "workflow",
           "defined_kinds": [
             "boundary",
@@ -13358,6 +13739,21 @@
           ]
         },
         {
+          "suite": "fulfillment_reads",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
           "suite": "workflow",
           "defined_kinds": [
             "boundary",
@@ -13414,6 +13810,21 @@
         },
         {
           "suite": "fulfillment",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        {
+          "suite": "fulfillment_reads",
           "defined_kinds": [
             "boundary",
             "error",
