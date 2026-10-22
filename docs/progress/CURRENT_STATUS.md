@@ -1,6 +1,6 @@
 ## 2026-10-22 A4d21：契约逐项结论（缺口销项）（本地完成）
 
-把352项契约逐项结案：**352 = 315项有四类证据 + 37项有明确结论，未解释0项**。分布：已被具名实现替代15（如`/api/home/dashboard`→`/api/vehicle/{vehicle}/health-dashboard`、`/api/order/verify`→`/api/merchant/orders/{id}/redeem`）、服务内部事务完成1、依赖外部上游10（大模型2+微信/短信8）、尚未实现7、实现无200路径1、仅本地演示3。新增`CONTRACT_VERDICTS.json`结论表与fail-closed门禁：结论必须覆盖全部未结案操作、**不得写在已有证据的操作上**（防用“已替代”抹掉真实缺口）、`superseded`替代必须在契约内且带实现标记、契约总数352与证据下限315写死、生成文件逐字节比对。顺带修正三处契约元数据（`/api/ai/chat`、辅助材料上传与访问），不改路径与行为。**覆盖口径不变**：仍报315有证据/37无证据，不把结论算成证据。11项门禁单测与32项覆盖单测通过；全API验收仍false。[执行记录](R9_A4D21_CONTRACT_RECONCILIATION.md) / [契约逐项结论](../api/CONTRACT_RECONCILIATION.md)。下一阶段按结论表推进：7项未实现逐项做产品决策，10项外部阻塞等真实上游接入后再补证据，通用商家动作接口若要恢复写入须先改契约。
+把352项契约逐项结案：**352 = 315项有四类证据 + 37项有明确结论，未解释0项**。分布：已被具名实现替代15（如`/api/home/dashboard`→`/api/vehicle/{vehicle}/health-dashboard`、`/api/order/verify`→`/api/merchant/orders/{id}/redeem`）、服务内部事务完成1、依赖外部上游10（大模型2+微信/短信8）、尚未实现7、实现无200路径1、仅本地演示3。新增`CONTRACT_VERDICTS.json`结论表与fail-closed门禁：结论必须覆盖全部未结案操作、**不得写在已有证据的操作上**（防用“已替代”抹掉真实缺口）、`superseded`替代必须在契约内且带实现标记、契约总数352与证据下限315写死、生成文件逐字节比对。顺带修正三处契约元数据（`/api/ai/chat`、辅助材料上传与访问），不改路径与行为。**覆盖口径不变**：仍报315有证据/37无证据，不把结论算成证据。11项门禁单测与32项覆盖单测通过；全API验收仍false。[执行记录](R9_A4D21_CONTRACT_RECONCILIATION.md) / [契约逐项结论](../api/CONTRACT_RECONCILIATION.md)。下一阶段按结论表推进：7项未实现逐项做产品决策，10项外部阻塞等真实上游接入后再补证据，通用商家动作接口若要恢复写入须先改契约。已上传[草稿PR212](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/212)，依赖PR211，实现提交 `062347d`；远程CI已触发，未合并。
 
 ## 2026-10-22 A4d20：车主公开星级项目评分报价读取（本地完成）
 
