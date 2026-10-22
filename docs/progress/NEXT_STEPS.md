@@ -1,3 +1,7 @@
+## 2026-10-22 A4d16：客户关系与价格比较只读验收（本地完成）
+
+4接口/58请求/216断言、338匿名请求/1014断言通过，13张所选业务表完整内容摘要不变，源码一致且隔离资源清理；84项相关Python回归通过。覆盖门店隐私、到店转换凭据、客户稳定锚点与分页，以及价格依据缺失/失效时UNKNOWN、端点与一分差异。生产Java和schema未改，历史身份/订单/报价及政策审计明确合成。所选历史覆盖306/352，缺口46，全API验收仍false。[执行记录](R9_A4D16_RELATIONS_PRICE_READS_EXECUTION.md)。下一优先券清单/可领取与草稿修订证据；已上传[草稿PR207](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/207)，依赖PR206，实现提交 `e5559e9`；远程CI已触发，未合并。
+
 ## 2026-10-22 A4d15：社区图片真实存储与授权发布（本地完成）
 
 基于PR205（八项CI全绿），完成11接口/85请求、12不变量、8项Java及87项相关Python测试；真实MySQL、私有MinIO和ClamAV引擎链路通过，源码稳定，自有容器与网络实际移除。已验证元数据清除、审核失败回滚、批准/拒绝/撤回、父经验撤回和旧公开ID不复活。生产业务代码和schema未改。所选历史证据累计302/352项，缺口50项；完整API验收仍false。合成身份/前序支付、合成扫描库及像素保留均有明确边界，不计真实资金或自动视觉遮挡验收。[执行记录](R9_A4D15_COMMUNITY_IMAGES_EXECUTION.md)。下一优先商家客户关系与运营价格比较只读链；已上传[草稿PR206](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/206)，依赖PR205，实现提交 `fe713cf`；远程CI已触发，未合并。

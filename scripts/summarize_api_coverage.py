@@ -10,6 +10,7 @@ from generate_api_acceptance import ROOT, operations
 
 KINDS = ('normal', 'boundary', 'error', 'unauthorized')
 POSTMAN = {
+    'relations_price': 'R9_A4D16_RELATIONS_PRICE_READS_2026_10_22.json',
     'owner': 'R9_A4D2A_OWNER_API_CASES_2026_10_19.json',
     'fulfillment': 'R9_A4D2B1_FULFILLMENT_API_CASES_2026_10_19.json',
     'coupon': 'R9_A4D2B2_COUPON_API_CASES_2026_10_19.json',
@@ -184,6 +185,11 @@ def newman_evidence(suite, manifest, collection, collection_hash, report, catalo
         completed = report.get('fulfillment_reads_database', {}).get('checks', {})
         require(set(completed) == set('order_completed local_payment_only redemption_test_mode report_signed foreign_vehicle_unchanged no_foreign_orders'.split()) and
                 all(v is True for v in completed.values()), 'Fulfillment completion evidence incomplete')
+    if suite == 'relations_price':
+        from relations_price_api_cases import CHECKS
+        require(evidence.get('read_only_intents_verified') is True, 'Read-only request intent proof missing')
+        checks=report.get('relations_price_database', {}).get('checks', {})
+        require(set(checks)==CHECKS and all(v is True for v in checks.values()), 'Read-only content invariants incomplete')
     if suite == 'plan_evidence':
         require(evidence.get('plan_request_intents_verified') is True,
                 'Plan consent/version/date/write intent evidence missing')

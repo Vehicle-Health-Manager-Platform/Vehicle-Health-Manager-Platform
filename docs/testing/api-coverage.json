@@ -7,11 +7,11 @@
   "counts": {
     "contract_operations": 352,
     "protected_operations": 338,
-    "four_kind_definitions": 302,
-    "historical_four_kind_operations": 302,
-    "without_complete_historical_evidence": 50,
+    "four_kind_definitions": 306,
+    "historical_four_kind_operations": 306,
+    "without_complete_historical_evidence": 46,
     "current_run_operations": 0,
-    "suites": 29
+    "suites": 30
   },
   "suites": [
     {
@@ -243,6 +243,17 @@
         "docs/testing/postman/quotes-case-manifest.json": "542180cf38662a5a32b8699a12d9a34c53f642795f80283336b611469a2298f5",
         "docs/testing/postman/quotes-cases.postman_collection.json": "8a78651d6a3dac4dd948b72f121e9a35416394b2eb32b68d0d49380140977ab2",
         "docs/testing/reports/R9_A4D2H2_MERCHANT_QUOTES_2026_10_20.json": "0508cd1999281131505e99f5853d8795272534b5f35c9acc3b5f037c98f547b0"
+      }
+    },
+    {
+      "name": "relations_price",
+      "type": "postman",
+      "evidence_status": "HISTORICAL_RECONCILED",
+      "recorded_source_sha256": "2b0218e7bf69edd3d6a40e77176f840452c9aa251471309cacfbefaa6cf63803",
+      "inputs": {
+        "docs/testing/postman/relations-price-case-manifest.json": "1d1e99b65951fa9c340bb06b94dbebb817c994d2d55d95d615515b6b85a0e7ca",
+        "docs/testing/postman/relations-price-cases.postman_collection.json": "4cb819f83c9296d2006b9aecb317e8d586a7c318e03a12207b8deebac8f405f5",
+        "docs/testing/reports/R9_A4D16_RELATIONS_PRICE_READS_2026_10_22.json": "43255f10d1d191e13803791827bd17a4913aed7b5fba2e714080c4e1048a89b5"
       }
     },
     {
@@ -3841,22 +3852,38 @@
       "roles": "OPERATOR(can_price_monitor)",
       "protected": true,
       "implementation_status": "r8b3c2-price-comparison-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "relations_price",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_admin_price_monitor_comparisons_id",
@@ -3865,22 +3892,38 @@
       "roles": "OPERATOR(can_price_monitor)",
       "protected": true,
       "implementation_status": "r8b3c2-price-comparison-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "relations_price",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_admin_price_monitor_policies",
@@ -8144,22 +8187,38 @@
       "roles": "MERCHANT(manager, own store only)",
       "protected": true,
       "implementation_status": "r8b3b-local-customer-relations-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "relations_price",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_merchant_customer_relations_id",
@@ -8168,22 +8227,38 @@
       "roles": "MERCHANT(manager, own store only)",
       "protected": true,
       "implementation_status": "r8b3b-local-customer-relations-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "relations_price",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_merchant_files_upload",

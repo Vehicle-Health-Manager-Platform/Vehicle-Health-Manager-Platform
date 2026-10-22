@@ -1,0 +1,588 @@
+{
+  "version": 1,
+  "cases": 58,
+  "operations": 4,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "relations",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations",
+      "operation_id": "get_api_merchant_customer_relations",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 5
+    },
+    {
+      "name": "relations_boundary",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations",
+      "operation_id": "get_api_merchant_customer_relations",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "relations_error",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations",
+      "operation_id": "get_api_merchant_customer_relations",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "relations_anonymous",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations",
+      "operation_id": "get_api_merchant_customer_relations",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "relations_wrong_role",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations",
+      "operation_id": "get_api_merchant_customer_relations",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "relations_second_page",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations",
+      "operation_id": "get_api_merchant_customer_relations",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 5
+    },
+    {
+      "name": "relations_empty_page",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations",
+      "operation_id": "get_api_merchant_customer_relations",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "relations_other_store",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations",
+      "operation_id": "get_api_merchant_customer_relations",
+      "kind": "unauthorized",
+      "status": 200,
+      "role": "other_merchant",
+      "assertions": 5
+    },
+    {
+      "name": "relations_technician",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations",
+      "operation_id": "get_api_merchant_customer_relations",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "technician",
+      "assertions": 3
+    },
+    {
+      "name": "relations_size",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations",
+      "operation_id": "get_api_merchant_customer_relations",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "relations_duplicate",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations",
+      "operation_id": "get_api_merchant_customer_relations",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "relations_injected",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations",
+      "operation_id": "get_api_merchant_customer_relations",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "relation",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations/1",
+      "operation_id": "get_api_merchant_customer_relations_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 6
+    },
+    {
+      "name": "relation_boundary",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations/999999",
+      "operation_id": "get_api_merchant_customer_relations_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "relation_error",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations/0",
+      "operation_id": "get_api_merchant_customer_relations_id",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "relation_anonymous",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations/1",
+      "operation_id": "get_api_merchant_customer_relations_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "relation_wrong_role",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations/1",
+      "operation_id": "get_api_merchant_customer_relations_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "relation_empty",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations/1",
+      "operation_id": "get_api_merchant_customer_relations_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "relation_noncanonical",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations/3",
+      "operation_id": "get_api_merchant_customer_relations_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "relation_foreign",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations/1",
+      "operation_id": "get_api_merchant_customer_relations_id",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other_merchant",
+      "assertions": 3
+    },
+    {
+      "name": "relation_other_anchor",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations/4",
+      "operation_id": "get_api_merchant_customer_relations_id",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "relation_technician",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations/1",
+      "operation_id": "get_api_merchant_customer_relations_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "technician",
+      "assertions": 3
+    },
+    {
+      "name": "relation_test_identity",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations/8",
+      "operation_id": "get_api_merchant_customer_relations_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "relation_synthetic_verified_identity",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations/100",
+      "operation_id": "get_api_merchant_customer_relations_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "relation_inactive_owner",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations/124",
+      "operation_id": "get_api_merchant_customer_relations_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "relation_moved_vehicle",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations/125",
+      "operation_id": "get_api_merchant_customer_relations_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "relation_query",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations/1",
+      "operation_id": "get_api_merchant_customer_relations_id",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "relation_bad_page",
+      "method": "GET",
+      "path": "/api/merchant/customer-relations/1",
+      "operation_id": "get_api_merchant_customer_relations_id",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "comparisons",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons",
+      "operation_id": "get_api_admin_price_monitor_comparisons",
+      "kind": "normal",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 5
+    },
+    {
+      "name": "comparisons_boundary",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons",
+      "operation_id": "get_api_admin_price_monitor_comparisons",
+      "kind": "boundary",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 3
+    },
+    {
+      "name": "comparisons_error",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons",
+      "operation_id": "get_api_admin_price_monitor_comparisons",
+      "kind": "error",
+      "status": 400,
+      "role": "monitor",
+      "assertions": 3
+    },
+    {
+      "name": "comparisons_anonymous",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons",
+      "operation_id": "get_api_admin_price_monitor_comparisons",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "comparisons_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons",
+      "operation_id": "get_api_admin_price_monitor_comparisons",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "comparisons_empty",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons",
+      "operation_id": "get_api_admin_price_monitor_comparisons",
+      "kind": "boundary",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 4
+    },
+    {
+      "name": "comparison",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons/5",
+      "operation_id": "get_api_admin_price_monitor_comparisons_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 5
+    },
+    {
+      "name": "comparison_boundary",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons/999999",
+      "operation_id": "get_api_admin_price_monitor_comparisons_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "monitor",
+      "assertions": 3
+    },
+    {
+      "name": "comparison_error",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons/0",
+      "operation_id": "get_api_admin_price_monitor_comparisons_id",
+      "kind": "error",
+      "status": 400,
+      "role": "monitor",
+      "assertions": 3
+    },
+    {
+      "name": "comparison_anonymous",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons/5",
+      "operation_id": "get_api_admin_price_monitor_comparisons_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "comparison_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons/5",
+      "operation_id": "get_api_admin_price_monitor_comparisons_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "comparisons_catalog_denied",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons",
+      "operation_id": "get_api_admin_price_monitor_comparisons",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "comparisons_plain_denied",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons",
+      "operation_id": "get_api_admin_price_monitor_comparisons",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "plain",
+      "assertions": 3
+    },
+    {
+      "name": "comparison_catalog_denied",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons/5",
+      "operation_id": "get_api_admin_price_monitor_comparisons_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "comparison_plain_denied",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons/5",
+      "operation_id": "get_api_admin_price_monitor_comparisons_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "plain",
+      "assertions": 3
+    },
+    {
+      "name": "comparisons_duplicate",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons",
+      "operation_id": "get_api_admin_price_monitor_comparisons",
+      "kind": "error",
+      "status": 400,
+      "role": "monitor",
+      "assertions": 3
+    },
+    {
+      "name": "comparisons_injected",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons",
+      "operation_id": "get_api_admin_price_monitor_comparisons",
+      "kind": "error",
+      "status": 400,
+      "role": "monitor",
+      "assertions": 3
+    },
+    {
+      "name": "comparison_query",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons/5",
+      "operation_id": "get_api_admin_price_monitor_comparisons_id",
+      "kind": "error",
+      "status": 400,
+      "role": "monitor",
+      "assertions": 3
+    },
+    {
+      "name": "comparison_state_1",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons/1",
+      "operation_id": "get_api_admin_price_monitor_comparisons_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 5
+    },
+    {
+      "name": "comparison_state_2",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons/2",
+      "operation_id": "get_api_admin_price_monitor_comparisons_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 5
+    },
+    {
+      "name": "comparison_state_3",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons/3",
+      "operation_id": "get_api_admin_price_monitor_comparisons_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 5
+    },
+    {
+      "name": "comparison_state_4",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons/4",
+      "operation_id": "get_api_admin_price_monitor_comparisons_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 5
+    },
+    {
+      "name": "comparison_state_6",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons/6",
+      "operation_id": "get_api_admin_price_monitor_comparisons_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 5
+    },
+    {
+      "name": "comparison_state_7",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons/7",
+      "operation_id": "get_api_admin_price_monitor_comparisons_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 5
+    },
+    {
+      "name": "comparison_state_8",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons/8",
+      "operation_id": "get_api_admin_price_monitor_comparisons_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 5
+    },
+    {
+      "name": "comparison_state_9",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons/9",
+      "operation_id": "get_api_admin_price_monitor_comparisons_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 5
+    },
+    {
+      "name": "comparison_state_10",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons/10",
+      "operation_id": "get_api_admin_price_monitor_comparisons_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 5
+    },
+    {
+      "name": "comparison_state_11",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons/11",
+      "operation_id": "get_api_admin_price_monitor_comparisons_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 5
+    },
+    {
+      "name": "comparison_state_12",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons/12",
+      "operation_id": "get_api_admin_price_monitor_comparisons_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 5
+    },
+    {
+      "name": "comparison_state_13",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/comparisons/13",
+      "operation_id": "get_api_admin_price_monitor_comparisons_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 5
+    }
+  ]
+}
