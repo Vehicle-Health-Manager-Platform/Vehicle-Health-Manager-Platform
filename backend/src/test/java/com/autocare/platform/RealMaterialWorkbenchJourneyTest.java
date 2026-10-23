@@ -272,6 +272,11 @@ class RealMaterialWorkbenchJourneyTest {
         jdbc.update("UPDATE staff_account SET status='DISABLED' WHERE id=1");bench("disabled_merchant","unauthorized","merchant","",401);check("current_staff_and_binding_required",true);
         jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE subject_type='user' AND subject_id=1");access("revoked_owner","unauthorized","owner",a,401);check("current_owner_session_required",true);
         check("no_payment_archive_or_rewards",jdbc.queryForObject("SELECT COUNT(*) FROM payment",Integer.class)==0&&jdbc.queryForObject("SELECT COUNT(*) FROM vehicle_archive",Integer.class)==0&&jdbc.queryForObject("SELECT COUNT(*) FROM point_task_event",Integer.class)==0);
+        if(System.getenv("AUTOCARE_NATIVE_MATERIAL_RUN_ID")!=null){
+            jdbc.update("INSERT INTO user(id,openid,status) VALUES(991,'synthetic-native-material',1)");
+            jdbc.update("INSERT INTO vehicle(id,user_id,current_mileage) VALUES(991,991,100)");
+            NativeMaterialAcceptance.run(jdbc,mapper,port,token("native_owner",991,"user","OWNER",0,null),InputMaterialValidatorTest.pdf(1));
+        }
         completed=true;
     }
     static String sourceDigest()throws Exception{
