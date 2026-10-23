@@ -50,7 +50,7 @@ onUnload(() => { visible = false; scanner.reset(); flow.reset() })
           <text class="ux-card-title">接车</text>
           <view class="ux-badge" :class="toneClass('ok')"><text>扫码即校验</text></view>
         </view>
-        <text class="ux-card-note">扫车主核销码进入接车检查；车牌与联系人按授权范围展示，不落本地缓存。</text>
+        <text class="ux-card-note">扫描车主订单详情中的接车二维码进入接车检查；车牌与联系人按授权范围展示，不落本地缓存。</text>
         <button class="reservation-primary" :disabled="scanState.busy" :loading="scanState.busy" @tap="scanner.scan">扫码接车</button>
         <text v-if="scanState.message" class="status-line" role="status">{{ scanState.message }}</text>
       </view>

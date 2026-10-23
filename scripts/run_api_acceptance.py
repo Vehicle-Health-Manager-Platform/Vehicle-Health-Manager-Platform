@@ -55,6 +55,7 @@ def source_hash():
     paths += [ROOT / 'scripts/assessment_api_cases.py']
     paths += [ROOT / 'scripts/governance_api_cases.py', ROOT / 'scripts/fulfillment_reads_api_cases.py', ROOT / 'scripts/plan_evidence_api_cases.py']
     paths += [ROOT / 'scripts/local_finance_api_cases.py', ROOT / 'scripts/delivery_compare_api_cases.py', ROOT / 'scripts/native-delivery-e2e.cjs']
+    paths += [ROOT / 'scripts/native-pickup-scan-e2e.cjs', ROOT / 'apps/miniapp/src/pages/merchant/orders.vue', ROOT / 'apps/miniapp/src/services/pickup-scan.js']
     paths += [ROOT / 'scripts/native-finance-e2e.cjs', ROOT / 'scripts/native-acceptance-plugin.mjs']
     paths += [ROOT / 'scripts/relations_price_api_cases.py', ROOT / 'scripts/coupon_catalog_api_cases.py', ROOT / 'scripts/auth_sessions_api_cases.py']
     value = hashlib.sha256()
