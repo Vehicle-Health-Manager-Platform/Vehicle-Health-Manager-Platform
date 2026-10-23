@@ -98,11 +98,6 @@
       "reason": "订单取消/退款时的券释放由事务内的 CouponRecovery 完成,不存在独立 HTTP 入口;单独暴露会被滥用为手动改券状态。"
     },
     {
-      "operation": "GET /api/admin/reconciliation",
-      "verdict": "implemented-local",
-      "reason": "A4d26已实现单日单渠道本地资金只读查询及微信小程序页；Java HTTP/MySQL和JS验证单列，未纳入所选四类历史HTTP来源，真实渠道账单及差额仍未知。"
-    },
-    {
       "operation": "POST /api/auth/cloud-login",
       "verdict": "blocked-external",
       "reason": "CloudRunAuthController已有条件启用的cloud-login控制器和测试；需可信微信云托管网关及关闭公网直连的正式环境验证，不能将现有实现误写为仅permitAll占位。"

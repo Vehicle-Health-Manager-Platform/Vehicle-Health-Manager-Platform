@@ -1,6 +1,8 @@
+> 2026-10-23：[资金查询真实联调与微信原生验收](../progress/R9_A4D27_LOCAL_FINANCE_ACCEPTANCE.md)：24业务请求/110断言、8项开发者工具检查、15表完整内容不变，实际清理成功；[复现](WECHAT_LOCAL_FINANCE_ACCEPTANCE.md)。正式资金及手机真机仍待验。
+
 > [金融恢复实际验收](../progress/R9_A4D6_FINANCIAL_RECOVERY_EXECUTION.md)：支付/退款恢复及佣金六重点接口，签名本机替身、真实HTTP和MySQL；正式资金仍待验。
 
-> [接口覆盖核对](API_COVERAGE.md)：当前契约与19套所选历史证据逐项核对；本轮不等于重跑业务接口，全量验收仍未通过。
+> [接口覆盖核对](API_COVERAGE.md)：当前352项契约与36套所选历史证据逐项核对，317项完整四类、缺35项；生成索引不等于重跑业务接口，全量验收仍未通过。
 
 # 测试资料
 

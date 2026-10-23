@@ -18,13 +18,17 @@ class LocalFinanceContractTest(unittest.TestCase):
         self.assertEqual({'const':'no-store'},op['responses']['200']['headers']['Cache-Control']['schema'])
         self.assertTrue({'400','401','403','409','503'}.issubset(op['responses']))
 
-    def test_missing_historical_evidence_is_not_hidden_by_local_implementation(self):
+    def test_recorded_finance_evidence_replaces_local_verdict_without_hiding_external_login(self):
         import json
         from pathlib import Path
         data=json.loads((Path(__file__).resolve().parents[1]/'docs/api/CONTRACT_VERDICTS.json').read_text(encoding='utf-8'))
         rows={row['operation']:row for row in data['verdicts']}
-        self.assertEqual('implemented-local',rows['GET /api/admin/reconciliation']['verdict'])
+        self.assertNotIn('GET /api/admin/reconciliation',rows)
         self.assertEqual('blocked-external',rows['POST /api/auth/cloud-login']['verdict'])
+        coverage=json.loads((Path(__file__).resolve().parents[1]/'docs/testing/api-coverage.json').read_text(encoding='utf-8'))
+        finance=next(r for r in coverage['operations'] if r['method']=='GET' and r['path']=='/api/admin/reconciliation')
+        self.assertEqual({'normal','boundary','error','unauthorized'},set(finance['historical_kinds']))
+        self.assertFalse(coverage['full_api_acceptance_passed'])
 
 
 if __name__=='__main__':

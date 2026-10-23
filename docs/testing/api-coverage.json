@@ -7,11 +7,11 @@
   "counts": {
     "contract_operations": 352,
     "protected_operations": 338,
-    "four_kind_definitions": 316,
-    "historical_four_kind_operations": 316,
-    "without_complete_historical_evidence": 36,
+    "four_kind_definitions": 317,
+    "historical_four_kind_operations": 317,
+    "without_complete_historical_evidence": 35,
     "current_run_operations": 0,
-    "suites": 35
+    "suites": 36
   },
   "suites": [
     {
@@ -210,6 +210,17 @@
         "docs/testing/postman/invitation-case-manifest.json": "e9e187187c31d05fa03f976a1f94f9db5a7b7b4a60431e6ad37a66928e59f178",
         "docs/testing/postman/invitation-cases.postman_collection.json": "4ac83d1891ecc8e1abbae862acc273bcfcd4da466feef94732b536701a39324f",
         "docs/testing/reports/R9_A4D2F1_INVITATION_MONTHLY_API_2026_10_19.json": "4da8540eccee74449a29940e88eeb3b3b44daa8844789bbbe94169fb4a2b2911"
+      }
+    },
+    {
+      "name": "local_finance",
+      "type": "postman",
+      "evidence_status": "HISTORICAL_RECONCILED",
+      "recorded_source_sha256": "90f40e5632f6c1b4be51df72f9115b8eebddc741d7d88859ed2f8cb73848f1e7",
+      "inputs": {
+        "docs/testing/postman/local-finance-case-manifest.json": "f78c1b37a41c93f51a6b5ee83bcd0dbb99ab33580175fdb07ea567526cf83957",
+        "docs/testing/postman/local-finance-cases.postman_collection.json": "f6c2b814e88196be524b64a80d263ee93111d93f1073a1facc9836c41dd2a2ea",
+        "docs/testing/reports/R9_A4D27_LOCAL_FINANCE_API_2026_10_23.json": "8b14630be0539e096795898899a51d1b2c90f1ecf8cbfda0aea6c6f218a8d5ae"
       }
     },
     {
@@ -4353,22 +4364,38 @@
       "roles": "OPERATOR且当前有效会话拥有can_analytics；平台聚合，不含交易明细",
       "protected": true,
       "implementation_status": "local-finance-read-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "local_finance",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_admin_review_texts",

@@ -38,6 +38,26 @@ class CoverageSummaryTest(unittest.TestCase):
     def verify(self):
         return newman_evidence('tiny', self.manifest, self.collection, 'b' * 64, self.report, self.catalog)
 
+    def test_local_finance_requires_default_disabled_read_intent_and_every_content_check(self):
+        from local_finance_api_cases import CHECKS
+        report={key.replace('tiny_','local_finance_'):copy.deepcopy(value) for key,value in self.report.items()}
+        report['local_finance_evidence']['read_only_intents_verified']=True
+        report['local_finance_default_disabled_verified']=True
+        report['local_finance_database']={'checks':{key:True for key in CHECKS}}
+        report['local_finance_ui']={'executed':False,'passed':False}
+        def verify():return newman_evidence('local_finance',self.manifest,self.collection,'b'*64,report,self.catalog)
+        self.assertEqual((self.coverage,self.coverage),verify())
+        good=copy.deepcopy(report)
+        for key in CHECKS:
+            report=copy.deepcopy(good);report['local_finance_database']['checks'][key]=False
+            with self.subTest(table=key),self.assertRaises(ValueError):verify()
+        report=copy.deepcopy(good);report['local_finance_database']['checks'].pop(next(iter(CHECKS)))
+        with self.assertRaises(ValueError):verify()
+        report=copy.deepcopy(good);report['local_finance_default_disabled_verified']=False
+        with self.assertRaises(ValueError):verify()
+        report=copy.deepcopy(good);report['local_finance_evidence']['read_only_intents_verified']=False
+        with self.assertRaises(ValueError):verify()
+
     def test_full_recorded_evidence_is_historical_not_current_acceptance(self):
         defined, historical = self.verify()
         result = summarize(self.spec, [{'name': 'tiny', 'defined': defined, 'historical': historical}])
@@ -408,9 +428,9 @@ class TrackedCoverageTest(unittest.TestCase):
     def test_all_selected_repository_sources_reconcile_without_current_pass_claim(self):
         result = build()
         self.assertEqual(352, result['counts']['contract_operations'])
-        self.assertEqual(35, result['counts']['suites'])
-        self.assertEqual(316, result['counts']['historical_four_kind_operations'])
-        self.assertEqual(36, result['counts']['without_complete_historical_evidence'])
+        self.assertEqual(36, result['counts']['suites'])
+        self.assertEqual(317, result['counts']['historical_four_kind_operations'])
+        self.assertEqual(35, result['counts']['without_complete_historical_evidence'])
         self.assertFalse(result['full_api_acceptance_passed'])
         self.assertEqual(result, json.loads(OUTPUT.read_text(encoding='utf-8')))
         self.assertEqual(render(result), SUMMARY.read_text(encoding='utf-8'))

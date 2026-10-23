@@ -1,0 +1,248 @@
+{
+  "version": 1,
+  "cases": 24,
+  "operations": 1,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "local_daily_exact",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "normal",
+      "status": 200,
+      "role": "operator",
+      "assertions": 10
+    },
+    {
+      "name": "formal_records_separate",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "normal",
+      "status": 200,
+      "role": "operator",
+      "assertions": 8
+    },
+    {
+      "name": "empty_day_zero",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "boundary",
+      "status": 200,
+      "role": "operator",
+      "assertions": 8
+    },
+    {
+      "name": "broken_sources_unknown",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "boundary",
+      "status": 200,
+      "role": "operator",
+      "assertions": 9
+    },
+    {
+      "name": "unclassified_affects_formal",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "boundary",
+      "status": 200,
+      "role": "operator",
+      "assertions": 8
+    },
+    {
+      "name": "bad_refund_unknown",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "boundary",
+      "status": 200,
+      "role": "operator",
+      "assertions": 8
+    },
+    {
+      "name": "future_day_rejected",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "boundary",
+      "status": 409,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "missing_date",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "error",
+      "status": 400,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "missing_channel",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "error",
+      "status": 400,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "invalid_day",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "error",
+      "status": 400,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "short_date",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "error",
+      "status": 400,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "unknown_channel",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "error",
+      "status": 400,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "extra_query",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "error",
+      "status": 400,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "duplicate_channel",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "error",
+      "status": 400,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "duplicate_date",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "error",
+      "status": 400,
+      "role": "operator",
+      "assertions": 3
+    },
+    {
+      "name": "finance_denied_anonymous",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "finance_denied_owner",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "finance_denied_merchant",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "finance_denied_technician",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "technician",
+      "assertions": 3
+    },
+    {
+      "name": "finance_denied_review_operator",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "review_operator",
+      "assertions": 3
+    },
+    {
+      "name": "finance_denied_revoked_operator",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "revoked_operator",
+      "assertions": 3
+    },
+    {
+      "name": "finance_denied_disabled_operator",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "disabled_operator",
+      "assertions": 3
+    },
+    {
+      "name": "finance_denied_expired_operator",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "expired_operator",
+      "assertions": 3
+    },
+    {
+      "name": "local_daily_repeat",
+      "method": "GET",
+      "path": "/api/admin/reconciliation",
+      "operation_id": "get_api_admin_reconciliation",
+      "kind": "normal",
+      "status": 200,
+      "role": "operator",
+      "assertions": 8
+    }
+  ]
+}

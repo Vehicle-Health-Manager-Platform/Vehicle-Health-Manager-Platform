@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { fileURLToPath } from 'node:url'
+import vm from 'node:vm'
 import { nativeAcceptancePlugin } from '../../../scripts/native-acceptance-plugin.mjs'
 
 const valid = { R0_NATIVE_TEST_BUILD: '1', UNI_OUTPUT_DIR: fileURLToPath(new URL('../../../.cache/r0-native/mp-weixin', import.meta.url)), VITE_API_BASE_URL: 'http://127.0.0.1:18080' }
@@ -21,4 +22,20 @@ test('only the test build entry imports the bridge and no credentials are baked 
   assert.match(bridge, /platform!==.*devtools/)
   assert.match(bridge, /options.token/)
   assert.doesNotMatch(bridge, /JWT_SECRET|localStorage|setStorage|console\./)
+})
+test('synthetic operator analytics capability requires an explicit boolean in Devtools', () => {
+  const plugin=nativeAcceptancePlugin(valid)
+  const code=plugin.load(plugin.resolveId('virtual:autocare-native-acceptance')).replace(/^import .*;$/gm,'')
+  let session
+  const clear=()=>{}
+  const context={wx:{getSystemInfoSync:()=>({platform:'devtools'})},setOperatorSession:value=>{session=value},
+    clearOwnerSession:clear,clearMerchantSession:clear,clearTechnicianSession:clear,clearOperatorSession:clear,clearOwnerVehicle:clear}
+  vm.runInNewContext(code,context)
+  for(const capability of [undefined,false,'true',true]) {
+    context.wx.__autocareNativeAcceptance({role:'operator',token:'synthetic',actorId:2,canAnalytics:capability})
+    assert.equal(session.user.id,2)
+    assert.equal(session.user.can_analytics,capability===true)
+  }
+  context.wx.getSystemInfoSync=()=>({platform:'ios'})
+  assert.throws(()=>context.wx.__autocareNativeAcceptance({role:'operator',token:'synthetic',canAnalytics:true}),/Devtools/)
 })

@@ -1,5 +1,7 @@
 # 运营本地资金记录
 
+2026-10-23新增[真实HTTP/MySQL与微信开发者工具证据](../progress/R9_A4D27_LOCAL_FINANCE_ACCEPTANCE.md)：24个业务用例/110断言，15张源表完整内容不变，纳入317项历史四类覆盖；不代表正式渠道或手机真机验收。
+
 终端：微信小程序 `pages/operator/finance`，从运营工作区“资金记录”进入。PC不在本期范围。
 
 `GET /api/admin/reconciliation?date=2026-10-23&channel=LOCAL_TEST`
