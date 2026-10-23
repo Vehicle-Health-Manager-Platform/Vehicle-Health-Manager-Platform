@@ -45,4 +45,4 @@
 2. 补剩余原生旅程与页面核对；iOS/Android真机、相机/录音/扫码/签字/分享和正式身份逐项取证，缺条件保留待验。
 3. OCR/VIN/ASR、多模态、授权知识、真实资金及订阅消息按上游条件接入；最终性能、安全及发布门禁另验。每阶段代码、测试和资料整批上传GitHub。
 
-GitHub：本阶段分支承接PR217，单独创建阶段PR；上传、最终head的CI、合并与发布分别记录，不自动合并或发布。
+GitHub：实现提交 `2748296` 已上传[草稿PR218](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/218)，base=`codex/r9-a4d26-local-finance`，依赖仍未合并的PR217。代码、测试、集合、脱敏报告与中文资料全部上传；最终head的远程CI另行核查，当前尚不宣称通过。未合并或发布。

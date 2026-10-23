@@ -1,5 +1,5 @@
 ## A4d27 本地验收完成
-24业务/110断言、338匿名/1014断言、8项微信开发者工具检查、15表完整内容不变及清理成功。最终1035小程序、468Python及覆盖登记调整后54项通过，正常微信构建无身份桥。317/352、36套来源、35结论，全API仍false。代码/测试/资料正在整批上传GitHub；见docs/progress/R9_A4D27_LOCAL_FINANCE_ACCEPTANCE.md。
+24业务/110断言、338匿名/1014断言、8项微信开发者工具检查、15表完整内容不变及清理成功。最终1035小程序、468Python及覆盖登记调整后54项通过，正常微信构建无身份桥。317/352、36套来源、35结论，全API仍false。2748296代码/测试/资料整批上传[草稿PR218](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/218)，依赖PR217，最终CI待核查；见docs/progress/R9_A4D27_LOCAL_FINANCE_ACCEPTANCE.md。
 
 阶段已上传[草稿PR217](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/217)，实现提交 `fcee604`，base=`codex/r9-a4d25-openapi-reproducibility`，依赖PR216。全部源码、测试和资料已上传；远程CI以最终head检查为准，未合并或发布。
 
