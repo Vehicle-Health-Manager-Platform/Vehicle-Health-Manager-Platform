@@ -1,6 +1,6 @@
 ## 2026-10-23 A4d25：生成源一致性与CI回归修复（本地完成）
 
-核对最新PR215后发现schema-and-ocr失败，先修基线。根因是R9手改交付JSON但生成源缺少4操作修订；已补生成源、无写入build/--check及CI提前门禁，保留末尾生成/git diff检查。新9项回归修复前确实失败、修复后通过；完整重放85/85条schema命令通过，46套/457项Python测试通过，生成资产无Git规范内容变化。生产业务/路径/结构未改，历史覆盖仍316/352、缺口36，全API验收false。[执行记录](R9_A4D25_OPENAPI_REPRODUCIBILITY.md)。下一功能阶段财务对账先做本地记录口径，缺渠道账单保持未知；本阶段上传状态随后补记。
+核对最新PR215后发现schema-and-ocr失败，先修基线。根因是R9手改交付JSON但生成源缺少4操作修订；已补生成源、无写入build/--check及CI提前门禁，保留末尾生成/git diff检查。新9项回归修复前确实失败、修复后通过；完整重放85/85条schema命令通过，46套/457项Python测试通过，生成资产无Git规范内容变化。生产业务/路径/结构未改，历史覆盖仍316/352、缺口36，全API验收false。[执行记录](R9_A4D25_OPENAPI_REPRODUCIBILITY.md)。下一功能阶段财务对账先做本地记录口径，缺渠道账单保持未知；已上传[草稿PR216](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/216)，依赖PR215，实现提交 `e037489`；远程CI已触发，未合并。
 
 ## 2026-10-22 A4d24：商家侧取车对比（核销前核对）（本地完成）
 

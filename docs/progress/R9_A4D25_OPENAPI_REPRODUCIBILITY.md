@@ -29,3 +29,6 @@
 ## 下一功能阶段
 
 财务对账仍未实现，保持原not-implemented结论。下一阶段先确定并实现本地支付/退款记录的按日按渠道查询：北京时间半开区间、CNY十进制、正式与LOCAL_TEST分开、异常来源可见；缺少真实渠道账单时，渠道金额及差额必须未知，不能把本地支付减退款宣称为渠道已对平。独立权限、只读无副作用及真实账单接入边界随规格一起确认。当前阶段不计财务功能交付。
+
+
+阶段已上传[草稿PR216](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/216)，实现提交 `e037489`，base=`codex/r9-a4d24-delivery-merchant-view`，依赖PR215；远程CI已触发，结果以PR实际检查为准，未合并。
