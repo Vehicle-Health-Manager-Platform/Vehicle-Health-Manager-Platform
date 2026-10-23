@@ -45,3 +45,5 @@ node scripts/native-material-upload-e2e.cjs --allow-isolated-upload
 ## GitHub交付
 
 实现d477891已整批上传[草稿PR222](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/222)，base=codex/r9-a4d30-native-pickup-scan，依赖PR221。最终head远程CI另行核查，尚不宣称全部通过；未合并或发布。
+
+A4d32开始时已复核最终3bff98e：八项CI全部成功，PR222仍OPEN，未合并/部署。

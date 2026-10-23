@@ -81,6 +81,14 @@ def source_digest():
     return h.hexdigest()
 
 
+def native_environment(environ):
+    native_id=environ.get('AUTOCARE_NATIVE_MATERIAL_RUN_ID','')
+    kind=environ.get('AUTOCARE_NATIVE_UPLOAD_KIND','pdf')
+    if native_id and not re.fullmatch(r'[0-9a-f]{32}',native_id):raise ValueError('Invalid native run id')
+    if kind not in ('pdf','image') or (kind!='pdf' and not native_id):raise ValueError('Invalid native upload mode')
+    return native_id,kind
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__);mode=parser.add_mutually_exclusive_group()
     mode.add_argument('--docker',action='store_true');mode.add_argument('--check-only',action='store_true');args=parser.parse_args()
@@ -89,9 +97,9 @@ def main():
         JUNIT.unlink(missing_ok=True);EVIDENCE.unlink(missing_ok=True)
         command=['mvn','-B','-Dupload.test.images.prebuilt=true','-Dtest=RealMaterialWorkbenchJourneyTest,InputMaterialValidatorTest,JdbcInputMaterialTest,ServiceWorkspaceHttpTest,JdbcServiceWorkspaceTest','test']
         if args.docker:
-            native_id=os.environ.get('AUTOCARE_NATIVE_MATERIAL_RUN_ID','')
-            if native_id and not re.fullmatch(r'[0-9a-f]{32}',native_id):raise ValueError('Invalid native run id')
+            native_id,native_kind=native_environment(os.environ)
             native=['-e','AUTOCARE_NATIVE_MATERIAL_RUN_ID='+native_id] if native_id else []
+            if native_id:native+=['-e','AUTOCARE_NATIVE_UPLOAD_KIND='+native_kind]
             if native_id:command=[('-Dtest=RealMaterialWorkbenchJourneyTest' if value.startswith('-Dtest=') else value) for value in command]
             host=['-e','TESTCONTAINERS_HOST_OVERRIDE=host.docker.internal'] if platform.system() in ('Windows','Darwin') else []
             command=['docker','run','--rm','--name',('autocare-material-native-'+native_id[:8] if native_id else 'autocare-material-workbench-'+uuid.uuid4().hex[:8]),'--mount',f'type=bind,source={ROOT},target=/workspace','--mount','type=volume,source=autocare-maven-cache,target=/root/.m2','--mount','type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock',*host,*native,'-e','JAVA_TOOL_OPTIONS=-Dapi.version=1.44','-w','/workspace/backend','maven:3.9-eclipse-temurin-17',*command]
