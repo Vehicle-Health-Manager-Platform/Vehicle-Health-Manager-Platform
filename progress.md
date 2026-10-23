@@ -1,3 +1,5 @@
+阶段已上传[草稿PR217](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/217)，实现提交 `fcee604`，base=`codex/r9-a4d25-openapi-reproducibility`，依赖PR216。全部源码、测试和资料已上传；远程CI以最终head检查为准，未合并或发布。
+
 ## A4d26 本地最终通过
 23项Java（真实隔离MySQL11+HTTP4+无DB1+云托管7）、1034小程序、459Python及微信构建通过。隔离资源已移除；上限批量夹具与同意时间守卫最终均执行。中间连接拒绝及旧断言/序列化问题已如实记入阶段报告，不计为通过。准备全阶段提交上传。
 

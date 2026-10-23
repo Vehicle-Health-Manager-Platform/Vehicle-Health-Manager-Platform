@@ -33,3 +33,8 @@
 4. 最终性能、安全、iOS/Android真机与生产交付。每阶段代码/测试/资料整批提交推送GitHub，分别记录上传、CI、合并与发布状态。
 
 规格：[设计](../superpowers/specs/2026-10-23-local-finance-design.md)；计划：[实施顺序](../superpowers/plans/2026-10-23-local-finance.md)；接口：[LOCAL_FINANCE](../api/LOCAL_FINANCE.md)；操作：[小程序指南](../user-guides/LOCAL_FINANCE.md)。
+
+
+## GitHub交付
+
+阶段已上传[草稿PR217](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/217)，实现提交 `fcee604`，base=`codex/r9-a4d25-openapi-reproducibility`，依赖PR216。全部源码、测试和资料已上传；远程CI以最终head检查为准，未合并或发布。
