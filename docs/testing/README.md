@@ -1,3 +1,5 @@
+> 2026-10-23：[扫码接车原生阶段与复现](../progress/R9_A4D30_NATIVE_PICKUP_SCAN.md)。系统扫码返回辅助，随后真实HTTP核对本店PAID订单；不代表手机相机或接车提交。
+
 > 2026-10-23：[取车对比原生阶段记录](../progress/R9_A4D29_NATIVE_DELIVERY.md) · [隔离复现步骤](WECHAT_DELIVERY_COMPARE_ACCEPTANCE.md)。只读对比与核销前导航独立验证，不代表实际核销或手机真机。
 
 > 2026-10-23：[资金查询真实联调与微信原生验收](../progress/R9_A4D27_LOCAL_FINANCE_ACCEPTANCE.md)：24业务请求/110断言、8项开发者工具检查、15表完整内容不变，实际清理成功；[复现](WECHAT_LOCAL_FINANCE_ACCEPTANCE.md)。正式资金及手机真机仍待验。

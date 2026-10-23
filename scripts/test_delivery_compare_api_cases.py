@@ -121,5 +121,22 @@ class DeliveryCompareEvidenceTest(unittest.TestCase):
             self.assertFalse((Path(self.temp.name)/'native-delivery-sessions.private.json').exists())
 
 
+    def test_scan_mode_is_mutually_exclusive_and_requires_system_api_cleanup(self):
+        from unittest.mock import patch
+        from types import SimpleNamespace
+        from delivery_compare_api_cases import native_mode,verify_ui
+        with patch.dict('os.environ',{'AUTOCARE_DELIVERY_NATIVE_QA':'1','AUTOCARE_PICKUP_SCAN_NATIVE_QA':'1'}):
+            with self.assertRaises(ValueError):native_mode()
+        work=Path(self.temp.name)
+        output=work/'native-pickup-scan.json'
+        output.write_text(json.dumps({'passed':True,'session_cleared':True,'system_api_restored':False}),encoding='utf-8')
+        with patch.dict('os.environ',{'AUTOCARE_DELIVERY_NATIVE_QA':'0','AUTOCARE_PICKUP_SCAN_NATIVE_QA':'1'}),patch('delivery_compare_api_cases.subprocess.run',return_value=SimpleNamespace(returncode=0)):
+            self.assertEqual('pickup-scan',native_mode())
+            with self.assertRaises(ValueError):verify_ui(SimpleNamespace(port=18080),self.tokens,work)
+            self.assertFalse((work/'native-pickup-scan-sessions.private.json').exists())
+            output.write_text(json.dumps({'passed':True,'session_cleared':True,'system_api_restored':True}),encoding='utf-8')
+            self.assertTrue(verify_ui(SimpleNamespace(port=18080),self.tokens,work)['system_api_restored'])
+
+
 if __name__=='__main__':
     unittest.main()

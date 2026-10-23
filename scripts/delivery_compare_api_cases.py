@@ -89,32 +89,41 @@ INSERT INTO service_evidence_file(order_id,record_id,file_id,kind) VALUES
 (301,301,8,'PROTECTION'),(301,301,9,'PROCESS'),(301,301,10,'FINISH'),(301,301,11,'SIGNATURE'),
 (302,302,20,'PROCESS'),(302,302,21,'SIGNATURE'),
 (305,305,29,'PROTECTION'),(305,305,30,'PROCESS'),(305,305,31,'FINISH'),(305,305,32,'SIGNATURE');""")
+    if native_mode()=='pickup-scan':
+        mysql.sql("INSERT INTO `order`(id,order_no,user_id,vehicle_id,merchant_id,amount,pay_amount,status) VALUES(304,'SYNTH-SCAN-0304',1,1,1,12.34,12.34,'PAID');")
     BASELINE.clear();BASELINE.update(snapshot(mysql));return tokens
 
 
 def environment(tokens):return [('WECHAT_APP_ID','fulfillment-cases')]
 
 
+def native_mode():
+    delivery=os.environ.get('AUTOCARE_DELIVERY_NATIVE_QA')=='1'
+    scan=os.environ.get('AUTOCARE_PICKUP_SCAN_NATIVE_QA')=='1'
+    if delivery and scan:raise ValueError('Select only one native acceptance mode')
+    return 'pickup-scan' if scan else 'delivery' if delivery else None
+
+
 def backend_port():
     from run_performance_baseline import free_port
-    if os.environ.get('AUTOCARE_DELIVERY_NATIVE_QA')!='1':return free_port()
+    if native_mode() is None:return free_port()
     with socket.socket() as probe:probe.bind(('127.0.0.1',18080))
     return 18080
 
 
 def verify_ui(backend,tokens,work):
-    if os.environ.get('AUTOCARE_DELIVERY_NATIVE_QA')!='1':
-        return {'executed':False,'passed':False,'reason':'WeChat Devtools not opted in; no device acceptance claimed'}
-    if backend.port!=18080:raise ValueError('Native delivery backend must be isolated loopback port 18080')
-    private=work/'native-delivery-sessions.private.json';output=work/'native-delivery.json'
+    mode=native_mode()
+    if mode is None:return {'executed':False,'passed':False,'reason':'WeChat Devtools not opted in; no device acceptance claimed'}
+    if backend.port!=18080:raise ValueError('Native backend must be isolated loopback port 18080')
+    private=work/('native-'+mode+'-sessions.private.json');output=work/('native-'+mode+'.json')
     private.write_text(json.dumps({key:tokens[key] for key in ('owner_token','other_token','merchant_token','other_merchant_token')}),encoding='utf-8')
     try:
-        result=subprocess.run(['node',str(ROOT/'scripts/native-delivery-e2e.cjs'),str(private),str(output)],
+        result=subprocess.run(['node',str(ROOT/('scripts/native-'+mode+'-e2e.cjs')),str(private),str(output)],
                               cwd=ROOT,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=240)
-        if result.returncode:raise ValueError('Native delivery checks failed; inspect sanitized native-delivery.json')
+        if result.returncode:raise ValueError('Native checks failed; inspect sanitized native-'+mode+'.json')
         report=json.loads(output.read_text(encoding='utf-8'))
-        if report.get('passed') is not True or report.get('session_cleared') is not True:
-            raise ValueError('Native delivery evidence or identity cleanup incomplete')
+        if report.get('passed') is not True or report.get('session_cleared') is not True or (mode=='pickup-scan' and report.get('system_api_restored') is not True):
+            raise ValueError('Native evidence or identity/system API cleanup incomplete')
         return report
     finally:private.unlink(missing_ok=True)
 
