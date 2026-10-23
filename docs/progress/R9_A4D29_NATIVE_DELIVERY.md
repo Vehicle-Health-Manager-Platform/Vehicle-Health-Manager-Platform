@@ -31,3 +31,7 @@ delivery_compare套件接现有可选原生钩子：默认只验HTTP并明确UI�
 最终b34bba3b630f完整通过：338匿名请求/1014断言，16业务请求/60断言，7项原生检查，13项数据库只读检查；prepared和业务集合默认禁用各实际0请求。源码稳定，身份清空及后端/MySQL/网络清理成功，原生私有会话文件删除。成功轮未触发元素读取重试（字段未输出表示0次）。[脱敏报告](../testing/reports/R9_A4D29_NATIVE_DELIVERY_2026_10_23.json)。
 
 测试源码与集合、原生脚本、复现文档、阶段记录同批上传。覆盖保持317/352，不替换此前A4d22历史来源，不宣称全API或真机通过。下一阶段优先按剩余验收表核对相机/文件/扫码等原生交互与多角色旅程，正式供应商所需条件单列。
+
+## GitHub交付
+
+实现928d14d已整批上传[草稿PR220](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/220)，base=codex/r9-a4d28-miniapp-handover，依赖PR219。最终head远程CI另行核查，未合并或发布。
