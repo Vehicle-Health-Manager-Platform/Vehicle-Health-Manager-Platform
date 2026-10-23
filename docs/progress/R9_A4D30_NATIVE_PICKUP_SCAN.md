@@ -39,3 +39,7 @@ try {
 90242a68e006整轮通过：原生6项，复用取车对比集合16业务请求/60断言、338匿名请求/1014断言，两默认禁用集合各0请求；13项数据库检查通过，来源稳定、系统API恢复、身份清空及三类资源清理成功。私有原生会话文件已删除，正常微信包无测试身份桥。[脱敏报告](../testing/reports/R9_A4D30_NATIVE_PICKUP_SCAN_2026_10_23.json)。扫码上下文的额外真实HTTP随原生脚本执行，不把它计为新增四类接口覆盖。
 
 代码、测试、页面摘要、计划与实际报告同批上传，覆盖保持317/352。下一阶段优先迁移并验证受控文件/图片选取与上传的原生链路；存储、扫描及文件清理也要真实取证。正式身份、物理相机与手机旅程仍待验。本轮未重跑全量Java、性能、安全或正式供应商；前置PR220开始时5项CI成功，backend/performance仍运行，状态OPEN。
+
+## GitHub交付
+
+实现a5ca612已整批上传[草稿PR221](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/221)，base=codex/r9-a4d29-native-delivery，依赖PR220。最终head远程CI另行核查，尚不宣称全部通过；未合并或发布。
