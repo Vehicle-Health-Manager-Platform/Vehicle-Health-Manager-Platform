@@ -1,5 +1,9 @@
 # 交付文档对照核查（2026-10-23）
 
+## A4d32实施后的更新
+
+[A4d28交接资料](R9_A4D28_MINIAPP_HANDOVER.md)、[A4d29取车对比](R9_A4D29_NATIVE_DELIVERY.md)、[A4d30扫码](R9_A4D30_NATIVE_PICKUP_SCAN.md)、[A4d31 PDF](R9_A4D31_NATIVE_MATERIAL_UPLOAD.md)及[A4d32档案图片](R9_A4D32_NATIVE_IMAGE_UPLOAD.md)已分别形成阶段证据。图片原生五项、页面真实PNG上传、归属扫描与签名下载核对通过，无新增档案或辅助材料；选择器结果仍为工具辅助。当前历史覆盖仍317/352、36套来源、35项结论，全API仍false。正式识别、供应商、资金、手机及发布门禁继续按[剩余验收](../delivery/REMAINING_ACCEPTANCE.md)推进；下文“下一步整理手册”等保留为当时基线。
+
 ## A4d27实施后的更新
 
 以下正文保留A4d25核查基线，当前执行结果见[A4d27](R9_A4D27_LOCAL_FINANCE_ACCEPTANCE.md)：F20已补小程序单日单渠道本地资金记录，24个真实HTTP/MySQL用例及8项微信开发者工具检查通过，渠道账单/差额仍未知。正式资金、正式身份、手机真机及生产交付仍待验。云托管登录已纠正为已有控制器、正式可信链路待验。
