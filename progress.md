@@ -644,3 +644,13 @@ run_reward_acceptance --docker通过，281.36秒：144HTTP/14接口四类，17�
 
 
 阶段已上传[草稿PR215](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/215)，实现提交 `0641389`，base=`codex/r9-a4d23-delivery-compare-page`，依赖PR214；远程CI已触发，结果以PR实际检查为准，未合并。
+
+
+## A4d25 开始
+
+已核对最新阶段19–24成果及PR215检查，避免重复附件验收。用investigate定位生成源缺失，以brainstorming/planning-with-files落盘设计。先完成可复现生成修复与CI门禁，再推进财务对账。
+
+
+## A4d25 本地完成
+
+修复4操作生成源漂移，新9项回归验证先失败后通过。schema-and-ocr完整85条命令/451测试通过（118.313秒），加认证就绪6项合计46套/457项Python测试。生成资产无Git规范内容差异，316/352历史覆盖与36项结论缺口不变。准备提交依赖PR215的草稿PR；财务对账留下一功能阶段，不计本轮交付。
