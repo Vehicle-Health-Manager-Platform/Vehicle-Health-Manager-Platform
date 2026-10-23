@@ -1,6 +1,9 @@
 """Pickup delivery comparison: baseline vs finished-work evidence, isolated read-only HTTP."""
 import hashlib
 import json
+import os
+import socket
+import subprocess
 from coupon_api_cases import Cases
 from fulfillment_api_cases import ROOT, assemble, seed as identity_seed
 
@@ -90,6 +93,30 @@ INSERT INTO service_evidence_file(order_id,record_id,file_id,kind) VALUES
 
 
 def environment(tokens):return [('WECHAT_APP_ID','fulfillment-cases')]
+
+
+def backend_port():
+    from run_performance_baseline import free_port
+    if os.environ.get('AUTOCARE_DELIVERY_NATIVE_QA')!='1':return free_port()
+    with socket.socket() as probe:probe.bind(('127.0.0.1',18080))
+    return 18080
+
+
+def verify_ui(backend,tokens,work):
+    if os.environ.get('AUTOCARE_DELIVERY_NATIVE_QA')!='1':
+        return {'executed':False,'passed':False,'reason':'WeChat Devtools not opted in; no device acceptance claimed'}
+    if backend.port!=18080:raise ValueError('Native delivery backend must be isolated loopback port 18080')
+    private=work/'native-delivery-sessions.private.json';output=work/'native-delivery.json'
+    private.write_text(json.dumps({key:tokens[key] for key in ('owner_token','other_token','merchant_token','other_merchant_token')}),encoding='utf-8')
+    try:
+        result=subprocess.run(['node',str(ROOT/'scripts/native-delivery-e2e.cjs'),str(private),str(output)],
+                              cwd=ROOT,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=240)
+        if result.returncode:raise ValueError('Native delivery checks failed; inspect sanitized native-delivery.json')
+        report=json.loads(output.read_text(encoding='utf-8'))
+        if report.get('passed') is not True or report.get('session_cleared') is not True:
+            raise ValueError('Native delivery evidence or identity cleanup incomplete')
+        return report
+    finally:private.unlink(missing_ok=True)
 
 
 def audit(path,collection,manifest,tokens):

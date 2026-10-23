@@ -108,5 +108,18 @@ class DeliveryCompareEvidenceTest(unittest.TestCase):
             self.assertEqual(2,r.returncode)
 
 
+    def test_native_acceptance_is_explicit_and_private_sessions_are_removed_on_failure(self):
+        from unittest.mock import patch
+        from types import SimpleNamespace
+        from delivery_compare_api_cases import verify_ui,backend_port
+        with patch.dict('os.environ',{'AUTOCARE_DELIVERY_NATIVE_QA':'0'}):
+            self.assertFalse(verify_ui(None,None,None)['executed'])
+        with patch.dict('os.environ',{'AUTOCARE_DELIVERY_NATIVE_QA':'1'}):
+            with self.assertRaises(ValueError):verify_ui(SimpleNamespace(port=12345),self.tokens,Path(self.temp.name))
+            with patch('delivery_compare_api_cases.subprocess.run',return_value=SimpleNamespace(returncode=1)):
+                with self.assertRaises(ValueError):verify_ui(SimpleNamespace(port=18080),self.tokens,Path(self.temp.name))
+            self.assertFalse((Path(self.temp.name)/'native-delivery-sessions.private.json').exists())
+
+
 if __name__=='__main__':
     unittest.main()
