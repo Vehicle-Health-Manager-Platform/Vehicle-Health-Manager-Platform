@@ -1,3 +1,7 @@
+## 2026-10-23 A4d25：生成源一致性与CI回归修复（本地完成）
+
+核对最新PR215后发现schema-and-ocr失败，先修基线。根因是R9手改交付JSON但生成源缺少4操作修订；已补生成源、无写入build/--check及CI提前门禁，保留末尾生成/git diff检查。新9项回归修复前确实失败、修复后通过；完整重放85/85条schema命令通过，46套/457项Python测试通过，生成资产无Git规范内容变化。生产业务/路径/结构未改，历史覆盖仍316/352、缺口36，全API验收false。[执行记录](R9_A4D25_OPENAPI_REPRODUCIBILITY.md)。下一功能阶段财务对账先做本地记录口径，缺渠道账单保持未知；已上传[草稿PR216](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/216)，依赖PR215，实现提交 `e037489`；远程CI已触发，未合并。
+
 ## 2026-10-22 A4d24：商家侧取车对比（核销前核对）（本地完成）
 
 补上取车对比的第三块：核销前告诉店员证据齐不齐（核销是订单终点，事后发现缺照片只能走争议）。**不新开接口、不新开页面**：后端授权本就同时允许本单车主与本店员工，投影一致；页面`pages/order/delivery-compare.vue`按`?role=merchant`切门店会话（与接车详情页同套路），服务层只把登录提示改成中性措辞，文案分叉收在展示层（`deliveryPageView(role)`标题说明、`deliveryResultView(data,role)`结论解释，未知角色回落车主口径）。两个入口都在待核销之后：商家订单详情入口矩阵新增`delivery-compare`（必带`role=merchant`，仅在`PENDING_VERIFY`/`COMPLETED`出现，标签随状态变化）与核销页顶部按钮（`data-testid="redeem-delivery-compare"`），顺序排在核销之前。**不在前端阻止核销**：能否核销由后端守卫决定，前端复制规则只会两边漂移。小程序单测**1024/1024**（新增/更新2项：角色文案分叉、商家入口矩阵）、微信构建与H5构建均DONE；文案配对逐条核对：6组商家/角色文案在编译后wxml均为0次、在编译后映射模块里存在，`redeem.wxml`含新按钮。未做开发者工具与真机走查，不声明渲染通过。接口与覆盖数字未变（316/352，缺口36），全API验收仍false。[执行记录](R9_A4D24_DELIVERY_COMPARE_MERCHANT.md) / [规格](../superpowers/specs/2026-10-22-delivery-compare-merchant-design.md)。下一优先财务对账口径立项或真机走查。已上传[草稿PR215](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/215)，依赖PR214，实现提交 `0641389`；远程CI已触发，未合并。

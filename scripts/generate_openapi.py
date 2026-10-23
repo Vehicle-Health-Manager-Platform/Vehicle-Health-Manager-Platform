@@ -1,5 +1,6 @@
 """Generate the S0 OpenAPI draft from the tracked core and support contracts."""
 
+import argparse
 import csv
 import json
 import re
@@ -34,6 +35,7 @@ from r8c1b1_openapi import add_r8c1b1
 from r8c1b2a_openapi import add_r8c1b2a
 from r8c1b3a_openapi import add_r8c1b3a
 from r9a2b_openapi import add_r9a2b
+from r9_contract_updates_openapi import add_r9_contract_updates
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -87,7 +89,7 @@ def implemented_auth_operation(path, summary, role, protected, fields, features=
     return data
 
 
-def main():
+def build_document():
     document = {
         "openapi": "3.1.0",
         "info": {"title": "汽车健康管家平台 S0 API 草案", "version": "0.1.0",
@@ -1528,9 +1530,23 @@ def main():
     add_r8c1b3a(document, operation)
     add_r8_completion(document, operation)
     add_r9a2b(document, operation)
-    OUTPUT.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    add_r9_contract_updates(document, operation)
+    return document
+
+
+def main(argv=None):
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--check',action='store_true',help='Check the tracked contract without writing files')
+    args=parser.parse_args(argv)
+    document=build_document()
+    content=json.dumps(document,ensure_ascii=False,indent=2)+'\n'
+    if args.check:
+        if not OUTPUT.is_file() or OUTPUT.read_text(encoding='utf-8')!=content:
+            parser.exit(1,'OpenAPI contract differs from generator sources; run python scripts/generate_openapi.py and review the diff\n')
+    else:
+        OUTPUT.write_text(content,encoding='utf-8')
     count = sum(len(item) for item in document["paths"].values())
-    print(f"Wrote {count} operations to {OUTPUT.relative_to(ROOT)}")
+    print(f"{'Checked' if args.check else 'Wrote'} {count} operations {'in' if args.check else 'to'} {OUTPUT.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":

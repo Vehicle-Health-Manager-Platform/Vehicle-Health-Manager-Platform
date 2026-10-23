@@ -1,0 +1,603 @@
+{
+  "version": 1,
+  "passed": true,
+  "previous_ci": {
+    "pr": 215,
+    "run": 39807721436,
+    "job": 119925320143,
+    "failure": "regenerated contract drift"
+  },
+  "regression": {
+    "failed_before_fix": true,
+    "new_tests": 9,
+    "python_suites": 46,
+    "python_tests": 457
+  },
+  "contract": {
+    "operations": 352,
+    "historical_evidence_operations": 316,
+    "remaining_without_historical_evidence": 36,
+    "generated_contract_unchanged": true,
+    "before_fix_generator_sha256": "e9db39eba7287b646709a6b0cbfbeb678c11652bb8b6258955a457ef6e7f70a1",
+    "delivered_and_fixed_generator_sha256": "616e74f27400aa4dda710fd8a248e1c9618e1d0e2ec7fee62f12c5ba98285174",
+    "drift_operations": [
+      "POST /api/ai/chat",
+      "POST /api/check/delivery/compare",
+      "POST /api/input-materials/{purpose}/{vehicleId}/upload",
+      "GET /api/input-materials/{purpose}/{vehicleId}/{id}/access"
+    ]
+  },
+  "schema_and_ocr": {
+    "passed": true,
+    "duration_seconds": 118.313,
+    "commands": 85,
+    "completed": 85,
+    "python_tests": 451,
+    "steps": [
+      {
+        "command": "python -m unittest discover -s scripts -p test_generate_openapi.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 1.157,
+        "tests": 9
+      },
+      {
+        "command": "python scripts/generate_openapi.py --check",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.312
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_core_coverage.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 1.438,
+        "tests": 14
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_isolated_journeys.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.546,
+        "tests": 6
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_database_recovery.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 1.188,
+        "tests": 16
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_performance_baseline.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.812,
+        "tests": 14
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_api_acceptance.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.641,
+        "tests": 9
+      },
+      {
+        "command": "python scripts/generate_api_acceptance.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.203
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_api_coverage_summary.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 3.719,
+        "tests": 32
+      },
+      {
+        "command": "python scripts/summarize_api_coverage.py --check",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.531
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_reconcile_contract.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.719,
+        "tests": 11
+      },
+      {
+        "command": "python scripts/reconcile_contract.py --check",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.25
+      },
+      {
+        "command": "python scripts/owner_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.266
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_owner_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.797,
+        "tests": 7
+      },
+      {
+        "command": "python scripts/fulfillment_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.281
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_fulfillment_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.828,
+        "tests": 8
+      },
+      {
+        "command": "python scripts/coupon_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.25
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_coupon_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 1.813,
+        "tests": 11
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_ci_build_evidence.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.5,
+        "tests": 6
+      },
+      {
+        "command": "python scripts/merchant_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.25
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_merchant_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 1.61,
+        "tests": 7
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_owned_cleanup.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.406,
+        "tests": 3
+      },
+      {
+        "command": "python scripts/community_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.297
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_community_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 2.14,
+        "tests": 10
+      },
+      {
+        "command": "python scripts/publication_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.266
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_publication_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 2.437,
+        "tests": 8
+      },
+      {
+        "command": "python scripts/experience_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.266
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_experience_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 2.781,
+        "tests": 10
+      },
+      {
+        "command": "python scripts/health_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.282
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_health_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 3.359,
+        "tests": 9
+      },
+      {
+        "command": "python scripts/points_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.266
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_points_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 3.625,
+        "tests": 9
+      },
+      {
+        "command": "python scripts/exchange_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.265
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_exchange_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 4.219,
+        "tests": 9
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_service_archive_acceptance.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 1.594,
+        "tests": 10
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_material_workbench_acceptance.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 1.515,
+        "tests": 10
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_pickup_work_files_acceptance.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.719,
+        "tests": 9
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_merchant_onboarding_files_acceptance.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.844,
+        "tests": 11
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_community_images_acceptance.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 2.078,
+        "tests": 10
+      },
+      {
+        "command": "python scripts/quotes_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.234
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_quotes_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 5.203,
+        "tests": 9
+      },
+      {
+        "command": "python scripts/discovery_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.266
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_discovery_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 5.063,
+        "tests": 9
+      },
+      {
+        "command": "python scripts/diagnosis_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.25
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_diagnosis_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 4.735,
+        "tests": 10
+      },
+      {
+        "command": "python scripts/invitation_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.234
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_invitation_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 3.984,
+        "tests": 9
+      },
+      {
+        "command": "python scripts/reviews_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.282
+      },
+      {
+        "command": "python scripts/dispute_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.25
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_dispute_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 2.156,
+        "tests": 8
+      },
+      {
+        "command": "python scripts/workflow_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.25
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_workflow_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 1.969,
+        "tests": 9
+      },
+      {
+        "command": "python scripts/finance_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.25
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_finance_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 2.235,
+        "tests": 8
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_reviews_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 5.906,
+        "tests": 11
+      },
+      {
+        "command": "python scripts/assessment_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.219
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_assessment_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 6.75,
+        "tests": 12
+      },
+      {
+        "command": "python scripts/plan_evidence_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.25
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_plan_evidence_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 2.015,
+        "tests": 8
+      },
+      {
+        "command": "python scripts/fulfillment_reads_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.25
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_fulfillment_reads_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 1.922,
+        "tests": 8
+      },
+      {
+        "command": "python scripts/auth_sessions_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.359
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_auth_sessions_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 2.469,
+        "tests": 9
+      },
+      {
+        "command": "python scripts/coupon_catalog_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.312
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_coupon_catalog_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 2.719,
+        "tests": 10
+      },
+      {
+        "command": "python scripts/relations_price_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.203
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_relations_price_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 2.188,
+        "tests": 9
+      },
+      {
+        "command": "python scripts/governance_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.203
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_governance_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 7.25,
+        "tests": 14
+      },
+      {
+        "command": "python scripts/rating_quotes_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.203
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_rating_quotes_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 2.172,
+        "tests": 10
+      },
+      {
+        "command": "python scripts/delivery_compare_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.187
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_delivery_compare_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 2.0,
+        "tests": 9
+      },
+      {
+        "command": "python -m pip install -r scripts/requirements-export-qa.txt",
+        "passed": true,
+        "mode": "already-installed-exact-version"
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_upload_acceptance.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.656,
+        "tests": 9
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_reward_acceptance.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 1.469,
+        "tests": 10
+      },
+      {
+        "command": "python scripts/export_api_cases.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.266
+      },
+      {
+        "command": "python -m unittest discover -s scripts -p test_export_api_cases.py -v",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 3.968,
+        "tests": 12
+      },
+      {
+        "command": "git diff --exit-code -- docs/testing/postman/",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.094
+      },
+      {
+        "command": "python scripts/generate_traceability.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.203
+      },
+      {
+        "command": "python scripts/build_init_sql.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.203
+      },
+      {
+        "command": "python scripts/generate_openapi.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.329
+      },
+      {
+        "command": "python scripts/verify_compose_migrations.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.203
+      },
+      {
+        "command": "git diff --exit-code -- docs/progress/S0_TRACEABILITY.csv docs/sql/init.sql docs/sql/migrations/V001__baseline.sql docs/api/openapi.json",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.125
+      },
+      {
+        "command": "python -m py_compile services/ocr/src/server.py",
+        "passed": true,
+        "exit_code": 0,
+        "duration_seconds": 0.203
+      }
+    ],
+    "scope": "Local replay of schema-and-ocr run commands; checkout/setup actions excluded; exact pypdf dependency already installed"
+  },
+  "additional_tests": {
+    "suite": "test_check_auth_readiness.py",
+    "tests": 6,
+    "passed": true
+  },
+  "boundaries": [
+    "Local replay; checkout/setup actions excluded; exact pypdf 6.18.1 already installed",
+    "No new backend HTTP, miniapp device, channel bill or real external service acceptance"
+  ]
+}

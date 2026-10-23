@@ -692,3 +692,13 @@ POST /api/check/delivery/compare 实测：齐备订单 READY/deliverable=true、
 ## A4d24 结果
 
 1024/1024 单测通过（角色文案分叉 2 项 + 入口矩阵断言：PENDING_VERIFY/COMPLETED 出现、必带 role=merchant、IN_SERVICE 不出现、标签随状态）；微信构建 DONE（原生样式与无测试身份桥 PASS）、H5 构建 DONE。文案配对：核销前核对/核销前无需再补/再决定是否核销/暂不能核销/取车对比（核销前核对）/查看取车对比 在编译后 wxml 全为 0 次，在 delivery-compare-display.js 与 merchant-order-display.js 里存在；redeem.wxml 含 redeem-delivery-compare。渲染未在开发者工具与真机执行。
+
+
+## A4d25 根因确认
+
+最新基线codex/r9-a4d24-delivery-merchant-view，head1d52e4c，PR215。GitHub失败第83步为生成后git diff；本地将generate_openapi.main输出定向.cache复现，352操作中恰4个操作漂移，components相同。A4d21/22只改交付JSON，未更新生成源；直接改回旧JSON会丢失真实取车只读契约，因此修生成器。
+
+
+## A4d25 验证结论
+
+生成源缺失导致CI第83步覆盖手写元数据/只读契约；修复后规范文本相同，默认两次输出字节稳定，--check失败不写。完整schema链路85/85、所有46套Python共457测试通过。复现只需生成到缓存，无需运行后端或联网依赖；后续改契约必须更新生成源并跑--check。

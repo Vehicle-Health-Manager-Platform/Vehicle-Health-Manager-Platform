@@ -1,0 +1,90 @@
+"""The generator must reproduce the delivered contract, without using that file as input."""
+import contextlib
+import io
+import json
+from pathlib import Path
+import tempfile
+import unittest
+from unittest.mock import patch
+import generate_openapi as generator
+
+
+class OpenApiGenerationTest(unittest.TestCase):
+    def setUp(self):
+        (generator.ROOT/'.cache').mkdir(exist_ok=True)
+        self.temp=tempfile.TemporaryDirectory(prefix='openapi-generation-',dir=generator.ROOT/'.cache')
+        self.addCleanup(self.temp.cleanup)
+        self.output=Path(self.temp.name)/'openapi.json'
+
+    def test_full_generation_reproduces_delivered_contract(self):
+        delivered=generator.OUTPUT.read_text(encoding='utf-8')
+        with patch.object(generator,'OUTPUT',self.output),patch('sys.argv',['generate_openapi.py']),contextlib.redirect_stdout(io.StringIO()):
+            generator.main()
+        self.assertEqual(delivered,self.output.read_text(encoding='utf-8'))
+
+    def invoke(self,*args):
+        with patch.object(generator,'OUTPUT',self.output),contextlib.redirect_stdout(io.StringIO()),contextlib.redirect_stderr(io.StringIO()):
+            return generator.main(list(args))
+
+    def test_check_accepts_current_file_without_writing(self):
+        self.output.write_bytes(generator.OUTPUT.read_bytes())
+        before=self.output.read_bytes(),self.output.stat().st_mtime_ns
+        with patch.object(Path,'write_text',side_effect=AssertionError('check must not write')):
+            self.invoke('--check')
+        self.assertEqual(before,(self.output.read_bytes(),self.output.stat().st_mtime_ns))
+
+    def test_check_rejects_semantic_drift_invalid_and_empty_files_without_repair(self):
+        drift=generator.build_document()
+        drift['paths']['/api/check/delivery/compare']['post']['parameters']=[{'name':'Idempotency-Key','in':'header','required':True}]
+        for content in (json.dumps(drift,ensure_ascii=False,indent=2)+'\n','{',''):
+            with self.subTest(content=content[:30]):
+                self.output.write_text(content,encoding='utf-8');before=self.output.read_bytes()
+                with patch.object(Path,'write_text',side_effect=AssertionError('check must not repair')),self.assertRaises(SystemExit) as error:
+                    self.invoke('--check')
+                self.assertEqual(1,error.exception.code)
+                self.assertEqual(before,self.output.read_bytes())
+
+    def test_missing_contract_is_not_created_by_check(self):
+        with patch.object(Path,'write_text',side_effect=AssertionError('check must not create')),self.assertRaises(SystemExit) as error:
+            self.invoke('--check')
+        self.assertEqual(1,error.exception.code)
+        self.assertFalse(self.output.exists())
+
+    def test_two_default_generations_are_byte_stable(self):
+        self.invoke();first=self.output.read_bytes()
+        self.invoke();self.assertEqual(first,self.output.read_bytes())
+
+    def test_build_does_not_read_or_require_the_output(self):
+        self.output.write_text('invalid output must not become generator input',encoding='utf-8')
+        with patch.object(generator,'OUTPUT',self.output):document=generator.build_document()
+        self.assertEqual(json.loads(generator.OUTPUT.read_text(encoding='utf-8')),document)
+        self.assertEqual('invalid output must not become generator input',self.output.read_text(encoding='utf-8'))
+
+    def test_delivery_compare_remains_read_only_strict_and_authorized(self):
+        document=generator.build_document();item=document['paths']['/api/check/delivery/compare']['post']
+        self.assertEqual(352,sum(len(v) for v in document['paths'].values()))
+        self.assertEqual('delivery-compare-implemented',item['x-implementation-status'])
+        self.assertEqual('本单车主或本店 MERCHANT/STAFF',item['x-roles'])
+        self.assertEqual([{'bearerAuth':[]}],item['security'])
+        self.assertFalse(any(p.get('name')=='Idempotency-Key' for p in item.get('parameters',[])))
+        schema=item['requestBody']['content']['application/json']['schema']
+        self.assertEqual(False,schema['additionalProperties'])
+        self.assertEqual(['order_id'],schema['required'])
+        self.assertEqual({'order_id':{'type':'integer','minimum':1,'maximum':9007199254740991}},schema['properties'])
+        self.assertEqual({'200','400','401','403','404','409','503'},set(item['responses']))
+        self.assertIn('43001',item['responses']['409']['description'])
+
+    def test_r9_implementation_markers_survive_regeneration(self):
+        paths=generator.build_document()['paths']
+        self.assertEqual('ai-chat-implemented-requires-provider',paths['/api/ai/chat']['post']['x-implementation-status'])
+        self.assertEqual('controlled-input-material-upload-implemented',paths['/api/input-materials/{purpose}/{vehicleId}/upload']['post']['x-implementation-status'])
+        self.assertEqual('controlled-input-material-access-implemented',paths['/api/input-materials/{purpose}/{vehicleId}/{id}/access']['get']['x-implementation-status'])
+
+    def test_builds_are_independent(self):
+        first=generator.build_document();second=generator.build_document()
+        first['paths']['/api/check/delivery/compare']['post']['responses']['404']['content'].clear()
+        self.assertEqual(generator.build_document(),second)
+        self.assertTrue(first['paths']['/api/check/delivery/compare']['post']['responses']['200']['content'])
+
+
+if __name__=='__main__':unittest.main()
