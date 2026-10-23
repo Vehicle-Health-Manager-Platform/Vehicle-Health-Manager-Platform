@@ -1,3 +1,5 @@
+> 2026-10-23：[原生PDF上传阶段与复现](../progress/R9_A4D31_NATIVE_MATERIAL_UPLOAD.md)。仅回环代理、真实uploadFile/JVM/存储/扫描，系统文件选择结果辅助；真机和生产病毒库另验。
+
 > 2026-10-23：[扫码接车原生阶段与复现](../progress/R9_A4D30_NATIVE_PICKUP_SCAN.md)。系统扫码返回辅助，随后真实HTTP核对本店PAID订单；不代表手机相机或接车提交。
 
 > 2026-10-23：[取车对比原生阶段记录](../progress/R9_A4D29_NATIVE_DELIVERY.md) · [隔离复现步骤](WECHAT_DELIVERY_COMPARE_ACCEPTANCE.md)。只读对比与核销前导航独立验证，不代表实际核销或手机真机。
