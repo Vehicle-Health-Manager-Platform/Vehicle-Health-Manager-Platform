@@ -198,6 +198,10 @@ jobs:
         run: |
           python -m unittest discover -s scripts -p test_reconcile_contract.py -v
           python scripts/reconcile_contract.py --check
+      - name: Check WeChat handover pages templates and guide links
+        run: |
+          python -m unittest discover -s scripts -p test_miniapp_handover.py -v
+          python scripts/miniapp_handover.py --check
       - run: python scripts/owner_api_cases.py
       - run: python -m unittest discover -s scripts -p test_owner_api_cases.py -v
       - run: python scripts/fulfillment_api_cases.py

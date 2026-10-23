@@ -1,3 +1,6 @@
+## A4d28 实施开始
+沿1e7b1fb建立codex/r9-a4d28-miniapp-handover；四角色指南、110页/三模板94变量索引、剩余验收表与CI门禁完成。8项测试和生成/契约检查通过，敏感扫描0发现；1f8525c已上传草稿PR219，依赖PR218，最终CI待核查，未合并或部署。
+
 ## A4d27 本地验收完成
 24业务/110断言、338匿名/1014断言、8项微信开发者工具检查、15表完整内容不变及清理成功。最终1035小程序、468Python及覆盖登记调整后54项通过，正常微信构建无身份桥。317/352、36套来源、35结论，全API仍false。2748296代码/测试/资料整批上传[草稿PR218](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/218)，依赖PR217，最终CI待核查；见docs/progress/R9_A4D27_LOCAL_FINANCE_ACCEPTANCE.md。
 

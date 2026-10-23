@@ -1,3 +1,7 @@
+## 当前微信小程序交付资料
+
+[三角色与受限运营操作手册](docs/user-guides/README.md) · [页面与三份环境模板索引](docs/delivery/MINIAPP_REFERENCE.md) · [剩余验收和交接条件](docs/delivery/REMAINING_ACCEPTANCE.md)。资料由源码核对，不代替正式身份、真机或上线验收；以下保留阶段历史。
+
 ## 2026-10-23 A4d27：微信资金查询真实联调与原生验收
 
 微信小程序资金页完成真实HTTP/MySQL四类验收：24业务请求/110断言、338匿名请求/1014断言、8项微信开发者工具检查和15张源表完整内容不变，资源清理成功。当前352项契约、36套来源、317项完整四类历史证据、缺35项；全API仍未通过。正式支付/退款、渠道账单、正式身份与手机真机待验。[阶段结果](docs/progress/R9_A4D27_LOCAL_FINANCE_ACCEPTANCE.md) / [复现](docs/testing/WECHAT_LOCAL_FINANCE_ACCEPTANCE.md) / [最新交付核查](docs/progress/DELIVERY_AUDIT_2026_10_23.md)。下方保留历史记录。
