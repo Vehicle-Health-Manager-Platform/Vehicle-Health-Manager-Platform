@@ -68,8 +68,8 @@ test('operator entries are grouped and only appear with the matching permission'
   assert.deepEqual(keys(operatorEntryGroups({ canDiagnoseManage: true })), ['diagnosis-cases', 'diagnosis-service'])
   const full = operatorEntryGroups(ALL)
   assert.deepEqual(full.map(group => group.key), ['content', 'queue', 'operate', 'read'])
-  assert.equal(keys(full).length, 21)
-  assert.equal(new Set(keys(full)).size, 21)
+  assert.equal(keys(full).length, 22)
+  assert.equal(new Set(keys(full)).size, 22)
   for (const entry of full.flatMap(group => group.entries)) {
     assert.match(entry.url, /^\/pages\//, `${entry.key} 必须指向页面`)
     assert.ok(entry.label.length > 0 && entry.note.length > 0, `${entry.key} 缺少可读文案`)

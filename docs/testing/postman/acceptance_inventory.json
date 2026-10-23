@@ -1668,10 +1668,13 @@
       "operation_id": "get_api_admin_reconciliation",
       "method": "GET",
       "path": "/api/admin/reconciliation",
-      "roles": "授权运营",
-      "implementation_status": "unspecified",
+      "roles": "OPERATOR且当前有效会话拥有can_analytics；平台聚合，不含交易明细",
+      "implementation_status": "local-finance-read-implemented",
       "content_types": [],
-      "required_query": [],
+      "required_query": [
+        "date",
+        "channel"
+      ],
       "anonymous_expected": 401,
       "cases": {
         "normal": "NOT_RUN",

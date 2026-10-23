@@ -13,8 +13,9 @@
 | --- | --- | --- |
 | `superseded` | 已被具名实现替代 | 15 |
 | `internal-only` | 由服务内部事务完成 | 1 |
-| `blocked-external` | 依赖未接入的外部上游 | 10 |
-| `not-implemented` | 尚未实现(需先立项) | 6 |
+| `implemented-local` | 本地软件已实现，完整历史HTTP证据待补 | 1 |
+| `blocked-external` | 依赖未接入的外部上游 | 11 |
+| `not-implemented` | 尚未实现(需先立项) | 4 |
 | `no-success-path` | 实现存在但无成功路径 | 1 |
 | `dev-only` | 仅本地演示或开发端点 | 3 |
 
@@ -46,11 +47,18 @@
 | --- | --- | --- |
 | `POST /api/coupon/release` | `未标记` | 订单取消/退款时的券释放由事务内的 CouponRecovery 完成,不存在独立 HTTP 入口;单独暴露会被滥用为手动改券状态。 |
 
-### 依赖未接入的外部上游（10 项）
+### 本地软件已实现，完整历史HTTP证据待补（1 项）
+
+| 操作 | 当前实现标记 | 说明 |
+| --- | --- | --- |
+| `GET /api/admin/reconciliation` | `local-finance-read-implemented` | A4d26已实现单日单渠道本地资金只读查询及微信小程序页；Java HTTP/MySQL和JS验证单列，未纳入所选四类历史HTTP来源，真实渠道账单及差额仍未知。 |
+
+### 依赖未接入的外部上游（11 项）
 
 | 操作 | 当前实现标记 | 说明 |
 | --- | --- | --- |
 | `POST /api/ai/chat` | `ai-chat-implemented-requires-provider` | 实现存在(AiChatController,含车辆档案上下文与积分钩子),但必须配置 DeepSeek 供应商才能返回 200;本地不可验收,也不允许用假响应替代。 |
+| `POST /api/auth/cloud-login` | `未标记` | CloudRunAuthController已有条件启用的cloud-login控制器和测试；需可信微信云托管网关及关闭公网直连的正式环境验证，不能将现有实现误写为仅permitAll占位。 |
 | `POST /api/auth/merchant/code` | `core-implemented` | 商家登录验证码需要生产短信适配器;本地只能用已登录会话夹具,不计真实短信。 |
 | `POST /api/auth/merchant/login` | `core-implemented` | 依赖 merchant/code 下发的验证码,因此同受生产短信适配器阻塞。 |
 | `POST /api/auth/operator/code` | `operator-auth-implemented` | 运营验证码同需生产短信适配器。 |
@@ -61,12 +69,10 @@
 | `POST /api/auth/wx-login` | `core-implemented` | 微信登录需要真实 code2session 上游;本地用自签会话夹具,不计真实微信登录。 |
 | `POST /api/knowledge/answer` | `r8-remaining-implemented` | 实现存在(LicensedKnowledge.answer),未配置 AI 即 503,配置后需真实上游生成并复核来源未变更。 |
 
-### 尚未实现(需先立项)（6 项）
+### 尚未实现(需先立项)（4 项）
 
 | 操作 | 当前实现标记 | 说明 |
 | --- | --- | --- |
-| `GET /api/admin/reconciliation` | `未标记` | 按日按渠道的本地/渠道金额差异报表未实现;目前只有单笔支付的 /api/payments/{id}/reconcile。需要财务口径与渠道账单来源后才能立项。 |
-| `POST /api/auth/cloud-login` | `未标记` | 云托管登录只有 SecurityConfig 的 permitAll 占位,没有控制器;正式登录走 wx-login/手机号绑定。 |
 | `POST /api/payments/callback/{channel}` | `未标记` | 真实渠道回调未接入;当前只有 LOCAL_TEST 渠道回调用于隔离验收。接入需渠道证书、验签密钥与生产商户号。 |
 | `POST /api/refunds/callback/{channel}` | `未标记` | 同上:退款回调只有 LOCAL_TEST,真实渠道回调未接入。 |
 | `GET /api/vehicle/ocr-license` | `未标记` | 行驶证 OCR 未实现,需要外部 OCR 供应商与合规存储方案;当前车辆信息由车主手填。 |

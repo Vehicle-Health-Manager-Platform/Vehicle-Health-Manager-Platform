@@ -1,0 +1,129 @@
+{
+  "kind": "local-finance-stage",
+  "date": "2026-10-23",
+  "recorded_at": "2026-10-23T10:29:15.445921+08:00",
+  "baseline": "93145b6",
+  "target": "WeChat mini-program and shared backend",
+  "local_verification_passed": true,
+  "java": {
+    "tests": 23,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": [
+      {
+        "suite": "com.autocare.platform.order.JdbcLocalFinanceTest",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 66.323
+      },
+      {
+        "suite": "com.autocare.platform.order.LocalFinanceHttpTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 28.916
+      },
+      {
+        "suite": "com.autocare.platform.order.LocalFinanceNoDatabaseTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 0.014
+      },
+      {
+        "suite": "com.autocare.platform.CloudRunAuthTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 56.99
+      },
+      {
+        "suite": "com.autocare.platform.CloudRunDisabledTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 16.524
+      }
+    ],
+    "command": "mvn -B -Dtest=LocalFinanceHttpTest,LocalFinanceNoDatabaseTest,JdbcLocalFinanceTest,CloudRunAuthTest,CloudRunDisabledTest test",
+    "runtime": "Java17 Maven Docker; Testcontainers isolated MySQL8"
+  },
+  "miniapp": {
+    "tests": 1034,
+    "failures": 0,
+    "skipped": 0,
+    "new_tests": 10,
+    "wechat_build_passed": true,
+    "native_shared_styles_passed": true,
+    "no_test_identity_bridge_passed": true,
+    "default_page": "pages/index/index",
+    "finance_route_count": 1,
+    "native_picker_count": 2,
+    "rendering_tested": false
+  },
+  "python": {
+    "tests": 459,
+    "failures": 0,
+    "command": "python -m unittest discover -s scripts -p test_*.py"
+  },
+  "contracts": {
+    "operations": 352,
+    "historical_four_kind_evidenced": 316,
+    "without_complete_historical_evidence": 36,
+    "new_newman_business_operations": 0,
+    "full_api_acceptance_passed": false,
+    "checks": [
+      "generate_openapi.py --check",
+      "summarize_api_coverage.py --check",
+      "reconcile_contract.py --check"
+    ]
+  },
+  "source_files_sha256": {
+    "backend/src/main/java/com/autocare/platform/order/LocalFinance.java": "0fafe31604eb8382ba72fb4c63e34a44783f17296e9c959900526cec8d3d8cab",
+    "backend/src/main/java/com/autocare/platform/order/LocalFinanceController.java": "532500710934aba1ce730bc993fff02b1b23237cd2d6f1161b1af595a05f5aff",
+    "backend/src/main/java/com/autocare/platform/order/ReservationConfiguration.java": "a486d92702f0d4363be5331b328ba1b39664d90e238130e2c01427fab5a650e6",
+    "apps/miniapp/src/services/local-finance.js": "6b5ba8d23678083e66474eb35f7c429011381261047c8f76140574b2d23a8f6a",
+    "apps/miniapp/src/pages/operator/finance.vue": "69534ba64442a2c933ebdf40a7a998514c26082001f57be87307ac34f8822ac6",
+    "apps/miniapp/src/services/public-review-display.js": "82fb0e831432293ab0d2a6cc24641e9afc455b6c4d080edcea8e365bb318514c",
+    "apps/miniapp/src/pages.json": "a4a94d0ce8020bd4447d02fd4c013795f0b7f32b1819b5f905457f77844a1610"
+  },
+  "prior_failures": [
+    {
+      "scope": "initial Java13",
+      "error": "test snapshot ObjectMapper missing JSR310; fixed test serialization"
+    },
+    {
+      "scope": "operator entry tests",
+      "error": "entry total and unique count expected21; updated to22 with permission checks retained"
+    },
+    {
+      "scope": "expanded MySQL11 interim run",
+      "error": "one setup connection refused; owned container events show kill9/exit137, caller not established; not counted as pass",
+      "action": "bulk-created 10001-row fixture; strengthened consent order; fresh complete23-test run passed"
+    }
+  ],
+  "boundaries": [
+    "HTTP controller tests use MockMvc and simulated service/identity; JDBC tests use SQL synthetic local facts",
+    "No integrated real HTTP+MySQL Newman finance run",
+    "No official login, SMS, funds, statement, settlement or provider requests",
+    "No developer-tools or device rendering, security scan, performance pass or deployment"
+  ],
+  "channel_statement": {
+    "state": "UNAVAILABLE",
+    "net_amount": null,
+    "difference": null
+  },
+  "github": {
+    "base": "codex/r9-a4d25-openapi-reproducibility",
+    "dependency_pr": 216,
+    "status": "pending-upload"
+  },
+  "isolated_resources_removed": true
+}

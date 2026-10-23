@@ -4350,9 +4350,9 @@
       "operation_id": "get_api_admin_reconciliation",
       "method": "GET",
       "path": "/api/admin/reconciliation",
-      "roles": "授权运营",
+      "roles": "OPERATOR且当前有效会话拥有can_analytics；平台聚合，不含交易明细",
       "protected": true,
-      "implementation_status": "unspecified",
+      "implementation_status": "local-finance-read-implemented",
       "defined_kinds": [],
       "historical_kinds": [],
       "missing_definition_kinds": [
@@ -15219,6 +15219,6 @@
       ]
     }
   ],
-  "contract_sha256": "616e74f27400aa4dda710fd8a248e1c9618e1d0e2ec7fee62f12c5ba98285174",
+  "contract_sha256": "b32d8192e6cc243b99b494b27e06a80df1c60fdcc4dceaa13939cc2a97d3d0c9",
   "input_hash_policy": "Input SHA256 uses CRLF-to-LF normalization. Historical raw collection digests must match its LF or CRLF byte form; content changes are rejected."
 }
