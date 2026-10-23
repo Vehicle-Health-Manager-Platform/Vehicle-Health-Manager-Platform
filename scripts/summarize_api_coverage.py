@@ -10,6 +10,7 @@ from generate_api_acceptance import ROOT, operations
 
 KINDS = ('normal', 'boundary', 'error', 'unauthorized')
 POSTMAN = {
+    'local_finance': 'R9_A4D27_LOCAL_FINANCE_API_2026_10_23.json',
     'rating_quotes': 'R9_A4D20_RATING_QUOTES_2026_10_22.json',
     'delivery_compare': 'R9_A4D22_DELIVERY_COMPARE_2026_10_22.json',
     'auth_sessions': 'R9_A4D18_AUTH_SESSIONS_2026_10_22.json',
@@ -207,6 +208,12 @@ def newman_evidence(suite, manifest, collection, collection_hash, report, catalo
         require(evidence.get('read_only_intents_verified') is True, 'Read-only request intent proof missing')
         checks=report.get('relations_price_database', {}).get('checks', {})
         require(set(checks)==CHECKS and all(v is True for v in checks.values()), 'Read-only content invariants incomplete')
+    if suite == 'local_finance':
+        from local_finance_api_cases import CHECKS
+        require(evidence.get('read_only_intents_verified') is True, 'Local finance read-only intent proof missing')
+        require(report.get('local_finance_default_disabled_verified') is True, 'Local finance default-disabled execution proof missing')
+        checks=report.get('local_finance_database', {}).get('checks', {})
+        require(set(checks)==CHECKS and all(v is True for v in checks.values()), 'Local finance source content invariants incomplete')
     if suite == 'plan_evidence':
         require(evidence.get('plan_request_intents_verified') is True,
                 'Plan consent/version/date/write intent evidence missing')

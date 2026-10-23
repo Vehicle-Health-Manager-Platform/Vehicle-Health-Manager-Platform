@@ -1,0 +1,804 @@
+{
+  "info": {
+    "name": "Autocare isolated local finance read-only records",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:1"
+    },
+    {
+      "key": "isolated_local_finance_cases",
+      "value": "false"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "if(pm.variables.get(\"isolated_local_finance_cases\")!==\"true\"){pm.execution.skipRequest();throw new Error(\"Use the isolated fulfillment runner\");}"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "local_daily_exact",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-10-20&channel=LOCAL_TEST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{operator_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.payments).to.eql({state:\"KNOWN\",success_count:2,anomaly_count:0,other_count:1,amount:\"0.03\"});});",
+              "pm.test(\"business 1\",()=>{const d=pm.response.json().data;pm.expect(d.refunds).to.eql({state:\"KNOWN\",success_count:1,anomaly_count:0,other_count:0,amount:\"0.05\"});pm.expect(d.local_net).to.eql({state:\"KNOWN\",amount:\"-0.02\"});});",
+              "pm.test(\"business 2\",()=>{const d=pm.response.json().data;pm.expect(d.window_from).to.eql(\"2026-10-19T16:00:00Z\");pm.expect(d.window_to).to.eql(\"2026-10-20T16:00:00Z\");pm.expect(d.unclassified_count).to.eql(0);});",
+              "pm.test(\"business 3\",()=>{const d=pm.response.json().data;pm.expect(d.date).to.eql(\"2026-10-20\");pm.expect(d.channel).to.eql(\"LOCAL_TEST\");pm.expect(d.test_mode).to.eql(true);});",
+              "pm.test(\"business 4\",()=>{const d=pm.response.json().data;pm.expect(d.timezone).to.eql(\"Asia/Shanghai\");pm.expect(d.currency).to.eql(\"CNY\");pm.expect(d.source_version).to.eql(\"R9_LOCAL_FINANCE_V1\");});",
+              "pm.test(\"business 5\",()=>{pm.expect(pm.response.json().data.channel_statement).to.eql({state:\"UNAVAILABLE\",net_amount:null,difference:null});});",
+              "pm.test(\"business 6\",()=>{for(const k of [\"user_id\",\"order_id\",\"payment_no\",\"channel_payment_no\",\"phone\",\"openid\",\"session\",\"merchant_id\"])pm.expect(pm.response.text()).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "formal_records_separate",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-10-20&channel=WECHAT",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{operator_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.payments.amount).to.eql(\"12.34\");pm.expect(d.payments.success_count).to.eql(1);pm.expect(d.refunds.amount).to.eql(\"0.00\");pm.expect(d.local_net.amount).to.eql(\"12.34\");});",
+              "pm.test(\"business 1\",()=>{const d=pm.response.json().data;pm.expect(d.date).to.eql(\"2026-10-20\");pm.expect(d.channel).to.eql(\"WECHAT\");pm.expect(d.test_mode).to.eql(false);});",
+              "pm.test(\"business 2\",()=>{const d=pm.response.json().data;pm.expect(d.timezone).to.eql(\"Asia/Shanghai\");pm.expect(d.currency).to.eql(\"CNY\");pm.expect(d.source_version).to.eql(\"R9_LOCAL_FINANCE_V1\");});",
+              "pm.test(\"business 3\",()=>{pm.expect(pm.response.json().data.channel_statement).to.eql({state:\"UNAVAILABLE\",net_amount:null,difference:null});});",
+              "pm.test(\"business 4\",()=>{for(const k of [\"user_id\",\"order_id\",\"payment_no\",\"channel_payment_no\",\"phone\",\"openid\",\"session\",\"merchant_id\"])pm.expect(pm.response.text()).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "empty_day_zero",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-10-17&channel=LOCAL_TEST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{operator_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.payments.amount).to.eql(\"0.00\");pm.expect(d.refunds.amount).to.eql(\"0.00\");pm.expect(d.local_net.amount).to.eql(\"0.00\");pm.expect(d.payments.success_count).to.eql(0);});",
+              "pm.test(\"business 1\",()=>{const d=pm.response.json().data;pm.expect(d.date).to.eql(\"2026-10-17\");pm.expect(d.channel).to.eql(\"LOCAL_TEST\");pm.expect(d.test_mode).to.eql(true);});",
+              "pm.test(\"business 2\",()=>{const d=pm.response.json().data;pm.expect(d.timezone).to.eql(\"Asia/Shanghai\");pm.expect(d.currency).to.eql(\"CNY\");pm.expect(d.source_version).to.eql(\"R9_LOCAL_FINANCE_V1\");});",
+              "pm.test(\"business 3\",()=>{pm.expect(pm.response.json().data.channel_statement).to.eql({state:\"UNAVAILABLE\",net_amount:null,difference:null});});",
+              "pm.test(\"business 4\",()=>{for(const k of [\"user_id\",\"order_id\",\"payment_no\",\"channel_payment_no\",\"phone\",\"openid\",\"session\",\"merchant_id\"])pm.expect(pm.response.text()).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "broken_sources_unknown",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-10-21&channel=LOCAL_TEST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{operator_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.payments.success_count).to.eql(1);pm.expect(d.payments.anomaly_count).to.eql(2);pm.expect(d.unclassified_count).to.eql(2);});",
+              "pm.test(\"business 1\",()=>{const d=pm.response.json().data;for(const k of [\"payments\",\"refunds\",\"local_net\"]){pm.expect(d[k].state).to.eql(\"UNKNOWN\");pm.expect(d[k].amount).to.eql(null);}});",
+              "pm.test(\"business 2\",()=>{const d=pm.response.json().data;pm.expect(d.date).to.eql(\"2026-10-21\");pm.expect(d.channel).to.eql(\"LOCAL_TEST\");pm.expect(d.test_mode).to.eql(true);});",
+              "pm.test(\"business 3\",()=>{const d=pm.response.json().data;pm.expect(d.timezone).to.eql(\"Asia/Shanghai\");pm.expect(d.currency).to.eql(\"CNY\");pm.expect(d.source_version).to.eql(\"R9_LOCAL_FINANCE_V1\");});",
+              "pm.test(\"business 4\",()=>{pm.expect(pm.response.json().data.channel_statement).to.eql({state:\"UNAVAILABLE\",net_amount:null,difference:null});});",
+              "pm.test(\"business 5\",()=>{for(const k of [\"user_id\",\"order_id\",\"payment_no\",\"channel_payment_no\",\"phone\",\"openid\",\"session\",\"merchant_id\"])pm.expect(pm.response.text()).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "unclassified_affects_formal",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-10-21&channel=WECHAT",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{operator_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.unclassified_count).to.eql(2);pm.expect(d.payments.amount).to.eql(null);pm.expect(d.local_net.amount).to.eql(null);});",
+              "pm.test(\"business 1\",()=>{const d=pm.response.json().data;pm.expect(d.date).to.eql(\"2026-10-21\");pm.expect(d.channel).to.eql(\"WECHAT\");pm.expect(d.test_mode).to.eql(false);});",
+              "pm.test(\"business 2\",()=>{const d=pm.response.json().data;pm.expect(d.timezone).to.eql(\"Asia/Shanghai\");pm.expect(d.currency).to.eql(\"CNY\");pm.expect(d.source_version).to.eql(\"R9_LOCAL_FINANCE_V1\");});",
+              "pm.test(\"business 3\",()=>{pm.expect(pm.response.json().data.channel_statement).to.eql({state:\"UNAVAILABLE\",net_amount:null,difference:null});});",
+              "pm.test(\"business 4\",()=>{for(const k of [\"user_id\",\"order_id\",\"payment_no\",\"channel_payment_no\",\"phone\",\"openid\",\"session\",\"merchant_id\"])pm.expect(pm.response.text()).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "bad_refund_unknown",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-10-22&channel=LOCAL_TEST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{operator_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.payments.amount).to.eql(\"0.00\");pm.expect(d.refunds.anomaly_count).to.eql(1);pm.expect(d.refunds.amount).to.eql(null);pm.expect(d.local_net.amount).to.eql(null);});",
+              "pm.test(\"business 1\",()=>{const d=pm.response.json().data;pm.expect(d.date).to.eql(\"2026-10-22\");pm.expect(d.channel).to.eql(\"LOCAL_TEST\");pm.expect(d.test_mode).to.eql(true);});",
+              "pm.test(\"business 2\",()=>{const d=pm.response.json().data;pm.expect(d.timezone).to.eql(\"Asia/Shanghai\");pm.expect(d.currency).to.eql(\"CNY\");pm.expect(d.source_version).to.eql(\"R9_LOCAL_FINANCE_V1\");});",
+              "pm.test(\"business 3\",()=>{pm.expect(pm.response.json().data.channel_statement).to.eql({state:\"UNAVAILABLE\",net_amount:null,difference:null});});",
+              "pm.test(\"business 4\",()=>{for(const k of [\"user_id\",\"order_id\",\"payment_no\",\"channel_payment_no\",\"phone\",\"openid\",\"session\",\"merchant_id\"])pm.expect(pm.response.text()).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "future_day_rejected",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2099-01-01&channel=LOCAL_TEST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{operator_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(409));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "missing_date",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?channel=LOCAL_TEST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{operator_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "missing_channel",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-10-20",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{operator_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "invalid_day",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-02-30&channel=LOCAL_TEST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{operator_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "short_date",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-1-01&channel=LOCAL_TEST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{operator_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "unknown_channel",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-10-20&channel=ALL",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{operator_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "extra_query",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-10-20&channel=LOCAL_TEST&page=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{operator_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "duplicate_channel",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-10-20&channel=LOCAL_TEST&channel=WECHAT",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{operator_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "duplicate_date",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-10-20&date=2026-10-21&channel=LOCAL_TEST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{operator_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "finance_denied_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-10-20&channel=LOCAL_TEST",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "finance_denied_owner",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-10-20&channel=LOCAL_TEST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "finance_denied_merchant",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-10-20&channel=LOCAL_TEST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "finance_denied_technician",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-10-20&channel=LOCAL_TEST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{technician_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "finance_denied_review_operator",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-10-20&channel=LOCAL_TEST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{review_operator_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "finance_denied_revoked_operator",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-10-20&channel=LOCAL_TEST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{revoked_operator_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "finance_denied_disabled_operator",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-10-20&channel=LOCAL_TEST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{disabled_operator_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "finance_denied_expired_operator",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-10-20&channel=LOCAL_TEST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{expired_operator_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "local_daily_repeat",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/admin/reconciliation?date=2026-10-20&channel=LOCAL_TEST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{operator_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.payments.amount).to.eql(\"0.03\");pm.expect(d.local_net.amount).to.eql(\"-0.02\");});",
+              "pm.test(\"business 1\",()=>{const d=pm.response.json().data;pm.expect(d.date).to.eql(\"2026-10-20\");pm.expect(d.channel).to.eql(\"LOCAL_TEST\");pm.expect(d.test_mode).to.eql(true);});",
+              "pm.test(\"business 2\",()=>{const d=pm.response.json().data;pm.expect(d.timezone).to.eql(\"Asia/Shanghai\");pm.expect(d.currency).to.eql(\"CNY\");pm.expect(d.source_version).to.eql(\"R9_LOCAL_FINANCE_V1\");});",
+              "pm.test(\"business 3\",()=>{pm.expect(pm.response.json().data.channel_statement).to.eql({state:\"UNAVAILABLE\",net_amount:null,difference:null});});",
+              "pm.test(\"business 4\",()=>{for(const k of [\"user_id\",\"order_id\",\"payment_no\",\"channel_payment_no\",\"phone\",\"openid\",\"session\",\"merchant_id\"])pm.expect(pm.response.text()).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

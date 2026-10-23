@@ -2,7 +2,7 @@
 
 本文件由 `python scripts/reconcile_contract.py` 生成，请勿手工编辑；结论数据在 [CONTRACT_VERDICTS.json](CONTRACT_VERDICTS.json)。
 
-- 契约操作：**352** 项；具备四类历史证据：**316** 项；有明确结论但**不计证据**：**36** 项。
+- 契约操作：**352** 项；具备四类历史证据：**317** 项；有明确结论但**不计证据**：**35** 项。
 - 未解释的操作：**0** 项（脚本 `--check` 会在出现未结案条目时失败）。
 
 结论只回答"这一项为什么没有四类证据"，**不等于**该功能已验收、已上线或已可用。真实执行证据见 [API_COVERAGE.md](../testing/API_COVERAGE.md)，全 API 验收仍为 `false`。
@@ -13,7 +13,7 @@
 | --- | --- | --- |
 | `superseded` | 已被具名实现替代 | 15 |
 | `internal-only` | 由服务内部事务完成 | 1 |
-| `implemented-local` | 本地软件已实现，完整历史HTTP证据待补 | 1 |
+| `implemented-local` | 本地软件已实现，完整历史HTTP证据待补 | 0 |
 | `blocked-external` | 依赖未接入的外部上游 | 11 |
 | `not-implemented` | 尚未实现(需先立项) | 4 |
 | `no-success-path` | 实现存在但无成功路径 | 1 |
@@ -46,12 +46,6 @@
 | 操作 | 当前实现标记 | 说明 |
 | --- | --- | --- |
 | `POST /api/coupon/release` | `未标记` | 订单取消/退款时的券释放由事务内的 CouponRecovery 完成,不存在独立 HTTP 入口;单独暴露会被滥用为手动改券状态。 |
-
-### 本地软件已实现，完整历史HTTP证据待补（1 项）
-
-| 操作 | 当前实现标记 | 说明 |
-| --- | --- | --- |
-| `GET /api/admin/reconciliation` | `local-finance-read-implemented` | A4d26已实现单日单渠道本地资金只读查询及微信小程序页；Java HTTP/MySQL和JS验证单列，未纳入所选四类历史HTTP来源，真实渠道账单及差额仍未知。 |
 
 ### 依赖未接入的外部上游（11 项）
 

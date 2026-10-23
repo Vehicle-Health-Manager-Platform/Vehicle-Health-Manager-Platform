@@ -1,6 +1,6 @@
 # 当前核查与实施入口（2026-10-23）
 
-[最新交付核查](DELIVERY_AUDIT_2026_10_23.md) · [A4d26小程序资金记录](R9_A4D26_LOCAL_FINANCE_EXECUTION.md)。以下保留阶段历史，当前结果以最新执行记录为准。
+[最新交付核查](DELIVERY_AUDIT_2026_10_23.md) · [A4d27资金真实联调与微信原生验收](R9_A4D27_LOCAL_FINANCE_ACCEPTANCE.md) · [A4d26小程序资金记录](R9_A4D26_LOCAL_FINANCE_EXECUTION.md)。当前36套来源/317项四类历史证据，缺35项；全API仍未验收。以下保留阶段历史，当前结果以最新执行记录为准。
 
 # 项目进度与下一步规划
 

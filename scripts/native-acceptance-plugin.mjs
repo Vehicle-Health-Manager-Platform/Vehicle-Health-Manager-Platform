@@ -34,7 +34,7 @@ wx.${NATIVE_BRIDGE_MARKER}=function(options){
  if(role==='owner'){setOwnerSession({access_token:options.token,user:{phone_bound:false}});if(options.vehicle)selectOwnerVehicle({vehicle_id:options.vehicle});}
  else if(role==='merchant')merchantSession.accessToken=options.token;
  else if(role==='technician')setTechnicianSession({access_token:options.token});
- else if(role==='operator')setOperatorSession({access_token:options.token,expires_in:900,user:{can_review:true}});
+ else if(role==='operator')setOperatorSession({access_token:options.token,expires_in:900,user:{id:options.actorId,can_review:true,can_analytics:options.canAnalytics===true}});
  else if(role!=='clear')throw new Error('Native acceptance role invalid');
  options.success?.({ready:true});return {ready:true};
 };`

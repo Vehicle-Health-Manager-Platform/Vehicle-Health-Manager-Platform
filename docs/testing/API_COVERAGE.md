@@ -3,23 +3,22 @@
 本文件由 `python scripts/summarize_api_coverage.py` 生成。
 
 - 当前契约：352 项；受保护接口：338 项。
-- 四类用例定义覆盖：316 项；有匹配历史四类执行记录：316 项（接口去重）。
-- 所选记录中未获完整四类证据：36 项；汇总过程新发起接口：0 项（各套实际执行见来源报告）。
+- 四类用例定义覆盖：317 项；有匹配历史四类执行记录：317 项（接口去重）。
+- 所选记录中未获完整四类证据：35 项；汇总过程新发起接口：0 项（各套实际执行见来源报告）。
 
 历史证据不等于当前版本重跑通过，不等于完整权限矩阵或真实身份/资金验收。
 匿名401不算业务四类覆盖；未列历史证据不等于功能未开发。
-本工具只索引明确选定的35套记录，不否认其他单元、HTTP或历史验证；后续可增加经过校验的证据适配器。
+本工具只索引明确选定的36套记录，不否认其他单元、HTTP或历史验证；后续可增加经过校验的证据适配器。
 全API验收仍为false。结构化来源、哈希及逐项状态见 [api-coverage.json](api-coverage.json)。
 下方每一项缺口的结案结论（已被替代/内部完成/外部阻塞/未实现/无成功路径/仅演示）见 [契约逐项结论](../api/CONTRACT_RECONCILIATION.md)，由 `python scripts/reconcile_contract.py` 生成。
 
 ## 历史证据缺口（按领域分组）
 
-### api/admin（5项）
+### api/admin（4项）
 
 - `GET /api/admin/assessment`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。
 - `GET /api/admin/dashboard`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。
 - `POST /api/admin/merchant/audit`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。
-- `GET /api/admin/reconciliation`：缺 boundary, error, normal, unauthorized；实现标记 `local-finance-read-implemented`。
 - `GET /api/admin/standard-project`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。
 
 ### api/ai（2项）
