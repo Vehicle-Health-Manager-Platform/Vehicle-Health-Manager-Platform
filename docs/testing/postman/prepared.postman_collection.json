@@ -4854,9 +4854,9 @@
       "name": "get_api_admin_reconciliation",
       "request": {
         "method": "GET",
-        "url": "{{base_url}}/api/admin/reconciliation",
+        "url": "{{base_url}}/api/admin/reconciliation?date={{get_api_admin_reconciliation_date}}&channel={{get_api_admin_reconciliation_channel}}",
         "header": [],
-        "description": "`date, channel` → 本地/渠道金额与差异列表\nRoles: 授权运营",
+        "description": "运营按北京时间日期及渠道读取本地资金记录；渠道账单及差额未知\nRoles: OPERATOR且当前有效会话拥有can_analytics；平台聚合，不含交易明细",
         "auth": {
           "type": "bearer",
           "bearer": [
@@ -4876,7 +4876,7 @@
             "exec": [
               "if (pm.variables.get(\"enable_prepared_requests\") !== \"true\") { pm.execution.skipRequest(); }",
               "else {",
-              "  const missing = [\"status_get_api_admin_reconciliation\", \"access_token\"].filter(k => !pm.variables.get(k));",
+              "  const missing = [\"status_get_api_admin_reconciliation\", \"get_api_admin_reconciliation_date\", \"get_api_admin_reconciliation_channel\", \"access_token\"].filter(k => !pm.variables.get(k));",
               "  if (missing.length) { pm.execution.skipRequest(); throw new Error(\"Configure fixture variables before sending: \" + missing.join(\",\")); }",
               "}"
             ]

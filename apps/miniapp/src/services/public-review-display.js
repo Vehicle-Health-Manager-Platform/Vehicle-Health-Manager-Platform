@@ -129,6 +129,7 @@ const OPERATOR_ENTRIES = [
   { group: 'read', key: 'price-comparisons', label: '只读价格比较', note: '各门店同项目报价对比', url: '/pages/operator/price-comparisons', can: 'canPriceMonitor' },
   { group: 'read', key: 'price-policies', label: '价格监控来源依据', note: '监控口径与来源留档', url: '/pages/operator/price-policies', can: 'canPriceMonitor' },
   { group: 'read', key: 'business-dashboard', label: '门店经营看板', note: '聚合指标，不含车主明细', url: '/pages/operator/business-dashboard', can: 'canAnalytics' },
+  { group: 'read', key: 'finance', label: '资金记录', note: '按日与渠道查询，渠道对账差额保持未知', url: '/pages/operator/finance', can: 'canAnalytics' },
   { group: 'read', key: 'monthly-assessment', label: '门店月度结算与历史', note: '考核结算与历史快照', url: '/pages/operator/monthly-assessment', can: 'canAssessment' },
   { group: 'read', key: 'assessment-policies', label: '门店月度考核政策', note: '考核口径配置', url: '/pages/operator/assessment-policies', can: 'canAssessment' },
 ]

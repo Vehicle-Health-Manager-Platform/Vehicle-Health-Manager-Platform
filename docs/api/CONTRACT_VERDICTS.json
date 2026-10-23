@@ -99,13 +99,13 @@
     },
     {
       "operation": "GET /api/admin/reconciliation",
-      "verdict": "not-implemented",
-      "reason": "按日按渠道的本地/渠道金额差异报表未实现;目前只有单笔支付的 /api/payments/{id}/reconcile。需要财务口径与渠道账单来源后才能立项。"
+      "verdict": "implemented-local",
+      "reason": "A4d26已实现单日单渠道本地资金只读查询及微信小程序页；Java HTTP/MySQL和JS验证单列，未纳入所选四类历史HTTP来源，真实渠道账单及差额仍未知。"
     },
     {
       "operation": "POST /api/auth/cloud-login",
-      "verdict": "not-implemented",
-      "reason": "云托管登录只有 SecurityConfig 的 permitAll 占位,没有控制器;正式登录走 wx-login/手机号绑定。"
+      "verdict": "blocked-external",
+      "reason": "CloudRunAuthController已有条件启用的cloud-login控制器和测试；需可信微信云托管网关及关闭公网直连的正式环境验证，不能将现有实现误写为仅permitAll占位。"
     },
     {
       "operation": "GET /api/vehicle/ocr-license",

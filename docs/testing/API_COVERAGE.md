@@ -19,7 +19,7 @@
 - `GET /api/admin/assessment`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。
 - `GET /api/admin/dashboard`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。
 - `POST /api/admin/merchant/audit`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。
-- `GET /api/admin/reconciliation`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。
+- `GET /api/admin/reconciliation`：缺 boundary, error, normal, unauthorized；实现标记 `local-finance-read-implemented`。
 - `GET /api/admin/standard-project`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。
 
 ### api/ai（2项）

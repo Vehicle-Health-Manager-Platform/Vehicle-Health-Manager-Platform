@@ -4174,26 +4174,260 @@
     },
     "/api/admin/reconciliation": {
       "get": {
-        "summary": "`date, channel` → 本地/渠道金额与差异列表",
+        "summary": "运营按北京时间日期及渠道读取本地资金记录；渠道账单及差额未知",
         "operationId": "get_api_admin_reconciliation",
         "tags": [
           "admin"
         ],
-        "x-feature-ids": [],
-        "parameters": [],
+        "x-feature-ids": [
+          "F20"
+        ],
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^20[0-9]{2}-[0-9]{2}-[0-9]{2}$"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "WECHAT",
+                "LOCAL_TEST"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "统一成功响应",
+            "description": "只读本地日汇总，CNY两位十进制字符串；异常总额null；channel_statement的net_amount/difference均null",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "date",
+                            "channel",
+                            "test_mode",
+                            "timezone",
+                            "currency",
+                            "source_version",
+                            "window_from",
+                            "window_to",
+                            "observed_at",
+                            "payments",
+                            "refunds",
+                            "unclassified_count",
+                            "local_net",
+                            "channel_statement"
+                          ],
+                          "properties": {
+                            "date": {
+                              "type": "string",
+                              "format": "date"
+                            },
+                            "channel": {
+                              "type": "string",
+                              "enum": [
+                                "WECHAT",
+                                "LOCAL_TEST"
+                              ]
+                            },
+                            "test_mode": {
+                              "type": "boolean"
+                            },
+                            "timezone": {
+                              "const": "Asia/Shanghai"
+                            },
+                            "currency": {
+                              "const": "CNY"
+                            },
+                            "source_version": {
+                              "const": "R9_LOCAL_FINANCE_V1"
+                            },
+                            "window_from": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "window_to": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "observed_at": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "payments": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "required": [
+                                "state",
+                                "success_count",
+                                "anomaly_count",
+                                "other_count",
+                                "amount"
+                              ],
+                              "properties": {
+                                "state": {
+                                  "type": "string",
+                                  "enum": [
+                                    "KNOWN",
+                                    "UNKNOWN"
+                                  ]
+                                },
+                                "success_count": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 10000
+                                },
+                                "anomaly_count": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 10000
+                                },
+                                "other_count": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 10000
+                                },
+                                "amount": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "pattern": "^(0|[1-9][0-9]{0,11})\\.[0-9]{2}$"
+                                }
+                              }
+                            },
+                            "refunds": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "required": [
+                                "state",
+                                "success_count",
+                                "anomaly_count",
+                                "other_count",
+                                "amount"
+                              ],
+                              "properties": {
+                                "state": {
+                                  "type": "string",
+                                  "enum": [
+                                    "KNOWN",
+                                    "UNKNOWN"
+                                  ]
+                                },
+                                "success_count": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 10000
+                                },
+                                "anomaly_count": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 10000
+                                },
+                                "other_count": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 10000
+                                },
+                                "amount": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "pattern": "^(0|[1-9][0-9]{0,11})\\.[0-9]{2}$"
+                                }
+                              }
+                            },
+                            "unclassified_count": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 10000
+                            },
+                            "local_net": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "required": [
+                                "state",
+                                "amount"
+                              ],
+                              "properties": {
+                                "state": {
+                                  "type": "string",
+                                  "enum": [
+                                    "KNOWN",
+                                    "UNKNOWN"
+                                  ]
+                                },
+                                "amount": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "pattern": "^-?(0|[1-9][0-9]{0,11})\\.[0-9]{2}$"
+                                }
+                              }
+                            },
+                            "channel_statement": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "required": [
+                                "state",
+                                "net_amount",
+                                "difference"
+                              ],
+                              "properties": {
+                                "state": {
+                                  "const": "UNAVAILABLE"
+                                },
+                                "net_amount": {
+                                  "type": "null"
+                                },
+                                "difference": {
+                                  "type": "null"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
                 }
               }
             }
           },
           "400": {
-            "description": "参数或业务状态错误",
+            "description": "日期/渠道缺失、未知/重复query或格式错误，40001",
             "content": {
               "application/json": {
                 "schema": {
@@ -4206,7 +4440,34 @@
             "description": "认证失败，code=40100"
           },
           "403": {
-            "description": "无权访问，code=40300"
+            "description": "角色或当前can_analytics不符，40300",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "未来日期或单日超过10000条，40900",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "数据库或来源不可用，50300",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -4214,7 +4475,8 @@
             "bearerAuth": []
           }
         ],
-        "x-roles": "授权运营"
+        "x-implementation-status": "local-finance-read-implemented",
+        "x-roles": "OPERATOR且当前有效会话拥有can_analytics；平台聚合，不含交易明细"
       }
     },
     "/api/coupon/reserve": {

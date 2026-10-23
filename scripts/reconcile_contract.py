@@ -12,6 +12,7 @@ OUTPUT = ROOT / 'docs/api/CONTRACT_RECONCILIATION.md'
 KINDS = OrderedDict([
     ('superseded', '已被具名实现替代'),
     ('internal-only', '由服务内部事务完成'),
+    ('implemented-local', '本地软件已实现，完整历史HTTP证据待补'),
     ('blocked-external', '依赖未接入的外部上游'),
     ('not-implemented', '尚未实现(需先立项)'),
     ('no-success-path', '实现存在但无成功路径'),

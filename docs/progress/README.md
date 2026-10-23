@@ -1,3 +1,7 @@
+# 当前核查与实施入口（2026-10-23）
+
+[最新交付核查](DELIVERY_AUDIT_2026_10_23.md) · [A4d26小程序资金记录](R9_A4D26_LOCAL_FINANCE_EXECUTION.md)。以下保留阶段历史，当前结果以最新执行记录为准。
+
 # 项目进度与下一步规划
 
 > **2026-10-18 阶段实施**：本地预览已上传PR156；A1设计及A2a录音/试听/图片PDF本机采集已本地完成，891前端、微信/H5/预览构建通过，正在阶段上传。[执行](R9_A2A_INPUT_MATERIALS_EXECUTION.md) · [验收](../testing/LOCAL_A2A_INPUT_MATERIALS_ACCEPTANCE.md)。下一A2b受控媒体上传，再A3候选确认，外部服务继续后置。

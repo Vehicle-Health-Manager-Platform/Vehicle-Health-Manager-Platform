@@ -180,6 +180,7 @@ jobs:
       - name: Check OpenAPI source reproducibility before regenerating assets
         run: |
           python -m unittest discover -s scripts -p test_generate_openapi.py -v
+          python -m unittest discover -s scripts -p test_local_finance_contract.py -v
           python scripts/generate_openapi.py --check
       - run: python -m unittest discover -s scripts -p test_core_coverage.py -v
       - run: python -m unittest discover -s scripts -p test_isolated_journeys.py -v
