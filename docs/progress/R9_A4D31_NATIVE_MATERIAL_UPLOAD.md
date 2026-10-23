@@ -41,3 +41,7 @@ node scripts/native-material-upload-e2e.cjs --allow-isolated-upload
 本阶段补齐的是开发者工具与真实后端存储的联调，文件选择返回仍为辅助、微信临时缓存仍由系统管理；不是物理选取、预览渲染或生产扫描库覆盖通过。下一阶段可沿此隔离平台核对图片/录音采集与真实上传，手机三角色旅程及正式供应商条件另验。
 
 提交前覆盖门禁发现执行器文件摘要漂移，已重生成索引并复跑33项覆盖核对测试通过，覆盖仍317/352。Python本阶段相关测试共52项（材料/上传19+覆盖33）。敏感扫描两项为已核实的固定回环测试输入地址及Docker公共测试主机名，精确例外不含令牌或实际私有地址。
+
+## GitHub交付
+
+实现d477891已整批上传[草稿PR222](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/222)，base=codex/r9-a4d30-native-pickup-scan，依赖PR221。最终head远程CI另行核查，尚不宣称全部通过；未合并或发布。
