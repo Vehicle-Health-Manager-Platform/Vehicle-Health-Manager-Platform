@@ -20,7 +20,7 @@
 
 ## 上传
 
-独立分支 codex/r9-a4d37-mileage-miniapp，依赖 PR227；阶段上传结果在交付后补记，不合并或部署。
+实现提交 fadf8f2 已上传独立分支 codex/r9-a4d37-mileage-miniapp；[草稿PR228](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/228)依赖 PR227，未合并或部署。最终 head CI 单独核对，不能用本地通过替代远程结论。
 
 ## 下一阶段
 
