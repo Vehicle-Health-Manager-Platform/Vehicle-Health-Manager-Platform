@@ -28,9 +28,9 @@ onShow(flow.resume);onHide(suspend);onUnload(suspend);onBeforeUnmount(suspend)
   <text class="hint">可对照原材料手动整理候选；确认仅带入本页，仍需原保存或发送按钮。</text>
   <view v-if="vehicleId&&fileIds.length" class="row">
    <text class="hint">里程图片识别（可选）：选定一张已上传图片，仅用于提取本次档案里程。服务未启用时请手动整理；多个里程无法确定时不会自动选择。</text>
-   <picker :disabled="disabled" :range="fileIds.map((id,index)=>'图片 '+(index+1))" @change="selectedFile=fileIds[Number($event.detail.value)]"><view class="field">{{selectedFile?'已选图片 '+(fileIds.indexOf(selectedFile)+1):'请选择识别图片'}}</view></picker>
-   <label class="hint"><switch :checked="consent" :disabled="disabled||!selectedFile" @change="consent=$event.detail.value" />同意将选定图片用于本次里程识别，结果由我核对</label>
-   <button :disabled="disabled||!selectedFile||!consent||state.phase==='recognizing'" @tap="recognize">{{state.phase==='recognizing'?'正在识别，可取消':'识别所选图片的里程'}}</button>
+   <picker data-testid="mileage-source" :disabled="disabled" :range="fileIds.map((id,index)=>'图片 '+(index+1))" @change="selectedFile=fileIds[Number($event.detail.value)]"><view class="field">{{selectedFile?'已选图片 '+(fileIds.indexOf(selectedFile)+1):'请选择识别图片'}}</view></picker>
+   <label class="hint"><switch data-testid="mileage-consent" :checked="consent" :disabled="disabled||!selectedFile" @change="consent=$event.detail.value" />同意将选定图片用于本次里程识别，结果由我核对</label>
+   <button data-testid="mileage-recognize" :disabled="disabled||!selectedFile||!consent||state.phase==='recognizing'" @tap="recognize">{{state.phase==='recognizing'?'正在识别，可取消':'识别所选图片的里程'}}</button>
   </view>
   <button v-if="['closed','applied'].includes(state.phase)" :disabled="disabled||!actor" data-testid="candidate-begin" @tap="flow.begin">手动整理候选</button>
   <template v-else>
@@ -38,17 +38,17 @@ onShow(flow.resume);onHide(suspend);onUnload(suspend);onBeforeUnmount(suspend)
    <view v-for="def in fields" :key="def.key" class="row">
     <text>{{def.label}}</text><text class="hint">当前：{{values[def.key]||'未填写'}}</text>
     <textarea v-if="def.kind==='multiline'" :value="state.form[def.key]||''" :maxlength="def.max||100" :disabled="disabled||state.phase==='recognizing'" class="field multiline" @input="flow.edit(def.key,$event.detail.value)" />
-    <input v-else :value="state.form[def.key]||''" :maxlength="def.max||100" :disabled="disabled||state.phase==='recognizing'" class="field" @input="flow.edit(def.key,$event.detail.value)" />
+    <input v-else :data-testid="'candidate-'+def.key" :value="state.form[def.key]||''" :maxlength="def.max||100" :disabled="disabled||state.phase==='recognizing'" class="field" @input="flow.edit(def.key,$event.detail.value)" />
     <text v-if="state.source==='PROVIDER'&&state.rows.find(r=>r.key===def.key)" class="hint">可信度：{{state.rows.find(r=>r.key===def.key)?.confidence??'未知'}}，请核对原材料</text>
    </view>
    <button v-if="state.phase==='editing'" :disabled="disabled" data-testid="candidate-review" @tap="flow.review">检查候选内容</button>
    <template v-if="state.phase==='review'">
     <text class="hint">以下已填写项目将替换当前表单对应值，空项保留原值。</text>
     <view v-for="row in state.rows" :key="row.key" class="hint">{{fields.find(d=>d.key===row.key)?.label}}：{{row.value}}</view>
-    <label class="hint"><switch :checked="state.ack" :disabled="disabled" @change="state.ack=$event.detail.value" />我已逐项对照原材料核对</label>
+    <label class="hint"><switch data-testid="candidate-ack" :checked="state.ack" :disabled="disabled" @change="state.ack=$event.detail.value" />我已逐项对照原材料核对</label>
     <button :disabled="disabled||!state.ack" data-testid="candidate-confirm" @tap="flow.confirm">确认带入表单</button>
    </template>
-   <button class="secondary" @tap="cancel">取消本次候选</button>
+   <button data-testid="candidate-cancel" class="secondary" @tap="cancel">取消本次候选</button>
   </template>
   <text v-if="state.message" class="hint" role="status">{{state.message}}</text>
  </view>

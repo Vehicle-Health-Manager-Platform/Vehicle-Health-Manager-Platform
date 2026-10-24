@@ -5,7 +5,7 @@ from pathlib import Path
 import unittest
 from unittest.mock import patch
 import run_real_mileage_acceptance as runner
-from run_real_mileage_acceptance import ROOT, EXPECTED, CHECKS, gateway_audit, local_model_root
+from run_real_mileage_acceptance import ROOT, EXPECTED, CHECKS, NATIVE_CHECKS, gateway_audit, native_audit, local_model_root
 
 class RealMileageProofTest(unittest.TestCase):
     def setUp(self):
@@ -62,5 +62,21 @@ class RealMileageProofTest(unittest.TestCase):
                  patch.dict(runner.os.environ, {key: 'a' * 32}), patch.object(runner.uuid, 'uuid4') as create, contextlib.redirect_stderr(io.StringIO()):
                 with self.assertRaises(SystemExit): runner.main()
                 create.assert_not_called()
+
+    def test_native_requires_every_ui_database_and_cleanup_fact(self):
+        ui={k:True for k in ['passed','session_cleared','system_api_restored','proxy_closed','local_reference_released']}
+        ui.update(checks=[{'name':k,'passed':True} for k in NATIVE_CHECKS],counts={'upload':1,'recognition':2,'archive':1})
+        database={k:True for k in ['passed','zero_archives_before_save','one_archive_saved','correct_mileage_and_file','vehicle_mileage_unchanged','signed_download_matches','no_input_material_created']}
+        database['checkpoints']=['candidate','cancelled','applied']
+        self.assertEqual(ui,native_audit(ui,database)['ui'])
+        for kind in ['missing_check','failed_check','duplicate_checkpoint','bad_count','cleanup','database']:
+            a,b=copy.deepcopy(ui),copy.deepcopy(database)
+            if kind=='missing_check':a['checks'].pop()
+            elif kind=='failed_check':a['checks'][0]['passed']=False
+            elif kind=='duplicate_checkpoint':b['checkpoints']=['candidate']*3
+            elif kind=='bad_count':a['counts']['archive']=2
+            elif kind=='cleanup':a['session_cleared']=False
+            else:b['one_archive_saved']=False
+            with self.subTest(kind=kind),self.assertRaises(ValueError):native_audit(a,b)
 
 if __name__ == '__main__': unittest.main()

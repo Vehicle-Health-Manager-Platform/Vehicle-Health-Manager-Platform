@@ -285,6 +285,12 @@ class RealMaterialWorkbenchJourneyTest {
             jdbc.update("INSERT INTO user(id,openid,status) VALUES(991,'synthetic-real-mileage',1)");
             jdbc.update("INSERT INTO vehicle(id,user_id,current_mileage) VALUES(991,991,100)");
             RealMileageAcceptance.run(jdbc,mapper,port,token("real_mileage",991,"user","OWNER",0,null),tokens.get("other"));
+            if(RealMileageAcceptance.config.path("native").asBoolean()){
+                jdbc.update("INSERT INTO user(id,openid,status) VALUES(992,'synthetic-native-mileage',1)");
+                jdbc.update("INSERT INTO vehicle(id,user_id,current_mileage) VALUES(992,992,100)");
+                var nativeProof=NativeMileageAcceptance.run(jdbc,mapper,port,token("native_mileage",992,"user","OWNER",0,null),Base64.getDecoder().decode(RealMileageAcceptance.config.path("image").asText()));
+                RealMileageAcceptance.proof.put("native_database",nativeProof);
+            }
         }
         completed=true;
     }
