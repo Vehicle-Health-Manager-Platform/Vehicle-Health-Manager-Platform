@@ -13,3 +13,7 @@
 ## 本地验证与限制
 
 17项OCR测试、Python编译、差异格式、交接索引与API覆盖索引检查通过。两次Docker构建均在拉取python:3.11-slim前因auth.docker.io网络超时失败，本机没有该基础镜像，未验证镜像构建成功或容器启动。没有通过更换来源/镜像隐藏失败，记录为待CI及网络恢复复验。首阶段PR225最新核查backend仍运行，其余已出现六项成功，compose尚未出现；不宣称全CI通过。
+
+## GitHub交付
+
+实现e280435已整批上传[草稿PR226](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/226)，base=codex/r9-a4d34-mileage-candidates，依赖PR225。镜像构建及真实推理保持待验，最终head CI另核，不宣称全部通过；未合并部署。
