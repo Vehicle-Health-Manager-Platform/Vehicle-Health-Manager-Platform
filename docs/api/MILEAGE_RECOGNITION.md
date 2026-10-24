@@ -19,3 +19,17 @@
 400为正文/用途/query错误；401为会话/用户失效；403为非正式车主；404为车辆/图片不属于本人或不可用；409为仍可用事实变化；429为本实例繁忙；503为关闭、数据库/存储/私有OCR故障、结果无效或超时。响应no-store，不返回对象key、签名URL、服务凭据或OCR原文。照片、真实模型和当前车辆对应关系必须在获授权样本/真机验收中独立核对。
 
 本轮测试使用真实MySQL验证归属/撤销与无写入，存储与推理是明确替身；传输测试的回环HTTP服务也是替身，不证明MinIO或Paddle推理端到端通过。私有服务实现及待验条件见[OCR说明](../../services/ocr/README.md)。
+
+## A4d40 本地真实模型联调
+
+在Windows/Docker Desktop下，先按[OCR运行准备](../../services/ocr/README.md)校验本地模型和隔离依赖，并准备已有上传验收镜像。仓库根目录显式执行：
+
+```powershell
+.cache/ocr-runtime/Scripts/python.exe scripts/run_real_mileage_acceptance.py --allow-isolated-real-ocr --models-root .cache/ocr-prepared
+```
+
+缺少显式参数、复用运行身份或与原生材料身份混用均在创建资源前拒绝。仅测试类读取本轮 `.cache/real-mileage-<id>/config.private.json`；真实OCR只监听宿主回环，JVM测试转发器使用受限本机目的地址，生产配置不变。默认材料旅程不启用此钩子。
+
+报告在本轮cache目录，随机凭据配置在结束时删除。不得上传私有日志、配置或身份；交付仅使用脱敏阶段报告。真实OCR观测器仅验证PNG解码像素并计数，然后调用原模型，不返回替身结果；前置模型自检的调用与网关旅程计数分开。权限拒绝不得推理，成功网关调用只产出人工确认候选，不自动保存档案或修改登记里程。
+
+12项新增JSON HTTP用例和原80项材料/工作台用例分开记账，签名对象下载字节另核，不当成全API验收。合成图片及测试扫描库不证明真实仪表效果、正式恶意软件覆盖、微信交互或手机效果；Linux镜像、worker硬截止和授权样本仍另验。见[阶段记录](../progress/R9_A4D40_REAL_MILEAGE_GATEWAY.md)。
