@@ -22,7 +22,7 @@
 
 ## 交付与下一步
 
-完成后上传依赖PR231的草稿PR，最终head CI另核，未合并部署。下一阶段按授权真实仪表样本、手机权限/取消旅程及Linux运行/worker限制继续补证。
+实现ff10eb1已完整上传[草稿PR232](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/232)，依赖PR231，分支codex/r9-a4d41-native-mileage；最终head CI另核，未合并部署。下一阶段按授权真实仪表样本、手机权限/取消旅程及Linux运行/worker限制继续补证。
 
 收尾补齐入口保护：无显式开关、目录名称或位置不合法、目录不存在时不进入报告写入链。负向回归实际检查目录保持空，随后按最终脚本重新执行整轮并通过；无产品行为变更。
 
