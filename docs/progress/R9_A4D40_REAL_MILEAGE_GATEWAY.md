@@ -22,6 +22,6 @@
 
 ## 交付及下一步
 
-阶段完成后上传依赖PR230的草稿PR，最终head CI另核，未合并部署。下一阶段接微信开发者工具的原生上传、明确选图/用途同意、候选核对、取消及原保存按钮；真实授权仪表样本、手机权限和Linux镜像另验。
+实现bed2164已完整上传[草稿PR231](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/231)，依赖PR230，分支codex/r9-a4d40-real-mileage-gateway；最终head CI另核，未合并部署。下一阶段接微信开发者工具的原生上传、明确选图/用途同意、候选核对、取消及原保存按钮；真实授权仪表样本、手机权限和Linux镜像另验。
 
 脱敏：扫描将Docker Desktop标准宿主名host.docker.internal的docker.internal部分识别为内部域名，核对其为本机测试使用的标准约定后，仅精确允许该匹配值，复扫0发现，无实际组织域名或凭据例外。
