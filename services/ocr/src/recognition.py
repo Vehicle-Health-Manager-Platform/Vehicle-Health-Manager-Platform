@@ -37,7 +37,7 @@ class PaddleEngine:
                 raise ValueError('local model directory missing')
         from paddleocr import PaddleOCR
         # Plain CPU profile avoids the observed Paddle 3.3.1 oneDNN PIR attribute failure.
-        self.model = PaddleOCR(ocr_version='PP-OCRv5', device='cpu', enable_mkldnn=False,
+        self.model = PaddleOCR(ocr_version='PP-OCRv5', device='cpu', enable_mkldnn=False, cpu_threads=2,
             text_detection_model_name='PP-OCRv5_mobile_det', text_recognition_model_name='PP-OCRv5_mobile_rec',
             text_detection_model_dir=detection_dir, text_recognition_model_dir=recognition_dir,
             use_doc_orientation_classify=False, use_doc_unwarping=False, use_textline_orientation=False)

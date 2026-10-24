@@ -56,3 +56,22 @@ python services/ocr/model_assets.py --output .cache/ocr-prepared --check
 生产启用前仍须独立worker硬截止、资源限额、授权仪表样本效果及微信全链路验证。依赖或镜像网络失败应保留实际错误与待验状态，不用替身模型标记完成。
 
 本轮实际发现Paddle 3.3.1默认oneDNN路径抛ConvertPirAttribute2RuntimeAttribute未实现错误；只关闭 `enable_mkldnn` 后相同模型/图片通过。因此适配器固定普通CPU配置 `enable_mkldnn=False`，没有异常后自动换模型或返回空成功。未做加速性能验收。
+
+## A4d42 硬截止与资源隔离（2026-10-25）
+
+上文A4d35的串行/无硬截止描述为历史边界。生产 `server.py` 在 `OCR_ENABLED=true` 时使用单个常驻CPU子进程，先校验凭据再预热；启动截止30秒，每次请求从管道发送、JSON/图片解码到推理返回默认8秒。固定两个CPU线程，保持PP-OCRv5本地目录和oneDNN关闭配置。默认关闭仍为501，不包含Paddle的普通镜像不会自动开启推理。
+
+父进程用固定上限二进制帧传原始JSON：输入6MiB、输出16KiB，不传pickle或异常原文。独立看门狗可终止卡在本地库或管道I/O中的整个受管进程组，后台只尝试重建一次，不重放超时请求；重建失败保持UNAVAILABLE，需运维重启。图片解码也在子进程内。健康接口区分READY、BUSY、RECOVERING、UNAVAILABLE；Compose启用模型时仅READY/BUSY算就绪，默认关闭时仍可通过存活检查。
+
+HTTP最多4个处理连接、监听积压4、识别同时1项且不排队。推理忙返回429，重建/异常返回503，无效图片422；第5个连接在TCP层关闭，不承诺已解析的HTTP状态。头和请求体读取合计3秒，独立计时，不因慢速分段发送重置；之后由推理截止接管。消息长度、输入像素及原候选人工确认协议保持。
+
+Windows使用实际Job Object：组/单进程内存1536MiB、活动进程8，父进程退出关闭最后句柄会终止整个组；设置结果通过内核查询验证。Linux worker绑定父死亡SIGKILL，独立会话/进程组终止；健康检查使用WNOWAIT避免提前回收PID，清理幂等，避免对已回收的身份再次发信号。Linux进程内存/CPU/PID硬上限依赖容器，Compose设置1536MiB、2 CPU、128 PID、只读根、64MiB /tmp、去除capabilities等。本轮Windows实际Job及进程行为通过，Linux镜像/资源压力运行未验，不把配置检查当运行验收，也未进行耗尽主机RAM的压力测试。
+
+历史 `create_server(..., engine=...)` 直接注入接口保留给明确的协议/观测夹具；这不是生产隔离路径。A4d39旧 `runtime_check.py` 和A4d40/41观测引擎属历史进程内路径，不能证明当前硬截止。真实隔离路径复验命令为：
+
+```powershell
+.cache/ocr-runtime/Scripts/python.exe services/ocr/isolated_check.py --models-root .cache/ocr-prepared --report .cache/ocr-isolated-check.json
+python -m unittest discover -s services/ocr -p 'test_*.py'
+```
+
+隔离自检使用真实固定模型，对生成里程图经私有HTTP识别两次，核对同一预热进程复用、错误图片不重载、健康与完整关闭；它不证明真实仪表准确率、手机旅程或Linux部署。故障测试使用明确的替身引擎，但进程/管道/HTTP/终止和恢复实际执行，不把替身返回当识别效果。
