@@ -68,9 +68,9 @@ class MaterialWorkbenchEvidenceTest(unittest.TestCase):
     def test_native_image_requires_explicit_valid_run_and_mode(self):
         self.assertEqual(('', 'pdf'),native_environment({}))
         run='a'*32
-        for kind in ['pdf','image']:
+        for kind in ['pdf','image','audio']:
             self.assertEqual((run,kind),native_environment({'AUTOCARE_NATIVE_MATERIAL_RUN_ID':run,'AUTOCARE_NATIVE_UPLOAD_KIND':kind}))
-        for environ in [{'AUTOCARE_NATIVE_UPLOAD_KIND':'image'},
+        for environ in [{'AUTOCARE_NATIVE_UPLOAD_KIND':'image'},{'AUTOCARE_NATIVE_UPLOAD_KIND':'audio'},
                         {'AUTOCARE_NATIVE_MATERIAL_RUN_ID':'../escape'},
                         {'AUTOCARE_NATIVE_MATERIAL_RUN_ID':run,'AUTOCARE_NATIVE_UPLOAD_KIND':'arbitrary'}]:
             with self.assertRaises(ValueError):native_environment(environ)

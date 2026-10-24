@@ -5,18 +5,19 @@ const {connectDevtools,waitForPage}=require('../apps/miniapp/test/helpers/devtoo
 const {waitElement,tapElement}=require('../apps/miniapp/test/helpers/native-elements.cjs')
 const {createWxMockScope}=require('../apps/miniapp/test/helpers/devtools-mocks.cjs')
 const root=path.resolve(__dirname,'..'),id=crypto.randomUUID().replaceAll('-',''),work=path.join(root,'.cache','native-material-'+id)
-const kind=process.argv.includes('--image')?'image':'pdf',imageMode=kind==='image'
+assert.ok(!(process.argv.includes('--image')&&process.argv.includes('--audio')),'Upload modes are mutually exclusive')
+const kind=process.argv.includes('--audio')?'audio':process.argv.includes('--image')?'image':'pdf',imageMode=kind==='image',audioMode=kind==='audio'
 fs.mkdirSync(work,{recursive:true});console.log('Native material run: '+work)
-const report={passed:false,kind,session_cleared:false,system_api_restored:false,local_file_released:false,checks:[],scope:`Devtools ${imageMode?'image':'PDF'} picker assisted; real WeChat file/uploadFile, isolated JVM/MySQL/MinIO/ClamAV with synthetic scan DB; no phone picker, camera, preview rendering, production scanner or recognition acceptance`}
+const report={passed:false,kind,session_cleared:false,system_api_restored:false,local_file_released:false,checks:[],scope:`Devtools ${audioMode?'recorder events assisted; real audio context callbacks':imageMode?'image picker assisted':'PDF picker assisted'}; real WeChat file/uploadFile, isolated JVM/MySQL/MinIO/ClamAV with synthetic scan DB; no phone capture, microphone permissions, listening quality, production scanner or recognition acceptance`}
 const pass=name=>report.checks.push({name,passed:true}),delay=ms=>new Promise(r=>setTimeout(r,ms))
-let client,mocks,local,proxy,backend,backendExit,log,backendFinished=false
-function digest(){const hash=crypto.createHash('sha256');for(const name of ['scripts/native-material-upload-e2e.cjs','scripts/native-material-proxy.cjs','scripts/run_material_workbench_acceptance.py','apps/miniapp/src/components/LocalInputMaterials.vue','apps/miniapp/src/services/input-material-upload.js','apps/miniapp/src/services/private-images.js','apps/miniapp/src/services/archive-flow.js','apps/miniapp/src/pages/archive/record-add.vue','apps/miniapp/test/helpers/native-elements.cjs'])hash.update(fs.readFileSync(path.join(root,name)));return hash.digest('hex')}
+let client,mocks,local,proxy,backend,backendExit,log,backendFinished=false,audioInstalled=false
+function digest(){const hash=crypto.createHash('sha256');for(const name of ['scripts/native-material-upload-e2e.cjs','scripts/native-material-proxy.cjs','scripts/native-acceptance-plugin.mjs','scripts/native-audio-fixture.mjs','scripts/run_material_workbench_acceptance.py','apps/miniapp/src/components/LocalInputMaterials.vue','apps/miniapp/src/services/local-input-materials.js','apps/miniapp/src/services/api-runtime.js','apps/miniapp/src/services/input-material-upload.js','apps/miniapp/src/services/private-images.js','apps/miniapp/src/services/archive-flow.js','apps/miniapp/src/pages/archive/record-add.vue','apps/miniapp/test/helpers/native-elements.cjs'])hash.update(fs.readFileSync(path.join(root,name)));return hash.digest('hex')}
 const before=digest()
 async function native(ready){
   assert.equal(ready.kind,kind)
   proxy=await createProxy({...ready,container:'autocare-material-native-'+id.slice(0,8),work,containerWork:'/workspace/.cache/native-material-'+id})
   client=await connectDevtools({timeoutMs:20000});const rpc=client.rpc;mocks=createWxMockScope(rpc)
-  const downloaded=(await rpc('App.callWxMethod',{method:'downloadFile',args:[{url:'http://127.0.0.1:18080/__native-fixture.'+(imageMode?'png':'pdf'),header:{Authorization:'Bearer '+ready.token}}]})).result
+  const downloaded=(await rpc('App.callWxMethod',{method:'downloadFile',args:[{url:'http://127.0.0.1:18080/__native-fixture.'+{image:'png',pdf:'pdf',audio:'mp3'}[kind],header:{Authorization:'Bearer '+ready.token}}]})).result
   assert.equal(downloaded.statusCode,200);local=downloaded.tempFilePath
   await rpc('App.callWxMethod',{method:'__autocareNativeAcceptance',args:[{role:'owner',token:ready.token,vehicle:991}]})
   await rpc('App.callWxMethod',{method:'reLaunch',args:[{url:'/pages/archive/record-add?vehicle_id=991'}]})
@@ -24,7 +25,26 @@ async function native(ready){
   const read=async fn=>{for(let i=0;i<3;i++)try{return await fn()}catch(e){if(i===2||!e.message.startsWith('Devtools RPC'))throw e;const current=await rpc('App.getCurrentPage');assert.equal(current.path,p.path);Object.assign(p,current)}}
   const text=fragment=>read(()=>waitElement(rpc,p,'text',e=>e.text?.includes(fragment)))
   const tap=async label=>{const button=await read(()=>waitElement(rpc,p,'button',e=>e.text?.trim()===label));await tapElement(rpc,p,button)}
-  if(imageMode){
+  if(audioMode){
+    audioInstalled=true // Restore even when the installation executed but its RPC reply was lost.
+    await rpc('App.callWxMethod',{method:'__autocareNativeAcceptance',args:[{role:'audio-fixture',file:{path:local,size:Buffer.from(ready.audio,'base64').length,durationMs:ready.duration_ms}}]})
+    const stopRecord=async()=>{const button=await read(()=>waitElement(rpc,p,'button',e=>e.text?.startsWith('停止录音（')));await tapElement(rpc,p,button)}
+    await tap('录制语音');await read(()=>waitElement(rpc,p,'button',e=>e.text?.startsWith('停止录音（')));pass('assisted recorder start reaches native recording state')
+    await tap('取消本段录音');await text('本机辅助材料（0/3）');pass('cancelled recorder event cannot retain a material')
+    await tap('录制语音');await stopRecord();await text('本机语音');await text('本机辅助材料（1/3）');pass('assisted stop event adds real temporary MP3')
+    await tap('试听')
+    const deadline=Date.now()+15000;let audio
+    do{audio=(await rpc('App.callWxMethod',{method:'__autocareNativeAcceptance',args:[{role:'audio-status'}]})).result;assert.equal(audio.playerErrorEvents,0);if(audio.playerPlayEvents>0)break;await delay(100)}while(Date.now()<deadline)
+    assert.ok(audio.playerPlayEvents>0,'Real audio onPlay not observed');pass('real WeChat audio context emits onPlay for generated MP3')
+    await tap('停止试听')
+    const stopDeadline=Date.now()+5000
+    do{audio=(await rpc('App.callWxMethod',{method:'__autocareNativeAcceptance',args:[{role:'audio-status'}]})).result;if(audio.activePlayers===0)break;await delay(100)}while(Date.now()<stopDeadline)
+    assert.equal(audio.activePlayers,0);assert.equal(audio.playerDestroys,1);assert.equal(audio.recorderListeners,0);assert.equal(audio.recorderStarts,2);assert.equal(audio.recorderStops,2);pass('stop playback destroys context and recorder subscriptions are released')
+    assert.equal(proxy.requests,0,'Recording and playback must not upload materials')
+    await tap('上传本份材料');await text('已上传 · 扫描通过 · 尚未识别');pass('real uploadFile receives validated CLEAN audio receipt')
+    await text('未发送给AI或写入档案');pass('audio receipt preserves no-recognition/no-archive boundary')
+    await tap('移除本机引用');await text('本机辅助材料（0/3）');pass('remove clears local reference')
+  }else if(imageMode){
     await text('归档图片（0/5）')
     const size=Buffer.from(ready.image,'base64').length
     await mocks.mock('chooseMedia',{tempFiles:[{tempFilePath:local,size,fileType:'image'}],type:'image',errMsg:'chooseMedia:ok'})
@@ -61,7 +81,9 @@ async function main(){
   finally{
     if(client){try{for(const method of mocks?.methods||[])await mocks.restore(method);report.system_api_restored=true}catch{report.passed=false}
       try{report.local_file_released=report.checks.some(c=>c.name==='remove clears local reference');report.local_file_cleanup='WeChat-managed temporary download; no saved user-directory file created'}catch{report.passed=false}
-      try{await client.rpc('App.callWxMethod',{method:'__autocareNativeAcceptance',args:[{role:'clear'}]});report.session_cleared=true}catch{report.passed=false}client.close()}
+      try{await client.rpc('App.callWxMethod',{method:'__autocareNativeAcceptance',args:[{role:'clear'}]});report.session_cleared=true}catch{report.passed=false}
+      if(audioInstalled)try{report.audio=(await client.rpc('App.callWxMethod',{method:'__autocareNativeAcceptance',args:[{role:'audio-restore'}]})).result;report.audio_fixture_restored=report.audio.restored===true;assert.ok(report.audio_fixture_restored);assert.equal(report.audio.activePlayers,0);assert.equal(report.audio.recorderListeners,0);assert.equal(report.audio.playerErrorEvents,0)}catch{report.passed=false}
+      client.close()}
     if(proxy){report.upload_requests=proxy.requests;await proxy.close();proxy=undefined;report.proxy_closed=true}
     fs.writeFileSync(path.join(work,'native.json'),JSON.stringify(report,null,2)+'\n')
   }

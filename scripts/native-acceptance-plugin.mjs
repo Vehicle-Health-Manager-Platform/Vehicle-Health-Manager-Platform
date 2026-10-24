@@ -26,8 +26,15 @@ import {merchantSession,clearMerchantSession} from ${JSON.stringify(source + '/s
 import {setTechnicianSession,clearTechnicianSession} from ${JSON.stringify(source + '/services/technician-session.js')};
 import {setOperatorSession,clearOperatorSession} from ${JSON.stringify(source + '/services/operator-session.js')};
 import {selectOwnerVehicle,clearOwnerVehicle} from ${JSON.stringify(source + '/services/owner-vehicle-selection.js')};
+import {apiRuntime} from ${JSON.stringify(source + '/services/api-runtime.js')};
+import {installNativeAudioFixture} from ${JSON.stringify(root.replaceAll('\\', '/') + '/scripts/native-audio-fixture.mjs')};
+let audioFixture;
 wx.${NATIVE_BRIDGE_MARKER}=function(options){
  if(wx.getSystemInfoSync().platform!=='devtools')throw new Error('Native acceptance only supports Devtools');
+ const answer=result=>{options.success?.(result);return result;};
+ if(options.role==='audio-fixture'){if(audioFixture)throw new Error('Audio fixture already active');audioFixture=installNativeAudioFixture({runtime:apiRuntime,file:options.file});return answer(audioFixture.status());}
+ if(options.role==='audio-status'){if(!audioFixture)throw new Error('Audio fixture missing');return answer(audioFixture.status());}
+ if(options.role==='audio-restore'){let result={restored:true};if(audioFixture){audioFixture.restore();result=audioFixture.status();}audioFixture=null;return answer(result);}
  clearOwnerSession();clearMerchantSession();clearTechnicianSession();clearOperatorSession();clearOwnerVehicle();
  const role=options.role;
  if(role!=='clear' && (typeof options.token!=='string'||!options.token))throw new Error('Native acceptance session missing');

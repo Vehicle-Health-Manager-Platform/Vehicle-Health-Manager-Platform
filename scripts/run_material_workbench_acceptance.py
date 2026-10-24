@@ -85,7 +85,7 @@ def native_environment(environ):
     native_id=environ.get('AUTOCARE_NATIVE_MATERIAL_RUN_ID','')
     kind=environ.get('AUTOCARE_NATIVE_UPLOAD_KIND','pdf')
     if native_id and not re.fullmatch(r'[0-9a-f]{32}',native_id):raise ValueError('Invalid native run id')
-    if kind not in ('pdf','image') or (kind!='pdf' and not native_id):raise ValueError('Invalid native upload mode')
+    if kind not in ('pdf','image','audio') or (kind!='pdf' and not native_id):raise ValueError('Invalid native upload mode')
     return native_id,kind
 
 
