@@ -40,6 +40,7 @@ test('loopback proxy rejects wrong actor and route without invoking Docker',asyn
 })
 test('native runner rejects missing opt-in and unowned path without writing reports',()=>{
  const root=path.resolve('../..'),cache=path.join(root,'.cache'),id=crypto.randomUUID().replaceAll('-','')
+ fs.mkdirSync(cache,{recursive:true})
  for(const [name,flags] of [['real-mileage-'+id,[]],['invalid-native-'+id,['--allow-isolated-mileage']]]){
   const directory=path.join(cache,name);fs.mkdirSync(directory)
   try{

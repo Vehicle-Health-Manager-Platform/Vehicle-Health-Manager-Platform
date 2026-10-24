@@ -246,5 +246,12 @@
   "material_workbench_scope": "Original 80-case phase before optional native archive creation; not a claim that the entire run creates no archive.",
   "wechat_devtools_journey_passed": true,
   "entry_guard_verified": "Missing opt-in and invalid run directory leave no reports; final full real journey rerun passed after guard change.",
-  "private_control_files_remaining": []
+  "private_control_files_remaining": [],
+  "clean_checkout_regression": {
+    "initial_ci_failure": "New native-entry test assumed repository .cache parent existed; ENOENT on fresh checkout",
+    "fresh_workspace_before_fix_failed": true,
+    "fresh_workspace_after_fix_tests_passed": 5,
+    "full_miniapp_tests_after_fix_passed": 1060,
+    "fix_scope": "test fixture parent-directory creation only; production/native integration source unchanged"
+  }
 }
