@@ -277,6 +277,7 @@ jobs:
       - run: python scripts/verify_compose_migrations.py
       - run: git diff --exit-code -- docs/progress/S0_TRACEABILITY.csv docs/sql/init.sql docs/sql/migrations/V001__baseline.sql docs/api/openapi.json
       - run: python -m py_compile services/ocr/src/server.py
+      - run: python -m pip install -r services/ocr/requirements.txt
       - run: python -m unittest discover -s services/ocr -p 'test_*.py'
   schema-mysql:
     runs-on: ubuntu-latest

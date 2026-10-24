@@ -1,5 +1,7 @@
 FROM python:3.11-slim
 WORKDIR /app
-COPY src/server.py /app/server.py
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+COPY src/ /app/
 EXPOSE 8090
 CMD ["python", "server.py"]
