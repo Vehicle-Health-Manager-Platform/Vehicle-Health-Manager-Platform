@@ -26,6 +26,6 @@ Compose OCR配置2 CPU、1536MiB、128 PID、只读根、64MiB临时空间、去
 
 ## 交付和下一步
 
-阶段上传后补记依赖PR232的草稿PR，最终head CI另核，不合并部署。下一阶段让隔离worker进入共享网关/微信验收夹具，随后补授权仪表/手机、Linux推理镜像与容器实测及出口隔离。
+实现提交ff0209b已上传[草稿PR233](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/233)，依赖PR232；最终head CI另核，未合并部署。下一阶段让隔离worker进入共享网关/微信验收夹具，随后补授权仪表/手机、Linux推理镜像与容器实测及出口隔离。
 
 脱敏扫描将本机健康检查的源码URL片段、1536MiB对应字节数误判为内部地址/电话；核对实际配置和内核查询值后仅精确允许两个匹配值，复扫0发现，无组织地址、个人资料或凭据例外。

@@ -7,4 +7,4 @@
 - 验证：真实子进程挂起/启动失败/崩溃/恢复/关闭、HTTP忙和健康、真实固定模型隔离HTTP合成图、原OCR和相关回归、Compose及索引。阶段上传依赖PR232草稿PR，不合并部署。
 - 仍待：授权仪表/手机、Linux推理镜像实测、出口隔离和生产上线批准。
 
-- 2026-10-25：41项OCR及真实隔离模型HTTP通过，Windows Job/进程硬截止与单次恢复通过，Compose/健康表达式和索引核对通过；产品镜像拉取仍被网络阻塞。阶段上传中。
+- 2026-10-25：41项OCR及真实隔离模型HTTP通过，Windows Job/进程硬截止与单次恢复通过，Compose/健康表达式和索引核对通过；产品镜像拉取仍被网络阻塞。ff0209b已上传[草稿PR233](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/233)，依赖PR232，最终head CI另核，未合并部署。
