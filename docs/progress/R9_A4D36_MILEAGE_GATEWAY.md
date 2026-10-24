@@ -19,3 +19,7 @@
 后续优先把档案图片选择、明确用途确认、新网关返回与既有候选确认组件接线；真实OCR模型、私有服务镜像/资源限制与获授权样本仍需独立验收。
 
 敏感扫描五处MEDIUM经核对均为两个公开数值常量：2^32+1的版本溢出测试值和2^53−2的JSON安全整数上限。仅对这两个精确值例外，不修改边界规避扫描，不豁免任何真实号码、凭据或地址；复扫结果另核。
+
+## GitHub交付
+
+完整实现193d5d8已整批上传[草稿PR227](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/227)，base=codex/r9-a4d35-local-ocr-adapter，依赖PR226。数值精确例外后敏感扫描零发现；最终head远程CI另核，不提前宣称全部成功。未合并部署。
