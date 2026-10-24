@@ -11,6 +11,7 @@ import secrets
 import subprocess
 import sys
 import threading
+import time
 import traceback
 import uuid
 from run_material_workbench_acceptance import ROOT, JUNIT, EVIDENCE, audit, source_digest
@@ -18,6 +19,7 @@ from run_material_workbench_acceptance import ROOT, JUNIT, EVIDENCE, audit, sour
 EXPECTED = {'upload': 200, 'anonymous': 401, 'foreign_owner': 404, 'consent_required': 400,
     'query_rejected': 400, 'missing_file': 404, 'unsafe_file': 404, 'real_candidate': 200,
     'deleted_file': 404, 'transferred_vehicle': 404, 'signed_access': 200, 'revoked_session': 401}
+NATIVE_CHECKS = set('upload_real_png selection_consent_required candidate_not_saved ack_required cancel_revokes_consent second_real_recognition confirmation_only_applies original_save_succeeds reentry_empty'.split())
 CHECKS = {'passed', 'signed_download_matches', 'one_clean_owned_png', 'no_archive_created',
     'vehicle_mileage_unchanged', 'no_input_material_created', 'requires_confirmation', 'forwarder_closed'}
 
@@ -43,16 +45,27 @@ def gateway_audit(proof):
             raise ValueError('Gateway method/path/status changed')
     return {'requests': len(rows), 'checks': {name: True for name in sorted(CHECKS)}, 'cases': rows}
 
+def native_audit(ui, database):
+    rows = ui.get('checks', [])
+    if len(rows) != len(NATIVE_CHECKS) or {r['name'] for r in rows} != NATIVE_CHECKS or any(r.get('passed') is not True for r in rows): raise ValueError('Missing native journey checks')
+    if any(ui.get(k) is not True for k in ['passed','session_cleared','system_api_restored','proxy_closed','local_reference_released']): raise ValueError('Native cleanup incomplete')
+    if ui.get('counts') != {'upload':1,'recognition':2,'archive':1}: raise ValueError('Unexpected native API count')
+    if set(database.get('checkpoints', [])) != {'candidate','cancelled','applied'} or len(database['checkpoints']) != 3: raise ValueError('Missing database checkpoints')
+    if any(database.get(k) is not True for k in ['passed','zero_archives_before_save','one_archive_saved','correct_mileage_and_file','vehicle_mileage_unchanged','signed_download_matches','no_input_material_created']): raise ValueError('Native database proof incomplete')
+    return {'ui':ui,'database':database}
+
 def digest():
     value = hashlib.sha256(source_digest().encode())
     paths = [Path(__file__), *sorted((ROOT / 'services/ocr').glob('*.py')),
         *sorted((ROOT / 'services/ocr/src').glob('*.py')), *sorted((ROOT / 'services/ocr').glob('requirements*.txt')), ROOT / 'services/ocr/models.lock.json']
+    paths += [ROOT / p for p in ['scripts/native-mileage-e2e.cjs','scripts/native-mileage-proxy.cjs','scripts/native-acceptance-plugin.mjs','apps/miniapp/src/components/InputCandidateReview.vue','apps/miniapp/src/pages/archive/record-add.vue','apps/miniapp/src/services/mileage-recognition.js','apps/miniapp/src/services/input-candidates.js','apps/miniapp/src/services/archive-flow.js','apps/miniapp/src/services/archives.js','apps/miniapp/test/helpers/native-elements.cjs','apps/miniapp/test/helpers/devtools-rpc.cjs']]
     for path in paths: value.update(path.relative_to(ROOT).as_posix().encode()); value.update(path.read_bytes())
     return value.hexdigest()
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--allow-isolated-real-ocr', action='store_true')
+    parser.add_argument('--native', action='store_true', help='Also run the isolated real WeChat Devtools journey')
     parser.add_argument('--models-root', type=Path, default=ROOT / '.cache/ocr-prepared')
     args = parser.parse_args()
     if not args.allow_isolated_real_ocr: parser.error('Explicit --allow-isolated-real-ocr required')
@@ -64,7 +77,7 @@ def main():
     run = uuid.uuid4().hex; work = ROOT / '.cache' / ('real-mileage-' + run); work.mkdir()
     print('Real mileage run: ' + str(work), flush=True)
     before = digest(); report = {'passed': False, 'full_api_acceptance_passed': False, 'source_sha256': before,
-        'scope': 'synthetic PNG; real CPU OCR, gateway HTTP, MySQL and private MinIO; synthetic ClamAV signatures; no WeChat or owner accuracy acceptance'}
+        'scope': ('Devtools events assisted; real upload/OCR/archive save; synthetic identities/image/scanner; no phone or owner accuracy acceptance' if args.native else 'synthetic PNG; real CPU OCR, gateway HTTP, MySQL and private MinIO; synthetic ClamAV signatures; no WeChat or owner accuracy acceptance')}
     server = thread = None
     container = 'autocare-real-mileage-' + run[:8]
     config = work / 'config.private.json'
@@ -90,7 +103,7 @@ def main():
         token = secrets.token_hex(32)
         server = create_server(('127.0.0.1', 0), ObservedEngine(), token)
         thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
-        config.write_text(json.dumps({'port': server.server_port, 'token': token, 'image': base64.b64encode(encoded.getvalue()).decode('ascii')}), encoding='utf-8')
+        config.write_text(json.dumps({'port': server.server_port, 'token': token, 'image': base64.b64encode(encoded.getvalue()).decode('ascii'), 'native':args.native}), encoding='utf-8')
         for path in (JUNIT, EVIDENCE): path.unlink(missing_ok=True)
         command = ['docker', 'run', '--rm', '--name', container, '--mount', f'type=bind,source={ROOT},target=/workspace',
             '--mount', 'type=volume,source=autocare-maven-cache,target=/root/.m2', '--mount', 'type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock',
@@ -98,13 +111,35 @@ def main():
             '-e', 'JAVA_TOOL_OPTIONS=-Dapi.version=1.44', '-w', '/workspace/backend', 'maven:3.9-eclipse-temurin-17',
             'mvn', '-B', '-Dupload.test.images.prebuilt=true', '-Dtest=RealMaterialWorkbenchJourneyTest', 'test']
         with (work / 'backend.private.log').open('wb') as log:
-            code = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, timeout=1200).returncode
+            if args.native:
+                process = subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT)
+                try:
+                    with (work / 'native-run.private.log').open('wb') as native_log:
+                        native_process = subprocess.Popen(['node', str(ROOT / 'scripts/native-mileage-e2e.cjs'), str(work), '--allow-isolated-mileage'], stdout=native_log, stderr=subprocess.STDOUT)
+                        try:
+                            deadline = time.monotonic() + 1100
+                            while native_process.poll() is None:
+                                if process.poll() is not None: (work / 'backend-finished').touch()
+                                if time.monotonic() > deadline: raise ValueError('Native process deadline exceeded')
+                                time.sleep(0.2)
+                            native_code = native_process.returncode
+                        finally:
+                            if native_process.poll() is None: native_process.terminate(); native_process.wait(timeout=30)
+                    code = process.wait(timeout=120)
+                    if native_code: raise ValueError('Native journey failed; inspect private run logs')
+                finally:
+                    if process.poll() is None:
+                        subprocess.run(['docker','stop',container], capture_output=True, timeout=30)
+                        process.wait(timeout=30)
+            else: code = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, timeout=1200).returncode
         report['maven_exit_code'] = code
         if code: raise ValueError('Isolated JVM journey failed; inspect private log')
         report['material_workbench'] = audit(JUNIT, EVIDENCE)
-        report['gateway'] = gateway_audit(json.loads((work / 'gateway.json').read_text(encoding='utf-8')))
+        gateway = json.loads((work / 'gateway.json').read_text(encoding='utf-8'))
+        report['gateway'] = gateway_audit(gateway)
+        if args.native: report['native'] = native_audit(json.loads((work / 'native.json').read_text(encoding='utf-8')), gateway['native_database'])
         report['gateway_provider_calls'] = len(calls)
-        if len(calls) != 1: raise ValueError('Rejected requests reached OCR or success did not use the real engine')
+        if len(calls) != (3 if args.native else 1): raise ValueError('Rejected requests reached OCR or success did not use the real engine')
         report['uploaded_image_sha256'] = hashlib.sha256(encoded.getvalue()).hexdigest()
         report['sources_unchanged'] = before == digest()
         if not report['sources_unchanged']: raise ValueError('Sources changed during acceptance')
@@ -117,6 +152,7 @@ def main():
             server.shutdown(); server.server_close(); thread.join(5)
             report['ocr_server_stopped'] = not thread.is_alive()
         config.unlink(missing_ok=True)
+        (work / 'native-ready.private.json').unlink(missing_ok=True)
         report['private_config_removed'] = not config.exists()
         # Stop only a remaining Maven process whose exact run identity matches this invocation.
         remaining = subprocess.run(['docker', 'inspect', container], capture_output=True)

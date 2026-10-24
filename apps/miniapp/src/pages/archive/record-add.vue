@@ -82,8 +82,8 @@ async function preview(id) {
       <picker :disabled="state.busy || uploadBusy || recognitionBusy || state.saved" :range="types" @change="pickType"><view class="field">{{ types[state.archiveType - 1] }}</view></picker>
       <text class="label">发生日期</text>
       <picker mode="date" :value="state.recordedDate" :disabled="state.busy || uploadBusy || recognitionBusy || state.saved" @change="pickDate"><view class="field">{{ state.recordedDate || '请选择日期' }}</view></picker>
-      <text class="label">标题</text><input v-model="state.title" class="field" maxlength="80" :disabled="state.busy || uploadBusy || recognitionBusy || state.saved" placeholder="例如 更换机油" />
-      <text class="label">当时里程（km，选填）</text><input v-model="state.mileage" class="field" type="number" maxlength="10" :disabled="state.busy || uploadBusy || recognitionBusy || state.saved" placeholder="非负整数" />
+      <text class="label">标题</text><input data-testid="archive-title" v-model="state.title" class="field" maxlength="80" :disabled="state.busy || uploadBusy || recognitionBusy || state.saved" placeholder="例如 更换机油" />
+      <text class="label">当时里程（km，选填）</text><input data-testid="archive-mileage" v-model="state.mileage" class="field" type="number" maxlength="10" :disabled="state.busy || uploadBusy || recognitionBusy || state.saved" placeholder="非负整数" />
       <text class="label">备注（选填）</text><textarea v-model="state.notes" class="notes" maxlength="1000" :disabled="state.busy || uploadBusy || recognitionBusy || state.saved" placeholder="记录具体情况" />
       <text class="label">归档图片（{{ state.fileIds.length }}/5）</text>
       <view v-for="(id, index) in state.fileIds" :key="id" class="image-row"><text>图片 {{ index + 1 }} 已上传</text><button class="secondary" :disabled="state.busy || uploadBusy || recognitionBusy" @tap="preview(id)">预览</button><button class="secondary" :disabled="state.busy || uploadBusy || recognitionBusy || !!state.saved" @tap="remove(id)">移除</button></view>
@@ -95,7 +95,7 @@ async function preview(id) {
       <text v-if="state.message" class="status" :class="{ error: state.failureKind }" role="status">{{ state.message }}</text>
       <button v-if="['unauthorized','forbidden'].includes(state.failureKind)" @tap="login">重新登录</button>
       <button v-else-if="state.saved" @tap="back">返回查看档案</button>
-      <button v-else :disabled="state.busy || uploadBusy || recognitionBusy || (state.inputType === 1 && !state.fileIds.length)" :loading="state.busy" @tap="flow.save">保存档案</button>
+      <button v-else data-testid="archive-save" :disabled="state.busy || uploadBusy || recognitionBusy || (state.inputType === 1 && !state.fileIds.length)" :loading="state.busy" @tap="flow.save">保存档案</button>
       <text class="note">保存失败时可使用原内容重试。仅已上传成功的图片会随档案保存。</text>
     </view>
   </view>
