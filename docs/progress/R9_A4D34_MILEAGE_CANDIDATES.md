@@ -9,3 +9,5 @@
 五项回归通过，含单位分组、无猜测/换算、冲突和低置信度、重复/边界及恶意结构。首轮负数前缀被截为正数的测试失败，已拒绝有符号数字行并复验通过。CI的schema-and-ocr新增执行测试，README给出函数契约、命令和待接入边界。未重跑手机、业务HTTP或全量后端；不增加历史API覆盖。
 
 下一阶段接入实际OCR推理与图片安全验证，再与本人车辆及候选确认流程衔接，使用获授权样本验证识别质量。当前HTTP依旧501，小程序尚不能从图片得到里程候选，不宣称OCR功能已交付。
+
+完整实现e7b8411已上传[草稿PR225](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/225)，依赖PR224，base=codex/r9-a4d33-native-audio-upload；最终head CI另核，未合并部署。
