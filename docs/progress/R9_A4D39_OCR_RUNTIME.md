@@ -24,6 +24,6 @@
 
 ## 交付与下一阶段
 
-依赖PR229的独立草稿PR，链接在上传后补记，最终head CI另核，不合并部署。本阶段真实模型和生成图片链路通过，见[脱敏报告](../testing/reports/R9_A4D39_OCR_RUNTIME_2026_10_24.json)。下一阶段推进真实授权仪表样本和共享后端/微信全链路，并补Linux镜像与worker资源隔离。
+实现f556fad已上传[草稿PR230](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/230)，依赖PR229，分支codex/r9-a4d39-ocr-runtime，最终head CI另核；未合并或部署。本阶段真实模型和生成图片链路通过，见[脱敏报告](../testing/reports/R9_A4D39_OCR_RUNTIME_2026_10_24.json)。下一阶段推进真实授权仪表样本和共享后端/微信全链路，并补Linux镜像与worker资源隔离。
 
 脱敏扫描将已安装且wheel锁定的OpenCV版本4.10.0.84误判为公网IP；核对实际依赖后仅精确允许该版本字面值，复扫0发现，无个人资料或凭据例外。
