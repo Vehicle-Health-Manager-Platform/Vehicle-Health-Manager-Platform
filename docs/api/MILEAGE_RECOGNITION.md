@@ -1,0 +1,21 @@
+# 本人车辆里程识别候选网关
+
+`POST /api/vehicle/mileage-recognition`，正式OWNER JWT、application/json、无query。不写车辆里程或档案，不需要写幂等键；用户最终仍须走既有档案保存。
+
+```json
+{"vehicle_id":101,"file_id":1,"consent":true,"consent_version":"MILEAGE_OCR_V1"}
+```
+
+两个ID须为正整数且小于9007199254740991，只接受这四个字段，拒绝重复键、额外键和缺失同意。请求是从本人已有上传图片为本人选定车辆提取里程的用途确认；上传归属不能证明照片实际拍的是该车辆，仍须本人对照。
+
+默认`MILEAGE_OCR_ENABLED=false`。启用必须有私有对象存储、有效本地OCR服务，以及仅后端持有的`MILEAGE_OCR_URL`和`MILEAGE_OCR_SERVICE_TOKEN`。URL固定以`/recognize`结尾，不允许userinfo/query/fragment；HTTPS为默认。私有HTTP需显式`MILEAGE_OCR_ALLOW_PRIVATE_HTTP=true`且主机仅ocr、localhost、127.0.0.1，不跟随重定向。凭据为32–512位可打印ASCII，不能进入VITE、URL、小程序请求或公开报告。主模板/Compose仅提供关闭和空值示例，不安装模型或自动启用私有OCR。
+
+服务在独立只读事务中检查当前会话/用户、本人有效车辆，以及本人未删CLEAN JPEG/PNG文件（1字节至4MiB），然后离开数据库事务。仅服务端读取私有对象，核对存储类型/大小和读取长度；不接受客户端URL或对象key。最多两个实例内处理同时进入存储/OCR阶段，繁忙返回429。私有HTTP连接3秒、整个HTTP等待15秒硬截止，响应上限64KiB，超时取消请求且不重试。此限额不等于私有模型进程取消或分布式全局限流；模型worker仍需独立硬截止和资源隔离。
+
+识别响应严格检查版本、场景、真实调用标记、人工确认标记、状态、候选数量、唯一读数、0–200万公里和0–1有限置信度。调用返回后开启新的只读事务，重新检查会话/用户/车辆及文件事实；撤销、转属、删除或不合规不返回候选，仍可用但事实变化返回409。此阶段无持久化同意记录、识别缓存或写入。
+
+成功为标准ApiResponse，data包含vehicle_id、file_id、review_status、requires_confirmation=true及recognition。recognition遵循既有候选组件结构：version=1、scene=archive、status=CANDIDATE或EMPTY、fields。单一高/低置信候选映射为字符串mileage和原confidence；歧义/无候选不自动择值，fields为空。review_status保留CANDIDATE、LOW_CONFIDENCE、AMBIGUOUS、NO_CANDIDATE，供后续页面解释。小程序接线尚未实现，不能据此宣称页面能识别图片。
+
+400为正文/用途/query错误；401为会话/用户失效；403为非正式车主；404为车辆/图片不属于本人或不可用；409为仍可用事实变化；429为本实例繁忙；503为关闭、数据库/存储/私有OCR故障、结果无效或超时。响应no-store，不返回对象key、签名URL、服务凭据或OCR原文。照片、真实模型和当前车辆对应关系必须在获授权样本/真机验收中独立核对。
+
+本轮测试使用真实MySQL验证归属/撤销与无写入，存储与推理是明确替身；传输测试的回环HTTP服务也是替身，不证明MinIO或Paddle推理端到端通过。私有服务实现及待验条件见[OCR说明](../../services/ocr/README.md)。

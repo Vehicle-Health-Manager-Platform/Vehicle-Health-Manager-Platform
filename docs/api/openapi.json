@@ -33827,6 +33827,150 @@
         "description": "no-store。默认关闭 INPUT_MATERIAL_UPLOAD_ENABLED；仅本人有效车辆、正式会话。独立input_material表，不接受或返回业务图片file_id，不做ASR/OCR。MP3 16kHz单声道48kbps、1–60秒、3MiB；静态PDF 1–50页10MiB，无加密/表单/注释/动作/附件。CLEAN才写入；用途及车辆隔离幂等，同键不同内容409。签发60秒强制attachment/no-store，复核会话/车辆/用途及对象元数据。详见CONTROLLED_INPUT_MATERIALS.md。",
         "x-implementation-status": "controlled-input-material-access-implemented"
       }
+    },
+    "/api/vehicle/mileage-recognition": {
+      "post": {
+        "summary": "从本人CLEAN图片读取仪表里程候选，明确同意后调用私有OCR，需本人确认",
+        "operationId": "post_api_vehicle_mileage_recognition",
+        "tags": [
+          "vehicle"
+        ],
+        "x-feature-ids": [
+          "F03"
+        ],
+        "responses": {
+          "200": {
+            "description": "候选投影: vehicle_id/file_id/review_status(CANDIDATE|LOW_CONFIDENCE|AMBIGUOUS|NO_CANDIDATE)/requires_confirmation=true/recognition(version=1,scene=archive,status=CANDIDATE|EMPTY,fields)。单候选mileage字符串及原置信度，歧义/无候选fields为空；不返回对象key/URL或OCR原文。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "正文、重复键、用途确认或query无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "会话撤销/过期或用户失效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非正式车主角色",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "非本人车辆或图片，图片非CLEAN/已删/类型大小不符",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "调用期间车辆或图片事实变化",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "本实例已有两个识别在处理",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "关闭、数据/存储/OCR不可用、结果无效或超时",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "vehicle_id",
+                  "file_id",
+                  "consent",
+                  "consent_version"
+                ],
+                "properties": {
+                  "vehicle_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740990
+                  },
+                  "file_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740990
+                  },
+                  "consent": {
+                    "const": true
+                  },
+                  "consent_version": {
+                    "const": "MILEAGE_OCR_V1"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-implementation-status": "mileage-recognition-gateway-implemented-requires-model",
+        "x-roles": "当前有效OWNER会话、本人有效车辆、本人CLEAN JPEG/PNG；MILEAGE_OCR_ENABLED默认false",
+        "description": "no-store、无query、无自动落库。MILEAGE_OCR_V1用途确认，图片1–4MiB，服务端读取私有字节；调用前后复核会话/车辆/文件。实例并发2，私有HTTP15秒硬截止、64KiB响应上限，无重试/重定向。低置信度保留；歧义不自动选值。服务凭据不下发客户端，真实模型与小程序接线另验。"
+      }
     }
   },
   "components": {

@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "operations": 352,
-  "anonymous_probes": 338,
+  "operations": 353,
+  "anonymous_probes": 339,
   "full_api_acceptance_passed": false,
   "note": "Generated inventory, not test evidence. Anonymous 401 does not prove controller implementation or role/ownership validation.",
   "items": [
@@ -5922,6 +5922,24 @@
       "path": "/api/vehicle/match-plate",
       "roles": "正式车主",
       "implementation_status": "core-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_vehicle_mileage_recognition",
+      "method": "POST",
+      "path": "/api/vehicle/mileage-recognition",
+      "roles": "当前有效OWNER会话、本人有效车辆、本人CLEAN JPEG/PNG；MILEAGE_OCR_ENABLED默认false",
+      "implementation_status": "mileage-recognition-gateway-implemented-requires-model",
       "content_types": [
         "application/json"
       ],

@@ -1,3 +1,9 @@
+## A4d36验证收口
+Java22项通过（HTTP4/MySQL12/传输6），Python73和Compose配置/62挂载核对通过，MySQL/Ryuk已移除。输入严格用途同意，调用前后会话/车辆/图片复核、硬HTTP截止和响应上限通过。真实MySQL搭配存储/推理替身，SpringHTTP与实际MySQL分层测试，不是实际Paddle/MinIO端到端。353契约，历史317，结论36，全API仍false。
+
+## A4d36
+复用ReservationStore现行会话校验与私有对象read/stat；文件归属只能证明本人上传，不能证明图片属于车辆，须本人指定用途并确认。私有OCR与公开后端分别鉴权，不向小程序泄露服务凭据。
+
 ## A4d35
 当前环境无Paddle/PaddleOCR和模型；实际JPEG/PNG解码及回环HTTP通过，推理构造/调用仅替身。新增私有凭据、体积/像素/格式校验、CPU v5本地目录适配，默认关闭。后端本人车辆与CLEAN对象网关、硬推理截止、真实模型样本和小程序确认接线仍待完成。
 

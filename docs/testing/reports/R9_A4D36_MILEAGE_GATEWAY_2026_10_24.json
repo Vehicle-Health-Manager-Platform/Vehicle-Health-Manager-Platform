@@ -1,0 +1,78 @@
+{
+  "stage": "A4d36",
+  "base_commit": "928fa48",
+  "java_test_summary": [
+    {
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "class": "com.autocare.platform.MileageRecognitionHttpTest",
+      "testcases": [
+        "strict_body_consent_and_query_are_checked_before_service",
+        "owner_response_is_no_store_and_uses_authenticated_subject",
+        "unavailable_is_not_reported_as_empty_success",
+        "anonymous_staff_and_binding_are_rejected_before_service"
+      ]
+    },
+    {
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "class": "com.autocare.platform.order.JdbcMileageRecognitionTest",
+      "testcases": [
+        "missing_consent_extra_duplicate_and_negative_ids_rejected",
+        "revoke_or_transfer_during_inference_withholds_candidate",
+        "low_confidence_is_not_promoted_and_ambiguity_has_no_automatic_choice",
+        "foreign_vehicle_or_file_refused_before_storage",
+        "only_two_inferences_enter_at_once",
+        "invalid_provider_shape_confidence_version_and_count_rejected",
+        "storage_metadata_mismatch_cannot_reach_provider",
+        "changed_file_and_malformed_upstream_withhold_candidate",
+        "revoked_session_refused_before_storage",
+        "clean_owned_image_returns_only_candidate_and_never_writes",
+        "disabled_unknown_type_deleted_oversize_and_scan_state_rejected",
+        "disabled_service_has_zero_external_io"
+      ]
+    },
+    {
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "class": "com.autocare.platform.order.MileageOcrClientTest",
+      "testcases": [
+        "rejects_untrusted_destination_and_bad_credentials",
+        "oversized_response_is_cancelled",
+        "redirects_errors_and_wrong_content_type_are_refused",
+        "stalled_response_body_has_hard_deadline",
+        "duplicate_json_is_not_success",
+        "sends_server_credential_and_bytes_without_urls"
+      ]
+    }
+  ],
+  "java_tests_passed": 22,
+  "python_related_tests_passed": 73,
+  "owned_mysql_and_ryuk_removed": true,
+  "source_sha256_at_report": {
+    "backend/src/main/java/com/autocare/platform/order/MileageOcrClient.java": "4b30e65e9bfaae31c29721f89b09f174661891194385db048fe8773566ddf8c2",
+    "backend/src/main/java/com/autocare/platform/order/MileageRecognition.java": "9b5d915002cbc0d95ab4638de7055b3c79f21415b24c85c7b709fa757e367b50",
+    "backend/src/main/java/com/autocare/platform/order/MileageRecognitionConfiguration.java": "ac8c17c1c459443b842370a26e2a330cd9da18dd2a98ad1d37e6bd965915d94d",
+    "backend/src/main/java/com/autocare/platform/order/MileageRecognitionController.java": "ab271437ec41e533dffb4c790df987ef95d1834fb5fabc22c336254028d9eadd",
+    "backend/src/test/java/com/autocare/platform/order/JdbcMileageRecognitionTest.java": "af3ccb92a9e9288467936510256ca89002fd5f632e34811b869817f8ebda0d94",
+    "backend/src/test/java/com/autocare/platform/order/MileageOcrClientTest.java": "af41a16d99757af65a590506472be5b22a239c7f561120c3e95c9c80a894f367",
+    "backend/src/test/java/com/autocare/platform/MileageRecognitionHttpTest.java": "cee455ca43ac9329f169a82e8d52e79dc92567f32db0a0294974eb7173258551"
+  },
+  "boundaries": {
+    "real_mysql": true,
+    "spring_http_uses_mock_jwt_decoder_and_service": true,
+    "storage_and_ocr_provider_mocked": true,
+    "transport_loopback_server_is_stub": true,
+    "actual_paddle_inference_passed": false,
+    "miniapp_recognition_connected": false
+  },
+  "contract_operations": 353,
+  "historical_four_kind_operations": 317,
+  "full_api_acceptance_passed": false
+}

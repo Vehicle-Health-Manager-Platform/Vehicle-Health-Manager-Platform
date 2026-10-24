@@ -1,5 +1,9 @@
 # 交付文档对照核查（2026-10-23）
 
+## A4d36更新（2026-10-24）
+
+[里程识别网关](R9_A4D36_MILEAGE_GATEWAY.md)新增默认关闭的后端权限、有界转发与人工确认候选接口，Java22/Python73分层检查通过；真实模型及小程序接线仍待验。当前353项契约、317项完整四类历史证据、36套来源和36项结论，全API仍false；下文旧352/35及各阶段结果保留历史口径，当前以生成索引和剩余验收表为准。
+
 ## A4d32实施后的更新
 
 [A4d28交接资料](R9_A4D28_MINIAPP_HANDOVER.md)、[A4d29取车对比](R9_A4D29_NATIVE_DELIVERY.md)、[A4d30扫码](R9_A4D30_NATIVE_PICKUP_SCAN.md)、[A4d31 PDF](R9_A4D31_NATIVE_MATERIAL_UPLOAD.md)及[A4d32档案图片](R9_A4D32_NATIVE_IMAGE_UPLOAD.md)已分别形成阶段证据。图片原生五项、页面真实PNG上传、归属扫描与签名下载核对通过，无新增档案或辅助材料；选择器结果仍为工具辅助。当前历史覆盖仍317/352、36套来源、35项结论，全API仍false。正式识别、供应商、资金、手机及发布门禁继续按[剩余验收](../delivery/REMAINING_ACCEPTANCE.md)推进；下文“下一步整理手册”等保留为当时基线。
