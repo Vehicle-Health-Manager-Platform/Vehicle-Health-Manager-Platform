@@ -1,0 +1,73 @@
+{
+  "stage": "A4d39",
+  "base_commit": "9cf5fdb726cc1474badfaadfe8872dbbbe07cdd3",
+  "platform": {
+    "system": "Windows",
+    "python": "3.11.15",
+    "architecture": "x86_64"
+  },
+  "direct_pins": {
+    "paddleocr": "3.7.0",
+    "paddlepaddle": "3.3.1",
+    "Pillow": "12.3.0"
+  },
+  "resolved_wheels": 70,
+  "additional_runtime_setuptools": "79.0.1",
+  "locked_distributions": 71,
+  "pip_tool_version": "24.0",
+  "pip_check": "passed",
+  "installed_versions_match_report": true,
+  "lock_dry_run": "passed in installed environment; not a second fresh install",
+  "model_assets_verified": true,
+  "model_archives": [
+    {
+      "name": "PP-OCRv5_mobile_det",
+      "bytes": 4935680,
+      "sha256": "50446e5d01ac2a73d5319c89513281f6578414c888c602f9af13f93feefffc58"
+    },
+    {
+      "name": "PP-OCRv5_mobile_rec",
+      "bytes": 16834560,
+      "sha256": "566b9512b34e34a9f0db54d87b51fa5a0b9ed2cf1ab7e49728cc0b8b5a64f414"
+    }
+  ],
+  "model_digests_publisher_signed": false,
+  "runtime": {
+    "passed": true,
+    "dependencies": {
+      "paddleocr": "3.7.0",
+      "paddlepaddle": "3.3.1",
+      "Pillow": "12.3.0"
+    },
+    "real_engine_initialized": true,
+    "synthetic_image_inference_passed": true,
+    "private_http_synthetic_inference_passed": true,
+    "private_http_server_stopped": true,
+    "status": "CANDIDATE",
+    "requires_confirmation": true,
+    "owner_instrument_accuracy_accepted": false,
+    "wechat_journey_accepted": false
+  },
+  "initial_inference_failure": "NotImplementedError in oneDNN ConvertPirAttribute2RuntimeAttribute; reproduced; enable_mkldnn=False fixed same real models and generated image",
+  "configuration_regression_red": true,
+  "ocr_tests": {
+    "passed": 26,
+    "new": 9
+  },
+  "handover_tests_passed": 8,
+  "docker_build": "blocked before image build by Docker Hub authorization connection timeout",
+  "linux_runtime_accepted": false,
+  "full_api_acceptance_passed": false,
+  "historical_full_evidence": 317,
+  "contract_operations": 353,
+  "source_sha256": {
+    "services/ocr/model_assets.py": "0622b9bda4eff90196de93ed9b4decfd84888097add5ca928e276f403e6a0db1",
+    "services/ocr/models.lock.json": "3e115438d76d4fb4719fab9a0a547c3e8a2c97f3f323f1cfd7805b5052c5e0e7",
+    "services/ocr/runtime_check.py": "feffb66ff39ffe2942074707f638d75a161db07691f9c664a539e3dc1a7ac1ef",
+    "services/ocr/requirements-runtime.txt": "d1e29a850ab70dc3293f9aa6574b9dfa72e87233a05219888b5f9ab0aad2ce09",
+    "services/ocr/requirements-runtime-windows.lock.txt": "fbd5f38df724f919e9fedbf5e7fc2ec17f51eafb92789ff6ac98fa5e653318e2",
+    "services/ocr/src/recognition.py": "7e9811d1daac980c21fa94e294622599c8c262c901b35f619955931c1e8e7a92",
+    "services/ocr/test_model_assets.py": "cf5917c6f930e99846431f05aae84de021a348b09c11973286cd96d178ba8b10",
+    "services/ocr/test_recognition.py": "bb687ab7ec580e0c0e10866d98c3e789ad69f2e854306b7f7fa85a724bf193de"
+  }
+}
