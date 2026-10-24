@@ -79,11 +79,12 @@ class RealMaterialWorkbenchJourneyTest {
     static final class LoopbackStorage implements AutoCloseable {
         final ServerSocket listener;
         final Set<Socket> sockets=ConcurrentHashMap.newKeySet();
-        LoopbackStorage()throws IOException {
+        LoopbackStorage()throws IOException {this(MINIO.getHost(),MINIO.getMappedPort(9000));}
+        LoopbackStorage(String host,int port)throws IOException {
             listener=new ServerSocket(0,50,InetAddress.getByName("127.0.0.1"));
             daemon(()->{while(!listener.isClosed())try{
                 Socket incoming=listener.accept();sockets.add(incoming);
-                Socket outgoing=new Socket(MINIO.getHost(),MINIO.getMappedPort(9000));sockets.add(outgoing);
+                Socket outgoing=new Socket(host,port);sockets.add(outgoing);
                 daemon(()->pipe(incoming,outgoing));daemon(()->pipe(outgoing,incoming));
             }catch(IOException stopped){if(!listener.isClosed())throw new UncheckedIOException(stopped);}});
         }
@@ -121,6 +122,7 @@ class RealMaterialWorkbenchJourneyTest {
         r.add("MYSQL_USER",MYSQL::getUsername);r.add("MYSQL_PASSWORD",MYSQL::getPassword);
         r.add("MINIO_ENDPOINT",()->"http://"+MINIO.getHost()+":"+MINIO.getMappedPort(9000));
         r.add("MINIO_PUBLIC_ENDPOINT",publicStorage::endpoint);
+        RealMileageAcceptance.configure(r);
         r.add("UPLOAD_MINIO_ACCESS_KEY",()->USER);r.add("UPLOAD_MINIO_SECRET_KEY",()->SECRET);r.add("UPLOAD_MINIO_BUCKET",()->BUCKET);r.add("UPLOAD_MINIO_REGION",()->"us-east-1");
     }
     @LocalServerPort int port;
@@ -278,6 +280,12 @@ class RealMaterialWorkbenchJourneyTest {
             byte[] fixture=switch(System.getenv().getOrDefault("AUTOCARE_NATIVE_UPLOAD_KIND","pdf")){case "image"->NativeMaterialAcceptance.image();case "audio"->NativeMaterialAcceptance.audio();case "pdf"->InputMaterialValidatorTest.pdf(1);default->throw new IllegalArgumentException("Invalid native upload mode");};
             NativeMaterialAcceptance.run(jdbc,mapper,port,token("native_owner",991,"user","OWNER",0,null),fixture);
         }
+        if(RealMileageAcceptance.enabled()){
+            assertNull(System.getenv("AUTOCARE_NATIVE_MATERIAL_RUN_ID"));
+            jdbc.update("INSERT INTO user(id,openid,status) VALUES(991,'synthetic-real-mileage',1)");
+            jdbc.update("INSERT INTO vehicle(id,user_id,current_mileage) VALUES(991,991,100)");
+            RealMileageAcceptance.run(jdbc,mapper,port,token("real_mileage",991,"user","OWNER",0,null),tokens.get("other"));
+        }
         completed=true;
     }
     static String sourceDigest()throws Exception{
@@ -301,6 +309,7 @@ class RealMaterialWorkbenchJourneyTest {
     }
     static void cleanup()throws Exception{
         if(publicStorage!=null)publicStorage.close();
+        RealMileageAcceptance.close();
         var resources=new LinkedHashMap<String,GenericContainer<?>>();
         resources.put("initializer",initializer);resources.put("clamav",CLAM);resources.put("minio",MINIO);resources.put("mysql",MYSQL);
         for(var entry:resources.entrySet()){
