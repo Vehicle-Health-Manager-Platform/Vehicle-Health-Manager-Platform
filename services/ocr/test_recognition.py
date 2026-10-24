@@ -53,6 +53,7 @@ class ImageTest(unittest.TestCase):
                         with self.assertRaises(ValueError): engine.recognize(None)
         self.assertFalse(captured['use_doc_unwarping'])
         self.assertFalse(captured['use_textline_orientation'])
+        self.assertIs(False,captured.get('enable_mkldnn'))
         self.assertEqual('PP-OCRv5',captured['ocr_version'])
     def test_credential_required_for_enabled_engine(self):
         with self.assertRaises(ValueError): create_server(('127.0.0.1',0),Engine(),'short')
