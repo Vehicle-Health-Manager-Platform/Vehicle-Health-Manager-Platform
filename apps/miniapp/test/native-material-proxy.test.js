@@ -45,3 +45,22 @@ test('image mode admits only authenticated PNG fixture and fixed image upload ro
 test('native proxy rejects unknown upload mode before listening',async()=>{
   await assert.rejects(()=>createProxy({kind:'arbitrary'}),/Invalid proxy mode/)
 })
+
+test('audio mode isolates authenticated MP3 input and rejects PDF/image upload metadata',async t=>{
+  const work=fs.mkdtempSync(path.join(os.tmpdir(),'native-audio-proxy-'))
+  const proxy=await createProxy({kind:'audio',token:'eyJsynthetic.token',port:12345,container:'synthetic-container',work,containerWork:'/workspace/.cache/native-material-'+'c'.repeat(32),audio:Buffer.from('synthetic-mp3').toString('base64'),listenPort:0})
+  t.after(async()=>{await proxy.close();fs.rmdirSync(work)})
+  const base='http://127.0.0.1:'+proxy.server.address().port
+  assert.equal((await fetch(base+'/__native-fixture.mp3')).status,401)
+  for(const suffix of ['pdf','png'])assert.equal((await fetch(base+'/__native-fixture.'+suffix)).status,404)
+  assert.equal((await fetch(base+'/api/file/upload',{method:'POST'})).status,404)
+  const fixture=await fetch(base+'/__native-fixture.mp3',{headers:{Authorization:'Bearer eyJsynthetic.token'}})
+  assert.equal(fixture.headers.get('content-type'),'audio/mpeg');assert.equal(await fixture.text(),'synthetic-mp3')
+  const route=base+'/api/input-materials/ARCHIVE/991/upload'
+  assert.equal((await fetch(route,{method:'POST'})).status,401)
+  for(const kind of ['pdf','image','']){
+    const headers={Authorization:'Bearer eyJsynthetic.token','Content-Type':'multipart/form-data; boundary=synthetic','Idempotency-Key':'00000000-0000-4000-8000-000000000001','X-Material-Kind':kind}
+    assert.equal((await fetch(route,{method:'POST',headers})).status,400)
+  }
+  assert.equal(proxy.requests,0);assert.deepEqual(fs.readdirSync(work),[])
+})

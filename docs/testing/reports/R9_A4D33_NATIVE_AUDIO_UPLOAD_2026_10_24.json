@@ -1,0 +1,953 @@
+{
+  "run_id": "9c52760e4a794a33b91fbd4cd3f874f7",
+  "passed": true,
+  "sources_unchanged": true,
+  "source_sha256": "9b8059080d4f1b18e2ad9a0e9e6ed3ed539ef43589e9c4af51c85be25eef06a0",
+  "native": {
+    "passed": true,
+    "kind": "audio",
+    "session_cleared": true,
+    "system_api_restored": true,
+    "local_file_released": true,
+    "checks": [
+      {
+        "name": "assisted recorder start reaches native recording state",
+        "passed": true
+      },
+      {
+        "name": "cancelled recorder event cannot retain a material",
+        "passed": true
+      },
+      {
+        "name": "assisted stop event adds real temporary MP3",
+        "passed": true
+      },
+      {
+        "name": "real WeChat audio context emits onPlay for generated MP3",
+        "passed": true
+      },
+      {
+        "name": "stop playback destroys context and recorder subscriptions are released",
+        "passed": true
+      },
+      {
+        "name": "real uploadFile receives validated CLEAN audio receipt",
+        "passed": true
+      },
+      {
+        "name": "audio receipt preserves no-recognition/no-archive boundary",
+        "passed": true
+      },
+      {
+        "name": "remove clears local reference",
+        "passed": true
+      },
+      {
+        "name": "reentry has no retained local material",
+        "passed": true
+      }
+    ],
+    "scope": "Devtools recorder events assisted; real audio context callbacks; real WeChat file/uploadFile, isolated JVM/MySQL/MinIO/ClamAV with synthetic scan DB; no phone capture, microphone permissions, listening quality, production scanner or recognition acceptance",
+    "upload_requests": 1,
+    "local_file_cleanup": "WeChat-managed temporary download; no saved user-directory file created",
+    "audio": {
+      "recorderStarts": 2,
+      "recorderStops": 2,
+      "playerPlays": 1,
+      "playerStops": 1,
+      "playerDestroys": 1,
+      "playerPlayEvents": 1,
+      "playerEndedEvents": 0,
+      "playerErrorEvents": 0,
+      "recorderListeners": 0,
+      "activePlayers": 0,
+      "recording": false,
+      "restored": true
+    },
+    "audio_fixture_restored": true,
+    "proxy_closed": true
+  },
+  "database": {
+    "no_cross_kind_material": true,
+    "signed_download_matches": true,
+    "passed": true,
+    "duration_ms": 8100,
+    "no_archive_created": true,
+    "one_clean_scoped_audio": true
+  },
+  "backend": {
+    "version": 1,
+    "passed": true,
+    "full_api_acceptance_passed": false,
+    "finished_at": "2026-10-23T16:57:51.147689+00:00",
+    "duration_seconds": 166.11,
+    "source_sha256": "210b140bcc8cff35836e96736f0f48ab71d8a397b196e46fb4e03fe73189d299",
+    "sources_unchanged": true,
+    "maven_exit_code": 0,
+    "execution_mode": "local-execution",
+    "proof": {
+      "requests": 80,
+      "operations": 4,
+      "coverage": {
+        "POST /api/input-materials/{purpose}/{vehicleId}/upload": [
+          "boundary",
+          "error",
+          "normal",
+          "unauthorized"
+        ],
+        "GET /api/input-materials/{purpose}/{vehicleId}/{id}/access": [
+          "boundary",
+          "error",
+          "normal",
+          "unauthorized"
+        ],
+        "GET /api/merchant/workbench": [
+          "boundary",
+          "error",
+          "normal",
+          "unauthorized"
+        ],
+        "GET /api/tech/workbench": [
+          "boundary",
+          "error",
+          "normal",
+          "unauthorized"
+        ]
+      },
+      "checks": {
+        "five_isolated_materials": true,
+        "materials_never_become_images": true,
+        "five_successful_uploads": true,
+        "four_type_purpose_downloads": true,
+        "scope_and_query_enforced": true,
+        "private_bucket_and_signature_enforced": true,
+        "material_current_facts_rechecked": true,
+        "workbench_actor_isolation": true,
+        "eight_mutually_exclusive_buckets": true,
+        "assignment_and_closed_tasks_rechecked": true,
+        "pagination_has_no_duplicate_or_missing_tasks": true,
+        "workbench_minimal_private_fields": true,
+        "current_staff_and_binding_required": true,
+        "current_owner_session_required": true,
+        "no_payment_archive_or_rewards": true
+      },
+      "cleanup": {
+        "initializer": true,
+        "clamav": true,
+        "minio": true,
+        "mysql": true,
+        "network": true
+      },
+      "cases": [
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/upload",
+          "kind": "normal",
+          "status": 200,
+          "method": "POST",
+          "passed": true,
+          "name": "audio_ai"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/upload",
+          "kind": "boundary",
+          "status": 200,
+          "method": "POST",
+          "passed": true,
+          "name": "audio_replay"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/upload",
+          "kind": "boundary",
+          "status": 409,
+          "method": "POST",
+          "passed": true,
+          "name": "changed_content"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/upload",
+          "kind": "error",
+          "status": 422,
+          "method": "POST",
+          "passed": true,
+          "name": "invalid_bytes"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/ARCHIVE/1/upload",
+          "kind": "normal",
+          "status": 200,
+          "method": "POST",
+          "passed": true,
+          "name": "pdf_archive"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "other",
+          "path": "/api/input-materials/ARCHIVE/2/upload",
+          "kind": "normal",
+          "status": 200,
+          "method": "POST",
+          "passed": true,
+          "name": "audio_archive"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "other",
+          "path": "/api/input-materials/AI/2/upload",
+          "kind": "normal",
+          "status": 200,
+          "method": "POST",
+          "passed": true,
+          "name": "pdf_ai"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/AI/3/upload",
+          "kind": "boundary",
+          "status": 200,
+          "method": "POST",
+          "passed": true,
+          "name": "same_key_other_vehicle"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/upload",
+          "kind": "error",
+          "status": 400,
+          "method": "POST",
+          "passed": true,
+          "name": "unknown_kind"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/upload?owner_id=2",
+          "kind": "error",
+          "status": 400,
+          "method": "POST",
+          "passed": true,
+          "name": "upload_query"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/upload",
+          "kind": "error",
+          "status": 422,
+          "method": "POST",
+          "passed": true,
+          "name": "infected_bytes"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "anonymous",
+          "path": "/api/input-materials/AI/1/upload",
+          "kind": "unauthorized",
+          "status": 401,
+          "method": "POST",
+          "passed": true,
+          "name": "upload_anonymous"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "merchant",
+          "path": "/api/input-materials/AI/1/upload",
+          "kind": "unauthorized",
+          "status": 403,
+          "method": "POST",
+          "passed": true,
+          "name": "upload_merchant"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/AI/2/upload",
+          "kind": "unauthorized",
+          "status": 404,
+          "method": "POST",
+          "passed": true,
+          "name": "upload_foreign_vehicle"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/UNKNOWN/1/upload",
+          "kind": "error",
+          "status": 400,
+          "method": "POST",
+          "passed": true,
+          "name": "upload_unknown_purpose"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/1/access",
+          "kind": "normal",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "access_audio"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/ARCHIVE/1/2/access",
+          "kind": "normal",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "access_pdf"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "other",
+          "path": "/api/input-materials/ARCHIVE/2/3/access",
+          "kind": "normal",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "access_other_audio"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "other",
+          "path": "/api/input-materials/AI/2/4/access",
+          "kind": "normal",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "access_other_pdf"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/999999/access",
+          "kind": "boundary",
+          "status": 404,
+          "method": "GET",
+          "passed": true,
+          "name": "access_missing"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/1/access?owner_id=2",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "access_query"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/1/access?page=1&page=1",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "access_duplicate_query"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/0/access",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "access_zero_id"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/9007199254740992/access",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "access_unsafe_id"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/ARCHIVE/1/1/access",
+          "kind": "unauthorized",
+          "status": 404,
+          "method": "GET",
+          "passed": true,
+          "name": "access_wrong_purpose"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/3/1/access",
+          "kind": "unauthorized",
+          "status": 404,
+          "method": "GET",
+          "passed": true,
+          "name": "access_other_owned_vehicle"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "other",
+          "path": "/api/input-materials/AI/1/1/access",
+          "kind": "unauthorized",
+          "status": 404,
+          "method": "GET",
+          "passed": true,
+          "name": "access_foreign_owner"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "anonymous",
+          "path": "/api/input-materials/AI/1/1/access",
+          "kind": "unauthorized",
+          "status": 401,
+          "method": "GET",
+          "passed": true,
+          "name": "access_anonymous"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "merchant",
+          "path": "/api/input-materials/AI/1/1/access",
+          "kind": "unauthorized",
+          "status": 403,
+          "method": "GET",
+          "passed": true,
+          "name": "access_merchant"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "technician",
+          "path": "/api/input-materials/AI/1/1/access",
+          "kind": "unauthorized",
+          "status": 403,
+          "method": "GET",
+          "passed": true,
+          "name": "access_technician"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/1/access",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "access_scan_constraint"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/1/access",
+          "kind": "unauthorized",
+          "status": 404,
+          "method": "GET",
+          "passed": true,
+          "name": "access_deleted"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/1/access",
+          "kind": "unauthorized",
+          "status": 404,
+          "method": "GET",
+          "passed": true,
+          "name": "access_transferred"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench",
+          "kind": "normal",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bench_merchant"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?page=2",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "empty_page_merchant"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?owner_id=2",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_merchant_owner_id=2"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?bucket=BAD",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_merchant_bucket=BAD"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?bucket=SERVICE&bucket=SERVICE",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_merchant_bucket=SERVICE&bucket=SERVICE"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?page=0",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_merchant_page=0"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?page_size=100",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_merchant_page_size=100"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?page=1&page=1",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_merchant_page=1&page=1"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "anonymous",
+          "path": "/api/merchant/workbench",
+          "kind": "unauthorized",
+          "status": 401,
+          "method": "GET",
+          "passed": true,
+          "name": "anonymous_merchant"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "owner",
+          "path": "/api/merchant/workbench",
+          "kind": "unauthorized",
+          "status": 403,
+          "method": "GET",
+          "passed": true,
+          "name": "wrong_role_merchant"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench",
+          "kind": "normal",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bench_technician"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?page=2",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "empty_page_technician"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?owner_id=2",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_technician_owner_id=2"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?bucket=BAD",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_technician_bucket=BAD"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?bucket=SERVICE&bucket=SERVICE",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_technician_bucket=SERVICE&bucket=SERVICE"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?page=0",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_technician_page=0"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?page_size=100",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_technician_page_size=100"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?page=1&page=1",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_technician_page=1&page=1"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "anonymous",
+          "path": "/api/tech/workbench",
+          "kind": "unauthorized",
+          "status": 401,
+          "method": "GET",
+          "passed": true,
+          "name": "anonymous_technician"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "owner",
+          "path": "/api/tech/workbench",
+          "kind": "unauthorized",
+          "status": 403,
+          "method": "GET",
+          "passed": true,
+          "name": "wrong_role_technician"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "other_merchant",
+          "path": "/api/merchant/workbench",
+          "kind": "unauthorized",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "other_shop"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "peer",
+          "path": "/api/tech/workbench",
+          "kind": "unauthorized",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "unassigned_peer"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?bucket=SERVICE",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_SERVICE_merchant"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?bucket=SERVICE",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_SERVICE_technician"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?bucket=RECEIVE",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_RECEIVE_merchant"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?bucket=RECEIVE",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_RECEIVE_technician"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?bucket=CONFIRM",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_CONFIRM_merchant"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?bucket=CONFIRM",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_CONFIRM_technician"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?bucket=WAIT_ACCEPT",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_WAIT_ACCEPT_merchant"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?bucket=WAIT_ACCEPT",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_WAIT_ACCEPT_technician"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?bucket=REVIEW_SOURCE",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_REVIEW_SOURCE_merchant"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?bucket=REVIEW_SOURCE",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_REVIEW_SOURCE_technician"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?bucket=VERIFY",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_VERIFY_merchant"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?bucket=VERIFY",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_VERIFY_technician"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?bucket=DISPUTE",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_DISPUTE_merchant"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?bucket=DISPUTE",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_DISPUTE_technician"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?bucket=ASSIGN",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_ASSIGN_merchant"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "no_assignment_tech"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench",
+          "kind": "unauthorized",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "former_tech"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "peer",
+          "path": "/api/tech/workbench",
+          "kind": "normal",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "new_tech"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "closed_merchant"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "peer",
+          "path": "/api/tech/workbench",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "closed_tech"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?page=1&page_size=20",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "page_one"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?page=2&page_size=20",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "page_two"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "peer",
+          "path": "/api/tech/workbench",
+          "kind": "unauthorized",
+          "status": 401,
+          "method": "GET",
+          "passed": true,
+          "name": "unbound_tech"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench",
+          "kind": "unauthorized",
+          "status": 401,
+          "method": "GET",
+          "passed": true,
+          "name": "disabled_merchant"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/1/access",
+          "kind": "unauthorized",
+          "status": 401,
+          "method": "GET",
+          "passed": true,
+          "name": "revoked_owner"
+        }
+      ]
+    },
+    "error": null,
+    "boundaries": [
+      "synthetic identities; real HTTP/MySQL/MinIO/ClamAV",
+      "synthetic scan database injected only in test configuration; production freshness unchanged",
+      "synthetic task/dispatch/closure fixtures; real material writes and workbench reads; structural audio is not playback or recognition acceptance; material TTL is 60 seconds, natural expiry not measured",
+      "no production malware coverage, real identity, external cloud supplier or device acceptance"
+    ]
+  },
+  "full_api_acceptance_passed": false
+}

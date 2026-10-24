@@ -275,7 +275,8 @@ class RealMaterialWorkbenchJourneyTest {
         if(System.getenv("AUTOCARE_NATIVE_MATERIAL_RUN_ID")!=null){
             jdbc.update("INSERT INTO user(id,openid,status) VALUES(991,'synthetic-native-material',1)");
             jdbc.update("INSERT INTO vehicle(id,user_id,current_mileage) VALUES(991,991,100)");
-            NativeMaterialAcceptance.run(jdbc,mapper,port,token("native_owner",991,"user","OWNER",0,null),"image".equals(System.getenv("AUTOCARE_NATIVE_UPLOAD_KIND"))?NativeMaterialAcceptance.image():InputMaterialValidatorTest.pdf(1));
+            byte[] fixture=switch(System.getenv().getOrDefault("AUTOCARE_NATIVE_UPLOAD_KIND","pdf")){case "image"->NativeMaterialAcceptance.image();case "audio"->NativeMaterialAcceptance.audio();case "pdf"->InputMaterialValidatorTest.pdf(1);default->throw new IllegalArgumentException("Invalid native upload mode");};
+            NativeMaterialAcceptance.run(jdbc,mapper,port,token("native_owner",991,"user","OWNER",0,null),fixture);
         }
         completed=true;
     }
