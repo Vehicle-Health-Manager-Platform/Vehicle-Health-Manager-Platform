@@ -191,6 +191,11 @@
       "operation": "POST /api/demo/vehicles/{id}/mileage",
       "verdict": "dev-only",
       "reason": "本地 profile 的里程写入样例(local-example),生产里程由接车检查写入。"
+    },
+    {
+      "operation": "POST /api/vehicle/mileage-recognition",
+      "verdict": "implemented-local",
+      "reason": "默认关闭的里程识别网关已实现；真实OCR模型、小程序接线及完整四类真实HTTP执行证据待补。"
     }
   ]
 }

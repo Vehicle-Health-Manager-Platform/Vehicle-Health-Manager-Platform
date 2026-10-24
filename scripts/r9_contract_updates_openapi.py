@@ -64,3 +64,17 @@ def add_r9_contract_updates(document, operation):
     ]}}}
     item['responses']['200']['headers']={'Cache-Control':{'schema':{'const':'no-store'}}}
     paths[path]['get']=item
+
+    path='/api/vehicle/mileage-recognition'
+    item=operation('post',path,'从本人CLEAN图片读取仪表里程候选，明确同意后调用私有OCR，需本人确认','F03')
+    item.pop('parameters',None)
+    item['x-implementation-status']='mileage-recognition-gateway-implemented-requires-model'
+    item['x-roles']='当前有效OWNER会话、本人有效车辆、本人CLEAN JPEG/PNG；MILEAGE_OCR_ENABLED默认false'
+    item['description']='no-store、无query、无自动落库。MILEAGE_OCR_V1用途确认，图片1–4MiB，服务端读取私有字节；调用前后复核会话/车辆/文件。实例并发2，私有HTTP15秒硬截止、64KiB响应上限，无重试/重定向。低置信度保留；歧义不自动选值。服务凭据不下发客户端，真实模型与小程序接线另验。'
+    item['requestBody']={'required':True,'content':{'application/json':{'schema':{'type':'object','additionalProperties':False,'required':['vehicle_id','file_id','consent','consent_version'],'properties':{
+        'vehicle_id':{'type':'integer','minimum':1,'maximum':9007199254740990},'file_id':{'type':'integer','minimum':1,'maximum':9007199254740990},'consent':{'const':True},'consent_version':{'const':'MILEAGE_OCR_V1'}}}}}}
+    item['responses']['200']['description']='候选投影: vehicle_id/file_id/review_status(CANDIDATE|LOW_CONFIDENCE|AMBIGUOUS|NO_CANDIDATE)/requires_confirmation=true/recognition(version=1,scene=archive,status=CANDIDATE|EMPTY,fields)。单候选mileage字符串及原置信度，歧义/无候选fields为空；不返回对象key/URL或OCR原文。'
+    for code,desc in [('400','正文、重复键、用途确认或query无效'),('401','会话撤销/过期或用户失效'),('403','非正式车主角色'),('404','非本人车辆或图片，图片非CLEAN/已删/类型大小不符'),('409','调用期间车辆或图片事实变化'),('429','本实例已有两个识别在处理'),('503','关闭、数据/存储/OCR不可用、结果无效或超时')]:
+        item['responses'][code]={'description':desc,'content':copy.deepcopy(item['responses']['200']['content'])}
+    item['responses']['200']['headers']={'Cache-Control':{'schema':{'const':'no-store'}}}
+    paths[path]={'post':item}

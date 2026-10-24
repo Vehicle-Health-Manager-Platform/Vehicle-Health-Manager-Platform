@@ -9678,6 +9678,40 @@
       ]
     },
     {
+      "name": "post_api_vehicle_mileage_recognition",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "url": "{{base_url}}/api/vehicle/mileage-recognition",
+        "description": "从本人CLEAN图片读取仪表里程候选，明确同意后调用私有OCR，需本人确认",
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"anonymous is rejected\", () => pm.response.to.have.status(401));",
+              "pm.test(\"safe JSON envelope\", () => pm.expect(pm.response.json().code).to.eql(40100));",
+              "pm.test(\"private response is not cached\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "name": "get_api_vehicle_ocr_license",
       "request": {
         "method": "GET",

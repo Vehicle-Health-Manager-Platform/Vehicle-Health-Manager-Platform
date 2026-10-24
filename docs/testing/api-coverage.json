@@ -5,11 +5,11 @@
   "current_backend_revalidated": false,
   "scope": "Selected recorded synthetic-identity/LOCAL_TEST suites only; other tests are not indexed. Reconciled with current definitions; no new HTTP execution or production acceptance.",
   "counts": {
-    "contract_operations": 352,
-    "protected_operations": 338,
+    "contract_operations": 353,
+    "protected_operations": 339,
     "four_kind_definitions": 317,
     "historical_four_kind_operations": 317,
-    "without_complete_historical_evidence": 35,
+    "without_complete_historical_evidence": 36,
     "current_run_operations": 0,
     "suites": 36
   },
@@ -15038,6 +15038,30 @@
       ]
     },
     {
+      "operation_id": "post_api_vehicle_mileage_recognition",
+      "method": "POST",
+      "path": "/api/vehicle/mileage-recognition",
+      "roles": "当前有效OWNER会话、本人有效车辆、本人CLEAN JPEG/PNG；MILEAGE_OCR_ENABLED默认false",
+      "protected": true,
+      "implementation_status": "mileage-recognition-gateway-implemented-requires-model",
+      "defined_kinds": [],
+      "historical_kinds": [],
+      "missing_definition_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "missing_historical_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "current_acceptance": "NOT_RUN",
+      "sources": []
+    },
+    {
       "operation_id": "get_api_vehicle_ocr_license",
       "method": "GET",
       "path": "/api/vehicle/ocr-license",
@@ -15246,6 +15270,6 @@
       ]
     }
   ],
-  "contract_sha256": "b32d8192e6cc243b99b494b27e06a80df1c60fdcc4dceaa13939cc2a97d3d0c9",
+  "contract_sha256": "4463302f9ccc7f91bb490b36079be4147ca08338d353a6b3c7efaaad1d9f3e5d",
   "input_hash_policy": "Input SHA256 uses CRLF-to-LF normalization. Historical raw collection digests must match its LF or CRLF byte form; content changes are rejected."
 }

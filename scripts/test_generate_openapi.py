@@ -60,9 +60,19 @@ class OpenApiGenerationTest(unittest.TestCase):
         self.assertEqual(json.loads(generator.OUTPUT.read_text(encoding='utf-8')),document)
         self.assertEqual('invalid output must not become generator input',self.output.read_text(encoding='utf-8'))
 
+    def test_mileage_gateway_requires_consent_and_has_no_write_key(self):
+        item=generator.build_document()['paths']['/api/vehicle/mileage-recognition']['post']
+        self.assertEqual([{'bearerAuth':[]}],item['security'])
+        self.assertFalse(item.get('parameters'))
+        schema=item['requestBody']['content']['application/json']['schema']
+        self.assertFalse(schema['additionalProperties'])
+        self.assertTrue(schema['properties']['consent']['const'])
+        self.assertEqual('MILEAGE_OCR_V1',schema['properties']['consent_version']['const'])
+        self.assertTrue({'400','401','403','404','409','429','503'}.issubset(item['responses']))
+
     def test_delivery_compare_remains_read_only_strict_and_authorized(self):
         document=generator.build_document();item=document['paths']['/api/check/delivery/compare']['post']
-        self.assertEqual(352,sum(len(v) for v in document['paths'].values()))
+        self.assertEqual(353,sum(len(v) for v in document['paths'].values()))
         self.assertEqual('delivery-compare-implemented',item['x-implementation-status'])
         self.assertEqual('本单车主或本店 MERCHANT/STAFF',item['x-roles'])
         self.assertEqual([{'bearerAuth':[]}],item['security'])
