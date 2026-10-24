@@ -16,6 +16,8 @@ from generate_api_acceptance import ROOT, OUTPUT, generate
 from run_performance_baseline import Docker, Owned, MySQL, Backend, LABEL, JAR, build_jar, free_port, migration_files
 
 CI_INPUT = ROOT / '.cache/api-ci-build-input.json'
+# Reviewed scope includes the authenticated mileage-recognition gateway.
+ANONYMOUS_PROBE_COUNT = 339
 
 
 def backend_input_hash():
@@ -181,7 +183,7 @@ def main():
                 raise ValueError('Generated Postman assets are stale')
         probe = assets['anonymous.postman_collection.json']
         expected = {item['name']: (item['request']['method'], item['request']['url'].removeprefix('{{base_url}}')) for item in probe['item']}
-        if len(expected) != 338: raise ValueError('Review changed anonymous acceptance scope')
+        if len(expected) != ANONYMOUS_PROBE_COUNT: raise ValueError('Review changed anonymous acceptance scope')
         report['contract_operations'] = assets['acceptance_inventory.json']['operations']
         report['collection_sha256'] = hashlib.sha256((OUTPUT / 'anonymous.postman_collection.json').read_bytes()).hexdigest()
         suite = 'owner' if args.owner_cases else 'fulfillment' if args.fulfillment_cases else 'coupon' if args.coupon_cases else 'merchant' if args.merchant_cases else 'community' if args.community_cases else 'publication' if args.publication_cases else 'experience' if args.experience_cases else 'health' if args.health_cases else 'export' if args.export_cases else 'points' if args.points_cases else 'exchange' if args.exchange_cases else 'invitation' if args.invitation_cases else 'diagnosis' if args.diagnosis_cases else 'discovery' if args.discovery_cases else 'quotes' if args.quotes_cases else 'reviews' if args.reviews_cases else 'finance' if args.finance_cases else 'workflow' if args.workflow_cases else 'dispute' if args.dispute_cases else 'assessment' if args.assessment_cases else 'governance' if args.governance_cases else 'fulfillment_reads' if args.fulfillment_reads_cases else 'plan_evidence' if args.plan_evidence_cases else 'relations_price' if args.relations_price_cases else 'coupon_catalog' if args.coupon_catalog_cases else 'auth_sessions' if args.auth_sessions_cases else 'rating_quotes' if args.rating_quotes_cases else 'delivery_compare' if args.delivery_compare_cases else 'local_finance' if args.local_finance_cases else None
@@ -218,7 +220,7 @@ def main():
                    'newman', 'run', str(OUTPUT / 'anonymous.postman_collection.json'),
                    '--env-var', f'base_url=http://127.0.0.1:{port}', '--reporters', 'json', '--reporter-json-export', str(raw),
                    '--timeout-request', '10000']
-        print('API acceptance: Newman 6.2.1 / 338 anonymous requests', flush=True)
+        print(f'API acceptance: Newman 6.2.1 / {len(expected)} anonymous requests', flush=True)
         with (work / 'newman.log').open('wb') as log:
             result = subprocess.run(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, timeout=600, shell=False)
         report['newman_exit_code'] = result.returncode

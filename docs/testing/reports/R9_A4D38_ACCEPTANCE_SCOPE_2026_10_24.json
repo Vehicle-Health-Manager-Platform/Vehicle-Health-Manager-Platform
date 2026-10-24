@@ -1,0 +1,72 @@
+{
+  "stage": "A4d38",
+  "base_commit": "4704dcf2f8cc7d959216eea013270ca484053ef0",
+  "baseline_ci": {
+    "run": 40052396963,
+    "java_tests": 2201,
+    "java_failures": 0,
+    "failed_step": "Verify anonymous and owner API cases through Newman on an isolated stack",
+    "error": "Review changed anonymous acceptance scope",
+    "stack_started": false
+  },
+  "regression": {
+    "old_runner_assertion_failures": 2,
+    "python_tests_passed": 55,
+    "scope_addition_and_removal_rejected": true
+  },
+  "local_http": {
+    "passed": true,
+    "source_sha256": "dac9ac2e7ed2c8dd669d4f2532413e8e55f54efb42926423534f60fafe1f1e60",
+    "jar_sha256": "346c0002f9066dbae13c7c5ce3b0d08b99fe7200975051fbd18d0e6a0209363c",
+    "collection_sha256": "0972c092a3273f5e6f22bec39a4d1aac1b4323b70888f2b12341bdf305f96699",
+    "scope": "anonymous authentication plus owner business operations (synthetic identities; LOCAL_TEST funds only)",
+    "started_at": "2026-10-24T05:59:47.944638+00:00",
+    "finished_at": "2026-10-24T06:03:24.660736+00:00",
+    "duration_seconds": 213.531,
+    "contract_operations": 353,
+    "prepared_default_disabled_verified": true,
+    "owner_default_disabled_verified": true,
+    "business_table_counts_unchanged": true,
+    "sources_unchanged": true,
+    "owner_database": {
+      "keys": 2,
+      "audits": 2,
+      "archives": 2,
+      "vehicles": 2,
+      "owner_archives": 1,
+      "owner_vehicles": 1
+    },
+    "cleanup": [
+      {
+        "role": "backend",
+        "passed": true
+      },
+      {
+        "role": "mysql",
+        "passed": true
+      },
+      {
+        "role": "network",
+        "passed": true
+      }
+    ],
+    "evidence": {
+      "requests": 339,
+      "assertions": 1017,
+      "failures": 0
+    },
+    "owner_evidence": {
+      "requests": 61,
+      "assertions": 204,
+      "failures": 0
+    }
+  },
+  "mileage_anonymous_probe": {
+    "method": "POST",
+    "path": "/api/vehicle/mileage-recognition",
+    "status": 401,
+    "assertions": 3
+  },
+  "full_api_acceptance_passed": false,
+  "real_ocr_model_accepted": false
+}
