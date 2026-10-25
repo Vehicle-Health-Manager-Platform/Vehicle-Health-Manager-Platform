@@ -41,6 +41,24 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual('CANDIDATE',worker.recognize_request(body())['status'])
         with self.assertRaises(InvalidImage):worker.recognize_request(b'{')
         self.assertEqual(pid,worker.pid);self.assertEqual('CANDIDATE',worker.recognize_request(body())['status'])
+    def test_creator_thread_exit_and_repeated_recovery_preserve_owned_worker(self):
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            worker=pool.submit(ProcessRecognizer,timeout=.35,startup_timeout=5,
+                _command=[sys.executable,'-u',str(CHILD),'good']).result(timeout=8)
+        self.addCleanup(worker.close)
+        # The caller thread has exited; the process must still be owned by a live supervisor.
+        time.sleep(.15)
+        self.assertEqual('READY',worker.status)
+        self.assertEqual('CANDIDATE',worker.recognize_request(body())['status'])
+        supervisor=worker._supervisor
+        for _ in range(2):
+            pid=worker.pid
+            with self.assertRaises(WorkerUnavailable):worker.recognize_request(body((255,0,0)))
+            wait_ready(worker);time.sleep(.15)
+            self.assertEqual('READY',worker.status);self.assertNotEqual(pid,worker.pid)
+            self.assertEqual('CANDIDATE',worker.recognize_request(body())['status'])
+            self.assertIs(supervisor,worker._supervisor);self.assertTrue(supervisor.is_alive())
+        worker.close();self.assertFalse(supervisor.is_alive())
     def test_hung_inference_is_killed_and_next_request_uses_new_process(self):
         worker=self.worker(timeout=.35);pid=worker.pid;start=time.monotonic()
         with self.assertRaises(WorkerUnavailable):worker.recognize_request(body((255,0,0)))

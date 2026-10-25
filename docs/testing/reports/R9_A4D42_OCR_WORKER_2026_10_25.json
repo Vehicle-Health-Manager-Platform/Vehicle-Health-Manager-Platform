@@ -5,11 +5,11 @@
   "base_commit": "a462f9e8e793bdbf4940ad6ffa2294bbc253d7cd",
   "base_pr_ci": "PR232 eight checks SUCCESS before stage",
   "ocr_tests": {
-    "tests": 41,
-    "passed": 41,
+    "tests": 42,
+    "passed": 42,
     "failed": 0,
     "skipped": 0,
-    "new_lifecycle_tests": 15
+    "new_lifecycle_tests": 16
   },
   "fault_engine": "Explicit substitute lines only; real OS processes, pipe blocking, watchdog, crash, restart, parent death, HTTP and shutdown executed",
   "real_model": {
@@ -66,12 +66,33 @@
   "private_image_or_exception_text_logged": false,
   "source_sha256": {
     "services/ocr/src/server.py": "c7cf731f8e1da44f307939a95f996ebdeb98dd975b71a200319dad8ee50bd52c",
-    "services/ocr/src/worker.py": "008fa6fb25486ba0525c54e5b0d62332542ba193107a333916721c2caf7211f5",
+    "services/ocr/src/worker.py": "93f93898eeb6b4b7eb2a8e79fe975bd63a8e9b4bf1fd49de68da3194be0622df",
     "services/ocr/src/process_limits.py": "b932c033defd2d3838910198b8e4ca6171d6098d97024301fd1d0a5de632fbc5",
     "services/ocr/src/recognition.py": "fd52cd825f01944733e86c8852824aef421603b52e90651af842d0547d5cfcd8",
     "services/ocr/isolated_check.py": "605eebd687cbe1be855f3d690572d08e6d5c24d576e151d55b6df9e908335aa9",
-    "services/ocr/test_worker.py": "504c57a3e32033719d4288cc65cb354c5dabc2c0419d0cf481bc853539fcec52",
+    "services/ocr/test_worker.py": "8e5c9434ce87a2796938fb155996e67f29613e4ba00485791ea9b536a84ce8da",
     "services/ocr/test_worker_child.py": "04641d1a6c4ee9c02bc113643b710e3e4ed6c8c12d41e50be5b2148b83ba58cd",
     "deploy/compose/compose.yml": "afbdbe5eab80215680476fd200b4bb8d27f224b2032abb3815c0eb3fd704926c"
+  },
+  "linux_process_tests": {
+    "passed": 42,
+    "failed": 0,
+    "skipped": 0,
+    "python": "3.14.4",
+    "Pillow": "12.3.0",
+    "environment": "Existing Ubuntu WSL; byte-identical source copied into disposable Linux temporary directory",
+    "engine": "Explicit substitute; real process, IPC, HTTP and OS lifetime tests",
+    "real_model_accepted": false,
+    "product_container_accepted": false
+  },
+  "ci_recovery_fix": {
+    "initial_linux_ci_failures": 4,
+    "root_cause": "Linux PDEATHSIG tracks the creating thread; short-lived recovery thread killed the new worker on exit",
+    "reproduction": "Standalone Linux standard-library reproduction returned SIGKILL while parent process remained alive",
+    "fix": "One persistent supervisor thread owns all initial and recovery process creation",
+    "regression_failed_before_fix": true,
+    "regression_passed_after_fix": true,
+    "product_deadline_unchanged_seconds": 8,
+    "final_head_ci": "pending remote verification"
   }
 }

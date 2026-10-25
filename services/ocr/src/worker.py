@@ -72,10 +72,16 @@ class ProcessRecognizer:
         self.command = _command or [sys.executable, '-u', str(Path(__file__).resolve()), '--child',
             '--detection-dir', local(detection_dir), '--recognition-dir', local(recognition_dir)]
         self._lock = threading.RLock(); self._busy = threading.Lock(); self._cleanup = threading.Lock()
-        self._process = self._recovery = self._ticket = None
+        self._process = self._ticket = None
         self._closed = False; self._state = 'STARTING'
-        try: self._boot()
-        except Exception: self.close(); raise WorkerUnavailable('OCR worker startup failed') from None
+        self._changed = threading.Condition(self._lock)
+        self._initial_done = threading.Event(); self._boot_requested = True
+        # Linux PDEATHSIG follows the creating thread, not just its process.
+        # Keep one owner alive across initial boot, idle periods and recovery.
+        self._supervisor = threading.Thread(target=self._supervise, name='ocr-worker-supervisor', daemon=True)
+        self._supervisor.start(); self._initial_done.wait()
+        if self.status != 'READY':
+            self.close(); raise WorkerUnavailable('OCR worker startup failed') from None
 
     @property
     def status(self):
@@ -143,11 +149,17 @@ class ProcessRecognizer:
                 if self._process is process: self._process = None
             raise
 
-    def _recover(self):
-        try: self._boot()
-        except Exception:
-            with self._lock:
-                if not self._closed: self._state = 'UNAVAILABLE'
+    def _supervise(self):
+        while True:
+            with self._changed:
+                self._changed.wait_for(lambda: self._closed or self._boot_requested)
+                if self._closed: return
+                self._boot_requested = False
+            try: self._boot()
+            except Exception:
+                with self._lock:
+                    if not self._closed: self._state = 'UNAVAILABLE'
+            finally: self._initial_done.set()
 
     def _retire(self, process):
         with self._lock:
@@ -158,11 +170,11 @@ class ProcessRecognizer:
             with self._lock:
                 if not self._closed: self._state = 'UNAVAILABLE'
             return  # Do not start a second process if the first could not be reaped.
-        with self._lock:
+        with self._changed:
             if self._process is process: self._process = None
             if not self._closed:
-                self._recovery = threading.Thread(target=self._recover, name='ocr-worker-recovery', daemon=True)
-                self._recovery.start()
+                self._boot_requested = True
+                self._changed.notify()
 
     def recognize_request(self, raw):
         if not isinstance(raw, bytes) or not 0 < len(raw) <= MAX_BODY: raise InvalidImage('Invalid request')
@@ -183,11 +195,12 @@ class ProcessRecognizer:
         finally: self._busy.release()
 
     def close(self):
-        with self._lock:
+        with self._changed:
             self._closed = True; self._state = 'CLOSED'
-            process, recovery = self._process, self._recovery
+            process = self._process
+            self._changed.notify()
         self._dispose(process)
-        if recovery and recovery is not threading.current_thread(): recovery.join(timeout=3)
+        if self._supervisor is not threading.current_thread(): self._supervisor.join(timeout=3)
         with self._lock: self._process = None
 
 if __name__ == '__main__':
