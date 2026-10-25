@@ -93,3 +93,28 @@ Linux父死亡信号依附创建线程的寿命，故由持续存活的单个监
 原生验收固定微信基础库3.17.2：隔离包构建后将 `.cache/r0-native/mp-weixin/project.config.json` 的 `libVersion` 设置为 `3.17.2`，只关闭并重新打开该隔离项目，再运行。`Tool.getInfo`与报告均须为3.17.2，否则不通过。2026-10-25同一包在3.17.4的reLaunch返回pageNotFound属性错误，切回3.17.2同一路由成功；这是本机版本对照结论，不推断所有工具/手机版本均存在该问题。普通包和产品SDK配置未改变。接口依据见[微信官方自动化文档](https://developers.weixin.qq.com/miniprogram/dev/devtools/auto/miniprogram.html)。
 
 两种模式均先进行独立worker私有HTTP真实模型预检，两次识别与业务请求分开计数。业务必须恰好1次（网关）或3次（基础网关1+原生2）worker请求、零失败且复用同一子进程，已有权限拒绝不得到达worker。保留原12项网关/80项基础以及可选微信9项和三个SQL检查点；服务、worker、监督线程和自有容器未清理不得通过。仅`report.json`的本次passed=true与来源稳定才构成本轮结果；日志、令牌和控制配置留在忽略目录。真实仪表/手机、Linux容器及网关在途worker故障交互仍需另验。
+
+## A4d44 Linux CPU镜像与网络出口（2026-10-25启动，2026-10-26交付）
+
+`Dockerfile.runtime` 是显式启用的Linux x86_64 / CPython3.11镜像，固定官方bookworm基础镜像摘要，使用独立71包Linux wheel锁和PyPI官方文件摘要。构建通过额外的 `ocr_wheels` 上下文离线安装并pip check；系统库仍来自官方Debian HTTPS签名仓库，不是OS包快照锁。普通Dockerfile和默认网关保持关闭。
+
+先准备模型，再准备wheel；默认从官方文件地址获取，也可显式使用TUNA作为传输，完整性始终按锁内的官方字节数和SHA256校验。`--direct` 仅显式绕过系统代理，仍验证TLS证书。已有输出须完整通过校验，失败不会覆盖或发布半套文件：
+
+```powershell
+python services/ocr/model_assets.py --output .cache/ocr-prepared --check
+python services/ocr/prepare_runtime_wheels.py --output .cache/ocr-linux-wheels --mirror-tuna --direct
+python scripts/run_linux_ocr_acceptance.py --allow-isolated-linux-ocr
+```
+
+运行器每次绑定当前源码重建本机镜像，在自有网络/容器验收并清理，不启动生产栈。启动入口校验版本和离线模型，强制worker网络策略；非root10001、只读根/模型、2 CPU、1536MiB且无swap、128 PID、64MiB /tmp和16MiB共享内存由实际inspect和cgroup/文件系统核对。模型子进程初始化前通过libseccomp禁止socket/socketpair/connect、发送/接收及io_uring等调用，TSYNC覆盖已有线程并由后续线程继承；缺库、装载失败或自检失败则不启动引擎，默认/Windows未请求策略时兼容原路径。
+
+`deploy/compose/ocr-runtime.yml` 必须与主compose文件显式合并，并由私有环境提供 `MILEAGE_OCR_SERVICE_TOKEN`、绝对 `OCR_MODELS_ROOT` 和 `OCR_WHEELHOUSE_ROOT`。OCR只接internal网络，后端同时接默认网络和该私有网络，统一凭据；不发布OCR宿主端口。三项配置缺一都会拒绝解析。示例只检查配置和构建，不启动：
+
+```powershell
+docker compose -f deploy/compose/compose.yml -f deploy/compose/ocr-runtime.yml config --quiet
+docker compose -f deploy/compose/compose.yml -f deploy/compose/ocr-runtime.yml build ocr
+```
+
+本轮Linux实际模型两次合成图CANDIDATE/123456且仍须本人核对，同一worker复用；60项Linux回归无失败/跳过。已有线程/TCP/UDP/Unix socket正反向及管道测试实际执行，模型worker的过滤器数量比HTTP父进程多1。外部控制服务正向可达、OCR父服务跨网请求被阻断；internal网络本身不证明宿主服务完全隔离，不能替代worker内核策略或发布版安全审计。资源值已实测读取，未进行耗尽内存/PID或性能压力测试。本阶段未重跑JVM/微信旅程，真实仪表/手机、生产发布仍待验。详见[A4d44记录](../../docs/progress/R9_A4D44_LINUX_OCR.md)。
+
+网络语义参照[Docker桥接文档](https://docs.docker.com/engine/network/drivers/bridge/)，内核规则按[libseccomp文档](https://man7.org/linux/man-pages/man3/seccomp_rule_add.3.html)核对；均通过gstack浏览。公开包镜像站仅用于wheel传输，本轮TUNA探针与全部SHA256通过，镜像站帮助页浏览器启动失败未取得正文，未以其作为验收证据。

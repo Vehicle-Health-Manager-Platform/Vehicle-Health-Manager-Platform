@@ -10,6 +10,7 @@ import threading
 import time
 from recognition import MAX_BODY, InvalidImage, decode_image, recognize_image, PaddleEngine
 from process_limits import bind_worker, kill_worker, guard_parent, worker_alive
+from network_guard import configure as configure_network
 
 MAX_RESPONSE = 16384
 class WorkerBusy(RuntimeError): pass
@@ -48,7 +49,9 @@ def child_loop(factory):
     try:
         guard_parent()
         if read_frame(sys.stdin.buffer,4) != b'BOOT': return
-        try: engine = factory()
+        try:
+            configure_network()
+            engine = factory()
         except Exception: answer({'kind': 'startup_failed'}); return
         answer({'kind': 'ready'})
         while True:
