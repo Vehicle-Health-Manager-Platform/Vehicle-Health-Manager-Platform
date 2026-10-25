@@ -14,6 +14,7 @@ async function main(){
  const ready=JSON.parse(fs.readFileSync(readyFile,'utf8'))
  proxy=await createMileageProxy({...ready,work,run})
  client=await connectDevtools({timeoutMs:20000});const rpc=client.rpc;mocks=createWxMockScope(rpc)
+ report.sdk_version=(await rpc('Tool.getInfo')).SDKVersion;assert.equal(report.sdk_version,'3.17.2','Native mileage acceptance requires the verified SDK 3.17.2')
  const downloaded=(await rpc('App.callWxMethod',{method:'downloadFile',args:[{url:'http://127.0.0.1:18080/__mileage-fixture.png',header:{Authorization:'Bearer '+ready.token}}]})).result
  assert.equal(downloaded.statusCode,200);const local=downloaded.tempFilePath
  await rpc('App.callWxMethod',{method:'__autocareNativeAcceptance',args:[{role:'owner',token:ready.token,vehicle:992}]})

@@ -1,6 +1,8 @@
 # 当前核查与实施入口（2026-10-25）
 
-[A4d42 OCR硬截止与进程隔离](R9_A4D42_OCR_WORKER.md)：单常驻子进程、有界HTTP、8秒截止、受管组终止与单次重建；41项OCR和真实隔离模型HTTP复验通过，Linux容器仍另验。
+[A4d43隔离OCR共享网关与微信旅程](R9_A4D43_ISOLATED_MILEAGE.md)：生产worker接入既有验收，原字节透明观测、预检/业务计数分开和进程清理；本次实际结果见阶段记录。
+
+[A4d42 OCR硬截止与进程隔离](R9_A4D42_OCR_WORKER.md)：单常驻子进程、有界HTTP、8秒截止、受管组终止与单次重建；Windows/Ubuntu各42项OCR和Windows真实隔离模型HTTP复验通过，Linux容器仍另验。
 
 [A4d41微信原生真实里程识别与保存](R9_A4D41_NATIVE_MILEAGE.md)：原生上传、明确同意、真实OCR、人工确认及原保存按钮旅程，三阶段SQL检查点；实际验收结果见阶段记录。
 

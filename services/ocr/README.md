@@ -77,3 +77,19 @@ python -m unittest discover -s services/ocr -p 'test_*.py'
 隔离自检使用真实固定模型，对生成里程图经私有HTTP识别两次，核对同一预热进程复用、错误图片不重载、健康与完整关闭；它不证明真实仪表准确率、手机旅程或Linux部署。故障测试使用明确的替身引擎，但进程/管道/HTTP/终止和恢复实际执行，不把替身返回当识别效果。
 
 Linux父死亡信号依附创建线程的寿命，故由持续存活的单个监督线程统一创建初始worker和恢复worker，不能在创建后退出恢复线程。初次CI发现该问题，新增短生命周期调用线程及连续恢复回归在修复前失败、修复后通过；最终Windows和Ubuntu各42项通过。Ubuntu仅验替身模型的真实进程/HTTP生命周期，产品容器和Linux真实模型仍未验收。
+
+## A4d43 共享网关与微信验收接线
+
+`scripts/run_real_mileage_acceptance.py` 使用生产 `ProcessRecognizer` 处理共享网关转发的原始请求。父进程的 `ObservedWorker` 只记录委托/完成/失败次数、是否独立且复用同一预热进程以及资源配置，原始字节和响应原样传递；JSON、图片解码及模型执行仍在子进程。计数表示worker请求，不代表直接观测模型内部调用。
+
+在已准备固定Windows运行环境/模型、Docker Desktop和预构建上传测试镜像的本机运行：
+
+```powershell
+.cache/ocr-runtime/Scripts/python.exe scripts/run_real_mileage_acceptance.py --allow-isolated-real-ocr
+# 先按docs/testing/WECHAT_LOCAL_FINANCE_ACCEPTANCE.md构建并打开隔离微信包，确认RPC9420；再运行：
+.cache/ocr-runtime/Scripts/python.exe scripts/run_real_mileage_acceptance.py --allow-isolated-real-ocr --native
+```
+
+原生验收固定微信基础库3.17.2：隔离包构建后将 `.cache/r0-native/mp-weixin/project.config.json` 的 `libVersion` 设置为 `3.17.2`，只关闭并重新打开该隔离项目，再运行。`Tool.getInfo`与报告均须为3.17.2，否则不通过。2026-10-25同一包在3.17.4的reLaunch返回pageNotFound属性错误，切回3.17.2同一路由成功；这是本机版本对照结论，不推断所有工具/手机版本均存在该问题。普通包和产品SDK配置未改变。接口依据见[微信官方自动化文档](https://developers.weixin.qq.com/miniprogram/dev/devtools/auto/miniprogram.html)。
+
+两种模式均先进行独立worker私有HTTP真实模型预检，两次识别与业务请求分开计数。业务必须恰好1次（网关）或3次（基础网关1+原生2）worker请求、零失败且复用同一子进程，已有权限拒绝不得到达worker。保留原12项网关/80项基础以及可选微信9项和三个SQL检查点；服务、worker、监督线程和自有容器未清理不得通过。仅`report.json`的本次passed=true与来源稳定才构成本轮结果；日志、令牌和控制配置留在忽略目录。真实仪表/手机、Linux容器及网关在途worker故障交互仍需另验。

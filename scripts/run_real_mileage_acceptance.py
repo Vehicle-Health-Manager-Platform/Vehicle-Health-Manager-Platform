@@ -1,4 +1,4 @@
-"""Explicit local real OCR -> real shared gateway acceptance. No WeChat UI claims."""
+"""Explicit isolated OCR worker -> shared gateway, with opt-in WeChat Devtools journey."""
 import argparse
 import base64
 import hashlib
@@ -23,6 +23,58 @@ NATIVE_CHECKS = set('upload_real_png selection_consent_required candidate_not_sa
 CHECKS = {'passed', 'signed_download_matches', 'one_clean_owned_png', 'no_archive_created',
     'vehicle_mileage_unchanged', 'no_input_material_created', 'requires_confirmation', 'forwarder_closed'}
 
+class ObservedWorker:
+    """Transparent request-boundary counter; no parent-side image decode or response replacement."""
+    def __init__(self, worker):
+        self.worker = worker
+        self.initial_pid = worker.pid
+        self.initial_ready = worker.status == 'READY'
+        self.isolated = type(self.initial_pid) is int and self.initial_pid > 0 and self.initial_pid != os.getpid()
+        self._lock = threading.Lock()
+        self.attempts = self.completed = self.failed = 0
+        self.same_process = True
+
+    @property
+    def status(self): return self.worker.status
+
+    def recognize_request(self, raw):
+        with self._lock:
+            self.attempts += 1
+            self.same_process &= self.worker.pid == self.initial_pid
+        try:
+            result = self.worker.recognize_request(raw)
+        except Exception:
+            with self._lock: self.failed += 1
+            raise
+        else:
+            with self._lock: self.completed += 1
+            return result
+        finally:
+            with self._lock: self.same_process &= self.worker.pid == self.initial_pid
+
+    def snapshot(self):
+        with self._lock:
+            return {'request_attempts': self.attempts, 'completed_requests': self.completed, 'failed_requests': self.failed,
+                'process_isolated': self.isolated, 'initial_ready': self.initial_ready,
+                'same_warm_process': self.same_process and self.worker.pid == self.initial_pid,
+                'recognition': self.status, 'inference_deadline_seconds': self.worker.timeout,
+                'startup_deadline_seconds': self.worker.startup_timeout, 'os_limits': self.worker.resource_profile}
+
+    def close(self): self.worker.close()
+
+
+def worker_audit(proof, expected):
+    for name, value in [('request_attempts', expected), ('completed_requests', expected), ('failed_requests', 0)]:
+        if type(proof.get(name)) is not int or proof[name] != value: raise ValueError('Unexpected worker request count')
+    if any(proof.get(name) is not True for name in ['process_isolated', 'initial_ready', 'same_warm_process']):
+        raise ValueError('Missing isolated warm-worker proof')
+    if proof.get('recognition') != 'READY' or proof.get('inference_deadline_seconds') != 8 or proof.get('startup_deadline_seconds') != 30:
+        raise ValueError('Worker is not ready with production deadlines')
+    if not isinstance(proof.get('os_limits'), dict) or not proof['os_limits'].get('kind'):
+        raise ValueError('Worker resource profile missing')
+    return proof
+
+
 def local_model_root(path):
     resolved = Path(path).resolve()
     # Paddle's Windows reader failed on this workspace's absolute Unicode prefix.
@@ -46,6 +98,7 @@ def gateway_audit(proof):
     return {'requests': len(rows), 'checks': {name: True for name in sorted(CHECKS)}, 'cases': rows}
 
 def native_audit(ui, database):
+    if ui.get('sdk_version') != '3.17.2': raise ValueError('Native mileage SDK evidence missing or changed')
     rows = ui.get('checks', [])
     if len(rows) != len(NATIVE_CHECKS) or {r['name'] for r in rows} != NATIVE_CHECKS or any(r.get('passed') is not True for r in rows): raise ValueError('Missing native journey checks')
     if any(ui.get(k) is not True for k in ['passed','session_cleared','system_api_restored','proxy_closed','local_reference_released']): raise ValueError('Native cleanup incomplete')
@@ -74,34 +127,29 @@ def main():
         parser.error('Do not reuse another run identity')
     args.models_root = local_model_root(args.models_root)
     os.chdir(ROOT)
-    run = uuid.uuid4().hex; work = ROOT / '.cache' / ('real-mileage-' + run); work.mkdir()
+    run = uuid.uuid4().hex; work = ROOT / '.cache' / ('real-mileage-' + run); work.mkdir(parents=True)
     print('Real mileage run: ' + str(work), flush=True)
     before = digest(); report = {'passed': False, 'full_api_acceptance_passed': False, 'source_sha256': before,
         'scope': ('Devtools events assisted; real upload/OCR/archive save; synthetic identities/image/scanner; no phone or owner accuracy acceptance' if args.native else 'synthetic PNG; real CPU OCR, gateway HTTP, MySQL and private MinIO; synthetic ClamAV signatures; no WeChat or owner accuracy acceptance')}
-    server = thread = None
+    server = thread = worker = None
     container = 'autocare-real-mileage-' + run[:8]
     config = work / 'config.private.json'
     try:
         sys.path.insert(0, str(ROOT / 'services/ocr'))
-        from runtime_check import run as runtime_check
-        report['runtime_preflight'] = runtime_check(args.models_root)
+        from isolated_check import run as isolated_check
+        report['runtime_preflight'] = isolated_check(args.models_root)
         from model_assets import verify_models
-        from recognition import PaddleEngine
+        from worker import ProcessRecognizer
         from server import create_server
         from PIL import Image, ImageDraw, ImageFont
         models = verify_models(args.models_root)
-        engine = PaddleEngine(models['PP-OCRv5_mobile_det'], models['PP-OCRv5_mobile_rec'])
+        worker = ProcessRecognizer(models['PP-OCRv5_mobile_det'], models['PP-OCRv5_mobile_rec'])
         with Image.new('RGB', (1100, 220), 'white') as image:
             ImageDraw.Draw(image).text((40, 65), 'ODO 123456 km', font=ImageFont.load_default(size=80), fill='black')
-            pixels = image.tobytes(); encoded = io.BytesIO(); image.save(encoded, format='PNG')
-        calls = []
-        class ObservedEngine:
-            def recognize(self, image):
-                if image.tobytes() != pixels: raise ValueError('Unexpected OCR image pixels')
-                calls.append(True)
-                return engine.recognize(image)
+            encoded = io.BytesIO(); image.save(encoded, format='PNG')
+        observed = ObservedWorker(worker)
         token = secrets.token_hex(32)
-        server = create_server(('127.0.0.1', 0), ObservedEngine(), token)
+        server = create_server(('127.0.0.1', 0), observed, token)
         thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
         config.write_text(json.dumps({'port': server.server_port, 'token': token, 'image': base64.b64encode(encoded.getvalue()).decode('ascii'), 'native':args.native}), encoding='utf-8')
         for path in (JUNIT, EVIDENCE): path.unlink(missing_ok=True)
@@ -138,8 +186,7 @@ def main():
         gateway = json.loads((work / 'gateway.json').read_text(encoding='utf-8'))
         report['gateway'] = gateway_audit(gateway)
         if args.native: report['native'] = native_audit(json.loads((work / 'native.json').read_text(encoding='utf-8')), gateway['native_database'])
-        report['gateway_provider_calls'] = len(calls)
-        if len(calls) != (3 if args.native else 1): raise ValueError('Rejected requests reached OCR or success did not use the real engine')
+        report['gateway_worker'] = worker_audit(observed.snapshot(), 3 if args.native else 1)
         report['uploaded_image_sha256'] = hashlib.sha256(encoded.getvalue()).hexdigest()
         report['sources_unchanged'] = before == digest()
         if not report['sources_unchanged']: raise ValueError('Sources changed during acceptance')
@@ -149,8 +196,13 @@ def main():
         with (work / 'error.private.log').open('w', encoding='utf-8') as log: traceback.print_exc(file=log)
     finally:
         if server:
-            server.shutdown(); server.server_close(); thread.join(5)
-            report['ocr_server_stopped'] = not thread.is_alive()
+            if thread and thread.is_alive(): server.shutdown(); thread.join(5)
+            server.server_close()
+            report['ocr_server_stopped'] = thread is None or not thread.is_alive()
+        elif worker: worker.close()
+        if worker:
+            report['ocr_worker_closed'] = worker.status == 'CLOSED' and worker.pid is None
+            report['ocr_supervisor_stopped'] = not worker._supervisor.is_alive()
         config.unlink(missing_ok=True)
         (work / 'native-ready.private.json').unlink(missing_ok=True)
         report['private_config_removed'] = not config.exists()
@@ -162,7 +214,8 @@ def main():
                 subprocess.run(['docker', 'stop', container], capture_output=True, timeout=30)
             report['passed'] = False
         report['maven_container_removed'] = subprocess.run(['docker', 'inspect', container], capture_output=True).returncode != 0
-        report['passed'] = report['passed'] and report.get('ocr_server_stopped') is True and report['private_config_removed'] and report['maven_container_removed']
+        report['passed'] = report['passed'] and all(report.get(name) is True for name in
+            ['ocr_server_stopped','ocr_worker_closed','ocr_supervisor_stopped','private_config_removed','maven_container_removed'])
         (work / 'report.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     print('Real mileage acceptance: ' + ('PASS' if report['passed'] else 'FAIL; inspect private run log'), flush=True)
     return 0 if report['passed'] else 1
