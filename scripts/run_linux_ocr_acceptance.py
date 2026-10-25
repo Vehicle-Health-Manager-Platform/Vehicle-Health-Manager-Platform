@@ -24,6 +24,33 @@ def inspection_arguments(name, network=False):
     return ['network' if network else 'container', 'inspect', name]
 
 
+def inspected_object(result, name, network=False):
+    if result.returncode == 0:
+        rows = json.loads(result.stdout)
+        if not isinstance(rows, list) or len(rows) != 1 or not isinstance(rows[0], dict):
+            raise RuntimeError('Unexpected Docker inspection response')
+        return rows[0]
+    kind = 'network' if network else 'container'
+    missing = {f'Error response from daemon: No such {kind}: {name}', f'Error: No such {kind}: {name}'}
+    if network: missing.add(f'Error response from daemon: network {name} not found')
+    if result.stderr.strip() in missing and result.stdout.strip() in ('', '[]'): return None
+    raise RuntimeError('Cannot verify owned Docker resource')
+
+
+def cleanup_owned(run, containers, networks, inspect, remove):
+    complete = True
+    for name, network in [(name, False) for name in containers] + [(name, True) for name in networks]:
+        try:
+            item = inspect(name, network)
+            if item is None: continue
+            if not owned(item, run, network):
+                complete = False; continue
+            remove(name, network)
+            if inspect(name, network) is not None: complete = False
+        except Exception: complete = False
+    return complete
+
+
 def digest():
     paths = [*sorted((ROOT/'services/ocr').rglob('*.py')), *sorted((ROOT/'services/ocr').glob('requirements*.txt')),
         ROOT/'services/ocr/Dockerfile.runtime', ROOT/'services/ocr/.dockerignore', ROOT/'services/ocr/models.lock.json',
@@ -87,7 +114,7 @@ def main():
 
     def inspect(name, network=False):
         result = docker(inspection_arguments(name,network), required=False)
-        return json.loads(result.stdout)[0] if result.returncode == 0 else None
+        return inspected_object(result,name,network)
 
     def ephemeral(name, arguments, timeout=120):
         containers.append(name)
@@ -142,19 +169,15 @@ def main():
     except Exception as error:
         report['error_kind'] = type(error).__name__
         (work/'error.private.log').write_text(str(error), encoding='utf-8')
-        if inspect(server):
-            docker(['logs',server],required=False)
+        try:
+            if inspect(server): docker(['logs',server],required=False)
+        except Exception: report['runtime_log_collection_failed'] = True
     finally:
-        cleanup = True
-        for name in containers:
-            item = inspect(name)
-            if item and owned(item,run): docker(['rm','--force',name],required=False)
-            if inspect(name): cleanup = False
-        for name in networks:
-            item = inspect(name,True)
-            if item and owned(item,run,True): docker(['network','rm',name],required=False)
-            if inspect(name,True): cleanup = False
-        environment.unlink(missing_ok=True)
+        def remove(name, network=False):
+            docker(['network','rm',name] if network else ['rm','--force',name],required=False)
+        cleanup = cleanup_owned(run,containers,networks,inspect,remove)
+        try: environment.unlink(missing_ok=True)
+        except OSError: pass
         report['cleanup'] = {'owned_containers_and_networks_removed':cleanup,'private_environment_removed':not environment.exists()}
         report['passed'] = report['passed'] and all(report['cleanup'].values())
         (work/'report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')

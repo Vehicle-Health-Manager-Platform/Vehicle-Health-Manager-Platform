@@ -14,7 +14,7 @@
     "failed": 0,
     "skipped_linux_kernel_only": 1
   },
-  "runner_audit_tests_passed": 7,
+  "runner_audit_tests_passed": 18,
   "compose": {
     "passed": true,
     "default_ocr_and_gateway_disabled": true,
@@ -62,10 +62,10 @@
   ],
   "acceptance": {
     "passed": true,
-    "source_sha256": "856a474a73a04073412f56c0428659cba874232c7b4c9c3f5837042b725a829c",
+    "source_sha256": "2f1a2f9cc61620d5e7eaa98888da8ae23e9f475c57feb54fb412d488e62d53b1",
     "full_api_acceptance_passed": false,
     "scope": "Linux x86_64 CPU image; generated mileage image; no WeChat, owner instrument accuracy or production acceptance",
-    "image_id": "sha256:1b2cc2b1d5cd718f9bd43a7809fc0ec197faf958096e90f936c9bfe0241cf85f",
+    "image_id": "sha256:e0dce3041a53b2c2517fae7e3d26ea2ab8ca4f46eb43d35e9edb6f46dab069ce",
     "resources": {
       "Memory": 1610612736,
       "MemorySwap": 1610612736,
@@ -132,5 +132,13 @@
   "started": "2026-10-25",
   "completed": "2026-10-26",
   "handover_audit_tests_passed": 8,
-  "immutable_image_id_used_by_all_run_containers": true
+  "immutable_image_id_used_by_all_run_containers": true,
+  "cleanup_failure_regression": {
+    "new_tests": 11,
+    "all_runner_tests_passed": 18,
+    "failure_input": "Explicit subprocess/Docker error response fixtures; no Docker daemon shutdown",
+    "only_explicit_absence_accepted": true,
+    "connection_and_permission_errors_fail_acceptance": true,
+    "actual_linux_full_rerun_passed": true
+  }
 }

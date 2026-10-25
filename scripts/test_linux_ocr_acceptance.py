@@ -1,8 +1,10 @@
 import contextlib
 import copy
 import io
+import json
+import subprocess
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 import run_linux_ocr_acceptance as runner
 
 
@@ -59,6 +61,110 @@ class LinuxOcrProofTest(unittest.TestCase):
         with patch('sys.argv',['runner']),patch.object(runner.uuid,'uuid4') as create,contextlib.redirect_stderr(io.StringIO()):
             with self.assertRaises(SystemExit):runner.main()
             create.assert_not_called()
+
+
+class DockerInspectionTest(unittest.TestCase):
+    def result(self, returncode=0, stdout='', stderr=''):
+        return subprocess.CompletedProcess(['docker', 'container', 'inspect', 'owned'], returncode, stdout, stderr)
+
+    def test_success_requires_one_dictionary(self):
+        item={'Config':{'Labels':{runner.OWNER:'run'}}}
+        self.assertEqual(item,runner.inspected_object(self.result(stdout=json.dumps([item])),'owned'))
+
+    def test_malformed_success_is_not_a_missing_resource(self):
+        for stdout in ['', 'not-json', 'null', '{}', '[]', '[{},{}]', '[null]', '["owned"]']:
+            with self.subTest(stdout=stdout),self.assertRaises((RuntimeError,ValueError)):
+                runner.inspected_object(self.result(stdout=stdout),'owned')
+
+    def test_only_explicit_missing_resource_errors_are_accepted(self):
+        for network in [False,True]:
+            kind='network' if network else 'container'
+            errors=[f'Error response from daemon: No such {kind}: owned',f'Error: No such {kind}: owned']
+            if network:errors.append('Error response from daemon: network owned not found')
+            for stderr in errors:
+                with self.subTest(network=network,stderr=stderr):
+                    self.assertIsNone(runner.inspected_object(self.result(1,stderr=stderr+'\n'),'owned',network))
+
+    def test_daemon_and_permission_failures_are_not_missing_resources(self):
+        for stderr in ['Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?',
+                'permission denied while trying to connect to the Docker daemon socket',
+                'Error response from daemon: authorization denied']:
+            for network in [False,True]:
+                with self.subTest(stderr=stderr,network=network),self.assertRaises(RuntimeError):
+                    runner.inspected_object(self.result(1,stderr=stderr),'owned',network)
+
+    def test_other_names_resource_types_and_mixed_errors_are_rejected(self):
+        for network in [False,True]:
+            kind='network' if network else 'container'
+            other='container' if network else 'network'
+            errors=[f'Error response from daemon: No such {kind}: someone-else',
+                f'Error response from daemon: No such {other}: owned',
+                f'Error response from daemon: No such {kind}: owned-extra',
+                f'Error response from daemon: No such {kind}: owned\npermission denied',
+                f'Cannot connect to daemon\nError response from daemon: No such {kind}: owned',
+                'Error response from daemon: network someone-else not found']
+            if not network:errors.append('Error response from daemon: network owned not found')
+            for stderr in errors:
+                with self.subTest(network=network,stderr=stderr),self.assertRaises(RuntimeError):
+                    runner.inspected_object(self.result(1,stderr=stderr),'owned',network)
+
+
+class OwnedCleanupTest(unittest.TestCase):
+    def item(self, network=False, run='run'):
+        labels={'Labels':{runner.OWNER:run}}
+        return labels if network else {'Config':labels}
+
+    def test_all_explicitly_missing_resources_need_no_removal(self):
+        inspect=Mock(return_value=None);remove=Mock()
+        self.assertTrue(runner.cleanup_owned('run',['container'],['network'],inspect,remove))
+        remove.assert_not_called()
+
+    def test_owned_containers_and_networks_are_removed_and_rechecked(self):
+        state={(False,'same-name'):self.item(),(True,'same-name'):self.item(True)};removed=[]
+        def inspect(name,network=False):return state.get((network,name))
+        def remove(name,network=False):removed.append((network,name));state.pop((network,name))
+        self.assertTrue(runner.cleanup_owned('run',['same-name'],['same-name'],inspect,remove))
+        self.assertEqual([(False,'same-name'),(True,'same-name')],removed)
+        self.assertEqual({},state)
+
+    def test_foreign_resources_are_preserved_and_other_resources_still_cleaned(self):
+        state={(False,'foreign'):self.item(run='someone-else'),(True,'owned'):self.item(True)};removed=[]
+        def inspect(name,network=False):return state.get((network,name))
+        def remove(name,network=False):removed.append((network,name));state.pop((network,name))
+        self.assertFalse(runner.cleanup_owned('run',['foreign'],['owned'],inspect,remove))
+        self.assertEqual([(True,'owned')],removed)
+        self.assertIn((False,'foreign'),state)
+
+    def test_inspection_failure_cannot_pass_and_does_not_stop_other_cleanup(self):
+        state={(True,'owned'):self.item(True)};removed=[]
+        def inspect(name,network=False):
+            if name=='unavailable':raise RuntimeError('Cannot connect to the Docker daemon')
+            return state.get((network,name))
+        def remove(name,network=False):removed.append((network,name));state.pop((network,name))
+        self.assertFalse(runner.cleanup_owned('run',['unavailable'],['owned'],inspect,remove))
+        self.assertEqual([(True,'owned')],removed)
+
+    def test_removal_failure_cannot_pass_and_does_not_stop_other_cleanup(self):
+        state={(False,'unavailable'):self.item(),(True,'owned'):self.item(True)};removed=[]
+        def inspect(name,network=False):return state.get((network,name))
+        def remove(name,network=False):
+            if name=='unavailable':raise RuntimeError('permission denied')
+            removed.append((network,name));state.pop((network,name))
+        self.assertFalse(runner.cleanup_owned('run',['unavailable'],['owned'],inspect,remove))
+        self.assertEqual([(True,'owned')],removed)
+        self.assertIn((False,'unavailable'),state)
+
+    def test_surviving_or_replaced_resource_cannot_pass(self):
+        for surviving in [self.item(),self.item(run='someone-else')]:
+            state={(False,'surviving'):self.item(),(True,'owned'):self.item(True)};removed=[]
+            def inspect(name,network=False):return state.get((network,name))
+            def remove(name,network=False):
+                removed.append((network,name))
+                if name=='surviving':state[(network,name)]=surviving
+                else:state.pop((network,name))
+            with self.subTest(surviving=surviving):
+                self.assertFalse(runner.cleanup_owned('run',['surviving'],['owned'],inspect,remove))
+                self.assertEqual([(False,'surviving'),(True,'owned')],removed)
 
 
 if __name__=='__main__':unittest.main()
