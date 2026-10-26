@@ -23,3 +23,5 @@ gstack browse在390×844的H5开发页使用仅内存合成会话和明确接口
 脱敏机器报告见[VIN_OWNER_GATEWAY_2026_10_26.json](../testing/VIN_OWNER_GATEWAY_2026_10_26.json)。本机原始日志与截图在.cache/stage-handover，统一回归日志在.cache/local-delivery-3efd68dacc53，均不上传。
 
 下一具体实施单元为R2b行驶证：复用现有Paddle进程隔离，添加专用字段协议/用途同意与新车上传授权，识别候选仍走人工车型选择；先做专用本地提取和误识别/无结果/私有文件权限，再接页面。ASR、图文异步任务和向量按既有路线逐阶段实施，当前均未标记完成。
+
+上传：实现提交664ba6f已推送[草稿PR243](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/243)，base为codex/recognition-vin-foundation（PR242）。未合并、未部署；新head远程CI独立核对，排队/运行不记通过。
