@@ -25,3 +25,5 @@
 先由小程序管理账号按官方步骤开通隔离测试环境并核对资源/预算；之后提供EnvId、地域及已建服务名即可定位环境，服务端密钥只留在私有配置。选定产品确认支持既有访问链路、MySQL和最小权限后进入B1b真实云端车主/技师身份及B1c手机号；商家/运营短信正式成功仍暂缓。正式支付退款、授权数据/AI、500并发延迟、iOS/Android手机与发布验收均未因此完成。
 
 官方资料经gstack /browse于2026-10-26读取：[创建环境](https://docs.cloudbase.net/quick-start/create-env)、[云托管概述](https://docs.cloudbase.net/run/introduction)。本地检查不证明账号权限、平台当前套餐、地域可用性或费用。
+
+实现提交6ee3d4a已上传[草稿PR240](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/240)，依赖尚未合并的PR239，未合并、开通或部署。最终head CI按GitHub实际状态核对，运行中的检查不计成功。
