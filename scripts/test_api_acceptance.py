@@ -1,8 +1,12 @@
 import copy
+import contextlib
+import io
 import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch, Mock
+import run_api_acceptance as runner
 from generate_api_acceptance import ROOT, generate, operations
 from run_api_acceptance import audit_newman
 
@@ -52,11 +56,45 @@ class AcceptanceAssetsTest(unittest.TestCase):
     def test_tracked_scope_and_assets_match_contract(self):
         spec = json.loads((ROOT / 'docs/api/openapi.json').read_text(encoding='utf-8'))
         assets = generate(spec)
-        self.assertEqual(352, assets['acceptance_inventory.json']['operations'])
-        self.assertEqual(338, assets['acceptance_inventory.json']['anonymous_probes'])
+        self.assertEqual(353, assets['acceptance_inventory.json']['operations'])
+        self.assertEqual(339, assets['acceptance_inventory.json']['anonymous_probes'])
         for name, expected in assets.items():
             actual = json.loads((ROOT / 'docs/testing/postman' / name).read_text(encoding='utf-8'))
             self.assertEqual(expected, actual, name)
+
+
+class RunnerScopeTest(unittest.TestCase):
+    def run_preflight(self, delta=0):
+        spec = json.loads((ROOT / 'docs/api/openapi.json').read_text(encoding='utf-8'))
+        if delta > 0:
+            spec['paths']['/api/future-protected'] = {'get': {'operationId': 'future_probe', 'security': [{'bearerAuth': []}]}}
+        if delta < 0:
+            del spec['paths']['/api/vehicle/mileage-recognition']
+        assets = generate(spec)
+        cache = ROOT / '.cache'; cache.mkdir(exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix='runner-preflight-', dir=cache) as directory:
+            root = Path(directory)
+            (root / 'docs/api').mkdir(parents=True)
+            (root / 'docs/api/openapi.json').write_text(json.dumps(spec), encoding='utf-8')
+            output = root / 'postman'; output.mkdir()
+            for name, value in assets.items():
+                (output / name).write_text(json.dumps(value), encoding='utf-8')
+            with patch.object(runner, 'ROOT', root), patch.object(runner, 'OUTPUT', output), \
+                 patch.object(runner, 'source_hash', return_value='preflight-test'), \
+                 patch.object(runner, 'Owned', return_value=Mock(role='network')), patch.object(runner, 'MySQL', return_value=Mock(role='mysql')), \
+                 patch.object(runner, 'build_jar', side_effect=ValueError('build boundary reached')) as build, \
+                 patch('sys.argv', ['run_api_acceptance.py']), contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(1, runner.main())
+                report = json.loads(next((root / '.cache').glob('api-acceptance-*/report.json')).read_text(encoding='utf-8'))
+                return build.call_count, report['error']
+
+    def test_current_scope_reaches_build_boundary_including_mileage_probe(self):
+        self.assertEqual((1, 'build boundary reached'), self.run_preflight())
+
+    def test_scope_addition_and_removal_still_require_review_before_build(self):
+        for delta in (-1, 1):
+            with self.subTest(delta=delta):
+                self.assertEqual((0, 'Review changed anonymous acceptance scope'), self.run_preflight(delta))
 
 
 class NewmanEvidenceTest(unittest.TestCase):

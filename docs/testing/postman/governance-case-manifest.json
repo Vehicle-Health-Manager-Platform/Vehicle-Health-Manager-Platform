@@ -1,0 +1,568 @@
+{
+  "version": 1,
+  "cases": 56,
+  "operations": 9,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "quotes_unknown_source",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/quotes",
+      "operation_id": "get_api_admin_price_monitor_quotes",
+      "kind": "boundary",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 6
+    },
+    {
+      "name": "projects_list",
+      "method": "GET",
+      "path": "/api/admin/catalog/projects",
+      "operation_id": "get_api_admin_catalog_kind",
+      "kind": "normal",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 7
+    },
+    {
+      "name": "projects_list_last_page",
+      "method": "GET",
+      "path": "/api/admin/catalog/projects",
+      "operation_id": "get_api_admin_catalog_kind",
+      "kind": "boundary",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 4
+    },
+    {
+      "name": "projects_list_page_size",
+      "method": "GET",
+      "path": "/api/admin/catalog/projects",
+      "operation_id": "get_api_admin_catalog_kind",
+      "kind": "error",
+      "status": 400,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "projects_list_anonymous",
+      "method": "GET",
+      "path": "/api/admin/catalog/projects",
+      "operation_id": "get_api_admin_catalog_kind",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "projects_list_monitor_denied",
+      "method": "GET",
+      "path": "/api/admin/catalog/projects",
+      "operation_id": "get_api_admin_catalog_kind",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "monitor",
+      "assertions": 3
+    },
+    {
+      "name": "brand_create",
+      "method": "POST",
+      "path": "/api/admin/catalog/brands",
+      "operation_id": "post_api_admin_catalog_kind",
+      "kind": "normal",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 7
+    },
+    {
+      "name": "brand_create_replay",
+      "method": "POST",
+      "path": "/api/admin/catalog/brands",
+      "operation_id": "post_api_admin_catalog_kind",
+      "kind": "boundary",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 4
+    },
+    {
+      "name": "brand_create_changed_body",
+      "method": "POST",
+      "path": "/api/admin/catalog/brands",
+      "operation_id": "post_api_admin_catalog_kind",
+      "kind": "error",
+      "status": 400,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "series_create_duplicate",
+      "method": "POST",
+      "path": "/api/admin/catalog/series",
+      "operation_id": "post_api_admin_catalog_kind",
+      "kind": "error",
+      "status": 409,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "brand_create_anonymous",
+      "method": "POST",
+      "path": "/api/admin/catalog/brands",
+      "operation_id": "post_api_admin_catalog_kind",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "brand_create_plain_denied",
+      "method": "POST",
+      "path": "/api/admin/catalog/brands",
+      "operation_id": "post_api_admin_catalog_kind",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "plain",
+      "assertions": 3
+    },
+    {
+      "name": "project_update",
+      "method": "PUT",
+      "path": "/api/admin/catalog/projects/1",
+      "operation_id": "put_api_admin_catalog_kind_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 7
+    },
+    {
+      "name": "project_update_replay",
+      "method": "PUT",
+      "path": "/api/admin/catalog/projects/1",
+      "operation_id": "put_api_admin_catalog_kind_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "catalog",
+      "assertions": 4
+    },
+    {
+      "name": "project_update_stale_revision",
+      "method": "PUT",
+      "path": "/api/admin/catalog/projects/1",
+      "operation_id": "put_api_admin_catalog_kind_id",
+      "kind": "error",
+      "status": 409,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "project_update_bad_money",
+      "method": "PUT",
+      "path": "/api/admin/catalog/projects/1",
+      "operation_id": "put_api_admin_catalog_kind_id",
+      "kind": "error",
+      "status": 400,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "project_update_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/catalog/projects/1",
+      "operation_id": "put_api_admin_catalog_kind_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "project_update_merchant_denied",
+      "method": "PUT",
+      "path": "/api/admin/catalog/projects/1",
+      "operation_id": "put_api_admin_catalog_kind_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_ready_source",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/quotes",
+      "operation_id": "get_api_admin_price_monitor_quotes",
+      "kind": "normal",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 7
+    },
+    {
+      "name": "quotes_last_page",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/quotes",
+      "operation_id": "get_api_admin_price_monitor_quotes",
+      "kind": "boundary",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 4
+    },
+    {
+      "name": "quotes_page_size",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/quotes",
+      "operation_id": "get_api_admin_price_monitor_quotes",
+      "kind": "error",
+      "status": 400,
+      "role": "monitor",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_anonymous",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/quotes",
+      "operation_id": "get_api_admin_price_monitor_quotes",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_catalog_denied",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/quotes",
+      "operation_id": "get_api_admin_price_monitor_quotes",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create",
+      "method": "POST",
+      "path": "/api/admin/price-monitor/policies",
+      "operation_id": "post_api_admin_price_monitor_policies",
+      "kind": "normal",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 10
+    },
+    {
+      "name": "policy_create_replay",
+      "method": "POST",
+      "path": "/api/admin/price-monitor/policies",
+      "operation_id": "post_api_admin_price_monitor_policies",
+      "kind": "boundary",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 4
+    },
+    {
+      "name": "policy_create_changed_body",
+      "method": "POST",
+      "path": "/api/admin/price-monitor/policies",
+      "operation_id": "post_api_admin_price_monitor_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "monitor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_stale_hash",
+      "method": "POST",
+      "path": "/api/admin/price-monitor/policies",
+      "operation_id": "post_api_admin_price_monitor_policies",
+      "kind": "error",
+      "status": 409,
+      "role": "monitor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_past_window",
+      "method": "POST",
+      "path": "/api/admin/price-monitor/policies",
+      "operation_id": "post_api_admin_price_monitor_policies",
+      "kind": "error",
+      "status": 409,
+      "role": "monitor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_bad_range",
+      "method": "POST",
+      "path": "/api/admin/price-monitor/policies",
+      "operation_id": "post_api_admin_price_monitor_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "monitor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_anonymous",
+      "method": "POST",
+      "path": "/api/admin/price-monitor/policies",
+      "operation_id": "post_api_admin_price_monitor_policies",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_catalog_denied",
+      "method": "POST",
+      "path": "/api/admin/price-monitor/policies",
+      "operation_id": "post_api_admin_price_monitor_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "policies_list",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/policies",
+      "operation_id": "get_api_admin_price_monitor_policies",
+      "kind": "normal",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 5
+    },
+    {
+      "name": "policies_list_last_page",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/policies",
+      "operation_id": "get_api_admin_price_monitor_policies",
+      "kind": "boundary",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 4
+    },
+    {
+      "name": "policies_list_page_size",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/policies",
+      "operation_id": "get_api_admin_price_monitor_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "monitor",
+      "assertions": 3
+    },
+    {
+      "name": "policies_list_anonymous",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/policies",
+      "operation_id": "get_api_admin_price_monitor_policies",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policies_list_plain_denied",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/policies",
+      "operation_id": "get_api_admin_price_monitor_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "plain",
+      "assertions": 3
+    },
+    {
+      "name": "policy_detail",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/policies/1",
+      "operation_id": "get_api_admin_price_monitor_policies_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 5
+    },
+    {
+      "name": "policy_detail_missing",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/policies/2",
+      "operation_id": "get_api_admin_price_monitor_policies_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "monitor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_detail_bad_id",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/policies/0",
+      "operation_id": "get_api_admin_price_monitor_policies_id",
+      "kind": "error",
+      "status": 400,
+      "role": "monitor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_detail_anonymous",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/policies/1",
+      "operation_id": "get_api_admin_price_monitor_policies_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_detail_catalog_denied",
+      "method": "GET",
+      "path": "/api/admin/price-monitor/policies/1",
+      "operation_id": "get_api_admin_price_monitor_policies_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "policy_update",
+      "method": "PUT",
+      "path": "/api/admin/price-monitor/policies/1",
+      "operation_id": "put_api_admin_price_monitor_policies_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 6
+    },
+    {
+      "name": "policy_update_replay",
+      "method": "PUT",
+      "path": "/api/admin/price-monitor/policies/1",
+      "operation_id": "put_api_admin_price_monitor_policies_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 4
+    },
+    {
+      "name": "policy_update_stale_revision",
+      "method": "PUT",
+      "path": "/api/admin/price-monitor/policies/1",
+      "operation_id": "put_api_admin_price_monitor_policies_id",
+      "kind": "error",
+      "status": 409,
+      "role": "monitor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_update_missing_revision",
+      "method": "PUT",
+      "path": "/api/admin/price-monitor/policies/1",
+      "operation_id": "put_api_admin_price_monitor_policies_id",
+      "kind": "error",
+      "status": 400,
+      "role": "monitor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_update_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/price-monitor/policies/1",
+      "operation_id": "put_api_admin_price_monitor_policies_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_update_catalog_denied",
+      "method": "PUT",
+      "path": "/api/admin/price-monitor/policies/1",
+      "operation_id": "put_api_admin_price_monitor_policies_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "catalog",
+      "assertions": 3
+    },
+    {
+      "name": "policy_publish",
+      "method": "PUT",
+      "path": "/api/admin/price-monitor/policies/1/status",
+      "operation_id": "put_api_admin_price_monitor_policies_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 7
+    },
+    {
+      "name": "policy_publish_replay",
+      "method": "PUT",
+      "path": "/api/admin/price-monitor/policies/1/status",
+      "operation_id": "put_api_admin_price_monitor_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 4
+    },
+    {
+      "name": "policy_publish_again",
+      "method": "PUT",
+      "path": "/api/admin/price-monitor/policies/1/status",
+      "operation_id": "put_api_admin_price_monitor_policies_id_status",
+      "kind": "boundary",
+      "status": 409,
+      "role": "monitor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_stop",
+      "method": "PUT",
+      "path": "/api/admin/price-monitor/policies/1/status",
+      "operation_id": "put_api_admin_price_monitor_policies_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 7
+    },
+    {
+      "name": "policy_stop_replay",
+      "method": "PUT",
+      "path": "/api/admin/price-monitor/policies/1/status",
+      "operation_id": "put_api_admin_price_monitor_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "monitor",
+      "assertions": 4
+    },
+    {
+      "name": "policy_stop_again",
+      "method": "PUT",
+      "path": "/api/admin/price-monitor/policies/1/status",
+      "operation_id": "put_api_admin_price_monitor_policies_id_status",
+      "kind": "boundary",
+      "status": 409,
+      "role": "monitor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_status_bad_value",
+      "method": "PUT",
+      "path": "/api/admin/price-monitor/policies/1/status",
+      "operation_id": "put_api_admin_price_monitor_policies_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "monitor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_status_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/price-monitor/policies/1/status",
+      "operation_id": "put_api_admin_price_monitor_policies_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_status_catalog_denied",
+      "method": "PUT",
+      "path": "/api/admin/price-monitor/policies/1/status",
+      "operation_id": "put_api_admin_price_monitor_policies_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "catalog",
+      "assertions": 3
+    }
+  ]
+}

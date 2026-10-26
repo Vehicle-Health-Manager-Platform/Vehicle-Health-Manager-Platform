@@ -1,0 +1,188 @@
+{
+  "version": 1,
+  "cases": 18,
+  "operations": 1,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "quotes",
+      "method": "GET",
+      "path": "/api/service/project/1/rating-quotes",
+      "operation_id": "get_api_service_project_id_rating_quotes",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 9
+    },
+    {
+      "name": "quotes_other_owner",
+      "method": "GET",
+      "path": "/api/service/project/1/rating-quotes",
+      "operation_id": "get_api_service_project_id_rating_quotes",
+      "kind": "normal",
+      "status": 200,
+      "role": "other",
+      "assertions": 5
+    },
+    {
+      "name": "quotes_empty_page",
+      "method": "GET",
+      "path": "/api/service/project/1/rating-quotes",
+      "operation_id": "get_api_service_project_id_rating_quotes",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "quotes_region",
+      "method": "GET",
+      "path": "/api/service/project/1/rating-quotes",
+      "operation_id": "get_api_service_project_id_rating_quotes",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "quotes_region_no_match",
+      "method": "GET",
+      "path": "/api/service/project/1/rating-quotes",
+      "operation_id": "get_api_service_project_id_rating_quotes",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "quotes_second_project",
+      "method": "GET",
+      "path": "/api/service/project/2/rating-quotes",
+      "operation_id": "get_api_service_project_id_rating_quotes",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "quotes_missing_project",
+      "method": "GET",
+      "path": "/api/service/project/999999/rating-quotes",
+      "operation_id": "get_api_service_project_id_rating_quotes",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_inactive_project",
+      "method": "GET",
+      "path": "/api/service/project/3/rating-quotes",
+      "operation_id": "get_api_service_project_id_rating_quotes",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_page_zero",
+      "method": "GET",
+      "path": "/api/service/project/1/rating-quotes",
+      "operation_id": "get_api_service_project_id_rating_quotes",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_page_size",
+      "method": "GET",
+      "path": "/api/service/project/1/rating-quotes",
+      "operation_id": "get_api_service_project_id_rating_quotes",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_region_digits",
+      "method": "GET",
+      "path": "/api/service/project/1/rating-quotes",
+      "operation_id": "get_api_service_project_id_rating_quotes",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_unknown_query",
+      "method": "GET",
+      "path": "/api/service/project/1/rating-quotes",
+      "operation_id": "get_api_service_project_id_rating_quotes",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_duplicate_page",
+      "method": "GET",
+      "path": "/api/service/project/1/rating-quotes",
+      "operation_id": "get_api_service_project_id_rating_quotes",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_zero_project",
+      "method": "GET",
+      "path": "/api/service/project/0/rating-quotes",
+      "operation_id": "get_api_service_project_id_rating_quotes",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_anonymous",
+      "method": "GET",
+      "path": "/api/service/project/1/rating-quotes",
+      "operation_id": "get_api_service_project_id_rating_quotes",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_merchant_denied",
+      "method": "GET",
+      "path": "/api/service/project/1/rating-quotes",
+      "operation_id": "get_api_service_project_id_rating_quotes",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_technician_denied",
+      "method": "GET",
+      "path": "/api/service/project/1/rating-quotes",
+      "operation_id": "get_api_service_project_id_rating_quotes",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "technician",
+      "assertions": 3
+    },
+    {
+      "name": "quotes_other_merchant_denied",
+      "method": "GET",
+      "path": "/api/service/project/1/rating-quotes",
+      "operation_id": "get_api_service_project_id_rating_quotes",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "other_merchant",
+      "assertions": 3
+    }
+  ]
+}

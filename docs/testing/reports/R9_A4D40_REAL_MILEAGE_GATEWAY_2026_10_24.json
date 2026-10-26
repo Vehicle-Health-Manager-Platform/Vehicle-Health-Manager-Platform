@@ -1,0 +1,227 @@
+{
+  "passed": true,
+  "full_api_acceptance_passed": false,
+  "source_sha256": "13ea4033cee2830f9f29b718dd7cc0c82227dd046199a9341aac7f9c3ccf43f6",
+  "scope": "synthetic PNG; real CPU OCR, gateway HTTP, MySQL and private MinIO; synthetic ClamAV signatures; no WeChat or owner accuracy acceptance",
+  "runtime_preflight": {
+    "passed": true,
+    "dependencies": {
+      "paddleocr": "3.7.0",
+      "paddlepaddle": "3.3.1",
+      "Pillow": "12.3.0"
+    },
+    "real_engine_initialized": true,
+    "synthetic_image_inference_passed": true,
+    "private_http_synthetic_inference_passed": true,
+    "private_http_server_stopped": true,
+    "status": "CANDIDATE",
+    "requires_confirmation": true,
+    "owner_instrument_accuracy_accepted": false,
+    "wechat_journey_accepted": false
+  },
+  "maven_exit_code": 0,
+  "gateway": {
+    "requests": 12,
+    "checks": {
+      "forwarder_closed": true,
+      "no_archive_created": true,
+      "no_input_material_created": true,
+      "one_clean_owned_png": true,
+      "passed": true,
+      "requires_confirmation": true,
+      "signed_download_matches": true,
+      "vehicle_mileage_unchanged": true
+    },
+    "cases": [
+      {
+        "passed": true,
+        "method": "POST",
+        "name": "upload",
+        "path": "/api/file/upload",
+        "status": 200
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "name": "anonymous",
+        "path": "/api/vehicle/mileage-recognition",
+        "status": 401
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "name": "foreign_owner",
+        "path": "/api/vehicle/mileage-recognition",
+        "status": 404
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "name": "consent_required",
+        "path": "/api/vehicle/mileage-recognition",
+        "status": 400
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "name": "query_rejected",
+        "path": "/api/vehicle/mileage-recognition?owner_id=991",
+        "status": 400
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "name": "missing_file",
+        "path": "/api/vehicle/mileage-recognition",
+        "status": 404
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "name": "unsafe_file",
+        "path": "/api/vehicle/mileage-recognition",
+        "status": 404
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "name": "real_candidate",
+        "path": "/api/vehicle/mileage-recognition",
+        "status": 200
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "name": "deleted_file",
+        "path": "/api/vehicle/mileage-recognition",
+        "status": 404
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "name": "transferred_vehicle",
+        "path": "/api/vehicle/mileage-recognition",
+        "status": 404
+      },
+      {
+        "passed": true,
+        "method": "GET",
+        "name": "signed_access",
+        "path": "/api/file/1/access",
+        "status": 200
+      },
+      {
+        "passed": true,
+        "method": "POST",
+        "name": "revoked_session",
+        "path": "/api/vehicle/mileage-recognition",
+        "status": 401
+      }
+    ]
+  },
+  "gateway_provider_calls": 1,
+  "uploaded_image_sha256": "db6dcdf2168c079a14f7ecc1c983063d51a84bd001c2e2b6273649c41e35a90b",
+  "sources_unchanged": true,
+  "ocr_server_stopped": true,
+  "private_config_removed": true,
+  "maven_container_removed": true,
+  "stage": "A4d40",
+  "base_commit": "e75b7d8fa427210013863d0b8e151943f99b4d66",
+  "python_tests_passed": 19,
+  "ocr_tests_passed": 26,
+  "contract_operations": 353,
+  "historical_full_evidence": 317,
+  "real_owner_instrument_accuracy_accepted": false,
+  "wechat_native_journey_accepted": false,
+  "material_workbench": {
+    "requests": 80,
+    "operations": 4,
+    "coverage": {
+      "POST /api/input-materials/{purpose}/{vehicleId}/upload": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/input-materials/{purpose}/{vehicleId}/{id}/access": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/merchant/workbench": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "GET /api/tech/workbench": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ]
+    },
+    "checks": {
+      "five_isolated_materials": true,
+      "materials_never_become_images": true,
+      "five_successful_uploads": true,
+      "four_type_purpose_downloads": true,
+      "scope_and_query_enforced": true,
+      "private_bucket_and_signature_enforced": true,
+      "material_current_facts_rechecked": true,
+      "workbench_actor_isolation": true,
+      "eight_mutually_exclusive_buckets": true,
+      "assignment_and_closed_tasks_rechecked": true,
+      "pagination_has_no_duplicate_or_missing_tasks": true,
+      "workbench_minimal_private_fields": true,
+      "current_staff_and_binding_required": true,
+      "current_owner_session_required": true,
+      "no_payment_archive_or_rewards": true
+    },
+    "cleanup": {
+      "initializer": true,
+      "clamav": true,
+      "minio": true,
+      "mysql": true,
+      "network": true
+    }
+  },
+  "real_run_junit": {
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "verified_before_default_recheck": true
+  },
+  "default_compatibility": {
+    "passed": true,
+    "dedicated_run_flag_passed": false,
+    "requests": 80,
+    "operations": 4,
+    "checks": {
+      "five_isolated_materials": true,
+      "materials_never_become_images": true,
+      "five_successful_uploads": true,
+      "four_type_purpose_downloads": true,
+      "scope_and_query_enforced": true,
+      "private_bucket_and_signature_enforced": true,
+      "material_current_facts_rechecked": true,
+      "workbench_actor_isolation": true,
+      "eight_mutually_exclusive_buckets": true,
+      "assignment_and_closed_tasks_rechecked": true,
+      "pagination_has_no_duplicate_or_missing_tasks": true,
+      "workbench_minimal_private_fields": true,
+      "current_staff_and_binding_required": true,
+      "current_owner_session_required": true,
+      "no_payment_archive_or_rewards": true
+    },
+    "cleanup": {
+      "initializer": true,
+      "clamav": true,
+      "minio": true,
+      "mysql": true,
+      "network": true
+    }
+  }
+}

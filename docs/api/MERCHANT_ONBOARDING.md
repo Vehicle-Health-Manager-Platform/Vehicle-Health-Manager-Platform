@@ -61,7 +61,7 @@ V020 扩展 `merchant_application`（`address/contact_phone/revision/merchant_id
 
 ## 状态
 
-后端与迁移：接口、锁序、幂等、审计、配额并发与失败回滚已有 MockMvc 与真实 MySQL 测试覆盖，并在**真实后端容器＋真实隔离库**上端到端验收通过（含真实私有上传与 ClamAV 扫描的资质受控访问），见[本机端到端验收](../testing/LOCAL_MERCHANT_ONBOARDING_ACCEPTANCE.md)。
+后端与迁移：接口、锁序、幂等、审计、配额并发与失败回滚已有 MockMvc 与真实 MySQL 测试覆盖，并在**真实后端容器＋真实隔离库**上端到端验收通过（含真实私有上传与 ClamAV 扫描的资质受控访问），见[本机端到端验收](../testing/LOCAL_MERCHANT_ONBOARDING_ACCEPTANCE.md)。资质附件受控访问接口的所选历史四类证据（正常/边界/错误/未授权 + 真实签名下载字节一致与自然过期）见[入驻资质附件授权访问验收](../testing/MERCHANT_ONBOARDING_PRIVATE_FILES_ACCEPTANCE.md)。
 
 小程序侧已接入，服务层 `apps/miniapp/src/services/merchant-onboarding.js` 与服务端逐字段对齐（固定品类、固定驳回码、6 位行政区划码、1..9 个互不相同的资质文件 id 与 0–100000 配额上限），页面为车主端 `pages/owner/onboarding`（申请＋进度＋驳回重提，入口在「我的」）、运营端 `pages/operator/onboarding`（待审＋详情＋批准/固定码驳回＋资质受控查看）与 `pages/operator/quotas`（配额列表与设置）。运营身份登录响应固定携带 `can_review` 与 `can_onboard` 两个布尔权限位，客户端按各自权限决定入口，缺字段或类型不符即判协议错误。
 

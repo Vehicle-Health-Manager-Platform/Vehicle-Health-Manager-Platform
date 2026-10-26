@@ -5,7 +5,7 @@ async function elements(rpc, page, selector) {
     const elementId = queue.shift(), params = { pageId: page.pageId, ...(elementId ? { elementId } : {}) }
     const method = elementId ? 'Element.getElements' : 'Page.getElements'
     found.push(...(await rpc(method, { ...params, selector })).elements)
-    for (const child of (await rpc(method, { ...params, selector: 'component' })).elements) {
+    for (const child of (await rpc(method, { ...params, selector: '*' })).elements.filter(node=>node.tagName==='component')) {
       if (!visited.has(child.elementId)) { visited.add(child.elementId); queue.push(child.elementId) }
     }
     assert.ok(visited.size <= 50, 'Unexpected native component tree')

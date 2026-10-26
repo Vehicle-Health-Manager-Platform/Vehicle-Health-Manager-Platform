@@ -1077,7 +1077,8 @@
               }
             }
           }
-        }
+        },
+        "x-implementation-status": "ai-chat-implemented-requires-provider"
       }
     },
     "/api/ai/plan": {
@@ -2943,7 +2944,7 @@
     },
     "/api/check/delivery/compare": {
       "post": {
-        "summary": "取车对比",
+        "summary": "取车对比:接车基线与完工证据的只读对照(交付仍由核销完成)",
         "operationId": "post_api_check_delivery_compare",
         "tags": [
           "check"
@@ -2951,20 +2952,9 @@
         "x-feature-ids": [
           "F14"
         ],
-        "parameters": [
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
         "responses": {
           "200": {
-            "description": "统一成功响应",
+            "description": "对照投影:order_id/order_status/result(READY|INCOMPLETE)/deliverable/baseline/work/missing",
             "content": {
               "application/json": {
                 "schema": {
@@ -2974,7 +2964,7 @@
             }
           },
           "400": {
-            "description": "参数或业务状态错误",
+            "description": "正文不是 {\"order_id\":正整数} 或携带 query,code=40001",
             "content": {
               "application/json": {
                 "schema": {
@@ -2987,7 +2977,37 @@
             "description": "认证失败，code=40100"
           },
           "403": {
-            "description": "无权访问，code=40300"
+            "description": "角色不符，code=40300"
+          },
+          "404": {
+            "description": "订单不存在或不属于当前身份，code=40400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "接车检查未完成，code=43001",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "数据库不可用，code=50300",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -3001,11 +3021,23 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "additionalProperties": true
+                "additionalProperties": false,
+                "required": [
+                  "order_id"
+                ],
+                "properties": {
+                  "order_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  }
+                }
               }
             }
           }
-        }
+        },
+        "x-implementation-status": "delivery-compare-implemented",
+        "x-roles": "本单车主或本店 MERCHANT/STAFF"
       }
     },
     "/api/tech/orders": {
@@ -4142,26 +4174,260 @@
     },
     "/api/admin/reconciliation": {
       "get": {
-        "summary": "`date, channel` → 本地/渠道金额与差异列表",
+        "summary": "运营按北京时间日期及渠道读取本地资金记录；渠道账单及差额未知",
         "operationId": "get_api_admin_reconciliation",
         "tags": [
           "admin"
         ],
-        "x-feature-ids": [],
-        "parameters": [],
+        "x-feature-ids": [
+          "F20"
+        ],
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^20[0-9]{2}-[0-9]{2}-[0-9]{2}$"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "WECHAT",
+                "LOCAL_TEST"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "统一成功响应",
+            "description": "只读本地日汇总，CNY两位十进制字符串；异常总额null；channel_statement的net_amount/difference均null",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "date",
+                            "channel",
+                            "test_mode",
+                            "timezone",
+                            "currency",
+                            "source_version",
+                            "window_from",
+                            "window_to",
+                            "observed_at",
+                            "payments",
+                            "refunds",
+                            "unclassified_count",
+                            "local_net",
+                            "channel_statement"
+                          ],
+                          "properties": {
+                            "date": {
+                              "type": "string",
+                              "format": "date"
+                            },
+                            "channel": {
+                              "type": "string",
+                              "enum": [
+                                "WECHAT",
+                                "LOCAL_TEST"
+                              ]
+                            },
+                            "test_mode": {
+                              "type": "boolean"
+                            },
+                            "timezone": {
+                              "const": "Asia/Shanghai"
+                            },
+                            "currency": {
+                              "const": "CNY"
+                            },
+                            "source_version": {
+                              "const": "R9_LOCAL_FINANCE_V1"
+                            },
+                            "window_from": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "window_to": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "observed_at": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "payments": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "required": [
+                                "state",
+                                "success_count",
+                                "anomaly_count",
+                                "other_count",
+                                "amount"
+                              ],
+                              "properties": {
+                                "state": {
+                                  "type": "string",
+                                  "enum": [
+                                    "KNOWN",
+                                    "UNKNOWN"
+                                  ]
+                                },
+                                "success_count": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 10000
+                                },
+                                "anomaly_count": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 10000
+                                },
+                                "other_count": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 10000
+                                },
+                                "amount": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "pattern": "^(0|[1-9][0-9]{0,11})\\.[0-9]{2}$"
+                                }
+                              }
+                            },
+                            "refunds": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "required": [
+                                "state",
+                                "success_count",
+                                "anomaly_count",
+                                "other_count",
+                                "amount"
+                              ],
+                              "properties": {
+                                "state": {
+                                  "type": "string",
+                                  "enum": [
+                                    "KNOWN",
+                                    "UNKNOWN"
+                                  ]
+                                },
+                                "success_count": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 10000
+                                },
+                                "anomaly_count": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 10000
+                                },
+                                "other_count": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 10000
+                                },
+                                "amount": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "pattern": "^(0|[1-9][0-9]{0,11})\\.[0-9]{2}$"
+                                }
+                              }
+                            },
+                            "unclassified_count": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 10000
+                            },
+                            "local_net": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "required": [
+                                "state",
+                                "amount"
+                              ],
+                              "properties": {
+                                "state": {
+                                  "type": "string",
+                                  "enum": [
+                                    "KNOWN",
+                                    "UNKNOWN"
+                                  ]
+                                },
+                                "amount": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "pattern": "^-?(0|[1-9][0-9]{0,11})\\.[0-9]{2}$"
+                                }
+                              }
+                            },
+                            "channel_statement": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "required": [
+                                "state",
+                                "net_amount",
+                                "difference"
+                              ],
+                              "properties": {
+                                "state": {
+                                  "const": "UNAVAILABLE"
+                                },
+                                "net_amount": {
+                                  "type": "null"
+                                },
+                                "difference": {
+                                  "type": "null"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
                 }
               }
             }
           },
           "400": {
-            "description": "参数或业务状态错误",
+            "description": "日期/渠道缺失、未知/重复query或格式错误，40001",
             "content": {
               "application/json": {
                 "schema": {
@@ -4174,7 +4440,34 @@
             "description": "认证失败，code=40100"
           },
           "403": {
-            "description": "无权访问，code=40300"
+            "description": "角色或当前can_analytics不符，40300",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "未来日期或单日超过10000条，40900",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "数据库或来源不可用，50300",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -4182,7 +4475,8 @@
             "bearerAuth": []
           }
         ],
-        "x-roles": "授权运营"
+        "x-implementation-status": "local-finance-read-implemented",
+        "x-roles": "OPERATOR且当前有效会话拥有can_analytics；平台聚合，不含交易明细"
       }
     },
     "/api/coupon/reserve": {
@@ -33422,7 +33716,8 @@
           }
         },
         "x-roles": "OWNER",
-        "description": "no-store。默认关闭 INPUT_MATERIAL_UPLOAD_ENABLED；仅本人有效车辆、正式会话。独立input_material表，不接受或返回业务图片file_id，不做ASR/OCR。MP3 16kHz单声道48kbps、1–60秒、3MiB；静态PDF 1–50页10MiB，无加密/表单/注释/动作/附件。CLEAN才写入；用途及车辆隔离幂等，同键不同内容409。签发60秒强制attachment/no-store，复核会话/车辆/用途及对象元数据。详见CONTROLLED_INPUT_MATERIALS.md。"
+        "description": "no-store。默认关闭 INPUT_MATERIAL_UPLOAD_ENABLED；仅本人有效车辆、正式会话。独立input_material表，不接受或返回业务图片file_id，不做ASR/OCR。MP3 16kHz单声道48kbps、1–60秒、3MiB；静态PDF 1–50页10MiB，无加密/表单/注释/动作/附件。CLEAN才写入；用途及车辆隔离幂等，同键不同内容409。签发60秒强制attachment/no-store，复核会话/车辆/用途及对象元数据。详见CONTROLLED_INPUT_MATERIALS.md。",
+        "x-implementation-status": "controlled-input-material-upload-implemented"
       }
     },
     "/api/input-materials/{purpose}/{vehicleId}/{id}/access": {
@@ -33529,7 +33824,152 @@
           }
         ],
         "x-roles": "OWNER",
-        "description": "no-store。默认关闭 INPUT_MATERIAL_UPLOAD_ENABLED；仅本人有效车辆、正式会话。独立input_material表，不接受或返回业务图片file_id，不做ASR/OCR。MP3 16kHz单声道48kbps、1–60秒、3MiB；静态PDF 1–50页10MiB，无加密/表单/注释/动作/附件。CLEAN才写入；用途及车辆隔离幂等，同键不同内容409。签发60秒强制attachment/no-store，复核会话/车辆/用途及对象元数据。详见CONTROLLED_INPUT_MATERIALS.md。"
+        "description": "no-store。默认关闭 INPUT_MATERIAL_UPLOAD_ENABLED；仅本人有效车辆、正式会话。独立input_material表，不接受或返回业务图片file_id，不做ASR/OCR。MP3 16kHz单声道48kbps、1–60秒、3MiB；静态PDF 1–50页10MiB，无加密/表单/注释/动作/附件。CLEAN才写入；用途及车辆隔离幂等，同键不同内容409。签发60秒强制attachment/no-store，复核会话/车辆/用途及对象元数据。详见CONTROLLED_INPUT_MATERIALS.md。",
+        "x-implementation-status": "controlled-input-material-access-implemented"
+      }
+    },
+    "/api/vehicle/mileage-recognition": {
+      "post": {
+        "summary": "从本人CLEAN图片读取仪表里程候选，明确同意后调用私有OCR，需本人确认",
+        "operationId": "post_api_vehicle_mileage_recognition",
+        "tags": [
+          "vehicle"
+        ],
+        "x-feature-ids": [
+          "F03"
+        ],
+        "responses": {
+          "200": {
+            "description": "候选投影: vehicle_id/file_id/review_status(CANDIDATE|LOW_CONFIDENCE|AMBIGUOUS|NO_CANDIDATE)/requires_confirmation=true/recognition(version=1,scene=archive,status=CANDIDATE|EMPTY,fields)。单候选mileage字符串及原置信度，歧义/无候选fields为空；不返回对象key/URL或OCR原文。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "正文、重复键、用途确认或query无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "会话撤销/过期或用户失效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非正式车主角色",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "非本人车辆或图片，图片非CLEAN/已删/类型大小不符",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "调用期间车辆或图片事实变化",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "本实例已有两个识别在处理",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "关闭、数据/存储/OCR不可用、结果无效或超时",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "vehicle_id",
+                  "file_id",
+                  "consent",
+                  "consent_version"
+                ],
+                "properties": {
+                  "vehicle_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740990
+                  },
+                  "file_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740990
+                  },
+                  "consent": {
+                    "const": true
+                  },
+                  "consent_version": {
+                    "const": "MILEAGE_OCR_V1"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-implementation-status": "mileage-recognition-gateway-implemented-requires-model",
+        "x-roles": "当前有效OWNER会话、本人有效车辆、本人CLEAN JPEG/PNG；MILEAGE_OCR_ENABLED默认false",
+        "description": "no-store、无query、无自动落库。MILEAGE_OCR_V1用途确认，图片1–4MiB，服务端读取私有字节；调用前后复核会话/车辆/文件。实例并发2，私有HTTP15秒硬截止、64KiB响应上限，无重试/重定向。低置信度保留；歧义不自动选值。服务凭据不下发客户端，真实模型与小程序接线另验。"
       }
     }
   },

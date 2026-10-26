@@ -69,3 +69,25 @@ V010 扩展上传作用域和 pickup_check，新增 pickup_check_file 的单据/
 FUEL 与 DASHBOARD 必须不同文件，沿用 CLEAN、上传员工本人、未删除、全局不可重复关联及同事务写入/审计/幂等。FUEL 不作为损伤标注槽。旧七图响应不会补造油表照片，客户端明确显示历史未提供。已有 `pickup_check_file.photo_slot VARCHAR(16)` 可存 FUEL，无新增表或迁移（仍66表）。图片签发仍受订单归属授权。
 
 原生扫码/二维码视觉与真机留在R9；离线独立解码只证明生成内容可解码。二维码不是授权凭证。
+
+## R7a 取车对比（2026-10-22）
+
+`POST /api/check/delivery/compare` 把接车基线与完工证据放在一起，回答"这辆车能不能交付"。**只读**：不写库、不改订单状态，交付本身仍由核销完成（核销带资金与免佣语义），避免第二条写路径与核销争夺订单状态。因此该接口**不需要** `Idempotency-Key`（契约已同步移除该参数）。
+
+正文严格为 `{"order_id":<正整数>}`，不接受任何 query。身份为本单车主或本店 `MERCHANT/STAFF`；技师、他人车主、他店一律 404，未知角色 403。
+
+返回 `data`：
+
+| 字段 | 说明 |
+| --- | --- |
+| `order_id` / `order_status` | 订单与当前状态 |
+| `result` | `READY`（证据齐备）或 `INCOMPLETE`（有缺口，见 `missing`） |
+| `deliverable` | `result=READY` 且订单处于 `PENDING_VERIFY`；已完成订单可回看但不再可交付 |
+| `baseline` | `pickup_check_id`、`mileage`、`mileage_delta`（相对接车基线）、`fuel_level`、`damage_status`、`damage_count`、`photo_count`、`photo_slots`（排序后的槽位名）、`owner_confirm`、`confirm_at` |
+| `work.protection` | `submitted`、`item_count`、`photo` |
+| `work.report` | `submitted`、`status`（`MISSING/SUBMITTED/SIGNED`）、`process_photos`、`fault_photos`、`finish_photos`、`signature_photos`、`no_fault_parts`、`no_parts`、`signed_at` |
+| `missing` | 缺口编码：`OWNER_CONFIRM`、`PROTECTION_PHOTO`、`REPORT`、`PROCESS`、`FINISH`、`FAULT`、`SIGNATURE` |
+
+`FAULT` 仅在既无故障件照片、也未声明 `no_fault_parts=true` 时出现。没有接车单时返回 `409` `43001`（没有基线无法对比），不返回空对比。响应不含车主/员工/技师 id、对象键或文件列表。
+
+车主端页面已接入：`pages/order/delivery-compare.vue`（入口在订单详情，仅 `PENDING_VERIFY`/`COMPLETED` 显示），文案与缺口语义集中在 `services/delivery-compare-display.js`。契约与四类证据见[验收](../testing/DELIVERY_COMPARE_ACCEPTANCE.md)，页面设计见[取车对比页规格](../superpowers/specs/2026-10-22-delivery-compare-page-design.md)。

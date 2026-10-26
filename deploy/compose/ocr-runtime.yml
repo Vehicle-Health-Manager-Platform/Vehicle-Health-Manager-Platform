@@ -1,0 +1,30 @@
+# Explicit overlay: compose.yml remains the default disabled OCR profile.
+services:
+  ocr:
+    memswap_limit: 1536m
+    build:
+      context: ../../services/ocr
+      dockerfile: Dockerfile.runtime
+      additional_contexts:
+        ocr_wheels: ${OCR_WHEELHOUSE_ROOT:?Set the verified Linux wheel directory}
+    environment:
+      OCR_ENABLED: 'true'
+      OCR_SERVICE_TOKEN: ${MILEAGE_OCR_SERVICE_TOKEN:?Set a private OCR service token}
+    volumes:
+      - type: bind
+        source: ${OCR_MODELS_ROOT:?Set the verified absolute model directory}
+        target: /models
+        read_only: true
+        bind:
+          create_host_path: false
+    networks: [ocr_private]
+  backend:
+    environment:
+      MILEAGE_OCR_ENABLED: 'true'
+      MILEAGE_OCR_URL: http://ocr:8090/recognize
+      MILEAGE_OCR_ALLOW_PRIVATE_HTTP: 'true'
+    networks: [default, ocr_private]
+networks:
+  ocr_private:
+    internal: true
+    enable_ipv6: false

@@ -1,0 +1,29 @@
+# A4d39 OCR模型资产及运行环境准备
+
+2026-10-24，基线9cf5fdb / PR229，分支codex/r9-a4d39-ocr-runtime。范围为微信小程序使用的OCR基础设施，不做PC开发，不开启现有默认关闭的网关。
+
+## 已实施
+
+通过gstack浏览官方安装、OCR流水线及推理引擎文档，包索引确认PaddleOCR 3.7.0和CPU PaddlePaddle 3.3.1。官方文档首次浏览器启动超时，重开后200读取成功。明确固定直接依赖的候选运行环境；不把它称为跨平台完整传递依赖锁。
+
+实际下载官方PP-OCRv5_mobile_det/rec推理包，分别4935680和16834560字节，锁定包及六个模型文件的长度和SHA-256。官方页重复列出识别模型URL，首次下载步骤因重复URL断言停止；去重后取得同一官方URL，不更换来源。摘要来自本轮下载，不冒充发布方签名。
+
+新增离线模型准备/核对工具：精确包摘要、精确成员与普通文件校验，拒绝路径穿越、链接、额外/重复项，临时目录完整验证后发布，不覆盖已有输出。真实下载包已成功离线准备及再次核对；二进制和运行环境仅存本机.cache，不上传GitHub。
+
+新增真实运行自检：固定直接依赖版本及模型摘要通过后，构造真实Paddle引擎，对程序生成的ODO 123456 km图片推理，唯一正确里程才能成功。失败覆盖旧报告且不写虚假成功标记；合成图与真实车主仪表效果、微信全链路分开记录。
+
+## 验证状态
+
+26项OCR回归通过，新增9项含资产/前置校验，原17项图片解码/HTTP及明确模型替身测试保持。首轮一次Windows回环连接WinError10053，未改服务，后续24项和最终26项均通过，仍记录该偶发失败。
+
+真实模型包校验通过，独立venv安装PaddleOCR 3.7.0 / CPU PaddlePaddle 3.3.1 / Pillow 12.3.0及传递依赖，实际安装版本与解析报告一致，pip check无冲突。首次真实推理明确报NotImplementedError：oneDNN的ConvertPirAttribute2RuntimeAttribute不支持PIR Double数组属性。仅在本机诊断中关闭enable_mkldnn后，相同模型/合成图通过；随后适配器固定enable_mkldnn=False，正常自检命令真实通过：直接调用和临时私有回环HTTP /recognize均为正确唯一里程、CANDIDATE且requires_confirmation=true，HTTP no-store，临时服务已关闭。无模型替身、无异常降级。
+
+补充配置回归先在旧构造参数上证实断言失败，再修复后完整26项通过；首次未获准运行该测试时被沙箱临时目录权限拦截，不将其计为有效证红。版本报告读取曾因默认GBK失败，显式UTF-8后70项版本核对通过。Windows依赖锁由实际70个wheel报告及另行下载的setuptools 79.0.1 wheel生成，共71项（pip安装工具24.0另记），现有环境的哈希模式dry-run通过，不等于第二个全新环境重装或Linux验收。默认Docker镜像再构建在python:3.11-slim元数据授权阶段仍因auth.docker.io连接超时失败，未构建或启动成功；未更换镜像来源隐藏失败。
+
+运行准备与命令见[OCR说明](../../services/ocr/README.md)。普通Docker镜像不包含推理引擎和模型。真实车主授权样本、硬worker截止、Linux推理镜像、网络出口隔离及微信识别保存旅程仍待验收。历史覆盖317/353、36套/36结论、全API验收false不变。
+
+## 交付与下一阶段
+
+实现f556fad已上传[草稿PR230](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/230)，依赖PR229，分支codex/r9-a4d39-ocr-runtime，最终head CI另核；未合并或部署。本阶段真实模型和生成图片链路通过，见[脱敏报告](../testing/reports/R9_A4D39_OCR_RUNTIME_2026_10_24.json)。下一阶段推进真实授权仪表样本和共享后端/微信全链路，并补Linux镜像与worker资源隔离。
+
+脱敏扫描将已安装且wheel锁定的OpenCV版本4.10.0.84误判为公网IP；核对实际依赖后仅精确允许该版本字面值，复扫0发现，无个人资料或凭据例外。

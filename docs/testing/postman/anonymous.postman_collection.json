@@ -2893,7 +2893,7 @@
           "type": "noauth"
         },
         "url": "{{base_url}}/api/admin/reconciliation",
-        "description": "`date, channel` → 本地/渠道金额与差异列表"
+        "description": "运营按北京时间日期及渠道读取本地资金记录；渠道账单及差额未知"
       },
       "event": [
         {
@@ -3767,7 +3767,7 @@
           "type": "noauth"
         },
         "url": "{{base_url}}/api/check/delivery/compare",
-        "description": "取车对比",
+        "description": "取车对比:接车基线与完工证据的只读对照(交付仍由核销完成)",
         "body": {
           "mode": "raw",
           "raw": "{}"
@@ -9658,6 +9658,40 @@
         },
         "url": "{{base_url}}/api/vehicle/match-plate",
         "description": "本人车牌精确匹配（只读）",
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"anonymous is rejected\", () => pm.response.to.have.status(401));",
+              "pm.test(\"safe JSON envelope\", () => pm.expect(pm.response.json().code).to.eql(40100));",
+              "pm.test(\"private response is not cached\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "post_api_vehicle_mileage_recognition",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "url": "{{base_url}}/api/vehicle/mileage-recognition",
+        "description": "从本人CLEAN图片读取仪表里程候选，明确同意后调用私有OCR，需本人确认",
         "body": {
           "mode": "raw",
           "raw": "{}"

@@ -159,10 +159,27 @@ services:
 
   ocr:
     build: ../../services/ocr
+    cpus: 2.0
+    mem_limit: 1536m
+    pids_limit: 128
+    shm_size: 16m
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs:
+      - /tmp:size=67108864,mode=1777
     environment:
       OCR_PORT: 8090
+      OMP_NUM_THREADS: 2
+      MKL_NUM_THREADS: 2
+      OPENBLAS_NUM_THREADS: 2
+      PADDLE_PDX_CACHE_HOME: /tmp/paddlex
+      PADDLE_HOME: /tmp/paddle
+      HF_HOME: /tmp/huggingface
+      MODELSCOPE_CACHE: /tmp/modelscope
+      XDG_CACHE_HOME: /tmp/xdg
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8090/health', timeout=3)"]
+      test: ["CMD", "python", "-c", "import json,os,urllib.request; r=json.load(urllib.request.urlopen('http://localhost:8090/health', timeout=3)); assert r.get('status')=='UP' and (os.environ.get('OCR_ENABLED')!='true' or r.get('recognition') in ('READY','BUSY'))"]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -175,6 +192,10 @@ services:
       UPLOAD_HTTP_CONCURRENCY: ${UPLOAD_HTTP_CONCURRENCY:-4}
       UPLOAD_CLEANUP_INTERVAL_MS: ${UPLOAD_CLEANUP_INTERVAL_MS:-60000}
       INPUT_MATERIAL_UPLOAD_ENABLED: ${INPUT_MATERIAL_UPLOAD_ENABLED:-false}
+      MILEAGE_OCR_ENABLED: ${MILEAGE_OCR_ENABLED:-false}
+      MILEAGE_OCR_URL: ${MILEAGE_OCR_URL:-}
+      MILEAGE_OCR_SERVICE_TOKEN: ${MILEAGE_OCR_SERVICE_TOKEN:-}
+      MILEAGE_OCR_ALLOW_PRIVATE_HTTP: ${MILEAGE_OCR_ALLOW_PRIVATE_HTTP:-false}
       MYSQL_HOST: mysql
       SERVICE_ARCHIVE_ENABLED: ${SERVICE_ARCHIVE_ENABLED:-false}
       EXPERIENCE_CARD_ENABLED: ${EXPERIENCE_CARD_ENABLED:-false}

@@ -15,7 +15,7 @@ const flow = createArchiveFlow({ state, api: archiveApi, token: () => ownerSessi
 const types = ['保养', '维修', '保险', '事故', '改装', '违章', '年检', '行驶证资料', '驾驶证资料', '本人故障记录']
 const uploadBusy = ref(false), imageMessage = ref(''), candidate = ref(null)
 const notice = ref(''), permissionDenied = ref(false)
-const auxiliaryPicker = ref(false)
+const auxiliaryPicker = ref(false), recognitionBusy = ref(false)
 let generation = 0, imageKey = '', routeVehicleId = 0, routeInputType = 3, routeArchiveType = 1
 const today = () => { const now = new Date(); return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}` }
 onLoad(query => { routeVehicleId = Number(query.vehicle_id); routeInputType = archiveInputType(query);const type=Number(query.archive_type);routeArchiveType=Number.isInteger(type)&&type>=1&&type<=10?type:1;state.archiveType=routeArchiveType; state.vehicleId = Number.isSafeInteger(routeVehicleId) && routeVehicleId > 0 ? routeVehicleId : 0; state.inputType = routeInputType; state.recordedDate = today() })
@@ -28,7 +28,7 @@ function back() { uni.switchTab({ url: '/pages/archive/index' }) }
 function pickType(event) { state.archiveType = Number(event.detail.value) + 1 }
 function pickDate(event) { state.recordedDate = event.detail.value }
 async function choose() {
-  if (uploadBusy.value || state.busy || state.fileIds.length >= 5) return
+  if (recognitionBusy.value || uploadBusy.value || state.busy || state.fileIds.length >= 5) return
   const current = ++generation, token = ownerSession.accessToken
   uploadBusy.value = true; imageMessage.value = ''; permissionDenied.value = false
   try {
@@ -59,7 +59,7 @@ async function upload() {
   } catch (error) { if (current === generation) imageMessage.value = error?.message || '图片上传失败，请重试' }
   finally { if (current === generation) uploadBusy.value = false }
 }
-function remove(id) { if (!state.busy && !uploadBusy.value) state.fileIds = state.fileIds.filter(value => value !== id) }
+function remove(id) { if (!recognitionBusy.value && !state.busy && !uploadBusy.value && !state.saved) state.fileIds = state.fileIds.filter(value => value !== id) }
 async function preview(id) {
   const token = ownerSession.accessToken, current = generation
   try {
@@ -77,25 +77,25 @@ async function preview(id) {
     <view v-else-if="!state.vehicleId" class="panel"><text>车辆信息无效，请返回选择车辆</text><button @tap="back">返回档案</button></view>
     <view v-else class="panel">
       <LocalInputMaterials :actor="ownerSession.accessToken" :scope="'archive:'+state.vehicleId+':'+state.archiveType" @picker-change="auxiliaryPicker=$event" />
-      <InputCandidateReview :actor="ownerSession.accessToken" :scope="'archive:'+state.vehicleId+':'+state.archiveType" scene="archive" :fields="candidateFields.archive" :values="state" :disabled="state.busy||uploadBusy||!!state.saved" @apply="Object.assign(state,$event)" />
+      <InputCandidateReview :actor="ownerSession.accessToken" :scope="'archive:'+state.vehicleId+':'+state.archiveType" scene="archive" :vehicle-id="state.vehicleId" :file-ids="state.fileIds" @busy="recognitionBusy=$event" :fields="candidateFields.archive" :values="state" :disabled="state.busy||uploadBusy||!!state.saved" @apply="Object.assign(state,$event)" />
       <text class="label">档案类型</text>
-      <picker :disabled="state.busy || uploadBusy || state.saved" :range="types" @change="pickType"><view class="field">{{ types[state.archiveType - 1] }}</view></picker>
+      <picker :disabled="state.busy || uploadBusy || recognitionBusy || state.saved" :range="types" @change="pickType"><view class="field">{{ types[state.archiveType - 1] }}</view></picker>
       <text class="label">发生日期</text>
-      <picker mode="date" :value="state.recordedDate" :disabled="state.busy || uploadBusy || state.saved" @change="pickDate"><view class="field">{{ state.recordedDate || '请选择日期' }}</view></picker>
-      <text class="label">标题</text><input v-model="state.title" class="field" maxlength="80" :disabled="state.busy || uploadBusy || state.saved" placeholder="例如 更换机油" />
-      <text class="label">当时里程（km，选填）</text><input v-model="state.mileage" class="field" type="number" maxlength="10" :disabled="state.busy || uploadBusy || state.saved" placeholder="非负整数" />
-      <text class="label">备注（选填）</text><textarea v-model="state.notes" class="notes" maxlength="1000" :disabled="state.busy || uploadBusy || state.saved" placeholder="记录具体情况" />
+      <picker mode="date" :value="state.recordedDate" :disabled="state.busy || uploadBusy || recognitionBusy || state.saved" @change="pickDate"><view class="field">{{ state.recordedDate || '请选择日期' }}</view></picker>
+      <text class="label">标题</text><input data-testid="archive-title" v-model="state.title" class="field" maxlength="80" :disabled="state.busy || uploadBusy || recognitionBusy || state.saved" placeholder="例如 更换机油" />
+      <text class="label">当时里程（km，选填）</text><input data-testid="archive-mileage" v-model="state.mileage" class="field" type="number" maxlength="10" :disabled="state.busy || uploadBusy || recognitionBusy || state.saved" placeholder="非负整数" />
+      <text class="label">备注（选填）</text><textarea v-model="state.notes" class="notes" maxlength="1000" :disabled="state.busy || uploadBusy || recognitionBusy || state.saved" placeholder="记录具体情况" />
       <text class="label">归档图片（{{ state.fileIds.length }}/5）</text>
-      <view v-for="(id, index) in state.fileIds" :key="id" class="image-row"><text>图片 {{ index + 1 }} 已上传</text><button class="secondary" :disabled="state.busy || uploadBusy" @tap="preview(id)">预览</button><button class="secondary" :disabled="state.busy || uploadBusy" @tap="remove(id)">移除</button></view>
-      <button v-if="state.fileIds.length < 5 && !state.saved" class="secondary" :disabled="state.busy || uploadBusy" @tap="choose">{{ state.inputType === 1 ? '拍照并上传' : '选择并上传图片' }}</button>
-      <button v-if="candidate" class="secondary" :disabled="state.busy || uploadBusy" @tap="upload">使用原图片重试上传</button>
+      <view v-for="(id, index) in state.fileIds" :key="id" class="image-row"><text>图片 {{ index + 1 }} 已上传</text><button class="secondary" :disabled="state.busy || uploadBusy || recognitionBusy" @tap="preview(id)">预览</button><button class="secondary" :disabled="state.busy || uploadBusy || recognitionBusy || !!state.saved" @tap="remove(id)">移除</button></view>
+      <button v-if="state.fileIds.length < 5 && !state.saved" class="secondary" :disabled="state.busy || uploadBusy || recognitionBusy" @tap="choose">{{ state.inputType === 1 ? '拍照并上传' : '选择并上传图片' }}</button>
+      <button v-if="candidate" class="secondary" :disabled="state.busy || uploadBusy || recognitionBusy" @tap="upload">使用原图片重试上传</button>
       <text v-if="notice" class="status" role="status">{{ notice }}</text>
       <text v-if="imageMessage" class="status">{{ imageMessage }}</text>
       <button v-if="permissionDenied" class="secondary" @tap="authorize">去开启相机权限</button>
       <text v-if="state.message" class="status" :class="{ error: state.failureKind }" role="status">{{ state.message }}</text>
       <button v-if="['unauthorized','forbidden'].includes(state.failureKind)" @tap="login">重新登录</button>
       <button v-else-if="state.saved" @tap="back">返回查看档案</button>
-      <button v-else :disabled="state.busy || uploadBusy || (state.inputType === 1 && !state.fileIds.length)" :loading="state.busy" @tap="flow.save">保存档案</button>
+      <button v-else data-testid="archive-save" :disabled="state.busy || uploadBusy || recognitionBusy || (state.inputType === 1 && !state.fileIds.length)" :loading="state.busy" @tap="flow.save">保存档案</button>
       <text class="note">保存失败时可使用原内容重试。仅已上传成功的图片会随档案保存。</text>
     </view>
   </view>

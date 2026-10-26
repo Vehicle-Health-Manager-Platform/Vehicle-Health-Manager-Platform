@@ -2,7 +2,7 @@
 import copy,json,tempfile,unittest
 from pathlib import Path
 from unittest.mock import patch
-from run_material_workbench_acceptance import ROOT,CLASS,CHECKS,audit,inventory
+from run_material_workbench_acceptance import ROOT,CLASS,CHECKS,audit,inventory,native_environment
 
 class MaterialWorkbenchEvidenceTest(unittest.TestCase):
     def setUp(self):
@@ -64,5 +64,15 @@ class MaterialWorkbenchEvidenceTest(unittest.TestCase):
         with self.assertRaises(ValueError):self.check()
         self.data['checks'].pop('synthetic_extra');self.data['cleanup']['unowned_resource']=True
         with self.assertRaises(ValueError):self.check()
+
+    def test_native_image_requires_explicit_valid_run_and_mode(self):
+        self.assertEqual(('', 'pdf'),native_environment({}))
+        run='a'*32
+        for kind in ['pdf','image','audio']:
+            self.assertEqual((run,kind),native_environment({'AUTOCARE_NATIVE_MATERIAL_RUN_ID':run,'AUTOCARE_NATIVE_UPLOAD_KIND':kind}))
+        for environ in [{'AUTOCARE_NATIVE_UPLOAD_KIND':'image'},{'AUTOCARE_NATIVE_UPLOAD_KIND':'audio'},
+                        {'AUTOCARE_NATIVE_MATERIAL_RUN_ID':'../escape'},
+                        {'AUTOCARE_NATIVE_MATERIAL_RUN_ID':run,'AUTOCARE_NATIVE_UPLOAD_KIND':'arbitrary'}]:
+            with self.assertRaises(ValueError):native_environment(environ)
 
 if __name__=='__main__':unittest.main()

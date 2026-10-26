@@ -1,0 +1,18 @@
+FROM python:3.11-slim-bookworm@sha256:f06d01d4ba3f8ad5af45a3ec87df19c1d317d8e8961edc0fabda61811af6f7cf
+WORKDIR /app
+RUN sed -i 's|http://deb.debian.org|https://deb.debian.org|g' /etc/apt/sources.list.d/debian.sources \
+    && apt-get -o Acquire::Retries=3 update && apt-get install -y --no-install-recommends libgomp1 libglib2.0-0 libgl1 libseccomp2 \
+    && rm -rf /var/lib/apt/lists/*
+COPY requirements-runtime-linux.lock.txt /app/requirements-runtime-linux.lock.txt
+RUN --mount=type=bind,from=ocr_wheels,target=/wheels \
+    pip install --no-cache-dir --no-index --find-links=/wheels --only-binary=:all: --require-hashes -r requirements-runtime-linux.lock.txt && pip check
+COPY src/ /app/
+COPY model_assets.py models.lock.json runtime_entry.py /app/
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 HOME=/tmp \
+    OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 \
+    PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK=True \
+    PADDLE_PDX_CACHE_HOME=/tmp/paddlex PADDLE_HOME=/tmp/paddle \
+    HF_HOME=/tmp/huggingface MODELSCOPE_CACHE=/tmp/modelscope XDG_CACHE_HOME=/tmp/xdg
+USER 10001:10001
+EXPOSE 8090
+CMD ["python", "runtime_entry.py"]

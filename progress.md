@@ -1,3 +1,124 @@
+# A4d45 Linux OCR共享网关与微信旅程
+- 最终两模式80+12项、TCP1/3次、微信9项及三SQL/唯一正确档案、同受限worker/来源稳定/清理通过。1061小程序、60 Python审计、普通/隔离微信构建和索引核对通过，70c94fd已上传草稿PR236（依赖PR235），最终head CI另核，未合并部署；详见docs/progress/R9_A4D45_LINUX_MILEAGE.md。
+
+# A4d44 Linux推理镜像与出口验收完成
+- 2026-10-25启动、2026-10-26收口。最终不可变镜像ID绑定/真实合成图两次/同worker复用、60项Linux无失败无跳过、Windows60项中59通过1项Linux内核跳过、运行器18项/交接8项通过；71包Linux离线锁、Compose正反向及内核资源/网络验证通过。来源稳定，容器/网络及私有env清理。7a7c847已上传草稿PR235（依赖PR234），最终head CI另核，未合并部署；未重跑JVM/微信/真实仪表或压力测试。
+
+# A4d44 离线锁完成与镜像复验
+- 官方PyPI元数据+字节数/SHA256核对后，通过显式TUNA镜像传输完成候选wheel。Linux network=none/ignore-installed解析最终71包；初始dry-run跳过基础镜像的setuptools79.0.1和packaging26.3，已补齐并重新解析。临时生成报告首次误用Windows默认GBK，未生成锁，明确UTF8后成功。
+- 首轮构建APT官方HTTP502引起签名入口失败，不计镜像/推理通过；改用同一官方HTTPS、保留签名校验后整轮复验中。71包锁、公开来源manifest与离线安装context已落盘。
+
+# A4d44 实施中
+- 官方Python3.11.17/bookworm基础镜像已拉取并固定摘要。WSL真实内核socket/线程同步/管道测试通过；Windows原52项通过但Linux内核1项明确跳过。新增wheel完整性7项和运行器证据5项通过（首次受限临时目录ACL失败，正常环境重跑通过）。
+- 容器pip约20KB/s；宿主跨平台整体解析因OpenCV候选失败，未放宽版本。保存实际Linux解析元数据/兼容标签；仅停止已核对标签及命令行的自有慢下载。官方PyPI字节范围预取进行中，最终仍需Linux离线解析确定锁。urllib经系统代理TLS EOF、直连官方API200，显式direct选项保持TLS校验与源不变。
+
+# A4d44 Linux OCR镜像与出口约束
+- 基线782daa5/PR234全部8项CI成功，设计/计划已落盘。普通镜像仅默认关闭，现有Windows锁不能用于Linux；实施独立推理镜像/离线模型校验、internal网络与子进程seccomp，实际证据单独记账。
+
+# A4d43 隔离OCR网关与微信旅程完成
+- 最终源码两种模式均通过：网关80+12/worker1次，微信9项/三SQL/唯一正确档案/worker3次；来源稳定与完整清理，实际自有worker0、无运行容器和私有控制文件残留。1060小程序、42 OCR、14+11+8 Python及普通/隔离微信构建和索引对账通过。两轮SDK3.17.4导航失败如实保留，固定隔离SDK3.17.2并增加版本门禁/CI审计。a8e2eea已上传草稿PR234（依赖PR233），最终head CI另核，未合并部署。
+
+# A4d43 SDK差异定位
+- 两轮原生均在业务前失败、零上传/识别/保存，资源清理通过。逐步探针确认下载和身份安装成功，reLaunch原生错误为Cannot read properties of undefined (reading pageNotFound)。同一包/同一路由3.17.4失败、固定3.17.2后reLaunch:ok。仅隔离项目固定SDK，原生报告与Python审计增加版本门禁；14项审计及1060项小程序再次通过。最终源码在SDK3.17.2重跑中。
+
+# A4d43 原生首轮未通过
+- 首轮在首个业务操作前出现App.callWxMethod RPC错误，upload/recognition/archive均0；worker/服务/监督线程和容器已清理。独立无业务身份下载探针200/1次命中，身份桥clear成功，未确认具体根因。仅重开自有隔离项目，随后用全新运行身份重跑；不把首轮计通过。
+
+# A4d43 实施与网关通过
+- 透明worker接线和审计完成，14项运行器/11项材料/42项OCR/1060项小程序通过；真实网关80+12项、单次worker及源码/全部清理通过。微信原生与普通包验证进行中。一次补丁因上下文空行不匹配未应用，改为准确锚点后成功。后台shell返回时报告未完成，随后以实际报告PASS核验。
+
+# A4d43 开始
+- 已创建codex/r9-a4d43-isolated-mileage并落盘设计/计划；PR233六项CI成功，backend仍运行。实施隔离worker进入共享网关和微信旅程。
+
+# A4d42 OCR硬截止与进程隔离
+- Windows和Ubuntu各42项OCR与真实隔离模型HTTP复验通过；Windows Job/硬截止/重建/管道与父退出清理通过，Compose及索引对账通过。2026-10-25实现ff0209b已上传草稿PR233（依赖PR232），最终head CI另核，未合并部署；Linux产品镜像仍受Docker Hub授权网络阻塞。
+
+# A4d41 微信原生真实里程识别与档案保存
+- 真实原生9项、三阶段SQL、最终档案/图片/里程与清理通过；1060项小程序、20项Python、26项OCR和8项交接测试、两类微信构建与索引对账通过。ff10eb1完整阶段已上传草稿PR232（依赖PR231），最终head CI另核；真实仪表/手机/Linux另验。
+
+# A4d40 真实OCR与共享网关联调
+- 已完成真实模型/MinIO/共享网关80+12项JSON HTTP用例、默认80项兼容复验、19项Python及26项OCR回归；网关模型调用1次、无自动档案/里程写入、源码稳定与清理通过。bed2164完整阶段已上传草稿PR231（依赖PR230），最终head CI另核；微信原生交互下阶段补齐。
+
+# A4d39 真实OCR运行环境准备
+- 已完成官方模型摘要锁定、71项Windows依赖锁及隔离安装；关闭oneDNN后真实模型直接/私有HTTP合成图识别通过、临时服务清理，26项OCR及8项交接回归通过。f556fad完整阶段已上传草稿PR230（依赖PR229），最终head CI另核；Docker拉取仍被网络阻塞，真实仪表/微信全链路待验。
+
+# A4d38 验收运行器范围修复
+- 已修复PR228的338→339保护范围遗漏；旧代码两项断言失败，55项Python通过；真实匿名339/1017及车主61/204通过、默认关闭零请求、匿名行数不变、源码稳定和三资源清理通过。7465034完整阶段已上传草稿PR229（依赖PR228），最终head CI另核；OCR模型准备顺延。
+
+# A4d37 微信档案里程识别入口
+- 已实施显式选图/用途同意、候选核对与取消保护；1055项小程序通过，微信普通构建通过。52项Python及交接索引/契约对账通过，最终普通包构建通过；fadf8f2完整阶段已上传草稿PR228（依赖PR227），最终head CI另核；真实模型仍待验。
+
+## A4d36已上传
+193d5d8完整实现/测试/契约/配置和脱敏报告上传草稿PR227，依赖PR226。Java22、Python73及生成/Compose检查通过，最终head远程CI另核，未合并部署。小程序接线与真实模型仍待验。
+
+## A4d36本地完成
+后端里程候选网关、22项Java、73项Python、契约/覆盖/交接/Compose检查及资源清理完成，准备整批上传。小程序识别按钮和真实模型未验，默认关闭且无里程/档案写入。
+
+## A4d36开始
+沿928fa48创建codex/r9-a4d36-mileage-gateway，推进后端权限与有界推理转发；真实模型、小程序接线另验。
+
+## A4d35实现已上传
+e280435上传草稿PR226，依赖PR225；17回归及编译/索引通过。两次镜像构建被Docker Hub网络阻塞，真实推理和小程序端到端未验；不宣称可部署，未合并。
+
+## A4d35实施中
+私有OCR入口与本地推理适配已实现，17项回归通过，文档明确模型替身及未接入小程序边界；最终镜像与上传待收口。
+
+## A4d34已上传
+e7b8411整批上传草稿PR225，依赖PR224；五项回归及CI接线完成。独立文本候选基础未接入模型/HTTP/页面，最终head CI另核，未合并部署。
+
+## A4d34本地完成
+候选解析模块、五项回归、CI和契约文档完成；当前未接入图片或小程序，准备阶段上传。
+
+## A4d33已上传
+f5eeb41完整阶段已上传草稿PR224，依赖PR223；最终head CI另核，未合并/部署。
+
+## A4d33本地完成
+音频9c52760e原生9/HTTP80/实际上传1，PDF5f4d84a6原生5/HTTP80/实际上传1，均Java完整旅程、数据库/签名下载/来源及清理通过。1047小程序、75相关Python、正常微信无桥构建和索引通过，准备整批上传。
+
+## A4d33开始（2026-10-24）
+沿69b121c建立codex/r9-a4d33-native-audio-upload，复用隔离平台推进录音状态、试听和受控音频上传。PR223部分CI仍运行，最终结果另核。
+
+## A4d32已上传（2026-10-24）
+f49f870完整阶段已推送草稿PR223，base=codex/r9-a4d31-native-material-upload，依赖PR222。创建后核对OPEN/draft及实现提交一致，远程CI运行中，最终head状态另记；工作按微信小程序范围推进，未合并或部署。
+
+## A4d32本地完成（2026-10-24）
+图片与默认PDF各一轮原生5/HTTP80/实际上传1及Java完整旅程通过，数据库、签名下载、清理与源码稳定成功；1040小程序、75项Python、普通微信无桥构建通过。阶段资料和脱敏报告齐备，准备整批上传依赖PR222的草稿PR，未合并/部署。
+
+## A4d32开始
+承接3bff98e，分支codex/r9-a4d32-native-image-upload。计划已保存，图片模式和安全拒绝回归已实施；实际原生旅程正在运行，尚未登记通过。
+
+## A4d31本地完成
+原生5/实际PDF1次/HTTP80、归属扫描与字节比对、无档案写入及五资源清理通过。最终1038小程序、19Python及普通微信构建通过；独立Java旅程最终1通过，先前另外54通过，失败轮单列。d477891整批上传草稿PR222，依赖PR221，最终CI待核查，未合并/部署。
+
+## A4d31开始
+承接81e3024，复用真实材料后端旅程，增加独立车主991的原生PDF上传联调。
+
+## A4d30本地完成
+90242a68e006原生6、业务16/60、匿名338/1014、13项只读与清理成功。Python34、小程序1035及正常微信无桥构建通过，a5ca612整批上传草稿PR221，依赖PR220，最终CI待核查；未合并/部署。
+
+## A4d30开始
+沿b1a9031建立codex/r9-a4d30-native-pickup-scan，选择真实按钮+系统扫码结果辅助+真实归属/状态HTTP的只读链路。
+
+## A4d29最终本地通过
+成功轮b34bba3b630f：原生7项、业务16/60、匿名338/1014、13项只读及清理通过。Python25、小程序1035、普通微信无身份桥构建成功；先前三轮工具失败单列，不计成功。928d14d整批上传草稿PR220，依赖PR219；最终CI待核查，未合并或部署。
+
+## A4d29开始
+沿374cfa0建立codex/r9-a4d29-native-delivery，复用已有SQL夹具与原生身份桥。
+
+## A4d28 实施开始
+沿1e7b1fb建立codex/r9-a4d28-miniapp-handover；四角色指南、110页/三模板94变量索引、剩余验收表与CI门禁完成。8项测试和生成/契约检查通过，敏感扫描0发现；1f8525c已上传草稿PR219，依赖PR218，最终CI待核查，未合并或部署。
+
+## A4d27 本地验收完成
+24业务/110断言、338匿名/1014断言、8项微信开发者工具检查、15表完整内容不变及清理成功。最终1035小程序、468Python及覆盖登记调整后54项通过，正常微信构建无身份桥。317/352、36套来源、35结论，全API仍false。2748296代码/测试/资料整批上传[草稿PR218](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/218)，依赖PR217，最终CI待核查；见docs/progress/R9_A4D27_LOCAL_FINANCE_ACCEPTANCE.md。
+
+阶段已上传[草稿PR217](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/217)，实现提交 `fcee604`，base=`codex/r9-a4d25-openapi-reproducibility`，依赖PR216。全部源码、测试和资料已上传；远程CI以最终head检查为准，未合并或发布。
+
+## A4d26 本地最终通过
+23项Java（真实隔离MySQL11+HTTP4+无DB1+云托管7）、1034小程序、459Python及微信构建通过。隔离资源已移除；上限批量夹具与同意时间守卫最终均执行。中间连接拒绝及旧断言/序列化问题已如实记入阶段报告，不计为通过。准备全阶段提交上传。
+
+## 2026-10-23 A4d26 进行中
+已落盘设计/计划、资金只读投影与HTTP入口、小程序原生查询页及测试。JS1034通过、微信构建及原生门禁通过。Java隔离MySQL与云托管回归正在最终复跑；尚未提交或上传本阶段。无生产资金、真机或账单验收声明。
+
 ## 2026-10-20 收口：12 支堆叠 PR 全部合并进 main
 
 R9 期间形成的整条栈（#181 → #192，12 支）已按链式顺序全部合并进 `main`，合并后 `main` = `13354bf8`，`open PR = 0`。合并前后做了三项核对：
@@ -409,3 +530,270 @@ R7c3 诊断消息首轮127项126通过、1失败：新已读测试将不同幂�
 交付核对时发现前置 PR166 的后端 CI 失败在 `CI jar predates source inputs`（完整业务回归后的旧 mtime 门禁）。已下载其脱敏失败报告定位。改为 CI 在全新 checkout、jar 尚不存在时记录 backend/src/main 与 pom 的内容 SHA-256；clean verify 后要求产物存在、源码内容与记录一致。既不按文件触碰时间否定内容相同的构建，也不允许旧产物或变动内容通过。新增 6 项测试覆盖时间戳变动/内容变化/旧产物/缺证明/缺产物/本地冒充CI，全部通过。实际远程修复结果仍待新 CI，不提前计通过；本阶段运行器来源变化后另做完整本地复跑，更新最终实际报告。PR168 初次查询暂无记录，随后 GitHub 已启动 CI；构建来源修复的最终提交完整 CI 仍待结果。
 
 首轮真实119请求/397断言仅1条失败：提交回执也是 data.application.application_id，预期误写扁平字段；其他请求/断言通过，隔离资源全部清理。已按既有契约修正；同轮来源有开发修改，不计最终成功。清理等待采用单次inspect快照校验归属，避免检测存在后第二次guard时容器已删除的竞态。固定实现后完整复跑。
+
+
+## 2026-10-21 A4d-5 接口覆盖核对
+- 用户继续授权规划后实施、逐阶段上传。PR195保留原分支与检查；本轮独立工具从origin/main创建codex/r9-a4d5-api-coverage。
+- 设计：逐项核对当前OpenAPI、16套Postman清单/集合/历史报告及3套专用HTTP旅程；合并时去重，并保持当前验收NOT_RUN，不能将历史证据当成新执行。
+- 初步清单：16套用例定义联合覆盖198项，其余154项缺这些清单覆盖；专用旅程尚需纳入，不能把154直接称作未开发功能。
+- 任务：实现严格核对工具与可复跑输出→反伪造/缺失/漂移/去重测试→CI门禁→报告与下一补测队列→提交推送。
+
+- A4d-5本地完成：19套定义/报告核对，352项契约中216项历史四类完整、136项所选来源缺口；新业务HTTP为0。新增19+既有186=205项Python测试通过，生成/--check/编译/diff通过。
+- 修复跨平台哈希风险：Windows输入CRLF与Git/Linux LF不同，指纹统一LF、历史集合接受严格LF/CRLF字节形式；模拟两平台输出一致且内容变更拒绝。准备提交推送独立阶段分支。
+
+- A4d-5完成并上传：e94cb60，origin/codex/r9-a4d5-api-coverage，草稿PR196。下一批支付/退款恢复与佣金六接口；本轮未执行这些接口的新增业务验收。
+
+## 2026-10-21 A4d-6 金融恢复验收
+- 已检查六接口及现有Java/数据库/渠道测试；复用已实现业务，新增隔离Postman+全迁移MySQL+本机签名供应商HTTP验证。
+- 任务：合成夹具/八接口四类用例→签名供应商与运行器接入→脚本测试/默认禁用→真实隔离执行/数据库与调用数核对→覆盖总表/CI/报告→阶段上传。
+- Docker29.6.2及MySQL/Maven镜像可用；默认沙箱访问Docker受限，升级执行权限后确认可用。
+
+- 首轮实际运行74d043b386e6在SQL夹具阶段失败（尚未发业务HTTP）；独立隔离诊断确认order金额列误用了total_amount，当前表列为amount。已修正夹具，未改业务schema；两轮已建MySQL/网络均完成清理。准备新环境完整重跑。
+
+- A4d-6完整重跑997d21cb4040通过（189.219秒）：8接口72业务HTTP/238断言+338匿名/1014断言，14DB检查及供应商固定调用数通过；源码仍匹配，后端/MySQL/网络已清理。默认禁用实测0请求；192项相关Python测试通过。
+- 历史四类覆盖20套去重222项，所选缺口130项；全量API/正式资金/真机仍不销项。文档与证据已整理，准备阶段上传。一次将Java误放入Python语法检查的命令已纠正；Java单独编译和实际供应商启动均通过。
+
+
+## R9 A4d7 开始
+
+已创建 codex/r9-a4d7-workflow-notifications，依赖 A4d6。实施十个新增接口的四类用例与生命周期通知验证。
+
+
+## R9 A4d7 本地验收完成
+
+运行660a6639bcc4通过，226.719秒，171业务请求/567断言，338匿名请求/1014断言；源文件一致、自有资源清理通过。202项相关脚本测试、默认关闭零请求及覆盖一致性检查通过。详细记录见 docs/progress/R9_A4D7_WORKFLOW_NOTIFICATIONS_EXECUTION.md；GitHub上传为下一步。
+
+
+## R9 A4d7 最终复跑
+
+提交前整理脚本后，运行7774f0b5fe12重新通过；最终源文件哈希一致，清理全部通过。业务和匿名请求数量、全部数据库不变量与初次成功运行一致。
+
+
+## R9 A4d8 开始
+
+创建 codex/r9-a4d8-dispute-recovery，基于 PR198。采用真实履约流程驱动争议，不直接插入争议或通知 SQL 夹具。
+
+
+## R9 A4d8 本地验收通过
+
+运行e6ee18635810耗时207.062秒，144业务请求/485断言、338匿名请求/1014断言通过。211项相关脚本测试通过，默认关闭零请求，源文件未变且自有资源清理通过。累计234/352项拥有完整所选历史四类证据，118项缺口。详见 docs/progress/R9_A4D8_DISPUTE_RECOVERY_EXECUTION.md。准备提交推送GitHub草稿PR。
+
+
+## R9 A4d9 开始
+
+创建 codex/r9-a4d9-pickup-work-files，基于 A4d-8。采用 Java 真实旅程（MySQL/MinIO/ClamAV）+ Python 证据审计，补齐接车与三侧施工附件访问四个接口；Newman 套件无法验证真实签名下载，故不沿用。
+
+
+## R9 A4d9 本地验收通过
+
+运行通过，282.656秒：39业务请求/4接口四类覆盖/0失败；19个真实上传CLEAN、14条接车附件与5条施工证据关联；签名下载逐字节一致，去签名/篡改/6.1秒过期均403。修掉接车附件访问忽略未知与重复query的缺口。源码一致，4容器与网络实际移除；回归17项通过。覆盖238/352项，缺口114项。详见 docs/progress/R9_A4D9_PICKUP_WORK_FILES_EXECUTION.md。
+
+
+## R9 A4d10 开始
+
+创建 codex/r9-a4d10-assessment-reads，基于 A4d-9。采用 Newman 业务套件（真后端 + 真 MySQL），补齐考核政策、月结、员工考核与经营看板共 20 个已实现接口；这些接口不碰对象存储与渠道回调，风险在月份窗口、结算修订、权限与"不凭空出分"。
+
+
+## R9 A4d10 本地验收通过
+
+运行通过，228.873秒：153业务请求/530断言/0失败，20接口四类齐备；匿名338请求/1014断言通过且行数不变；7个幂等作用域与2组同键异体实测通过；13项数据库不变量全部为真（3份快照摘要全UNKNOWN且分数等级为null、无政策月份policy_snapshot为JSON null、事实不入审计）。源码一致，容器与网络实际移除。覆盖258/352项，缺口94项。详见 docs/progress/R9_A4D10_ASSESSMENT_READS_EXECUTION.md。
+## R9 A4d11 计划
+
+创建 codex/r9-a4d11-governance-writes，基于 A4d-10。继续用 Newman 业务套件（真后端 + 真 MySQL），补齐目录治理 3 项与价格监测政策 6 项共 9 个已实现接口；主题是"证据链"——报价没补齐来源说明就只能是 UNKNOWN，补齐后才有可引用的来源哈希，政策只肯认这个哈希。
+
+
+## 2026-10-22 A4d12 开始
+
+已复核最新HEAD fe3f562及PR202八项CI成功。原拟附件工作已由A4d9完成，新建分支改名codex/r9-a4d12-fulfillment-reads。开始补齐剩余履约读取与时段关闭10接口。
+
+
+## A4d12 首轮通过并增强空页检查
+
+首轮01e272c598d2通过，251.219秒，170业务请求/565断言、338匿名请求通过；原履约6项及新增关闭/读取6项DB不变量均通过。补强四个分页边界空数组断言后，8项专用脚本测试通过；启动最终源文件完整复跑，目标170请求/569断言。
+
+
+## A4d12 最终本地验收通过
+
+最终运行d9cdc6989eac，213.765秒，170业务请求/569断言，338匿名请求/1014断言全通过，源码匹配、自有资源清理通过。246项相关Python校验通过，空页增强后的8项专用测试重跑通过。累计277项历史四类证据，缺口75项。执行文档 docs/progress/R9_A4D12_FULFILLMENT_READS_EXECUTION.md，准备GitHub阶段上传。
+
+
+## A4d13 开始
+
+创建codex/r9-a4d13-plan-evidence，开始6项方案证据接口验收；生产Java/schema暂不修改。
+
+
+## A4d13 本地验收通过
+
+运行377fc68a422d，219秒；70业务请求/237断言及338匿名请求/1014断言通过，9项DB不变量、源文件哈希及资源清理通过。255项相关Python校验通过、默认关闭零请求。累计283项历史四类证据，缺口69项。详见docs/progress/R9_A4D13_PLAN_EVIDENCE_EXECUTION.md，准备GitHub阶段上传。
+
+
+## A4d14 开始
+
+创建codex/r9-a4d14-invitation-rewards，复用真实奖励旅程，强化只读和重复发放断言，准备全新数据库运行。
+
+
+## A4d14 本地验收通过
+
+run_reward_acceptance --docker通过，281.36秒：144HTTP/14接口四类，17项检查、8项Java测试、75项Python校验通过；源文件一致、自有MySQL实际移除。累计291项历史证据，缺口61项。执行记录docs/progress/R9_A4D14_INVITATION_REWARDS_EXECUTION.md，准备阶段GitHub上传。
+
+
+## A4d15 开始
+
+已建立 codex/r9-a4d15-community-images，编写真实旅程；继续完成严格证据适配器、CI及回归。修复初稿 token 方法落在类外的问题后进入编译验证。
+
+
+## A4d15 本地完成
+
+真实旅程258.203秒PASS：85图片业务请求、11接口四类证据、12不变量；8项Java和87项相关Python校验通过。源码一致且五类资源实际移除。所选历史覆盖302/352项，缺口50项；合成身份/前序支付和扫描库不计外部验收，PNG元数据剥离不等于自动视觉遮挡。CI门禁、报告及执行文档已完成，准备提交推送依赖PR205的草稿PR。
+
+
+本阶段已上传[草稿PR206](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/206)，实现提交 `fe713cf`，base=`codex/r9-a4d14-invitation-rewards`，依赖PR205；远程CI已触发，结论以PR实际检查为准，未合并。
+
+
+## A4d16 开始
+
+已建 codex/r9-a4d16-relations-price-reads 分支，设计客户关系及价格比较独立只读验收。
+
+
+## A4d16 本地完成
+
+236.968秒实际PASS，4接口58业务请求/216断言、338匿名请求/1014断言，13张业务表完整内容摘要无变化；源码稳定且自有后端/MySQL/网络清理。84项相关Python回归及新集合默认禁发0请求通过。历史覆盖306/352，缺口46；准备上传依赖PR206的草稿PR。
+
+
+阶段已上传[草稿PR207](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/207)，实现提交 `e5559e9`，base=`codex/r9-a4d15-community-images`，依赖PR206；远程CI已触发，结果以PR实际检查为准，未合并。
+
+
+## A4d17 开始
+
+新建 codex/r9-a4d17-coupon-catalog，设计复用独立HTTP验收框架；前置PR207部分CI成功，后端/性能仍运行。
+
+
+## A4d17 本地完成
+
+195.422秒真实PASS：9接口96业务请求/354断言、338匿名请求/1014断言；13项不变量及99项Python回归通过。额外4次列表读取所选11表完整内容摘要无变化，源码稳定且自有后端/MySQL/网络移除。历史覆盖310/352，缺口42；准备上传依赖PR207的阶段草稿PR。
+
+
+阶段已上传[草稿PR208](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/208)，实现提交 `aabe4b9`，base=`codex/r9-a4d16-relations-price-reads`，依赖PR207；远程CI已触发，结果以PR实际检查为准，未合并。
+
+
+## A4d18 开始
+
+已建 codex/r9-a4d18-auth-sessions；PR208部分CI成功，后端及性能仍运行。读取生产认证与会话实现，准备独立合成会话HTTP验收。
+
+
+## A4d18 本地完成
+
+214.766秒实际PASS：4接口45请求/149断言、338匿名/1014断言，13不变量及89项相关Python回归通过；额外7次HTTP验证并发刷新单次成功及退出失效。源码一致、资源清理且公开报告不含凭证。历史覆盖313/352，缺口39；准备上传依赖PR208的阶段草稿PR。
+
+
+阶段已上传[草稿PR209](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/209)，实现提交 `3895f3d`，base=`codex/r9-a4d17-coupon-catalog`，依赖PR208；远程CI已触发，结果以PR实际检查为准，未合并。
+
+
+## A4d19 开始
+
+已建 codex/r9-a4d19-onboarding-files；先核对覆盖缺口清单确认入驻附件授权访问是唯一未覆盖的入驻读接口，再读通 MerchantOnboardingAdminController.access、MerchantOnboarding.fileOwner 与 MerchantOnboardingInput 的校验边界，准备独立合成申请的 HTTP 旅程。
+
+
+## A4d19 本地完成
+
+307.395秒实际PASS：1接口12业务请求四类覆盖/0失败，11项检查全真；3次真实上传CLEAN且只归属申请人，两份申请快照精确、跨申请零引用且未激活门店；签名下载逐字节一致，去签名/篡改/6.1秒过期均403。源码一致且4容器与网络移除，同批回归15项Java与125项Python通过。历史覆盖314/352，缺口38。
+
+
+阶段已上传[草稿PR210](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/210)，实现提交 `a1ea4ad`，base=`codex/r9-a4d18-auth-sessions`，依赖PR209；远程CI已触发，结果以PR实际检查为准，未合并。
+
+
+## A4d20 开始
+
+已建 codex/r9-a4d20-rating-quotes；先把 38 项缺口逐条查实现，确认只有 GET /api/service/project/{id}/rating-quotes 四类全可达，另三项分别是"无 200 路径""需大模型供应商""本地示例端点"。
+
+
+## A4d20 本地完成
+
+201.923秒实际PASS：1接口18业务请求/67断言四类覆盖、338匿名请求/1014断言、14张业务表前后摘要不变；排序[1,3,2]与评分5.00/2.00/null如实，下架/最新价0/项目status=0均被排除。首轮因 extra 断言跨 pm.test 作用域复用 const 而 FAIL，改为每条自取响应后通过。历史覆盖315/352，缺口37。
+
+
+阶段已上传[草稿PR211](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/211)，实现提交 `38ad29f`，base=`codex/r9-a4d19-onboarding-files`，依赖PR210；远程CI已触发，结果以PR实际检查为准，未合并。
+
+
+## A4d21 开始
+
+已建 codex/r9-a4d21-contract-verdicts；先逐条查 37 项缺口的实现可达性，确认它们不是"缺证据"而是四种不同处境（已被替代/外部阻塞/未实现/无成功路径），决定改成"结论表 + 门禁"而不是继续排队补证据。
+
+
+## A4d21 本地完成
+
+352 = 315 有证据 + 37 有结论，未解释 0 项；分布 superseded=15 / internal-only=1 / blocked-external=10 / not-implemented=7 / no-success-path=1 / dev-only=3。门禁 11 项单测与覆盖 32 项单测通过，--check 逐字节一致；覆盖口径不变（仍 315/37）。顺带修正 3 处契约元数据（ai/chat 与辅助材料上传/访问），不改路径与行为。
+
+
+阶段已上传[草稿PR212](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/212)，实现提交 `062347d`，base=`codex/r9-a4d20-rating-quotes`，依赖PR211；远程CI已触发，结果以PR实际检查为准，未合并。
+
+
+## A4d22 开始
+
+已建 codex/r9-a4d22-delivery-compare；从结论表的 not-implemented 里挑出唯一可离线实现且审计点名欠着的取车对比，先定"只读投影、不写 delivery_compare、交付仍归核销"的设计，再写服务与控制器。
+
+
+## A4d22 本地完成
+
+319.130秒实际PASS：16业务请求/60断言/1接口四类，338匿名/1014断言，13项不变量全真（12表摘要不变 + delivery_compare 0行）。缺口逐项算出（[OWNER_CONFIRM,PROTECTION_PHOTO,FINISH,FAULT]），已完成订单可回看不可交付，无接车单 409 43001。契约改真实 schema 并去掉幂等键要求。历史覆盖316/352，缺口36。
+
+
+阶段已上传[草稿PR213](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/213)，实现提交 `5f22023`，base=`codex/r9-a4d21-contract-verdicts`，依赖PR212；远程CI已触发，结果以PR实际检查为准，未合并。
+
+
+## A4d23 开始
+
+已建 codex/r9-a4d23-delivery-compare-page；A4d22 只做了后端，本阶段补 R7a 的页面：先照接车详情/施工证据页的分层（协议/展示/页面）定结构，再定"入口只在待核销与已完成显示""409 不给重试"两条规则。
+
+
+## A4d23 本地完成
+
+小程序单测 1023/1023（新增 8 项），微信构建 DONE（原生样式与无测试身份桥 PASS），H5 构建 DONE。校验含结论与缺口一致、deliverable 依赖 READY、槽位数一致、报工状态自洽、order_id 回指请求订单。文案成对验证通过（wxml 无映射文案、编译后映射模块有）。接口与覆盖数字未变（316/352，缺口 36）。
+
+
+阶段已上传[草稿PR214](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/214)，实现提交 `4b5bdf3`，base=`codex/r9-a4d22-delivery-compare`，依赖PR213；远程CI已触发，结果以PR实际检查为准，未合并。
+
+
+## A4d24 开始
+
+已建 codex/r9-a4d24-delivery-merchant-view；商家侧没必要新开接口或页面，后端已允许本店员工读同一投影。决定复用页面 + role 参数，文案分叉放展示层，入口放在商家订单详情与核销页顶部。
+
+
+## A4d24 本地完成
+
+小程序单测 1024/1024（新增/更新 2 项）；微信与 H5 构建均 DONE；6 组商家/角色文案在编译后 wxml 为 0 次、映射模块里存在。不在前端阻止核销（后端守卫是唯一权威）。接口与覆盖数字未变（316/352，缺口 36）。
+
+
+阶段已上传[草稿PR215](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/215)，实现提交 `0641389`，base=`codex/r9-a4d23-delivery-compare-page`，依赖PR214；远程CI已触发，结果以PR实际检查为准，未合并。
+
+
+## A4d25 开始
+
+已核对最新阶段19–24成果及PR215检查，避免重复附件验收。用investigate定位生成源缺失，以brainstorming/planning-with-files落盘设计。先完成可复现生成修复与CI门禁，再推进财务对账。
+
+
+## A4d25 本地完成
+
+修复4操作生成源漂移，新9项回归验证先失败后通过。schema-and-ocr完整85条命令/451测试通过（118.313秒），加认证就绪6项合计46套/457项Python测试。生成资产无Git规范内容差异，316/352历史覆盖与36项结论缺口不变。准备提交依赖PR215的草稿PR；财务对账留下一功能阶段，不计本轮交付。
+
+
+阶段已上传[草稿PR216](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/216)，实现提交 `e037489`，base=`codex/r9-a4d24-delivery-merchant-view`，依赖PR215；远程CI已触发，结果以PR实际检查为准，未合并。
+# A4d45本地收口（2026-10-26）
+- 宿主Java17/Maven可用且不改全局安装；安全改线、最终微信/网关复验、资料与脱敏报告完成，9+14+18+11+8 Python审计及1061小程序回归、两种微信构建和索引核对通过。70c94fd已上传依赖PR235的草稿PR236，最终head CI另核，未合并部署。
+
+## 2026-10-21 交付文档独立核查
+- 目标：按原始交付文档 F01–F20 及第9–12章核对当前代码、历史证据与未完成项。
+- 阶段：需求基线已读；正在核对真实接入、PC后台、接口/性能门禁及小程序实现。
+- 保留已有记录；本轮仅添加检查记录与审计报告，不修改业务代码。
+- 本次实测：小程序1015/1015通过、0失败/跳过；微信构建及两项原生门禁通过；62迁移挂载校验通过。
+- 已校验新报告全部本地引用路径存在。历史后端、覆盖率、性能及恢复证据仅引用，未冒充本次复跑。
+- 报告：docs/progress/DELIVERY_AUDIT_2026_10_21.md。读取中出现的Windows通配路径和Python默认GBK错误已通过rg glob与显式UTF-8读取纠正，不影响结论。
+
+## A4d-4c 验证中
+- 新增15项测试；与既有退款8项合计23/23通过；全量1030/1030通过，0失败/跳过。
+- 微信构建通过，产物含17个退款静态锚点、2个textarea，映射模块存在。
+- 尚未执行真机、模拟器渲染、正式资金；不更改后端/API契约。
+
+- A4d-4c 本地验证完成：1030项全通过，微信/H5构建与原生两门禁通过；报告和当前状态已整理，准备提交推送。
+
+- A4d-4c已上传：6a8835b推送至origin/codex/r9-a4d4c-refunds；草稿PR195：https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/195。阶段规划及实现/本地验证/上传完成；远程CI独立跟踪，未合并或上线。

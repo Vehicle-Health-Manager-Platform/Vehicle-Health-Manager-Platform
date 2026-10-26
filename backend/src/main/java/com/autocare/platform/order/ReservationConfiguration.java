@@ -11,6 +11,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @ConditionalOnProperty("MYSQL_HOST")
 @EnableScheduling
 public class ReservationConfiguration {
+    @Bean LocalFinance localFinance(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators){return new LocalFinance(db,operators);}
     @Bean LicensedKnowledge licensedKnowledge(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators,ExperienceModeration experiences,com.autocare.platform.ai.DeepSeekClient ai,@org.springframework.beans.factory.annotation.Value("${KNOWLEDGE_ENABLED:false}")boolean enabled,@org.springframework.beans.factory.annotation.Value("${KNOWLEDGE_AI_ENABLED:false}")boolean aiEnabled){return new LicensedKnowledge(db,operators,experiences,ai,enabled,aiEnabled);}
     @Bean PublicImages publicImages(ReservationStore db,com.autocare.platform.gateway.identity.OperatorIdentity operators,ExperienceModeration experiences,org.springframework.beans.factory.ObjectProvider<com.autocare.platform.file.SignedObjectStore> store,@org.springframework.beans.factory.annotation.Value("${PUBLIC_IMAGES_ENABLED:false}")boolean enabled){return new PublicImages(db,operators,experiences,store.getIfAvailable(),enabled);}
     @Bean PointLedger pointLedger(ReservationStore db,PointTaskPolicies policies,@org.springframework.beans.factory.annotation.Value("${WECHAT_APP_ID:}")String app,@org.springframework.beans.factory.annotation.Value("${POINTS_EARNING_ENABLED:false}")boolean enabled,@org.springframework.beans.factory.annotation.Value("${POINTS_AI_VERIFIED_ENABLED:false}")boolean aiEnabled,com.autocare.platform.ai.DeepSeekClient ai){return new PointLedger(db,policies,app,enabled,aiEnabled,ai::officialEndpoint);}
@@ -55,6 +56,7 @@ public class ReservationConfiguration {
     @Bean MerchantOrders merchantOrders(ReservationStore db){return new MerchantOrders(db);}
     @Bean OrderFulfillment orderFulfillment(ReservationStore db,MerchantOrders orders){return new OrderFulfillment(db,orders);}
     @Bean PickupInspection pickupInspection(ReservationStore db){return new PickupInspection(db);}
+    @Bean DeliveryCompare deliveryCompare(ReservationStore db){return new DeliveryCompare(db);}
     @Bean TechnicianAssignments technicianAssignments(ReservationStore db,@org.springframework.beans.factory.annotation.Value("${WECHAT_APP_ID:}")String appId){return new TechnicianAssignments(db,appId);}
     @Bean OrderDisputes orderDisputes(ReservationStore db){return new OrderDisputes(db);}
     @Bean OrderReviews orderReviews(ReservationStore db){return new OrderReviews(db);}

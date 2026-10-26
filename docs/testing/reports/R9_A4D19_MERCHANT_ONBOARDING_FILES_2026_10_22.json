@@ -1,0 +1,171 @@
+{
+  "version": 1,
+  "passed": true,
+  "full_api_acceptance_passed": false,
+  "finished_at": "2026-10-22T14:21:48.284631+00:00",
+  "duration_seconds": 307.395,
+  "source_sha256": "3b485ed35130c29df046921abe367a10740b9f33313a9a81bb8c7d84d539629d",
+  "sources_unchanged": true,
+  "maven_exit_code": 0,
+  "execution_mode": "local-execution",
+  "proof": {
+    "requests": 12,
+    "operations": 1,
+    "coverage": {
+      "GET /api/admin/merchant-applications/{id}/files/{file}/access": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ]
+    },
+    "checks": {
+      "three_clean_uploads": true,
+      "files_owned_by_applicants_only": true,
+      "applications_exact_two": true,
+      "qualification_snapshots_exact": true,
+      "one_application_per_applicant": true,
+      "no_merchant_activation": true,
+      "cross_application_files_never_linked": true,
+      "unsigned_object_denied": true,
+      "tampered_signature_denied": true,
+      "expired_signature_denied": true,
+      "signature_lease_bounded": true
+    },
+    "cleanup": {
+      "initializer": true,
+      "clamav": true,
+      "minio": true,
+      "mysql": true,
+      "network": true
+    },
+    "cases": [
+      {
+        "name": "onboarding_qualification_first",
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/admin/merchant-applications/1/files/1/access",
+        "role": "operator",
+        "operation": "/api/admin/merchant-applications/{id}/files/{file}/access"
+      },
+      {
+        "name": "onboarding_qualification_second",
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/admin/merchant-applications/1/files/2/access",
+        "role": "operator",
+        "operation": "/api/admin/merchant-applications/{id}/files/{file}/access"
+      },
+      {
+        "name": "onboarding_other_application",
+        "passed": true,
+        "method": "GET",
+        "status": 200,
+        "kind": "normal",
+        "path": "/api/admin/merchant-applications/2/files/3/access",
+        "role": "operator",
+        "operation": "/api/admin/merchant-applications/{id}/files/{file}/access"
+      },
+      {
+        "name": "onboarding_cross_application_file",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "boundary",
+        "path": "/api/admin/merchant-applications/1/files/3/access",
+        "role": "operator",
+        "operation": "/api/admin/merchant-applications/{id}/files/{file}/access"
+      },
+      {
+        "name": "onboarding_missing_application",
+        "passed": true,
+        "method": "GET",
+        "status": 404,
+        "kind": "boundary",
+        "path": "/api/admin/merchant-applications/999999/files/1/access",
+        "role": "operator",
+        "operation": "/api/admin/merchant-applications/{id}/files/{file}/access"
+      },
+      {
+        "name": "onboarding_query",
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/admin/merchant-applications/1/files/1/access?page=1",
+        "role": "operator",
+        "operation": "/api/admin/merchant-applications/{id}/files/{file}/access"
+      },
+      {
+        "name": "onboarding_zero_application",
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/admin/merchant-applications/0/files/1/access",
+        "role": "operator",
+        "operation": "/api/admin/merchant-applications/{id}/files/{file}/access"
+      },
+      {
+        "name": "onboarding_zero_file",
+        "passed": true,
+        "method": "GET",
+        "status": 400,
+        "kind": "error",
+        "path": "/api/admin/merchant-applications/1/files/0/access",
+        "role": "operator",
+        "operation": "/api/admin/merchant-applications/{id}/files/{file}/access"
+      },
+      {
+        "name": "onboarding_anonymous",
+        "passed": true,
+        "method": "GET",
+        "status": 401,
+        "kind": "unauthorized",
+        "path": "/api/admin/merchant-applications/1/files/1/access",
+        "role": "anonymous",
+        "operation": "/api/admin/merchant-applications/{id}/files/{file}/access"
+      },
+      {
+        "name": "onboarding_review_permission_only",
+        "passed": true,
+        "method": "GET",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/admin/merchant-applications/1/files/1/access",
+        "role": "review_operator",
+        "operation": "/api/admin/merchant-applications/{id}/files/{file}/access"
+      },
+      {
+        "name": "onboarding_owner_denied",
+        "passed": true,
+        "method": "GET",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/admin/merchant-applications/1/files/1/access",
+        "role": "owner",
+        "operation": "/api/admin/merchant-applications/{id}/files/{file}/access"
+      },
+      {
+        "name": "onboarding_merchant_denied",
+        "passed": true,
+        "method": "GET",
+        "status": 403,
+        "kind": "unauthorized",
+        "path": "/api/admin/merchant-applications/1/files/1/access",
+        "role": "merchant",
+        "operation": "/api/admin/merchant-applications/{id}/files/{file}/access"
+      }
+    ]
+  },
+  "error": null,
+  "boundaries": [
+    "synthetic user, shop, operator and application rows; real HTTP uploads, onboarding submissions, permission checks and signed object downloads",
+    "synthetic scan database injected only in test configuration; production freshness unchanged",
+    "signature lease is 5 seconds and one natural expiry was measured; no production malware coverage, real operator identity, review decision, quota or external cloud supplier acceptance"
+  ]
+}

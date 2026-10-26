@@ -1,0 +1,1538 @@
+{
+  "version": 1,
+  "cases": 153,
+  "operations": 20,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "policies_seeded",
+      "method": "GET",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "get_api_admin_assessment_policies",
+      "kind": "normal",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 8
+    },
+    {
+      "name": "policies_last_page",
+      "method": "GET",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "get_api_admin_assessment_policies",
+      "kind": "boundary",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 4
+    },
+    {
+      "name": "policies_page_size",
+      "method": "GET",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "get_api_admin_assessment_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "policies_anonymous",
+      "method": "GET",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "get_api_admin_assessment_policies",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policies_analyst_denied",
+      "method": "GET",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "get_api_admin_assessment_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "analyst",
+      "assertions": 3
+    },
+    {
+      "name": "policies_merchant_denied",
+      "method": "GET",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "get_api_admin_assessment_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchants_list",
+      "method": "GET",
+      "path": "/api/admin/assessment/merchants",
+      "operation_id": "get_api_admin_assessment_merchants",
+      "kind": "normal",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 4
+    },
+    {
+      "name": "merchants_last_page",
+      "method": "GET",
+      "path": "/api/admin/assessment/merchants",
+      "operation_id": "get_api_admin_assessment_merchants",
+      "kind": "boundary",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 4
+    },
+    {
+      "name": "merchants_page_zero",
+      "method": "GET",
+      "path": "/api/admin/assessment/merchants",
+      "operation_id": "get_api_admin_assessment_merchants",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "merchants_anonymous",
+      "method": "GET",
+      "path": "/api/admin/assessment/merchants",
+      "operation_id": "get_api_admin_assessment_merchants",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "merchants_analyst_denied",
+      "method": "GET",
+      "path": "/api/admin/assessment/merchants",
+      "operation_id": "get_api_admin_assessment_merchants",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "analyst",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_policy_absent",
+      "method": "GET",
+      "path": "/api/merchant/assessment/policy",
+      "operation_id": "get_api_merchant_assessment_policy",
+      "kind": "boundary",
+      "status": 200,
+      "role": "other_merchant",
+      "assertions": 4
+    },
+    {
+      "name": "policy_create",
+      "method": "POST",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "post_api_admin_assessment_policies",
+      "kind": "normal",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 6
+    },
+    {
+      "name": "policy_create_replay",
+      "method": "POST",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "post_api_admin_assessment_policies",
+      "kind": "boundary",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 4
+    },
+    {
+      "name": "policy_create_malformed",
+      "method": "POST",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "post_api_admin_assessment_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_anonymous",
+      "method": "POST",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "post_api_admin_assessment_policies",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "post_api_admin_assessment_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_changed_body",
+      "method": "POST",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "post_api_admin_assessment_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_past_window",
+      "method": "POST",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "post_api_admin_assessment_policies",
+      "kind": "boundary",
+      "status": 409,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_zero_target",
+      "method": "POST",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "post_api_admin_assessment_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_duplicate_requirement",
+      "method": "POST",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "post_api_admin_assessment_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_grade_not_zero",
+      "method": "POST",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "post_api_admin_assessment_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_grade_not_declining",
+      "method": "POST",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "post_api_admin_assessment_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_mid_month",
+      "method": "POST",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "post_api_admin_assessment_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_unknown_field",
+      "method": "POST",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "post_api_admin_assessment_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_query",
+      "method": "POST",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "post_api_admin_assessment_policies",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_unknown_merchant",
+      "method": "POST",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "post_api_admin_assessment_policies",
+      "kind": "error",
+      "status": 404,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_create_analyst_denied",
+      "method": "POST",
+      "path": "/api/admin/assessment/policies",
+      "operation_id": "post_api_admin_assessment_policies",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "analyst",
+      "assertions": 3
+    },
+    {
+      "name": "policy_update",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/2",
+      "operation_id": "put_api_admin_assessment_policies_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 5
+    },
+    {
+      "name": "policy_update_replay",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/2",
+      "operation_id": "put_api_admin_assessment_policies_id",
+      "kind": "boundary",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 4
+    },
+    {
+      "name": "policy_update_malformed",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/2",
+      "operation_id": "put_api_admin_assessment_policies_id",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_update_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/2",
+      "operation_id": "put_api_admin_assessment_policies_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_update_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/2",
+      "operation_id": "put_api_admin_assessment_policies_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "policy_update_stale",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/2",
+      "operation_id": "put_api_admin_assessment_policies_id",
+      "kind": "boundary",
+      "status": 409,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_update_unknown",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/999",
+      "operation_id": "put_api_admin_assessment_policies_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_update_zero_id",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/0",
+      "operation_id": "put_api_admin_assessment_policies_id",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_publish",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/2/status",
+      "operation_id": "put_api_admin_assessment_policies_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 5
+    },
+    {
+      "name": "policy_publish_replay",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/2/status",
+      "operation_id": "put_api_admin_assessment_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 4
+    },
+    {
+      "name": "policy_publish_malformed",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/2/status",
+      "operation_id": "put_api_admin_assessment_policies_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_publish_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/2/status",
+      "operation_id": "put_api_admin_assessment_policies_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_publish_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/2/status",
+      "operation_id": "put_api_admin_assessment_policies_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "policy_publish_again",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/2/status",
+      "operation_id": "put_api_admin_assessment_policies_id_status",
+      "kind": "boundary",
+      "status": 409,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_status_draft",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/2/status",
+      "operation_id": "put_api_admin_assessment_policies_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_publish_unknown",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/999/status",
+      "operation_id": "put_api_admin_assessment_policies_id_status",
+      "kind": "boundary",
+      "status": 404,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_policy_not_started",
+      "method": "GET",
+      "path": "/api/merchant/assessment/policy",
+      "operation_id": "get_api_merchant_assessment_policy",
+      "kind": "normal",
+      "status": 200,
+      "role": "other_merchant",
+      "assertions": 4
+    },
+    {
+      "name": "merchant_policy",
+      "method": "GET",
+      "path": "/api/merchant/assessment/policy",
+      "operation_id": "get_api_merchant_assessment_policy",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "merchant_policy_error",
+      "method": "GET",
+      "path": "/api/merchant/assessment/policy",
+      "operation_id": "get_api_merchant_assessment_policy",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_policy_anonymous",
+      "method": "GET",
+      "path": "/api/merchant/assessment/policy",
+      "operation_id": "get_api_merchant_assessment_policy",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_policy_wrong_role",
+      "method": "GET",
+      "path": "/api/merchant/assessment/policy",
+      "operation_id": "get_api_merchant_assessment_policy",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_policy_staff_denied",
+      "method": "GET",
+      "path": "/api/merchant/assessment/policy",
+      "operation_id": "get_api_merchant_assessment_policy",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "staff",
+      "assertions": 3
+    },
+    {
+      "name": "admin_month_ready",
+      "method": "GET",
+      "path": "/api/admin/assessment/month",
+      "operation_id": "get_api_admin_assessment_month",
+      "kind": "normal",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 5
+    },
+    {
+      "name": "admin_month_open",
+      "method": "GET",
+      "path": "/api/admin/assessment/month",
+      "operation_id": "get_api_admin_assessment_month",
+      "kind": "boundary",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 4
+    },
+    {
+      "name": "admin_month_missing_month",
+      "method": "GET",
+      "path": "/api/admin/assessment/month",
+      "operation_id": "get_api_admin_assessment_month",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "admin_month_missing_merchant",
+      "method": "GET",
+      "path": "/api/admin/assessment/month",
+      "operation_id": "get_api_admin_assessment_month",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "admin_month_bad_month",
+      "method": "GET",
+      "path": "/api/admin/assessment/month",
+      "operation_id": "get_api_admin_assessment_month",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "admin_month_unknown_merchant",
+      "method": "GET",
+      "path": "/api/admin/assessment/month",
+      "operation_id": "get_api_admin_assessment_month",
+      "kind": "error",
+      "status": 404,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "admin_month_anonymous",
+      "method": "GET",
+      "path": "/api/admin/assessment/month",
+      "operation_id": "get_api_admin_assessment_month",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "admin_month_analyst_denied",
+      "method": "GET",
+      "path": "/api/admin/assessment/month",
+      "operation_id": "get_api_admin_assessment_month",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "analyst",
+      "assertions": 3
+    },
+    {
+      "name": "settle",
+      "method": "POST",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "post_api_admin_assessment_snapshots",
+      "kind": "normal",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 9
+    },
+    {
+      "name": "settle_replay",
+      "method": "POST",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "post_api_admin_assessment_snapshots",
+      "kind": "boundary",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 4
+    },
+    {
+      "name": "settle_malformed",
+      "method": "POST",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "post_api_admin_assessment_snapshots",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "settle_anonymous",
+      "method": "POST",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "post_api_admin_assessment_snapshots",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "settle_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "post_api_admin_assessment_snapshots",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "settle_stale_revision",
+      "method": "POST",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "post_api_admin_assessment_snapshots",
+      "kind": "boundary",
+      "status": 409,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "settle_changed_body",
+      "method": "POST",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "post_api_admin_assessment_snapshots",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "settle_future_month",
+      "method": "POST",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "post_api_admin_assessment_snapshots",
+      "kind": "boundary",
+      "status": 409,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "settle_unknown_merchant",
+      "method": "POST",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "post_api_admin_assessment_snapshots",
+      "kind": "error",
+      "status": 404,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "settle_again",
+      "method": "POST",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "post_api_admin_assessment_snapshots",
+      "kind": "normal",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 5
+    },
+    {
+      "name": "settle_again_replay",
+      "method": "POST",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "post_api_admin_assessment_snapshots",
+      "kind": "boundary",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 4
+    },
+    {
+      "name": "settle_again_malformed",
+      "method": "POST",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "post_api_admin_assessment_snapshots",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "settle_again_anonymous",
+      "method": "POST",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "post_api_admin_assessment_snapshots",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "settle_again_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "post_api_admin_assessment_snapshots",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "settle_other_shop",
+      "method": "POST",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "post_api_admin_assessment_snapshots",
+      "kind": "normal",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 6
+    },
+    {
+      "name": "settle_other_shop_replay",
+      "method": "POST",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "post_api_admin_assessment_snapshots",
+      "kind": "boundary",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 4
+    },
+    {
+      "name": "settle_other_shop_malformed",
+      "method": "POST",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "post_api_admin_assessment_snapshots",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "settle_other_shop_anonymous",
+      "method": "POST",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "post_api_admin_assessment_snapshots",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "settle_other_shop_wrong_role",
+      "method": "POST",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "post_api_admin_assessment_snapshots",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "admin_snapshots",
+      "method": "GET",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "get_api_admin_assessment_snapshots",
+      "kind": "normal",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 4
+    },
+    {
+      "name": "admin_snapshots_boundary",
+      "method": "GET",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "get_api_admin_assessment_snapshots",
+      "kind": "boundary",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "admin_snapshots_error",
+      "method": "GET",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "get_api_admin_assessment_snapshots",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "admin_snapshots_anonymous",
+      "method": "GET",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "get_api_admin_assessment_snapshots",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "admin_snapshots_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/assessment/snapshots",
+      "operation_id": "get_api_admin_assessment_snapshots",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "admin_snapshot",
+      "method": "GET",
+      "path": "/api/admin/assessment/snapshots/2",
+      "operation_id": "get_api_admin_assessment_snapshots_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 4
+    },
+    {
+      "name": "admin_snapshot_boundary",
+      "method": "GET",
+      "path": "/api/admin/assessment/snapshots/999999",
+      "operation_id": "get_api_admin_assessment_snapshots_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "admin_snapshot_error",
+      "method": "GET",
+      "path": "/api/admin/assessment/snapshots/0",
+      "operation_id": "get_api_admin_assessment_snapshots_id",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "admin_snapshot_anonymous",
+      "method": "GET",
+      "path": "/api/admin/assessment/snapshots/2",
+      "operation_id": "get_api_admin_assessment_snapshots_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "admin_snapshot_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/assessment/snapshots/2",
+      "operation_id": "get_api_admin_assessment_snapshots_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "admin_snapshot_facts",
+      "method": "GET",
+      "path": "/api/admin/assessment/snapshots/2/facts",
+      "operation_id": "get_api_admin_assessment_snapshots_id_facts",
+      "kind": "normal",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 7
+    },
+    {
+      "name": "admin_snapshot_facts_boundary",
+      "method": "GET",
+      "path": "/api/admin/assessment/snapshots/2/facts",
+      "operation_id": "get_api_admin_assessment_snapshots_id_facts",
+      "kind": "boundary",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "admin_snapshot_facts_error",
+      "method": "GET",
+      "path": "/api/admin/assessment/snapshots/2/facts",
+      "operation_id": "get_api_admin_assessment_snapshots_id_facts",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "admin_snapshot_facts_anonymous",
+      "method": "GET",
+      "path": "/api/admin/assessment/snapshots/2/facts",
+      "operation_id": "get_api_admin_assessment_snapshots_id_facts",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "admin_snapshot_facts_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/assessment/snapshots/2/facts",
+      "operation_id": "get_api_admin_assessment_snapshots_id_facts",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "admin_history",
+      "method": "GET",
+      "path": "/api/admin/assessment/history",
+      "operation_id": "get_api_admin_assessment_history",
+      "kind": "normal",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 4
+    },
+    {
+      "name": "admin_history_boundary",
+      "method": "GET",
+      "path": "/api/admin/assessment/history",
+      "operation_id": "get_api_admin_assessment_history",
+      "kind": "boundary",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "admin_history_error",
+      "method": "GET",
+      "path": "/api/admin/assessment/history",
+      "operation_id": "get_api_admin_assessment_history",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "admin_history_anonymous",
+      "method": "GET",
+      "path": "/api/admin/assessment/history",
+      "operation_id": "get_api_admin_assessment_history",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "admin_history_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/assessment/history",
+      "operation_id": "get_api_admin_assessment_history",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_month",
+      "method": "GET",
+      "path": "/api/merchant/assessment/month",
+      "operation_id": "get_api_merchant_assessment_month",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "merchant_month_boundary",
+      "method": "GET",
+      "path": "/api/merchant/assessment/month",
+      "operation_id": "get_api_merchant_assessment_month",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_month_error",
+      "method": "GET",
+      "path": "/api/merchant/assessment/month",
+      "operation_id": "get_api_merchant_assessment_month",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_month_anonymous",
+      "method": "GET",
+      "path": "/api/merchant/assessment/month",
+      "operation_id": "get_api_merchant_assessment_month",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_month_wrong_role",
+      "method": "GET",
+      "path": "/api/merchant/assessment/month",
+      "operation_id": "get_api_merchant_assessment_month",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_month_staff_denied",
+      "method": "GET",
+      "path": "/api/merchant/assessment/month",
+      "operation_id": "get_api_merchant_assessment_month",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "staff",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_history",
+      "method": "GET",
+      "path": "/api/merchant/assessment/history",
+      "operation_id": "get_api_merchant_assessment_history",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "merchant_history_boundary",
+      "method": "GET",
+      "path": "/api/merchant/assessment/history",
+      "operation_id": "get_api_merchant_assessment_history",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_history_error",
+      "method": "GET",
+      "path": "/api/merchant/assessment/history",
+      "operation_id": "get_api_merchant_assessment_history",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_history_anonymous",
+      "method": "GET",
+      "path": "/api/merchant/assessment/history",
+      "operation_id": "get_api_merchant_assessment_history",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_history_wrong_role",
+      "method": "GET",
+      "path": "/api/merchant/assessment/history",
+      "operation_id": "get_api_merchant_assessment_history",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_history_staff_denied",
+      "method": "GET",
+      "path": "/api/merchant/assessment/history",
+      "operation_id": "get_api_merchant_assessment_history",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "staff",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_snapshot",
+      "method": "GET",
+      "path": "/api/merchant/assessment/snapshots/2",
+      "operation_id": "get_api_merchant_assessment_snapshots_id",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "merchant_snapshot_boundary",
+      "method": "GET",
+      "path": "/api/merchant/assessment/snapshots/3",
+      "operation_id": "get_api_merchant_assessment_snapshots_id",
+      "kind": "boundary",
+      "status": 404,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_snapshot_error",
+      "method": "GET",
+      "path": "/api/merchant/assessment/snapshots/0",
+      "operation_id": "get_api_merchant_assessment_snapshots_id",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_snapshot_anonymous",
+      "method": "GET",
+      "path": "/api/merchant/assessment/snapshots/2",
+      "operation_id": "get_api_merchant_assessment_snapshots_id",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_snapshot_wrong_role",
+      "method": "GET",
+      "path": "/api/merchant/assessment/snapshots/2",
+      "operation_id": "get_api_merchant_assessment_snapshots_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_snapshot_staff_denied",
+      "method": "GET",
+      "path": "/api/merchant/assessment/snapshots/2",
+      "operation_id": "get_api_merchant_assessment_snapshots_id",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "staff",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_snapshot_facts",
+      "method": "GET",
+      "path": "/api/merchant/assessment/snapshots/2/facts",
+      "operation_id": "get_api_merchant_assessment_snapshots_id_facts",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "merchant_snapshot_facts_boundary",
+      "method": "GET",
+      "path": "/api/merchant/assessment/snapshots/2/facts",
+      "operation_id": "get_api_merchant_assessment_snapshots_id_facts",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_snapshot_facts_error",
+      "method": "GET",
+      "path": "/api/merchant/assessment/snapshots/2/facts",
+      "operation_id": "get_api_merchant_assessment_snapshots_id_facts",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_snapshot_facts_anonymous",
+      "method": "GET",
+      "path": "/api/merchant/assessment/snapshots/2/facts",
+      "operation_id": "get_api_merchant_assessment_snapshots_id_facts",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_snapshot_facts_wrong_role",
+      "method": "GET",
+      "path": "/api/merchant/assessment/snapshots/2/facts",
+      "operation_id": "get_api_merchant_assessment_snapshots_id_facts",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_facts_staff_denied",
+      "method": "GET",
+      "path": "/api/merchant/assessment/snapshots/2/facts",
+      "operation_id": "get_api_merchant_assessment_snapshots_id_facts",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "staff",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_staff_frozen",
+      "method": "GET",
+      "path": "/api/merchant/assessment/staff",
+      "operation_id": "get_api_merchant_assessment_staff",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 5
+    },
+    {
+      "name": "merchant_staff_self",
+      "method": "GET",
+      "path": "/api/merchant/assessment/staff",
+      "operation_id": "get_api_merchant_assessment_staff",
+      "kind": "normal",
+      "status": 200,
+      "role": "staff",
+      "assertions": 4
+    },
+    {
+      "name": "merchant_staff_no_snapshot",
+      "method": "GET",
+      "path": "/api/merchant/assessment/staff",
+      "operation_id": "get_api_merchant_assessment_staff",
+      "kind": "boundary",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "merchant_staff_missing_month",
+      "method": "GET",
+      "path": "/api/merchant/assessment/staff",
+      "operation_id": "get_api_merchant_assessment_staff",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_staff_merchant_param",
+      "method": "GET",
+      "path": "/api/merchant/assessment/staff",
+      "operation_id": "get_api_merchant_assessment_staff",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_staff_owner_denied",
+      "method": "GET",
+      "path": "/api/merchant/assessment/staff",
+      "operation_id": "get_api_merchant_assessment_staff",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_staff_anonymous",
+      "method": "GET",
+      "path": "/api/merchant/assessment/staff",
+      "operation_id": "get_api_merchant_assessment_staff",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "business_merchants",
+      "method": "GET",
+      "path": "/api/admin/business/merchants",
+      "operation_id": "get_api_admin_business_merchants",
+      "kind": "normal",
+      "status": 200,
+      "role": "analyst",
+      "assertions": 4
+    },
+    {
+      "name": "business_merchants_boundary",
+      "method": "GET",
+      "path": "/api/admin/business/merchants",
+      "operation_id": "get_api_admin_business_merchants",
+      "kind": "boundary",
+      "status": 200,
+      "role": "analyst",
+      "assertions": 3
+    },
+    {
+      "name": "business_merchants_error",
+      "method": "GET",
+      "path": "/api/admin/business/merchants",
+      "operation_id": "get_api_admin_business_merchants",
+      "kind": "error",
+      "status": 400,
+      "role": "analyst",
+      "assertions": 3
+    },
+    {
+      "name": "business_merchants_anonymous",
+      "method": "GET",
+      "path": "/api/admin/business/merchants",
+      "operation_id": "get_api_admin_business_merchants",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "business_merchants_wrong_role",
+      "method": "GET",
+      "path": "/api/admin/business/merchants",
+      "operation_id": "get_api_admin_business_merchants",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "business_merchants_assessor_denied",
+      "method": "GET",
+      "path": "/api/admin/business/merchants",
+      "operation_id": "get_api_admin_business_merchants",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "admin_dashboard",
+      "method": "GET",
+      "path": "/api/admin/business/dashboard",
+      "operation_id": "get_api_admin_business_dashboard",
+      "kind": "normal",
+      "status": 200,
+      "role": "analyst",
+      "assertions": 11
+    },
+    {
+      "name": "admin_dashboard_no_sources",
+      "method": "GET",
+      "path": "/api/admin/business/dashboard",
+      "operation_id": "get_api_admin_business_dashboard",
+      "kind": "boundary",
+      "status": 200,
+      "role": "analyst",
+      "assertions": 5
+    },
+    {
+      "name": "admin_dashboard_future",
+      "method": "GET",
+      "path": "/api/admin/business/dashboard",
+      "operation_id": "get_api_admin_business_dashboard",
+      "kind": "error",
+      "status": 409,
+      "role": "analyst",
+      "assertions": 3
+    },
+    {
+      "name": "admin_dashboard_missing_merchant",
+      "method": "GET",
+      "path": "/api/admin/business/dashboard",
+      "operation_id": "get_api_admin_business_dashboard",
+      "kind": "error",
+      "status": 400,
+      "role": "analyst",
+      "assertions": 3
+    },
+    {
+      "name": "admin_dashboard_assessor_denied",
+      "method": "GET",
+      "path": "/api/admin/business/dashboard",
+      "operation_id": "get_api_admin_business_dashboard",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "admin_dashboard_anonymous",
+      "method": "GET",
+      "path": "/api/admin/business/dashboard",
+      "operation_id": "get_api_admin_business_dashboard",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_dashboard",
+      "method": "GET",
+      "path": "/api/merchant/business/dashboard",
+      "operation_id": "get_api_merchant_business_dashboard",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "merchant_dashboard_no_sources",
+      "method": "GET",
+      "path": "/api/merchant/business/dashboard",
+      "operation_id": "get_api_merchant_business_dashboard",
+      "kind": "boundary",
+      "status": 200,
+      "role": "other_merchant",
+      "assertions": 5
+    },
+    {
+      "name": "merchant_dashboard_merchant_param",
+      "method": "GET",
+      "path": "/api/merchant/business/dashboard",
+      "operation_id": "get_api_merchant_business_dashboard",
+      "kind": "error",
+      "status": 400,
+      "role": "merchant",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_dashboard_staff_denied",
+      "method": "GET",
+      "path": "/api/merchant/business/dashboard",
+      "operation_id": "get_api_merchant_business_dashboard",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "staff",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_dashboard_owner_denied",
+      "method": "GET",
+      "path": "/api/merchant/business/dashboard",
+      "operation_id": "get_api_merchant_business_dashboard",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_dashboard_anonymous",
+      "method": "GET",
+      "path": "/api/merchant/business/dashboard",
+      "operation_id": "get_api_merchant_business_dashboard",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_stop",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/2/status",
+      "operation_id": "put_api_admin_assessment_policies_id_status",
+      "kind": "normal",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 5
+    },
+    {
+      "name": "policy_stop_replay",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/2/status",
+      "operation_id": "put_api_admin_assessment_policies_id_status",
+      "kind": "boundary",
+      "status": 200,
+      "role": "assessor",
+      "assertions": 4
+    },
+    {
+      "name": "policy_stop_malformed",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/2/status",
+      "operation_id": "put_api_admin_assessment_policies_id_status",
+      "kind": "error",
+      "status": 400,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "policy_stop_anonymous",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/2/status",
+      "operation_id": "put_api_admin_assessment_policies_id_status",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "policy_stop_wrong_role",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/2/status",
+      "operation_id": "put_api_admin_assessment_policies_id_status",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "policy_stop_again",
+      "method": "PUT",
+      "path": "/api/admin/assessment/policies/2/status",
+      "operation_id": "put_api_admin_assessment_policies_id_status",
+      "kind": "boundary",
+      "status": 409,
+      "role": "assessor",
+      "assertions": 3
+    },
+    {
+      "name": "merchant_policy_stopped",
+      "method": "GET",
+      "path": "/api/merchant/assessment/policy",
+      "operation_id": "get_api_merchant_assessment_policy",
+      "kind": "boundary",
+      "status": 200,
+      "role": "other_merchant",
+      "assertions": 4
+    }
+  ]
+}

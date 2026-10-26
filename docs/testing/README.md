@@ -1,3 +1,15 @@
+> 2026-10-23：[原生PDF上传阶段与复现](../progress/R9_A4D31_NATIVE_MATERIAL_UPLOAD.md)。仅回环代理、真实uploadFile/JVM/存储/扫描，系统文件选择结果辅助；真机和生产病毒库另验。
+
+> 2026-10-23：[扫码接车原生阶段与复现](../progress/R9_A4D30_NATIVE_PICKUP_SCAN.md)。系统扫码返回辅助，随后真实HTTP核对本店PAID订单；不代表手机相机或接车提交。
+
+> 2026-10-23：[取车对比原生阶段记录](../progress/R9_A4D29_NATIVE_DELIVERY.md) · [隔离复现步骤](WECHAT_DELIVERY_COMPARE_ACCEPTANCE.md)。只读对比与核销前导航独立验证，不代表实际核销或手机真机。
+
+> 2026-10-23：[资金查询真实联调与微信原生验收](../progress/R9_A4D27_LOCAL_FINANCE_ACCEPTANCE.md)：24业务请求/110断言、8项开发者工具检查、15表完整内容不变，实际清理成功；[复现](WECHAT_LOCAL_FINANCE_ACCEPTANCE.md)。正式资金及手机真机仍待验。
+
+> [金融恢复实际验收](../progress/R9_A4D6_FINANCIAL_RECOVERY_EXECUTION.md)：支付/退款恢复及佣金六重点接口，签名本机替身、真实HTTP和MySQL；正式资金仍待验。
+
+> [接口覆盖核对](API_COVERAGE.md)：当前352项契约与36套所选历史证据逐项核对，317项完整四类、缺35项；生成索引不等于重跑业务接口，全量验收仍未通过。
+
 # 测试资料
 
 > 2026-10-18最新：[R8验收](LOCAL_R8_COMPLETION_ACCEPTANCE.md)已补齐[PR155](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/155)实际结果：2117后端/868前端、六项CI及[main复验](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/runs/39045134951)成功。下方待CI/仅本地文字为历史记录。
@@ -131,3 +143,13 @@
 - [R7c1 本地验收](LOCAL_R7C1_NOTIFICATIONS_ACCEPTANCE.md)：本地阶段，整R7完成后代码与文档统一上传。
 
 - [R7c2 本地验收](LOCAL_R7C2_DIAGNOSIS_ACCEPTANCE.md)：本地完成，整R7完成后代码与文档统一上传。
+
+- [A4d15 社区图片真实验收](../progress/R9_A4D15_COMMUNITY_IMAGES_EXECUTION.md)：11接口/85请求，12不变量，元数据、审核、撤回与旧ID失效；真实存储与扫描引擎、明确合成身份/支付/扫描库边界。
+
+- [A4d16 客户关系与价格比较](../progress/R9_A4D16_RELATIONS_PRICE_READS_EXECUTION.md)：4接口/58请求，门店隐私、稳定锚点、UNKNOWN判定与13表内容不变。
+
+- [A4d17 券清单与草稿修订](../progress/R9_A4D17_COUPON_CATALOG_EXECUTION.md)：4个新增证据接口，9接口旅程/96请求，发布冻结、领取去重与退池/停用。
+
+- [A4d18 认证会话](../progress/R9_A4D18_AUTH_SESSIONS_EXECUTION.md)：3个新增证据接口，45请求、失败回滚、双请求刷新单次成功及退出失效，公开证据不含凭证。
+
+- [A4d25 OpenAPI生成一致性](../progress/R9_A4D25_OPENAPI_REPRODUCIBILITY.md)：修复4操作漂移，非写入检查、9项新增回归、完整schema链路85条命令通过。

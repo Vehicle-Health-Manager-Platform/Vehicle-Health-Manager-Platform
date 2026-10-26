@@ -1,0 +1,29 @@
+# A4d28 当前微信小程序手册与交付资料
+
+2026-10-23。基线1e7b1fb，分支codex/r9-a4d28-miniapp-handover，承接尚未合并的PR218。范围为现有软件的资料收口与漂移检查，不改变业务行为、权限、配置默认值或数据库迁移。
+
+## 完成内容
+
+- [车主](../user-guides/OWNER.md)、[商家](../user-guides/MERCHANT.md)、[技师](../user-guides/TECHNICIAN.md)及[受限运营](../user-guides/OPERATOR.md)四份当前版本how-to：入口、主要流程、操作前置、成功核对及错误恢复，链接既有专项指南。
+- [页面/模板reference](../delivery/MINIAPP_REFERENCE.md)：从pages.json与源码生成110个注册页面、对应标题/源文件/阅读指南；三份受版本控制的环境模板共94条变量记录。只显示变量名及字面布尔值，不输出密钥、URL或其他变量值，也不读取私有环境。
+- [剩余验收表](../delivery/REMAINING_ACCEPTANCE.md)：正式身份、识别/多模态、知识AI、资金/账单、消息传播、三角色双系统真机、性能安全和发布交接，逐项说明所需条件、责任角色及证据。
+- 新增miniapp_handover.py及CI门禁，生成JSON含来源摘要。页面/模板/手册变化需要核对重生成，拒绝缺失源码、重复页面/变量、越界路径、无效tab与文档坏链接。
+- 更新根README和用户手册索引，纠正旧入口“材料当前不上传”与“手册待写”的过期说明。现有专项教程和设计解释复用，不复制旧时点结果成当前验收。
+
+## 实际验证
+
+`python -m unittest discover -s scripts -p test_miniapp_handover.py -v`：8项通过，含LF/CRLF一致、源内容变动、密钥值不导出及上述拒绝条件。
+
+`python scripts/miniapp_handover.py --check`、OpenAPI检查、覆盖核对和契约结论检查均通过。统计保持352项契约、36套历史来源、317项完整四类历史证据、35项结论，全API验收仍false。检查文档链接和页面存在性不会增加业务验收证据。
+
+本阶段无小程序/后端生产代码变动，未重跑Java、Docker业务HTTP、微信构建或手机真机；此前A4d27结果保留原来源。用户指南来自实际入口、RoleLanding、订单/工作台/运营页面及已有专项代码/指南核对，不宣称110个页面逐页交互通过。
+
+PR218最终head1e7b1fb在本阶段开始及复查时六项CI成功、backend仍运行，仍OPEN；本阶段远程CI按最终head另记。阶段代码、测试及资料同批上传，不自动合并或部署。
+
+## 下一步
+
+A4d29优先复用已启动的微信开发者工具，核对取车对比和商家核销前入口等尚无原生渲染证据的页面；使用隔离合成数据，真实业务HTTP，明确区分工具辅助事件与手机触摸。外部身份、真实资金等条件按剩余表逐项接入，不用测试夹具代替正式验收。
+
+## GitHub交付
+
+实现提交1f8525c已整批上传[草稿PR219](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/219)，base=codex/r9-a4d27-finance-acceptance，依赖PR218。最终head远程CI另行核查，尚不宣称通过；未合并或发布。

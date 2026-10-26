@@ -1,0 +1,168 @@
+{
+  "version": 1,
+  "cases": 16,
+  "operations": 1,
+  "full_api_acceptance_passed": false,
+  "items": [
+    {
+      "name": "delivery_ready",
+      "method": "POST",
+      "path": "/api/check/delivery/compare",
+      "operation_id": "post_api_check_delivery_compare",
+      "kind": "normal",
+      "status": 200,
+      "role": "owner",
+      "assertions": 10
+    },
+    {
+      "name": "delivery_ready_merchant",
+      "method": "POST",
+      "path": "/api/check/delivery/compare",
+      "operation_id": "post_api_check_delivery_compare",
+      "kind": "normal",
+      "status": 200,
+      "role": "merchant",
+      "assertions": 4
+    },
+    {
+      "name": "delivery_incomplete",
+      "method": "POST",
+      "path": "/api/check/delivery/compare",
+      "operation_id": "post_api_check_delivery_compare",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 5
+    },
+    {
+      "name": "delivery_completed",
+      "method": "POST",
+      "path": "/api/check/delivery/compare",
+      "operation_id": "post_api_check_delivery_compare",
+      "kind": "boundary",
+      "status": 200,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "delivery_missing_baseline",
+      "method": "POST",
+      "path": "/api/check/delivery/compare",
+      "operation_id": "post_api_check_delivery_compare",
+      "kind": "boundary",
+      "status": 409,
+      "role": "owner",
+      "assertions": 4
+    },
+    {
+      "name": "delivery_missing_order",
+      "method": "POST",
+      "path": "/api/check/delivery/compare",
+      "operation_id": "post_api_check_delivery_compare",
+      "kind": "boundary",
+      "status": 404,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "delivery_empty_body",
+      "method": "POST",
+      "path": "/api/check/delivery/compare",
+      "operation_id": "post_api_check_delivery_compare",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "delivery_extra_field",
+      "method": "POST",
+      "path": "/api/check/delivery/compare",
+      "operation_id": "post_api_check_delivery_compare",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "delivery_zero_order",
+      "method": "POST",
+      "path": "/api/check/delivery/compare",
+      "operation_id": "post_api_check_delivery_compare",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "delivery_string_order",
+      "method": "POST",
+      "path": "/api/check/delivery/compare",
+      "operation_id": "post_api_check_delivery_compare",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "delivery_list_body",
+      "method": "POST",
+      "path": "/api/check/delivery/compare",
+      "operation_id": "post_api_check_delivery_compare",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "delivery_query",
+      "method": "POST",
+      "path": "/api/check/delivery/compare",
+      "operation_id": "post_api_check_delivery_compare",
+      "kind": "error",
+      "status": 400,
+      "role": "owner",
+      "assertions": 3
+    },
+    {
+      "name": "delivery_anonymous",
+      "method": "POST",
+      "path": "/api/check/delivery/compare",
+      "operation_id": "post_api_check_delivery_compare",
+      "kind": "unauthorized",
+      "status": 401,
+      "role": "anonymous",
+      "assertions": 3
+    },
+    {
+      "name": "delivery_technician_denied",
+      "method": "POST",
+      "path": "/api/check/delivery/compare",
+      "operation_id": "post_api_check_delivery_compare",
+      "kind": "unauthorized",
+      "status": 403,
+      "role": "technician",
+      "assertions": 3
+    },
+    {
+      "name": "delivery_other_owner",
+      "method": "POST",
+      "path": "/api/check/delivery/compare",
+      "operation_id": "post_api_check_delivery_compare",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other",
+      "assertions": 3
+    },
+    {
+      "name": "delivery_other_merchant",
+      "method": "POST",
+      "path": "/api/check/delivery/compare",
+      "operation_id": "post_api_check_delivery_compare",
+      "kind": "unauthorized",
+      "status": 404,
+      "role": "other_merchant",
+      "assertions": 3
+    }
+  ]
+}

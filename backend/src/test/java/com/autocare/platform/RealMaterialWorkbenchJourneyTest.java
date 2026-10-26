@@ -49,9 +49,15 @@ import static org.junit.jupiter.api.Assertions.*;
     "INPUT_MATERIAL_UPLOAD_ENABLED=true","UPLOAD_SIGNED_URL_SECONDS=10","UPLOAD_CLEANUP_INTERVAL_MS=600000"})
 @Testcontainers @DirtiesContext(classMode=DirtiesContext.ClassMode.AFTER_CLASS)
 class RealMaterialWorkbenchJourneyTest {
-    static final String RUN=UUID.randomUUID().toString(), ROOT_PASSWORD=UUID.randomUUID().toString();
+    static String runIdentity(){
+        if(!"true".equals(System.getenv("AUTOCARE_LINUX_MILEAGE_HOST")))return UUID.randomUUID().toString();
+        String id=System.getenv("AUTOCARE_REAL_MILEAGE_RUN_ID");
+        if(id==null||!id.matches("[0-9a-f]{32}")||!"true".equals(System.getenv("TESTCONTAINERS_RYUK_DISABLED")))throw new IllegalStateException("Invalid host acceptance identity");
+        return id;
+    }
+    static final String RUN=runIdentity(), ROOT_PASSWORD=UUID.randomUUID().toString();
     static final String USER="test-upload-user", SECRET=UUID.randomUUID().toString(), BUCKET="upload-journey";
-    static final Network NETWORK=Network.newNetwork();
+    static final Network NETWORK=Network.builder().createNetworkCmdModifier(c->c.withLabels(Map.of("autocare.upload.run",RUN))).build();
     // Structural MPEG fixtures only; this is not a playback or recognition claim.
     static final byte[] CLEAN=InputMaterialValidatorTest.audio(28);
     static final byte[] INFECTED=InputMaterialValidatorTest.audio(29);
@@ -79,11 +85,13 @@ class RealMaterialWorkbenchJourneyTest {
     static final class LoopbackStorage implements AutoCloseable {
         final ServerSocket listener;
         final Set<Socket> sockets=ConcurrentHashMap.newKeySet();
-        LoopbackStorage()throws IOException {
+        final java.util.concurrent.atomic.AtomicInteger connections=new java.util.concurrent.atomic.AtomicInteger();
+        LoopbackStorage()throws IOException {this(MINIO.getHost(),MINIO.getMappedPort(9000));}
+        LoopbackStorage(String host,int port)throws IOException {
             listener=new ServerSocket(0,50,InetAddress.getByName("127.0.0.1"));
             daemon(()->{while(!listener.isClosed())try{
                 Socket incoming=listener.accept();sockets.add(incoming);
-                Socket outgoing=new Socket(MINIO.getHost(),MINIO.getMappedPort(9000));sockets.add(outgoing);
+                Socket outgoing=new Socket(host,port);sockets.add(outgoing);connections.incrementAndGet();
                 daemon(()->pipe(incoming,outgoing));daemon(()->pipe(outgoing,incoming));
             }catch(IOException stopped){if(!listener.isClosed())throw new UncheckedIOException(stopped);}});
         }
@@ -121,6 +129,7 @@ class RealMaterialWorkbenchJourneyTest {
         r.add("MYSQL_USER",MYSQL::getUsername);r.add("MYSQL_PASSWORD",MYSQL::getPassword);
         r.add("MINIO_ENDPOINT",()->"http://"+MINIO.getHost()+":"+MINIO.getMappedPort(9000));
         r.add("MINIO_PUBLIC_ENDPOINT",publicStorage::endpoint);
+        RealMileageAcceptance.configure(r);
         r.add("UPLOAD_MINIO_ACCESS_KEY",()->USER);r.add("UPLOAD_MINIO_SECRET_KEY",()->SECRET);r.add("UPLOAD_MINIO_BUCKET",()->BUCKET);r.add("UPLOAD_MINIO_REGION",()->"us-east-1");
     }
     @LocalServerPort int port;
@@ -272,6 +281,24 @@ class RealMaterialWorkbenchJourneyTest {
         jdbc.update("UPDATE staff_account SET status='DISABLED' WHERE id=1");bench("disabled_merchant","unauthorized","merchant","",401);check("current_staff_and_binding_required",true);
         jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE subject_type='user' AND subject_id=1");access("revoked_owner","unauthorized","owner",a,401);check("current_owner_session_required",true);
         check("no_payment_archive_or_rewards",jdbc.queryForObject("SELECT COUNT(*) FROM payment",Integer.class)==0&&jdbc.queryForObject("SELECT COUNT(*) FROM vehicle_archive",Integer.class)==0&&jdbc.queryForObject("SELECT COUNT(*) FROM point_task_event",Integer.class)==0);
+        if(System.getenv("AUTOCARE_NATIVE_MATERIAL_RUN_ID")!=null){
+            jdbc.update("INSERT INTO user(id,openid,status) VALUES(991,'synthetic-native-material',1)");
+            jdbc.update("INSERT INTO vehicle(id,user_id,current_mileage) VALUES(991,991,100)");
+            byte[] fixture=switch(System.getenv().getOrDefault("AUTOCARE_NATIVE_UPLOAD_KIND","pdf")){case "image"->NativeMaterialAcceptance.image();case "audio"->NativeMaterialAcceptance.audio();case "pdf"->InputMaterialValidatorTest.pdf(1);default->throw new IllegalArgumentException("Invalid native upload mode");};
+            NativeMaterialAcceptance.run(jdbc,mapper,port,token("native_owner",991,"user","OWNER",0,null),fixture);
+        }
+        if(RealMileageAcceptance.enabled()){
+            assertNull(System.getenv("AUTOCARE_NATIVE_MATERIAL_RUN_ID"));
+            jdbc.update("INSERT INTO user(id,openid,status) VALUES(991,'synthetic-real-mileage',1)");
+            jdbc.update("INSERT INTO vehicle(id,user_id,current_mileage) VALUES(991,991,100)");
+            RealMileageAcceptance.run(jdbc,mapper,port,token("real_mileage",991,"user","OWNER",0,null),tokens.get("other"));
+            if(RealMileageAcceptance.config.path("native").asBoolean()){
+                jdbc.update("INSERT INTO user(id,openid,status) VALUES(992,'synthetic-native-mileage',1)");
+                jdbc.update("INSERT INTO vehicle(id,user_id,current_mileage) VALUES(992,992,100)");
+                var nativeProof=NativeMileageAcceptance.run(jdbc,mapper,port,token("native_mileage",992,"user","OWNER",0,null),Base64.getDecoder().decode(RealMileageAcceptance.config.path("image").asText()));
+                RealMileageAcceptance.proof.put("native_database",nativeProof);
+            }
+        }
         completed=true;
     }
     static String sourceDigest()throws Exception{
@@ -295,6 +322,7 @@ class RealMaterialWorkbenchJourneyTest {
     }
     static void cleanup()throws Exception{
         if(publicStorage!=null)publicStorage.close();
+        RealMileageAcceptance.close();
         var resources=new LinkedHashMap<String,GenericContainer<?>>();
         resources.put("initializer",initializer);resources.put("clamav",CLAM);resources.put("minio",MINIO);resources.put("mysql",MYSQL);
         for(var entry:resources.entrySet()){

@@ -16,6 +16,8 @@ from generate_api_acceptance import ROOT, OUTPUT, generate
 from run_performance_baseline import Docker, Owned, MySQL, Backend, LABEL, JAR, build_jar, free_port, migration_files
 
 CI_INPUT = ROOT / '.cache/api-ci-build-input.json'
+# Reviewed scope includes the authenticated mileage-recognition gateway.
+ANONYMOUS_PROBE_COUNT = 339
 
 
 def backend_input_hash():
@@ -50,7 +52,14 @@ def source_hash():
     paths += [ROOT / 'scripts/merchant_api_cases.py']
     paths += [ROOT / 'scripts/community_api_cases.py', ROOT / 'scripts/publication_api_cases.py', ROOT / 'scripts/experience_api_cases.py', ROOT / 'scripts/health_api_cases.py', ROOT / 'scripts/export_api_cases.py', ROOT / 'scripts/requirements-export-qa.txt']
     paths += [ROOT / 'scripts/points_api_cases.py', ROOT / 'scripts/exchange_api_cases.py']
+    paths += [ROOT / 'scripts/dispute_api_cases.py', ROOT / 'scripts/workflow_api_cases.py', ROOT / 'scripts/finance_api_cases.py', ROOT / 'scripts/FinanceTestSupplier.java']
     paths += [ROOT / 'scripts/invitation_api_cases.py', ROOT / 'scripts/diagnosis_api_cases.py', ROOT / 'scripts/discovery_api_cases.py', ROOT / 'scripts/quotes_api_cases.py', ROOT / 'scripts/reviews_api_cases.py']
+    paths += [ROOT / 'scripts/assessment_api_cases.py']
+    paths += [ROOT / 'scripts/governance_api_cases.py', ROOT / 'scripts/fulfillment_reads_api_cases.py', ROOT / 'scripts/plan_evidence_api_cases.py']
+    paths += [ROOT / 'scripts/local_finance_api_cases.py', ROOT / 'scripts/delivery_compare_api_cases.py', ROOT / 'scripts/native-delivery-e2e.cjs']
+    paths += [ROOT / 'scripts/native-pickup-scan-e2e.cjs', ROOT / 'apps/miniapp/src/pages/merchant/orders.vue', ROOT / 'apps/miniapp/src/services/pickup-scan.js']
+    paths += [ROOT / 'scripts/native-finance-e2e.cjs', ROOT / 'scripts/native-acceptance-plugin.mjs']
+    paths += [ROOT / 'scripts/relations_price_api_cases.py', ROOT / 'scripts/coupon_catalog_api_cases.py', ROOT / 'scripts/auth_sessions_api_cases.py']
     value = hashlib.sha256()
     for path in paths:
         if path.is_file(): value.update(path.relative_to(ROOT).as_posix().encode()); value.update(path.read_bytes())
@@ -139,12 +148,25 @@ def main():
     parser.add_argument('--discovery-cases', action='store_true', help='Run local service discovery search and merchant location scenarios.')
     parser.add_argument('--quotes-cases', action='store_true', help='Run merchant selection quote version and shelving scenarios.')
     parser.add_argument('--reviews-cases', action='store_true', help='Run owner review, public star, public text and summary consent scenarios.')
+    parser.add_argument('--dispute-cases', action='store_true', help='Run isolated pickup dispute and resumed fulfillment cases.')
+    parser.add_argument('--workflow-cases', action='store_true', help='Run isolated fulfillment reads and three-role notifications.')
+    parser.add_argument('--finance-cases', action='store_true', help='Run isolated signed supplier financial recovery and commission cases.')
+    parser.add_argument('--assessment-cases', action='store_true', help='Run isolated assessment policy, monthly settlement and business dashboard reads.')
+    parser.add_argument('--plan-evidence-cases', action='store_true', help='Run model applicability, conservative evidence and manual plan context cases.')
+    parser.add_argument('--fulfillment-reads-cases', action='store_true', help='Run remaining reservation and fulfillment views and slot closure.')
+    parser.add_argument('--governance-cases', action='store_true', help='Run isolated catalog governance and price monitor evidence cases.')
+    parser.add_argument('--relations-price-cases', action='store_true', help='Run isolated store customer relations and price comparisons read-only evidence.')
+    parser.add_argument('--coupon-catalog-cases', action='store_true', help='Run coupon catalog, frozen draft edits and offers eligibility.')
+    parser.add_argument('--auth-sessions-cases', action='store_true', help='Run synthetic session refresh, logout, invalidation and concurrent rotation.')
+    parser.add_argument('--rating-quotes-cases', action='store_true', help='Run isolated public star service project rating quotes read-only evidence.')
+    parser.add_argument('--delivery-compare-cases', action='store_true', help='Run isolated pickup delivery comparison read-only evidence.')
+    parser.add_argument('--local-finance-cases', action='store_true', help='Run isolated daily local finance read-only cases, no channel calls.')
     args = parser.parse_args()
     if args.record_ci_sources:
-        if any((args.ci_built_jar,args.owner_cases,args.fulfillment_cases,args.coupon_cases,args.merchant_cases,args.community_cases,args.publication_cases,args.experience_cases,args.health_cases,args.export_cases,args.points_cases,args.exchange_cases,args.invitation_cases,args.diagnosis_cases,args.discovery_cases,args.quotes_cases,args.reviews_cases)):
+        if any((args.ci_built_jar,args.owner_cases,args.fulfillment_cases,args.coupon_cases,args.merchant_cases,args.community_cases,args.publication_cases,args.experience_cases,args.health_cases,args.export_cases,args.points_cases,args.exchange_cases,args.invitation_cases,args.diagnosis_cases,args.discovery_cases,args.quotes_cases,args.reviews_cases,args.finance_cases,args.workflow_cases,args.dispute_cases,args.assessment_cases,args.governance_cases,args.fulfillment_reads_cases,args.plan_evidence_cases,args.relations_price_cases,args.coupon_catalog_cases,args.auth_sessions_cases,args.rating_quotes_cases,args.delivery_compare_cases,args.local_finance_cases)):
             parser.error('Record CI inputs separately before the build')
         record_ci_sources(); print('API acceptance: recorded fresh CI build inputs',flush=True); return 0
-    if sum((args.owner_cases, args.fulfillment_cases, args.coupon_cases, args.merchant_cases, args.community_cases,args.publication_cases,args.experience_cases,args.health_cases,args.export_cases,args.points_cases,args.exchange_cases,args.invitation_cases,args.diagnosis_cases,args.discovery_cases,args.quotes_cases,args.reviews_cases)) > 1:
+    if sum((args.owner_cases, args.fulfillment_cases, args.coupon_cases, args.merchant_cases, args.community_cases,args.publication_cases,args.experience_cases,args.health_cases,args.export_cases,args.points_cases,args.exchange_cases,args.invitation_cases,args.diagnosis_cases,args.discovery_cases,args.quotes_cases,args.reviews_cases,args.finance_cases,args.workflow_cases,args.dispute_cases,args.assessment_cases,args.governance_cases,args.fulfillment_reads_cases,args.plan_evidence_cases,args.relations_price_cases,args.coupon_catalog_cases,args.auth_sessions_cases,args.rating_quotes_cases,args.delivery_compare_cases,args.local_finance_cases)) > 1:
         parser.error('Business suites require separate fresh databases; select one per run')
     run = uuid.uuid4().hex
     work = ROOT / '.cache' / ('api-acceptance-' + run[:12]); work.mkdir(parents=True)
@@ -161,10 +183,10 @@ def main():
                 raise ValueError('Generated Postman assets are stale')
         probe = assets['anonymous.postman_collection.json']
         expected = {item['name']: (item['request']['method'], item['request']['url'].removeprefix('{{base_url}}')) for item in probe['item']}
-        if len(expected) != 338: raise ValueError('Review changed anonymous acceptance scope')
+        if len(expected) != ANONYMOUS_PROBE_COUNT: raise ValueError('Review changed anonymous acceptance scope')
         report['contract_operations'] = assets['acceptance_inventory.json']['operations']
         report['collection_sha256'] = hashlib.sha256((OUTPUT / 'anonymous.postman_collection.json').read_bytes()).hexdigest()
-        suite = 'owner' if args.owner_cases else 'fulfillment' if args.fulfillment_cases else 'coupon' if args.coupon_cases else 'merchant' if args.merchant_cases else 'community' if args.community_cases else 'publication' if args.publication_cases else 'experience' if args.experience_cases else 'health' if args.health_cases else 'export' if args.export_cases else 'points' if args.points_cases else 'exchange' if args.exchange_cases else 'invitation' if args.invitation_cases else 'diagnosis' if args.diagnosis_cases else 'discovery' if args.discovery_cases else 'quotes' if args.quotes_cases else 'reviews' if args.reviews_cases else None
+        suite = 'owner' if args.owner_cases else 'fulfillment' if args.fulfillment_cases else 'coupon' if args.coupon_cases else 'merchant' if args.merchant_cases else 'community' if args.community_cases else 'publication' if args.publication_cases else 'experience' if args.experience_cases else 'health' if args.health_cases else 'export' if args.export_cases else 'points' if args.points_cases else 'exchange' if args.exchange_cases else 'invitation' if args.invitation_cases else 'diagnosis' if args.diagnosis_cases else 'discovery' if args.discovery_cases else 'quotes' if args.quotes_cases else 'reviews' if args.reviews_cases else 'finance' if args.finance_cases else 'workflow' if args.workflow_cases else 'dispute' if args.dispute_cases else 'assessment' if args.assessment_cases else 'governance' if args.governance_cases else 'fulfillment_reads' if args.fulfillment_reads_cases else 'plan_evidence' if args.plan_evidence_cases else 'relations_price' if args.relations_price_cases else 'coupon_catalog' if args.coupon_catalog_cases else 'auth_sessions' if args.auth_sessions_cases else 'rating_quotes' if args.rating_quotes_cases else 'delivery_compare' if args.delivery_compare_cases else 'local_finance' if args.local_finance_cases else None
         business_module = importlib.import_module(suite+'_api_cases') if suite else None
         if business_module:
             business_collection, business_manifest = business_module.assets()
@@ -183,8 +205,11 @@ def main():
         business_tokens = business_module.seed(mysql,secret) if business_module else None
         extra_env = business_module.environment(business_tokens) if business_module and hasattr(business_module,'environment') else ()
         before = counts(mysql)
-        port = free_port(); backend = Backend(run, network, port, secret, 10)
+        port = business_module.backend_port() if business_module and hasattr(business_module,'backend_port') else free_port()
+        backend = Backend(run, network, port, secret, 10)
         backend.start(mysql, extra_env=extra_env); backend.wait_healthy()
+        if business_module and hasattr(business_module,'prepare_backend'):
+            business_module.prepare_backend(backend)
         if business_module and hasattr(business_module,'prepare'):
             business_module.prepare(mysql)
             before = counts(mysql)
@@ -195,7 +220,7 @@ def main():
                    'newman', 'run', str(OUTPUT / 'anonymous.postman_collection.json'),
                    '--env-var', f'base_url=http://127.0.0.1:{port}', '--reporters', 'json', '--reporter-json-export', str(raw),
                    '--timeout-request', '10000']
-        print('API acceptance: Newman 6.2.1 / 338 anonymous requests', flush=True)
+        print(f'API acceptance: Newman 6.2.1 / {len(expected)} anonymous requests', flush=True)
         with (work / 'newman.log').open('wb') as log:
             result = subprocess.run(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, timeout=600, shell=False)
         report['newman_exit_code'] = result.returncode
@@ -213,6 +238,15 @@ def main():
         report['business_table_counts_unchanged'] = before == counts(mysql)
         if not report['business_table_counts_unchanged']: raise ValueError('Anonymous requests changed table row counts')
         if business_module:
+            business_disabled_raw = work / (suite+'-disabled.json')
+            business_disabled_command = [str(business_module.OUTPUT) if v==str(OUTPUT / 'anonymous.postman_collection.json')
+                                        else str(business_disabled_raw) if v==str(raw) else v for v in command]
+            with (work / (suite+'-disabled.log')).open('wb') as log:
+                disabled = subprocess.run(business_disabled_command,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT,timeout=600,shell=False)
+            disabled_run = json.loads(business_disabled_raw.read_text(encoding='utf-8'))['run']
+            if disabled.returncode or disabled_run.get('failures') or disabled_run['stats']['requests']['total'] != 0:
+                raise ValueError('Business collection must send zero requests by default')
+            report[suite+'_default_disabled_verified'] = True
             private_env = work / (suite+'-environment.private.json')
             private_env.write_text(json.dumps({'name':'isolated '+suite+' identities','values':[
                 {'key':k,'value':v,'enabled':True} for k,v in business_tokens.items()]}),encoding='utf-8')
@@ -227,7 +261,11 @@ def main():
             if business.returncode: raise ValueError('Business Newman scenarios failed; inspect local private report')
             check = getattr(business_module,'audit',audit_owner_cases)
             report[suite+'_evidence'] = check(business_raw,business_collection,business_manifest,business_tokens)
+            if hasattr(business_module,'verify_ui'):
+                report[suite+'_ui'] = business_module.verify_ui(backend,business_tokens,work)
             report[suite+'_database'] = business_module.verify_database(mysql)
+            if hasattr(business_module,'verify_supplier'):
+                report[suite+'_supplier'] = business_module.verify_supplier(backend)
             report['scope'] = 'anonymous authentication plus '+suite+' business operations (synthetic identities; LOCAL_TEST funds only)'
         report['sources_unchanged'] = report['source_sha256'] == source_hash()
         if not report['sources_unchanged']: raise ValueError('Acceptance sources changed during execution')

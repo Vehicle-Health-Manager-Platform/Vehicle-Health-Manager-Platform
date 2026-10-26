@@ -1,0 +1,144 @@
+{
+  "stage": "A4d44",
+  "date": "2026-10-26",
+  "base_commit": "782daa55a2f24bbabe33aaaed562e0341012ce53",
+  "base_pr_ci": "PR234 all eight checks SUCCESS",
+  "linux_wheel_packages": 71,
+  "wheel_manifest_sha256": "e32479f499118acc05b397bf0475c4fb3327343d2f3d7b79b6472cfd245cb536",
+  "wheel_integrity": "Official PyPI release metadata size/SHA256; checked before local offline installation",
+  "wheel_transport": "Canonical PyPI plus explicitly selected TUNA mirror and verified byte ranges; no version substitution",
+  "linux_resolution": "Actual pinned Linux Python3.11.17, network=none, ignore-installed, no-index wheel closure",
+  "windows_tests": {
+    "tests": 60,
+    "passed": 59,
+    "failed": 0,
+    "skipped_linux_kernel_only": 1
+  },
+  "runner_audit_tests_passed": 18,
+  "compose": {
+    "passed": true,
+    "default_ocr_and_gateway_disabled": true,
+    "runtime_overlay_explicit": true,
+    "ocr_internal_only": true,
+    "backend_dual_network": true,
+    "verified_readonly_model_mount": true,
+    "offline_wheel_build_context": true,
+    "resources_match_runtime": true,
+    "missing_config_rejected": [
+      "MILEAGE_OCR_SERVICE_TOKEN",
+      "OCR_MODELS_ROOT",
+      "OCR_WHEELHOUSE_ROOT"
+    ]
+  },
+  "image_metadata": {
+    "python": "3.11.17",
+    "dependencies": {
+      "paddleocr": "3.7.0",
+      "paddlepaddle": "3.3.1",
+      "Pillow": "12.3.0"
+    },
+    "os_packages": [
+      "libgl1=1.6.0-1",
+      "libglib2.0-0=2.74.6-2+deb12u9",
+      "libgomp1=12.2.0-14+deb12u1",
+      "libseccomp2=2.5.4-1+deb12u1"
+    ]
+  },
+  "failed_attempts": [
+    {
+      "phase": "apt_http",
+      "passed": false,
+      "cause": "Official Debian HTTP returned502; same HTTPS and package signature verification used on retry"
+    },
+    {
+      "phase": "observer",
+      "passed": false,
+      "image_built": true,
+      "model_ready": true,
+      "cause": "Substring process matcher counted itself; generic inspect confused same-named network and container",
+      "reported_cleanup": false,
+      "actual_owned_resources_removed_on_followup_check": true
+    }
+  ],
+  "acceptance": {
+    "passed": true,
+    "source_sha256": "2f1a2f9cc61620d5e7eaa98888da8ae23e9f475c57feb54fb412d488e62d53b1",
+    "full_api_acceptance_passed": false,
+    "scope": "Linux x86_64 CPU image; generated mileage image; no WeChat, owner instrument accuracy or production acceptance",
+    "image_id": "sha256:e0dce3041a53b2c2517fae7e3d26ea2ab8ca4f46eb43d35e9edb6f46dab069ce",
+    "resources": {
+      "Memory": 1610612736,
+      "MemorySwap": 1610612736,
+      "ShmSize": 16777216,
+      "NanoCpus": 2000000000,
+      "PidsLimit": 128,
+      "ReadonlyRootfs": true,
+      "nonroot_user": "10001:10001",
+      "capabilities_dropped": true,
+      "no_new_privileges": true,
+      "internal_network_only": true,
+      "host_port_published": false,
+      "models_read_only": true
+    },
+    "real_model": {
+      "passed": true,
+      "candidate_requests": 2,
+      "mileage_km": 123456,
+      "requires_confirmation": true,
+      "unauthorized_status": 401,
+      "invalid_json_status": 422,
+      "health_ready": true,
+      "synthetic_image_sha256": "5d3609ad6b622c14adb2c92c6ff8871facdb4b22c24efc5d74ce1238829dda72"
+    },
+    "warm_worker_reused": true,
+    "worker_filter_count": 3,
+    "parent_filter_count": 2,
+    "kernel_resources": {
+      "memory_bytes": 1610612736,
+      "swap_bytes": 0,
+      "cpus": 2.0,
+      "pids": 128,
+      "tmp_bytes": 67108864,
+      "shm_bytes": 16777216
+    },
+    "network_controls": {
+      "outside_service_positive": true,
+      "ocr_parent_outside_blocked": true,
+      "worker_kernel_filter_installed": true
+    },
+    "linux_tests": {
+      "tests": 60,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "sources_unchanged": true,
+    "cleanup": {
+      "owned_containers_and_networks_removed": true,
+      "private_environment_removed": true
+    }
+  },
+  "full_api_acceptance_passed": false,
+  "owner_instrument_accuracy_accepted": false,
+  "phone_or_wechat_rerun_accepted": false,
+  "shared_gateway_rerun_accepted": false,
+  "ram_or_pid_exhaustion_tested": false,
+  "performance_load_accepted": false,
+  "general_host_sandbox_accepted": false,
+  "public_internet_endpoint_probed": false,
+  "production_deployed": false,
+  "contract_operations": 353,
+  "historical_full_evidence": 317,
+  "started": "2026-10-25",
+  "completed": "2026-10-26",
+  "handover_audit_tests_passed": 8,
+  "immutable_image_id_used_by_all_run_containers": true,
+  "cleanup_failure_regression": {
+    "new_tests": 11,
+    "all_runner_tests_passed": 18,
+    "failure_input": "Explicit subprocess/Docker error response fixtures; no Docker daemon shutdown",
+    "only_explicit_absence_accepted": true,
+    "connection_and_permission_errors_fail_acceptance": true,
+    "actual_linux_full_rerun_passed": true
+  }
+}

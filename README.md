@@ -1,3 +1,23 @@
+## 2026-10-26 阶段更新集成
+
+本次集成PR195及PR196–236完整阶段栈，包含退款页、权限和业务验收、微信原生旅程及Linux OCR联调。[合并核查](docs/progress/MERGE_2026_10_26.md)记录范围、历史CI修复及最终验证方式；合并状态以GitHub记录为准。产品交付目标仍为微信小程序和共享后端。
+
+## 当前微信小程序交付资料
+
+[三角色与受限运营操作手册](docs/user-guides/README.md) · [页面与三份环境模板索引](docs/delivery/MINIAPP_REFERENCE.md) · [剩余验收和交接条件](docs/delivery/REMAINING_ACCEPTANCE.md)。资料由源码核对，不代替正式身份、真机或上线验收；以下保留阶段历史。
+
+## 2026-10-23 A4d27：微信资金查询真实联调与原生验收
+
+微信小程序资金页完成真实HTTP/MySQL四类验收：24业务请求/110断言、338匿名请求/1014断言、8项微信开发者工具检查和15张源表完整内容不变，资源清理成功。当前352项契约、36套来源、317项完整四类历史证据、缺35项；全API仍未通过。正式支付/退款、渠道账单、正式身份与手机真机待验。[阶段结果](docs/progress/R9_A4D27_LOCAL_FINANCE_ACCEPTANCE.md) / [复现](docs/testing/WECHAT_LOCAL_FINANCE_ACCEPTANCE.md) / [最新交付核查](docs/progress/DELIVERY_AUDIT_2026_10_23.md)。下方保留历史记录。
+
+## 2026-10-21 A4d-6：支付退款恢复与佣金验收（本地完成）
+
+本轮真实隔离HTTP/MySQL/本机签名供应商通过：8接口（六重点+两支撑）72业务请求/238断言，338匿名请求/1014断言，14项数据库检查；新退款只提交一次、FAILED退款只查询、重复核对不增加供应商调用，坏金额不记成功、佣金只冲销一次。源码稳定且资源实际清理；默认禁用0请求，192项相关Python测试通过。仅SQL合成身份/历史事实及LOCAL_TEST，不代表正式资金或真机验收。[执行记录](docs/progress/R9_A4D6_FINANCIAL_RECOVERY_EXECUTION.md) / [覆盖清单](docs/testing/API_COVERAGE.md)。20套来源去重为222项历史四类完整，所选来源缺口130项；全API仍未通过。分支承接尚未合并的PR196，上传与远程CI另记。
+
+## 2026-10-21 A4d-5：接口覆盖核对工具（已上传PR196）
+
+新增可复跑核对工具与CI漂移门禁，统一当前352项契约及所选19套历史业务记录，去重确认216项四类历史证据，136项尚未在这些记录中完整覆盖。当前版本业务HTTP本轮未执行，全API验收仍false；不能把缺口数等同未开发功能。新增19项及既有186项相关Python测试全部通过（共205项），LF/CRLF报告一致且内容变化拒绝。[覆盖清单](docs/testing/API_COVERAGE.md) / [执行记录](docs/progress/R9_A4D5_API_COVERAGE_EXECUTION.md)。下一批优先支付/退款恢复与佣金六接口，正式渠道继续后置。实现提交e94cb60已上传[草稿PR196](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/196)，远程CI待完成；独立分支基于main，退款页PR195保留原分支和检查。
+
 ## 2026-10-20 收口：12 支堆叠 PR 全部合并进 main
 
 R9 期间形成的整条栈（#181 → #192，12 支）已按链式顺序全部合并进 `main`，合并后 `main` = `13354bf8`，`open PR = 0`。合并前后做了三项核对：
@@ -373,3 +393,7 @@ docker compose --env-file .env -f deploy/compose/compose.yml up --build -d
 - PR 中不提交个人交付文档、密钥、数据库口令、真实用户数据、临时构建产物或测试凭据。
 
 欢迎从 [当前进度](docs/progress/CURRENT_STATUS.md)、[R8 计划](docs/progress/R8_IMPLEMENTATION_PLAN.md) 和 [下一步公开问答页面](docs/progress/R8C1B3B_PUBLIC_QA_UI_NEXT_PLAN.md) 开始了解项目。
+
+## 2026-10-21 A4d-4c：共用退款页收口（已上传PR195）
+
+车主/店长退款页统一阶段、资金事实、表单缺口与错误恢复；新增确认前后账号/路由/版本/正文复检，页面隐藏或账号变化取消旧弹窗；未知结果保留原正文原键重试。新增15项测试，全量1030/1030（0失败/跳过），微信与H5构建及两项原生门禁通过；产物17锚点、2个textarea。后端/API/渠道未改；真机、正式资金及全量后端本轮未执行。后续路线与上传策略见[执行计划](docs/progress/NEXT_EXECUTION_PLAN_2026_10_21.md)，[阶段记录](docs/progress/R9_A4D4C_REFUNDS_EXECUTION.md)。实现提交6a8835b已推送并创建[草稿PR195](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/195)，远程CI待完成；未合并、未上线。

@@ -1,3 +1,83 @@
+## 2026-10-26 阶段更新集成
+
+当前代码承接A4d45，另保留PR195独立退款页更新，集成范围为PR195–236共42项阶段成果。历史失败已有PR216/229修复，不将旧失败head逐个独立上线。源码和交付进度以[本次合并核查](MERGE_2026_10_26.md)、[A4d45记录](R9_A4D45_LINUX_MILEAGE.md)及[剩余验收](../delivery/REMAINING_ACCEPTANCE.md)为准，下面保留阶段历史。
+
+## 2026-10-23 A4d26：微信小程序本地资金记录
+
+本阶段为小程序受限运营工作区新增“资金记录”，共用后端实现单日/单渠道本地支付退款只读汇总。北京时间归日、测试/正式渠道隔离、来源异常使金额未知，渠道账单与对账差额始终未知；无资金写操作。复用can_analytics聚合权限，新增页面及接口契约，无数据库迁移。实现与验收见[阶段记录](R9_A4D26_LOCAL_FINANCE_EXECUTION.md)，[使用说明](../user-guides/LOCAL_FINANCE.md)。本地23项Java、1034项小程序、459项Python与微信构建通过，隔离资源已清理。[草稿PR217](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/217)已上传，依赖PR216，实现fcee604，最终远程CI待核对；全API仍false，真机与正式资金未验收。
+
+下一阶段先完成该查询的真实HTTP/MySQL四类联调及小程序开发者工具/真机页面核验，再收口交付资料；正式身份、识别、授权知识、真实资金及微信消息继续按条件逐项接入，最后性能/安全/真机与发布验收。每阶段代码、测试和资料整批上传GitHub，不把上传算作合并或发布。PC排除，H5仅辅助。
+
+## 2026-10-23 A4d25：生成源一致性与CI回归修复（本地完成）
+
+核对最新PR215后发现schema-and-ocr失败，先修基线。根因是R9手改交付JSON但生成源缺少4操作修订；已补生成源、无写入build/--check及CI提前门禁，保留末尾生成/git diff检查。新9项回归修复前确实失败、修复后通过；完整重放85/85条schema命令通过，46套/457项Python测试通过，生成资产无Git规范内容变化。生产业务/路径/结构未改，历史覆盖仍316/352、缺口36，全API验收false。[执行记录](R9_A4D25_OPENAPI_REPRODUCIBILITY.md)。下一功能阶段财务对账先做本地记录口径，缺渠道账单保持未知；已上传[草稿PR216](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/216)，依赖PR215，实现提交 `e037489`；远程CI已触发，未合并。
+
+## 2026-10-22 A4d24：商家侧取车对比（核销前核对）（本地完成）
+
+补上取车对比的第三块：核销前告诉店员证据齐不齐（核销是订单终点，事后发现缺照片只能走争议）。**不新开接口、不新开页面**：后端授权本就同时允许本单车主与本店员工，投影一致；页面`pages/order/delivery-compare.vue`按`?role=merchant`切门店会话（与接车详情页同套路），服务层只把登录提示改成中性措辞，文案分叉收在展示层（`deliveryPageView(role)`标题说明、`deliveryResultView(data,role)`结论解释，未知角色回落车主口径）。两个入口都在待核销之后：商家订单详情入口矩阵新增`delivery-compare`（必带`role=merchant`，仅在`PENDING_VERIFY`/`COMPLETED`出现，标签随状态变化）与核销页顶部按钮（`data-testid="redeem-delivery-compare"`），顺序排在核销之前。**不在前端阻止核销**：能否核销由后端守卫决定，前端复制规则只会两边漂移。小程序单测**1024/1024**（新增/更新2项：角色文案分叉、商家入口矩阵）、微信构建与H5构建均DONE；文案配对逐条核对：6组商家/角色文案在编译后wxml均为0次、在编译后映射模块里存在，`redeem.wxml`含新按钮。未做开发者工具与真机走查，不声明渲染通过。接口与覆盖数字未变（316/352，缺口36），全API验收仍false。[执行记录](R9_A4D24_DELIVERY_COMPARE_MERCHANT.md) / [规格](../superpowers/specs/2026-10-22-delivery-compare-merchant-design.md)。下一优先财务对账口径立项或真机走查。已上传[草稿PR215](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/215)，依赖PR214，实现提交 `0641389`；远程CI已触发，未合并。
+
+## 2026-10-22 A4d23：车主端取车对比页（本地完成）
+
+补上 R7a 的另一半：A4d22 只交付了取车对比后端，本阶段接入车主端页面。新增协议层`services/delivery-compare.js`（认证POST、正文只有order_id、不带幂等键、逐字段白名单）、展示层`services/delivery-compare-display.js`（结论徽标、接车基线事实、完工证据事实、缺口人话清单、失败分流）与页面`pages/order/delivery-compare.vue`（复用通用读取流程，映射吃`state.value`而不是state）。入口在订单详情，仅`PENDING_VERIFY`/`COMPLETED`显示；409接车单缺失只给“先查看接车单”不给重试。校验比“能渲染”严：结论必须与缺口一致（READY必须missing为空）、deliverable只能在READY上、photo_count等于槽位数、报工submitted/status/signed_at自洽、投影order_id必须回指请求订单，29种被拒形态进单测。小程序单测**1023/1023**（新增8项）、微信构建DONE（原生样式检查与无测试身份桥均PASS）、H5构建DONE；文案成对验证：编译后wxml搜不到映射文案、编译后映射模块里存在。无接口与覆盖数字变化（仍316/352，缺口36），全API验收仍false。未做开发者工具与真机走查，不声明渲染通过。[执行记录](R9_A4D23_DELIVERY_COMPARE_PAGE.md) / [页面规格](../superpowers/specs/2026-10-22-delivery-compare-page-design.md)。下一优先商家侧取车对比视图或财务对账口径立项。已上传[草稿PR214](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/214)，依赖PR213，实现提交 `4b5bdf3`；远程CI已触发，未合并。
+
+## 2026-10-22 A4d22：取车对比（接车基线 vs 完工证据）（本地完成）
+
+**新写功能**：实现最后一个可离线完成、且审计点名欠着的 `POST /api/check/delivery/compare`（R7a 取车对比）。真实隔离 PASS 319.130 秒：16 业务请求/60 断言/1 接口四类齐备，338 匿名请求/1014 断言 0 失败；**13 项数据库不变量全真**——12 张业务表前后摘要逐字节不变且 `delivery_compare` 始终 0 行（证明这个 POST 没有偷偷写库）。投影：基线（七槽位照片、里程与相对基线增量、油量、损伤数、车主确认态）+ 防护（勾选项与防护照）+ 报工（质检状态与过程/故障件/完工/签字四类证据数），输出 `READY/INCOMPLETE`、`deliverable` 与逐项 `missing`；缺证据订单实测返回 `[OWNER_CONFIRM,PROTECTION_PHOTO,FINISH,FAULT]`，已完成订单 `READY` 但不可再交付，无接车单 409 `43001`。**设计决策：只读投影不写库**——交付仍由核销完成，避免第二条写路径与核销争夺订单状态，因此契约同步移除幂等键要求。授权为本单车主或本店员工；技师/他人车主/他店一律 404。合成订单/接车单/防护/报工夹具，无图像识别与仪表盘 OCR，页面未接入。历史覆盖316/352，缺口36（`not-implemented` 7→6），全API验收仍false。[执行记录](R9_A4D22_DELIVERY_COMPARE.md) / [验收说明](../testing/DELIVERY_COMPARE_ACCEPTANCE.md)。下一优先配套车主端取车对比页，再议财务对账口径。已上传[草稿PR213](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/213)，依赖PR212，实现提交 `5f22023`；远程CI已触发，未合并。
+
+## 2026-10-22 A4d21：契约逐项结论（缺口销项）（本地完成）
+
+把352项契约逐项结案：**352 = 315项有四类证据 + 37项有明确结论，未解释0项**。分布：已被具名实现替代15（如`/api/home/dashboard`→`/api/vehicle/{vehicle}/health-dashboard`、`/api/order/verify`→`/api/merchant/orders/{id}/redeem`）、服务内部事务完成1、依赖外部上游10（大模型2+微信/短信8）、尚未实现7、实现无200路径1、仅本地演示3。新增`CONTRACT_VERDICTS.json`结论表与fail-closed门禁：结论必须覆盖全部未结案操作、**不得写在已有证据的操作上**（防用“已替代”抹掉真实缺口）、`superseded`替代必须在契约内且带实现标记、契约总数352与证据下限315写死、生成文件逐字节比对。顺带修正三处契约元数据（`/api/ai/chat`、辅助材料上传与访问），不改路径与行为。**覆盖口径不变**：仍报315有证据/37无证据，不把结论算成证据。11项门禁单测与32项覆盖单测通过；全API验收仍false。[执行记录](R9_A4D21_CONTRACT_RECONCILIATION.md) / [契约逐项结论](../api/CONTRACT_RECONCILIATION.md)。下一阶段按结论表推进：7项未实现逐项做产品决策，10项外部阻塞等真实上游接入后再补证据，通用商家动作接口若要恢复写入须先改契约。已上传[草稿PR212](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/212)，依赖PR211，实现提交 `062347d`；远程CI已触发，未合并。
+
+## 2026-10-22 A4d20：车主公开星级项目评分报价读取（本地完成）
+
+补齐1接口四类证据：18业务请求/67断言/0失败，1接口覆盖normal/boundary/error/unauthorized；338匿名请求/1014断言0失败，14张业务表前后内容摘要逐字节不变。排序与评分如实：在架且最新价>0的三家按「有评价优先→平均分降序→价格升序」返回`[1,3,2]`，评分`5.00`/`2.00`/`null`；下架报价、最新版本价0、项目`status=0`三类夹具均被正确排除（后者整体404）。生产业务代码零变更，只把`POST /api/merchant/orders/{id}/actions`的契约与实现偏差写清：四个动作分别409 `43001`/`43004`/`43005`/`43006`，该接口无200路径，不以伪造200补证据。剩余37项缺口按成因登记：27项契约映射`unspecified`无实现、7项需真实微信/短信上游、1项无成功路径、1项需大模型供应商、1项本地示例端点。新增10项套件单测与32项覆盖单测通过。合成身份/订单/支付/核销/评价与授权夹具，不计真实资金、评价链路或真机。历史覆盖315/352，缺口37，全API验收仍false。[执行记录](R9_A4D20_RATING_QUOTES_EXECUTION.md) / [验收说明](../testing/RATING_QUOTES_ACCEPTANCE.md)。下一优先把剩余缺口转成功能缺口逐项立项（是否仍在路线图内），而不是继续在证据清单里找可跑项。已上传[草稿PR211](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/211)，依赖PR210，实现提交 `38ad29f`；远程CI已触发，未合并。
+
+## 2026-10-22 A4d19：商家入驻资质附件授权访问（本地完成）
+
+补齐1接口四类证据：12业务请求/1接口四类覆盖/0失败，11项检查全真。3次真实上传经ClamAV判CLEAN且只归属两位申请人；两份申请快照精确为`[1,2]`与`[3]`，跨申请引用双向为0，且未激活门店（`merchant_id`/`reviewed_at`为NULL）。签名下载逐字节一致、`X-Amz-Expires=5`，去签名/篡改/6.1秒自然过期均403；只有`can_review`的运营403，车主与商家403。源码前后一致且4容器与网络实际移除；同批回归`MerchantOnboardingHttpTest`(6)/`MerchantOnboardingMySqlTest`(9)与125项Python回归（78执行器/32覆盖/3清理/12CI与隔离旅程）通过。生产代码零变更。合成身份/门店/运营账号与申请夹具，不含审核决策、配额与建店，不计真实微信身份或真机。历史覆盖314/352，缺口38，全API验收仍false。[执行记录](R9_A4D19_MERCHANT_ONBOARDING_FILES_EXECUTION.md) / [验收说明](../testing/MERCHANT_ONBOARDING_PRIVATE_FILES_ACCEPTANCE.md)。下一优先商家订单履约动作与车主评分报价读取（两项已实现缺口；认证组需真实短信/微信上游，27项`unspecified`条目代码无映射）；已上传[草稿PR210](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/210)，依赖PR209，实现提交 `a1ea4ad`；远程CI已触发，未合并。
+
+## 2026-10-22 A4d18：认证会话轮换与退出（本地完成）
+
+补齐3接口证据，连同车辆列表共45业务请求/149断言；338匿名请求/1014断言、13不变量及89项相关Python回归通过。额外7次HTTP证明双请求刷新恰一成功、赢家及原access在退出后失效；失败刷新回滚，其他会话不变。动态JWT/refresh绑定真实响应，归档不含凭证；源码稳定且隔离资源清理。合成已登录会话，不计真实微信/短信登录。历史覆盖313/352，缺口39，全API验收仍false。[执行记录](R9_A4D18_AUTH_SESSIONS_EXECUTION.md)。下一优先入驻材料附件授权访问；已上传[草稿PR209](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/209)，依赖PR208，实现提交 `3895f3d`；远程CI已触发，未合并。
+
+## 2026-10-22 A4d17：券清单与草稿修订验收（本地完成）
+
+补齐4个已有接口证据，连同5个支撑接口共96业务请求/354断言；338匿名请求/1014断言、13项不变量及99项相关Python回归通过。五个券来源经真实HTTP创建，验证修订/发布冻结、旧回执不复活、跨店/独立权限、可领取渠道、去重/库存、退池与停用。额外4次列表读取前后所选11表完整内容摘要不变，源码一致且隔离资源清理。历史覆盖310/352、缺口42，全API验收仍false；合成身份/门店夹具，不计真实资金或真机。[执行记录](R9_A4D17_COUPON_CATALOG_EXECUTION.md)。下一优先认证会话刷新、退出和失效控制；已上传[草稿PR208](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/208)，依赖PR207，实现提交 `aabe4b9`；远程CI已触发，未合并。
+
+## 2026-10-22 A4d16：客户关系与价格比较只读验收（本地完成）
+
+4接口/58请求/216断言、338匿名请求/1014断言通过，13张所选业务表完整内容摘要不变，源码一致且隔离资源清理；84项相关Python回归通过。覆盖门店隐私、到店转换凭据、客户稳定锚点与分页，以及价格依据缺失/失效时UNKNOWN、端点与一分差异。生产Java和schema未改，历史身份/订单/报价及政策审计明确合成。所选历史覆盖306/352，缺口46，全API验收仍false。[执行记录](R9_A4D16_RELATIONS_PRICE_READS_EXECUTION.md)。下一优先券清单/可领取与草稿修订证据；已上传[草稿PR207](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/207)，依赖PR206，实现提交 `e5559e9`；远程CI已触发，未合并。
+
+## 2026-10-22 A4d15：社区图片真实存储与授权发布（本地完成）
+
+基于PR205（八项CI全绿），完成11接口/85请求、12不变量、8项Java及87项相关Python测试；真实MySQL、私有MinIO和ClamAV引擎链路通过，源码稳定，自有容器与网络实际移除。已验证元数据清除、审核失败回滚、批准/拒绝/撤回、父经验撤回和旧公开ID不复活。生产业务代码和schema未改。所选历史证据累计302/352项，缺口50项；完整API验收仍false。合成身份/前序支付、合成扫描库及像素保留均有明确边界，不计真实资金或自动视觉遮挡验收。[执行记录](R9_A4D15_COMMUNITY_IMAGES_EXECUTION.md)。下一优先商家客户关系与运营价格比较只读链；已上传[草稿PR206](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/206)，依赖PR205，实现提交 `fe713cf`；远程CI已触发，未合并。
+
+## 2026-10-21 A4d-11：运营目录治理与价格监测证据链（已上传 PR202）
+
+本阶段成果已上传[草稿PR202](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/202)（base=`codex/r9-a4d10-assessment-reads`，依赖PR201），远程CI已启动、结论以该PR实际结果为准。
+
+本阶段补齐 9 个已实现但无四类证据的运营接口：目录治理 3 项（`GET`/`POST`/`PUT /api/admin/catalog/*`）、价格监测政策 6 项（报价证据读、政策清单/明细/创建/修订/状态），生产代码零变更。真实隔离 HTTP/MySQL PASS（205.068 秒）：56 个业务请求 / 218 条断言 / 0 失败，9 接口各覆盖正常/边界/错误/未授权；匿名 338 请求 / 1014 断言通过且业务表行数不变；6 个幂等作用域重放逐字节相等、2 组"同键异体"被 400 拒绝；14 项数据库不变量全真（行数 `brand=2 / standard_project=1 / price_monitor_policy=1 / idempotency=6 / audit_log=7`）；默认关闭开关时该套件 0 请求。核心是证据链：目录来源说明为空时同一报价只能 `UNKNOWN`，补齐后变 `READY` 并给出 64 位哈希，政策只允许引用这次读取得到的哈希（伪造哈希与过去窗口均 409）。仅 SQL 合成身份、报价版本与同形审计夹具，不代表商家写入、正式资金或真机验收。[执行记录](R9_A4D11_GOVERNANCE_WRITES_EXECUTION.md) / [验收说明](../testing/GOVERNANCE_WRITES_ACCEPTANCE.md)。覆盖核对 25 套来源、267/352 项历史四类完整、缺口 85 项；全 API 验收仍为 false。
+
+## 2026-10-21 A4d-10：考核政策、月结与经营看板读接口（已上传 PR201）
+
+本阶段成果已上传[PR201](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/201)（base=`codex/r9-a4d9-pickup-work-files`，依赖PR200）；8 项远程CI全部 success（`backend` 约 34 分钟、`compose-smoke` 约 2 分钟，其余并行 job 3 分钟内），仍为草稿、未合并。
+
+本阶段补齐 20 个已实现但无四类证据的接口（考核政策 5、月结与读取 11、员工考核 1、经营看板 3），契约里无映射的 `GET /api/admin/assessment` 明确排除。真实隔离 HTTP/MySQL PASS（228.873 秒）：153 个业务请求 / 530 条断言 / 0 失败，20 接口各覆盖正常/边界/错误/未授权；匿名 338 请求 / 1014 断言通过且前后表行数不变；7 个幂等作用域与 2 组"同键异体"实测被拒；13 项数据库不变量全部为真——3 份快照摘要全为 `UNKNOWN` 且分数与等级为 JSON null、无政策月份 `policy_snapshot` 为 JSON null、事实明细从不进入审计。固定月份夹具为 `2024-01`/`2999-01`/`3000-01`，因为审计要求实际 query 与声明 query 逐字相同。仅 SQL 合成身份与历史政策夹具，不代表正式资金或真机验收。[执行记录](R9_A4D10_ASSESSMENT_READS_EXECUTION.md) / [验收说明](../testing/ASSESSMENT_READS_ACCEPTANCE.md)。覆盖核对 24 套来源、258/352 项历史四类完整、缺口 94 项；全 API 验收仍为 false。
+
+## 2026-10-21 A4d-9：接车与施工私有附件访问（已上传 PR200）
+
+本阶段成果已上传[PR200](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/200)（base=`codex/r9-a4d8-dispute-recovery`，依赖PR199）；8 项远程CI全部 success（`backend`、`compose-smoke`、`performance-baseline`、`database-recovery`、`web`、`miniapp`、`schema-and-ocr`、`schema-mysql`），仍为草稿、未合并。
+
+真实MySQL/MinIO/ClamAV旅程PASS（282.656秒）：4个附件读接口（接车、商家/技师/车主三侧施工证据）各覆盖正常/边界/错误/未授权，39个业务请求0失败；19个真实上传全部CLEAN，14条接车附件与5条施工证据关联核对通过；签名下载逐字节一致，去签名/篡改/6.1秒自然过期均403，租期5秒有界。修掉接车附件访问忽略未知/重复query的真实缺口。源码执行前后一致，4个容器与网络实际移除；同批回归PickupHttpTest/ServiceWorkHttpTest/PrivateFileAccessTest共17项通过。身份/订单/支付为SQL合成夹具，正式身份、资金、真机与外部存储未验收。[执行记录](R9_A4D9_PICKUP_WORK_FILES_EXECUTION.md) / [验收说明](../testing/PICKUP_WORK_PRIVATE_FILES_ACCEPTANCE.md)。覆盖核对23套来源、238/352项历史四类完整、缺口114项；全API验收仍为false。
+
+## 2026-10-21 A4d-6：支付退款恢复与佣金验收（本地完成）
+
+本轮真实隔离HTTP/MySQL/本机签名供应商通过：8接口（六重点+两支撑）72业务请求/238断言，338匿名请求/1014断言，14项数据库检查；新退款只提交一次、FAILED退款只查询、重复核对不增加供应商调用，坏金额不记成功、佣金只冲销一次。源码稳定且资源实际清理；默认禁用0请求，192项相关Python测试通过。仅SQL合成身份/历史事实及LOCAL_TEST，不代表正式资金或真机验收。[执行记录](R9_A4D6_FINANCIAL_RECOVERY_EXECUTION.md) / [覆盖清单](../testing/API_COVERAGE.md)。20套来源去重为222项历史四类完整，所选来源缺口130项；全API仍未通过。分支承接尚未合并的PR196，上传与远程CI另记。
+
+## 2026-10-21 A4d-5：接口覆盖核对工具（已上传PR196）
+
+新增可复跑核对工具与CI漂移门禁，统一当前352项契约及所选19套历史业务记录，去重确认216项四类历史证据，136项尚未在这些记录中完整覆盖。当前版本业务HTTP本轮未执行，全API验收仍false；不能把缺口数等同未开发功能。新增19项及既有186项相关Python测试全部通过（共205项），LF/CRLF报告一致且内容变化拒绝。[覆盖清单](../testing/API_COVERAGE.md) / [执行记录](R9_A4D5_API_COVERAGE_EXECUTION.md)。下一批优先支付/退款恢复与佣金六接口，正式渠道继续后置。实现提交e94cb60已上传[草稿PR196](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/196)，远程CI待完成；独立分支基于main，退款页PR195保留原分支和检查。
+
 ## 2026-10-20 收口：12 支堆叠 PR 全部合并进 main
 
 R9 期间形成的整条栈（#181 → #192，12 支）已按链式顺序全部合并进 `main`，合并后 `main` = `13354bf8`，`open PR = 0`。合并前后做了三项核对：
@@ -405,3 +485,7 @@ A7.2b 施工档案回写已实现：[规格 #53](https://github.com/Vehicle-Heal
 ## 每阶段交付
 
 用户已要求每完成一个阶段整理文档并上传 GitHub。后续按“验证→文档→提交→推送阶段分支→PR→CI”的顺序收口，在用户报告中提供 PR 链接与最终验证结果。详见[阶段交付规则](STAGE_DELIVERY.md)。
+
+## 2026-10-21 A4d-4c：共用退款页收口（已上传PR195）
+
+车主/店长退款页统一阶段、资金事实、表单缺口与错误恢复；新增确认前后账号/路由/版本/正文复检，页面隐藏或账号变化取消旧弹窗；未知结果保留原正文原键重试。新增15项测试，全量1030/1030（0失败/跳过），微信与H5构建及两项原生门禁通过；产物17锚点、2个textarea。后端/API/渠道未改；真机、正式资金及全量后端本轮未执行。后续路线与上传策略见[执行计划](NEXT_EXECUTION_PLAN_2026_10_21.md)，[阶段记录](R9_A4D4C_REFUNDS_EXECUTION.md)。实现提交6a8835b已推送并创建[草稿PR195](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/195)，远程CI待完成；未合并、未上线。

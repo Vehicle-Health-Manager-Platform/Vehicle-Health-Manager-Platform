@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "operations": 352,
-  "anonymous_probes": 338,
+  "operations": 353,
+  "anonymous_probes": 339,
   "full_api_acceptance_passed": false,
   "note": "Generated inventory, not test evidence. Anonymous 401 does not prove controller implementation or role/ownership validation.",
   "items": [
@@ -1668,10 +1668,13 @@
       "operation_id": "get_api_admin_reconciliation",
       "method": "GET",
       "path": "/api/admin/reconciliation",
-      "roles": "授权运营",
-      "implementation_status": "unspecified",
+      "roles": "OPERATOR且当前有效会话拥有can_analytics；平台聚合，不含交易明细",
+      "implementation_status": "local-finance-read-implemented",
       "content_types": [],
-      "required_query": [],
+      "required_query": [
+        "date",
+        "channel"
+      ],
       "anonymous_expected": 401,
       "cases": {
         "normal": "NOT_RUN",
@@ -1735,7 +1738,7 @@
       "method": "POST",
       "path": "/api/ai/chat",
       "roles": null,
-      "implementation_status": "unspecified",
+      "implementation_status": "ai-chat-implemented-requires-provider",
       "content_types": [
         "application/json"
       ],
@@ -2332,8 +2335,8 @@
       "operation_id": "post_api_check_delivery_compare",
       "method": "POST",
       "path": "/api/check/delivery/compare",
-      "roles": null,
-      "implementation_status": "unspecified",
+      "roles": "本单车主或本店 MERCHANT/STAFF",
+      "implementation_status": "delivery-compare-implemented",
       "content_types": [
         "application/json"
       ],
@@ -2892,7 +2895,7 @@
       "method": "POST",
       "path": "/api/input-materials/{purpose}/{vehicleId}/upload",
       "roles": "OWNER",
-      "implementation_status": "unspecified",
+      "implementation_status": "controlled-input-material-upload-implemented",
       "content_types": [
         "multipart/form-data"
       ],
@@ -2910,7 +2913,7 @@
       "method": "GET",
       "path": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
       "roles": "OWNER",
-      "implementation_status": "unspecified",
+      "implementation_status": "controlled-input-material-access-implemented",
       "content_types": [],
       "required_query": [],
       "anonymous_expected": 401,
@@ -5919,6 +5922,24 @@
       "path": "/api/vehicle/match-plate",
       "roles": "正式车主",
       "implementation_status": "core-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_vehicle_mileage_recognition",
+      "method": "POST",
+      "path": "/api/vehicle/mileage-recognition",
+      "roles": "当前有效OWNER会话、本人有效车辆、本人CLEAN JPEG/PNG；MILEAGE_OCR_ENABLED默认false",
+      "implementation_status": "mileage-recognition-gateway-implemented-requires-model",
       "content_types": [
         "application/json"
       ],

@@ -101,8 +101,8 @@ test('detail entry matrix replaces seven inline includes() arrays', () => {
   assert.deepEqual(keys({ status: 'PAID' }), ['pickup', 'refund'])
   assert.deepEqual(keys({ status: 'RECEIVED' }), ['dispatch', 'protection', 'pickup-detail', 'refund', 'workspace'])
   assert.deepEqual(keys({ status: 'IN_SERVICE' }), ['dispatch', 'protection', 'pickup-detail', 'refund', 'workspace'])
-  assert.deepEqual(keys({ status: 'PENDING_VERIFY' }), ['dispatch', 'protection', 'redeem', 'pickup-detail', 'refund', 'workspace'])
-  assert.deepEqual(keys({ status: 'COMPLETED' }), ['dispatch', 'protection', 'redeem', 'pickup-detail'])
+  assert.deepEqual(keys({ status: 'PENDING_VERIFY' }), ['dispatch', 'protection', 'delivery-compare', 'redeem', 'pickup-detail', 'refund', 'workspace'])
+  assert.deepEqual(keys({ status: 'COMPLETED' }), ['dispatch', 'protection', 'delivery-compare', 'redeem', 'pickup-detail'])
   assert.deepEqual(keys({ status: 'DISPUTED' }), ['protection', 'pickup-detail', 'refund'])
   assert.deepEqual(keys({ status: 'CLOSED' }), [])
   // 已关闭但属于"双方同意取消"时，退款处理入口仍要给出。
@@ -117,6 +117,11 @@ test('detail entry matrix replaces seven inline includes() arrays', () => {
   assert.deepEqual(merchantEntryList({ status: 'DISPUTED' }).find(e => e.key === 'refund').params, { role: 'merchant' })
   assert.deepEqual(merchantEntryList({ status: 'RECEIVED' }).find(e => e.key === 'workspace').params, { role: 'merchant' })
   assert.deepEqual(merchantEntryList({ status: 'PAID' }).find(e => e.key === 'pickup').params, {})
+  // 取车对比复用车主页，但必须带 role，否则会按车主会话去读本店订单。
+  assert.deepEqual(merchantEntryList({ status: 'PENDING_VERIFY' }).find(e => e.key === 'delivery-compare').params, { role: 'merchant' })
+  assert.equal(merchantEntryList({ status: 'PENDING_VERIFY' }).find(e => e.key === 'delivery-compare').label, '取车对比（核销前核对）')
+  assert.equal(merchantEntryList({ status: 'COMPLETED' }).find(e => e.key === 'delivery-compare').label, '查看取车对比')
+  assert.equal(merchantEntryList({ status: 'IN_SERVICE' }).some(e => e.key === 'delivery-compare'), false)
 })
 
 test('no-action hint tells the shop the next concrete step', () => {

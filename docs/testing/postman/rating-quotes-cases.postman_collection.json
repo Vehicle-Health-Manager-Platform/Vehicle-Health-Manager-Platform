@@ -1,0 +1,593 @@
+{
+  "info": {
+    "name": "Autocare isolated public star service rating quotes",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:1"
+    },
+    {
+      "key": "isolated_rating_quotes_cases",
+      "value": "false"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "if(pm.variables.get(\"isolated_rating_quotes_cases\")!==\"true\"){pm.execution.skipRequest();throw new Error(\"Use the isolated fulfillment runner\");}"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "quotes",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/service/project/1/rating-quotes",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.total).to.eql(3);pm.expect(d.page).to.eql(1);pm.expect(d.page_size).to.eql(20);});",
+              "pm.test(\"business 1\",()=>{const i=pm.response.json().data.items;pm.expect(i.map(x=>x.merchant_project_id)).to.eql([1,3,2]);pm.expect(i.map(x=>x.merchant_id)).to.eql([1,3,2]);});",
+              "pm.test(\"business 2\",()=>{const i=pm.response.json().data.items;pm.expect(i.map(x=>x.price)).to.eql([\"12.34\",\"30.00\",\"10.00\"]);pm.expect(i[0].version).to.eql(1);pm.expect(i[0].merchant_name).to.eql(\"synthetic shop\");});",
+              "pm.test(\"business 3\",()=>{const i=pm.response.json().data.items;pm.expect(i[0].rating_summary).to.eql({count:1,rating_sum:5,average_rating:\"5.00\"});pm.expect(i[1].rating_summary).to.eql({count:1,rating_sum:2,average_rating:\"2.00\"});});",
+              "pm.test(\"business 4\",()=>{const i=pm.response.json().data.items;pm.expect(i[2].rating_summary).to.eql({count:0,rating_sum:0,average_rating:null});});",
+              "pm.test(\"business 5\",()=>{for(const k of [\"owner_id\",\"user_id\",\"review_id\",\"order_id\",\"content\",\"actor_staff_id\",\"audit_id\",\"submission_key\",\"phone\",\"openid\"])pm.expect(pm.response.text()).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_other_owner",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/service/project/1/rating-quotes",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.total).to.eql(3);pm.expect(d.items.map(x=>x.merchant_project_id)).to.eql([1,3,2]);});",
+              "pm.test(\"business 1\",()=>{for(const k of [\"owner_id\",\"user_id\",\"review_id\",\"order_id\",\"content\",\"actor_staff_id\",\"audit_id\",\"submission_key\",\"phone\",\"openid\"])pm.expect(pm.response.text()).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_empty_page",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/service/project/1/rating-quotes?page=1000000",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.total).to.eql(3);pm.expect(d.items).to.eql([]);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_region",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/service/project/1/rating-quotes?region_code=310000",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.total).to.eql(2);pm.expect(d.items.map(x=>x.merchant_id)).to.eql([1,3]);});",
+              "pm.test(\"business 1\",()=>{for(const k of [\"owner_id\",\"user_id\",\"review_id\",\"order_id\",\"content\",\"actor_staff_id\",\"audit_id\",\"submission_key\",\"phone\",\"openid\"])pm.expect(pm.response.text()).not.to.include(\"\\\"\"+k+\"\\\"\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_region_no_match",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/service/project/1/rating-quotes?region_code=999999",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.total).to.eql(0);pm.expect(d.items).to.eql([]);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_second_project",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/service/project/2/rating-quotes?page=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));",
+              "pm.test(\"business 0\",()=>{const d=pm.response.json().data;pm.expect(d.total).to.eql(1);pm.expect(d.items[0].merchant_project_id).to.eql(6);pm.expect(d.items[0].version_id).to.eql(6);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_missing_project",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/service/project/999999/rating-quotes",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_inactive_project",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/service/project/3/rating-quotes",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(404));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_page_zero",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/service/project/1/rating-quotes?page=0",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_page_size",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/service/project/1/rating-quotes?page_size=21",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_region_digits",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/service/project/1/rating-quotes?region_code=31000",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_unknown_query",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/service/project/1/rating-quotes?project_id=1",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_duplicate_page",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/service/project/1/rating-quotes?page=1&page=2",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_zero_project",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/service/project/0/rating-quotes",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{owner_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).not.to.eql(0);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_anonymous",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/service/project/1/rating-quotes",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40100);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_merchant_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/service/project/1/rating-quotes",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_technician_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/service/project/1/rating-quotes",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{technician_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "quotes_other_merchant_denied",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/service/project/1/rating-quotes",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{other_merchant_token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\",()=>pm.response.to.have.status(403));",
+              "pm.test(\"envelope\",()=>{pm.expect(pm.response.json().code).to.eql(40300);});",
+              "pm.test(\"no-store\",()=>pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
