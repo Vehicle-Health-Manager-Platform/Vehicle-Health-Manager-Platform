@@ -9821,6 +9821,40 @@
       ]
     },
     {
+      "name": "post_api_vehicle_vin_decode",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "url": "{{base_url}}/api/vehicle/vin-decode",
+        "description": "车主明确同意后查询NHTSA有限覆盖VIN候选，人工选车型",
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"anonymous is rejected\", () => pm.response.to.have.status(401));",
+              "pm.test(\"safe JSON envelope\", () => pm.expect(pm.response.json().code).to.eql(40100));",
+              "pm.test(\"private response is not cached\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "name": "get_api_vehicle_vehicle_health_dashboard",
       "request": {
         "method": "GET",

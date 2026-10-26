@@ -866,3 +866,7 @@ POST /api/check/delivery/compare 实测：齐备订单 READY/deliverable=true、
 - 26项首轮通过；最终额外MIME/编码边界复验中。所有完整VIN和服务响应均合成，仅使用本机真实HTTP；浏览器读取官方文档公开部分VIN示例得到ErrorCode6，即使有品牌/车型也不应升级为完整成功。
 - 官方FAQ明确国外车辆依赖美国市场登记、1980年前无数据，故不作中国全量来源。模型路线按官方faster-whisper CPU/int8/PyAV与BGE-small-zh-v1.5（MIT/512维）作本地试点，未下载模型/测准确率。
 - R3/R4采用异步任务/取消/TTL，避免60秒音频或50页PDF阻塞微信云通道15秒；R5新增独立embedding许可，旧资料默认无，先MySQL精确向量再按测量评估Milvus。
+
+R2a：现有VIN模式仅校验带入；复用账号隔离60秒prefill和手动车型选择，候选绝不产生内部model_id。ReservationStore.owner可复核会话/账号；共享auth_rate_limit适用固定分钟窗口，计数不包含VIN。
+
+R2a最终5套54项后端通过；新增HTTP用例合成VIN与继承用例重复触发409，已隔离样本复测。全量小程序1123、Python538、OCR63通过/1跳过及9组回归/MP和H5构建通过。gstack H5合成旅程13断言/截图通过，真实供应商与手机未验。PR242最终8项CI通过且OPEN。

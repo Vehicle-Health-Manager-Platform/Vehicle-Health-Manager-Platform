@@ -6,14 +6,23 @@ import {vehicleApi,vehicleFailure} from '../../services/vehicles.js'
 import {initialVehicleEntryState,createVehicleEntryFlow} from '../../services/vehicle-entry.js'
 import {vehicleEntryPrefill} from '../../services/vehicle-entry-session.js'
 import {selectOwnerVehicle} from '../../services/owner-vehicle-selection.js'
+import {initialVinState,createVinFlow} from '../../services/vin-decode.js'
+import {VIN_DISCLOSURE,vinSummary} from '../../services/vin-candidate.js'
 const state=reactive(initialVehicleEntryState())
 const flow=createVehicleEntryFlow({state,api:vehicleApi,token:()=>ownerSession.accessToken,prefill:vehicleEntryPrefill})
+const vinState=reactive(initialVinState())
+const vinFlow=createVinFlow({state:vinState,vin:()=>state.vin,token:()=>ownerSession.accessToken,prefill:vehicleEntryPrefill})
+watch(()=>[ownerSession.accessToken,state.mode],vinFlow.reset,{flush:'sync'})
+watch(()=>[state.vin,vinState.year,vinState.consent],vinFlow.invalidate,{flush:'sync'})
 watch(()=>ownerSession.accessToken,flow.reset,{flush:'sync'})
 watch(()=>state.plate,flow.invalidate,{flush:'sync'})
 onHide(flow.reset)
 onUnload(flow.reset)
+onHide(vinFlow.reset)
+onUnload(vinFlow.reset)
 function login(){clearOwnerSession();uni.navigateTo({url:'/pages/owner/index'})}
 function manual(){try{uni.navigateTo({url:flow.prepare()})}catch(error){const safe=vehicleFailure(error);state.message=safe.message;state.failureKind=safe.kind}}
+function confirmedVin(){try{uni.navigateTo({url:vinFlow.prepare()})}catch(error){const safe=vehicleFailure(error);vinState.message=safe.message;vinState.failureKind=safe.kind}}
 function choose(row){try{selectOwnerVehicle(flow.select(row));uni.switchTab({url:'/pages/archive/index'})}catch(error){const safe=vehicleFailure(error);state.message=safe.message;state.failureKind=safe.kind}}
 </script>
 <template>
@@ -32,7 +41,22 @@ function choose(row){try{selectOwnerVehicle(flow.select(row));uni.switchTab({url
     <button class="secondary" :disabled="state.busy" @tap="manual">带入车牌，手动登记新车</button>
    </template>
    <template v-else-if="state.mode==='license'"><text class="heading">行驶证识别尚未开通</text><text class="copy">当前可以手动填写证件上的车牌与VIN，并确认车型。不上传或保存行驶证照片。</text><button @tap="manual">手动填写车辆资料</button></template>
-   <template v-else-if="state.mode==='vin'"><text class="label">17位VIN（车架号）</text><input v-model="state.vin" class="field" maxlength="17" placeholder="不含I、O、Q" /><text class="copy">VIN车型解码尚未开通。校验后将带入手动表单，请自行选择并确认车型。</text><button @tap="manual">校验VIN并手动确认车型</button></template>
+   <template v-else-if="state.mode==='vin'">
+    <text class="label">17位VIN（车架号）</text><input v-model="state.vin" class="field" maxlength="17" placeholder="不含I、O、Q" />
+    <text class="label">年款提示（可留空）</text><input v-model="vinState.year" class="field" maxlength="4" type="number" placeholder="1980至2100" />
+    <text class="copy">{{VIN_DISCLOSURE}}</text>
+    <checkbox-group @change="vinState.consent=$event.detail.value.includes('yes')"><label class="copy"><checkbox value="yes" :checked="vinState.consent" />我已阅读并同意本次查询用途</label></checkbox-group>
+    <button :disabled="!vinState.consent||vinState.busy" :loading="vinState.busy" @tap="vinFlow.recognize">查询VIN候选</button>
+    <button v-if="vinState.busy" class="secondary" @tap="vinFlow.invalidate">取消查询</button>
+    <view v-if="vinState.candidate&&vinState.candidate.status!=='NO_MATCH'" class="match">
+     <text class="heading">{{vinState.candidate.status==='PARTIAL'?'部分候选信息':'车型候选信息'}}</text><text class="copy">来源：NHTSA（美国市场登记）</text><text class="copy">{{vinSummary(vinState.candidate)}}</text>
+     <checkbox-group @change="vinState.reviewed=$event.detail.value.includes('yes')"><label class="copy"><checkbox value="yes" :checked="vinState.reviewed" />我已核对，继续手动选择车型</label></checkbox-group>
+     <button :disabled="!vinState.reviewed" @tap="confirmedVin">带入VIN和候选摘要</button>
+    </view>
+    <text v-if="vinState.message" class="copy" :class="{error:vinState.failureKind}" role="status">{{vinState.message}}</text>
+    <button v-if="['unauthorized','forbidden'].includes(vinState.failureKind)" @tap="login">重新登录</button>
+    <button class="secondary" :disabled="vinState.busy" @tap="manual">直接带入VIN，手动确认车型</button>
+   </template>
    <text v-if="state.message" class="copy" :class="{error:state.failureKind}" role="status">{{state.message}}</text>
    <button v-if="['unauthorized','forbidden'].includes(state.failureKind)" @tap="login">重新登录</button>
   </view>

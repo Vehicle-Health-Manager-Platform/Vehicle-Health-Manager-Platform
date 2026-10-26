@@ -837,3 +837,7 @@ run_reward_acceptance --docker通过，281.36秒：144HTTP/14接口四类，17�
 - gstack /browse核实官方API/FAQ/部分VIN示例与两类模型一手资料；未发用户VIN。准备上传规划和首阶段，不合并发布。
 
 - R1规划/实现e1462df已推送，草稿PR242已创建：https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/242，base为PR241分支；最终文档head检查另核。R1没有新公共路由/生产开关/数据库迁移，真实VIN服务与OWNER页面仍待R2。
+
+R2a已创建codex/vin-owner-gateway，先实现VIN独立闭环，行驶证/ASR/图文/向量按既有路线后续；设计已落盘。
+
+R2a代码和选定验证完成：54 Java、1123 miniapp、538 Python、63 OCR通过/1跳过、13 H5浏览器断言；源码摘要执行前后一致。9组运行器通过，补齐接口、用户/管理员、配置和外部验收说明，准备检查并上传。

@@ -389,7 +389,165 @@
           {
             "bearerAuth": []
           }
-        ]
+        ],
+        "deprecated": true,
+        "description": "旧GET没有解码实现；迁移POST并提供VIN_VPIC_V1用途同意，勿将VIN置于查询参数。"
+      },
+      "post": {
+        "summary": "车主明确同意后查询NHTSA有限覆盖VIN候选，人工选车型",
+        "operationId": "post_api_vehicle_vin_decode",
+        "tags": [
+          "vehicle"
+        ],
+        "x-feature-ids": [
+          "F03"
+        ],
+        "responses": {
+          "200": {
+            "description": "vin/model_year_hint(整数或null)/status(CANDIDATE|PARTIAL|NO_MATCH)/source=NHTSA_VPIC/coverage=US_MARKET_REGISTRATION_ONLY/requires_confirmation=true/fields。fields仅make/model/model_year/trim/vehicle_type非空文本；完整候选需make/model/model_year；NO_MATCH为空。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VIN/年款/用途同意无效，额外字段/重复键/尾随JSON/query均拒绝",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "会话失效或账号停用/删除",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非OWNER角色",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "每车主分钟限额或本实例并发满",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "关闭、来源不可用/超时/响应无效或数据库不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "vin",
+                  "consent",
+                  "consent_version"
+                ],
+                "properties": {
+                  "vin": {
+                    "type": "string",
+                    "description": "首尾空白可去除，原始ASCII合法17位；服务端规范为大写",
+                    "pattern": "^[ \\t\\r\\n]*[A-HJ-NPR-Za-hj-npr-z0-9]{17}[ \\t\\r\\n]*$"
+                  },
+                  "model_year": {
+                    "type": "integer",
+                    "minimum": 1980,
+                    "maximum": 2100
+                  },
+                  "consent": {
+                    "const": true
+                  },
+                  "consent_version": {
+                    "const": "VIN_VPIC_V1"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-implementation-status": "vin-owner-candidate-implemented-requires-provider-acceptance",
+        "x-roles": "当前有效OWNER会话；VIN_DECODE_ENABLED默认false，显式NHTSA_VPIC来源",
+        "description": "仅POST JSON正文，禁止query，不自动登记车辆。VIN_VPIC_V1同意将VIN/可选年款发送美国NHTSA；仅美国市场登记覆盖，不保证中国车辆或内部车型精确匹配。调用前后复核会话/账号（失败也复核）；共享数据库每车主每UTC分钟5次，实例并发2。供应商10秒总期限、64KiB响应、不重定向、无应用级重试。返回需人工核对的CANDIDATE/PARTIAL/NO_MATCH，不提供model_id。旧GET未提供业务实现，应迁移本POST。"
       }
     },
     "/api/vehicle/ocr-license": {

@@ -1,0 +1,209 @@
+{
+  "version": 1,
+  "recorded_at": "2026-10-26T14:08:00.122266+00:00",
+  "stage": "R2a VIN owner gateway",
+  "branch": "codex/vin-owner-gateway",
+  "base_commit": "0362fc49fd9356ea10aa7e24e4d0caf3f5035c40",
+  "selected_checks_passed": true,
+  "full_backend_rerun": false,
+  "full_api_acceptance_passed": false,
+  "real_vin_provider_acceptance_passed": false,
+  "wechat_device_acceptance_passed": false,
+  "production_acceptance_passed": false,
+  "backend": {
+    "suites": [
+      {
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.JdbcVinRecognitionTest",
+        "report_sha256": "c95b5355e5f71dd32ef10ba16472db0f44c0f8112d67d40617b5c2dea3928cfa"
+      },
+      {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.VinHttpJourneyTest",
+        "report_sha256": "36cc71c2e97eb21bceaf3ec45e83d212ad263404baf0f37a917a65eb4f553166"
+      },
+      {
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.vehicle.vin.VinProtocolTest",
+        "report_sha256": "4d40ecc25361322d314748bb1d15dfbeec3ed63bdc3ab3148687333d244b5ff2"
+      },
+      {
+        "tests": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.vehicle.vin.VpicVinDecoderTest",
+        "report_sha256": "37b5016ebbe1c40ece1852c045ed8e4cb9cb3f52f91c0cd923577ac8e83d1e51"
+      },
+      {
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.JdbcMileageRecognitionTest",
+        "report_sha256": "975c0a49e51af36f9c44f48645a37145e3c48995704ee075294cdc716c05cdca"
+      }
+    ],
+    "total_tests": 54,
+    "log_sha256": "d7ec52293fc2e3b630b4ccd79ac9f553c52af23e6f867c5179c1430be2120886",
+    "boundary": "Real loopback application HTTP, JWT and isolated MySQL; synthetic identity/VIN provider, LOCAL_TEST funds; no synthetic VIN sent to NHTSA."
+  },
+  "local_regression": {
+    "version": 1,
+    "finished_at": "2026-10-26T14:05:55.241446+00:00",
+    "selected_checks_passed": true,
+    "source_sha256": "063d32415ae3419b344f2eb2da9d35495d0948dffa8f8c70b112f41c80c692d3",
+    "sources_unchanged": true,
+    "backend_requested": false,
+    "backend_runtime_verified": false,
+    "production_acceptance_passed": false,
+    "boundaries": [
+      "Synthetic identities and LOCAL_TEST funds in backend integration tests.",
+      "No real WeChat/SMS/payment/model provider or mobile-device acceptance.",
+      "Builds and unit tests do not certify rendered page interactions.",
+      "Selected regression checks are not all-API business or performance acceptance."
+    ],
+    "checks": [
+      {
+        "name": "miniapp-unit",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 2.468,
+        "log": "miniapp-unit.log"
+      },
+      {
+        "name": "python-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 118.36,
+        "log": "python-regression.log"
+      },
+      {
+        "name": "ocr-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 21.343,
+        "log": "ocr-regression.log"
+      },
+      {
+        "name": "wechat-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 16.563,
+        "log": "wechat-build.log"
+      },
+      {
+        "name": "h5-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 24.047,
+        "log": "h5-build.log"
+      },
+      {
+        "name": "openapi-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.328,
+        "log": "openapi-consistency.log"
+      },
+      {
+        "name": "migration-mounts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.156,
+        "log": "migration-mounts.log"
+      },
+      {
+        "name": "handover-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.297,
+        "log": "handover-consistency.log"
+      },
+      {
+        "name": "contract-verdicts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.172,
+        "log": "contract-verdicts.log"
+      }
+    ]
+  },
+  "counts": {
+    "miniapp_passed": 1123,
+    "python_passed": 538,
+    "ocr_passed": 63,
+    "ocr_skipped": 1,
+    "contract_operations": 355,
+    "protected_operations": 341,
+    "historical_four_kind_operations": 317,
+    "verdicts": 38
+  },
+  "h5_browser": {
+    "fixture": "synthetic session/provider/browser only",
+    "checks": [
+      "source disclosure visible",
+      "query initially disabled",
+      "candidate rendered",
+      "POST body only",
+      "review required",
+      "changed year clears candidate",
+      "no match manual recovery",
+      "unconfigured safe error",
+      "loading cancel visible",
+      "cancel late bytes dropped",
+      "manual summary is visible",
+      "catalog remains explicit",
+      "no viewport horizontal overflow"
+    ],
+    "passed": 13,
+    "url": "#/pages/vehicle/manual",
+    "viewport": "390x844",
+    "screenshot_visually_reviewed": true,
+    "result_sha256": "493b9d80f84daebc22befe1b3b2fedb88c0f67cd6fcb64deede9bbfdcaeab503",
+    "screenshot_sha256": "728c7986fb4758a22d562624c3b4a10466edac474a0cce5534cfc8e8c987f502",
+    "fixture_script_sha256": "2edc58ebbb81a90b894eece073126cda32de8f613eca8e31a5fcaca8ee77ae41",
+    "journey_script_sha256": "8b3b1530f3358aa44368043d8442a048f95d220e9cf4f398ad2e49670a24fa61",
+    "boundary": "gstack browse; in-memory synthetic session and browser-only provider double; no real NHTSA or WeChat device."
+  },
+  "source_hash_observation": "Per-file hashes recorded after selected tests. Unified local regression additionally measured source_digest before and after unchanged. No claim that all historical backend reports match this tree.",
+  "sources": {
+    ".env.example": "3c12fe97537d9b004a374f80e31271f61dc036d11fd755fea729f4354474ae81",
+    "apps/miniapp/src/pages/vehicle/entry.vue": "f523a6122f127979d7fb0625930901b2bdf9ceddd822db818ec5543eb6636efd",
+    "apps/miniapp/src/pages/vehicle/manual.vue": "741d30490f7f5ef4351be9b2bac5bcc75457215b33991814a8a50ea15cda9644",
+    "apps/miniapp/src/services/vehicle-entry.js": "8c89e5bbc46279473680fcdad5ef9b54a58dee610e09a1656a26a655c7900d6a",
+    "apps/miniapp/src/services/vin-candidate.js": "6ec775c39ef9b476769989efb9490be53514eca0b11caf35f966471677a28272",
+    "apps/miniapp/src/services/vin-decode.js": "24f8fbf96dacf5d4db4fb2605b8d4052775e34f80f0bad3a8ffd404a10a49705",
+    "apps/miniapp/test/vin-decode.test.js": "3de772892f26927a26d8ecdba80e3bf94ace411ce8d082ea0c515bdc1014c34c",
+    "backend/src/main/java/com/autocare/platform/order/VinRecognition.java": "289a66069119815c29470fb819d858bc4162d7408d5c98167babdd08833913af",
+    "backend/src/main/java/com/autocare/platform/order/VinRecognitionConfiguration.java": "9d43d06eb72e61411aca0ca4770210c75817ed3bf863fc4ee579047f7eba4c51",
+    "backend/src/main/java/com/autocare/platform/order/VinRecognitionController.java": "a17ac739278c25773d0fd71865046e552137e39819167cfb41f1616f1ac0ff83",
+    "backend/src/main/java/com/autocare/platform/vehicle/vin/VinDecoder.java": "92789ef7ceb5cad1db29a42d0fb4774832df354b795d6e8de531373d49f96be8",
+    "backend/src/main/java/com/autocare/platform/vehicle/vin/VpicVinDecoder.java": "fd820c5d85f0c5578625bba734cc873edacaaed8f6888397d5f6fa50f8e4c094",
+    "backend/src/main/java/com/autocare/platform/vehicle/vin/VpicVinResponse.java": "0fa1bcd6bfd2469c7fe0617dc933718b71a4fe63f1fac84293f9faa3a38068c3",
+    "backend/src/test/java/com/autocare/platform/order/JdbcVinRecognitionTest.java": "ab222f3d8054c957f12022387ac583501a9aefdb2069ffb36e768726c6228dec",
+    "backend/src/test/java/com/autocare/platform/order/VinHttpJourneyTest.java": "73975a0915e5db6615c0a3abf116a6a2c03eab2d4b6127a036006784e108fa5e",
+    "backend/src/test/java/com/autocare/platform/vehicle/vin/VinProtocolTest.java": "1340070a4f33e9d6aa71d26dc81e2b3153db69921dcf00ee21e3dbeaa7538180",
+    "backend/src/test/java/com/autocare/platform/vehicle/vin/VpicVinDecoderTest.java": "e1ac6ef8a3ea9ae24ce5f09d987867137c6a5da23fc4d06a2f06a9fdcda83ca3",
+    "deploy/cloudrun/env.example": "c76deaa1eefa328f3e116f5875b810504dde3939d39f01e8623f016b7878c32f",
+    "deploy/compose/compose.yml": "3ee5ac5ce614c7f1ab5b1bea211c082b350a3301e94a94bfb119ad3504cc41db",
+    "scripts/r9_contract_updates_openapi.py": "029e64ba6f6fd22ef67ca409ad1209c9d961b17b3bb1e8ba416c8bee5c9fd5e4"
+  },
+  "known_gaps": [
+    "Real provider authorization/US-market coverage and authorized vehicle samples",
+    "Chinese exact vehicle catalog mapping and driving-license extraction",
+    "ASR and general image/PDF extraction persistent async jobs",
+    "Embeddings/vector retrieval and authorized evaluation corpus",
+    "Formal WeChat/SMS/payment, mobile-device testing and production deployment"
+  ],
+  "repaired_test_issue": "Isolated synthetic VIN used to avoid collision with inherited core journey; existing duplicate registration rejection remains in effect."
+}

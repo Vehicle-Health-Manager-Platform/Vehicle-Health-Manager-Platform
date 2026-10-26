@@ -28,9 +28,9 @@ class ContractReconciliationTest(unittest.TestCase):
         self.assertEqual(TOTAL_CONTRACT, len(operations_))
         self.assertEqual(len(operations_), len(complete) + len(rows))
         self.assertGreaterEqual(len(complete), MIN_EVIDENCED)
-        self.assertEqual(37, len(rows))
-        self.assertEqual({'implemented-local': 2, 'superseded': 15, 'internal-only': 1, 'blocked-external': 11,
-                          'not-implemented': 4, 'no-success-path': 1, 'dev-only': 3}, dict(kinds))
+        self.assertEqual(38, len(rows))
+        self.assertEqual({'implemented-local': 3, 'superseded': 16, 'internal-only': 1, 'blocked-external': 11,
+                          'not-implemented': 3, 'no-success-path': 1, 'dev-only': 3}, dict(kinds))
         self.assertFalse(coverage['full_api_acceptance_passed'])
 
     def test_committed_report_matches_generator(self):

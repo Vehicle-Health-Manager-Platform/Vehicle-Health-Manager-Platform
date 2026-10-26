@@ -1,13 +1,16 @@
 import {normalizedPlate,normalizedVin,VehicleError,vehicleFailure} from './vehicles.js'
+import {vinResponse} from './vin-candidate.js'
 export function createVehiclePrefillStore({now=Date.now}={}) {
  let draft=null,timer=null
  function clear(){if(timer!==null)clearTimeout(timer);timer=null;draft=null}
  function put(token,source,fields={}) {
   clear();if(!token||!['plate','vin','license'].includes(source))throw new VehicleError('invalid','录车来源无效，请重新进入')
   const plate=source==='plate'?normalizedPlate(fields.plate):'',vin=source==='vin'?normalizedVin(fields.vin):''
-  draft={token,source,plate,vin,expires:now()+60000};timer=setTimeout(clear,60000)
+  const vinFacts=fields.vinFacts===undefined?undefined:vinResponse(fields.vinFacts,vin,fields.vinFacts.model_year_hint)
+  if(vinFacts&&(source!=='vin'||vinFacts.status==='NO_MATCH'))throw new VehicleError('invalid','候选无效，请手动选择车型')
+  draft={token,source,plate,vin,...(vinFacts?{vinFacts}:{}),expires:now()+60000};timer=setTimeout(clear,60000)
  }
- function take(token){const value=draft;clear();return value&&value.token===token&&now()<value.expires?{source:value.source,plate:value.plate,vin:value.vin}:null}
+ function take(token){const value=draft;clear();return value&&value.token===token&&now()<value.expires?{source:value.source,plate:value.plate,vin:value.vin,...(value.vinFacts?{vinFacts:value.vinFacts}:{})}:null}
  return {put,take,clear}
 }
 export const initialVehicleEntryState=()=>({mode:'manual',plate:'',vin:'',busy:false,matches:[],loaded:false,matchedPlate:'',matchedToken:'',message:'',failureKind:''})

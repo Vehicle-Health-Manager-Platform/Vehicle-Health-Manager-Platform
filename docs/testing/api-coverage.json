@@ -5,11 +5,11 @@
   "current_backend_revalidated": false,
   "scope": "Selected recorded synthetic-identity/LOCAL_TEST suites only; other tests are not indexed. Reconciled with current definitions; no new HTTP execution or production acceptance.",
   "counts": {
-    "contract_operations": 354,
-    "protected_operations": 340,
+    "contract_operations": 355,
+    "protected_operations": 341,
     "four_kind_definitions": 317,
     "historical_four_kind_operations": 317,
-    "without_complete_historical_evidence": 37,
+    "without_complete_historical_evidence": 38,
     "current_run_operations": 0,
     "suites": 36
   },
@@ -15174,6 +15174,30 @@
       "sources": []
     },
     {
+      "operation_id": "post_api_vehicle_vin_decode",
+      "method": "POST",
+      "path": "/api/vehicle/vin-decode",
+      "roles": "当前有效OWNER会话；VIN_DECODE_ENABLED默认false，显式NHTSA_VPIC来源",
+      "protected": true,
+      "implementation_status": "vin-owner-candidate-implemented-requires-provider-acceptance",
+      "defined_kinds": [],
+      "historical_kinds": [],
+      "missing_definition_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "missing_historical_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "current_acceptance": "NOT_RUN",
+      "sources": []
+    },
+    {
       "operation_id": "get_api_vehicle_vehicle_health_dashboard",
       "method": "GET",
       "path": "/api/vehicle/{vehicle}/health-dashboard",
@@ -15294,6 +15318,6 @@
       ]
     }
   ],
-  "contract_sha256": "095b04a850141f962cb8793f1e953efb11f01e5cea1d6b9cf07a13dcdf39911b",
+  "contract_sha256": "cd74e651f68f99ba291fca207b50462c5b9d7ff5a5638755240ad54b557b6933",
   "input_hash_policy": "Input SHA256 uses CRLF-to-LF normalization. Historical raw collection digests must match its LF or CRLF byte form; content changes are rejected."
 }

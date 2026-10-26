@@ -77,3 +77,7 @@ R1内部VIN边界与适配→R2车主网关/页面及行驶证；同时按资源
 ## 官方资料核对
 
 2026-10-26使用gstack /browse读取[NHTSA API](https://vpic.nhtsa.dot.gov/api/)及[FAQ](https://vpic.nhtsa.dot.gov/api/home/index/faq)。数据源为厂商565申报，国外车辆依赖面向美国市场登记；有自动流量控制。官方供应商覆盖/描述不等于本项目真实用户样本准确率。未发送用户VIN或其他私人车辆资料。
+
+## R2a进展
+
+VIN车主网关/用途同意/候选确认/手动录车已实施并完成选定回归，见[R2a记录](../../progress/RECOGNITION_R2A_VIN_GATEWAY.md)。默认关闭且真实NHTSA/中国覆盖待验，R2b行驶证随后，R3/R4/R5未实施完成。

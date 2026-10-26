@@ -17099,6 +17099,58 @@
       ]
     },
     {
+      "name": "post_api_vehicle_vin_decode",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/vehicle/vin-decode",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "description": "车主明确同意后查询NHTSA有限覆盖VIN候选，人工选车型\nRoles: 当前有效OWNER会话；VIN_DECODE_ENABLED默认false，显式NHTSA_VPIC来源",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "type": "string",
+              "value": "{{access_token}}"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{{body_post_api_vehicle_vin_decode}}"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.variables.get(\"enable_prepared_requests\") !== \"true\") { pm.execution.skipRequest(); }",
+              "else {",
+              "  const missing = [\"status_post_api_vehicle_vin_decode\", \"access_token\", \"body_post_api_vehicle_vin_decode\"].filter(k => !pm.variables.get(k));",
+              "  if (missing.length) { pm.execution.skipRequest(); throw new Error(\"Configure fixture variables before sending: \" + missing.join(\",\")); }",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"configured scenario status\", () => pm.response.to.have.status(Number(pm.variables.get(\"status_post_api_vehicle_vin_decode\"))));"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "name": "get_api_vehicle_vehicle_health_dashboard",
       "request": {
         "method": "GET",

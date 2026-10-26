@@ -19,3 +19,5 @@
 写操作后重新读取确认，权限变化后旧聚合应清除。401重新登录，403核对权限，资源不存在核对归属；503可能是关闭开关或未配置上游，交管理员定位。异常金额由管理员核对原支付/退款事实；本页不补写账单或直接发起资金操作。
 
 [运营账号运维](../operations/OPERATOR_ACCOUNTS.md) · [交付剩余验收](../delivery/REMAINING_ACCEPTANCE.md)。
+
+VIN来源管理：后端默认关闭；开启前检查NHTSA数据用途、地区覆盖和出口，必须显式VIN_DECODER_PROVIDER=NHTSA_VPIC。NHTSA候选不会自动进入车型目录，国内车型映射另按授权资料审核。关闭/失败保持手动录车；[配置与验收](../api/VIN_OWNER_GATEWAY.md)。

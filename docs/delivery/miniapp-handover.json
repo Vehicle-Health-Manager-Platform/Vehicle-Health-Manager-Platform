@@ -6,7 +6,7 @@
   "counts": {
     "pages": 110,
     "template_files": 3,
-    "template_entries": 100,
+    "template_entries": 104,
     "guides": 4
   },
   "inputs": {
@@ -113,22 +113,22 @@
     "apps/miniapp/src/pages/archive/reminder.vue": "7c212d991a074e72d03692a60e781e4a244d3b873fe63a72e01610727d3e0061",
     "apps/miniapp/src/pages/archive/reminders.vue": "32929ed579e7cc764f1b70afe672ba3f60b2efad1f394b6443638a724c5a3a16",
     "apps/miniapp/src/pages/mine/index.vue": "08e95395bbc2ae8f12851334203155b450a52a64cc360ffd671513d7030e02ce",
-    "apps/miniapp/src/pages/vehicle/entry.vue": "671ddfdbfcdc2fb7ae24d44b4364d2c384bd7227a23eaa4c60ea6dda27f70457",
-    "apps/miniapp/src/pages/vehicle/manual.vue": "0b030ec393288a8219ae23837bbc47006598feb7f2410b0a9a9b16bb9b5e0a9b",
+    "apps/miniapp/src/pages/vehicle/entry.vue": "dec366688c16e9c1952476da1eeb6b16a880da558afa4585726ffe63964a88ba",
+    "apps/miniapp/src/pages/vehicle/manual.vue": "d42f6a72aec1d7cf1f2c1bfa6145f119edf2d3b0b67327c2d3affc590a1c6d23",
     "apps/miniapp/src/pages/archive/record-add.vue": "48a30dba49719392b77ecba5b5146a6a31390a8deadb2bd045f5aeb17469b754",
     "apps/miniapp/src/pages/welfare/invite.vue": "f18fca0611b18499400077664716b5e07cbfedb23bdc83b800ff8a88bace6e6b",
     "apps/miniapp/src/pages/welfare/invite-entry.vue": "09386fa44ce6e06d8c1b62cfafa96e0c8161b608201e86aab9c16da77cd93899",
     "apps/miniapp/src/pages/merchant/invite.vue": "79ae4e99b15618d046725fbfc66ebf1bf8154298925f18a248849d9d19fb9e8b",
     "apps/miniapp/src/pages/operator/invite-policies.vue": "80a7f2ffb2187050ec2165e82b8d1fd44b689ec15605bc14d48753d94eadc4cf",
     "apps/miniapp/src/pages/operator/diagnosis-policies.vue": "78b977ef36d32d2c988cbe7e39bbfa9cbfc89ea60df280b4f4c43a174f45e772",
-    ".env.example": "ee0afc6688d733eafec3d61d1b1cf089a67b563eccb89e5b8c7bd84e1849e892",
+    ".env.example": "17cbf17195d1e052c7c476e5f2d2c1711f0a3c7a05dbb622a3ea04d24bcb8c8c",
     "apps/miniapp/.env.example": "e8051b9f73d1c3bc168438e191bbac4964a844188833ff90ee71159c9bb65d34",
-    "deploy/cloudrun/env.example": "1f1a163b4bbe990fb3bbeea2833cf25a6da53b7f6b8340425f6d72042bf298ec",
-    "docs/user-guides/OWNER.md": "23cfc23ee3d2b61d8753ceddac24d87c216fc587f490afb45c74bb9792cb5f28",
+    "deploy/cloudrun/env.example": "fdf1a101e4d08f8cfa2c9b176317bb846d5d658586633d3fbae1a8551196c1d9",
+    "docs/user-guides/OWNER.md": "a62e19584725669e409ca42bb74158bc02fbb3a853864447d9ecc9b5b6d5f031",
     "docs/user-guides/MERCHANT.md": "32be4044658136b0be92407291265e3855adec4768485e05e4251cac798f1870",
     "docs/user-guides/TECHNICIAN.md": "43a5509cf3569d5abc52e97a3745e71c11932e58a0c039462bb9e1f37782e1b5",
-    "docs/user-guides/OPERATOR.md": "1ce4e350e31025b7fa78c3f2c5465adf38ddff048892f32cb8d6cc53ea2396ba",
-    "docs/delivery/REMAINING_ACCEPTANCE.md": "8fc6440c3326c1968e522ee8aac37cb728c21adbd9b0d091567cab072f100618"
+    "docs/user-guides/OPERATOR.md": "d09668ba28dba897ec3374e29a92f24cbf4c1658cc42103749d21b20b82ca100",
+    "docs/delivery/REMAINING_ACCEPTANCE.md": "fc14d100c77928d7c3e270045831bc1352590330bb1548b9b373cf950e5f74c2"
   },
   "pages": [
     {
@@ -1159,6 +1159,16 @@
       "template_boolean": null
     },
     {
+      "source": ".env.example",
+      "key": "VIN_DECODE_ENABLED",
+      "template_boolean": "false"
+    },
+    {
+      "source": ".env.example",
+      "key": "VIN_DECODER_PROVIDER",
+      "template_boolean": null
+    },
+    {
       "source": "apps/miniapp/.env.example",
       "key": "VITE_API_BASE_URL",
       "template_boolean": null
@@ -1292,6 +1302,16 @@
       "source": "deploy/cloudrun/env.example",
       "key": "INVITE_REWARD_ENABLED",
       "template_boolean": "false"
+    },
+    {
+      "source": "deploy/cloudrun/env.example",
+      "key": "VIN_DECODE_ENABLED",
+      "template_boolean": "false"
+    },
+    {
+      "source": "deploy/cloudrun/env.example",
+      "key": "VIN_DECODER_PROVIDER",
+      "template_boolean": null
     }
   ]
 }

@@ -109,8 +109,9 @@
     },
     {
       "operation": "GET /api/vehicle/vin-decode",
-      "verdict": "not-implemented",
-      "reason": "R1内部VIN有限来源适配已实现并测试，OWNER权限网关、用途同意、页面和授权国内车型映射仍待R2；此旧GET没有公共业务实现。"
+      "verdict": "superseded",
+      "reason": "旧GET不执行解码；迁移具备OWNER会话复核、明确NHTSA用途同意和人工确认的POST，VIN不得放在查询参数。",
+      "replacement": "POST /api/vehicle/vin-decode"
     },
     {
       "operation": "POST /api/payments/callback/{channel}",
@@ -201,6 +202,11 @@
       "operation": "POST /api/check/pickup/mileage-recognition",
       "verdict": "implemented-local",
       "reason": "本店接车OCR候选及人工核对已接线，默认关闭；本地HTTP组件/MySQL权限与状态测试，上游和存储使用明确替身，真实模型、手机和完整供应商证据另验。"
+    },
+    {
+      "operation": "POST /api/vehicle/vin-decode",
+      "verdict": "implemented-local",
+      "reason": "R2a车主网关与小程序候选/人工选车型闭环已实现；HTTP/JWT/MySQL使用合成供应商验证，不作为真实NHTSA覆盖或中国车型来源验收，也不扩称历史四类证据齐全。"
     }
   ]
 }
