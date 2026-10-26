@@ -58,3 +58,12 @@ python scripts/run_linux_mileage_acceptance.py --allow-isolated-linux-mileage --
 原生模式仍需上述独立微信构建、自动化端口9420及固定SDK3.17.2。不能与其他材料/里程验收并行运行，共享本地证据文件和18080端口。缺开关、错平台或复用身份先拒绝。测试后端只通过宿主Docker Desktop命名管道创建测试资源，Ryuk关闭；新增容器均不挂Docker控制接口。固定目标字节转发容器使用本次双网络，唯一宿主端口仅127.0.0.1，OCR仍只连接internal网络且无发布端口。宿主curl.exe透传真实微信请求和响应。
 
 网关成功上游TCP连接预期1次，原生模式3次；这不是模型内部调用计数。真实模型预检两次另记，同一worker启动身份/READY/seccomp与来源稳定单独核对；80项材料/工作台、12项网关、9项原生和三SQL节点分别计证。JVM正常关闭资源；运行器按本次标签兜底清理，即使某项清理失败仍继续其他资源，探测故障不当作已删除。运行报告与日志保留在本次cache目录，凭据控制文件必须清理，只发布脱敏结果。
+# A4d46 故障复验入口
+
+按本文 Linux/宿主工具与隔离微信工程完成准备后，执行：
+
+```powershell
+.cache/ocr-runtime/Scripts/python.exe scripts/run_linux_mileage_acceptance.py --allow-isolated-linux-mileage --reliability --native
+```
+
+`--reliability` 才启用本次标签、worker 启动身份及 pidfd 绑定的故障控制，包含 8 秒推理截止、退出/繁忙/恢复、暂停自有转发器验证 15 秒 HTTP 截止，以及五种微信在途状态。不会修改生产超时或生成替身候选。普通模式仍可不带该参数运行；共享证据文件/18080端口的验收不得并行。私有控制文件留在忽略的 cache，运行结束核对资源清理；脱敏证据和限制见[A4d46执行记录](../progress/R9_A4D46_OCR_RELIABILITY.md)。

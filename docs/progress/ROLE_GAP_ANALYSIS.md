@@ -1,3 +1,7 @@
+## 2026-10-26 最新范围
+
+交付为微信小程序车主/商家/技师和受限运营入口及共享后端。A4d46已在阶段分支补齐真实Linux OCR故障、网关与微信在途状态的隔离证据，见[阶段记录](R9_A4D46_OCR_RELIABILITY.md)。生产业务行为没有新增；不能把合成身份、合成图片和Devtools事件当成正式身份/手机/真实仪表验收。下一B1正式身份，后续真实资金、识别/多模态、授权知识、消息传播及C阶段发布门禁仍按[完整路线](STATUS_AND_ROADMAP_2026_10_26.md)执行。以下为历史清点。
+
 ## 2026-10-23 A4d26：微信小程序本地资金记录
 
 本阶段为小程序受限运营工作区新增“资金记录”，共用后端实现单日/单渠道本地支付退款只读汇总。北京时间归日、测试/正式渠道隔离、来源异常使金额未知，渠道账单与对账差额始终未知；无资金写操作。复用can_analytics聚合权限，新增页面及接口契约，无数据库迁移。实现与验收见[阶段记录](R9_A4D26_LOCAL_FINANCE_EXECUTION.md)，[使用说明](../user-guides/LOCAL_FINANCE.md)。本地23项Java、1034项小程序、459项Python与微信构建通过，隔离资源已清理。[草稿PR217](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/217)已上传，依赖PR216，实现fcee604，最终远程CI待核对；全API仍false，真机与正式资金未验收。

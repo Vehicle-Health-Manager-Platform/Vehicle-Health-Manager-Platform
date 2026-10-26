@@ -11,18 +11,23 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /** Private handoff to isolated Devtools. Never loaded by production. */
 final class NativeMileageAcceptance {
-    static Map<String,Object> run(JdbcTemplate db,ObjectMapper json,int port,String token,byte[] image)throws Exception{
+    static Map<String,Object> run(JdbcTemplate db,ObjectMapper json,int port,String token,String other,byte[] image)throws Exception{
         Path work=RealMileageAcceptance.work(),ready=work.resolve("native-ready.private.json");
         var phases=new LinkedHashSet<String>();
+        boolean reliability=RealMileageAcceptance.config.path("reliability").asBoolean(false);
+        var expectedPhases=new ArrayList<>(List.of("candidate","cancelled","applied"));
+        if(reliability)expectedPhases.addAll(List.of("inflight-cancel","inflight-hide","inflight-leave","inflight-actor","inflight-context"));
         try{
-            write(json,ready,Map.of("port",port,"token",token,"image",Base64.getEncoder().encodeToString(image),"host_backend",RealMileageAcceptance.config.path("linux_runtime").asBoolean(false)));
+            write(json,ready,Map.of("port",port,"token",token,"other_token",other,"reliability",reliability,"image",Base64.getEncoder().encodeToString(image),"host_backend",RealMileageAcceptance.config.path("linux_runtime").asBoolean(false)));
             Path done=work.resolve("native.json");long deadline=System.nanoTime()+Duration.ofMinutes(7).toNanos();
             while(!Files.exists(done)&&System.nanoTime()<deadline){
-                for(String phase:List.of("candidate","cancelled","applied")){
+                for(String phase:expectedPhases){
                     if(Files.exists(work.resolve("checkpoint-"+phase+".request"))&&phases.add(phase)){
                         assertEquals(0,db.queryForObject("SELECT COUNT(*) FROM vehicle_archive WHERE vehicle_id=992",Integer.class));
                         assertEquals(100,db.queryForObject("SELECT current_mileage FROM vehicle WHERE id=992",Integer.class));
-                        assertEquals(1,db.queryForObject("SELECT COUNT(*) FROM file_object WHERE owner_id=992 AND scan_status='CLEAN' AND is_deleted=0",Integer.class));
+                        int files=reliability?(phase.startsWith("inflight-")?expectedPhases.indexOf(phase)-2:6):1;
+                        assertEquals(files,db.queryForObject("SELECT COUNT(*) FROM file_object WHERE owner_id=992 AND scan_status='CLEAN' AND is_deleted=0",Integer.class));
+                        assertEquals(0,db.queryForObject("SELECT COUNT(*) FROM input_material WHERE owner_id=992",Integer.class));
                         write(json,work.resolve("checkpoint-"+phase+".json"),Map.of("phase",phase,"passed",true));
                     }
                 }
@@ -30,8 +35,8 @@ final class NativeMileageAcceptance {
             }
             assertTrue(Files.exists(done),"Native mileage runner timed out");var ui=json.readTree(done.toFile());
             for(String flag:List.of("passed","session_cleared","system_api_restored","proxy_closed","local_reference_released"))assertTrue(ui.path(flag).asBoolean(),flag);
-            assertEquals(Set.of("candidate","cancelled","applied"),phases);
-            assertEquals(1,ui.path("counts").path("upload").asInt());assertEquals(2,ui.path("counts").path("recognition").asInt());assertEquals(1,ui.path("counts").path("archive").asInt());
+            assertEquals(new HashSet<>(expectedPhases),phases);
+            assertEquals(reliability?6:1,ui.path("counts").path("upload").asInt());assertEquals(reliability?7:2,ui.path("counts").path("recognition").asInt());assertEquals(1,ui.path("counts").path("archive").asInt());
             var content=json.readTree(db.queryForObject("SELECT content FROM vehicle_archive WHERE vehicle_id=992 AND archive_type=1 AND input_type=3",String.class));
             assertTrue(content.path("mileage").isIntegralNumber());assertEquals(123456,content.path("mileage").asInt());
             assertEquals("synthetic-mileage-native",content.path("title").asText());
@@ -39,7 +44,7 @@ final class NativeMileageAcceptance {
             assertEquals(1,db.queryForObject("SELECT COUNT(*) FROM vehicle_archive_file af JOIN vehicle_archive a ON a.id=af.archive_id JOIN file_object f ON f.id=af.file_id WHERE a.vehicle_id=992 AND f.owner_type='user' AND f.owner_id=992 AND f.scan_status='CLEAN' AND f.is_deleted=0 AND f.size_bytes=?",Integer.class,image.length));
             assertEquals(100,db.queryForObject("SELECT current_mileage FROM vehicle WHERE id=992",Integer.class));
             assertEquals(0,db.queryForObject("SELECT COUNT(*) FROM input_material WHERE owner_id=992",Integer.class));
-            long file=db.queryForObject("SELECT id FROM file_object WHERE owner_type='user' AND owner_id=992",Long.class);
+            long file=db.queryForObject("SELECT af.file_id FROM vehicle_archive_file af JOIN vehicle_archive a ON a.id=af.archive_id WHERE a.vehicle_id=992",Long.class);
             var access=HttpClient.newHttpClient().send(HttpRequest.newBuilder(URI.create("http://127.0.0.1:"+port+"/api/file/"+file+"/access")).header("Authorization","Bearer "+token).GET().build(),HttpResponse.BodyHandlers.ofString());
             assertEquals(200,access.statusCode());
             var download=HttpClient.newHttpClient().send(HttpRequest.newBuilder(URI.create(json.readTree(access.body()).path("data").path("url").asText())).GET().build(),HttpResponse.BodyHandlers.ofByteArray());

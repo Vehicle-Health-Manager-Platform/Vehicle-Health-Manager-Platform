@@ -75,6 +75,7 @@ final class RealMileageAcceptance {
         assertEquals("CANDIDATE",recognition.path("status").asText());assertEquals(1,recognition.path("fields").size());
         var field=recognition.path("fields").get(0);assertEquals("mileage",field.path("key").asText());assertEquals("123456",field.path("value").asText());assertTrue(field.path("confidence").asDouble()>=0.9);
         assertEquals(Set.of("vehicle_id","file_id","review_status","requires_confirmation","recognition"),mapper.convertValue(data,Map.class).keySet());
+        if(config.path("reliability").asBoolean(false))MileageFaultAcceptance.run(db,port,token,body,file);
         db.update("UPDATE file_object SET is_deleted=1 WHERE id=?",file);recognize(port,"deleted_file",token,route,body,404);db.update("UPDATE file_object SET is_deleted=0 WHERE id=?",file);
         db.update("UPDATE vehicle SET user_id=2 WHERE id=991");recognize(port,"transferred_vehicle",token,route,body,404);db.update("UPDATE vehicle SET user_id=991 WHERE id=991");
         var access=send(port,"signed_access",token,"GET","/api/file/"+file+"/access",null,null,null,200);

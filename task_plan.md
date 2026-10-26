@@ -956,3 +956,13 @@ R8b3b用户已确认最小服务关系方案，开始后端/API、实际页面�
 - A4d-4c 本地验证完成：1030项全通过，微信/H5构建与原生两门禁通过；报告和当前状态已整理，准备提交推送。
 
 - A4d-4c已上传：6a8835b推送至origin/codex/r9-a4d4c-refunds；草稿PR195：https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/195。阶段规划及实现/本地验证/上传完成；远程CI独立跟踪，未合并或上线。
+## 2026-10-26 A4d46 实施
+
+交付范围始终为微信小程序与共享后端；用户已授权规划后实施、每阶段上传 GitHub。沿用 docs/superpowers/plans/2026-10-26-a4d46-ocr-reliability.md 的既有设计，不重建识别服务。
+
+1. [complete] 扩展隔离 Linux 运行器，精确验证本次容器及 worker 启动身份后注入 STOP/KILL，真实 HTTP 验证 8 秒超时、繁忙和恢复。
+2. [complete] 共享 JVM 网关故障/15秒传输超时和8个SQL检查点；微信在途取消/隐藏/离开/换身份/上下文后的真实迟到字节保护及8个SQL检查点。
+3. [complete] 57项Python审计、1078项小程序回归、普通微信构建两门禁、SDK3.17.2既有隔离工程最终完整真实旅程和资源清理；产品源码未变，复用隔离工程。
+4. [pending] 更新脱敏报告/阶段记录/交付索引，提交推送并核对最终 head CI。
+
+远端 main 核对为 afa7e93；当前分支携带 PR238 的两项规划提交，避免合并未经授权的 PR。网络访问需环境权限升级，首次受限查询失败不作为远端状态证据。
