@@ -26,4 +26,4 @@
 
 手机相机/相册/权限、获授权真实仪表样本准确率、低置信/歧义/人工修正、在途取消和故障压力、正式身份/支付/消息/知识来源与生产部署仍独立待验。当前使用合成图片、身份、扫描库，Devtools选择器与switch/input事件有辅助。下一开发阶段优先补真实Linux HTTP路径的超时/worker退出/恢复和小程序在途状态验收，再进入授权样本与手机验收；不得用本阶段通过替代这些条件。
 
-阶段上传依赖PR235的草稿PR，不合并、不部署；最终head CI结果以GitHub实际检查为准。
+阶段实现提交70c94fd已上传[草稿PR236](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/236)，依赖PR235，未合并部署；最终head CI结果以GitHub实际检查为准。

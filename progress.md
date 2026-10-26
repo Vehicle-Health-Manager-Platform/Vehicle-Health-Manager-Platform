@@ -1,5 +1,5 @@
 # A4d45 Linux OCR共享网关与微信旅程
-- 最终两模式80+12项、TCP1/3次、微信9项及三SQL/唯一正确档案、同受限worker/来源稳定/清理通过。1061小程序、60 Python审计、普通/隔离微信构建和索引核对通过，阶段GitHub上传进行中；详见docs/progress/R9_A4D45_LINUX_MILEAGE.md。
+- 最终两模式80+12项、TCP1/3次、微信9项及三SQL/唯一正确档案、同受限worker/来源稳定/清理通过。1061小程序、60 Python审计、普通/隔离微信构建和索引核对通过，70c94fd已上传草稿PR236（依赖PR235），最终head CI另核，未合并部署；详见docs/progress/R9_A4D45_LINUX_MILEAGE.md。
 
 # A4d44 Linux推理镜像与出口验收完成
 - 2026-10-25启动、2026-10-26收口。最终不可变镜像ID绑定/真实合成图两次/同worker复用、60项Linux无失败无跳过、Windows60项中59通过1项Linux内核跳过、运行器18项/交接8项通过；71包Linux离线锁、Compose正反向及内核资源/网络验证通过。来源稳定，容器/网络及私有env清理。7a7c847已上传草稿PR235（依赖PR234），最终head CI另核，未合并部署；未重跑JVM/微信/真实仪表或压力测试。
@@ -779,4 +779,4 @@ run_reward_acceptance --docker通过，281.36秒：144HTTP/14接口四类，17�
 
 阶段已上传[草稿PR216](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/216)，实现提交 `e037489`，base=`codex/r9-a4d24-delivery-merchant-view`，依赖PR215；远程CI已触发，结果以PR实际检查为准，未合并。
 # A4d45本地收口（2026-10-26）
-- 宿主Java17/Maven可用且不改全局安装；安全改线、最终微信/网关复验、资料与脱敏报告完成，9+14+18+11+8 Python审计及1061小程序回归、两种微信构建和索引核对通过。准备提交依赖PR235的草稿PR，未合并部署。
+- 宿主Java17/Maven可用且不改全局安装；安全改线、最终微信/网关复验、资料与脱敏报告完成，9+14+18+11+8 Python审计及1061小程序回归、两种微信构建和索引核对通过。70c94fd已上传依赖PR235的草稿PR236，最终head CI另核，未合并部署。
