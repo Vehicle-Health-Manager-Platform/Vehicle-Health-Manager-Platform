@@ -1,5 +1,15 @@
 # 微信云托管部署
 
+2026-10-26 B1a更新：用户选择微信云开发，当前尚未开通环境，短信暂缓。先按[开通与部署准备计划](../../docs/superpowers/plans/2026-10-26-b1a-cloud-deployment.md)建立隔离测试环境并运行配置预检。此目录复用已有微信callContainer/云身份头适配；创建通用CloudBase环境不自动证明该访问链路可用，须先核对选定产品的兼容性和公网隔离。下文为既有微信云托管通道说明，不是已经部署的证据；资源、调用限制和套餐以选定环境的当前官方说明为准。
+
+本地部署声明模板为`deployment.example.json`。复制成被忽略的`deployment.local`后私下填写标识；它只是本地声明，不能替代控制台/真实公网隔离检查。使用示例：
+
+```powershell
+node scripts/check-wechat-identity-readiness.mjs --cloud-deployment --env-file deploy/cloudrun/env.example --miniapp-env-file apps/miniapp/.env.example --deployment-file deploy/cloudrun/deployment.example.json
+```
+
+模板未配置时退出2并报告configurationReady=false；始终cloudDeployed=false、formalIdentityAccepted=false。退出1为参数/读取错误，0仅帮助。云手机号仍按现有客户端需要AppSecret及微信手机号权限；短信暂缓不意味着商家/受限运营可以绕过二次验证。
+
 本目录提供把 Spring Boot 后端部署到**微信云托管**的最小产物，目的是让小程序在**无需配置通讯域名、无需 ICP 备案域名**的前提下完成真实微信登录。
 
 ## 为什么能免域名

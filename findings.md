@@ -832,3 +832,9 @@ POST /api/check/delivery/compare 实测：齐备订单 READY/deliverable=true、
 
 - 最终真实故障与微信旅程通过，生产候选/取消/恢复机制无须修改。推理8.071秒与传输15.057秒分别验证；8个网关SQL/8个微信SQL点无提前写入，最终仅原保存按钮写1条档案。
 - 仍需手机/真实仪表/正式身份/支付/性能；页面隐藏仅以navigateTo触发，表单类型变化是辅助强制事件，不宣称手机后台/触摸效果。
+## B1a 云部署准备核对
+
+- 用户确认云环境尚未开通，短信后续接入。工作区4个常用私有env文件不存在，进程配置预检也缺MySQL/JWT/微信配置；只记录状态没有打印值。
+- 现有deploy/cloudrun/Dockerfile、CloudRunAuthController、api-runtime.callContainer可复用；MySQL事务/迁移与私有MinIO上传不可直接当作云开发文档数据库/云存储实现。
+- 腾讯官方2026-10-26文档说明CloudBase Run支持Java容器和VPC访问MySQL；环境可从微信开发者工具云开发入口创建。开通含服务条款/角色授权及可能付费，当前不执行开通或部署。
+- 本机无cloudbase/tcb CLI命令；可先准备代码/镜像/配置和控制台步骤。真实云环境、身份与云上传必须另验。
