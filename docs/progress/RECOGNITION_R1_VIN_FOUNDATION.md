@@ -34,3 +34,7 @@ gstack /browse读取NHTSA官方API/FAQ及官方公开部分VIN示例（ErrorCode
 R2先补带明确用途同意的POST网关、当前OWNER授权/限流和候选页面；旧GET具名替代。国内车型映射/供应商数据许可、真实VIN样本、授权行驶证、中文ASR/embedding实际模型和iOS/Android验收仍待完成。ASR、图文与向量本轮是可执行路线，不能声称这些端到端功能已实现。
 
 完整进度以阶段提交/PR及最终head检查为准，上传不等于合并/远程CI通过/发布。
+
+## GitHub交付
+
+R1规划/实现提交`e1462df`已上传[草稿PR242](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/242)，base=`codex/local-delivery-pickup-ocr`，依赖PR241。后续文档记录提交保留同一PR，最终head CI以GitHub检查为准，不提前宣称通过。未合并或发布。

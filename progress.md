@@ -835,3 +835,5 @@ run_reward_acceptance --docker通过，281.36秒：144HTTP/14接口四类，17�
 - 新独立codex/recognition-vin-foundation按用户要求完成五类能力路线和R1实施。固定有限来源/候选人工确认，ASR试点faster-whisper CPU/int8，向量BGE-small-zh-v1.5/MySQL精确检索；模型未下载或测效果。
 - Java内部VIN协议、严格结果和受限客户端完成，27项通过，0失败/错误/跳过；8项交接与11项契约结论检查、354操作生成/覆盖/交接一致。旧GET未实现结论保持，无公共路由、生产Bean、数据库写入或完整真实VIN验收。
 - gstack /browse核实官方API/FAQ/部分VIN示例与两类模型一手资料；未发用户VIN。准备上传规划和首阶段，不合并发布。
+
+- R1规划/实现e1462df已推送，草稿PR242已创建：https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/242，base为PR241分支；最终文档head检查另核。R1没有新公共路由/生产开关/数据库迁移，真实VIN服务与OWNER页面仍待R2。
