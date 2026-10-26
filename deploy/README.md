@@ -1,5 +1,7 @@
 # 部署配置
 
+2026-10-26当前说明：[本地启动](../docs/delivery/LOCAL_SETUP.md)、[部署与交接顺序](../docs/delivery/LOCAL_HANDOVER.md)、[外部接入步骤及验收](../docs/delivery/EXTERNAL_INTEGRATIONS.md)。最新范围暂缓生产部署；以下保留早期Compose说明。现行Compose包含全部62项有序迁移；OCR默认关闭返回501，另有显式开启的受限推理镜像及隔离验证，不能将默认关闭状态误写为识别未实现，详见[OCR说明](../services/ocr/README.md)。
+
 现有 Compose 是此前网页方案的 S0 本地基础设施与过渡原型部署。复制 `.env.example` 为仓库根目录的 `.env` 并设置私有凭据，执行 `npm ci && npm run build`，再运行 `docker compose --env-file .env -f deploy/compose/compose.yml up --build -d`。Nginx 的 8081–8083 端口目前服务旧版车主/商家/技师网页原型，8084 端口服务运营 PC 网页；Prometheus 为本机 9090，MinIO 控制台为本机 9001。小程序代码上传、提审与发布、车主 H5 兜底域名和 HTTPS 均尚未配置。
 
 MySQL 首次创建卷时执行 `docs/sql/init.sql`；再次启动不会重跑初始化，后续结构变更必须执行版本化迁移。`docs/sql/seed_test.sql` 仅用于测试环境，不能通过 Compose 自动导入。OCR `/health` 可用，但识别接口仍返回 501。

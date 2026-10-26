@@ -6886,6 +6886,58 @@
       ]
     },
     {
+      "name": "post_api_check_pickup_mileage_recognition",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/check/pickup/mileage-recognition",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "description": "从本店接车仪表图片读取里程候选，员工核对后才带入表单\nRoles: 本店有效MERCHANT/STAFF会话、PAID订单、仍归订单车主的车辆、当前员工本人CLEAN JPEG/PNG",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "type": "string",
+              "value": "{{access_token}}"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{{body_post_api_check_pickup_mileage_recognition}}"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.variables.get(\"enable_prepared_requests\") !== \"true\") { pm.execution.skipRequest(); }",
+              "else {",
+              "  const missing = [\"status_post_api_check_pickup_mileage_recognition\", \"access_token\", \"body_post_api_check_pickup_mileage_recognition\"].filter(k => !pm.variables.get(k));",
+              "  if (missing.length) { pm.execution.skipRequest(); throw new Error(\"Configure fixture variables before sending: \" + missing.join(\",\")); }",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"configured scenario status\", () => pm.response.to.have.status(Number(pm.variables.get(\"status_post_api_check_pickup_mileage_recognition\"))));"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "name": "post_api_check_pickup_submit",
       "request": {
         "method": "POST",

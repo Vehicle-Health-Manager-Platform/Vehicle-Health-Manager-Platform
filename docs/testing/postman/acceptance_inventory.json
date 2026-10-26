@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "operations": 353,
-  "anonymous_probes": 339,
+  "operations": 354,
+  "anonymous_probes": 340,
   "full_api_acceptance_passed": false,
   "note": "Generated inventory, not test evidence. Anonymous 401 does not prove controller implementation or role/ownership validation.",
   "items": [
@@ -2391,6 +2391,24 @@
       "path": "/api/check/pickup/dispute/review",
       "roles": "OWNER",
       "implementation_status": "dispute-resolution-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_check_pickup_mileage_recognition",
+      "method": "POST",
+      "path": "/api/check/pickup/mileage-recognition",
+      "roles": "本店有效MERCHANT/STAFF会话、PAID订单、仍归订单车主的车辆、当前员工本人CLEAN JPEG/PNG",
+      "implementation_status": "pickup-mileage-recognition-implemented",
       "content_types": [
         "application/json"
       ],

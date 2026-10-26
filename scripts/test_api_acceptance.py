@@ -56,8 +56,8 @@ class AcceptanceAssetsTest(unittest.TestCase):
     def test_tracked_scope_and_assets_match_contract(self):
         spec = json.loads((ROOT / 'docs/api/openapi.json').read_text(encoding='utf-8'))
         assets = generate(spec)
-        self.assertEqual(353, assets['acceptance_inventory.json']['operations'])
-        self.assertEqual(339, assets['acceptance_inventory.json']['anonymous_probes'])
+        self.assertEqual(354, assets['acceptance_inventory.json']['operations'])
+        self.assertEqual(340, assets['acceptance_inventory.json']['anonymous_probes'])
         for name, expected in assets.items():
             actual = json.loads((ROOT / 'docs/testing/postman' / name).read_text(encoding='utf-8'))
             self.assertEqual(expected, actual, name)

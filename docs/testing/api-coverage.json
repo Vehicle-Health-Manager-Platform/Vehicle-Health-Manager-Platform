@@ -5,11 +5,11 @@
   "current_backend_revalidated": false,
   "scope": "Selected recorded synthetic-identity/LOCAL_TEST suites only; other tests are not indexed. Reconciled with current definitions; no new HTTP execution or production acceptance.",
   "counts": {
-    "contract_operations": 353,
-    "protected_operations": 339,
+    "contract_operations": 354,
+    "protected_operations": 340,
     "four_kind_definitions": 317,
     "historical_four_kind_operations": 317,
-    "without_complete_historical_evidence": 36,
+    "without_complete_historical_evidence": 37,
     "current_run_operations": 0,
     "suites": 36
   },
@@ -5993,6 +5993,30 @@
           ]
         }
       ]
+    },
+    {
+      "operation_id": "post_api_check_pickup_mileage_recognition",
+      "method": "POST",
+      "path": "/api/check/pickup/mileage-recognition",
+      "roles": "本店有效MERCHANT/STAFF会话、PAID订单、仍归订单车主的车辆、当前员工本人CLEAN JPEG/PNG",
+      "protected": true,
+      "implementation_status": "pickup-mileage-recognition-implemented",
+      "defined_kinds": [],
+      "historical_kinds": [],
+      "missing_definition_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "missing_historical_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "current_acceptance": "NOT_RUN",
+      "sources": []
     },
     {
       "operation_id": "post_api_check_pickup_submit",
@@ -15270,6 +15294,6 @@
       ]
     }
   ],
-  "contract_sha256": "4463302f9ccc7f91bb490b36079be4147ca08338d353a6b3c7efaaad1d9f3e5d",
+  "contract_sha256": "095b04a850141f962cb8793f1e953efb11f01e5cea1d6b9cf07a13dcdf39911b",
   "input_hash_policy": "Input SHA256 uses CRLF-to-LF normalization. Historical raw collection digests must match its LF or CRLF byte form; content changes are rejected."
 }

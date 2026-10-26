@@ -1,3 +1,5 @@
+> 2026-10-26本轮：[本地阶段测试报告](LOCAL_DELIVERY_2026_10_26.md) · [统一回归和启动](../delivery/LOCAL_SETUP.md) · [交接入口](../delivery/LOCAL_HANDOVER.md)。外部服务、真实设备、独立开发缺口分别记录。
+
 > 2026-10-23：[原生PDF上传阶段与复现](../progress/R9_A4D31_NATIVE_MATERIAL_UPLOAD.md)。仅回环代理、真实uploadFile/JVM/存储/扫描，系统文件选择结果辅助；真机和生产病毒库另验。
 
 > 2026-10-23：[扫码接车原生阶段与复现](../progress/R9_A4D30_NATIVE_PICKUP_SCAN.md)。系统扫码返回辅助，随后真实HTTP核对本店PAID订单；不代表手机相机或接车提交。

@@ -2,13 +2,13 @@
 import {reactive,ref,watch,onBeforeUnmount} from 'vue'
 import {onShow,onHide,onUnload} from '@dcloudio/uni-app'
 import {createCandidateFlow,initialCandidateState} from '../services/input-candidates.js'
-import {recognizeMileage} from '../services/mileage-recognition.js'
+import {recognizeMileage,recognizePickupMileage} from '../services/mileage-recognition.js'
 const selectedFile=ref(0), consent=ref(false)
-const props=defineProps({actor:{type:String,required:true},scope:{type:String,required:true},scene:{type:String,required:true},fields:{type:Array,required:true},values:{type:Object,required:true},disabled:Boolean,vehicleId:{type:Number,default:0},fileIds:{type:Array,default:()=>[]}})
+const props=defineProps({actor:{type:String,required:true},scope:{type:String,required:true},scene:{type:String,required:true},fields:{type:Array,required:true},values:{type:Object,required:true},disabled:Boolean,vehicleId:{type:Number,default:0},orderId:{type:Number,default:0},fileIds:{type:Array,default:()=>[]}})
 const emit=defineEmits(['apply','busy'])
 const state=reactive(initialCandidateState())
-const flow=createCandidateFlow({state,actor:()=>props.actor,scope:()=>props.scope+':'+selectedFile.value,scene:()=>props.scene,definitions:()=>props.fields,values:()=>props.values,allowed:()=>!props.disabled,timeoutMs:props.vehicleId?30000:15000,apply:patch=>emit('apply',patch)})
-watch(()=>[props.actor,props.scope,props.vehicleId,props.scene,JSON.stringify(props.fields),JSON.stringify(props.fileIds)],()=>{selectedFile.value=0;consent.value=false;flow.cancel()},{flush:'sync'})
+const flow=createCandidateFlow({state,actor:()=>props.actor,scope:()=>props.scope+':'+selectedFile.value,scene:()=>props.scene,definitions:()=>props.fields,values:()=>props.values,allowed:()=>!props.disabled,timeoutMs:(props.vehicleId||props.orderId)?30000:15000,apply:patch=>emit('apply',patch)})
+watch(()=>[props.actor,props.scope,props.vehicleId,props.orderId,props.scene,JSON.stringify(props.fields),JSON.stringify(props.fileIds)],()=>{selectedFile.value=0;consent.value=false;flow.cancel()},{flush:'sync'})
 watch(selectedFile,()=>{consent.value=false;flow.cancel()},{flush:'sync'})
 watch(consent,value=>{if(!value)flow.cancel()},{flush:'sync'})
 watch(()=>props.disabled,value=>{if(value){consent.value=false;flow.cancel()}},{flush:'sync'})
@@ -16,9 +16,9 @@ watch(()=>state.phase,value=>emit('busy',value==='recognizing'),{flush:'sync'})
 function cancel(){consent.value=false;flow.cancel()}
 function suspend(){consent.value=false;flow.suspend()}
 function recognize(){
- if(!consent.value||!props.fileIds.includes(selectedFile.value)||!props.vehicleId||props.disabled)return
- const token=props.actor,vehicleId=props.vehicleId,fileId=selectedFile.value
- flow.recognize(({signal})=>recognizeMileage({token,vehicleId,fileId,consent:true,signal}))
+ if(!consent.value||!props.fileIds.includes(selectedFile.value)||!(props.vehicleId||props.orderId)||props.disabled)return
+ const token=props.actor,vehicleId=props.vehicleId,orderId=props.orderId,fileId=selectedFile.value
+ flow.recognize(({signal})=>orderId?recognizePickupMileage({token,orderId,fileId,consent:true,signal}):recognizeMileage({token,vehicleId,fileId,consent:true,signal}))
 }
 onShow(flow.resume);onHide(suspend);onUnload(suspend);onBeforeUnmount(suspend)
 </script>
@@ -26,8 +26,8 @@ onShow(flow.resume);onHide(suspend);onUnload(suspend);onBeforeUnmount(suspend)
  <view class="candidates" data-testid="input-candidate-review">
   <text class="heading">材料内容核对</text>
   <text class="hint">可对照原材料手动整理候选；确认仅带入本页，仍需原保存或发送按钮。</text>
-  <view v-if="vehicleId&&fileIds.length" class="row">
-   <text class="hint">里程图片识别（可选）：选定一张已上传图片，仅用于提取本次档案里程。服务未启用时请手动整理；多个里程无法确定时不会自动选择。</text>
+  <view v-if="(vehicleId||orderId)&&fileIds.length" class="row">
+   <text class="hint">里程图片识别（可选）：选定一张已上传图片，仅用于提取{{orderId?'本次接车':'本次档案'}}里程。服务未启用时请手动整理；多个里程无法确定时不会自动选择。</text>
    <picker data-testid="mileage-source" :disabled="disabled" :range="fileIds.map((id,index)=>'图片 '+(index+1))" @change="selectedFile=fileIds[Number($event.detail.value)]"><view class="field">{{selectedFile?'已选图片 '+(fileIds.indexOf(selectedFile)+1):'请选择识别图片'}}</view></picker>
    <label class="hint"><switch data-testid="mileage-consent" :checked="consent" :disabled="disabled||!selectedFile" @change="consent=$event.detail.value" />同意将选定图片用于本次里程识别，结果由我核对</label>
    <button data-testid="mileage-recognize" :disabled="disabled||!selectedFile||!consent||state.phase==='recognizing'" @tap="recognize">{{state.phase==='recognizing'?'正在识别，可取消':'识别所选图片的里程'}}</button>

@@ -78,3 +78,19 @@ def add_r9_contract_updates(document, operation):
         item['responses'][code]={'description':desc,'content':copy.deepcopy(item['responses']['200']['content'])}
     item['responses']['200']['headers']={'Cache-Control':{'schema':{'const':'no-store'}}}
     paths[path]={'post':item}
+    path='/api/check/pickup/mileage-recognition'
+    pickup=copy.deepcopy(item)
+    meta=operation('post',path,'从本店接车仪表图片读取里程候选，员工核对后才带入表单','F14')
+    for key in ('operationId','summary','tags'):pickup[key]=meta[key]
+    pickup['x-implementation-status']='pickup-mileage-recognition-implemented'
+    pickup['x-roles']='本店有效MERCHANT/STAFF会话、PAID订单、仍归订单车主的车辆、当前员工本人CLEAN JPEG/PNG'
+    pickup['description']='默认随MILEAGE_OCR_ENABLED关闭；no-store、无query、无自动落库。PICKUP_MILEAGE_OCR_V1独立用途同意；只读1–4MiB私有图片，调用前后复核门店/员工会话、订单、车辆和未用于接车单的图片。与车主端共享实例两项并发限额及15秒供应商截止。仅候选，原八张照片、预约码、里程回退原因、车主确认/派工约束不变。'
+    schema=pickup['requestBody']['content']['application/json']['schema']
+    schema['required']=['order_id','file_id','consent','consent_version']
+    schema['properties']['order_id']=schema['properties'].pop('vehicle_id')
+    schema['properties']['consent_version']={'const':'PICKUP_MILEAGE_OCR_V1'}
+    pickup['responses']['200']['description']='order_id/file_id/review_status/requires_confirmation=true/recognition（archive场景、仅mileage候选）。歧义不选值，低置信保留。人工核对仅带入原表单，不自动提交接车、不改变车辆或订单。'
+    pickup['responses']['403']['description']='非MERCHANT/STAFF角色或绑定凭证'
+    pickup['responses']['404']['description']='非本店订单、车辆已转移、非当前员工图片、图片不安全或已用于接车单'
+    pickup['responses']['409']['description']='当前订单不可接车或在途订单/车辆/图片事实已变化'
+    paths[path]={'post':pickup}

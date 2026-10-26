@@ -3881,6 +3881,40 @@
       ]
     },
     {
+      "name": "post_api_check_pickup_mileage_recognition",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "url": "{{base_url}}/api/check/pickup/mileage-recognition",
+        "description": "从本店接车仪表图片读取里程候选，员工核对后才带入表单",
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"anonymous is rejected\", () => pm.response.to.have.status(401));",
+              "pm.test(\"safe JSON envelope\", () => pm.expect(pm.response.json().code).to.eql(40100));",
+              "pm.test(\"private response is not cached\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "name": "post_api_check_pickup_submit",
       "request": {
         "method": "POST",

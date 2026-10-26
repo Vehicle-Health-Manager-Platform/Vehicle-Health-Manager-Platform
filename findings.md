@@ -838,3 +838,18 @@ POST /api/check/delivery/compare 实测：齐备订单 READY/deliverable=true、
 - 现有deploy/cloudrun/Dockerfile、CloudRunAuthController、api-runtime.callContainer可复用；MySQL事务/迁移与私有MinIO上传不可直接当作云开发文档数据库/云存储实现。
 - 腾讯官方2026-10-26文档说明CloudBase Run支持Java容器和VPC访问MySQL；环境可从微信开发者工具云开发入口创建。开通含服务条款/角色授权及可能付费，当前不执行开通或部署。
 - 本机无cloudbase/tcb CLI命令；可先准备代码/镜像/配置和控制台步骤。真实云环境、身份与云上传必须另验。
+
+## 本地阶段交付范围核查（2026-10-26）
+- 当前HEAD 5269e8a，开始时git工作区干净；已有353项契约、317项选定历史四类证据，不能作为本轮通过数。
+- 生产微信/短信/资金仍拒绝式降级；本地已有三条真实HTTP/MySQL核心旅程和隔离测试夹具，演示工程仅只读，不代替业务集成。
+- 沿用已批准架构和现有设计，优先完整回归与故障修复，避免重复开发已有流程。
+
+## 本轮根因与边界
+- JdbcCouponInventoryTest基类使用未固定时区的DriverManagerDataSource，Timestamp写入与业务按UTC解读LocalDateTime在北京时间宿主出现偏差；原失败集合UTC对照54项无失败。固定测试UTC保持业务断言，完整干净回归独立记账。
+- 最终默认统一入口证据.cache/local-delivery-1590dcb03aba/report.json为selected_checks_passed=true，backend_requested/production_acceptance_passed=false；源码摘要稳定。不把它与独立后端运行拼接为一次全栈测试。
+- 本机gstack浏览记录的验证SDK网络加载来自uni-h5-vite框架插件，H5完整API包为了动态API保留，不能草率开启树摇丢掉原生能力。对外H5交付须专项裁剪，当前仅辅助。
+
+## 接车增量核查
+- 本轮在基线223套2201项通过后补接车OCR，避免旧全量结果冒称新源码全跑。新增13项JDBC、4项HTTP组件及真实TCP旅程，8套63项受影响回归通过。
+- 独立PICKUP_MILEAGE_OCR_V1确认，本店PAID/车辆仍归原车主/当前员工CLEAN未用图片，调用前后复核；仅DASHBOARD可选、人工核对后带入，原提交仍标MANUAL。
+- 模型资产曾一次Win5原子rename失败，具体占用进程未证实；有限重试只认Windows5/32，不复制/覆盖/吞持续错误。最终统一回归通过，上一轮false证据保留。

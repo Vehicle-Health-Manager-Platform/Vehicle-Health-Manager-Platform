@@ -1,4 +1,8 @@
-## 当前进度与后续计划（2026-10-26）
+## 本地阶段交接（2026-10-26）
+
+按最新范围暂缓正式微信身份、短信开通与生产发布，先完成本地开发、测试和资料交接。[统一交接入口](docs/delivery/LOCAL_HANDOVER.md)包括启动/配置、四角色手册、API、部署、外部接入步骤及已知问题；[本轮测试报告](docs/testing/LOCAL_DELIVERY_2026_10_26.md)区分新执行与历史依据。复跑命令：`python scripts/run_local_delivery.py`，含真实MySQL/HTTP的后端扩展为 `--backend`。待开发和待验收事项尚未全部关闭，不能据此认定项目全部完成。
+
+## 当前进度与后续计划（2026-10-26，历史路线）
 
 已完成到A4d45，42个阶段PR通过PR237合入main/afa7e93，主分支8项CI全部成功。产品为微信小程序及共享后端，主要软件流程已具备；正式接入、手机与发布验收仍待完成。详见[F01–F20现状和阶段路线](docs/progress/STATUS_AND_ROADMAP_2026_10_26.md)及[下一项A4d46可靠性补验](docs/superpowers/plans/2026-10-26-a4d46-ocr-reliability.md)。
 

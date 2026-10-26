@@ -70,9 +70,20 @@ class OpenApiGenerationTest(unittest.TestCase):
         self.assertEqual('MILEAGE_OCR_V1',schema['properties']['consent_version']['const'])
         self.assertTrue({'400','401','403','404','409','429','503'}.issubset(item['responses']))
 
+    def test_pickup_mileage_has_independent_purpose_and_shop_scope(self):
+        item=generator.build_document()['paths']['/api/check/pickup/mileage-recognition']['post']
+        schema=item['requestBody']['content']['application/json']['schema']
+        self.assertEqual([{'bearerAuth':[]}],item['security'])
+        self.assertEqual('PICKUP_MILEAGE_OCR_V1',schema['properties']['consent_version']['const'])
+        self.assertIn('order_id',schema['required'])
+        self.assertNotIn('vehicle_id',schema['properties'])
+        self.assertFalse(schema['additionalProperties'])
+        self.assertFalse(item.get('parameters'))
+        self.assertNotEqual(item['operationId'],generator.build_document()['paths']['/api/vehicle/mileage-recognition']['post']['operationId'])
+
     def test_delivery_compare_remains_read_only_strict_and_authorized(self):
         document=generator.build_document();item=document['paths']['/api/check/delivery/compare']['post']
-        self.assertEqual(353,sum(len(v) for v in document['paths'].values()))
+        self.assertEqual(354,sum(len(v) for v in document['paths'].values()))
         self.assertEqual('delivery-compare-implemented',item['x-implementation-status'])
         self.assertEqual('本单车主或本店 MERCHANT/STAFF',item['x-roles'])
         self.assertEqual([{'bearerAuth':[]}],item['security'])

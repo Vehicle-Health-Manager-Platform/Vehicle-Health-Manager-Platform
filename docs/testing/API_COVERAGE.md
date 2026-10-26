@@ -2,9 +2,9 @@
 
 本文件由 `python scripts/summarize_api_coverage.py` 生成。
 
-- 当前契约：353 项；受保护接口：339 项。
+- 当前契约：354 项；受保护接口：340 项。
 - 四类用例定义覆盖：317 项；有匹配历史四类执行记录：317 项（接口去重）。
-- 所选记录中未获完整四类证据：36 项；汇总过程新发起接口：0 项（各套实际执行见来源报告）。
+- 所选记录中未获完整四类证据：37 项；汇总过程新发起接口：0 项（各套实际执行见来源报告）。
 
 历史证据不等于当前版本重跑通过，不等于完整权限矩阵或真实身份/资金验收。
 匿名401不算业务四类覆盖；未列历史证据不等于功能未开发。
@@ -38,6 +38,10 @@
 - `POST /api/auth/staff-login`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。
 - `POST /api/auth/technician/bind`：缺 boundary, error, normal, unauthorized；实现标记 `core-implemented`。
 - `POST /api/auth/wx-login`：缺 boundary, error, normal, unauthorized；实现标记 `core-implemented`。
+
+### api/check（1项）
+
+- `POST /api/check/pickup/mileage-recognition`：缺 boundary, error, normal, unauthorized；实现标记 `pickup-mileage-recognition-implemented`。
 
 ### api/coupon（2项）
 

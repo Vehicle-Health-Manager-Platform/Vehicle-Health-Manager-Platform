@@ -71,6 +71,40 @@ class ModelAssetsTest(unittest.TestCase):
         path.write_bytes(self.files[path.name]); (directory / 'unexpected').touch()
         with self.assertRaises(ValueError): verify_models(self.output)
 
+    def test_transient_windows_publish_denial_retries_atomic_rename(self):
+        rename = Path.rename
+        denied = PermissionError('synthetic Windows sharing denial'); denied.winerror = 5
+        attempts = []
+        def publish(stage, output):
+            attempts.append(output)
+            if len(attempts) == 1: raise denied
+            return rename(stage, output)
+        with patch.object(Path, 'rename', new=publish), patch('model_assets.time.sleep') as sleep:
+            prepare_models(self.root, self.output)
+        self.assertEqual(2, len(attempts)); sleep.assert_called_once()
+        self.assertTrue(verify_models(self.output))
+
+    def test_persistent_windows_publish_denial_never_publishes_partial_models(self):
+        denied = PermissionError('synthetic persistent denial'); denied.winerror = 32
+        with patch.object(Path, 'rename', side_effect=denied) as rename, patch('model_assets.time.sleep'):
+            with self.assertRaises(PermissionError): prepare_models(self.root, self.output)
+        self.assertEqual(4, rename.call_count)
+        self.assertFalse(self.output.exists()); self.assertEqual([], list(self.root.glob('ocr-assets-*')))
+
+    def test_non_windows_permission_error_is_not_retried(self):
+        with patch.object(Path, 'rename', side_effect=PermissionError('synthetic denial')) as rename, patch('model_assets.time.sleep') as sleep:
+            with self.assertRaises(PermissionError): prepare_models(self.root, self.output)
+        rename.assert_called_once(); sleep.assert_not_called(); self.assertFalse(self.output.exists())
+
+    def test_destination_created_during_retry_is_preserved(self):
+        denied = PermissionError('synthetic sharing denial'); denied.winerror = 5
+        def publish(stage, output):
+            output.mkdir(); (output / 'keep').write_text('other preparation')
+            raise denied
+        with patch.object(Path, 'rename', new=publish), patch('model_assets.time.sleep'):
+            with self.assertRaises(ValueError): prepare_models(self.root, self.output)
+        self.assertEqual('other preparation', (self.output / 'keep').read_text())
+
     def test_missing_assets_fail_without_network(self):
         with self.assertRaises(ValueError): verify_models(self.output)
         self.archive.unlink()

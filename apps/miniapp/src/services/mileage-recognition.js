@@ -14,9 +14,15 @@ export function mileageResponse(data, vehicleId, fileId) {
   return data.recognition
 }
 
-export function createMileageRecognition({ baseUrl, runtime }) {
-  return ({ token, vehicleId, fileId, consent, signal }) => new Promise((resolve, reject) => {
-    if (!token || !baseUrl || !validId(vehicleId) || !validId(fileId) || consent !== true || signal?.aborted) { reject(Error('识别条件不完整')); return }
+export function pickupMileageResponse(data, orderId, fileId) {
+  if (!exact(data, ['order_id', 'file_id', 'review_status', 'requires_confirmation', 'recognition']) || data.order_id !== orderId) throw Error('invalid pickup response')
+  const { order_id, ...rest } = data
+  return mileageResponse({ ...rest, vehicle_id: order_id }, orderId, fileId)
+}
+export function createMileageRecognition({ baseUrl, runtime, pickup = false }) {
+  return ({ token, vehicleId, orderId, fileId, consent, signal }) => new Promise((resolve, reject) => {
+    const scopeId = pickup ? orderId : vehicleId
+    if (!token || !baseUrl || !validId(scopeId) || !validId(fileId) || consent !== true || signal?.aborted) { reject(Error('识别条件不完整')); return }
     let settled = false, task
     const finish = (error, value) => {
       if (settled) return
@@ -28,14 +34,14 @@ export function createMileageRecognition({ baseUrl, runtime }) {
     signal?.addEventListener?.('abort', abort, { once: true })
     try {
       task = runtime().request({
-        url: `${baseUrl.replace(/\/$/, '')}/api/vehicle/mileage-recognition`, method: 'POST', timeout: 25000,
+        url: `${baseUrl.replace(/\/$/, '')}${pickup ? '/api/check/pickup/mileage-recognition' : '/api/vehicle/mileage-recognition'}`, method: 'POST', timeout: 25000,
         header: { Authorization: `Bearer ${token}`, 'content-type': 'application/json' },
-        data: { vehicle_id: vehicleId, file_id: fileId, consent: true, consent_version: 'MILEAGE_OCR_V1' },
+        data: { [pickup ? 'order_id' : 'vehicle_id']: scopeId, file_id: fileId, consent: true, consent_version: pickup ? 'PICKUP_MILEAGE_OCR_V1' : 'MILEAGE_OCR_V1' },
         success: ({ statusCode, data }) => {
           if (settled || signal?.aborted) return
           try {
             if (statusCode !== 200 || data?.code !== 0) throw Error()
-            finish(false, mileageResponse(data.data, vehicleId, fileId))
+            finish(false, pickup ? pickupMileageResponse(data.data, scopeId, fileId) : mileageResponse(data.data, scopeId, fileId))
           } catch { finish(true) }
         }, fail: () => finish(true)
       })
@@ -44,3 +50,4 @@ export function createMileageRecognition({ baseUrl, runtime }) {
   })
 }
 export const recognizeMileage = createMileageRecognition({ baseUrl: apiOrigin, runtime: () => apiRuntime })
+export const recognizePickupMileage = createMileageRecognition({ baseUrl: apiOrigin, runtime: () => apiRuntime, pickup: true })
