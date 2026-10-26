@@ -24,9 +24,17 @@ final class RealMileageAcceptance {
         if(!enabled())return;
         assertNull(System.getenv("AUTOCARE_NATIVE_MATERIAL_RUN_ID"));
         config=JSON.readTree(work().resolve("config.private.json").toFile());
-        int port=config.path("port").asInt();assertTrue(port>0&&port<65536);
         String token=config.path("token").asText();assertTrue(token.matches("[a-f0-9]{64}"));
-        forwarder=new RealMaterialWorkbenchJourneyTest.LoopbackStorage("host.docker.internal",port);
+        boolean linux=config.path("linux_runtime").asBoolean(false);
+        int port=config.path("port").asInt();assertTrue(port>0&&port<65536);
+        if(linux){
+            assertTrue(config.path("linux_runtime").isBoolean());
+            assertEquals("true",System.getenv("AUTOCARE_LINUX_MILEAGE_HOST"));
+            assertEquals("true",System.getenv("TESTCONTAINERS_RYUK_DISABLED"));
+            forwarder=new RealMaterialWorkbenchJourneyTest.LoopbackStorage("127.0.0.1",port);
+        }else{
+            forwarder=new RealMaterialWorkbenchJourneyTest.LoopbackStorage("host.docker.internal",port);
+        }
         r.add("MILEAGE_OCR_ENABLED",()->true);r.add("MILEAGE_OCR_URL",()->forwarder.endpoint()+"/recognize");
         r.add("MILEAGE_OCR_SERVICE_TOKEN",()->token);r.add("MILEAGE_OCR_ALLOW_PRIVATE_HTTP",()->true);
     }
@@ -80,6 +88,11 @@ final class RealMileageAcceptance {
         proof=new LinkedHashMap<>(Map.of("passed",true,"cases",cases,"signed_download_matches",true,"one_clean_owned_png",true,"no_archive_created",true,"vehicle_mileage_unchanged",true,"no_input_material_created",true,"requires_confirmation",true));
     }
     static void close()throws Exception{
-        if(forwarder!=null){forwarder.close();if(proof!=null){proof.put("forwarder_closed",true);JSON.writerWithDefaultPrettyPrinter().writeValue(work().resolve("gateway.json").toFile(),proof);}}
+        if(forwarder!=null){forwarder.close();if(proof!=null){
+            proof.put("forwarder_closed",true);
+            proof.put("provider_transport",config.path("linux_runtime").asBoolean(false)?"linux-private-network-via-loopback":"host-isolated-worker");
+            proof.put("provider_tcp_connections",forwarder.connections.get());
+            JSON.writerWithDefaultPrettyPrinter().writeValue(work().resolve("gateway.json").toFile(),proof);
+        }}
     }
 }

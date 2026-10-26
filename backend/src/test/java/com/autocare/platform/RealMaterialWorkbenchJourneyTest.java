@@ -49,9 +49,15 @@ import static org.junit.jupiter.api.Assertions.*;
     "INPUT_MATERIAL_UPLOAD_ENABLED=true","UPLOAD_SIGNED_URL_SECONDS=10","UPLOAD_CLEANUP_INTERVAL_MS=600000"})
 @Testcontainers @DirtiesContext(classMode=DirtiesContext.ClassMode.AFTER_CLASS)
 class RealMaterialWorkbenchJourneyTest {
-    static final String RUN=UUID.randomUUID().toString(), ROOT_PASSWORD=UUID.randomUUID().toString();
+    static String runIdentity(){
+        if(!"true".equals(System.getenv("AUTOCARE_LINUX_MILEAGE_HOST")))return UUID.randomUUID().toString();
+        String id=System.getenv("AUTOCARE_REAL_MILEAGE_RUN_ID");
+        if(id==null||!id.matches("[0-9a-f]{32}")||!"true".equals(System.getenv("TESTCONTAINERS_RYUK_DISABLED")))throw new IllegalStateException("Invalid host acceptance identity");
+        return id;
+    }
+    static final String RUN=runIdentity(), ROOT_PASSWORD=UUID.randomUUID().toString();
     static final String USER="test-upload-user", SECRET=UUID.randomUUID().toString(), BUCKET="upload-journey";
-    static final Network NETWORK=Network.newNetwork();
+    static final Network NETWORK=Network.builder().createNetworkCmdModifier(c->c.withLabels(Map.of("autocare.upload.run",RUN))).build();
     // Structural MPEG fixtures only; this is not a playback or recognition claim.
     static final byte[] CLEAN=InputMaterialValidatorTest.audio(28);
     static final byte[] INFECTED=InputMaterialValidatorTest.audio(29);
@@ -79,12 +85,13 @@ class RealMaterialWorkbenchJourneyTest {
     static final class LoopbackStorage implements AutoCloseable {
         final ServerSocket listener;
         final Set<Socket> sockets=ConcurrentHashMap.newKeySet();
+        final java.util.concurrent.atomic.AtomicInteger connections=new java.util.concurrent.atomic.AtomicInteger();
         LoopbackStorage()throws IOException {this(MINIO.getHost(),MINIO.getMappedPort(9000));}
         LoopbackStorage(String host,int port)throws IOException {
             listener=new ServerSocket(0,50,InetAddress.getByName("127.0.0.1"));
             daemon(()->{while(!listener.isClosed())try{
                 Socket incoming=listener.accept();sockets.add(incoming);
-                Socket outgoing=new Socket(host,port);sockets.add(outgoing);
+                Socket outgoing=new Socket(host,port);sockets.add(outgoing);connections.incrementAndGet();
                 daemon(()->pipe(incoming,outgoing));daemon(()->pipe(outgoing,incoming));
             }catch(IOException stopped){if(!listener.isClosed())throw new UncheckedIOException(stopped);}});
         }

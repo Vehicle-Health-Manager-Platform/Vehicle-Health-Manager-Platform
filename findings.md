@@ -1,3 +1,6 @@
+# A4d45 Linux OCR共享网关与微信旅程
+- 基线5358ef6/PR235最终8项CI成功。新增宿主JVM+Linux OCR运行器和loopback固定目标入口，关闭Ryuk、无新增容器Docker控制挂载。最终网关80+12/TCP1次、微信80+12+9项/TCP3次、三SQL和唯一正确档案通过，源码稳定及完整清理通过；TCP连接与模型内部调用分开。
+
 # A4d44 Linux推理镜像与出口验收完成
 - 2026-10-25启动、2026-10-26收口。最终不可变镜像ID绑定/真实合成图两次/同worker复用、60项Linux无失败无跳过、Windows60项中59通过1项Linux内核跳过、运行器18项/交接8项通过；71包Linux离线锁、Compose正反向及内核资源/网络验证通过。来源稳定，容器/网络及私有env清理。7a7c847已上传草稿PR235（依赖PR234），最终head CI另核，未合并部署；未重跑JVM/微信/真实仪表或压力测试。
 
@@ -797,3 +800,8 @@ POST /api/check/delivery/compare 实测：齐备订单 READY/deliverable=true、
 ## A4d25 验证结论
 
 生成源缺失导致CI第83步覆盖手写元数据/只读契约；修复后规范文本相同，默认两次输出字节稳定，--check失败不写。完整schema链路85/85、所有46套Python共457测试通过。复现只需生成到缓存，无需运行后端或联网依赖；后续改契约必须更新生成源并跑--check。
+# A4d45联调实施进展（2026-10-26）
+- 自动审批拒绝为新增Maven容器挂Docker控制socket；采用Windows宿主缓存Java17/Maven及命名管道、关闭Ryuk，自有标签兜底清理。未将拒绝方案变相执行。
+- internal网络不分配宿主发布端口，首轮在入口核验拒绝后完成清理；转发容器改用internal+本次桥接，OCR仍仅internal。宿主JVM的Docker API兼容参数必须通过JAVA_TOOL_OPTIONS传给Surefire，父JVM系统属性不足。
+- 首个完整网关轮80+12项、同受限worker/成功上游TCP1次、来源稳定和清理通过。收口加入入口权限/挂载/端口审计及继续清理回归后，最终微信/网关两种模式分别复验通过。
+- PR235最终8项CI全部成功；小程序1061项授权环境通过，受限环境首次4项loopback EACCES不计成功。

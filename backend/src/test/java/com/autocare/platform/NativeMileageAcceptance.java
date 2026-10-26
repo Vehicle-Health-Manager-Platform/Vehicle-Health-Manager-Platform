@@ -15,7 +15,7 @@ final class NativeMileageAcceptance {
         Path work=RealMileageAcceptance.work(),ready=work.resolve("native-ready.private.json");
         var phases=new LinkedHashSet<String>();
         try{
-            write(json,ready,Map.of("port",port,"token",token,"image",Base64.getEncoder().encodeToString(image)));
+            write(json,ready,Map.of("port",port,"token",token,"image",Base64.getEncoder().encodeToString(image),"host_backend",RealMileageAcceptance.config.path("linux_runtime").asBoolean(false)));
             Path done=work.resolve("native.json");long deadline=System.nanoTime()+Duration.ofMinutes(7).toNanos();
             while(!Files.exists(done)&&System.nanoTime()<deadline){
                 for(String phase:List.of("candidate","cancelled","applied")){

@@ -5,10 +5,17 @@ import path from 'node:path'
 import fs from 'node:fs'
 import crypto from 'node:crypto'
 import {spawnSync} from 'node:child_process'
-const require=createRequire(import.meta.url),{admitted,createMileageProxy}=require('../../../scripts/native-mileage-proxy.cjs')
+const require=createRequire(import.meta.url),{admitted,createMileageProxy,transportCommand}=require('../../../scripts/native-mileage-proxy.cjs')
 const json={'content-type':'application/json'},key='123e4567-e89b-42d3-a456-426614174000'
 const recognition={vehicle_id:992,file_id:17,consent:true,consent_version:'MILEAGE_OCR_V1'}
 const body=value=>Buffer.from(JSON.stringify(value))
+
+test('host JVM transport passes private paths as literal curl arguments without a shell',()=>{
+ const config='D:\\项目 空间\\private.cfg',headers='D:\\项目 空间\\headers.txt'
+ assert.deepEqual(transportCommand(true,'a'.repeat(32),config,headers),['curl.exe',['--config',config,'--dump-header',headers,'--data-binary','@-']])
+ assert.equal(transportCommand(false,'a'.repeat(32),config,headers)[0],'docker')
+ for(const value of ['true',1,null,undefined])assert.throws(()=>transportCommand(value,'a'.repeat(32),config,headers))
+})
 test('mileage proxy requires exact selected owner source and explicit consent',()=>{
  assert.equal(admitted('/api/vehicle/mileage-recognition',json,body(recognition),17),true)
  for(const patch of [{vehicle_id:991},{file_id:18},{consent:false},{consent_version:'old'},{extra:true}])assert.equal(admitted('/api/vehicle/mileage-recognition',json,body({...recognition,...patch}),17),false)

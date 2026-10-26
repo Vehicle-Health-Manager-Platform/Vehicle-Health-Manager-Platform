@@ -45,3 +45,16 @@
 脚本创建独立合成车主992，通过真实原生文件上传、明确选图与用途同意、真实OCR网关、候选检查/本人核对、原保存按钮。第一次已返回候选取消后需重新同意，第二次确认带入前后均不自动保存；三阶段SQL检查点验证零档案，最终仅一条正确JSON里程/图片引用，车辆登记里程不变。
 
 原生界面验收9项；预设上传1、识别2、保存1个UI JSON请求，网关模型调用共3次（原后端991一次、原生992两次），前置模型自检另记。原80项基础用例中的无档案检查属于原生保存之前；最终本轮允许992通过原保存按钮写入一条合成档案。选图、picker/switch/input事件由开发者工具辅助，不等于手机触摸、权限、在途取消或真实仪表识别效果。临时下载文件由WeChat管理，只核对页面引用清除，不承诺物理删除。详见[阶段记录](../progress/R9_A4D41_NATIVE_MILEAGE.md)。
+
+## A4d45 Linux OCR与宿主JVM验收入口
+
+仅用于Windows Docker Desktop本机隔离验收，后端JVM运行在Windows，OCR运行在Linux容器。准备[离线Linux模型/依赖](../../services/ocr/README.md)、两个现有上传验收镜像及宿主Java17/Maven。将工作区缓存或已有工具的三个绝对路径写入私有`.cache/host-tools/host-tools.private.json`：`java_home`（含bin/java.exe）、`maven_home`（含boot/plexus-classworlds-*.jar、bin/m2.conf）、`maven_repository`（本地Maven仓库）。工具包应从官方来源取得并核对发布摘要；脚本不安装全局工具或修改系统PATH。Python需具备模型/wheel校验模块所需环境及Pillow12.3.0。
+
+```powershell
+python scripts/run_linux_mileage_acceptance.py --allow-isolated-linux-mileage
+python scripts/run_linux_mileage_acceptance.py --allow-isolated-linux-mileage --native
+```
+
+原生模式仍需上述独立微信构建、自动化端口9420及固定SDK3.17.2。不能与其他材料/里程验收并行运行，共享本地证据文件和18080端口。缺开关、错平台或复用身份先拒绝。测试后端只通过宿主Docker Desktop命名管道创建测试资源，Ryuk关闭；新增容器均不挂Docker控制接口。固定目标字节转发容器使用本次双网络，唯一宿主端口仅127.0.0.1，OCR仍只连接internal网络且无发布端口。宿主curl.exe透传真实微信请求和响应。
+
+网关成功上游TCP连接预期1次，原生模式3次；这不是模型内部调用计数。真实模型预检两次另记，同一worker启动身份/READY/seccomp与来源稳定单独核对；80项材料/工作台、12项网关、9项原生和三SQL节点分别计证。JVM正常关闭资源；运行器按本次标签兜底清理，即使某项清理失败仍继续其他资源，探测故障不当作已删除。运行报告与日志保留在本次cache目录，凭据控制文件必须清理，只发布脱敏结果。
