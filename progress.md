@@ -780,3 +780,20 @@ run_reward_acceptance --docker通过，281.36秒：144HTTP/14接口四类，17�
 阶段已上传[草稿PR216](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/216)，实现提交 `e037489`，base=`codex/r9-a4d24-delivery-merchant-view`，依赖PR215；远程CI已触发，结果以PR实际检查为准，未合并。
 # A4d45本地收口（2026-10-26）
 - 宿主Java17/Maven可用且不改全局安装；安全改线、最终微信/网关复验、资料与脱敏报告完成，9+14+18+11+8 Python审计及1061小程序回归、两种微信构建和索引核对通过。70c94fd已上传依赖PR235的草稿PR236，最终head CI另核，未合并部署。
+
+## 2026-10-21 交付文档独立核查
+- 目标：按原始交付文档 F01–F20 及第9–12章核对当前代码、历史证据与未完成项。
+- 阶段：需求基线已读；正在核对真实接入、PC后台、接口/性能门禁及小程序实现。
+- 保留已有记录；本轮仅添加检查记录与审计报告，不修改业务代码。
+- 本次实测：小程序1015/1015通过、0失败/跳过；微信构建及两项原生门禁通过；62迁移挂载校验通过。
+- 已校验新报告全部本地引用路径存在。历史后端、覆盖率、性能及恢复证据仅引用，未冒充本次复跑。
+- 报告：docs/progress/DELIVERY_AUDIT_2026_10_21.md。读取中出现的Windows通配路径和Python默认GBK错误已通过rg glob与显式UTF-8读取纠正，不影响结论。
+
+## A4d-4c 验证中
+- 新增15项测试；与既有退款8项合计23/23通过；全量1030/1030通过，0失败/跳过。
+- 微信构建通过，产物含17个退款静态锚点、2个textarea，映射模块存在。
+- 尚未执行真机、模拟器渲染、正式资金；不更改后端/API契约。
+
+- A4d-4c 本地验证完成：1030项全通过，微信/H5构建与原生两门禁通过；报告和当前状态已整理，准备提交推送。
+
+- A4d-4c已上传：6a8835b推送至origin/codex/r9-a4d4c-refunds；草稿PR195：https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/195。阶段规划及实现/本地验证/上传完成；远程CI独立跟踪，未合并或上线。

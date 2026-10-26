@@ -1,3 +1,7 @@
+## 2026-10-26 阶段更新集成
+
+当前代码承接A4d45，另保留PR195独立退款页更新，集成范围为PR195–236共42项阶段成果。历史失败已有PR216/229修复，不将旧失败head逐个独立上线。源码和交付进度以[本次合并核查](MERGE_2026_10_26.md)、[A4d45记录](R9_A4D45_LINUX_MILEAGE.md)及[剩余验收](../delivery/REMAINING_ACCEPTANCE.md)为准，下面保留阶段历史。
+
 ## 2026-10-23 A4d26：微信小程序本地资金记录
 
 本阶段为小程序受限运营工作区新增“资金记录”，共用后端实现单日/单渠道本地支付退款只读汇总。北京时间归日、测试/正式渠道隔离、来源异常使金额未知，渠道账单与对账差额始终未知；无资金写操作。复用can_analytics聚合权限，新增页面及接口契约，无数据库迁移。实现与验收见[阶段记录](R9_A4D26_LOCAL_FINANCE_EXECUTION.md)，[使用说明](../user-guides/LOCAL_FINANCE.md)。本地23项Java、1034项小程序、459项Python与微信构建通过，隔离资源已清理。[草稿PR217](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/217)已上传，依赖PR216，实现fcee604，最终远程CI待核对；全API仍false，真机与正式资金未验收。
@@ -481,3 +485,7 @@ A7.2b 施工档案回写已实现：[规格 #53](https://github.com/Vehicle-Heal
 ## 每阶段交付
 
 用户已要求每完成一个阶段整理文档并上传 GitHub。后续按“验证→文档→提交→推送阶段分支→PR→CI”的顺序收口，在用户报告中提供 PR 链接与最终验证结果。详见[阶段交付规则](STAGE_DELIVERY.md)。
+
+## 2026-10-21 A4d-4c：共用退款页收口（已上传PR195）
+
+车主/店长退款页统一阶段、资金事实、表单缺口与错误恢复；新增确认前后账号/路由/版本/正文复检，页面隐藏或账号变化取消旧弹窗；未知结果保留原正文原键重试。新增15项测试，全量1030/1030（0失败/跳过），微信与H5构建及两项原生门禁通过；产物17锚点、2个textarea。后端/API/渠道未改；真机、正式资金及全量后端本轮未执行。后续路线与上传策略见[执行计划](NEXT_EXECUTION_PLAN_2026_10_21.md)，[阶段记录](R9_A4D4C_REFUNDS_EXECUTION.md)。实现提交6a8835b已推送并创建[草稿PR195](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/195)，远程CI待完成；未合并、未上线。

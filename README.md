@@ -1,3 +1,7 @@
+## 2026-10-26 阶段更新集成
+
+本次集成PR195及PR196–236完整阶段栈，包含退款页、权限和业务验收、微信原生旅程及Linux OCR联调。[合并核查](docs/progress/MERGE_2026_10_26.md)记录范围、历史CI修复及最终验证方式；合并状态以GitHub记录为准。产品交付目标仍为微信小程序和共享后端。
+
 ## 当前微信小程序交付资料
 
 [三角色与受限运营操作手册](docs/user-guides/README.md) · [页面与三份环境模板索引](docs/delivery/MINIAPP_REFERENCE.md) · [剩余验收和交接条件](docs/delivery/REMAINING_ACCEPTANCE.md)。资料由源码核对，不代替正式身份、真机或上线验收；以下保留阶段历史。
@@ -389,3 +393,7 @@ docker compose --env-file .env -f deploy/compose/compose.yml up --build -d
 - PR 中不提交个人交付文档、密钥、数据库口令、真实用户数据、临时构建产物或测试凭据。
 
 欢迎从 [当前进度](docs/progress/CURRENT_STATUS.md)、[R8 计划](docs/progress/R8_IMPLEMENTATION_PLAN.md) 和 [下一步公开问答页面](docs/progress/R8C1B3B_PUBLIC_QA_UI_NEXT_PLAN.md) 开始了解项目。
+
+## 2026-10-21 A4d-4c：共用退款页收口（已上传PR195）
+
+车主/店长退款页统一阶段、资金事实、表单缺口与错误恢复；新增确认前后账号/路由/版本/正文复检，页面隐藏或账号变化取消旧弹窗；未知结果保留原正文原键重试。新增15项测试，全量1030/1030（0失败/跳过），微信与H5构建及两项原生门禁通过；产物17锚点、2个textarea。后端/API/渠道未改；真机、正式资金及全量后端本轮未执行。后续路线与上传策略见[执行计划](docs/progress/NEXT_EXECUTION_PLAN_2026_10_21.md)，[阶段记录](docs/progress/R9_A4D4C_REFUNDS_EXECUTION.md)。实现提交6a8835b已推送并创建[草稿PR195](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/195)，远程CI待完成；未合并、未上线。

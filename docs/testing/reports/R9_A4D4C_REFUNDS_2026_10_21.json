@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "date": "2026-10-21",
+  "stage": "R9-A4d-4c",
+  "baseline": "b41c3b1",
+  "scope": "共用退款页展示、确认上下文复检和原请求重试；无后端/渠道变更",
+  "passed": true,
+  "tests": {
+    "command": "npm test --workspace @autocare/miniapp",
+    "exit_code": 0,
+    "tests": 1030,
+    "pass": 1030,
+    "fail": 0,
+    "skipped": 0,
+    "new_tests": 15,
+    "refund_targeted_tests": 23
+  },
+  "builds": {
+    "mp_weixin": {
+      "command": "npm run build:miniapp",
+      "exit_code": 0,
+      "shared_selector_gate": true,
+      "no_test_bridge_gate": true
+    },
+    "h5": {
+      "command": "npm run build:h5 --workspace @autocare/miniapp",
+      "exit_code": 0
+    }
+  },
+  "compiled_page": {
+    "anchors": [
+      "refund-page",
+      "refund-login",
+      "refund-read-error",
+      "refund-original-retry",
+      "refund-order",
+      "refund-stage",
+      "refund-record",
+      "refund-test-warning",
+      "refund-request-form",
+      "refund-reason",
+      "refund-withdraw",
+      "refund-decision-form",
+      "refund-note",
+      "refund-reconcile",
+      "refund-write-result",
+      "refund-query-result",
+      "refund-action-error"
+    ],
+    "textarea_count": 2,
+    "mapping_module_present": true
+  },
+  "shared_selectors": {
+    "reservation-page": true,
+    "reservation-primary": true,
+    "ux-hero": true,
+    "ux-card": true,
+    "ux-metric-value": true,
+    "ux-badge": true,
+    "ux-row": true,
+    "ux-empty": true,
+    "ux-card-note": true,
+    "ux-divider": true
+  },
+  "log_sha256": {
+    "tests": "0b0a23bf1e81e583ca86ab4241b934b7e5a4115c76d4c3e01e31b872462905d3",
+    "mp": "fbe6eb5ef40be79ba08b15b685c3d7aea10985aaf8919e915a58ec9ba76134d9",
+    "h5": "47fa3930c94797e17705cfa2fa39ce65c16747d5b34144af0ad4054ecd37c979"
+  },
+  "not_executed": [
+    "真机/模拟器渲染",
+    "视觉回归截图",
+    "正式微信资金",
+    "全量后端复跑",
+    "本阶段远程CI结果（上传后独立记录）"
+  ]
+}
