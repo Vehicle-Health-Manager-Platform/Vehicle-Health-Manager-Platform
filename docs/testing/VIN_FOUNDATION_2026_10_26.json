@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "finished_at": "2026-10-26T12:37:23.605172+00:00",
+  "scope": "R1 internal VIN candidate protocol and bounded client only",
+  "passed": true,
+  "counts": {
+    "tests": 27,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "suites": {
+    "com.autocare.platform.vehicle.vin.VinProtocolTest": {
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "com.autocare.platform.vehicle.vin.VpicVinDecoderTest": {
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "source_sha256_at_summary": {
+    "backend/src/main/java/com/autocare/platform/vehicle/vin/VinDecoder.java": "92789ef7ceb5cad1db29a42d0fb4774832df354b795d6e8de531373d49f96be8",
+    "backend/src/main/java/com/autocare/platform/vehicle/vin/VpicVinDecoder.java": "fd820c5d85f0c5578625bba734cc873edacaaed8f6888397d5f6fa50f8e4c094",
+    "backend/src/main/java/com/autocare/platform/vehicle/vin/VpicVinResponse.java": "0fa1bcd6bfd2469c7fe0617dc933718b71a4fe63f1fac84293f9faa3a38068c3",
+    "backend/src/test/java/com/autocare/platform/vehicle/vin/VinProtocolTest.java": "1340070a4f33e9d6aa71d26dc81e2b3153db69921dcf00ee21e3dbeaa7538180",
+    "backend/src/test/java/com/autocare/platform/vehicle/vin/VpicVinDecoderTest.java": "e1ac6ef8a3ea9ae24ce5f09d987867137c6a5da23fc4d06a2f06a9fdcda83ca3"
+  },
+  "test_upstream": "real loopback HTTP with synthetic VIN/provider responses",
+  "public_vin_endpoint_implemented": false,
+  "real_full_vin_provider_acceptance_passed": false,
+  "internal_catalog_mapping_verified": false,
+  "new_backend_dependency_added": false,
+  "production_acceptance_passed": false,
+  "boundaries": [
+    "No public route, Spring production bean, startup task or database writes",
+    "No real user VIN submitted; browser read official public partial-VIN documentation example only",
+    "ASR, document extraction and vectors are planned; no installed models or domain effectiveness acceptance",
+    "Old PR241 results are historical and not recounted as this phase tests"
+  ],
+  "additional_validation": {
+    "handover_tests": 8,
+    "contract_verdict_tests": 11,
+    "openapi_operations_unchanged": 354,
+    "public_vin_get_still_not_implemented": true,
+    "vin_control_character_prefix_suffix_rejected": true
+  }
+}

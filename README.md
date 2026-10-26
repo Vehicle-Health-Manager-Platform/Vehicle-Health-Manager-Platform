@@ -1,5 +1,7 @@
 ## 本地阶段交接（2026-10-26）
 
+上一批实现1df7dd7已上传[草稿PR241](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/241)，未合并发布。后续已形成[行驶证/VIN、ASR、图文与向量路线](docs/superpowers/plans/2026-10-26-recognition-vector-roadmap.md)，开始[R1 VIN内部来源适配](docs/progress/RECOGNITION_R1_VIN_FOUNDATION.md)；内部适配不等于公共VIN入口、精确车型或真实服务验收。
+
 按最新范围暂缓正式微信身份、短信开通与生产发布，先完成本地开发、测试和资料交接。[统一交接入口](docs/delivery/LOCAL_HANDOVER.md)包括启动/配置、四角色手册、API、部署、外部接入步骤及已知问题；[本轮测试报告](docs/testing/LOCAL_DELIVERY_2026_10_26.md)区分新执行与历史依据。复跑命令：`python scripts/run_local_delivery.py`，含真实MySQL/HTTP的后端扩展为 `--backend`。待开发和待验收事项尚未全部关闭，不能据此认定项目全部完成。
 
 ## 当前进度与后续计划（2026-10-26，历史路线）

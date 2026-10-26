@@ -1,5 +1,7 @@
 # 当前微信小程序剩余验收与交接
 
+2026-10-26上传后续：上一批1df7dd7已上传草稿PR241，未合并/发布；[识别与向量路线](../superpowers/plans/2026-10-26-recognition-vector-roadmap.md)已落实，开始[R1 VIN内部适配](../progress/RECOGNITION_R1_VIN_FOUNDATION.md)。VIN公共权限网关/页面及行驶证、ASR、图文和向量完整链路尚未完成，不能从内部库测试推断已端到端可用。
+
 2026-10-26最新用户范围：正式微信认证、短信开通、生产发布等需外部账号/资质或人工办理的工作由后续人员接手，本地开发与测试继续。[本地交接入口](LOCAL_HANDOVER.md)、[启动与配置](LOCAL_SETUP.md)、[外部接入清单](EXTERNAL_INTEGRATIONS.md)、[开发和验收缺口](LOCAL_BACKLOG.md)、[本轮结果](../testing/LOCAL_DELIVERY_2026_10_26.md)作为当前执行入口；下文B阶段规划保留历史依据，不能因暂缓外部接入就认定其余所有独立开发已完成。
 
 2026-10-26 B1a更新：用户选择微信云开发、短信后接，云环境尚未开通。已开始[开通及部署预检准备](../superpowers/plans/2026-10-26-b1a-cloud-deployment.md)，复用Java/MySQL后端与微信云通道；该准备不等于真实云部署/身份验收。云服务归属/兼容性、公网隔离、外部MySQL迁移、私有文件与手机仍须实测；商家/受限运营短信暂缓期间保持阻塞。

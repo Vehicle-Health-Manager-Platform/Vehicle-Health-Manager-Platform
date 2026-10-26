@@ -76,8 +76,8 @@
 | --- | --- | --- |
 | `POST /api/payments/callback/{channel}` | `未标记` | 真实渠道回调未接入;当前只有 LOCAL_TEST 渠道回调用于隔离验收。接入需渠道证书、验签密钥与生产商户号。 |
 | `POST /api/refunds/callback/{channel}` | `未标记` | 同上:退款回调只有 LOCAL_TEST,真实渠道回调未接入。 |
-| `GET /api/vehicle/ocr-license` | `未标记` | 行驶证 OCR 未实现,需要外部 OCR 供应商与合规存储方案;当前车辆信息由车主手填。 |
-| `GET /api/vehicle/vin-decode` | `未标记` | VIN 解码未实现,需要外部 VIN 库供应商;车型由品牌/车系/配置枚举录入。 |
+| `GET /api/vehicle/ocr-license` | `未标记` | 现有受限Paddle里程能力可复用，但行驶证专用提取、新车上传授权网关及页面尚未完成；按R2规划接入，不把人工确认当识别。 |
+| `GET /api/vehicle/vin-decode` | `未标记` | R1内部VIN有限来源适配已实现并测试，OWNER权限网关、用途同意、页面和授权国内车型映射仍待R2；此旧GET没有公共业务实现。 |
 
 ### 实现存在但无成功路径（1 项）
 

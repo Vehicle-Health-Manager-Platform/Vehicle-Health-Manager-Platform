@@ -853,3 +853,16 @@ POST /api/check/delivery/compare 实测：齐备订单 READY/deliverable=true、
 - 本轮在基线223套2201项通过后补接车OCR，避免旧全量结果冒称新源码全跑。新增13项JDBC、4项HTTP组件及真实TCP旅程，8套63项受影响回归通过。
 - 独立PICKUP_MILEAGE_OCR_V1确认，本店PAID/车辆仍归原车主/当前员工CLEAN未用图片，调用前后复核；仅DASHBOARD可选、人工核对后带入，原提交仍标MANUAL。
 - 模型资产曾一次Win5原子rename失败，具体占用进程未证实；有限重试只认Windows5/32，不复制/覆盖/吞持续错误。最终统一回归通过，上一轮false证据保留。
+
+## 识别/向量规划前现状
+- 用户要求先上传再规划实施。上一批已提交并推送1df7dd7，PR241已建，base=codex/b1a-cloud-deployment-readiness。PR240核对8项SUCCESS、仍OPEN；不擅自合并。
+- 现行未实现GET /api/vehicle/vin-decode与GET /api/vehicle/ocr-license仅占位无参数。后续含敏感输入和用途同意应设计POST，旧GET具名替代，不能把VIN/文档信息塞进query日志。
+- 微信录车已有内存60秒VIN/车牌预填与手工车型目录选择；识别候选支持人工核对。辅助音频严格MP3（16kHz单声道、最多60秒/3MiB）、PDF10MiB；不应直接扩张上传白名单。
+- LicensedKnowledge已有授权、版本、当前来源哈希/事件/审计和撤回校验，当前KEYWORD；后续向量层必须保留这些校验，不把哈希特征冒称语义embedding。
+- gstack /browse核对NHTSA官方vPIC API：厂商565申报来源，支持flat/extended解码、建议显式modelyear，有自动流量控制。只作候选/有限来源试点，不等于内部精确配置匹配或全量中国车型库。官方来源https://vpic.nhtsa.dot.gov/api/，未发送用户VIN。
+
+## R1首阶段边界与来源确认
+- 已增加内部VinDecoder/VpicVinDecoder/严格结果解析，没有REST路由、Spring生产Bean或数据库写入，GET vin-decode仍维持未实现结论；不将基础代码当成端到端录车完成。
+- 26项首轮通过；最终额外MIME/编码边界复验中。所有完整VIN和服务响应均合成，仅使用本机真实HTTP；浏览器读取官方文档公开部分VIN示例得到ErrorCode6，即使有品牌/车型也不应升级为完整成功。
+- 官方FAQ明确国外车辆依赖美国市场登记、1980年前无数据，故不作中国全量来源。模型路线按官方faster-whisper CPU/int8/PyAV与BGE-small-zh-v1.5（MIT/512维）作本地试点，未下载模型/测准确率。
+- R3/R4采用异步任务/取消/TTL，避免60秒音频或50页PDF阻塞微信云通道15秒；R5新增独立embedding许可，旧资料默认无，先MySQL精确向量再按测量评估Milvus。

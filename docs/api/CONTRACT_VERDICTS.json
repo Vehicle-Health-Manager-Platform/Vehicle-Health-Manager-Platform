@@ -105,12 +105,12 @@
     {
       "operation": "GET /api/vehicle/ocr-license",
       "verdict": "not-implemented",
-      "reason": "行驶证 OCR 未实现,需要外部 OCR 供应商与合规存储方案;当前车辆信息由车主手填。"
+      "reason": "现有受限Paddle里程能力可复用，但行驶证专用提取、新车上传授权网关及页面尚未完成；按R2规划接入，不把人工确认当识别。"
     },
     {
       "operation": "GET /api/vehicle/vin-decode",
       "verdict": "not-implemented",
-      "reason": "VIN 解码未实现,需要外部 VIN 库供应商;车型由品牌/车系/配置枚举录入。"
+      "reason": "R1内部VIN有限来源适配已实现并测试，OWNER权限网关、用途同意、页面和授权国内车型映射仍待R2；此旧GET没有公共业务实现。"
     },
     {
       "operation": "POST /api/payments/callback/{channel}",

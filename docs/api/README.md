@@ -2,6 +2,8 @@
 
 # API 文档
 
+2026-10-26后续：[VIN内部来源适配](VIN_PROVIDER_FOUNDATION.md)仅内部库，公共VIN/行驶证网关仍待R2；五类能力的实施顺序见[规划](../superpowers/plans/2026-10-26-recognition-vector-roadmap.md)。
+
 2026-10-26：[商家接车仪表里程候选](PICKUP_MILEAGE_RECOGNITION.md)，独立门店/订单/图片授权与用途同意，人工核对后带入原表单，不自动提交。
 
 > [本机录音与辅助材料边界](LOCAL_INPUT_MATERIALS.md)：A2a本机采集不新增HTTP接口，不把音频/PDF混入现有图片上传或文本AI正文；受控媒体上传属于下一A2b。
