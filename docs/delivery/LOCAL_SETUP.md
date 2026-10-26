@@ -92,3 +92,5 @@ mvn -f backend/pom.xml spring-boot:run
 页面503时检查实际依赖、开关、会话及服务端请求ID；不要把界面“提交成功”当作数据库、短信送达或资金到账证据。
 
 VIN可选查询：默认关闭即可完整手动录车。本地需测试真实NHTSA时按[VIN配置与接入验收](../api/VIN_OWNER_GATEWAY.md)设置后端两个变量并重启；固定HTTPS出口，明确外发用途和有限地区覆盖。合成测试使用测试类中的VinDecoder替身，不发送到真实服务。
+
+行驶证可选识别：按[接口与配置](../api/LICENSE_RECOGNITION.md)准备私有上传/扫描和受限Paddle，再设置后端LICENSE_OCR四变量；默认关闭仍可手动录车。新车照片使用现有/api/file/upload，不要求尚未创建的车辆ID。可选OCR overlay的行驶证开关独立默认false、token复用该overlay的MILEAGE_OCR_SERVICE_TOKEN，启用前确认两端一致；不把上传或合成模型测试当真实证件验收。

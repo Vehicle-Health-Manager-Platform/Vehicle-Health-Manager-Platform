@@ -5,11 +5,11 @@
   "current_backend_revalidated": false,
   "scope": "Selected recorded synthetic-identity/LOCAL_TEST suites only; other tests are not indexed. Reconciled with current definitions; no new HTTP execution or production acceptance.",
   "counts": {
-    "contract_operations": 355,
-    "protected_operations": 341,
+    "contract_operations": 356,
+    "protected_operations": 342,
     "four_kind_definitions": 317,
     "historical_four_kind_operations": 317,
-    "without_complete_historical_evidence": 38,
+    "without_complete_historical_evidence": 39,
     "current_run_operations": 0,
     "suites": 36
   },
@@ -14967,6 +14967,30 @@
       ]
     },
     {
+      "operation_id": "post_api_vehicle_license_recognition",
+      "method": "POST",
+      "path": "/api/vehicle/license-recognition",
+      "roles": "当前有效OWNER会话；本人CLEAN JPEG/PNG 1..4MiB；LICENSE_OCR_ENABLED默认false",
+      "protected": true,
+      "implementation_status": "license-owner-candidate-implemented-requires-document-acceptance",
+      "defined_kinds": [],
+      "historical_kinds": [],
+      "missing_definition_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "missing_historical_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "current_acceptance": "NOT_RUN",
+      "sources": []
+    },
+    {
       "operation_id": "get_api_vehicle_list",
       "method": "GET",
       "path": "/api/vehicle/list",
@@ -15318,6 +15342,6 @@
       ]
     }
   ],
-  "contract_sha256": "cd74e651f68f99ba291fca207b50462c5b9d7ff5a5638755240ad54b557b6933",
+  "contract_sha256": "b304fa7d69b95671c9d535d7ee7d830fa47c579734f09b5d39b1bf727c74c9b3",
   "input_hash_policy": "Input SHA256 uses CRLF-to-LF normalization. Historical raw collection digests must match its LF or CRLF byte form; content changes are rejected."
 }

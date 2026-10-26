@@ -111,3 +111,26 @@ def add_r9_contract_updates(document, operation):
     paths[path]['post']=vin
     paths[path]['get']['deprecated']=True
     paths[path]['get']['description']='旧GET没有解码实现；迁移POST并提供VIN_VPIC_V1用途同意，勿将VIN置于查询参数。'
+
+    path='/api/vehicle/license-recognition'
+    license_=operation('post',path,'本人新车登记图片提取车牌/VIN候选，人工核对后手动选车型','F03')
+    license_.pop('parameters',None)
+    license_['x-implementation-status']='license-owner-candidate-implemented-requires-document-acceptance'
+    license_['x-roles']='当前有效OWNER会话；本人CLEAN JPEG/PNG 1..4MiB；LICENSE_OCR_ENABLED默认false'
+    license_['description']='仅POST JSON正文，无query、不接收vehicle_id、URL或对象key。复用当前车主私有图片上传，不要求尚未创建的车辆ID；NEW_VEHICLE_LICENSE_OCR_V1明确新车用途。调用前后复核会话/账号及文件归属/扫描/元数据，存储读取后推理前再复核；来源失败也复核。每车主UTC分钟5次、实例并发2，来源10秒期限/64KiB，无应用级重试/重定向；受限worker推理8秒且单任务无队列。只返回完整合法标签旁车牌/VIN，不返回姓名/住址/证件原文，不证明真伪或归属，不自动建车/匹配车型/关联证件附件。取消不承诺删除已上传照片，按既有私有附件策略保留。'
+    license_['requestBody']={'required':True,'content':{'application/json':{'schema':{'type':'object','additionalProperties':False,'required':['file_id','purpose','consent','consent_version'],'properties':{
+        'file_id':{'type':'integer','minimum':1,'maximum':9007199254740990},'purpose':{'const':'NEW_VEHICLE'},'consent':{'const':True},'consent_version':{'const':'NEW_VEHICLE_LICENSE_OCR_V1'}}}}}}
+    field_status=['CANDIDATE','LOW_CONFIDENCE','AMBIGUOUS','NO_CANDIDATE']
+    candidate={'type':'object','additionalProperties':False,'required':['value','confidence'],'properties':{'value':{'type':'string','minLength':7,'maxLength':17},'confidence':{'type':'number','minimum':0,'maximum':1}}}
+    field={'type':'object','additionalProperties':False,'required':['key','status','candidates'],'properties':{'key':{'enum':['plate','vin']},'status':{'enum':field_status},'candidates':{'type':'array','maxItems':10,'items':candidate}},'description':'固定先plate后vin；字段值不重复。无值NO_CANDIDATE；多值AMBIGUOUS；单值confidence>=0.9为CANDIDATE，否则LOW_CONFIDENCE；不修复O/0、不删除内部空白或猜测。'}
+    projection={'type':'object','additionalProperties':False,'required':['file_id','purpose','source','review_status','requires_confirmation','fields'],'properties':{
+        'file_id':{'type':'integer','minimum':1,'maximum':9007199254740990},'purpose':{'const':'NEW_VEHICLE'},'source':{'const':'LOCAL_OCR'},
+        'review_status':{'enum':['CANDIDATE','PARTIAL','LOW_CONFIDENCE','AMBIGUOUS','NO_CANDIDATE']},'requires_confirmation':{'const':True},'fields':{'type':'array','minItems':2,'maxItems':2,'items':field}}}
+    success={'application/json':{'schema':{'allOf':[{'$ref':'#/components/schemas/ApiResponse'},{'type':'object','required':['data'],'properties':{'data':projection}}]}}}
+    error_content=copy.deepcopy(license_['responses']['200']['content'])
+    license_['responses']={code:{'description':desc,'content':copy.deepcopy(success if code=='200' else error_content),'headers':{'Cache-Control':{'schema':{'const':'no-store'}}}} for code,desc in [
+        ('200','file_id/purpose=NEW_VEHICLE/source=LOCAL_OCR/review_status/requires_confirmation=true/fields。整体优先AMBIGUOUS再LOW_CONFIDENCE；两个高可信单值为CANDIDATE，一个为PARTIAL，均无值为NO_CANDIDATE。每字段保留所有候选及原始置信度，超10个报来源错误，不截断。'),
+        ('400','图片ID/新车用途/同意无效，额外字段/重复键/尾随JSON/query拒绝'),('401','会话过期/撤销或账号停用/删除'),('403','非OWNER身份或绑定凭证'),('404','非本人/已删/非CLEAN/非JPEG或PNG/超大小图片'),('409','调用期间文件元数据变化'),('429','每车主分钟限额或本实例并发满'),('503','关闭、数据/私有存储/来源不可用、超时或来源协议错误') ]}
+    paths[path]={'post':license_}
+    paths['/api/vehicle/ocr-license']['get']['deprecated']=True
+    paths['/api/vehicle/ocr-license']['get']['description']='旧GET没有行驶证识别业务实现；迁移POST /api/vehicle/license-recognition并提供当前本人file_id及新车用途同意。'

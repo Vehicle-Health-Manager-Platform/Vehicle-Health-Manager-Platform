@@ -6,7 +6,7 @@ import secrets
 import signal
 import socket
 import threading
-from recognition import MAX_BODY, InvalidImage, decode_image, recognize_image
+from recognition import MAX_BODY, InvalidImage, decode_image, recognize_image, load_request
 from worker import ProcessRecognizer, WorkerBusy
 
 class BoundedServer(ThreadingHTTPServer):
@@ -79,9 +79,11 @@ class Handler(BaseHTTPRequestHandler):
                     result=self.server.engine.recognize_request(raw)
                 else:
                     # Explicit in-process engines remain for historical protocol test fixtures.
-                    try: image=decode_image(json.loads(raw))
+                    try:
+                        request=load_request(raw)
+                        image=decode_image(request)
                     except Exception: raise InvalidImage('invalid image') from None
-                    with image: result=recognize_image(image,self.server.engine)
+                    with image: result=recognize_image(image,self.server.engine,request['scene'])
             except InvalidImage: return self.respond(422,{'error':'invalid_image_request'})
             except WorkerBusy: return self.respond(429,{'error':'recognition_busy'})
             except Exception: return self.respond(503,{'error':'recognition_failed'})

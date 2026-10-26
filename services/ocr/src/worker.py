@@ -8,7 +8,7 @@ import subprocess
 import sys
 import threading
 import time
-from recognition import MAX_BODY, InvalidImage, decode_image, recognize_image, PaddleEngine
+from recognition import MAX_BODY, InvalidImage, decode_image, recognize_image, PaddleEngine, load_request
 from process_limits import bind_worker, kill_worker, guard_parent, worker_alive
 from network_guard import configure as configure_network
 
@@ -56,10 +56,12 @@ def child_loop(factory):
         answer({'kind': 'ready'})
         while True:
             raw = read_frame(sys.stdin.buffer, MAX_BODY)
-            try: image = decode_image(json.loads(raw))
+            try:
+                request = load_request(raw)
+                image = decode_image(request)
             except Exception: answer({'kind': 'invalid'}); continue
             try:
-                with image: result = recognize_image(image, engine)
+                with image: result = recognize_image(image, engine, request['scene'])
                 answer({'kind': 'ok', 'result': result})
             except Exception: answer({'kind': 'error'})
     except (BrokenPipeError, OSError, WorkerUnavailable): pass

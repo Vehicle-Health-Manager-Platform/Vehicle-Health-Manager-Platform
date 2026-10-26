@@ -21,3 +21,5 @@
 [运营账号运维](../operations/OPERATOR_ACCOUNTS.md) · [交付剩余验收](../delivery/REMAINING_ACCEPTANCE.md)。
 
 VIN来源管理：后端默认关闭；开启前检查NHTSA数据用途、地区覆盖和出口，必须显式VIN_DECODER_PROVIDER=NHTSA_VPIC。NHTSA候选不会自动进入车型目录，国内车型映射另按授权资料审核。关闭/失败保持手动录车；[配置与验收](../api/VIN_OWNER_GATEWAY.md)。
+
+行驶证识别配置与验收：LICENSE_OCR默认关闭，先核对私有上传/扫描、受限worker和后端URL/token匹配；仅车主新车用途可用，管理员不能凭file_id读其他车主照片。关闭后保留手动录车。正式使用前明确图片保留/本人删除政策，准备授权证件对照与真机样本，分别记录替身/合成图/真实效果。[配置与接入步骤](../api/LICENSE_RECOGNITION.md)。

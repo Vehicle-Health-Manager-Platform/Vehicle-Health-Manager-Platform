@@ -81,9 +81,28 @@ class OpenApiGenerationTest(unittest.TestCase):
         self.assertFalse(item.get('parameters'))
         self.assertNotEqual(item['operationId'],generator.build_document()['paths']['/api/vehicle/mileage-recognition']['post']['operationId'])
 
+    def test_license_gateway_has_independent_new_vehicle_consent_and_bounded_candidates(self):
+        paths=generator.build_document()['paths'];item=paths['/api/vehicle/license-recognition']['post']
+        self.assertEqual('license-owner-candidate-implemented-requires-document-acceptance',item['x-implementation-status'])
+        self.assertEqual([{'bearerAuth':[]}],item['security'])
+        self.assertFalse(item.get('parameters'))
+        schema=item['requestBody']['content']['application/json']['schema']
+        self.assertFalse(schema['additionalProperties'])
+        self.assertEqual(['file_id','purpose','consent','consent_version'],schema['required'])
+        self.assertEqual('NEW_VEHICLE',schema['properties']['purpose']['const'])
+        self.assertEqual('NEW_VEHICLE_LICENSE_OCR_V1',schema['properties']['consent_version']['const'])
+        self.assertNotIn('vehicle_id',schema['properties'])
+        self.assertEqual({'200','400','401','403','404','409','429','503'},set(item['responses']))
+        projection=item['responses']['200']['content']['application/json']['schema']['allOf'][1]['properties']['data']
+        self.assertFalse(projection['additionalProperties'])
+        self.assertEqual(True,projection['properties']['requires_confirmation']['const'])
+        fields=projection['properties']['fields'];self.assertEqual((2,2),(fields['minItems'],fields['maxItems']))
+        self.assertEqual(10,fields['items']['properties']['candidates']['maxItems'])
+        self.assertTrue(paths['/api/vehicle/ocr-license']['get']['deprecated'])
+
     def test_delivery_compare_remains_read_only_strict_and_authorized(self):
         document=generator.build_document();item=document['paths']['/api/check/delivery/compare']['post']
-        self.assertEqual(355,sum(len(v) for v in document['paths'].values()))
+        self.assertEqual(356,sum(len(v) for v in document['paths'].values()))
         self.assertEqual('delivery-compare-implemented',item['x-implementation-status'])
         self.assertEqual('本单车主或本店 MERCHANT/STAFF',item['x-roles'])
         self.assertEqual([{'bearerAuth':[]}],item['security'])

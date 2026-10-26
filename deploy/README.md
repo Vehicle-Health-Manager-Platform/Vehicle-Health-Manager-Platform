@@ -13,3 +13,7 @@ CI 的 `compose-smoke` 作业会启动 MySQL、Redis、RabbitMQ、MinIO、OCR、
 ## 支付测试开关
 
 正式Compose不启用测试支付。`LOCAL_TEST` 仅用于独立隔离环境，须同时配置 `SPRING_PROFILES_ACTIVE=local-payment-test`、`PAYMENT_LOCAL_TEST_ENABLED=true` 和独立私有密钥 `PAYMENT_LOCAL_TEST_SECRET`（至少32字节）；与prod/production组合或缺少必要参数会拒绝启动。不可把本机私有测试文件加载到生产。V008需在已有库备份后按序迁移，新增事件/异常表，总表数48。正式微信渠道本步返回503，未发生真实扣款/退款。
+
+## 可选行驶证候选识别
+
+R2b默认关闭的LICENSE_OCR开关可复用受限Paddle服务，先准备私有上传/扫描和离线模型。可选ocr-runtime overlay仍需显式LICENSE_OCR_ENABLED=true；内部URL固定、token复用overlay的MILEAGE_OCR_SERVICE_TOKEN，并沿用ocr_private内部网络；不会因里程OCR启用而自动开放行驶证。服务端配置/回滚与授权证件验收见[行驶证接入](../docs/api/LICENSE_RECOGNITION.md)。本功能没有新增数据库迁移；照片不自动关联档案，也不承诺取消即删除。

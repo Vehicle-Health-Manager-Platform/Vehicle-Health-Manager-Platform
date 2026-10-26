@@ -1,16 +1,31 @@
 """Local PaddleOCR adapter: image bytes only, no URL/path input."""
 import base64
 import io
+import json
 from pathlib import Path
 from numbers import Real
 from mileage import parse_mileage
+from license_fields import parse_license
 MAX_IMAGE = 4 * 1024 * 1024
 MAX_BODY = 6 * 1024 * 1024
 
 class InvalidImage(ValueError): pass
 
+
+def load_request(raw):
+    def invalid_constant(_): raise InvalidImage('invalid JSON')
+    def unique(pairs):
+        value = {}
+        for key, item in pairs:
+            if key in value: raise InvalidImage('duplicate request key')
+            value[key] = item
+        return value
+    try:
+        return json.loads(raw, object_pairs_hook=unique, parse_constant=invalid_constant)
+    except Exception: raise InvalidImage('invalid request') from None
+
 def decode_image(request):
-    if not isinstance(request, dict) or set(request) != {'scene', 'image_base64'} or request['scene'] != 'mileage':
+    if not isinstance(request, dict) or set(request) != {'scene', 'image_base64'} or request['scene'] not in ('mileage', 'license'):
         raise InvalidImage('invalid request')
     value = request['image_base64']
     if not isinstance(value, str) or len(value) > (MAX_IMAGE + 2) // 3 * 4:
@@ -51,9 +66,10 @@ class PaddleEngine:
         if any(isinstance(score, bool) or not isinstance(score, Real) for score in scores): raise ValueError('invalid model confidence')
         return [{'text': text, 'confidence': float(score)} for text, score in zip(texts, scores)]
 
-def recognize_image(image, engine):
-    result = parse_mileage(engine.recognize(image))
+def recognize_image(image, engine, scene='mileage'):
+    if scene not in ('mileage', 'license'): raise InvalidImage('invalid scene')
+    result = (parse_license if scene == 'license' else parse_mileage)(engine.recognize(image))
     result['version'] = 1
-    result['scene'] = 'mileage'
+    result['scene'] = scene
     result['image_recognition_performed'] = True
     return result

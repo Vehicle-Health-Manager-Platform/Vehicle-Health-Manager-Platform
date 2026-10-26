@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "operations": 355,
-  "anonymous_probes": 341,
+  "operations": 356,
+  "anonymous_probes": 342,
   "full_api_acceptance_passed": false,
   "note": "Generated inventory, not test evidence. Anonymous 401 does not prove controller implementation or role/ownership validation.",
   "items": [
@@ -5910,6 +5910,24 @@
       "required_query": [
         "vehicle_id"
       ],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_vehicle_license_recognition",
+      "method": "POST",
+      "path": "/api/vehicle/license-recognition",
+      "roles": "当前有效OWNER会话；本人CLEAN JPEG/PNG 1..4MiB；LICENSE_OCR_ENABLED默认false",
+      "implementation_status": "license-owner-candidate-implemented-requires-document-acceptance",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
       "anonymous_expected": 401,
       "cases": {
         "normal": "NOT_RUN",

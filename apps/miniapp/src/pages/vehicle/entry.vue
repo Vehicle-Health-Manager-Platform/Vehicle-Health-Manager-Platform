@@ -8,6 +8,7 @@ import {vehicleEntryPrefill} from '../../services/vehicle-entry-session.js'
 import {selectOwnerVehicle} from '../../services/owner-vehicle-selection.js'
 import {initialVinState,createVinFlow} from '../../services/vin-decode.js'
 import {VIN_DISCLOSURE,vinSummary} from '../../services/vin-candidate.js'
+import LicenseRecognition from '../../components/LicenseRecognition.vue'
 const state=reactive(initialVehicleEntryState())
 const flow=createVehicleEntryFlow({state,api:vehicleApi,token:()=>ownerSession.accessToken,prefill:vehicleEntryPrefill})
 const vinState=reactive(initialVinState())
@@ -40,7 +41,7 @@ function choose(row){try{selectOwnerVehicle(flow.select(row));uni.switchTab({url
     <view v-for="row in state.matches" :key="row.vehicle_id" class="match"><text>{{row.model_name || '车型信息暂不可用'}}</text><text class="copy">{{row.plate_no_masked}} · {{row.current_mileage}} km</text><button @tap="choose(row)">选择此车查看档案</button></view>
     <button class="secondary" :disabled="state.busy" @tap="manual">带入车牌，手动登记新车</button>
    </template>
-   <template v-else-if="state.mode==='license'"><text class="heading">行驶证识别尚未开通</text><text class="copy">当前可以手动填写证件上的车牌与VIN，并确认车型。不上传或保存行驶证照片。</text><button @tap="manual">手动填写车辆资料</button></template>
+   <template v-else-if="state.mode==='license'"><LicenseRecognition @reauth="login" /><button class="secondary" @tap="manual">直接手动填写车辆资料</button></template>
    <template v-else-if="state.mode==='vin'">
     <text class="label">17位VIN（车架号）</text><input v-model="state.vin" class="field" maxlength="17" placeholder="不含I、O、Q" />
     <text class="label">年款提示（可留空）</text><input v-model="vinState.year" class="field" maxlength="4" type="number" placeholder="1980至2100" />

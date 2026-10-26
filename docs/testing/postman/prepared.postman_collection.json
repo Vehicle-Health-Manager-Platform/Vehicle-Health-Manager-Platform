@@ -16823,6 +16823,58 @@
       ]
     },
     {
+      "name": "post_api_vehicle_license_recognition",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/vehicle/license-recognition",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "description": "本人新车登记图片提取车牌/VIN候选，人工核对后手动选车型\nRoles: 当前有效OWNER会话；本人CLEAN JPEG/PNG 1..4MiB；LICENSE_OCR_ENABLED默认false",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "type": "string",
+              "value": "{{access_token}}"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{{body_post_api_vehicle_license_recognition}}"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.variables.get(\"enable_prepared_requests\") !== \"true\") { pm.execution.skipRequest(); }",
+              "else {",
+              "  const missing = [\"status_post_api_vehicle_license_recognition\", \"access_token\", \"body_post_api_vehicle_license_recognition\"].filter(k => !pm.variables.get(k));",
+              "  if (missing.length) { pm.execution.skipRequest(); throw new Error(\"Configure fixture variables before sending: \" + missing.join(\",\")); }",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"configured scenario status\", () => pm.response.to.have.status(Number(pm.variables.get(\"status_post_api_vehicle_license_recognition\"))));"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "name": "get_api_vehicle_list",
       "request": {
         "method": "GET",

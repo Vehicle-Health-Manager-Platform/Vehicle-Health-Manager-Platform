@@ -17,7 +17,7 @@ from run_performance_baseline import Docker, Owned, MySQL, Backend, LABEL, JAR, 
 
 CI_INPUT = ROOT / '.cache/api-ci-build-input.json'
 # Reviewed scope includes the authenticated mileage-recognition gateway.
-ANONYMOUS_PROBE_COUNT = 341
+ANONYMOUS_PROBE_COUNT = 342
 
 
 def backend_input_hash():

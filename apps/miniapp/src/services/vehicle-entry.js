@@ -5,7 +5,7 @@ export function createVehiclePrefillStore({now=Date.now}={}) {
  function clear(){if(timer!==null)clearTimeout(timer);timer=null;draft=null}
  function put(token,source,fields={}) {
   clear();if(!token||!['plate','vin','license'].includes(source))throw new VehicleError('invalid','录车来源无效，请重新进入')
-  const plate=source==='plate'?normalizedPlate(fields.plate):'',vin=source==='vin'?normalizedVin(fields.vin):''
+  const plate=source==='plate'||source==='license'&&fields.plate?normalizedPlate(fields.plate):'',vin=source==='vin'||source==='license'&&fields.vin?normalizedVin(fields.vin):''
   const vinFacts=fields.vinFacts===undefined?undefined:vinResponse(fields.vinFacts,vin,fields.vinFacts.model_year_hint)
   if(vinFacts&&(source!=='vin'||vinFacts.status==='NO_MATCH'))throw new VehicleError('invalid','候选无效，请手动选择车型')
   draft={token,source,plate,vin,...(vinFacts?{vinFacts}:{}),expires:now()+60000};timer=setTimeout(clear,60000)

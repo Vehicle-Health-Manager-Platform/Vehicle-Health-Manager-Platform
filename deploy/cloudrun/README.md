@@ -49,3 +49,7 @@ node scripts/check-wechat-identity-readiness.mjs --cloud-deployment --env-file d
 
 - 服务端：把 `WECHAT_CLOUD_RUN_ENABLED` 设为 `false`，`/api/auth/cloud-login` 立即不存在；`/api/auth/wx-login` 不受影响。
 - 小程序：清空 `VITE_WECHAT_CLOUD_ENV_ID` 与 `VITE_WECHAT_CLOUD_SERVICE`，重新构建即回到 `uni.request` + `code2session` 通道。
+
+## 行驶证识别可选配置
+
+云托管模板提供默认关闭的LICENSE_OCR_ENABLED及后端URL/token/私有HTTP选项。只有部署好维护中的私有存储/扫描和可达的受限OCR服务、明确图片用途与保留/本人删除政策后才启用；VITE变量不能放OCR凭据。供应商期限不等于上传到识别的全流程总期限；失败保持手动录车。[配置、权限和正式验收](../../docs/api/LICENSE_RECOGNITION.md)。

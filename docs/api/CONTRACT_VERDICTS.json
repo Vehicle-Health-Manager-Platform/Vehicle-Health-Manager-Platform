@@ -104,8 +104,9 @@
     },
     {
       "operation": "GET /api/vehicle/ocr-license",
-      "verdict": "not-implemented",
-      "reason": "现有受限Paddle里程能力可复用，但行驶证专用提取、新车上传授权网关及页面尚未完成；按R2规划接入，不把人工确认当识别。"
+      "verdict": "superseded",
+      "reason": "旧GET不执行行驶证识别；迁移当前OWNER、本人CLEAN图片与NEW_VEHICLE_LICENSE_OCR_V1独立用途同意的POST，候选须人工核对并手动选择车型。",
+      "replacement": "POST /api/vehicle/license-recognition"
     },
     {
       "operation": "GET /api/vehicle/vin-decode",
@@ -207,6 +208,11 @@
       "operation": "POST /api/vehicle/vin-decode",
       "verdict": "implemented-local",
       "reason": "R2a车主网关与小程序候选/人工选车型闭环已实现；HTTP/JWT/MySQL使用合成供应商验证，不作为真实NHTSA覆盖或中国车型来源验收，也不扩称历史四类证据齐全。"
+    },
+    {
+      "operation": "POST /api/vehicle/license-recognition",
+      "verdict": "implemented-local",
+      "reason": "R2b新车用途行驶证候选网关与本地受限OCR场景已实现；新车图片复用当前OWNER私有上传，无vehicle_id。授权真实证件效果、真机及国内车型映射另验，不据替身或合成样本扩称全部历史HTTP证据齐全。"
     }
   ]
 }

@@ -49,3 +49,7 @@
 以本轮报告中实际成功的项目为准。未通过项必须保留原因、复现方式和后续任务；不得将“资料齐全”“单测成功”写成“其余全部功能完成”。外部服务、未实现的独立功能和未执行的整体验收不应互相混淆。
 
 R2a最新增量：[VIN车主网关/候选与手动录车说明](../api/VIN_OWNER_GATEWAY.md)，默认关闭；[测试和已知边界](../progress/RECOGNITION_R2A_VIN_GATEWAY.md)、[脱敏证据](../testing/VIN_OWNER_GATEWAY_2026_10_26.json)。后续行驶证、ASR、图文和向量按路线推进。
+
+R2b最新增量：[行驶证车牌/VIN候选与手动录车](../api/LICENSE_RECOGNITION.md)，默认关闭；复用本人私有上传和受限Paddle，明确新车用途。真实证件效果、保留/本人删除政策、真机、国内车型及ASR/图文/向量另验。最终测试范围以本轮报告中实际记录为准。
+
+R2b最终记录：[行驶证软件回归与真实模型限制](../progress/RECOGNITION_R2B_LICENSE.md)、[脱敏证据](../testing/LICENSE_RECOGNITION_2026_10_27.json)。既有私有图片保留策略不包含本功能自动到期/本人删除承诺，正式证件前须明确政策。

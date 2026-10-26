@@ -2,6 +2,8 @@
 
 # API 文档
 
+2026-10-27 R2b：[行驶证新车用途候选接口](LICENSE_RECOGNITION.md)，本人CLEAN JPEG/PNG、明确上传识别用途同意，保留车牌/VIN低可信及多值候选，人工核对后手动选车型；默认关闭，不证明真伪，不自动关联证件附件。
+
 2026-10-26 R2a：[VIN车主POST网关及页面](VIN_OWNER_GATEWAY.md)已接通有限NHTSA候选与人工选车型流程，默认关闭；[内部来源适配](VIN_PROVIDER_FOUNDATION.md)为R1历史记录。真实覆盖、国内精确映射及行驶证另验；五类能力顺序见[规划](../superpowers/plans/2026-10-26-recognition-vector-roadmap.md)。
 
 2026-10-26：[商家接车仪表里程候选](PICKUP_MILEAGE_RECOGNITION.md)，独立门店/订单/图片授权与用途同意，人工核对后带入原表单，不自动提交。

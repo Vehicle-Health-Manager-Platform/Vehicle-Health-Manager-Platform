@@ -870,3 +870,11 @@ POST /api/check/delivery/compare 实测：齐备订单 READY/deliverable=true、
 R2a：现有VIN模式仅校验带入；复用账号隔离60秒prefill和手动车型选择，候选绝不产生内部model_id。ReservationStore.owner可复核会话/账号；共享auth_rate_limit适用固定分钟窗口，计数不包含VIN。
 
 R2a最终5套54项后端通过；新增HTTP用例合成VIN与继承用例重复触发409，已隔离样本复测。全量小程序1123、Python538、OCR63通过/1跳过及9组回归/MP和H5构建通过。gstack H5合成旅程13断言/截图通过，真实供应商与手机未验。PR242最终8项CI通过且OPEN。
+
+R2b核对：现有Paddle decode_image只允许mileage，worker/server复用受限子进程；里程网关需既有vehicle_id，行驶证新车流程不能套用此授权。当前工作区干净、基于7f3b19c；PR243六项CI成功/backend运行。
+
+R2b方案：已有/api/file/upload提供当前OWNER/私有/扫描/幂等，不要求vehicle_id，可直接复用新车照片上传；识别单独限制本人CLEAN JPEG/PNG<=4MiB及NEW_VEHICLE用途同意，不借用需车辆ID的input-materials。通用私有附件当前无本功能自动删除承诺，界面和交接须明确保留边界。
+
+R2b前端32项新增与原录车/VIN共66项通过；处理当前账号选图绑定、同意前零上传、unknown上传同键重试、已上传图片复用、人工修正重置核对、隐藏/取消/身份/同意迟到保护。OCR首轮76项中75通过/1平台跳过，真实模型合成图正在独立验证。
+
+R2b最终：后端9套81项、miniapp1155、Python539、OCR76通过/1跳过、MP/H5/门禁与9组回归全部通过，源码前后一致。gstack390px页面20+4断言与两图检查通过。真Paddle5场景运行/清理通过，但粤→粵导致PARTIAL，all_synthetic_fields_matched=false；沪图双字段正确，真实证件/手机/Linux仍未验。
