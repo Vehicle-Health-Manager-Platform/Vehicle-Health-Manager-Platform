@@ -136,4 +136,4 @@
 
 每阶段从最新已核验main建立独立codex分支；提交实现、必要测试、脱敏报告、剩余清单及交付索引，上传GitHub并核对最终head CI。阶段上传不自动等于合并或部署；按明确的后续合并/发布授权执行。已替代/内部/开发端点的契约结论单独维护，不以实现旧占位接口凑覆盖数量。
 
-当前下一项为A4d46。本轮已完成状态核查和路线规划，A4d46业务实施尚未开始。
+当前下一项为A4d46。本轮已完成状态核查和路线规划，已上传[草稿PR238](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/238)供审阅，最终head CI以GitHub实际结果为准；新规划尚未合并，A4d46业务实施尚未开始。
