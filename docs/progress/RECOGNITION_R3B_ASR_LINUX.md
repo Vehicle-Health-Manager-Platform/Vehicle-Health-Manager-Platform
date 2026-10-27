@@ -29,3 +29,5 @@
 接续R3c先做Java真实服务联调和受限进程故障注入；获授权中文/方言/噪声样本准备可并行，由负责人记录授权和人工对照。随后R4照片/原生文字PDF与扫描OCR复用持久任务授权/撤销/TTL；R5再加入独立embedding许可、模型版本及撤回约束。正式微信、短信、生产发布继续后置。
 
 原始日志/英文WAV/权重在忽略缓存；公共机器证据包含代码摘要、资源锁、合成样本结果、实际OS/Python包版本、资源限制及清理结果，无服务凭据或用户录音。
+
+上传：实现bbd0334，草稿[PR246](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/246)依赖PR245；本轮容器已清理，资源留在忽略缓存用于复现。新head远程CI独立跟踪；PR245本轮查询六项成功/backend仍运行，不冒称全CI完成。未合并部署。
