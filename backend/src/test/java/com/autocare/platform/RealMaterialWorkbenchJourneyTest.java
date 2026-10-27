@@ -200,7 +200,7 @@ class RealMaterialWorkbenchJourneyTest {
         }
     }
     @Test void realMaterialIsolationAndCurrentWorkbenches()throws Exception{
-        application=app;assertEquals(132,jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE()",Integer.class));
+        application=app;assertEquals(134,jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE()",Integer.class));
         jdbc.update("INSERT INTO user(id,openid,status) VALUES(1,'synthetic-material-owner',1),(2,'synthetic-material-other',1)");
         jdbc.update("INSERT INTO vehicle(id,user_id,current_mileage,plate_no,vin) VALUES(1,1,100,'PRIVATE_PLATE','PRIVATE_VIN'),(2,2,200,'PRIVATE_OTHER','PRIVATE_OTHER_VIN'),(3,1,300,'PRIVATE_THIRD','PRIVATE_THIRD_VIN')");
         jdbc.update("INSERT INTO merchant(id,merchant_type,name,address,status) VALUES(1,2,'synthetic shop','test',1),(2,2,'synthetic other shop','test',1)");
@@ -217,7 +217,9 @@ class RealMaterialWorkbenchJourneyTest {
         material("audio_archive","normal","other","/api/input-materials/ARCHIVE/2/upload",CLEAN,"audio",key,200);
         material("pdf_ai","normal","other","/api/input-materials/AI/2/upload",pdf,"pdf",key,200);
         material("same_key_other_vehicle","boundary","owner","/api/input-materials/AI/3/upload",CLEAN,"audio",key,200);
-        material("unknown_kind","error","owner",ai,CLEAN,"image",UUID.randomUUID().toString(),400);
+        // Images became a supported auxiliary kind in R4b. Keep this an unknown-kind
+        // case, rather than sending MP3 bytes under the now-valid image header.
+        material("unknown_kind","error","owner",ai,CLEAN,"webp",UUID.randomUUID().toString(),400);
         material("upload_query","error","owner",ai+"?owner_id=2",CLEAN,"audio",UUID.randomUUID().toString(),400);
         var infected=material("infected_bytes","error","owner",ai,INFECTED,"audio",UUID.randomUUID().toString(),422);
         assertEquals("上传文件未通过病毒检查",infected.path("message").asText());

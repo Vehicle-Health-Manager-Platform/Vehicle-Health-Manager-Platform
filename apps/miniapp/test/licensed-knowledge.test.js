@@ -5,7 +5,7 @@ import {reactive,ref,watch,effectScope} from 'vue'
 import {createKnowledgeApi,createKnowledgeRecovery,validKnowledgeBody,validKnowledgePayload,validKnowledgeReference,knowledgeRoute,knowledgeReference,KNOWLEDGE_FIELDS} from '../src/services/licensed-knowledge.js'
 import {initialDiagnosisState,createAsyncDiagnosisFlow} from '../src/services/async-diagnosis.js'
 import {createQuestionConfirmation,pendingQuestion} from '../src/services/community-question-recovery.js'
-import {operatorSession,setOperatorSession,clearOperatorSession,operatorLandingPage} from '../src/services/operator-session.js'
+import {operatorSession,operatorToken,setOperatorSession,clearOperatorSession,operatorLandingPage} from '../src/services/operator-session.js'
 import {validOperatorUser} from '../src/services/experience-publication.js'
 import {serviceLoginReturn} from '../src/services/service-login-return.js'
 const key='11111111-1111-4111-8111-111111111111',stamp='2026-10-17T00:00:00Z'
@@ -81,4 +81,25 @@ test('actual owner AI flow requires full use confirmation and sends the frozen o
 test('actual owner page discards late AI result after switching vehicle or hiding',async()=>{
  let resolve
  const h=ownerHarness({answer:()=>new Promise(r=>resolve=r)});try{h.view.question.value='资料问题';const pending=h.view.answer();h.view.gate.settle(true);await flush();h.vehicle.value={vehicle_id:2,model_id:2};resolve({reply:'old-model-answer'});await pending;assert.equal(h.view.state.data,null)}finally{h.dispose()}
+})
+
+test('embedding permission is a strict independent versioned pair and legacy stays valid',()=>{
+ assert.ok(validKnowledgePayload(payload()))
+ const current={...payload(),embedding_allowed:false,embedding_policy_version:'KNOWLEDGE_EMBEDDING_V1'}
+ assert.ok(validKnowledgePayload(current));assert.ok(validKnowledgeBody({...current,embedding_allowed:true},'create'))
+ for(const changes of [{embedding_allowed:true,embedding_policy_version:undefined},{embedding_allowed:'true'},{embedding_policy_version:'OLD'},{embedding_allowed:null}])assert.equal(validKnowledgePayload({...current,...changes}),false)
+ assert.equal(validKnowledgePayload({...payload(),embedding_allowed:true}),false)
+})
+test('operator new and edited drafts never inherit embedding consent',async()=>{
+ const h=operatorHarness();try{await flush();assert.equal(h.view.form.embedding_allowed,false);assert.equal(h.view.form.embedding_policy_version,'KNOWLEDGE_EMBEDDING_V1');const row=h.view.state.data.items[0];row.payload.embedding_allowed=true;row.payload.embedding_policy_version='KNOWLEDGE_EMBEDDING_V1';h.view.edit(row);assert.equal(h.view.form.embedding_allowed,false);assert.equal(h.view.form.embedding_policy_version,'KNOWLEDGE_EMBEDDING_V1') }finally{h.dispose()}
+})
+test('full draft confirmation freezes independent embedding consent and policy',async()=>{
+ const h=operatorHarness();try{await flush();h.view.edit(h.view.state.data.items[0]);for(const [key,value] of Object.entries(payload()))h.view.form[key]=key==='model_id'?String(value):value;h.view.form.embedding_allowed=true;h.view.save();assert.ok(h.view.confirmation.prompt.lines.some(line=>line.includes('本地私有嵌入 true')&&line.includes('KNOWLEDGE_EMBEDDING_V1')));h.view.form.embedding_allowed=false;h.view.gate.settle(true);await flush();assert.equal(h.calls[0][3].embedding_allowed,true);assert.equal(h.calls[0][3].embedding_policy_version,'KNOWLEDGE_EMBEDDING_V1')}finally{h.dispose()}
+})
+test('legacy and new pending creation bodies retain original fields and key',()=>{
+ for(const body of [payload(),{...payload(),embedding_allowed:true,embedding_policy_version:'KNOWLEDGE_EMBEDDING_V1'}]){const runtime=disk(),r=createKnowledgeRecovery({actor:()=>1,role:()=> 'admin',scope:()=> 'documents',runtime:()=>runtime,now:()=>1});const original={action:'create',id:0,body,key};r.savePending(original);assert.deepEqual(r.read().pending,original)}
+})
+test('mounted synchronous token watcher cannot erase operator actor during login',()=>{
+ clearOperatorSession();const scope=effectScope()
+ try{scope.run(()=>watch(()=>[operatorToken(),operatorSession.actorId,operatorSession.canKnowledge],()=>{operatorToken()},{flush:'sync'}));setOperatorSession({access_token:'synthetic-new-operator',expires_in:900,user:{id:7,can_review:false,can_onboard:false,can_knowledge:true}});assert.equal(operatorSession.actorId,7);assert.equal(operatorToken(),'synthetic-new-operator');assert.equal(operatorSession.canKnowledge,true)}finally{scope.stop();clearOperatorSession()}
 })

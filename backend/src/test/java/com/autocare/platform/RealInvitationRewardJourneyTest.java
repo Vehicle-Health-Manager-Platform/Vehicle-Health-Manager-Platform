@@ -111,7 +111,7 @@ class RealInvitationRewardJourneyTest {
     String policy(String scope,long coupon,Instant from,Instant to){var b=mapper.createObjectNode().put("scope",scope).put("source_note","SYNTHETIC reward protocol fixture").put("valid_from",from.toString()).put("valid_to",to.toString()).put("invitee_coupon_id",coupon).put("invitee_publication_revision",2);
         if(scope.equals("OWNER"))b.put("inviter_coupon_id",coupon).put("inviter_publication_revision",2);else b.putNull("inviter_coupon_id").putNull("inviter_publication_revision");return b.toString();}
     @Test void realHttpQualificationFreezeAndScheduledAtomicRewardDelivery()throws Exception{
-        application=app;assertEquals(132,jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE()",Integer.class));
+        application=app;assertEquals(134,jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE()",Integer.class));
         jdbc.update("INSERT INTO user(id,openid,status) VALUES(1,'synthetic-reward-owner',1),(2,'synthetic-reward-other',1)");
         jdbc.update("INSERT INTO merchant(id,merchant_type,name,address,status) VALUES(1,2,'synthetic shop','test',1),(2,2,'synthetic other shop','test',1)");
         jdbc.update("INSERT INTO staff_account(id,merchant_id,role,account,status) VALUES(1,1,'MERCHANT','synthetic-reward-shop','ACTIVE'),(2,2,'MERCHANT','synthetic-reward-other','ACTIVE')");

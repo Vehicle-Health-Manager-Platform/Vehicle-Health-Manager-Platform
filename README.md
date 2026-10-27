@@ -413,3 +413,5 @@ docker compose --env-file .env -f deploy/compose/compose.yml up --build -d
 2026-10-26 R2a：[VIN车主候选与人工录车](docs/api/VIN_OWNER_GATEWAY.md)已接通，默认关闭，明确NHTSA美国市场数据限制；[阶段验证](docs/progress/RECOGNITION_R2A_VIN_GATEWAY.md)。行驶证、ASR、图文及向量按路线继续，真实服务与生产尚未验收。
 
 2026-10-27 R4b：[图文持久任务与车主逐块核对](docs/api/DOCUMENT_JOBS.md)已实现，默认关闭；[测试范围、已修复问题及交接](docs/progress/RECOGNITION_R4B_DOCUMENT_JOBS.md)。实际模型与合成业务旅程分开记录，中文真实单据/真机及生产未验收。
+
+2026-10-27 R5a：[授权嵌入与内部向量索引基础](docs/api/KNOWLEDGE_VECTOR_FOUNDATION.md)，旧资料不隐式授权；车主检索仍KEYWORD，真实模型与公开向量接线待R5b/R5c。

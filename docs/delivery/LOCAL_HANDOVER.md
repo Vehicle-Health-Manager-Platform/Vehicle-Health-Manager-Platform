@@ -67,3 +67,7 @@ R4a增量：[受限图文/PDF内核、来源与实测](../progress/RECOGNITION_R
 ## R4b增量（2026-10-27）
 
 [图文任务及配置/操作/API](../api/DOCUMENT_JOBS.md)、[模型准备与测试Compose](../../services/documents/README.md)、[测试与问题记录](../progress/RECOGNITION_R4B_DOCUMENT_JOBS.md)。当前64迁移/132表、362项契约；历史证据仍317项，45项单独结论。本轮不合并上线，不关闭真实中文/真机、私有文件删除政策或R5向量待办。
+
+## R5a增量（2026-10-27）
+
+[嵌入许可/内部索引基础](../api/KNOWLEDGE_VECTOR_FOUNDATION.md)、[测试和修复记录](../progress/RECOGNITION_R5A_VECTOR_FOUNDATION.md)。65迁移/134表，公开362项不增；运营可独立记录本地私有嵌入授权，但没有自动索引、真实模型或车主VECTOR接线。原KEYWORD持续可用，旧资料默认不授予嵌入许可。

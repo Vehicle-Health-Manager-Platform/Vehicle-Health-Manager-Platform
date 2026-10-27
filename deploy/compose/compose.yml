@@ -75,6 +75,7 @@ services:
       - ../../docs/sql/migrations/V062__input_material.sql:/docker-entrypoint-initdb.d/062-input-material.sql:ro
       - ../../docs/sql/migrations/V063__recognition_job.sql:/docker-entrypoint-initdb.d/063-recognition-job.sql:ro
       - ../../docs/sql/migrations/V064__document_candidate_jobs.sql:/docker-entrypoint-initdb.d/064-document-candidate-jobs.sql:ro
+      - ../../docs/sql/migrations/V065__knowledge_embedding_index.sql:/docker-entrypoint-initdb.d/065-knowledge-embedding-index.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent"]
       interval: 10s

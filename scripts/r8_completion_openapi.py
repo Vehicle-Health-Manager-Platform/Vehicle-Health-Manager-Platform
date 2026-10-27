@@ -32,8 +32,8 @@ def add_r8_completion(d, operation):
     s['PublicImageBytes'] = strict({'png_base64': b64})
     s['PublicImageList'] = strict({'vehicle_id': ident, 'experience_id': uuid, 'items': {'type': 'array', 'maxItems': 20, 'items': strict({'public_id': uuid, **dims, 'published_at': stamp})}})
     payload = {'title': text(120), 'publisher': text(120), 'document_version': text(80), 'source_reference': text(500), 'license_reference': text(500), 'license_confirmed': boolean, 'model_id': ident, 'valid_from': stamp, 'valid_to': stamp, 'search_allowed': boolean, 'excerpt_allowed': boolean, 'ai_allowed': boolean, 'body': text(10000)}
-    s['KnowledgePayload'] = strict(payload)
-    s['KnowledgeUpdate'] = strict({**payload, 'expected_revision': ident})
+    s['KnowledgePayload'] = {'oneOf':[strict(payload),strict({**payload,'embedding_allowed':boolean,'embedding_policy_version':{'const':'KNOWLEDGE_EMBEDDING_V1'}})],'description':'旧13字段payload原样保存/哈希，嵌入默认未授权；新授权必须同时提交embedding_allowed布尔和策略版本。仅本地私有嵌入，不推导外部模型许可；现有公开检索仍KEYWORD。'}
+    s['KnowledgeUpdate'] = {'oneOf':[strict({**payload,'expected_revision':ident}),strict({**payload,'embedding_allowed':boolean,'embedding_policy_version':{'const':'KNOWLEDGE_EMBEDDING_V1'},'expected_revision':ident})]}
     s['KnowledgeStatus'] = strict({'expected_revision': ident, 'status': {'enum': ['PUBLISHED', 'STOPPED']}})
     s['KnowledgeDocument'] = strict({'id': ident, 'revision': ident, 'status': {'enum': ['DRAFT', 'PUBLISHED', 'STOPPED']}, 'source_hash': digest, 'public_id': nullable(uuid), 'payload': ref('KnowledgePayload'), 'created_at': stamp, 'published_at': nullable(stamp)})
     s['KnowledgeAdminPage'] = paged('KnowledgeDocument')

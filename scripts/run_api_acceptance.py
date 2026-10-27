@@ -92,7 +92,7 @@ def audit_newman(path, expected):
 
 def counts(mysql):
     tables = mysql.text('SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() ORDER BY table_name;').splitlines()
-    if len(tables) != 132 or any(not name.replace('_', '').isalnum() for name in tables):
+    if len(tables) != 134 or any(not name.replace('_', '').isalnum() for name in tables):
         raise ValueError('Unexpected isolated schema')
     return mysql.text(' UNION ALL '.join("SELECT '" + t + "',COUNT(*) FROM `" + t + '`' for t in tables) + ';')
 

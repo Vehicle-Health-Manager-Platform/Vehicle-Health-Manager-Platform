@@ -54039,162 +54039,345 @@
         }
       },
       "KnowledgePayload": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "title",
-          "publisher",
-          "document_version",
-          "source_reference",
-          "license_reference",
-          "license_confirmed",
-          "model_id",
-          "valid_from",
-          "valid_to",
-          "search_allowed",
-          "excerpt_allowed",
-          "ai_allowed",
-          "body"
-        ],
-        "properties": {
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 120
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "title",
+              "publisher",
+              "document_version",
+              "source_reference",
+              "license_reference",
+              "license_confirmed",
+              "model_id",
+              "valid_from",
+              "valid_to",
+              "search_allowed",
+              "excerpt_allowed",
+              "ai_allowed",
+              "body"
+            ],
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "publisher": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "document_version": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              },
+              "source_reference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "license_reference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "license_confirmed": {
+                "type": "boolean"
+              },
+              "model_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "valid_from": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "valid_to": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "search_allowed": {
+                "type": "boolean"
+              },
+              "excerpt_allowed": {
+                "type": "boolean"
+              },
+              "ai_allowed": {
+                "type": "boolean"
+              },
+              "body": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              }
+            }
           },
-          "publisher": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 120
-          },
-          "document_version": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 80
-          },
-          "source_reference": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 500
-          },
-          "license_reference": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 500
-          },
-          "license_confirmed": {
-            "type": "boolean"
-          },
-          "model_id": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 9007199254740991
-          },
-          "valid_from": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "valid_to": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "search_allowed": {
-            "type": "boolean"
-          },
-          "excerpt_allowed": {
-            "type": "boolean"
-          },
-          "ai_allowed": {
-            "type": "boolean"
-          },
-          "body": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 10000
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "title",
+              "publisher",
+              "document_version",
+              "source_reference",
+              "license_reference",
+              "license_confirmed",
+              "model_id",
+              "valid_from",
+              "valid_to",
+              "search_allowed",
+              "excerpt_allowed",
+              "ai_allowed",
+              "body",
+              "embedding_allowed",
+              "embedding_policy_version"
+            ],
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "publisher": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "document_version": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              },
+              "source_reference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "license_reference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "license_confirmed": {
+                "type": "boolean"
+              },
+              "model_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "valid_from": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "valid_to": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "search_allowed": {
+                "type": "boolean"
+              },
+              "excerpt_allowed": {
+                "type": "boolean"
+              },
+              "ai_allowed": {
+                "type": "boolean"
+              },
+              "body": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              },
+              "embedding_allowed": {
+                "type": "boolean"
+              },
+              "embedding_policy_version": {
+                "const": "KNOWLEDGE_EMBEDDING_V1"
+              }
+            }
           }
-        }
+        ],
+        "description": "旧13字段payload原样保存/哈希，嵌入默认未授权；新授权必须同时提交embedding_allowed布尔和策略版本。仅本地私有嵌入，不推导外部模型许可；现有公开检索仍KEYWORD。"
       },
       "KnowledgeUpdate": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "title",
-          "publisher",
-          "document_version",
-          "source_reference",
-          "license_reference",
-          "license_confirmed",
-          "model_id",
-          "valid_from",
-          "valid_to",
-          "search_allowed",
-          "excerpt_allowed",
-          "ai_allowed",
-          "body",
-          "expected_revision"
-        ],
-        "properties": {
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 120
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "title",
+              "publisher",
+              "document_version",
+              "source_reference",
+              "license_reference",
+              "license_confirmed",
+              "model_id",
+              "valid_from",
+              "valid_to",
+              "search_allowed",
+              "excerpt_allowed",
+              "ai_allowed",
+              "body",
+              "expected_revision"
+            ],
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "publisher": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "document_version": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              },
+              "source_reference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "license_reference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "license_confirmed": {
+                "type": "boolean"
+              },
+              "model_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "valid_from": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "valid_to": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "search_allowed": {
+                "type": "boolean"
+              },
+              "excerpt_allowed": {
+                "type": "boolean"
+              },
+              "ai_allowed": {
+                "type": "boolean"
+              },
+              "body": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              },
+              "expected_revision": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              }
+            }
           },
-          "publisher": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 120
-          },
-          "document_version": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 80
-          },
-          "source_reference": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 500
-          },
-          "license_reference": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 500
-          },
-          "license_confirmed": {
-            "type": "boolean"
-          },
-          "model_id": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 9007199254740991
-          },
-          "valid_from": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "valid_to": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "search_allowed": {
-            "type": "boolean"
-          },
-          "excerpt_allowed": {
-            "type": "boolean"
-          },
-          "ai_allowed": {
-            "type": "boolean"
-          },
-          "body": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 10000
-          },
-          "expected_revision": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 9007199254740991
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "title",
+              "publisher",
+              "document_version",
+              "source_reference",
+              "license_reference",
+              "license_confirmed",
+              "model_id",
+              "valid_from",
+              "valid_to",
+              "search_allowed",
+              "excerpt_allowed",
+              "ai_allowed",
+              "body",
+              "embedding_allowed",
+              "embedding_policy_version",
+              "expected_revision"
+            ],
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "publisher": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "document_version": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              },
+              "source_reference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "license_reference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "license_confirmed": {
+                "type": "boolean"
+              },
+              "model_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "valid_from": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "valid_to": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "search_allowed": {
+                "type": "boolean"
+              },
+              "excerpt_allowed": {
+                "type": "boolean"
+              },
+              "ai_allowed": {
+                "type": "boolean"
+              },
+              "body": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              },
+              "embedding_allowed": {
+                "type": "boolean"
+              },
+              "embedding_policy_version": {
+                "const": "KNOWLEDGE_EMBEDDING_V1"
+              },
+              "expected_revision": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              }
+            }
           }
-        }
+        ]
       },
       "KnowledgeStatus": {
         "type": "object",

@@ -129,10 +129,10 @@ class RecoveryGuardTest(unittest.TestCase):
             create.assert_not_called(); sql.assert_not_called()
 
     def test_migration_gaps_and_duplicates_fail_closed(self):
-        for index in range(1, 65): (self.work / f'V{index:03}__fixture.sql').write_text('SELECT 1;', encoding='utf-8')
+        for index in range(1, 66): (self.work / f'V{index:03}__fixture.sql').write_text('SELECT 1;', encoding='utf-8')
         with patch.object(recovery, 'MIGRATIONS', self.work):
-            self.assertEqual(64, len(recovery.migration_files()))
-            (self.work / 'V064__fixture.sql').unlink()
+            self.assertEqual(65, len(recovery.migration_files()))
+            (self.work / 'V065__fixture.sql').unlink()
             with self.assertRaises(recovery.RecoveryError): recovery.migration_files()
             (self.work / 'V061__duplicate.sql').write_text('SELECT 1;', encoding='utf-8')
             with self.assertRaises(recovery.RecoveryError): recovery.migration_files()
@@ -159,6 +159,7 @@ class RecoveryGuardTest(unittest.TestCase):
         (scripts / 'fixtures').mkdir(parents=True)
         (scripts / 'run_database_recovery.py').write_text('# synthetic runner', encoding='utf-8')
         (scripts / 'fixtures/database_recovery.sql').write_text('-- synthetic fixture', encoding='utf-8')
+        (scripts / 'fixtures/knowledge_embedding_recovery.sql').write_text('-- synthetic embedding fixture', encoding='utf-8')
         old = self.work / '.cache/database-recovery-old/report.json'
         old.parent.mkdir(parents=True)
         old.write_text('{"passed":true}', encoding='utf-8')
@@ -171,6 +172,17 @@ class RecoveryGuardTest(unittest.TestCase):
         result = json.loads(reports[0].read_text(encoding='utf-8'))
         self.assertFalse(result['passed'])
         self.assertEqual('synthetic failure', result['error'])
+
+    def test_missing_input_also_writes_safe_failure_without_starting_database(self):
+        with patch.object(recovery, 'ROOT', self.work), patch.object(recovery, 'run_recovery') as execute, \
+                contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(1, recovery.main())
+            execute.assert_not_called()
+        reports=list((self.work / '.cache').glob('database-recovery-*/report.json'))
+        self.assertEqual(1,len(reports))
+        result=json.loads(reports[0].read_text(encoding='utf-8'))
+        self.assertFalse(result['passed'])
+        self.assertEqual('FileNotFoundError',result['error'])
 
 
 if __name__ == '__main__':

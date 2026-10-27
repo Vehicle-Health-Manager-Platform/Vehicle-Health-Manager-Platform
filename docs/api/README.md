@@ -147,3 +147,5 @@ PR #14 实现[本人车辆列表、有效车型查询与手动添加](VEHICLE_MA
 R4a增量：[受限图文/PDF内核、来源与实测](../progress/RECOGNITION_R4A_DOCUMENT_CORE.md)。原生文字偏移与扫描/混合/图片实际Paddle多边形已实现，预算超限整次拒绝；没有新增公开HTTP接口、持久任务或小程序入口，R4b还需接入同意/鉴权/撤销/TTL和人工核对。不能据内核通过宣布车主图文业务完成。
 
 R4b当前增量：[图文任务/独立图片材料/人工逐块核对](DOCUMENT_JOBS.md)，3项公开操作，当前362项；R4a“无公开入口”描述的是当时内核阶段。
+
+R5a：[显式嵌入许可与内部版本化索引基础](KNOWLEDGE_VECTOR_FOUNDATION.md)。兼容旧知识payload，公开检索/AI保持KEYWORD，不新增向量公开操作，真实模型/tokenizer/召回另验。

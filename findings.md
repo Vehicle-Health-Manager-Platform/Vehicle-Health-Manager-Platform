@@ -898,3 +898,9 @@ R4a：Java/Paddle真实内核20项通过，扫描/混合/旋转实际读出合�
 R4a收口补充：源码COPY限定.py并固定无写入的临时pycache前缀，避免宿主字节码不在源码摘要中却进入镜像。最终版本重新进行内核/统一回归；前置PR247为覆盖率跳过门禁失败，Compose未执行，不能写成全部CI成功。
 
 R4b：共享候选核心按task隔离；图片独立input_material授权，JPEG/PNG4MiB/4096/6M。JDK PNG单帧判断忽略APNG，额外检查动画chunk与尾随；ImageIO内存缓存。页面空候选逐块选择，超1000字拒绝不截断，freshGET全来源签名/原表单保护。真实私有HTTP/PDFBox/Paddle与合成OWNER/MySQL证据分开，不能声称完整真实存储扫描模型同链路。V064原子可重放，132表不新增；362契约=317历史+45结论。
+
+R5a：LicensedKnowledge.trusted核对原payload哈希、最新事件及审计；usable包括开关/发布/许可/摘录/检索/有效期/精确车型。当前公开检索与AI方法严格KEYWORD。旧payload13字段须原样保持哈希和幂等回执，不推导embedding许可。现有缓存无embedding资源，本阶段明确内部替身管道，非真实语义模型验收。
+
+R5a测试发现：V065增加两表，旧schema总数门禁需134/65；已同步当前Java/脚本，不改历史证据。gstack运营页面冷登录复现actorId=0：setOperatorSession先写actor再expiry，flush:sync的operatorToken监听按旧expiry=0清掉半写入身份。改为expiry先行，保留token最后发布，新增挂载同步watch回归。索引rank另用LEFT JOIN识别成功任务全部缺块，并按文档缓存当前授权复检，避免每块重复SQL。
+
+R5a收口额外发现：前置PR249/b1完整2399项只有RealMaterialWorkbench unknown_kind仍用image并期望400；R4b已支持image，MP3伪装正确422。改webp保持不支持类型400，不削弱校验；独立小修5aacb52已回传PR249，本阶段真实ClamAV/MinIO材料+工作台59项通过。恢复新SQL夹具纳入执行摘要，缺输入也落安全失败报告，17项runner guard通过。

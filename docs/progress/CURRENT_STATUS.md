@@ -501,3 +501,7 @@ A7.2b 施工档案回写已实现：[规格 #53](https://github.com/Vehicle-Heal
 ## 2026-10-27 R4b当前增量
 
 [图文持久任务与车主逐块核对](RECOGNITION_R4B_DOCUMENT_JOBS.md)已在codex/document-owner-jobs完成本地开发/选定回归，默认关闭；64迁移/132表、362契约，历史317项及45结论保持分界。真实模型私有HTTP与合成业务测试分开，不代表全部API、中文材料/真实存储扫描、真机、生产或R5向量已验。下一步R5先核对现有知识授权/撤回路径，再固定embedding资源及评估，不用KEYWORD冒称向量。
+
+## 2026-10-27 R5a当前增量
+
+[嵌入授权与内部向量索引基础](RECOGNITION_R5A_VECTOR_FOUNDATION.md)已完成本地开发/选定验证，65迁移/134表，公开362项不变。189选定后端、59材料补充、11组回归、浏览器10项和跨实例恢复19检查通过；向量为明确替身，车主仍KEYWORD，真实模型/tokenizer/自动索引/公开VECTOR接线在R5b/R5c继续，不关闭全API、真机、性能及生产待办。

@@ -26,7 +26,7 @@ public class LicensedKnowledge {
  private Map<String,Object> view(Map<String,Object> r){var out=new LinkedHashMap<String,Object>(audit(r));out.put("payload",db.parse(r.get("payload")));out.put("created_at",iso(r.get("created_at")));out.put("published_at",iso(r.get("published_at")));return out;}
  private void event(Map<String,Object> r){db.jdbc.update("INSERT INTO knowledge_document_event(document_id,revision,status,source_hash,public_id,occurred_at) VALUES(?,?,?,?,?,?)",r.get("id"),r.get("revision"),r.get("status"),r.get("source_hash"),r.get("public_id"),"PUBLISHED".equals(r.get("status"))?r.get("published_at"):time(db.now()));}
  private boolean trusted(Map<String,Object> r){
-  var p=db.parse(r.get("payload"));try{CouponInput.exact(p,KnowledgeInput.FIELDS.toArray(String[]::new));KnowledgeInput.validatePayload(p);}catch(ResponseStatusException e){return false;}
+  var p=db.parse(r.get("payload"));try{KnowledgeInput.exactPayload(p);KnowledgeInput.validatePayload(p);}catch(ResponseStatusException e){return false;}
   if(!hash(p).equals(r.get("source_hash"))||p.path("model_id").asLong()!=number(r,"model_id")||!KnowledgeInput.time(p.get("valid_from")).equals(instant(r.get("valid_from")))||!KnowledgeInput.time(p.get("valid_to")).equals(instant(r.get("valid_to"))))return false;
   var events=db.jdbc.queryForList("SELECT * FROM knowledge_document_event WHERE document_id=? ORDER BY revision DESC LIMIT 1",r.get("id"));if(events.size()!=1)return false;var e=events.get(0);
   if(number(e,"is_deleted")!=0||number(e,"revision")!=number(r,"revision")||!Objects.equals(e.get("status"),r.get("status"))||!Objects.equals(e.get("source_hash"),r.get("source_hash"))||!Objects.equals(e.get("public_id"),r.get("public_id"))||"PUBLISHED".equals(r.get("status"))&&!Objects.equals(iso(r.get("published_at")),iso(e.get("occurred_at"))))return false;
@@ -37,6 +37,9 @@ public class LicensedKnowledge {
   try{model(number(r,"model_id"),false);return true;}catch(ResponseStatusException e){return false;}
  }
  public Map<String,Object> admin(OperatorActor a,int p){return db.reads.execute(t->{operators.authorize(a,OperatorIdentity.Permission.KNOWLEDGE,false);long total=db.jdbc.queryForObject("SELECT COUNT(*) FROM knowledge_document",Long.class);return page(db.jdbc.queryForList("SELECT * FROM knowledge_document ORDER BY id DESC LIMIT 20 OFFSET ?",(p-1)*20L).stream().map(this::view).toList(),total,p,20);});}
+ // Internal embedding foundation only: never bypass the existing publication trust chain.
+ Map<String,Object> embeddingSource(long id){var r=row(id,false);if(!usable(r,false)||!KnowledgeInput.embeddingAllowed(db.parse(r.get("payload"))))throw missing();return r;}
+ Object embeddingModel(VehicleOwner a,long vehicle){return experiences.recipient(a,vehicle);}
  public Map<String,Object> models(OperatorActor a,int p){return db.reads.execute(t->{operators.authorize(a,OperatorIdentity.Permission.KNOWLEDGE,false);String source=" FROM model m JOIN series s ON s.id=m.series_id AND s.status=1 AND s.is_deleted=0 JOIN brand b ON b.id=s.brand_id AND b.status=1 AND b.is_deleted=0 WHERE m.status=1 AND m.is_deleted=0";long total=db.jdbc.queryForObject("SELECT COUNT(*)"+source,Long.class);return page(db.jdbc.queryForList("SELECT m.id AS model_id,b.name AS brand,s.name AS series,m.year,m.config_name"+source+" ORDER BY m.id LIMIT 20 OFFSET ?",(p-1)*20L),total,p,20);});}
  public JsonNode save(OperatorActor a,Long id,String key,JsonNode b){
   var payload=KnowledgeInput.payload(b);String request=hash(b),canonical=WriteIntegrityService.normalizeKey(key);

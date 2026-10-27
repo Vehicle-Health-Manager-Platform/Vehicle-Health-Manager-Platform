@@ -161,7 +161,7 @@ class RealPrivateUploadJourneyTest {
         assertEquals(200,result.statusCode());assertArrayEquals(CLEAN,result.body());
     }
     @Test void realMultipartStorageScannerSigningAndArchivePermissions()throws Exception{
-        application=app;assertEquals(132,jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE()",Integer.class));
+        application=app;assertEquals(134,jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE()",Integer.class));
         jdbc.update("INSERT INTO user(id,openid,status) VALUES(1,'synthetic-upload-owner',1),(2,'synthetic-upload-other',1)");
         jdbc.update("INSERT INTO vehicle(id,user_id,current_mileage) VALUES(1,1,100),(2,2,200)");
         jdbc.update("INSERT INTO merchant(id,merchant_type,name,address,status) VALUES(1,2,'synthetic upload shop','test',1),(2,2,'synthetic other shop','test',1)");

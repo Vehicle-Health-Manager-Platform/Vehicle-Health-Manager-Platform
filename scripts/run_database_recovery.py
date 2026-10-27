@@ -37,8 +37,8 @@ def digest(value):
 
 def migration_files():
     files = sorted(MIGRATIONS.glob('*.sql'))
-    require([p.name[:4] for p in files] == [f'V{i:03}' for i in range(1, 65)],
-            'Expected exactly ordered V001-V064; review the recovery upgrade boundary when adding migrations')
+    require([p.name[:4] for p in files] == [f'V{i:03}' for i in range(1, 66)],
+            'Expected exactly ordered V001-V065; review the recovery upgrade boundary when adding migrations')
     return files
 
 
@@ -246,27 +246,28 @@ def run_recovery(report, work):
         report['mysql_version'] = source.text('SELECT VERSION();')
         report['source_server_uuid'] = source.text('SELECT @@server_uuid;')
         source.create_database('recovery_source')
-        step('migrate_V001_V063', lambda: apply(source, 'recovery_source', files[:-1]))
+        step('migrate_V001_V064', lambda: apply(source, 'recovery_source', files[:-1]))
         source.sql((ROOT / 'scripts/fixtures/database_recovery.sql').read_bytes(), 'recovery_source')
         before = step('snapshot_before_upgrade', lambda: snapshot(source, 'recovery_source'))
-        require(before['table_count'] == 132, 'Unexpected pre-V064 table count')
+        require(before['table_count'] == 132, 'Unexpected pre-V065 table count')
         report['pre_upgrade'] = before
         old_file = work / 'pre-upgrade.sql'
         report['pre_upgrade_backup'] = step('backup_before_upgrade', lambda: source.backup('recovery_source', old_file))
         expect_error(source, 'recovery_source', files[-1].read_text(encoding='utf-8') + "\nSIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='synthetic post-DDL failure';", 1644)
-        require(source.text("SELECT COUNT(*) FROM information_schema.check_constraints WHERE constraint_schema=DATABASE() AND constraint_name='ck_recognition_job' AND check_clause LIKE '%DOCUMENT%';", 'recovery_source') == '1',
+        require(source.text("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name='knowledge_embedding_chunk';", 'recovery_source') == '1',
                 'Expected committed DDL after injected failure')
         report['checks'].append({'name': 'injected_failure_leaves_committed_DDL', 'passed': True})
         step('restore_pre_upgrade_to_new_database', lambda: source.restore('recovery_rollback', old_file, report['pre_upgrade_backup']['sha256']))
         rollback = step('verify_backup_based_rollback', lambda: snapshot(source, 'recovery_rollback'))
         equal_snapshot(before, rollback, 'backup-based rollback')
-        step('retry_V064', lambda: apply(source, 'recovery_source', files[-1:]))
+        step('retry_V065', lambda: apply(source, 'recovery_source', files[-1:]))
+        source.sql((ROOT / 'scripts/fixtures/knowledge_embedding_recovery.sql').read_bytes(), 'recovery_source')
         source.sql("INSERT INTO input_material(id,owner_id,vehicle_id,purpose,object_key,content_type,size_bytes,duration_ms,pages,scan_status) VALUES(1,1,1,'AI','synthetic-recovery/material','application/pdf',100,0,1,'CLEAN');", 'recovery_source')
         source.sql("INSERT INTO input_material(id,owner_id,vehicle_id,purpose,object_key,content_type,size_bytes,duration_ms,pages,scan_status) VALUES(2,1,1,'AI','synthetic-recovery/audio','audio/mpeg',6048,1008,0,'CLEAN'); "
                    "INSERT INTO recognition_job(id,owner_id,vehicle_id,material_id,purpose,origin_session_id,origin_expires_at,source_hash,state,error_code,expires_at) "
                    "VALUES(1,1,1,2,'AI','synthetic-recovery-session',DATE_ADD(UTC_TIMESTAMP(),INTERVAL 1 HOUR),SHA2('synthetic-recovery-source',256),'CANCELLED','USER_CANCELLED',DATE_ADD(UTC_TIMESTAMP(),INTERVAL 10 MINUTE));", 'recovery_source')
         current = step('snapshot_current', lambda: snapshot(source, 'recovery_source'))
-        require(current['table_count'] == 132, 'Unexpected current table count')
+        require(current['table_count'] == 134, 'Unexpected current table count')
         report['current'] = current
         full_file = work / 'current.sql'
         report['current_backup'] = step('backup_current', lambda: source.backup('recovery_source', full_file))
@@ -289,6 +290,7 @@ def run_recovery(report, work):
         expect_error(restored, 'recovery_restore', "INSERT INTO user(id,openid) VALUES(1,'synthetic-duplicate');", 1062)
         expect_error(restored, 'recovery_restore', "INSERT INTO input_material(id,owner_id,vehicle_id,purpose,object_key,content_type,size_bytes,pages,scan_status) VALUES(999,1,1,'INVALID','synthetic-invalid','application/pdf',100,1,'CLEAN');", 3819)
         expect_error(restored, 'recovery_restore', 'UPDATE vehicle SET current_mileage=1 WHERE id=1;', 1644)
+        expect_error(restored, 'recovery_restore', "INSERT INTO knowledge_embedding_chunk(job_id,ordinal,start_offset,end_offset,chunk_hash,content_text,dimension,vector_json) VALUES(99999999,0,0,9,SHA2('synthetic',256),'synthetic',3,JSON_ARRAY(1,0,0));", 1452)
         require(restored.text('CALL recovery_vehicle_count();', 'recovery_restore') == '1', 'Restored procedure unavailable')
         require(restored.text("SELECT status FROM information_schema.events WHERE event_schema=DATABASE() AND event_name='recovery_disabled_event';", 'recovery_restore') == 'DISABLED', 'Restored event must remain disabled')
         report['checks'].append({'name': 'restored_unique_check_trigger_procedure_event', 'passed': True})
@@ -318,9 +320,9 @@ def main():
                              'rollback by backup into a new database, not transactional DDL/down migration',
                              'no zero-RPO/PITR, production failover, object-store backup or performance acceptance']}
     started = time.monotonic()
-    inputs = [ROOT / 'scripts/run_database_recovery.py', ROOT / 'scripts/fixtures/database_recovery.sql']
-    report['implementation_inputs_sha256'] = {p.relative_to(ROOT).as_posix(): digest(p.read_bytes()) for p in inputs}
+    inputs = [ROOT / 'scripts/run_database_recovery.py', ROOT / 'scripts/fixtures/database_recovery.sql', ROOT / 'scripts/fixtures/knowledge_embedding_recovery.sql']
     try:
+        report['implementation_inputs_sha256'] = {p.relative_to(ROOT).as_posix(): digest(p.read_bytes()) for p in inputs}
         report['started_from_commit'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
         run_recovery(report, work)
         report['implementation_sources_unchanged'] = report['implementation_inputs_sha256'] == {p.relative_to(ROOT).as_posix(): digest(p.read_bytes()) for p in inputs}
