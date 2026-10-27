@@ -39,3 +39,5 @@ R4b接入持久任务类型、当前OWNER/车辆/用途/材料重验、独立同
 真实中文、复杂布局/表格、不同字体/文字层与视觉一致性、低质量/通用旋转、获授权用户单据、保留/本人删除、手机/云上传和生产仍待验。当前是Windows宿主本地工具布局及准备好的OCR/JDK镜像，不是通用安装器或生产overlay；未安装/下载新模型。R5向量仍需独立embedding许可/版本/维度及撤回约束。
 
 原始生成文件、模型、Java产物、日志及JUnit仅留在忽略缓存；公共机器证据只含代码/依赖摘要、合成内容、实际版本和分项结果。前置PR247最终6项成功、backend失败、Compose跳过；本分支修复已做本地验证，新head CI须另核，不冒称全CI成功。
+
+上传：实现f8c43b3，草稿[PR248](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/248)依赖PR247；本轮临时容器已清理，资源/原始合成材料和日志仅在忽略缓存。新head CI独立跟踪，未结束不计通过；未合并部署。

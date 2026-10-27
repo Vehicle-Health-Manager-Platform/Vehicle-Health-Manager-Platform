@@ -869,3 +869,5 @@ R3c最终：50 Java/13真实进程检查/实际OOM通过，default gate单独验
 上传：实现a57452a，草稿[PR247](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/247)依赖PR246。全部本轮容器/网络及SQL夹具已清理，原缓存用于复现；新head CI独立跟踪，未完成不计通过。未合并部署。
 
 R4a最终：18 Java、21真实PDFBox/Paddle/负向/超时检查，11组559 Python/80 OCR通过+1跳过/40 ASR/14文档/1189 miniapp及构建契约均过；同一源码摘要，峰值约823MiB。前置PR247因显式ASR跳过触发覆盖门禁失败，core-coverage仅排除非必需外部套件，保留严格门禁并实际profile6项零跳过验证。没有公开文档接口/持久任务/页面；R4b继续授权/撤销/TTL及人工核对接入。
+
+上传：实现f8c43b3，草稿[PR248](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/248)依赖PR247；本轮临时容器已清理，资源/原始合成材料和日志仅在忽略缓存。新head CI独立跟踪，未结束不计通过；未合并部署。
