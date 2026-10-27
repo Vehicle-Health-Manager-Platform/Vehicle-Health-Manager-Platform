@@ -4,8 +4,10 @@ import {onShow,onHide,onUnload} from '@dcloudio/uni-app'
 import {createLocalMaterialsFlow,initialLocalMaterialsState} from '../services/local-input-materials.js'
 import {createMaterialUploadFlow,materialScope} from '../services/input-material-upload.js'
 import {imageRequestKey} from '../services/private-images.js'
-const props=defineProps({actor:{type:String,required:true},scope:{type:String,required:true}})
-const emit=defineEmits(['change','picker-change'])
+import AsrTranscription from './AsrTranscription.vue'
+import AsrPendingRequests from './AsrPendingRequests.vue'
+const props=defineProps({actor:{type:String,required:true},scope:{type:String,required:true},targetValue:{type:String,default:''},disabled:Boolean})
+const emit=defineEmits(['change','picker-change','apply-text','reauth'])
 const state=reactive(initialLocalMaterialsState())
 const flow=createLocalMaterialsFlow({state,actor:()=>props.actor,scope:()=>props.scope})
 const uploadState=reactive({busyId:'',message:'',results:{}})
@@ -25,7 +27,8 @@ function remove(id){delete uploadState.results[id];flow.remove(id)}
 <template>
   <view class="materials" data-testid="local-input-materials">
     <text class="heading">本机辅助材料（{{state.items.length}}/3）</text>
-    <text class="hint">可先试听或查看材料，再手动填写。音频/PDF需单独点击上传；材料不会随文字提问或档案保存发送，上传后也尚未识别。</text>
+    <text class="hint">可先试听或查看材料，再手动填写。音频/PDF需单独点击上传；材料不会随文字提问或档案保存发送。已上传音频可另行同意转写并核对文字，PDF尚未提取。</text>
+    <AsrPendingRequests :actor="actor" :scope="scope" :disabled="disabled" />
     <view class="actions">
       <button v-if="!['requesting','recording','stopping'].includes(state.phase)" :disabled="!actor||busy||full" data-testid="local-record-start" @tap="flow.startRecording">录制语音</button>
       <button v-if="state.phase==='recording'" data-testid="local-record-stop" @tap="flow.stopRecording">停止录音（{{state.seconds}}秒）</button>
@@ -44,9 +47,10 @@ function remove(id){delete uploadState.results[id];flow.remove(id)}
         <button v-else-if="item.kind==='audio'" @tap="flow.stopPlayback">停止试听</button>
         <button v-else :disabled="busy" @tap="flow.preview(item.id)">预览</button>
         <button v-if="item.kind!=='image'&&!uploadState.results[item.id]" :disabled="busy||!materialScope(scope)" :data-testid="'upload-material-'+item.kind" @tap="uploadFlow.upload(item.id)">{{uploadState.busyId===item.id?'上传检查中…':'上传本份材料'}}</button>
-        <text v-if="uploadState.results[item.id]" class="hint">已上传 · 扫描通过 · 尚未识别</text>
+        <text v-if="uploadState.results[item.id]" class="hint">已上传 · 扫描通过 · {{item.kind==='audio'?'转写需单独操作':'尚未提取'}}</text>
         <button :disabled="busy" @tap="remove(item.id)">移除本机引用</button>
       </view>
+      <AsrTranscription v-if="item.kind==='audio'&&uploadState.results[item.id]" :actor="actor" :scope="scope" :material="uploadState.results[item.id]" :value="targetValue" :disabled="disabled||busy" @apply="emit('apply-text',$event)" @reauth="emit('reauth')" />
     </view>
     <text v-if="state.message" class="status" role="status">{{state.message}}</text>
     <text v-if="uploadState.message" class="status" role="status">{{uploadState.message}}</text>

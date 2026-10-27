@@ -53,3 +53,7 @@ node scripts/check-wechat-identity-readiness.mjs --cloud-deployment --env-file d
 ## 行驶证识别可选配置
 
 云托管模板提供默认关闭的LICENSE_OCR_ENABLED及后端URL/token/私有HTTP选项。只有部署好维护中的私有存储/扫描和可达的受限OCR服务、明确图片用途与保留/本人删除政策后才启用；VITE变量不能放OCR凭据。供应商期限不等于上传到识别的全流程总期限；失败保持手动录车。[配置、权限和正式验收](../../docs/api/LICENSE_RECOGNITION.md)。
+
+## ASR任务配置与限制
+
+模板新增默认关闭的ASR_ENABLED与后端私有URL/token、HTTP许可和任务/清理间隔。短请求只创建/查询/取消任务，90秒来源I/O由单独后台执行线程处理，不塞进微信云通道请求。先备份并执行V063及全部前置迁移，核对同车辆/用途材料和私有ASR可达性；离线模型、完整依赖锁/Linux镜像尚未验时不启用。VITE不包含ASR凭据。[接口与运维](../../docs/api/ASR_JOBS.md)。

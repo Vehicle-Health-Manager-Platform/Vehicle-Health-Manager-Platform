@@ -1,6 +1,6 @@
 # 部署配置
 
-2026-10-26当前说明：[本地启动](../docs/delivery/LOCAL_SETUP.md)、[部署与交接顺序](../docs/delivery/LOCAL_HANDOVER.md)、[外部接入步骤及验收](../docs/delivery/EXTERNAL_INTEGRATIONS.md)。最新范围暂缓生产部署；以下保留早期Compose说明。现行Compose包含全部62项有序迁移；OCR默认关闭返回501，另有显式开启的受限推理镜像及隔离验证，不能将默认关闭状态误写为识别未实现，详见[OCR说明](../services/ocr/README.md)。
+2026-10-26当前说明：[本地启动](../docs/delivery/LOCAL_SETUP.md)、[部署与交接顺序](../docs/delivery/LOCAL_HANDOVER.md)、[外部接入步骤及验收](../docs/delivery/EXTERNAL_INTEGRATIONS.md)。最新范围暂缓生产部署；以下保留早期Compose说明。现行Compose包含全部63项有序迁移；OCR默认关闭返回501，另有显式开启的受限推理镜像及隔离验证，不能将默认关闭状态误写为识别未实现，详见[OCR说明](../services/ocr/README.md)。
 
 现有 Compose 是此前网页方案的 S0 本地基础设施与过渡原型部署。复制 `.env.example` 为仓库根目录的 `.env` 并设置私有凭据，执行 `npm ci && npm run build`，再运行 `docker compose --env-file .env -f deploy/compose/compose.yml up --build -d`。Nginx 的 8081–8083 端口目前服务旧版车主/商家/技师网页原型，8084 端口服务运营 PC 网页；Prometheus 为本机 9090，MinIO 控制台为本机 9001。小程序代码上传、提审与发布、车主 H5 兜底域名和 HTTPS 均尚未配置。
 
@@ -17,3 +17,7 @@ CI 的 `compose-smoke` 作业会启动 MySQL、Redis、RabbitMQ、MinIO、OCR、
 ## 可选行驶证候选识别
 
 R2b默认关闭的LICENSE_OCR开关可复用受限Paddle服务，先准备私有上传/扫描和离线模型。可选ocr-runtime overlay仍需显式LICENSE_OCR_ENABLED=true；内部URL固定、token复用overlay的MILEAGE_OCR_SERVICE_TOKEN，并沿用ocr_private内部网络；不会因里程OCR启用而自动开放行驶证。服务端配置/回滚与授权证件验收见[行驶证接入](../docs/api/LICENSE_RECOGNITION.md)。本功能没有新增数据库迁移；照片不自动关联档案，也不承诺取消即删除。
+
+## ASR持久任务（默认关闭）
+
+基础Compose挂载V063并转发ASR_ENABLED/URL/SERVICE_TOKEN/ALLOW_PRIVATE_HTTP及调度/清理间隔，当前132表。它不会自动启动或下载ASR模型；本阶段没有已验证的Linux ASR镜像/overlay或完整transitive wheel/hash锁。先完成[离线准备](../services/asr/README.md)，再按[任务接入](../docs/api/ASR_JOBS.md)启用，token仅在私有后端。关闭开关及回滚应用前核对候选、lease/TTL清理与schema兼容，不能反向删除业务数据或音频。

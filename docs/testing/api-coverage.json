@@ -5,11 +5,11 @@
   "current_backend_revalidated": false,
   "scope": "Selected recorded synthetic-identity/LOCAL_TEST suites only; other tests are not indexed. Reconciled with current definitions; no new HTTP execution or production acceptance.",
   "counts": {
-    "contract_operations": 356,
-    "protected_operations": 342,
+    "contract_operations": 359,
+    "protected_operations": 345,
     "four_kind_definitions": 317,
     "historical_four_kind_operations": 317,
-    "without_complete_historical_evidence": 39,
+    "without_complete_historical_evidence": 42,
     "current_run_operations": 0,
     "suites": 36
   },
@@ -13569,6 +13569,78 @@
       ]
     },
     {
+      "operation_id": "post_api_recognition_asr_jobs",
+      "method": "POST",
+      "path": "/api/recognition/asr/jobs",
+      "roles": "当前有效OWNER；本人车辆/同用途CLEAN input_material音频；ASR_ENABLED默认false",
+      "protected": true,
+      "implementation_status": "asr-durable-job-create-implemented-requires-model-acceptance",
+      "defined_kinds": [],
+      "historical_kinds": [],
+      "missing_definition_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "missing_historical_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "current_acceptance": "NOT_RUN",
+      "sources": []
+    },
+    {
+      "operation_id": "get_api_recognition_asr_jobs_id",
+      "method": "GET",
+      "path": "/api/recognition/asr/jobs/{id}",
+      "roles": "当前有效OWNER；本人车辆/同用途CLEAN input_material音频；ASR_ENABLED默认false",
+      "protected": true,
+      "implementation_status": "asr-durable-job-read-implemented-requires-model-acceptance",
+      "defined_kinds": [],
+      "historical_kinds": [],
+      "missing_definition_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "missing_historical_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "current_acceptance": "NOT_RUN",
+      "sources": []
+    },
+    {
+      "operation_id": "post_api_recognition_asr_jobs_id_cancel",
+      "method": "POST",
+      "path": "/api/recognition/asr/jobs/{id}/cancel",
+      "roles": "当前有效OWNER；本人当前车辆与任务；新有效会话可取消自己的旧任务",
+      "protected": true,
+      "implementation_status": "asr-durable-job-cancel-implemented",
+      "defined_kinds": [],
+      "historical_kinds": [],
+      "missing_definition_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "missing_historical_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "current_acceptance": "NOT_RUN",
+      "sources": []
+    },
+    {
       "operation_id": "post_api_refunds_callback_LOCAL_TEST",
       "method": "POST",
       "path": "/api/refunds/callback/LOCAL_TEST",
@@ -15342,6 +15414,6 @@
       ]
     }
   ],
-  "contract_sha256": "b304fa7d69b95671c9d535d7ee7d830fa47c579734f09b5d39b1bf727c74c9b3",
+  "contract_sha256": "deef85df7529ff1ee564529c4c2338d0a3175737a2c3407ae258868d3131b0ff",
   "input_hash_policy": "Input SHA256 uses CRLF-to-LF normalization. Historical raw collection digests must match its LF or CRLF byte form; content changes are rejected."
 }

@@ -1,4 +1,6 @@
-## 本地阶段交接（2026-10-26）
+## 本地阶段交接（2026-10-27）
+
+R3新增[ASR持久任务与人工转写核对](docs/api/ASR_JOBS.md)，默认关闭；离线真实模型/完整依赖锁/Linux镜像及授权语音效果仍待准备与验收。当前契约359项/345受保护，局部流程不代表全部开发或全API验收完成。
 
 上一批VIN阶段已上传草稿PR243，未合并发布。按[识别与向量路线](docs/superpowers/plans/2026-10-26-recognition-vector-roadmap.md)，R2b新增[行驶证车牌/VIN候选与人工录车](docs/api/LICENSE_RECOGNITION.md)，复用本人私有上传和受限本地OCR，默认关闭；真实证件效果、图片保留/删除政策、国内精确车型与真机仍待验。R2a历史验证见[VIN记录](docs/progress/RECOGNITION_R2A_VIN_GATEWAY.md)。
 

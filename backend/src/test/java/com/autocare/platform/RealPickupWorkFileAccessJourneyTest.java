@@ -183,7 +183,7 @@ class RealPickupWorkFileAccessJourneyTest {
         return uri;
     }
     @Test void realPickupAndWorkAttachmentPermissionsSignaturesAndOrderIsolation()throws Exception{
-        application=app;assertEquals(131,jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE()",Integer.class));
+        application=app;assertEquals(132,jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE()",Integer.class));
         jdbc.update("INSERT INTO user(id,openid,status) VALUES(1,'synthetic-pickup-files-owner',1),(2,'synthetic-pickup-files-other',1)");
         jdbc.update("INSERT INTO vehicle(id,user_id,current_mileage,plate_no) VALUES(1,1,100,'SYN-PICKUP-0001'),(2,2,200,'SYN-OTHER-0002')");
         jdbc.update("INSERT INTO merchant(id,merchant_type,name,address,status) VALUES(1,2,'synthetic pickup shop','test',1),(2,2,'synthetic other shop','test',1)");

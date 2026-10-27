@@ -100,9 +100,32 @@ class OpenApiGenerationTest(unittest.TestCase):
         self.assertEqual(10,fields['items']['properties']['candidates']['maxItems'])
         self.assertTrue(paths['/api/vehicle/ocr-license']['get']['deprecated'])
 
+    def test_asr_jobs_are_scoped_async_idempotent_and_confirmation_only(self):
+        paths=generator.build_document()['paths'];base='/api/recognition/asr/jobs'
+        create,read,cancel=paths[base]['post'],paths[base+'/{id}']['get'],paths[base+'/{id}/cancel']['post']
+        for item in (create,read,cancel):
+            self.assertEqual([{'bearerAuth':[]}],item['security'])
+            self.assertTrue(item['x-implementation-status'])
+            self.assertEqual('no-store',item['responses']['200']['headers']['Cache-Control']['schema']['const'])
+        self.assertTrue(any(p['name']=='Idempotency-Key' and p['required'] for p in create['parameters']))
+        self.assertTrue(any(p['name']=='Idempotency-Key' and p['required'] for p in cancel['parameters']))
+        self.assertFalse(any(p['name']=='Idempotency-Key' for p in read['parameters']))
+        body=create['requestBody']['content']['application/json']['schema']
+        self.assertFalse(body['additionalProperties'])
+        self.assertEqual(['vehicle_id','material_id','purpose','consent','consent_version'],body['required'])
+        self.assertEqual('ASR_TRANSCRIBE_V1',body['properties']['consent_version']['const'])
+        self.assertEqual(['AI','ARCHIVE'],body['properties']['purpose']['enum'])
+        self.assertEqual(0,cancel['requestBody']['content']['application/json']['schema']['maxProperties'])
+        projection=read['responses']['200']['content']['application/json']['schema']['allOf'][1]['properties']['data']
+        self.assertEqual(['QUEUED','RUNNING','SUCCEEDED','FAILED','CANCELLED','EXPIRED'],projection['properties']['state']['enum'])
+        result=projection['properties']['result']['anyOf'][1]
+        self.assertTrue(result['properties']['requires_confirmation']['const'])
+        self.assertEqual(50,result['properties']['segments']['maxItems'])
+        self.assertEqual('FASTER_WHISPER',result['properties']['source']['const'])
+
     def test_delivery_compare_remains_read_only_strict_and_authorized(self):
         document=generator.build_document();item=document['paths']['/api/check/delivery/compare']['post']
-        self.assertEqual(356,sum(len(v) for v in document['paths'].values()))
+        self.assertEqual(359,sum(len(v) for v in document['paths'].values()))
         self.assertEqual('delivery-compare-implemented',item['x-implementation-status'])
         self.assertEqual('本单车主或本店 MERCHANT/STAFF',item['x-roles'])
         self.assertEqual([{'bearerAuth':[]}],item['security'])

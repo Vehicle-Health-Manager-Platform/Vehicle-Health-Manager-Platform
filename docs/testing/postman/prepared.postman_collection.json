@@ -15298,6 +15298,161 @@
       ]
     },
     {
+      "name": "post_api_recognition_asr_jobs",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/recognition/asr/jobs",
+        "header": [
+          {
+            "key": "Idempotency-Key",
+            "value": "{{post_api_recognition_asr_jobs_Idempotency_Key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "description": "本人同车辆同用途音频创建持久ASR候选任务\nRoles: 当前有效OWNER；本人车辆/同用途CLEAN input_material音频；ASR_ENABLED默认false",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "type": "string",
+              "value": "{{access_token}}"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{{body_post_api_recognition_asr_jobs}}"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.variables.get(\"enable_prepared_requests\") !== \"true\") { pm.execution.skipRequest(); }",
+              "else {",
+              "  const missing = [\"status_post_api_recognition_asr_jobs\", \"post_api_recognition_asr_jobs_Idempotency_Key\", \"access_token\", \"body_post_api_recognition_asr_jobs\"].filter(k => !pm.variables.get(k));",
+              "  if (missing.length) { pm.execution.skipRequest(); throw new Error(\"Configure fixture variables before sending: \" + missing.join(\",\")); }",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"configured scenario status\", () => pm.response.to.have.status(Number(pm.variables.get(\"status_post_api_recognition_asr_jobs\"))));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "get_api_recognition_asr_jobs_id",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/recognition/asr/jobs/{{get_api_recognition_asr_jobs_id_id}}",
+        "header": [],
+        "description": "本人查询ASR排队状态与短期转写候选\nRoles: 当前有效OWNER；本人车辆/同用途CLEAN input_material音频；ASR_ENABLED默认false",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "type": "string",
+              "value": "{{access_token}}"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.variables.get(\"enable_prepared_requests\") !== \"true\") { pm.execution.skipRequest(); }",
+              "else {",
+              "  const missing = [\"status_get_api_recognition_asr_jobs_id\", \"get_api_recognition_asr_jobs_id_id\", \"access_token\"].filter(k => !pm.variables.get(k));",
+              "  if (missing.length) { pm.execution.skipRequest(); throw new Error(\"Configure fixture variables before sending: \" + missing.join(\",\")); }",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"configured scenario status\", () => pm.response.to.have.status(Number(pm.variables.get(\"status_get_api_recognition_asr_jobs_id\"))));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "post_api_recognition_asr_jobs_id_cancel",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/recognition/asr/jobs/{{post_api_recognition_asr_jobs_id_cancel_id}}/cancel",
+        "header": [
+          {
+            "key": "Idempotency-Key",
+            "value": "{{post_api_recognition_asr_jobs_id_cancel_Idempotency_Key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "description": "本人取消ASR任务并清空候选\nRoles: 当前有效OWNER；本人当前车辆与任务；新有效会话可取消自己的旧任务",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "type": "string",
+              "value": "{{access_token}}"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{{body_post_api_recognition_asr_jobs_id_cancel}}"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.variables.get(\"enable_prepared_requests\") !== \"true\") { pm.execution.skipRequest(); }",
+              "else {",
+              "  const missing = [\"status_post_api_recognition_asr_jobs_id_cancel\", \"post_api_recognition_asr_jobs_id_cancel_id\", \"post_api_recognition_asr_jobs_id_cancel_Idempotency_Key\", \"access_token\", \"body_post_api_recognition_asr_jobs_id_cancel\"].filter(k => !pm.variables.get(k));",
+              "  if (missing.length) { pm.execution.skipRequest(); throw new Error(\"Configure fixture variables before sending: \" + missing.join(\",\")); }",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"configured scenario status\", () => pm.response.to.have.status(Number(pm.variables.get(\"status_post_api_recognition_asr_jobs_id_cancel\"))));"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "name": "post_api_refunds_callback_LOCAL_TEST",
       "request": {
         "method": "POST",

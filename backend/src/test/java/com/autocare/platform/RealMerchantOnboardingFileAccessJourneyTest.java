@@ -180,7 +180,7 @@ class RealMerchantOnboardingFileAccessJourneyTest {
         return uri;
     }
     @Test void realMerchantOnboardingQualificationAttachmentPermissionsAndSignatures()throws Exception{
-        application=app;assertEquals(131,jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE()",Integer.class));
+        application=app;assertEquals(132,jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE()",Integer.class));
         jdbc.update("INSERT INTO user(id,openid,status) VALUES(1,'synthetic-onboarding-applicant',1),(2,'synthetic-onboarding-peer',1)");
         jdbc.update("INSERT INTO merchant(id,merchant_type,name,address,status) VALUES(1,1,'synthetic onboarded shop','test',1)");
         jdbc.update("INSERT INTO staff_account(id,merchant_id,role,account,status) VALUES(1,1,'MERCHANT','synthetic-onboarded-shop','ACTIVE')");

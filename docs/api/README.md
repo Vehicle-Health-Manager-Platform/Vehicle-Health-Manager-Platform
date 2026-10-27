@@ -2,6 +2,8 @@
 
 # API 文档
 
+2026-10-27 R3：[ASR持久任务](ASR_JOBS.md)新增创建/查询/取消与人工转写核对，默认关闭。软件流程、真实模型资源和授权语音效果分别验收；契约当前359项/345受保护、317历史证据加42项结论，不代表全接口本轮通过。
+
 2026-10-27 R2b：[行驶证新车用途候选接口](LICENSE_RECOGNITION.md)，本人CLEAN JPEG/PNG、明确上传识别用途同意，保留车牌/VIN低可信及多值候选，人工核对后手动选车型；默认关闭，不证明真伪，不自动关联证件附件。
 
 2026-10-26 R2a：[VIN车主POST网关及页面](VIN_OWNER_GATEWAY.md)已接通有限NHTSA候选与人工选车型流程，默认关闭；[内部来源适配](VIN_PROVIDER_FOUNDATION.md)为R1历史记录。真实覆盖、国内精确映射及行驶证另验；五类能力顺序见[规划](../superpowers/plans/2026-10-26-recognition-vector-roadmap.md)。

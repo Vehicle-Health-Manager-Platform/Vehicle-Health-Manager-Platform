@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "operations": 356,
-  "anonymous_probes": 342,
+  "operations": 359,
+  "anonymous_probes": 345,
   "full_api_acceptance_passed": false,
   "note": "Generated inventory, not test evidence. Anonymous 401 does not prove controller implementation or role/ownership validation.",
   "items": [
@@ -5364,6 +5364,58 @@
       "roles": "OWNER",
       "implementation_status": "r8a1-policy-implemented",
       "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_recognition_asr_jobs",
+      "method": "POST",
+      "path": "/api/recognition/asr/jobs",
+      "roles": "当前有效OWNER；本人车辆/同用途CLEAN input_material音频；ASR_ENABLED默认false",
+      "implementation_status": "asr-durable-job-create-implemented-requires-model-acceptance",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_recognition_asr_jobs_id",
+      "method": "GET",
+      "path": "/api/recognition/asr/jobs/{id}",
+      "roles": "当前有效OWNER；本人车辆/同用途CLEAN input_material音频；ASR_ENABLED默认false",
+      "implementation_status": "asr-durable-job-read-implemented-requires-model-acceptance",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_recognition_asr_jobs_id_cancel",
+      "method": "POST",
+      "path": "/api/recognition/asr/jobs/{id}/cancel",
+      "roles": "当前有效OWNER；本人当前车辆与任务；新有效会话可取消自己的旧任务",
+      "implementation_status": "asr-durable-job-cancel-implemented",
+      "content_types": [
+        "application/json"
+      ],
       "required_query": [],
       "anonymous_expected": 401,
       "cases": {

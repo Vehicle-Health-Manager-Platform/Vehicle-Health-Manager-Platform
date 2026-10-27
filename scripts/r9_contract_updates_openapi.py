@@ -134,3 +134,38 @@ def add_r9_contract_updates(document, operation):
     paths[path]={'post':license_}
     paths['/api/vehicle/ocr-license']['get']['deprecated']=True
     paths['/api/vehicle/ocr-license']['get']['description']='旧GET没有行驶证识别业务实现；迁移POST /api/vehicle/license-recognition并提供当前本人file_id及新车用途同意。'
+
+    path='/api/recognition/asr/jobs'
+    create=operation('post',path,'本人同车辆同用途音频创建持久ASR候选任务','F05')
+    create['x-implementation-status']='asr-durable-job-create-implemented-requires-model-acceptance'
+    create['x-roles']='当前有效OWNER；本人车辆/同用途CLEAN input_material音频；ASR_ENABLED默认false'
+    create['description']='严格JSON、无query、UUID幂等键；仅接受同一车辆及AI/ARCHIVE用途的本人audio/mpeg，现有16kHz mono/48kbps、1..60秒、<=3MiB政策保持。ASR_TRANSCRIBE_V1明确本次转写同意。每owner每UTC分钟5次新任务、最多2个未过期活动任务；幂等重放不重复排队或消耗限额。仅持久化作用域/原会话标识/源元数据hash/状态，不将JWT、原音频、对象key或转写放入普通回执/审计，不自动发送问题或保存档案。'
+    identity={'job_id':{'type':'integer','minimum':1,'maximum':9007199254740990},'vehicle_id':{'type':'integer','minimum':1,'maximum':9007199254740990},'material_id':{'type':'integer','minimum':1,'maximum':9007199254740990},'purpose':{'enum':['AI','ARCHIVE']},'task':{'const':'ASR'}}
+    reference={'type':'object','additionalProperties':False,'required':list(identity),'properties':copy.deepcopy(identity)}
+    create['requestBody']={'required':True,'content':{'application/json':{'schema':{'type':'object','additionalProperties':False,'required':['vehicle_id','material_id','purpose','consent','consent_version'],'properties':{
+        'vehicle_id':copy.deepcopy(identity['vehicle_id']),'material_id':copy.deepcopy(identity['material_id']),'purpose':copy.deepcopy(identity['purpose']),'consent':{'const':True},'consent_version':{'const':'ASR_TRANSCRIBE_V1'}}}}}}
+    content=copy.deepcopy(create['responses']['200']['content'])
+    def asr_responses(projection,descriptions):
+        success={'application/json':{'schema':{'allOf':[{'$ref':'#/components/schemas/ApiResponse'},{'type':'object','required':['data'],'properties':{'data':projection}}]}}}
+        return {code:{'description':desc,'content':copy.deepcopy(success if code=='200' else content),'headers':{'Cache-Control':{'schema':{'const':'no-store'}}}} for code,desc in descriptions}
+    common=[('400','正文/ID/同意/幂等键无效，额外或重复键/尾随JSON/query均拒绝'),('401','当前会话失效或账号停用/删除'),('403','非OWNER或绑定凭证'),('404','非本人当前车辆、同用途音频或任务不可用'),('503','关闭、数据或任务服务不可用')]
+    create['responses']=asr_responses(reference,[('200','创建回执仅job_id/vehicle_id/material_id/purpose/task；同键同正文返回原任务引用，不重放候选文本。'),*common,('429','每分钟新任务限额或已有2个活动任务')])
+    paths[path]={'post':create}
+    result={'type':'object','additionalProperties':False,'required':['version','task','source','status','language','duration_ms','segments','requires_confirmation','audio_recognition_performed'],'properties':{
+        'version':{'const':1},'task':{'const':'ASR'},'source':{'const':'FASTER_WHISPER'},'status':{'enum':['TRANSCRIBED','EMPTY']},'language':{'type':['string','null'],'pattern':'^[a-z]{2,3}$'},'duration_ms':{'type':'integer','minimum':1000,'maximum':60000},'requires_confirmation':{'const':True},'audio_recognition_performed':{'const':True},
+        'segments':{'type':'array','maxItems':50,'items':{'type':'object','additionalProperties':False,'required':['start_ms','end_ms','text','confidence'],'properties':{'start_ms':{'type':'integer','minimum':0,'maximum':59999},'end_ms':{'type':'integer','minimum':1,'maximum':60000},'text':{'type':'string','minLength':1,'maxLength':500},'confidence':{'type':['number','null'],'minimum':0,'maximum':1}}}}},
+        'description':'duration_ms必须等于原音频声明并经读取校验；时间单调不重叠且0<=start<end<=duration_ms，文本无控制或孤立代理字符、无首尾空白。以换行连接全部片段最多1000 UTF16单元，不静默截断。TRANSCRIBED非空，EMPTY空且language可null。faster-whisper平均logprob不转换可信百分比，实际适配confidence=null。'}
+    detail=operation('get',path+'/{id}','本人查询ASR排队状态与短期转写候选','F05')
+    detail['x-implementation-status']='asr-durable-job-read-implemented-requires-model-acceptance'
+    detail['x-roles']=create['x-roles']
+    detail['description']='无query、no-store；返回前重新验证当前会话/本人车辆、同用途材料与原创建会话。原会话撤销不再交付候选；取消/来源变化/关闭/TTL到期清空结果。候选TTL自创建10分钟，查询失效后不可见，后台清理正文；任务元数据与原音频保留策略另管。'
+    projection={'type':'object','additionalProperties':False,'required':[*identity,'state','expires_at','error_code','result'],'properties':{**copy.deepcopy(identity),'state':{'enum':['QUEUED','RUNNING','SUCCEEDED','FAILED','CANCELLED','EXPIRED']},'expires_at':{'type':'string','format':'date-time'},'error_code':{'enum':[None,'UNAVAILABLE','SOURCE_CHANGED','AUTH_REVOKED','WORKER_LOST','INVALID_RESULT','EXPIRED','USER_CANCELLED','FEATURE_DISABLED']},'result':{'anyOf':[{'type':'null'},result]}}}
+    detail['responses']=asr_responses(projection,[('200','固定任务作用域/状态/到期/error_code/result；只在SUCCEEDED返回经过严格校验的候选，其他状态result=null。'),*common])
+    paths[path+'/{id}']={'get':detail}
+    cancel=operation('post',path+'/{id}/cancel','本人取消ASR任务并清空候选','F05')
+    cancel['x-implementation-status']='asr-durable-job-cancel-implemented'
+    cancel['x-roles']='当前有效OWNER；本人当前车辆与任务；新有效会话可取消自己的旧任务'
+    cancel['description']='严格空对象{}、无query、UUID幂等键。可取消排队/运行或已成功候选并清空；重复取消安全，不删除原音频。取消请求失败或创建结果未知不能声称服务端已取消；未知创建可经重新同意后同正文同键确认原任务，再立即发取消。'
+    cancel['requestBody']={'required':True,'content':{'application/json':{'schema':{'type':'object','additionalProperties':False,'maxProperties':0}}}}
+    cancel['responses']=asr_responses({'type':'object','additionalProperties':False,'required':['job_id'],'properties':{'job_id':copy.deepcopy(identity['job_id'])}},[('200','取消受理回执仅job_id；终态与过期状态以再次查询为准。'),*common])
+    paths[path+'/{id}/cancel']={'post':cancel}

@@ -200,7 +200,7 @@ class RealMaterialWorkbenchJourneyTest {
         }
     }
     @Test void realMaterialIsolationAndCurrentWorkbenches()throws Exception{
-        application=app;assertEquals(131,jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE()",Integer.class));
+        application=app;assertEquals(132,jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE()",Integer.class));
         jdbc.update("INSERT INTO user(id,openid,status) VALUES(1,'synthetic-material-owner',1),(2,'synthetic-material-other',1)");
         jdbc.update("INSERT INTO vehicle(id,user_id,current_mileage,plate_no,vin) VALUES(1,1,100,'PRIVATE_PLATE','PRIVATE_VIN'),(2,2,200,'PRIVATE_OTHER','PRIVATE_OTHER_VIN'),(3,1,300,'PRIVATE_THIRD','PRIVATE_THIRD_VIN')");
         jdbc.update("INSERT INTO merchant(id,merchant_type,name,address,status) VALUES(1,2,'synthetic shop','test',1),(2,2,'synthetic other shop','test',1)");

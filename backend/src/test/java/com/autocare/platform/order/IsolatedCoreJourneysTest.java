@@ -66,7 +66,7 @@ class IsolatedCoreJourneysTest {
     final Map<String,String> issuedSessions=new HashMap<>();
 
     @BeforeAll void fixtures() {
-        assertEquals(131, jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE()",Integer.class));
+        assertEquals(132, jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE()",Integer.class));
         jdbc.update("INSERT INTO user(id,openid,status) VALUES(1,'synthetic-journey-owner',1),(2,'synthetic-journey-foreign',1),(3,'synthetic-journey-applicant',1)");
         jdbc.update("INSERT INTO brand(id,name,status) VALUES(1,'合成品牌',1)");
         jdbc.update("INSERT INTO series(id,brand_id,name,status) VALUES(1,1,'合成车系',1)");

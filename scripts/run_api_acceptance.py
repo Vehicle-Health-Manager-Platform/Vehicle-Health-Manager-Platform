@@ -17,7 +17,7 @@ from run_performance_baseline import Docker, Owned, MySQL, Backend, LABEL, JAR, 
 
 CI_INPUT = ROOT / '.cache/api-ci-build-input.json'
 # Reviewed scope includes the authenticated mileage-recognition gateway.
-ANONYMOUS_PROBE_COUNT = 342
+ANONYMOUS_PROBE_COUNT = 345
 
 
 def backend_input_hash():
@@ -92,7 +92,7 @@ def audit_newman(path, expected):
 
 def counts(mysql):
     tables = mysql.text('SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() ORDER BY table_name;').splitlines()
-    if len(tables) != 131 or any(not name.replace('_', '').isalnum() for name in tables):
+    if len(tables) != 132 or any(not name.replace('_', '').isalnum() for name in tables):
         raise ValueError('Unexpected isolated schema')
     return mysql.text(' UNION ALL '.join("SELECT '" + t + "',COUNT(*) FROM `" + t + '`' for t in tables) + ';')
 

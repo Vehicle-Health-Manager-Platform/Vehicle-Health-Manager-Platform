@@ -36,7 +36,7 @@
 ## 部署交接顺序
 
 1. 固定提交、依赖锁、镜像摘要和环境；先在隔离库跑测试，再备份目标库并演练恢复。不要在已有库重复执行初始化。
-2. 核对V001基线及V002–V062的有序迁移记录；执行 `python scripts/verify_compose_migrations.py` 校验新库Compose挂载。已有卷不会自动执行新增迁移。迁移失败先核查部分DDL，不盲目重试全部SQL。
+2. 核对V001基线及V002–V063的有序迁移记录；执行 `python scripts/verify_compose_migrations.py` 校验新库Compose挂载。已有卷不会自动执行新增迁移。迁移失败先核查部分DDL，不盲目重试全部SQL。
 3. 通过私有环境注入配置，选择直连HTTPS或可信云托管。云通道开启前须关闭服务公网身份入口并校验可信身份头。小程序所有VITE变量均会进入客户端。
 4. 配置维护中的私有存储、扫描、OCR内部网络；逐个启用业务开关并执行关联业务测试。不能用上传成功证明扫描或识别成功。
 5. 外部服务负责人按[外部清单](EXTERNAL_INTEGRATIONS.md)完成接入与真实验收，再执行真机、完整接口、性能、安全和恢复门禁。
@@ -53,3 +53,7 @@ R2a最新增量：[VIN车主网关/候选与手动录车说明](../api/VIN_OWNER
 R2b最新增量：[行驶证车牌/VIN候选与手动录车](../api/LICENSE_RECOGNITION.md)，默认关闭；复用本人私有上传和受限Paddle，明确新车用途。真实证件效果、保留/本人删除政策、真机、国内车型及ASR/图文/向量另验。最终测试范围以本轮报告中实际记录为准。
 
 R2b最终记录：[行驶证软件回归与真实模型限制](../progress/RECOGNITION_R2B_LICENSE.md)、[脱敏证据](../testing/LICENSE_RECOGNITION_2026_10_27.json)。既有私有图片保留策略不包含本功能自动到期/本人删除承诺，正式证件前须明确政策。
+
+R3增量：[ASR持久任务/权限/页面与接入](../api/ASR_JOBS.md)，V063增加recognition_job（当前132表），默认关闭。统一运行器新增ASR第10组并纳入源码/requirements.in摘要。真实模型、完整transitive wheel/hash锁、Linux镜像及授权语音仍未验，见[离线准备](../../services/asr/README.md)。
+
+R3软件闭环最终记录：[ASR异步任务回归/已知限制](../progress/RECOGNITION_R3_ASR.md)、[脱敏证据](../testing/ASR_JOBS_2026_10_27.json)。模型权重/全量依赖锁/Linux实际运行与真实语音效果仍未验，不将软件替身结果当作真实转写通过。

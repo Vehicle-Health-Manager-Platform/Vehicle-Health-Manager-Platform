@@ -86,7 +86,7 @@ function ask(text) { draft.value = text; return send() }
       </text>
 
       <view class="composer">
-        <LocalInputMaterials :actor="ownerSession.accessToken" :scope="'ai:'+(selectedOwnerVehicle?.vehicle_id||0)" @change="localMaterialCount=$event.count" />
+        <LocalInputMaterials :actor="ownerSession.accessToken" :scope="'ai:'+(selectedOwnerVehicle?.vehicle_id||0)" :target-value="draft" :disabled="state.busy" @change="localMaterialCount=$event.count" @apply-text="draft=$event" @reauth="login" />
         <InputCandidateReview :actor="ownerSession.accessToken" :scope="'ai:'+(selectedOwnerVehicle?.vehicle_id||0)" scene="voice" :fields="candidateFields.voice" :values="{question:draft}" :disabled="state.busy" @apply="draft=$event.question" />
         <textarea v-model="draft" class="input" :maxlength="MAX_QUESTION_CHARS" :disabled="state.busy || !ownerSession.accessToken"
           placeholder="描述车辆的现象或想问的问题" auto-height />

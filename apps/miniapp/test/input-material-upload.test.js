@@ -34,7 +34,7 @@ function flowHarness(){let token='owner',current='ai:11';const state={busyId:'',
  return {state,flow,items,operations,keys,setActor:v=>token=v,setScope:v=>current=v}}
 test('flow prevents duplicate clicks, retries same key, and never resubmits successful material',async()=>{
  const h=flowHarness(),first=h.flow.upload('a');await h.flow.upload('a');assert.equal(h.operations.length,1);h.operations[0].reject(new Error('network'));await first
- const next=h.flow.upload('a');assert.deepEqual(h.keys,[key,key]);h.operations[1].resolve({materialId:9});await next;await h.flow.upload('a');assert.equal(h.operations.length,2);assert.match(h.state.message,/尚未识别/)
+ const next=h.flow.upload('a');assert.deepEqual(h.keys,[key,key]);h.operations[1].resolve({materialId:9});await next;await h.flow.upload('a');assert.equal(h.operations.length,2);assert.match(h.state.message,/识别需单独同意/)
 })
 test('context change, remove and hide/reset fence late responses',async()=>{
  for(const action of ['actor','scope','remove','reset']){const h=flowHarness(),pending=h.flow.upload('a');if(action==='actor')h.setActor('another');if(action==='scope')h.setScope('archive:11:1');if(action==='remove')h.items.length=0;if(action==='reset')h.flow.reset();h.operations[0].resolve({materialId:9});await pending;assert.deepEqual(h.state.results,{});if(action==='reset')assert.equal(h.operations[0].aborted,true)}

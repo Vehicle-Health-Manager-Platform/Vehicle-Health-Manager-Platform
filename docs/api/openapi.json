@@ -34570,6 +34570,741 @@
         "x-roles": "当前有效OWNER会话；本人CLEAN JPEG/PNG 1..4MiB；LICENSE_OCR_ENABLED默认false",
         "description": "仅POST JSON正文，无query、不接收vehicle_id、URL或对象key。复用当前车主私有图片上传，不要求尚未创建的车辆ID；NEW_VEHICLE_LICENSE_OCR_V1明确新车用途。调用前后复核会话/账号及文件归属/扫描/元数据，存储读取后推理前再复核；来源失败也复核。每车主UTC分钟5次、实例并发2，来源10秒期限/64KiB，无应用级重试/重定向；受限worker推理8秒且单任务无队列。只返回完整合法标签旁车牌/VIN，不返回姓名/住址/证件原文，不证明真伪或归属，不自动建车/匹配车型/关联证件附件。取消不承诺删除已上传照片，按既有私有附件策略保留。"
       }
+    },
+    "/api/recognition/asr/jobs": {
+      "post": {
+        "summary": "本人同车辆同用途音频创建持久ASR候选任务",
+        "operationId": "post_api_recognition_asr_jobs",
+        "tags": [
+          "recognition"
+        ],
+        "x-feature-ids": [
+          "F05"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "创建回执仅job_id/vehicle_id/material_id/purpose/task；同键同正文返回原任务引用，不重放候选文本。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "job_id",
+                            "vehicle_id",
+                            "material_id",
+                            "purpose",
+                            "task"
+                          ],
+                          "properties": {
+                            "job_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "vehicle_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "material_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "purpose": {
+                              "enum": [
+                                "AI",
+                                "ARCHIVE"
+                              ]
+                            },
+                            "task": {
+                              "const": "ASR"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "正文/ID/同意/幂等键无效，额外或重复键/尾随JSON/query均拒绝",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "当前会话失效或账号停用/删除",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非OWNER或绑定凭证",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "非本人当前车辆、同用途音频或任务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "关闭、数据或任务服务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "每分钟新任务限额或已有2个活动任务",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "vehicle_id",
+                  "material_id",
+                  "purpose",
+                  "consent",
+                  "consent_version"
+                ],
+                "properties": {
+                  "vehicle_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740990
+                  },
+                  "material_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740990
+                  },
+                  "purpose": {
+                    "enum": [
+                      "AI",
+                      "ARCHIVE"
+                    ]
+                  },
+                  "consent": {
+                    "const": true
+                  },
+                  "consent_version": {
+                    "const": "ASR_TRANSCRIBE_V1"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-implementation-status": "asr-durable-job-create-implemented-requires-model-acceptance",
+        "x-roles": "当前有效OWNER；本人车辆/同用途CLEAN input_material音频；ASR_ENABLED默认false",
+        "description": "严格JSON、无query、UUID幂等键；仅接受同一车辆及AI/ARCHIVE用途的本人audio/mpeg，现有16kHz mono/48kbps、1..60秒、<=3MiB政策保持。ASR_TRANSCRIBE_V1明确本次转写同意。每owner每UTC分钟5次新任务、最多2个未过期活动任务；幂等重放不重复排队或消耗限额。仅持久化作用域/原会话标识/源元数据hash/状态，不将JWT、原音频、对象key或转写放入普通回执/审计，不自动发送问题或保存档案。"
+      }
+    },
+    "/api/recognition/asr/jobs/{id}": {
+      "get": {
+        "summary": "本人查询ASR排队状态与短期转写候选",
+        "operationId": "get_api_recognition_asr_jobs_id",
+        "tags": [
+          "recognition"
+        ],
+        "x-feature-ids": [
+          "F05"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "固定任务作用域/状态/到期/error_code/result；只在SUCCEEDED返回经过严格校验的候选，其他状态result=null。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "job_id",
+                            "vehicle_id",
+                            "material_id",
+                            "purpose",
+                            "task",
+                            "state",
+                            "expires_at",
+                            "error_code",
+                            "result"
+                          ],
+                          "properties": {
+                            "job_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "vehicle_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "material_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "purpose": {
+                              "enum": [
+                                "AI",
+                                "ARCHIVE"
+                              ]
+                            },
+                            "task": {
+                              "const": "ASR"
+                            },
+                            "state": {
+                              "enum": [
+                                "QUEUED",
+                                "RUNNING",
+                                "SUCCEEDED",
+                                "FAILED",
+                                "CANCELLED",
+                                "EXPIRED"
+                              ]
+                            },
+                            "expires_at": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "error_code": {
+                              "enum": [
+                                null,
+                                "UNAVAILABLE",
+                                "SOURCE_CHANGED",
+                                "AUTH_REVOKED",
+                                "WORKER_LOST",
+                                "INVALID_RESULT",
+                                "EXPIRED",
+                                "USER_CANCELLED",
+                                "FEATURE_DISABLED"
+                              ]
+                            },
+                            "result": {
+                              "anyOf": [
+                                {
+                                  "type": "null"
+                                },
+                                {
+                                  "type": "object",
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "version",
+                                    "task",
+                                    "source",
+                                    "status",
+                                    "language",
+                                    "duration_ms",
+                                    "segments",
+                                    "requires_confirmation",
+                                    "audio_recognition_performed"
+                                  ],
+                                  "properties": {
+                                    "version": {
+                                      "const": 1
+                                    },
+                                    "task": {
+                                      "const": "ASR"
+                                    },
+                                    "source": {
+                                      "const": "FASTER_WHISPER"
+                                    },
+                                    "status": {
+                                      "enum": [
+                                        "TRANSCRIBED",
+                                        "EMPTY"
+                                      ]
+                                    },
+                                    "language": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ],
+                                      "pattern": "^[a-z]{2,3}$"
+                                    },
+                                    "duration_ms": {
+                                      "type": "integer",
+                                      "minimum": 1000,
+                                      "maximum": 60000
+                                    },
+                                    "requires_confirmation": {
+                                      "const": true
+                                    },
+                                    "audio_recognition_performed": {
+                                      "const": true
+                                    },
+                                    "segments": {
+                                      "type": "array",
+                                      "maxItems": 50,
+                                      "items": {
+                                        "type": "object",
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "start_ms",
+                                          "end_ms",
+                                          "text",
+                                          "confidence"
+                                        ],
+                                        "properties": {
+                                          "start_ms": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "maximum": 59999
+                                          },
+                                          "end_ms": {
+                                            "type": "integer",
+                                            "minimum": 1,
+                                            "maximum": 60000
+                                          },
+                                          "text": {
+                                            "type": "string",
+                                            "minLength": 1,
+                                            "maxLength": 500
+                                          },
+                                          "confidence": {
+                                            "type": [
+                                              "number",
+                                              "null"
+                                            ],
+                                            "minimum": 0,
+                                            "maximum": 1
+                                          }
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "description": "duration_ms必须等于原音频声明并经读取校验；时间单调不重叠且0<=start<end<=duration_ms，文本无控制或孤立代理字符、无首尾空白。以换行连接全部片段最多1000 UTF16单元，不静默截断。TRANSCRIBED非空，EMPTY空且language可null。faster-whisper平均logprob不转换可信百分比，实际适配confidence=null。"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "正文/ID/同意/幂等键无效，额外或重复键/尾随JSON/query均拒绝",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "当前会话失效或账号停用/删除",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非OWNER或绑定凭证",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "非本人当前车辆、同用途音频或任务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "关闭、数据或任务服务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-implementation-status": "asr-durable-job-read-implemented-requires-model-acceptance",
+        "x-roles": "当前有效OWNER；本人车辆/同用途CLEAN input_material音频；ASR_ENABLED默认false",
+        "description": "无query、no-store；返回前重新验证当前会话/本人车辆、同用途材料与原创建会话。原会话撤销不再交付候选；取消/来源变化/关闭/TTL到期清空结果。候选TTL自创建10分钟，查询失效后不可见，后台清理正文；任务元数据与原音频保留策略另管。"
+      }
+    },
+    "/api/recognition/asr/jobs/{id}/cancel": {
+      "post": {
+        "summary": "本人取消ASR任务并清空候选",
+        "operationId": "post_api_recognition_asr_jobs_id_cancel",
+        "tags": [
+          "recognition"
+        ],
+        "x-feature-ids": [
+          "F05"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "取消受理回执仅job_id；终态与过期状态以再次查询为准。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "job_id"
+                          ],
+                          "properties": {
+                            "job_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "正文/ID/同意/幂等键无效，额外或重复键/尾随JSON/query均拒绝",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "当前会话失效或账号停用/删除",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非OWNER或绑定凭证",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "非本人当前车辆、同用途音频或任务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "关闭、数据或任务服务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "maxProperties": 0
+              }
+            }
+          }
+        },
+        "x-implementation-status": "asr-durable-job-cancel-implemented",
+        "x-roles": "当前有效OWNER；本人当前车辆与任务；新有效会话可取消自己的旧任务",
+        "description": "严格空对象{}、无query、UUID幂等键。可取消排队/运行或已成功候选并清空；重复取消安全，不删除原音频。取消请求失败或创建结果未知不能声称服务端已取消；未知创建可经重新同意后同正文同键确认原任务，再立即发取消。"
+      }
     }
   },
   "components": {

@@ -16,3 +16,7 @@
 [商家流程](MERCHANT.md) · [工作台及授权](../operations/SERVICE_WORKSPACE.md) · [页面与配置索引](../delivery/MINIAPP_REFERENCE.md) · [剩余验收](../delivery/REMAINING_ACCEPTANCE.md)。
 
 行驶证新车识别仅供OWNER；技师及绑定凭证无权调用，不得借车主file_id处理证件。施工/报工图片继续使用既有本人任务权限；行驶证候选不证明车辆归属或车型。[识别边界](../api/LICENSE_RECOGNITION.md)。
+
+## ASR转写边界（R3）
+
+R3 ASR任务不授予技师读取车主音频或转写的权限，不能以材料ID跨车辆/用途访问；原报工和历史档案授权继续独立执行。 [操作、状态与接入](../api/ASR_JOBS.md)。真实ASR/声音效果与手机仍待验。

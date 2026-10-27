@@ -213,6 +213,21 @@
       "operation": "POST /api/vehicle/license-recognition",
       "verdict": "implemented-local",
       "reason": "R2b新车用途行驶证候选网关与本地受限OCR场景已实现；新车图片复用当前OWNER私有上传，无vehicle_id。授权真实证件效果、真机及国内车型映射另验，不据替身或合成样本扩称全部历史HTTP证据齐全。"
+    },
+    {
+      "operation": "POST /api/recognition/asr/jobs",
+      "verdict": "implemented-local",
+      "reason": "R3持久ASR任务、当前OWNER/同车辆同用途权限、幂等/取消/租约/TTL及人工转写核对软件已实现；真实faster-whisper模型与授权语音效果尚未验收，局部替身流程不作为全部历史四类HTTP证据。"
+    },
+    {
+      "operation": "GET /api/recognition/asr/jobs/{id}",
+      "verdict": "implemented-local",
+      "reason": "R3持久ASR任务、当前OWNER/同车辆同用途权限、幂等/取消/租约/TTL及人工转写核对软件已实现；真实faster-whisper模型与授权语音效果尚未验收，局部替身流程不作为全部历史四类HTTP证据。"
+    },
+    {
+      "operation": "POST /api/recognition/asr/jobs/{id}/cancel",
+      "verdict": "implemented-local",
+      "reason": "R3持久ASR任务、当前OWNER/同车辆同用途权限、幂等/取消/租约/TTL及人工转写核对软件已实现；真实faster-whisper模型与授权语音效果尚未验收，局部替身流程不作为全部历史四类HTTP证据。"
     }
   ]
 }

@@ -2,9 +2,9 @@
 
 本文件由 `python scripts/summarize_api_coverage.py` 生成。
 
-- 当前契约：356 项；受保护接口：342 项。
+- 当前契约：359 项；受保护接口：345 项。
 - 四类用例定义覆盖：317 项；有匹配历史四类执行记录：317 项（接口去重）。
-- 所选记录中未获完整四类证据：39 项；汇总过程新发起接口：0 项（各套实际执行见来源报告）。
+- 所选记录中未获完整四类证据：42 项；汇总过程新发起接口：0 项（各套实际执行见来源报告）。
 
 历史证据不等于当前版本重跑通过，不等于完整权限矩阵或真实身份/资金验收。
 匿名401不算业务四类覆盖；未列历史证据不等于功能未开发。
@@ -84,6 +84,12 @@
 ### api/payments（1项）
 
 - `POST /api/payments/callback/{channel}`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。
+
+### api/recognition（3项）
+
+- `POST /api/recognition/asr/jobs`：缺 boundary, error, normal, unauthorized；实现标记 `asr-durable-job-create-implemented-requires-model-acceptance`。
+- `GET /api/recognition/asr/jobs/{id}`：缺 boundary, error, normal, unauthorized；实现标记 `asr-durable-job-read-implemented-requires-model-acceptance`。
+- `POST /api/recognition/asr/jobs/{id}/cancel`：缺 boundary, error, normal, unauthorized；实现标记 `asr-durable-job-cancel-implemented`。
 
 ### api/refunds（2项）
 

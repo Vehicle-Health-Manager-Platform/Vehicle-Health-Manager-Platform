@@ -55,7 +55,7 @@ export function createMaterialUploadFlow({state,items,actor,scope,api=inputMater
       operation=api.upload(actor(),target,item,keys.get(id));pending=operation
       const result=await operation.promise
       if(generation===epoch&&context()===who&&items().some(i=>i.id===id)){
-        state.results={...state.results,[id]:result};state.message='材料已上传并通过扫描；尚未识别，也未发送给AI或写入档案。'
+        state.results={...state.results,[id]:result};state.message='材料已上传并通过扫描；识别需单独同意，未发送给AI或写入档案。'
       }
     }catch(error){if(generation===epoch&&context()===who&&items().some(i=>i.id===id))state.message=error.message}
     finally{if(generation===epoch){if(pending===operation)pending=null;state.busyId=''}}

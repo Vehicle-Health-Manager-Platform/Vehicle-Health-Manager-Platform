@@ -180,7 +180,7 @@ class RealServiceArchiveAccessJourneyTest {
     String currentVersion(JsonNode data){for(var item:data.path("data").path("records").path("items"))if(item.path("record").path("archive_id").asLong()==1)return item.path("source_version").asText();throw new AssertionError("missing candidate");}
     void privacy(JsonNode data){for(String key:List.of("owner_id","user_id","vehicle_id","phone","vin","plate_no","object_key","source_version","provider_name"))assertFalse(data.toString().contains("\""+key+"\""),key);assertFalse(data.toString().contains("PRIVATE_UNSELECTED"));}
     @Test void realServiceConsentContextAndSignedAttachments()throws Exception{
-        application=app;assertEquals(131,jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE()",Integer.class));
+        application=app;assertEquals(132,jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE()",Integer.class));
         jdbc.update("INSERT INTO user(id,openid,status) VALUES(1,'synthetic-service-owner',1),(2,'synthetic-service-other',1)");
         jdbc.update("INSERT INTO vehicle(id,user_id,current_mileage,plate_no,vin) VALUES(1,1,100,'PRIVATE_PLATE','PRIVATE_VIN'),(2,2,200,'PRIVATE_OTHER','PRIVATE_OTHER_VIN')");
         jdbc.update("INSERT INTO merchant(id,merchant_type,name,address,status) VALUES(1,2,'synthetic shop','test',1),(2,2,'synthetic other shop','test',1)");

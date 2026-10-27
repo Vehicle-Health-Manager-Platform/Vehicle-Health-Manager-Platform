@@ -6,7 +6,7 @@
   "counts": {
     "pages": 110,
     "template_files": 3,
-    "template_entries": 112,
+    "template_entries": 124,
     "guides": 4
   },
   "inputs": {
@@ -101,7 +101,7 @@
     "apps/miniapp/src/pages/service/index.vue": "8a06052669d2d0a3d900b3ed20663c6ebf193a837330ee18b348a5b5d3c5ce66",
     "apps/miniapp/src/pages/service/merchant.vue": "cc468c56a17f805572060fc6db936efbdb6d49bc58556df30c41bd1a8e80122a",
     "apps/miniapp/src/pages/service/detail.vue": "c7f608b42c17438bf38f2a872b94bc7d3287e82634cbf7b399a02441ed2e6a13",
-    "apps/miniapp/src/pages/ai/index.vue": "1b31d0c2d7dc9cf1a18b968bc96c29a7b523497afcbf205dd5d9b80f2e56923e",
+    "apps/miniapp/src/pages/ai/index.vue": "a54434da8f5ff5ad7a49fde0fe0115749bd6803818e1346b6e77b6e61648345d",
     "apps/miniapp/src/pages/ai/service-plan.vue": "a7799a940f6018f6502a0a899a5ba30afcb669f5ff45208a7a612d0511093bbd",
     "apps/miniapp/src/pages/archive/index.vue": "01c9ce2054df2dc9dbab42530b55c5b9b126c084f8d5aa80d3f08ca1beeec8e0",
     "apps/miniapp/src/pages/archive/shares.vue": "94e1db171bbfc8f26df4dbfafe96fd0486c368c94956d6e9150fe83d6a486c26",
@@ -115,20 +115,20 @@
     "apps/miniapp/src/pages/mine/index.vue": "08e95395bbc2ae8f12851334203155b450a52a64cc360ffd671513d7030e02ce",
     "apps/miniapp/src/pages/vehicle/entry.vue": "1ff70ece57d911e3488fe742d68174805300a82893136bfcfa4f41eeadab4078",
     "apps/miniapp/src/pages/vehicle/manual.vue": "dde5a60f13108bbfd66fb9a6c18211f52355494dc48b9e4fb5fc7d1a6b8c1458",
-    "apps/miniapp/src/pages/archive/record-add.vue": "48a30dba49719392b77ecba5b5146a6a31390a8deadb2bd045f5aeb17469b754",
+    "apps/miniapp/src/pages/archive/record-add.vue": "791fbcfe27e30e760471fd0ee7a0562de2570bc0143eab931e87e1960598ff55",
     "apps/miniapp/src/pages/welfare/invite.vue": "f18fca0611b18499400077664716b5e07cbfedb23bdc83b800ff8a88bace6e6b",
     "apps/miniapp/src/pages/welfare/invite-entry.vue": "09386fa44ce6e06d8c1b62cfafa96e0c8161b608201e86aab9c16da77cd93899",
     "apps/miniapp/src/pages/merchant/invite.vue": "79ae4e99b15618d046725fbfc66ebf1bf8154298925f18a248849d9d19fb9e8b",
     "apps/miniapp/src/pages/operator/invite-policies.vue": "80a7f2ffb2187050ec2165e82b8d1fd44b689ec15605bc14d48753d94eadc4cf",
     "apps/miniapp/src/pages/operator/diagnosis-policies.vue": "78b977ef36d32d2c988cbe7e39bbfa9cbfc89ea60df280b4f4c43a174f45e772",
-    ".env.example": "87196f5f905106a0991db0fd61559f78e798184872b52cfdd7deaa297872fafc",
+    ".env.example": "c8a4f84592c5146afc139b2e2c1fee633aa18ec7aebed692834960ae614becc3",
     "apps/miniapp/.env.example": "e8051b9f73d1c3bc168438e191bbac4964a844188833ff90ee71159c9bb65d34",
-    "deploy/cloudrun/env.example": "3a5043c8e1426117f31754beb6df4c95d0ea808f7a5483dc2fd4d6de722df880",
-    "docs/user-guides/OWNER.md": "f5227d4377e252fee7f4df663bb7072d6fae6bb3774adde99f6cd977a7b8a3e9",
-    "docs/user-guides/MERCHANT.md": "89c54e3a73df7bebc50788c1e676037048dfdb87ff5b969c6f36a8dbb9c19358",
-    "docs/user-guides/TECHNICIAN.md": "865301205fa0dad8173015da25d783766d2446e547047e44b072dccbd2837608",
-    "docs/user-guides/OPERATOR.md": "11b3fc5ab1f88d83ccd2a5f6b4827610935a286245772e7f7cfe646e06584c98",
-    "docs/delivery/REMAINING_ACCEPTANCE.md": "965553e16bdeef6675d5360a9f45d8cb1638b017807127b246bee7ef05e7a611"
+    "deploy/cloudrun/env.example": "a57ccebe9fbe2943c38b27d7561c3a18626a19236b1a60eab6b6f1ddb53ad6b8",
+    "docs/user-guides/OWNER.md": "0c7d2a3999528602dffd1952078ac1117d360ce64966fabffee551b905f65fdf",
+    "docs/user-guides/MERCHANT.md": "3ef5e2265e7a22ff838b1044bc844bcaa2c4927c96e10be7ab2d2cffe9dd3762",
+    "docs/user-guides/TECHNICIAN.md": "29997a2d32942c49dc1821fd777dab72e891e119eeb83d0479b28696e2207baa",
+    "docs/user-guides/OPERATOR.md": "9ed6f572d606a7a5bfb616e00f90a761b75e29e2555061e45f043604da10a3c2",
+    "docs/delivery/REMAINING_ACCEPTANCE.md": "85d3a8540a96620a1c9ca2f7453b7aeb9c33dfd27896fd570609a18d71acfefd"
   },
   "pages": [
     {
@@ -1189,6 +1189,36 @@
       "template_boolean": "false"
     },
     {
+      "source": ".env.example",
+      "key": "ASR_ENABLED",
+      "template_boolean": "false"
+    },
+    {
+      "source": ".env.example",
+      "key": "ASR_URL",
+      "template_boolean": null
+    },
+    {
+      "source": ".env.example",
+      "key": "ASR_SERVICE_TOKEN",
+      "template_boolean": null
+    },
+    {
+      "source": ".env.example",
+      "key": "ASR_ALLOW_PRIVATE_HTTP",
+      "template_boolean": "false"
+    },
+    {
+      "source": ".env.example",
+      "key": "ASR_JOB_INTERVAL_MS",
+      "template_boolean": null
+    },
+    {
+      "source": ".env.example",
+      "key": "ASR_CLEANUP_INTERVAL_MS",
+      "template_boolean": null
+    },
+    {
       "source": "apps/miniapp/.env.example",
       "key": "VITE_API_BASE_URL",
       "template_boolean": null
@@ -1352,6 +1382,36 @@
       "source": "deploy/cloudrun/env.example",
       "key": "LICENSE_OCR_ALLOW_PRIVATE_HTTP",
       "template_boolean": "false"
+    },
+    {
+      "source": "deploy/cloudrun/env.example",
+      "key": "ASR_ENABLED",
+      "template_boolean": "false"
+    },
+    {
+      "source": "deploy/cloudrun/env.example",
+      "key": "ASR_URL",
+      "template_boolean": null
+    },
+    {
+      "source": "deploy/cloudrun/env.example",
+      "key": "ASR_SERVICE_TOKEN",
+      "template_boolean": null
+    },
+    {
+      "source": "deploy/cloudrun/env.example",
+      "key": "ASR_ALLOW_PRIVATE_HTTP",
+      "template_boolean": "false"
+    },
+    {
+      "source": "deploy/cloudrun/env.example",
+      "key": "ASR_JOB_INTERVAL_MS",
+      "template_boolean": null
+    },
+    {
+      "source": "deploy/cloudrun/env.example",
+      "key": "ASR_CLEANUP_INTERVAL_MS",
+      "template_boolean": null
     }
   ]
 }
