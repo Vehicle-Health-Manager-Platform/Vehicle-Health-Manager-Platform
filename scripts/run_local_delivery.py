@@ -29,7 +29,7 @@ def source_digest(root):
     paths = [root / 'package.json', root / 'package-lock.json', root / 'backend/pom.xml']
     for directory in ('backend/src', 'scripts', 'services/ocr', 'services/asr', 'docs/sql/migrations'):
         paths += [p for p in (root / directory).rglob('*') if p.is_file()
-                  and (p.suffix in ('.py', '.java', '.sql', '.js', '.mjs', '.cjs', '.yml', '.yaml', '.json', '.txt', '.in')
+                  and (p.suffix in ('.py', '.java', '.sql', '.js', '.mjs', '.cjs', '.yml', '.yaml', '.json', '.txt', '.in', '.sh', '.ps1')
                        or p.name.startswith('Dockerfile'))]
     for app in (root / 'apps').iterdir():
         for name in ('src', 'test', 'preview'):

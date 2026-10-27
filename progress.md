@@ -863,3 +863,5 @@ R3上传：实现b510e30已推送origin/codex/asr-durable-jobs，草稿[PR245](h
 R3b：固定官方模型536b0662742c02347bc0e980a01041f333bce120及24 wheel全锁，准备工具完整重下载验证。真实Linux英文合成语音正常，数字静音初轮幻觉You，增加精确零能量保护，最终17检查及10组回归通过；1189/546/36，OCR76+1跳过，峰值约822MiB。源码摘要一致且自有容器已清理；未验中文/用户效果、跨容器Java真实ASR联调、OOM/父进程故障、手机或生产。交接见RECOGNITION_R3B_ASR_LINUX.md。
 
 上传：实现bbd0334，草稿[PR246](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/246)依赖PR245；本轮容器已清理，资源留在忽略缓存用于复现。新head远程CI独立跟踪；PR245本轮查询六项成功/backend仍运行，不冒称全CI完成。未合并部署。
+
+R3c最终：50 Java/13真实进程检查/实际OOM通过，default gate单独验证7跳过；10组源码一致，1189 miniapp、553 Python、40 ASR、OCR76+1跳过。修复新测试JSON档案断言、故障脚本seccomp继承计数及pidfd保护。PR245/246最终7 CI成功但Compose旧131表断言失败；现修132/V063且5组SQL在新MySQL63迁移全过，本地整栈受Docker Hub auth网络超时阻断未验。源码摘要纳入.sh/.ps1。所有本轮容器网络已清理；下一步R4，真实中文/存储扫描/真机及生产仍另验。

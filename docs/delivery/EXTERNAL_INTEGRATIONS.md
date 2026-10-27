@@ -71,3 +71,5 @@ VIN车主网关及候选页面已接通，仍需获授权VIN/实车对照、来�
 负责人准备经许可的多语small模型精确revision/来源/全文件SHA-256、完整transitive离线wheel/hash锁、Linux受限镜像、私有服务网络/token及获授权声音样本。现有requirements.in仅直接依赖faster-whisper1.2.1，不代表资源已经安装或验收。按[离线资源步骤](../../services/asr/README.md)核验，再按[任务接口](../api/ASR_JOBS.md)验收本人/跨用途、撤销/转移、取消/未知创建、TTL/旧租约、静音/噪声/方言/时长边界、人工修正与原表单保存。真实效果、模型进程安全与手机分别记录，不用替身返回source标签冒充真实模型。
 
 R3b最新证据：[固定离线资源、Linux真实模型合成样本及静音修复](../progress/RECOGNITION_R3B_ASR_LINUX.md)。已取得并核验24个wheel与固定模型5文件，实际离线容器推理/超时恢复/网络禁止通过；原R3文档中的“尚无资源/未运行”是历史范围。中文/方言/噪声/真实用户准确率、Java真实ASR同版联调和手机仍待验，默认关闭，不代表生产接入完成。
+
+R3c最新记录：[Java真实模型联调与进程/OOM故障](../progress/RECOGNITION_R3C_ASR_REAL_JOURNEY.md)。选定50项Java（含4项实际模型任务/3项继承核心旅程）、13项进程检查及实际OOM通过；身份/CLEAN/存储仍为夹具。原R3b的Java/进程待验已由本轮补充，中文/用户效果和真机另验。前置Compose CI旧表数断言已修正并通过独立真实MySQL门禁；完整本地Compose因Docker Hub连接超时未完成，不冒称通过。

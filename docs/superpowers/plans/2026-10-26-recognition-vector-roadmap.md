@@ -91,3 +91,5 @@ VIN车主网关/用途同意/候选确认/手动录车已实施并完成选定�
 新增[ASR持久任务与人工转写核对](../../api/ASR_JOBS.md)，按V063保存有限候选、幂等创建/查询/取消、原会话与同用途材料重验；默认关闭。软件实现不代表faster-whisper真实权重或授权语音验收，完整transitive锁与Linux镜像仍需准备。图文/PDF与向量继续原R4/R5顺序。
 
 R3b最新证据：[固定离线资源、Linux真实模型合成样本及静音修复](../../progress/RECOGNITION_R3B_ASR_LINUX.md)。已取得并核验24个wheel与固定模型5文件，实际离线容器推理/超时恢复/网络禁止通过；原R3文档中的“尚无资源/未运行”是历史范围。中文/方言/噪声/真实用户准确率、Java真实ASR同版联调和手机仍待验，默认关闭，不代表生产接入完成。
+
+R3c最新记录：[Java真实模型联调与进程/OOM故障](../../progress/RECOGNITION_R3C_ASR_REAL_JOURNEY.md)。选定50项Java（含4项实际模型任务/3项继承核心旅程）、13项进程检查及实际OOM通过；身份/CLEAN/存储仍为夹具。原R3b的Java/进程待验已由本轮补充，中文/用户效果和真机另验。前置Compose CI旧表数断言已修正并通过独立真实MySQL门禁；完整本地Compose因Docker Hub连接超时未完成，不冒称通过。

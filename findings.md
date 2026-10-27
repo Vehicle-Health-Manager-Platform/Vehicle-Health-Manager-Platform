@@ -888,3 +888,7 @@ R3前端33项增量通过，全小程序1188通过；首次默认沙箱4项loopb
 R3最终软件证据：12套159项Java分项通过，1189 miniapp/541 Python/76 OCR通过1跳过/26 ASR；17 H5合成断言。修复取消句柄、缓存TTL、GET过期lease、child密钥继承和扁平runtime导入，最终10组源码前后一致；真实模型/权重/Linux镜像未验。
 
 R3b：固定官方模型536b0662742c02347bc0e980a01041f333bce120及24 wheel全锁，准备工具完整重下载验证。真实Linux英文合成语音正常，数字静音初轮幻觉You，增加精确零能量保护，最终17检查及10组回归通过；1189/546/36，OCR76+1跳过，峰值约822MiB。源码摘要一致且自有容器已清理；未验中文/用户效果、跨容器Java真实ASR联调、OOM/父进程故障、手机或生产。交接见RECOGNITION_R3B_ASR_LINUX.md。
+
+R3c运行入口：Docker internal网络不生成宿主发布端口；改为仅连接内部网络的ASR加独立127.0.0.1转发器，转发器只接本轮内部/桥接两网络。NGINX只读根需要显式/tmp下所有temp路径；Docker cp即使目标tmpfs也拒绝只读rootfs，改用有界stdin写固定/tmp测试夹具，保持非root和只读根。测试初次默认沙箱Temp写入被拒，工作区TEMP回归通过。PID/启动时间/命令校验及pidfd阻止PID复用误杀；真实信号只在本轮容器内。
+
+R3c最终：50 Java/13真实进程检查/实际OOM通过，default gate单独验证7跳过；10组源码一致，1189 miniapp、553 Python、40 ASR、OCR76+1跳过。修复新测试JSON档案断言、故障脚本seccomp继承计数及pidfd保护。PR245/246最终7 CI成功但Compose旧131表断言失败；现修132/V063且5组SQL在新MySQL63迁移全过，本地整栈受Docker Hub auth网络超时阻断未验。源码摘要纳入.sh/.ps1。所有本轮容器网络已清理；下一步R4，真实中文/存储扫描/真机及生产仍另验。

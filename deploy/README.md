@@ -20,4 +20,4 @@ R2b默认关闭的LICENSE_OCR开关可复用受限Paddle服务，先准备私有
 
 ## ASR持久任务（默认关闭）
 
-基础Compose挂载V063并转发ASR_ENABLED/URL/SERVICE_TOKEN/ALLOW_PRIVATE_HTTP及调度/清理间隔，当前132表。它不会自动启动或下载ASR模型；R3b已提供Linux完整Python wheel/hash锁和实际镜像合成样本验收，尚无已验生产overlay；真实中文/用户效果和Java真实服务同版联调仍待验。先完成[离线准备](../services/asr/README.md)，再按[任务接入](../docs/api/ASR_JOBS.md)启用，token仅在私有后端。关闭开关及回滚应用前核对候选、lease/TTL清理与schema兼容，不能反向删除业务数据或音频。
+基础Compose挂载V063并转发ASR_ENABLED/URL/SERVICE_TOKEN/ALLOW_PRIVATE_HTTP及调度/清理间隔，当前132表。它不会自动启动或下载ASR模型；R3b已提供Linux完整Python wheel/hash锁和实际镜像合成样本验收，尚无已验生产overlay；R3c已有Java真实模型合成任务联调/故障证据；真实中文/用户效果、存储扫描及生产路由仍待验。先完成[离线准备](../services/asr/README.md)，再按[任务接入](../docs/api/ASR_JOBS.md)启用，token仅在私有后端。关闭开关及回滚应用前核对候选、lease/TTL清理与schema兼容，不能反向删除业务数据或音频。

@@ -39,6 +39,19 @@ class LocalDeliveryTest(unittest.TestCase):
             (root / 'services/ocr/worker.py').write_text('changed')
             self.assertNotEqual(before, source_digest(root))
 
+    def test_digest_binds_shell_and_powershell_acceptance_scripts(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'apps').mkdir()
+            for name in ('package.json', 'package-lock.json', 'backend/pom.xml', 'scripts/verify_compose.sh', 'scripts/local.ps1'):
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text('first')
+            for name in ('verify_compose.sh','local.ps1'):
+                before = source_digest(root)
+                (root / 'scripts' / name).write_text('changed')
+                self.assertNotEqual(before, source_digest(root))
+
     def test_asr_is_a_default_check_and_its_sources_are_bound(self):
         base = steps(ROOT)
         self.assertEqual(10, len(base))

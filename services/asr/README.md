@@ -46,7 +46,28 @@ python scripts/run_linux_asr_acceptance.py --allow-isolated-linux-asr --models-r
 
 容器无网络/无宿主端口、非root、只读rootfs/资源挂载、2GiB内存及swap上限、CPU2、PID128、16MiB共享内存、256MiB临时目录、cap-drop及no-new-privileges。HTTP检查只用容器回环；模型子进程另用实际seccomp禁止socket。运行检查实际英文预期词、数字静音空结果、错误凭据/JSON、健康状态、真实子进程超时及清理、429/恢复和关闭。源码前后摘要必须一致；退出时只清理精确匹配本轮标识的容器。日志和独立report.json保存在忽略的.cache/linux-asr-*，失败返回非零。
 
-这不是生产部署工具。没有完成跨容器Java→真实ASR→原表单的同版联调，没有做OOM/父进程故障注入或真实授权声音效果集；资源限制配置与内核禁止证据不能替代这些检查。
+这不是生产部署工具。R3b入口只覆盖Python真实模型运行；跨容器Java任务及进程故障使用下述R3c独立入口。真实授权声音效果集仍单独验收；资源限制配置与内核禁止证据不能替代效果评估。
+
+## Java真实模型联调与故障检查
+
+`scripts/run_real_asr_journey.py`沿现有Spring/JWT/MySQL测试运行真实调度worker、Java HTTP客户端和固定Linux模型。身份、CLEAN元数据、私有对象存储仍为测试夹具；没有真实上传/扫描或微信登录。新增Java套件默认跳过，必须显式入口才启用，普通CI不会下载模型或偷偷调用服务。
+
+复用上述模型、wheel和英文WAV，并准备Java17/Maven/Docker及已缓存的Maven依赖。PowerShell示例沿项目本机工具位置（当前入口按Windows宿主和本地Maven缓存路径实现，其他宿主需适配工具位置）：
+
+```powershell
+$env:JAVA_HOME=(Resolve-Path '.cache/host-tools/jdk/jdk-17.0.20.1+1').Path
+$env:PATH=$env:JAVA_HOME+'/bin;'+$env:PATH
+$env:JAVA_TOOL_OPTIONS='-Dapi.version=1.44 -Dfile.encoding=UTF-8'
+$env:DOCKER_HOST='npipe:////./pipe/dockerDesktopLinuxEngine'
+$env:TESTCONTAINERS_HOST_OVERRIDE='127.0.0.1'
+python scripts/run_real_asr_journey.py --allow-isolated-real-asr --models-root .cache/asr-linux/models --wheelhouse .cache/asr-linux/wheels --synthetic-english-wav .cache/asr-linux/synthetic-english.wav
+```
+
+入口使用本地缓存的nginx:1.27-alpine作为测试转发器。模型容器只连内部网络、不发布端口，转发器只接本轮内部/桥接两个网络并绑定127.0.0.1随机端口；转发目的地固定为已检查的模型IP，关闭请求重试与访问日志。JVM通过该转发器访问真实私有服务，不代表正式部署路由已验收。
+
+Java检查选定ASR套件及真实旅程：幂等创建/查询/权限、真实候选不自动保存、原档案接口显式幂等写入且数据库JSON文字一致、取消和原会话撤销后迟到结果不交付。取消不承诺推理立即终止。英文真实模型结果只验证预期词，不能替代中文/方言/噪声准确率。
+
+随后只在本轮容器中故障注入：核对PID/命令/启动时间，用pidfd绑定实际模型worker后SIGKILL并验证失败/恢复；杀死本轮supervisor检查内核父退出SIGKILL及subreaper回收；独立256MiB、无网络容器通过实际cgroup OOM计数、安全503和主进程存活判断内存不足。精确归属不符、跳过/缺失JUnit结果、清理不全或源码变化均不计通过。私有配置、token、原日志和JUnit XML留在忽略的.cache/real-asr-*，公共证据仅包含摘要与脱敏结论。
 
 ## 私有服务接入与回滚
 
