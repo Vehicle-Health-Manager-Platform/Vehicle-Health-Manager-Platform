@@ -1026,4 +1026,4 @@ R2b收口：前置PR243最终8项CI通过。新PR244检查独立跟踪；实际P
 - [x] 核对设计，承接PR246，按用户授权规划后实施。
 - [x] 实际Java调度/HTTP/JWT/MySQL→Linux模型、显式档案保存、取消/撤销迟到保护，选定50项通过。
 - [x] 13项真实进程/父退出及实际OOM通过；10组回归及交接记录完成。
-- [ ] 上传R3c独立草稿PR；完整Compose构建因Docker Hub网络未验，新head CI另核。
+- [x] 实现a57452a已上传R3c草稿PR247（依赖PR246）；完整Compose构建因Docker Hub网络未验，新head CI另核，不合并部署。
