@@ -36,4 +36,4 @@ gstack browse在390×844通过17项合成页面检查：本机选择不自动上
 
 尚未验证/限制：授权中文/真实复杂单据、模糊与旋转质量、真实上传/扫描/私有存储同版闭环、iOS/Android/微信身份与麦克风/相机、本人原文件删除/保留政策、全部362 API同版四类验收、整栈恢复/性能和生产发布。取消或TTL只清候选，不删除原材料，也不承诺即时停算。R5向量检索仍为后续独立开发，当前检索仍KEYWORD；需落实授权语料、固定embedding许可/版本/hash、索引撤销/租户权限、召回评估和明确降级，再实施候选检索，不能把关键词说成向量。
 
-[机器测试证据](../testing/DOCUMENT_JOBS_2026_10_27.json)包含选定99项、11组回归、17项浏览器、实际内核21项及私有HTTP13项、资源/源码/清理与未验证边界。私有原始日志及生成材料仅在忽略的.cache内。GitHub上传收口另记；未合并部署。
+[机器测试证据](../testing/DOCUMENT_JOBS_2026_10_27.json)包含选定99项、11组回归、17项浏览器、实际内核21项及私有HTTP13项、资源/源码/清理与未验证边界。私有原始日志及生成材料仅在忽略的.cache内。实现acbd7e7已上传[草稿PR249](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/249)，依赖PR248，base=codex/document-extraction-core，远端实现head已核对一致。CI已触发，未完成不计通过；不合并部署。
