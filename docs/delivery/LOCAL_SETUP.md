@@ -97,6 +97,6 @@ VIN可选查询：默认关闭即可完整手动录车。本地需测试真实NH
 
 ## ASR任务可选配置（R3）
 
-先按顺序执行V063和全部前置迁移，现为63项/132表。后端ASR_ENABLED默认false，不影响本机试听和手动填写；启用前需独立私有ASR服务、同用途CLEAN音频及经核验本地模型。ASR_URL/ASR_SERVICE_TOKEN仅后端配置，VITE中不可放服务凭据。[接口、参数和状态](../api/ASR_JOBS.md)及[离线模型准备](../../services/asr/README.md)区分软件回归与真实效果；requirements.in不是完整transitive锁。本阶段不提供已验证Linux镜像/overlay。
+先按顺序执行V063和全部前置迁移，现为63项/132表。后端ASR_ENABLED默认false，不影响本机试听和手动填写；启用前需独立私有ASR服务、同用途CLEAN音频及经核验本地模型。ASR_URL/ASR_SERVICE_TOKEN仅后端配置，VITE中不可放服务凭据。[接口、参数和状态](../api/ASR_JOBS.md)及[离线模型准备](../../services/asr/README.md)区分软件回归与真实效果；requirements.in只列直接需求；R3b另交付完整Linux wheel/hash锁和本地镜像合成样本验收，未验生产overlay或真实中文效果。
 
 `python scripts/run_local_delivery.py` 默认现为10组，新增ASR协议/进程回归；完整后端仍需显式--backend。合成Provider不等于真实转写，创建未知与取消失败按页面恢复入口核对，不删除原音频。

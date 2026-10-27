@@ -859,3 +859,5 @@ R3已落地V063及任务创建/查询/取消、租约/CAS/TTL、后台线程、�
 R3软件回归与机器证据已收口；前置PR244最终8项CI成功。准备提交上传草稿，不合并部署。真实ASR资源/效果按后续准备，不用替身冒称成功。
 
 R3上传：实现b510e30已推送origin/codex/asr-durable-jobs，草稿[PR245](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/245)依赖PR244。未合并或部署；新head的远程CI另核，运行中不计通过。
+
+R3b：固定官方模型536b0662742c02347bc0e980a01041f333bce120及24 wheel全锁，准备工具完整重下载验证。真实Linux英文合成语音正常，数字静音初轮幻觉You，增加精确零能量保护，最终17检查及10组回归通过；1189/546/36，OCR76+1跳过，峰值约822MiB。源码摘要一致且自有容器已清理；未验中文/用户效果、跨容器Java真实ASR联调、OOM/父进程故障、手机或生产。交接见RECOGNITION_R3B_ASR_LINUX.md。

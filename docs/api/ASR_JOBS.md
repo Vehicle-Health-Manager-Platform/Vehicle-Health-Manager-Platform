@@ -80,3 +80,5 @@ Python私有服务独立使用 `ASR_SERVICE_ENABLED=false`、`ASR_MODEL_ROOT`、
 离线模型与完整依赖准备、manifest声明和验收边界见[ASR服务准备](../../services/asr/README.md)。`requirements.in` 仅列 faster-whisper 1.2.1 直接需求，不是完整transitive wheel/hash锁。真实模型、依赖完整锁和Linux镜像尚未准备时保持关闭。
 
 本轮[测试与问题记录](../progress/RECOGNITION_R3_ASR.md)、[脱敏机器证据](../testing/ASR_JOBS_2026_10_27.json)区分合成协议/真实本机HTTP数据库及尚未验收的真实ASR。候选内存缓存到期也会清除，用户已核对带入的原表单文字不受任务TTL自动删除。
+
+R3b最新证据：[固定离线资源、Linux真实模型合成样本及静音修复](../progress/RECOGNITION_R3B_ASR_LINUX.md)。已取得并核验24个wheel与固定模型5文件，实际离线容器推理/超时恢复/网络禁止通过；原R3文档中的“尚无资源/未运行”是历史范围。中文/方言/噪声/真实用户准确率、Java真实ASR同版联调和手机仍待验，默认关闭，不代表生产接入完成。

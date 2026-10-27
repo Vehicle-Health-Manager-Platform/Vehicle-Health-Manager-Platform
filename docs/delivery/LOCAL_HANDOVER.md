@@ -54,6 +54,8 @@ R2b最新增量：[行驶证车牌/VIN候选与手动录车](../api/LICENSE_RECO
 
 R2b最终记录：[行驶证软件回归与真实模型限制](../progress/RECOGNITION_R2B_LICENSE.md)、[脱敏证据](../testing/LICENSE_RECOGNITION_2026_10_27.json)。既有私有图片保留策略不包含本功能自动到期/本人删除承诺，正式证件前须明确政策。
 
-R3增量：[ASR持久任务/权限/页面与接入](../api/ASR_JOBS.md)，V063增加recognition_job（当前132表），默认关闭。统一运行器新增ASR第10组并纳入源码/requirements.in摘要。真实模型、完整transitive wheel/hash锁、Linux镜像及授权语音仍未验，见[离线准备](../../services/asr/README.md)。
+R3增量：[ASR持久任务/权限/页面与接入](../api/ASR_JOBS.md)，V063增加recognition_job（当前132表），默认关闭。统一运行器新增ASR第10组并纳入源码/requirements.in摘要。R3软件阶段的模型/资源待验已由R3b补充固定资源及Linux合成样本验证；授权语音/中文效果仍未验，见[离线准备](../../services/asr/README.md)。
 
-R3软件闭环最终记录：[ASR异步任务回归/已知限制](../progress/RECOGNITION_R3_ASR.md)、[脱敏证据](../testing/ASR_JOBS_2026_10_27.json)。模型权重/全量依赖锁/Linux实际运行与真实语音效果仍未验，不将软件替身结果当作真实转写通过。
+R3软件闭环最终记录：[ASR异步任务回归/已知限制](../progress/RECOGNITION_R3_ASR.md)、[脱敏证据](../testing/ASR_JOBS_2026_10_27.json)。该记录为R3历史范围；R3b另有固定权重/完整Linux Python依赖锁及真实模型合成样本证据，真实用户效果仍未验。
+
+R3b最新证据：[固定离线资源、Linux真实模型合成样本及静音修复](../progress/RECOGNITION_R3B_ASR_LINUX.md)。已取得并核验24个wheel与固定模型5文件，实际离线容器推理/超时恢复/网络禁止通过；原R3文档中的“尚无资源/未运行”是历史范围。中文/方言/噪声/真实用户准确率、Java真实ASR同版联调和手机仍待验，默认关闭，不代表生产接入完成。

@@ -1,43 +1,69 @@
-# 受限离线 ASR 服务准备
+# 受限离线 ASR 服务
 
-本服务为持久ASR任务的私有能力适配，默认关闭。现阶段没有安装/加载真实ASR权重，没有完成授权中文语音、方言/噪声、手机或Linux生产运行验收；合成Provider、协议/进程测试只能验证软件边界。[公共任务接口及操作](../../docs/api/ASR_JOBS.md)与[实施设计](../../docs/superpowers/specs/2026-10-27-asr-jobs-design.md)分别说明权限和人工确认。
+持久任务接口见[ASR任务](../../docs/api/ASR_JOBS.md)，默认开关保持关闭。R3b已在本地Linux x86_64容器实际加载固定small模型，验证英文合成语音、纯数字静音、超时恢复和网络禁止；这不代表中文、方言、噪声、手机或真实用户准确率验收。[运行报告](../../docs/progress/RECOGNITION_R3B_ASR_LINUX.md)分别列出证据和剩余事项。
 
-## 依赖与离线资源
+## 固定资源与准备
 
-试点为 `Systran/faster-whisper-small` 多语模型、CPU/int8。源码要求 faster-whisper 1.2.1，本目录 `requirements.in` 只列直接需求，**不是完整依赖或wheel/hash锁**。不要将一次 `pip install -r requirements.in` 当作可复现部署证据。
+- models.lock.json固定Systran/faster-whisper-small的实际40位revision、官方文件URL/字节数/SHA-256及公开MIT声明依据；权重不进入Git。
+- runtime-wheels-linux.json记录官方PyPI的24个Linux x86_64/CPython3.11 wheel来源与摘要。requirements-runtime-linux.lock.txt是对应完整Python运行闭包，包含setuptools；requirements.in只表达直接需求。
+- 固定Python基础镜像摘要；apt安装的OS包版本另记于实际容器报告。没有固定Debian快照源，不能保证未来重建产生字节完全相同的镜像，也不能将这些Linux轮子用于Windows/ARM。
 
-正式准备负责人需要：
-
-1. 在独立Linux构建环境审查许可和支持平台，固定Python及全部transitive包/轮子版本、下载来源、SHA-256与镜像摘要；离线wheelhouse须包含实际所需PyAV/CTranslate2等原生依赖，不能请求时联网补包。
-2. 从已确认来源取得上述模型的精确40位revision，记录模型/Tokenizer及所有文件摘要和许可依据。不要凭模型简称或本项目代码声明推断已取得某个revision。
-3. 本地模型目录至少包含 model.bin、config.json、tokenizer.json、vocabulary.txt，以及实际快照的其他文件；禁止符号链接或目录外文件。运行时比对完整文件清单/摘要和包版本。
-4. 在隔离资源环境验证实际模型加载、MP3解码、推理时间/内存、无网络、超时/崩溃和进程清理，再接获授权样本及业务网关。
-
-`prepare_manifest.py` 只记录**已经下载的目录与已经安装、审查过的运行时**，不负责下载，不证明revision来源。示例变量必须由负责人填写真实核验值，不可把占位值或随机hash用于验收：
+在仓库根执行以下命令。带--download-public-assets才联网，默认只校验；已有目录不完整或存在多余文件会失败，不能自动覆盖。下载使用临时目录、字节预算、分段限次重试与最终hash，全部校验后才发布目录。
 
 ```sh
-python services/asr/prepare_manifest.py \
-  --root "$ASR_MODEL_ROOT" \
-  --revision "$ASR_MODEL_REVISION" \
-  --license-reference "$ASR_LICENSE_REFERENCE" \
-  --accept-license \
-  --output "$ASR_MODEL_MANIFEST"
+python services/asr/prepare_assets.py --kind wheels --output .cache/asr-linux/wheels --download-public-assets
+python services/asr/prepare_assets.py --kind model --output .cache/asr-linux/models --download-public-assets
+python services/asr/prepare_assets.py --kind wheels --output .cache/asr-linux/wheels
+python services/asr/prepare_assets.py --kind model --output .cache/asr-linux/models
 ```
 
-manifest内必须有 repository、revision、license_reference、license_accepted、packages和files。代码同时校验 faster-whisper、ctranslate2、av、tokenizers、onnxruntime、huggingface-hub、numpy等实际包版本；记录完整运行时仍须维护独立的全依赖锁，不靠此manifest替代供应链审查。不得设置虚假的许可同意或用“清单生成成功”表述模型效果通过。
+wheel目录仅包含声明的wheel及自动生成的requirements.lock；模型目录仅包含声明的5个文件。禁止符号链接、额外文件或改写版本。下载需要可用官方网络，失败不代表资源可用；不自动改镜像源或降低TLS/hash校验。
 
-## 启动与隔离
+## 镜像与真实运行验收
 
-服务端变量：`ASR_SERVICE_ENABLED=false`、`ASR_MODEL_ROOT`、`ASR_MODEL_MANIFEST`、`ASR_SERVICE_TOKEN`（32..512个可见ASCII字符）、`ASR_PORT=8091`。模型启用与Java的 `ASR_ENABLED` 为独立开关；Java还需私有 `ASR_URL` 和相同token。
+构建从仓库根执行，命名上下文必须为上述已核验的wheel目录；pip安装阶段--no-index --require-hashes，不会请求时下载依赖。
 
-启用前必须完成Linux隔离、内存/CPU/文件上限与无网络保护，按源码的guard要求构建镜像。本目录Dockerfile是待验证的构建入口，未交付经过验证的Linux镜像/overlay或完整transitive锁；不要直接把服务暴露公网。服务内部只接受严格JSON、有限base64字节与既有1..60秒/<=3MiB MP3，不接受URL、路径或任意远程模型名称；推理只在受限子进程内执行。未准备模型时保持关闭，返回不可用而不是合成文本。
+```sh
+docker build -f services/asr/Dockerfile --build-context asr_wheels=.cache/asr-linux/wheels -t autocare-asr-runtime:acceptance .
+```
 
-运行命令为 `python services/asr/src/asr_server.py`，需在上述隔离与已核验本地资源环境中执行；这条命令本身不提供隔离保证。可信度保持null，不将平均logprob伪装为准确率。超过片段/字数/时间预算明确失败，不静默截断。
+准备本机英文合成WAV。Windows有Microsoft Zira Desktop时可在PowerShell中运行以下命令；只生成无个人资料的固定测试句，不录制用户声音：
 
-## 回归与验收
+```powershell
+Add-Type -AssemblyName System.Speech
+$asrSynth = New-Object System.Speech.Synthesis.SpeechSynthesizer
+$asrSynth.SelectVoice('Microsoft Zira Desktop')
+$asrSynth.SetOutputToWaveFile((Join-Path (Resolve-Path .cache/asr-linux).Path 'synthetic-english.wav'))
+$asrSynth.Speak('The engine makes a noise. Please check the brakes.')
+$asrSynth.Dispose()
+```
 
-软件回归：`python -m unittest discover -s services/asr -p 'test_*.py'`；统一本地入口 `python scripts/run_local_delivery.py` 包含ASR第10组及源码摘要。这些测试的Provider/音频夹具须明确标识，不把返回的source标签视作真实模型已运行。
+该声音不可用时，负责人准备同一句英文的合法本地合成WAV并记录合成来源；不能代换真实个人录音后上传报告。验收入口会重新核验资源并构建镜像，仅启动本轮标记的隔离容器：
 
-真实验收至少包含：授权普通话/方言/噪声/静音/不完整音频、合法时长边界、坏格式/超限、段时间/文本准确性、人工修正、真实受限子进程超时/资源耗尽/退出、关闭与重启，以及Java任务的取消/撤销/材料变化/TTL与原表单保存。记录版本、模型revision/文件摘要、样本授权、分项结果及失败；不以单个样本或协议测试代替本领域效果。原音频保留与删除政策仍按input_material单独管理。
+```sh
+python scripts/run_linux_asr_acceptance.py --allow-isolated-linux-asr --models-root .cache/asr-linux/models --wheelhouse .cache/asr-linux/wheels --synthetic-english-wav .cache/asr-linux/synthetic-english.wav
+```
 
-构建入口需从仓库根使用 `-f services/asr/Dockerfile`，并提供命名 `asr_wheels` 构建上下文；该目录必须有负责人准备的完整 `requirements.lock` 及匹配wheel/hash。当前没有这些已验资源，不应直接构建/启用并声称通过。健康状态中CONFIG_VERIFIED仅表示配置/清单已核对，真实受限子进程成功推理后才READY；测试引擎为TEST_ONLY。
+容器无网络/无宿主端口、非root、只读rootfs/资源挂载、2GiB内存及swap上限、CPU2、PID128、16MiB共享内存、256MiB临时目录、cap-drop及no-new-privileges。HTTP检查只用容器回环；模型子进程另用实际seccomp禁止socket。运行检查实际英文预期词、数字静音空结果、错误凭据/JSON、健康状态、真实子进程超时及清理、429/恢复和关闭。源码前后摘要必须一致；退出时只清理精确匹配本轮标识的容器。日志和独立report.json保存在忽略的.cache/linux-asr-*，失败返回非零。
+
+这不是生产部署工具。没有完成跨容器Java→真实ASR→原表单的同版联调，没有做OOM/父进程故障注入或真实授权声音效果集；资源限制配置与内核禁止证据不能替代这些检查。
+
+## 私有服务接入与回滚
+
+服务变量：ASR_SERVICE_ENABLED=false、ASR_MODEL_ROOT、ASR_MODEL_MANIFEST、ASR_SERVICE_TOKEN（32..512个可见ASCII字符）、ASR_PORT=8091。Java另需ASR_ENABLED、固定私有ASR_URL及相同token；独立开关默认关闭，禁止公网暴露。
+
+prepare_manifest.py只记录已经取得的固定本地文件及实际安装包版本，不下载资源或证明许可来源。先在目标Linux镜像内核对许可并生成清单，输出在模型目录外，再把模型和清单分别只读挂载；不要在已锁定模型目录加入额外文件。
+
+```sh
+python services/asr/prepare_manifest.py --root "$ASR_MODEL_ROOT" --revision "$ASR_MODEL_REVISION" --license-reference "$ASR_LICENSE_REFERENCE" --accept-license --output "$ASR_MODEL_MANIFEST"
+```
+
+在目标镜像实际安装环境执行，不能用Windows包版本生成Linux清单。服务启动只核验清单，状态为CONFIG_VERIFIED；受限子进程成功处理音频后才READY。测试引擎永远TEST_ONLY。请求只接固定JSON和现有1..60秒/3MiB MP3，不接URL/路径/模型简称；可信度保持null。只对完全零能量数字静音直接返回EMPTY，不使用幅度阈值删除轻声；其他静音/背景噪声幻觉风险仍需评估，候选必须人工核对。
+
+回滚先关闭Java及私有服务开关，核对活动任务、租约与TTL清理，再回退应用；不逆向删schema、档案或音频。原材料的保留和本人删除政策独立处理。
+
+## 回归与后续验收
+
+python -m unittest discover -s services/asr -p 'test_*.py'验证资源/协议/替身边界；python -m unittest discover -s scripts -p 'test_linux_asr_acceptance.py'验证验收入口的权限与资源约束。统一python scripts/run_local_delivery.py包括这两组和既有构建检查，不自动下载模型或执行真实容器验收。
+
+授权普通话/方言/噪声/静音/长短音频、坏编码/超限、时间片段/准确性、CPU时延与内存压力、父进程退出、重启、Java任务取消/撤销/材料变化/TTL及原表单保存、iOS/Android与云上传仍须分别记录版本/授权/结果。公开MIT模型声明不等于语音样本授权。正式微信、短信、支付与生产发布继续后置。

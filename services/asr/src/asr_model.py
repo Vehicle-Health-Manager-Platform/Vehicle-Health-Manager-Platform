@@ -51,6 +51,11 @@ class FasterWhisper:
         from faster_whisper.audio import decode_audio
         samples=decode_audio(io.BytesIO(audio),sampling_rate=16000)
         if not 16000<=len(samples)<=960000:raise ValueError('Decoded audio budget')
+        # Whisper can hallucinate words on digital silence. Only exact zero energy
+        # is handled here; no amplitude threshold that could discard quiet speech.
+        if not any(samples):
+            return result({'version':1,'task':'ASR','source':'FASTER_WHISPER','status':'EMPTY','language':None,
+                'duration_ms':duration,'segments':[],'requires_confirmation':True,'audio_recognition_performed':True},duration)
         segments,info=self.model.transcribe(samples,beam_size=5,condition_on_previous_text=False,vad_filter=False,word_timestamps=False)
         rows=[]
         for segment in segments:

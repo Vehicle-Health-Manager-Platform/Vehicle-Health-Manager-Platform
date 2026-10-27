@@ -51,9 +51,18 @@ class ModelTest(unittest.TestCase):
         class Model:
             def __init__(self,*args,**kwargs):captured.update(kwargs);captured['path']=args[0]
             def transcribe(self,samples,**kwargs):return iter([SimpleNamespace(start=0,end=.8,text=' 合成转写 ',avg_logprob=-.1)]),SimpleNamespace(language='zh')
-        modules={'faster_whisper':SimpleNamespace(WhisperModel=Model),'faster_whisper.audio':SimpleNamespace(decode_audio=lambda *args,**kwargs:[0]*16000)}
+        modules={'faster_whisper':SimpleNamespace(WhisperModel=Model),'faster_whisper.audio':SimpleNamespace(decode_audio=lambda *args,**kwargs:[.000001]*16000)}
         with patch.dict(sys.modules,modules):
             engine=FasterWhisper(self.root,self.manifest);output=engine.transcribe(b'test',1008)
         self.assertEqual(str(self.root.resolve()),captured['path']);self.assertTrue(captured['local_files_only']);self.assertEqual('cpu',captured['device']);self.assertEqual('int8',captured['compute_type']);self.assertIsNone(output['segments'][0]['confidence']);self.assertEqual('合成转写',output['segments'][0]['text'])
+
+    def test_exact_digital_silence_does_not_generate_hallucinated_words(self):
+        class Model:
+            def __init__(self,*args,**kwargs):pass
+            def transcribe(self,*args,**kwargs):raise AssertionError('Silence must not generate text')
+        modules={'faster_whisper':SimpleNamespace(WhisperModel=Model),'faster_whisper.audio':SimpleNamespace(decode_audio=lambda *args,**kwargs:[0.0]*16000)}
+        with patch.dict(sys.modules,modules):
+            output=FasterWhisper(self.root,self.manifest).transcribe(b'test',1008)
+        self.assertEqual('EMPTY',output['status']);self.assertEqual([],output['segments']);self.assertIsNone(output['language'])
 
 if __name__=='__main__':unittest.main()

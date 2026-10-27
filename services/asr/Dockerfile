@@ -1,5 +1,5 @@
-# Build from the repository root. ASR wheels are an operator-prepared named context,
-# never downloaded by this build. This image has not been accepted by the Windows tests.
+# Build from the repository root with the hash-verified asr_wheels named context.
+# Wheels are installed offline; Linux synthetic-sample acceptance is recorded separately.
 FROM python:3.11-slim-bookworm@sha256:f06d01d4ba3f8ad5af45a3ec87df19c1d317d8e8961edc0fabda61811af6f7cf
 WORKDIR /app
 RUN sed -i 's|http://deb.debian.org|https://deb.debian.org|g' /etc/apt/sources.list.d/debian.sources \
