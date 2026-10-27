@@ -103,3 +103,7 @@ test('mounted synchronous token watcher cannot erase operator actor during login
  clearOperatorSession();const scope=effectScope()
  try{scope.run(()=>watch(()=>[operatorToken(),operatorSession.actorId,operatorSession.canKnowledge],()=>{operatorToken()},{flush:'sync'}));setOperatorSession({access_token:'synthetic-new-operator',expires_in:900,user:{id:7,can_review:false,can_onboard:false,can_knowledge:true}});assert.equal(operatorSession.actorId,7);assert.equal(operatorToken(),'synthetic-new-operator');assert.equal(operatorSession.canKnowledge,true)}finally{scope.stop();clearOperatorSession()}
 })
+test('malformed primitive payloads reject safely instead of throwing inside response callbacks',async()=>{
+ for(const value of [undefined,null,true,5,'invalid',[],{}]){assert.equal(validKnowledgePayload(value),false);assert.equal(validKnowledgeBody(value,'create'),false)}
+ const calls=[],api=createKnowledgeApi({baseUrl:'https://fixture.test',runtime:()=>({request:o=>calls.push(o)})});const pending=api.admin('operator');calls[0].success({statusCode:200,data:{code:0,data:page([{...document(),payload:'invalid'}])}});await assert.rejects(pending,e=>e.kind==='protocol')
+})

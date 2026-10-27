@@ -877,3 +877,5 @@ R4b本地收口：99选定Java零失败/跳过，11组全过（1223 miniapp/559 
 R4b上传：实现acbd7e7，草稿[PR249](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/249)依赖PR248，远端实现head已核对；CI在运行，未完成不计通过。测试临时Vite停止、受限容器清理；默认关闭，不合并上线。
 
 R5a收口：最终189选定后端、真实材料补充59（80请求审计）、11组全过（1228 miniapp/560 Python/80 OCR+1平台跳过/40 ASR/26文档及构建契约）、gstack运营10检查；真实跨MySQL19恢复检查、134表/65迁移和合成索引块/外键通过。源8f742409一致；全部provider明确替身，无真实embedding/公开VECTOR/自动调度。前置PR249/b1 2399项旧image未知类型单失败，修正webp独立回传5aacb52，新CI待核。
+
+R5a最终补充：畸形资料payload原始值先判对象，避免in在异步回调抛错而挂起；16项许可/会话/协议检查及最终11组重新通过（1229/560/80+1跳过/40/26）。最终源34291543，浏览器10项复测通过；草稿PR250依赖已修复PR249/5aacb52，CI尚未结束不计通过，未合并部署。

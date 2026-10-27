@@ -2,7 +2,7 @@
   "version": 1,
   "stage": "R5a",
   "recorded_at": "2026-10-27T12:51:08.754568+00:00",
-  "source_sha256": "8f74240941d10a476cbdb48720982c82fdce96ef807e59e2e112165d023c605b",
+  "source_sha256": "34291543f6e6376a9e382006d94648a98facbeca5407cdafd29170aed9c77e01",
   "selected_checks_passed": true,
   "production_acceptance_passed": false,
   "full_api_acceptance_passed": false,
@@ -990,9 +990,9 @@
   },
   "local_delivery": {
     "version": 1,
-    "finished_at": "2026-10-27T12:47:22.800092+00:00",
+    "finished_at": "2026-10-27T12:59:23.535326+00:00",
     "selected_checks_passed": true,
-    "source_sha256": "8f74240941d10a476cbdb48720982c82fdce96ef807e59e2e112165d023c605b",
+    "source_sha256": "34291543f6e6376a9e382006d94648a98facbeca5407cdafd29170aed9c77e01",
     "sources_unchanged": true,
     "backend_requested": false,
     "backend_runtime_verified": false,
@@ -1008,77 +1008,77 @@
         "name": "miniapp-unit",
         "status": "passed",
         "exit_code": 0,
-        "duration_seconds": 2.516,
+        "duration_seconds": 2.235,
         "log": "miniapp-unit.log"
       },
       {
         "name": "python-regression",
         "status": "passed",
         "exit_code": 0,
-        "duration_seconds": 109.828,
+        "duration_seconds": 105.812,
         "log": "python-regression.log"
       },
       {
         "name": "ocr-regression",
         "status": "passed",
         "exit_code": 0,
-        "duration_seconds": 20.953,
+        "duration_seconds": 20.781,
         "log": "ocr-regression.log"
       },
       {
         "name": "asr-regression",
         "status": "passed",
         "exit_code": 0,
-        "duration_seconds": 5.141,
+        "duration_seconds": 5.172,
         "log": "asr-regression.log"
       },
       {
         "name": "document-regression",
         "status": "passed",
         "exit_code": 0,
-        "duration_seconds": 8.25,
+        "duration_seconds": 8.219,
         "log": "document-regression.log"
       },
       {
         "name": "wechat-build",
         "status": "passed",
         "exit_code": 0,
-        "duration_seconds": 12.859,
+        "duration_seconds": 12.844,
         "log": "wechat-build.log"
       },
       {
         "name": "h5-build",
         "status": "passed",
         "exit_code": 0,
-        "duration_seconds": 14.266,
+        "duration_seconds": 15.14,
         "log": "h5-build.log"
       },
       {
         "name": "openapi-consistency",
         "status": "passed",
         "exit_code": 0,
-        "duration_seconds": 0.328,
+        "duration_seconds": 0.282,
         "log": "openapi-consistency.log"
       },
       {
         "name": "migration-mounts",
         "status": "passed",
         "exit_code": 0,
-        "duration_seconds": 0.14,
+        "duration_seconds": 0.125,
         "log": "migration-mounts.log"
       },
       {
         "name": "handover-consistency",
         "status": "passed",
         "exit_code": 0,
-        "duration_seconds": 0.282,
+        "duration_seconds": 0.265,
         "log": "handover-consistency.log"
       },
       {
         "name": "contract-verdicts",
         "status": "passed",
         "exit_code": 0,
-        "duration_seconds": 0.187,
+        "duration_seconds": 0.172,
         "log": "contract-verdicts.log"
       }
     ]
@@ -2682,5 +2682,15 @@
     "Recovery uses synthetic structural vectors, not trusted published knowledge/model evidence.",
     "Selected local tests and prior CI failure are not a same-version full backend/all-362-API pass.",
     "No production deployment, WeChat/SMS/physical-device/capacity acceptance."
-  ]
+  ],
+  "final_protocol_regression": {
+    "licensed_knowledge_cases": 16,
+    "malformed_primitive_payloads_rejected_without_pending_callback": true
+  },
+  "github": {
+    "draft_pr": "https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/250",
+    "base": "codex/document-owner-jobs",
+    "parent_fix": "5aacb52",
+    "ci_completed": false
+  }
 }

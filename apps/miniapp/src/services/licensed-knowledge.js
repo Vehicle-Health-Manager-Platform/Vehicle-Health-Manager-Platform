@@ -5,7 +5,7 @@ import {ServiceError} from './service-catalog.js'
 const LEGACY_KNOWLEDGE_FIELDS=['title','publisher','document_version','source_reference','license_reference','license_confirmed','model_id','valid_from','valid_to','search_allowed','excerpt_allowed','ai_allowed','body']
 export const EMBEDDING_POLICY='KNOWLEDGE_EMBEDDING_V1'
 export const KNOWLEDGE_FIELDS=[...LEGACY_KNOWLEDGE_FIELDS,'embedding_allowed','embedding_policy_version']
-const payloadFields=n=>n&&('embedding_allowed' in n||'embedding_policy_version' in n)?KNOWLEDGE_FIELDS:LEGACY_KNOWLEDGE_FIELDS
+const payloadFields=n=>n&&typeof n==='object'&&('embedding_allowed' in n||'embedding_policy_version' in n)?KNOWLEDGE_FIELDS:LEGACY_KNOWLEDGE_FIELDS
 
 const stamp=n=>typeof n==='string'&&/^[1-9][0-9]{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(n)&&Number.isFinite(Date.parse(n))&&new Date(n).toISOString().replace('.000','')===n
 const text=(n,max,lines=false)=>typeof n==='string'&&n===n.trim()&&[...n].length>=1&&[...n].length<=max&&!(lines?/[\u0000-\u0009\u000b-\u001f\u007f\p{Cf}\p{Cs}]/u:/[\p{Cc}\p{Cf}\p{Cs}]/u).test(n)
