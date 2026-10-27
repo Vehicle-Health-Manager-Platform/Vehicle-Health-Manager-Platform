@@ -44,3 +44,5 @@ gstack browse 390×844合成H5完整旅程17断言通过：录音规格、选录
 完整最终版本后端/全API、Linux实际构建运行、权重/依赖资源、获授权语音效果集、手机及原材料保留/本人删除政策仍待验。下一步先准备ASR完整离线依赖/模型并做Linux实际运行与授权样本验证，随后R4图文/PDF复用持久任务授权/TTL约束，R5向量需独立embedding许可/版本/撤回检查；本轮不等于其余所有功能开发完成。
 
 脱敏机器证据：[ASR_JOBS_2026_10_27.json](../testing/ASR_JOBS_2026_10_27.json)。本机原日志/截图/测试凭据仅在.cache/stage-handover；最终10组日志在.cache/local-delivery-620ed3d2858c，均不上传。前置PR244最终8项CI成功、仍OPEN，本轮未合并部署。
+
+R3上传：实现b510e30已推送origin/codex/asr-durable-jobs，草稿[PR245](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/245)依赖PR244。未合并或部署；新head的远程CI另核，运行中不计通过。

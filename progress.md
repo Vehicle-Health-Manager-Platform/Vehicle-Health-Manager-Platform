@@ -857,3 +857,5 @@ R3开始：复用同车辆同用途input_material，新增持久异步转写；�
 R3已落地V063及任务创建/查询/取消、租约/CAS/TTL、后台线程、私有ASR协议/离线适配；开始真实MySQL/HTTP增量回归。前端任务/轮询/取消/未知请求恢复与带入前再校验已接入，尚未记录完整验证通过。
 
 R3软件回归与机器证据已收口；前置PR244最终8项CI成功。准备提交上传草稿，不合并部署。真实ASR资源/效果按后续准备，不用替身冒称成功。
+
+R3上传：实现b510e30已推送origin/codex/asr-durable-jobs，草稿[PR245](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/245)依赖PR244。未合并或部署；新head的远程CI另核，运行中不计通过。
