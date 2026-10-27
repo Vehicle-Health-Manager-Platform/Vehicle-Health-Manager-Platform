@@ -129,10 +129,10 @@ class RecoveryGuardTest(unittest.TestCase):
             create.assert_not_called(); sql.assert_not_called()
 
     def test_migration_gaps_and_duplicates_fail_closed(self):
-        for index in range(1, 64): (self.work / f'V{index:03}__fixture.sql').write_text('SELECT 1;', encoding='utf-8')
+        for index in range(1, 65): (self.work / f'V{index:03}__fixture.sql').write_text('SELECT 1;', encoding='utf-8')
         with patch.object(recovery, 'MIGRATIONS', self.work):
-            self.assertEqual(63, len(recovery.migration_files()))
-            (self.work / 'V063__fixture.sql').unlink()
+            self.assertEqual(64, len(recovery.migration_files()))
+            (self.work / 'V064__fixture.sql').unlink()
             with self.assertRaises(recovery.RecoveryError): recovery.migration_files()
             (self.work / 'V061__duplicate.sql').write_text('SELECT 1;', encoding='utf-8')
             with self.assertRaises(recovery.RecoveryError): recovery.migration_files()

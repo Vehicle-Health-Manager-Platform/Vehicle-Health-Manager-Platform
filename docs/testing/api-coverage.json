@@ -5,11 +5,11 @@
   "current_backend_revalidated": false,
   "scope": "Selected recorded synthetic-identity/LOCAL_TEST suites only; other tests are not indexed. Reconciled with current definitions; no new HTTP execution or production acceptance.",
   "counts": {
-    "contract_operations": 359,
-    "protected_operations": 345,
+    "contract_operations": 362,
+    "protected_operations": 348,
     "four_kind_definitions": 317,
     "historical_four_kind_operations": 317,
-    "without_complete_historical_evidence": 42,
+    "without_complete_historical_evidence": 45,
     "current_run_operations": 0,
     "suites": 36
   },
@@ -13641,6 +13641,78 @@
       "sources": []
     },
     {
+      "operation_id": "post_api_recognition_documents_jobs",
+      "method": "POST",
+      "path": "/api/recognition/documents/jobs",
+      "roles": "当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
+      "protected": true,
+      "implementation_status": "document-durable-job-implemented-local",
+      "defined_kinds": [],
+      "historical_kinds": [],
+      "missing_definition_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "missing_historical_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "current_acceptance": "NOT_RUN",
+      "sources": []
+    },
+    {
+      "operation_id": "get_api_recognition_documents_jobs_id",
+      "method": "GET",
+      "path": "/api/recognition/documents/jobs/{id}",
+      "roles": "当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
+      "protected": true,
+      "implementation_status": "document-durable-job-implemented-local",
+      "defined_kinds": [],
+      "historical_kinds": [],
+      "missing_definition_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "missing_historical_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "current_acceptance": "NOT_RUN",
+      "sources": []
+    },
+    {
+      "operation_id": "post_api_recognition_documents_jobs_id_cancel",
+      "method": "POST",
+      "path": "/api/recognition/documents/jobs/{id}/cancel",
+      "roles": "当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
+      "protected": true,
+      "implementation_status": "document-durable-job-implemented-local",
+      "defined_kinds": [],
+      "historical_kinds": [],
+      "missing_definition_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "missing_historical_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "current_acceptance": "NOT_RUN",
+      "sources": []
+    },
+    {
       "operation_id": "post_api_refunds_callback_LOCAL_TEST",
       "method": "POST",
       "path": "/api/refunds/callback/LOCAL_TEST",
@@ -15414,6 +15486,6 @@
       ]
     }
   ],
-  "contract_sha256": "deef85df7529ff1ee564529c4c2338d0a3175737a2c3407ae258868d3131b0ff",
+  "contract_sha256": "786b3b3c411f07a75821601bcd1b5fe4fa2d2e310a8b1ff7bb99026803a9bb92",
   "input_hash_policy": "Input SHA256 uses CRLF-to-LF normalization. Historical raw collection digests must match its LF or CRLF byte form; content changes are rejected."
 }

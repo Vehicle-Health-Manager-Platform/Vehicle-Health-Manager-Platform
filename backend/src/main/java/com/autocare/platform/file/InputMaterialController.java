@@ -30,9 +30,9 @@ public class InputMaterialController {
             if(file==null || file.isEmpty())throw new UploadHttpException(400,"上传文件无效");
             if(file.getSize()>InputMaterialValidator.PDF_MAX)throw new UploadHttpException(413,"辅助材料过大");
             String kind=request.getHeader("X-Material-Kind");
-            if(!("audio".equals(kind)||"pdf".equals(kind)))throw new UploadHttpException(400,"辅助材料类型无效");
+            if(!("audio".equals(kind)||"pdf".equals(kind)||"image".equals(kind)))throw new UploadHttpException(400,"辅助材料类型无效");
             // Native temporary filenames are not portable; validate bytes against the explicit kind.
-            try(var input=file.getInputStream()){return service().upload(actor,scope,request.getHeader("Idempotency-Key"),"audio".equals(kind)?"material.mp3":"material.pdf",input);}
+            try(var input=file.getInputStream()){return service().upload(actor,scope,request.getHeader("Idempotency-Key"),"audio".equals(kind)?"material.mp3":"image".equals(kind)?"material.image":"material.pdf",input);}
         }catch(jakarta.servlet.ServletException|IOException e){throw new UploadHttpException(400,"上传请求无效");}
     }
     @GetMapping("/{id}/access")

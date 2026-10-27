@@ -6,7 +6,7 @@
   "counts": {
     "pages": 110,
     "template_files": 3,
-    "template_entries": 124,
+    "template_entries": 139,
     "guides": 4
   },
   "inputs": {
@@ -121,13 +121,13 @@
     "apps/miniapp/src/pages/merchant/invite.vue": "79ae4e99b15618d046725fbfc66ebf1bf8154298925f18a248849d9d19fb9e8b",
     "apps/miniapp/src/pages/operator/invite-policies.vue": "80a7f2ffb2187050ec2165e82b8d1fd44b689ec15605bc14d48753d94eadc4cf",
     "apps/miniapp/src/pages/operator/diagnosis-policies.vue": "78b977ef36d32d2c988cbe7e39bbfa9cbfc89ea60df280b4f4c43a174f45e772",
-    ".env.example": "c8a4f84592c5146afc139b2e2c1fee633aa18ec7aebed692834960ae614becc3",
+    ".env.example": "b5642d8f1d392003b8756a4a7a3f4064a871027d0aa1b3e143a7316fbc53bc4f",
     "apps/miniapp/.env.example": "e8051b9f73d1c3bc168438e191bbac4964a844188833ff90ee71159c9bb65d34",
-    "deploy/cloudrun/env.example": "a57ccebe9fbe2943c38b27d7561c3a18626a19236b1a60eab6b6f1ddb53ad6b8",
-    "docs/user-guides/OWNER.md": "0c7d2a3999528602dffd1952078ac1117d360ce64966fabffee551b905f65fdf",
+    "deploy/cloudrun/env.example": "91fae638a46d826b48f2a66589b9024dc7d538a8f1bba97bd766ea801584af7f",
+    "docs/user-guides/OWNER.md": "84ed439f7edc7dab71928a3f8da79aeb9713a96e07a5ee85f4c9cb6f39d979fe",
     "docs/user-guides/MERCHANT.md": "3ef5e2265e7a22ff838b1044bc844bcaa2c4927c96e10be7ab2d2cffe9dd3762",
     "docs/user-guides/TECHNICIAN.md": "29997a2d32942c49dc1821fd777dab72e891e119eeb83d0479b28696e2207baa",
-    "docs/user-guides/OPERATOR.md": "9ed6f572d606a7a5bfb616e00f90a761b75e29e2555061e45f043604da10a3c2",
+    "docs/user-guides/OPERATOR.md": "cbadb577eaaaf1be73199bcb25ba15aa0c00367b32df4bd29b8fe5ecc7dec75c",
     "docs/delivery/REMAINING_ACCEPTANCE.md": "85d3a8540a96620a1c9ca2f7453b7aeb9c33dfd27896fd570609a18d71acfefd"
   },
   "pages": [
@@ -1219,6 +1219,51 @@
       "template_boolean": null
     },
     {
+      "source": ".env.example",
+      "key": "DOCUMENT_ENABLED",
+      "template_boolean": "false"
+    },
+    {
+      "source": ".env.example",
+      "key": "DOCUMENT_URL",
+      "template_boolean": null
+    },
+    {
+      "source": ".env.example",
+      "key": "DOCUMENT_SERVICE_TOKEN",
+      "template_boolean": null
+    },
+    {
+      "source": ".env.example",
+      "key": "DOCUMENT_ALLOW_PRIVATE_HTTP",
+      "template_boolean": "false"
+    },
+    {
+      "source": ".env.example",
+      "key": "DOCUMENT_JOB_INTERVAL_MS",
+      "template_boolean": null
+    },
+    {
+      "source": ".env.example",
+      "key": "DOCUMENT_CLEANUP_INTERVAL_MS",
+      "template_boolean": null
+    },
+    {
+      "source": ".env.example",
+      "key": "DOCUMENT_SERVICE_ENABLED",
+      "template_boolean": "false"
+    },
+    {
+      "source": ".env.example",
+      "key": "DOCUMENT_CORE_ENABLED",
+      "template_boolean": "false"
+    },
+    {
+      "source": ".env.example",
+      "key": "DOCUMENT_PORT",
+      "template_boolean": null
+    },
+    {
       "source": "apps/miniapp/.env.example",
       "key": "VITE_API_BASE_URL",
       "template_boolean": null
@@ -1411,6 +1456,36 @@
     {
       "source": "deploy/cloudrun/env.example",
       "key": "ASR_CLEANUP_INTERVAL_MS",
+      "template_boolean": null
+    },
+    {
+      "source": "deploy/cloudrun/env.example",
+      "key": "DOCUMENT_ENABLED",
+      "template_boolean": "false"
+    },
+    {
+      "source": "deploy/cloudrun/env.example",
+      "key": "DOCUMENT_URL",
+      "template_boolean": null
+    },
+    {
+      "source": "deploy/cloudrun/env.example",
+      "key": "DOCUMENT_SERVICE_TOKEN",
+      "template_boolean": null
+    },
+    {
+      "source": "deploy/cloudrun/env.example",
+      "key": "DOCUMENT_ALLOW_PRIVATE_HTTP",
+      "template_boolean": "false"
+    },
+    {
+      "source": "deploy/cloudrun/env.example",
+      "key": "DOCUMENT_JOB_INTERVAL_MS",
+      "template_boolean": null
+    },
+    {
+      "source": "deploy/cloudrun/env.example",
+      "key": "DOCUMENT_CLEANUP_INTERVAL_MS",
       "template_boolean": null
     }
   ]

@@ -228,6 +228,21 @@
       "operation": "POST /api/recognition/asr/jobs/{id}/cancel",
       "verdict": "implemented-local",
       "reason": "R3持久ASR任务、当前OWNER/同车辆同用途权限、幂等/取消/租约/TTL及人工转写核对软件已实现；真实faster-whisper模型与授权语音效果尚未验收，局部替身流程不作为全部历史四类HTTP证据。"
+    },
+    {
+      "operation": "POST /api/recognition/documents/jobs",
+      "verdict": "implemented-local",
+      "reason": "R4b持久文档任务、独立图片材料与人工逐块核对软件已实现；本地替身HTTP/MySQL不代表真实证件或模型效果，真实中文单据/手机与历史四类API全覆盖另验，默认关闭。"
+    },
+    {
+      "operation": "GET /api/recognition/documents/jobs/{id}",
+      "verdict": "implemented-local",
+      "reason": "R4b持久文档任务、独立图片材料与人工逐块核对软件已实现；本地替身HTTP/MySQL不代表真实证件或模型效果，真实中文单据/手机与历史四类API全覆盖另验，默认关闭。"
+    },
+    {
+      "operation": "POST /api/recognition/documents/jobs/{id}/cancel",
+      "verdict": "implemented-local",
+      "reason": "R4b持久文档任务、独立图片材料与人工逐块核对软件已实现；本地替身HTTP/MySQL不代表真实证件或模型效果，真实中文单据/手机与历史四类API全覆盖另验，默认关闭。"
     }
   ]
 }

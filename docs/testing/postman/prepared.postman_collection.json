@@ -15453,6 +15453,161 @@
       ]
     },
     {
+      "name": "post_api_recognition_documents_jobs",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/recognition/documents/jobs",
+        "header": [
+          {
+            "key": "Idempotency-Key",
+            "value": "{{post_api_recognition_documents_jobs_Idempotency_Key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "description": "本人同车辆同用途图片/PDF创建持久图文提取候选任务\nRoles: 当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "type": "string",
+              "value": "{{access_token}}"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{{body_post_api_recognition_documents_jobs}}"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.variables.get(\"enable_prepared_requests\") !== \"true\") { pm.execution.skipRequest(); }",
+              "else {",
+              "  const missing = [\"status_post_api_recognition_documents_jobs\", \"post_api_recognition_documents_jobs_Idempotency_Key\", \"access_token\", \"body_post_api_recognition_documents_jobs\"].filter(k => !pm.variables.get(k));",
+              "  if (missing.length) { pm.execution.skipRequest(); throw new Error(\"Configure fixture variables before sending: \" + missing.join(\",\")); }",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"configured scenario status\", () => pm.response.to.have.status(Number(pm.variables.get(\"status_post_api_recognition_documents_jobs\"))));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "get_api_recognition_documents_jobs_id",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/recognition/documents/jobs/{{get_api_recognition_documents_jobs_id_id}}",
+        "header": [],
+        "description": "本人查询图文提取排队状态与短期图文提取候选\nRoles: 当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "type": "string",
+              "value": "{{access_token}}"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.variables.get(\"enable_prepared_requests\") !== \"true\") { pm.execution.skipRequest(); }",
+              "else {",
+              "  const missing = [\"status_get_api_recognition_documents_jobs_id\", \"get_api_recognition_documents_jobs_id_id\", \"access_token\"].filter(k => !pm.variables.get(k));",
+              "  if (missing.length) { pm.execution.skipRequest(); throw new Error(\"Configure fixture variables before sending: \" + missing.join(\",\")); }",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"configured scenario status\", () => pm.response.to.have.status(Number(pm.variables.get(\"status_get_api_recognition_documents_jobs_id\"))));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "post_api_recognition_documents_jobs_id_cancel",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/recognition/documents/jobs/{{post_api_recognition_documents_jobs_id_cancel_id}}/cancel",
+        "header": [
+          {
+            "key": "Idempotency-Key",
+            "value": "{{post_api_recognition_documents_jobs_id_cancel_Idempotency_Key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "description": "本人取消图文提取任务并清空候选\nRoles: 当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "type": "string",
+              "value": "{{access_token}}"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{{body_post_api_recognition_documents_jobs_id_cancel}}"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.variables.get(\"enable_prepared_requests\") !== \"true\") { pm.execution.skipRequest(); }",
+              "else {",
+              "  const missing = [\"status_post_api_recognition_documents_jobs_id_cancel\", \"post_api_recognition_documents_jobs_id_cancel_id\", \"post_api_recognition_documents_jobs_id_cancel_Idempotency_Key\", \"access_token\", \"body_post_api_recognition_documents_jobs_id_cancel\"].filter(k => !pm.variables.get(k));",
+              "  if (missing.length) { pm.execution.skipRequest(); throw new Error(\"Configure fixture variables before sending: \" + missing.join(\",\")); }",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"configured scenario status\", () => pm.response.to.have.status(Number(pm.variables.get(\"status_post_api_recognition_documents_jobs_id_cancel\"))));"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "name": "post_api_refunds_callback_LOCAL_TEST",
       "request": {
         "method": "POST",

@@ -37,8 +37,8 @@ def digest(value):
 
 def migration_files():
     files = sorted(MIGRATIONS.glob('*.sql'))
-    require([p.name[:4] for p in files] == [f'V{i:03}' for i in range(1, 64)],
-            'Expected exactly ordered V001-V063; review the recovery upgrade boundary when adding migrations')
+    require([p.name[:4] for p in files] == [f'V{i:03}' for i in range(1, 65)],
+            'Expected exactly ordered V001-V064; review the recovery upgrade boundary when adding migrations')
     return files
 
 
@@ -246,21 +246,21 @@ def run_recovery(report, work):
         report['mysql_version'] = source.text('SELECT VERSION();')
         report['source_server_uuid'] = source.text('SELECT @@server_uuid;')
         source.create_database('recovery_source')
-        step('migrate_V001_V062', lambda: apply(source, 'recovery_source', files[:-1]))
+        step('migrate_V001_V063', lambda: apply(source, 'recovery_source', files[:-1]))
         source.sql((ROOT / 'scripts/fixtures/database_recovery.sql').read_bytes(), 'recovery_source')
         before = step('snapshot_before_upgrade', lambda: snapshot(source, 'recovery_source'))
-        require(before['table_count'] == 131, 'Unexpected pre-V063 table count')
+        require(before['table_count'] == 132, 'Unexpected pre-V064 table count')
         report['pre_upgrade'] = before
         old_file = work / 'pre-upgrade.sql'
         report['pre_upgrade_backup'] = step('backup_before_upgrade', lambda: source.backup('recovery_source', old_file))
         expect_error(source, 'recovery_source', files[-1].read_text(encoding='utf-8') + "\nSIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='synthetic post-DDL failure';", 1644)
-        require(source.text("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name='recognition_job';", 'recovery_source') == '1',
+        require(source.text("SELECT COUNT(*) FROM information_schema.check_constraints WHERE constraint_schema=DATABASE() AND constraint_name='ck_recognition_job' AND check_clause LIKE '%DOCUMENT%';", 'recovery_source') == '1',
                 'Expected committed DDL after injected failure')
         report['checks'].append({'name': 'injected_failure_leaves_committed_DDL', 'passed': True})
         step('restore_pre_upgrade_to_new_database', lambda: source.restore('recovery_rollback', old_file, report['pre_upgrade_backup']['sha256']))
         rollback = step('verify_backup_based_rollback', lambda: snapshot(source, 'recovery_rollback'))
         equal_snapshot(before, rollback, 'backup-based rollback')
-        step('retry_V063', lambda: apply(source, 'recovery_source', files[-1:]))
+        step('retry_V064', lambda: apply(source, 'recovery_source', files[-1:]))
         source.sql("INSERT INTO input_material(id,owner_id,vehicle_id,purpose,object_key,content_type,size_bytes,duration_ms,pages,scan_status) VALUES(1,1,1,'AI','synthetic-recovery/material','application/pdf',100,0,1,'CLEAN');", 'recovery_source')
         source.sql("INSERT INTO input_material(id,owner_id,vehicle_id,purpose,object_key,content_type,size_bytes,duration_ms,pages,scan_status) VALUES(2,1,1,'AI','synthetic-recovery/audio','audio/mpeg',6048,1008,0,'CLEAN'); "
                    "INSERT INTO recognition_job(id,owner_id,vehicle_id,material_id,purpose,origin_session_id,origin_expires_at,source_hash,state,error_code,expires_at) "

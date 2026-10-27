@@ -66,7 +66,7 @@ def main(argv=None):
     run=uuid.uuid4().hex;work=ROOT/'.cache'/('document-core-'+run);work.mkdir(parents=True)
     print('Document core run: '+str(work),flush=True)
     before=source_digest(ROOT);name='document-core-'+run[:12]
-    report={'passed':False,'source_sha256':before,'scope':'Internal kernel only; generated English documents; no owner API, persistent task, UI or user accuracy acceptance','production_acceptance_passed':False}
+    report={'passed':False,'source_sha256':before,'scope':'Internal kernel and private HTTP; generated English documents; no public owner API, persistent task, UI or user accuracy acceptance','production_acceptance_passed':False}
     def execute(command,log,timeout=180,required=True):
         result=subprocess.run(command,cwd=ROOT,capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=timeout)
         with (work/log).open('a',encoding='utf-8') as stream:stream.write(result.stdout+result.stderr)
@@ -115,6 +115,9 @@ def main(argv=None):
         result=docker(['exec',name,'python','/document/tests/linux_acceptance.py'],timeout=600,required=False)
         report['runtime']=json.loads(result.stdout)
         if result.returncode or not report['runtime']['passed']:raise RuntimeError('Document real runtime acceptance did not pass')
+        http=docker(['exec',name,'python','/document/tests/linux_http_acceptance.py'],timeout=300,required=False)
+        report['http_runtime']=json.loads(http.stdout)
+        if http.returncode or not report['http_runtime']['passed']:raise RuntimeError('Private document HTTP acceptance did not pass')
         report['memory_peak_bytes']=int(docker(['exec',name,'cat','/sys/fs/cgroup/memory.peak']).stdout);report['passed']=True
     except Exception as error:report['failure']=type(error).__name__+': '+str(error)
     finally:

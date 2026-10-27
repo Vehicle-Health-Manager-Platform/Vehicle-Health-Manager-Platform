@@ -411,3 +411,5 @@ docker compose --env-file .env -f deploy/compose/compose.yml up --build -d
 车主/店长退款页统一阶段、资金事实、表单缺口与错误恢复；新增确认前后账号/路由/版本/正文复检，页面隐藏或账号变化取消旧弹窗；未知结果保留原正文原键重试。新增15项测试，全量1030/1030（0失败/跳过），微信与H5构建及两项原生门禁通过；产物17锚点、2个textarea。后端/API/渠道未改；真机、正式资金及全量后端本轮未执行。后续路线与上传策略见[执行计划](docs/progress/NEXT_EXECUTION_PLAN_2026_10_21.md)，[阶段记录](docs/progress/R9_A4D4C_REFUNDS_EXECUTION.md)。实现提交6a8835b已推送并创建[草稿PR195](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/195)，远程CI待完成；未合并、未上线。
 
 2026-10-26 R2a：[VIN车主候选与人工录车](docs/api/VIN_OWNER_GATEWAY.md)已接通，默认关闭，明确NHTSA美国市场数据限制；[阶段验证](docs/progress/RECOGNITION_R2A_VIN_GATEWAY.md)。行驶证、ASR、图文及向量按路线继续，真实服务与生产尚未验收。
+
+2026-10-27 R4b：[图文持久任务与车主逐块核对](docs/api/DOCUMENT_JOBS.md)已实现，默认关闭；[测试范围、已修复问题及交接](docs/progress/RECOGNITION_R4B_DOCUMENT_JOBS.md)。实际模型与合成业务旅程分开记录，中文真实单据/真机及生产未验收。

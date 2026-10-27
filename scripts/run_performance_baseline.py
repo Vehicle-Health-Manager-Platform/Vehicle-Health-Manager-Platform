@@ -109,7 +109,7 @@ def free_port():
 
 def migration_files():
     files = sorted(MIGRATIONS.glob('*.sql'))
-    require(len(files) == 63, 'Expected 63 ordered migrations for the performance baseline')
+    require(len(files) == 64, 'Expected 64 ordered migrations for the performance baseline')
     return files
 
 

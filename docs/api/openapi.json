@@ -33789,9 +33789,11 @@
             "in": "header",
             "required": true,
             "schema": {
+              "type": "string",
               "enum": [
                 "audio",
-                "pdf"
+                "pdf",
+                "image"
               ]
             }
           }
@@ -33876,7 +33878,7 @@
           }
         },
         "x-roles": "OWNER",
-        "description": "no-store。默认关闭 INPUT_MATERIAL_UPLOAD_ENABLED；仅本人有效车辆、正式会话。独立input_material表，不接受或返回业务图片file_id，不做ASR/OCR。MP3 16kHz单声道48kbps、1–60秒、3MiB；静态PDF 1–50页10MiB，无加密/表单/注释/动作/附件。CLEAN才写入；用途及车辆隔离幂等，同键不同内容409。签发60秒强制attachment/no-store，复核会话/车辆/用途及对象元数据。详见CONTROLLED_INPUT_MATERIALS.md。",
+        "description": "no-store。默认关闭 INPUT_MATERIAL_UPLOAD_ENABLED；仅本人有效车辆、正式会话。独立input_material表，不接受或返回业务图片file_id，不做ASR/OCR。MP3 16kHz单声道48kbps、1–60秒、3MiB；静态PDF 1–50页10MiB，无加密/表单/注释/动作/附件。CLEAN才写入；用途及车辆隔离幂等，同键不同内容409。签发60秒强制attachment/no-store，复核会话/车辆/用途及对象元数据。详见CONTROLLED_INPUT_MATERIALS.md。 R4b独立辅助图片通道：X-Material-Kind=image，通过字节解码校验JPEG/PNG，<=4MiB/4096边长/600万像素/单帧，duration_ms=0/pages=1；复用本人车辆/用途授权、扫描及私有存储，不扩展业务图片白名单。",
         "x-implementation-status": "controlled-input-material-upload-implemented"
       }
     },
@@ -35304,6 +35306,846 @@
         "x-implementation-status": "asr-durable-job-cancel-implemented",
         "x-roles": "当前有效OWNER；本人当前车辆与任务；新有效会话可取消自己的旧任务",
         "description": "严格空对象{}、无query、UUID幂等键。可取消排队/运行或已成功候选并清空；重复取消安全，不删除原音频。取消请求失败或创建结果未知不能声称服务端已取消；未知创建可经重新同意后同正文同键确认原任务，再立即发取消。"
+      }
+    },
+    "/api/recognition/documents/jobs": {
+      "post": {
+        "summary": "本人同车辆同用途图片/PDF创建持久图文提取候选任务",
+        "operationId": "post_api_recognition_documents_jobs",
+        "tags": [
+          "recognition"
+        ],
+        "x-feature-ids": [
+          "F05"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "创建回执仅job_id/vehicle_id/material_id/purpose/task；同键同正文返回原任务引用，不重放候选文本。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "job_id",
+                            "vehicle_id",
+                            "material_id",
+                            "purpose",
+                            "task"
+                          ],
+                          "properties": {
+                            "job_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "vehicle_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "material_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "purpose": {
+                              "enum": [
+                                "AI",
+                                "ARCHIVE"
+                              ]
+                            },
+                            "task": {
+                              "const": "DOCUMENT"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "正文/ID/同意/幂等键无效，额外或重复键/尾随JSON/query均拒绝",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "当前会话失效或账号停用/删除",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非OWNER或绑定凭证",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "非本人当前车辆、同用途图片/PDF或任务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "关闭、数据或任务服务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "每分钟新任务限额或已有2个活动任务",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "vehicle_id",
+                  "material_id",
+                  "purpose",
+                  "consent",
+                  "consent_version"
+                ],
+                "properties": {
+                  "vehicle_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740990
+                  },
+                  "material_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740990
+                  },
+                  "purpose": {
+                    "enum": [
+                      "AI",
+                      "ARCHIVE"
+                    ]
+                  },
+                  "consent": {
+                    "const": true
+                  },
+                  "consent_version": {
+                    "const": "DOCUMENT_EXTRACT_V1"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-implementation-status": "document-durable-job-implemented-local",
+        "x-roles": "当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
+        "description": "严格JSON、no-store、无query；创建DOCUMENT_EXTRACT_V1独立同意，UUID幂等。JPEG/PNG<=4MiB/4096边长/600万像素或PDF<=10MiB，提取最多4页；超页整份LIMIT_EXCEEDED，不返回部分成功。每类型每车主每UTC分钟5次；DOCUMENT及DOCUMENT合计最多2个活动任务，按类型领取/访问/清理。租约180秒，不自动重试，候选自创建起10分钟；来源及原会话在存储前后、推理后和GET重新校验。撤销可清空已成功候选但不删除原材料，不承诺立即停算。人工逐段选择/修改/核对并重新GET后仅带入问题或备注，仍需原发送/保存；不产生日期/金额/里程事实。"
+      }
+    },
+    "/api/recognition/documents/jobs/{id}": {
+      "get": {
+        "summary": "本人查询图文提取排队状态与短期图文提取候选",
+        "operationId": "get_api_recognition_documents_jobs_id",
+        "tags": [
+          "recognition"
+        ],
+        "x-feature-ids": [
+          "F05"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "固定任务作用域/状态/到期/error_code/result；只在SUCCEEDED返回经过严格校验的候选，其他状态result=null。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "job_id",
+                            "vehicle_id",
+                            "material_id",
+                            "purpose",
+                            "task",
+                            "state",
+                            "expires_at",
+                            "error_code",
+                            "result"
+                          ],
+                          "properties": {
+                            "job_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "vehicle_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "material_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "purpose": {
+                              "enum": [
+                                "AI",
+                                "ARCHIVE"
+                              ]
+                            },
+                            "task": {
+                              "const": "DOCUMENT"
+                            },
+                            "state": {
+                              "enum": [
+                                "QUEUED",
+                                "RUNNING",
+                                "SUCCEEDED",
+                                "FAILED",
+                                "CANCELLED",
+                                "EXPIRED"
+                              ]
+                            },
+                            "expires_at": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "error_code": {
+                              "enum": [
+                                null,
+                                "UNAVAILABLE",
+                                "SOURCE_CHANGED",
+                                "AUTH_REVOKED",
+                                "WORKER_LOST",
+                                "INVALID_RESULT",
+                                "EXPIRED",
+                                "USER_CANCELLED",
+                                "FEATURE_DISABLED",
+                                "INVALID_DOCUMENT",
+                                "LIMIT_EXCEEDED"
+                              ]
+                            },
+                            "result": {
+                              "anyOf": [
+                                {
+                                  "type": "null"
+                                },
+                                {
+                                  "type": "object",
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "version",
+                                    "task",
+                                    "source",
+                                    "content_type",
+                                    "content_sha256",
+                                    "page_count",
+                                    "status",
+                                    "requires_confirmation",
+                                    "image_recognition_performed",
+                                    "all_pages_processed",
+                                    "pages"
+                                  ],
+                                  "properties": {
+                                    "version": {
+                                      "const": 1
+                                    },
+                                    "task": {
+                                      "const": "DOCUMENT"
+                                    },
+                                    "source": {
+                                      "const": "PDFBOX_PADDLE"
+                                    },
+                                    "content_type": {
+                                      "enum": [
+                                        "application/pdf",
+                                        "image/jpeg",
+                                        "image/png"
+                                      ]
+                                    },
+                                    "content_sha256": {
+                                      "type": "string",
+                                      "pattern": "^[a-f0-9]{64}$"
+                                    },
+                                    "page_count": {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 4
+                                    },
+                                    "status": {
+                                      "enum": [
+                                        "EXTRACTED",
+                                        "EMPTY"
+                                      ]
+                                    },
+                                    "requires_confirmation": {
+                                      "const": true
+                                    },
+                                    "image_recognition_performed": {
+                                      "type": "boolean"
+                                    },
+                                    "all_pages_processed": {
+                                      "const": true
+                                    },
+                                    "pages": {
+                                      "type": "array",
+                                      "minItems": 1,
+                                      "maxItems": 4,
+                                      "items": {
+                                        "type": "object",
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "page",
+                                          "method",
+                                          "text",
+                                          "raster_size",
+                                          "blocks"
+                                        ],
+                                        "properties": {
+                                          "page": {
+                                            "type": "integer",
+                                            "minimum": 1,
+                                            "maximum": 4
+                                          },
+                                          "method": {
+                                            "enum": [
+                                              "NATIVE_TEXT",
+                                              "OCR",
+                                              "EMPTY"
+                                            ]
+                                          },
+                                          "text": {
+                                            "type": "string",
+                                            "maxLength": 4096
+                                          },
+                                          "raster_size": {
+                                            "anyOf": [
+                                              {
+                                                "type": "null"
+                                              },
+                                              {
+                                                "type": "array",
+                                                "minItems": 2,
+                                                "maxItems": 2,
+                                                "items": {
+                                                  "type": "integer",
+                                                  "minimum": 1,
+                                                  "maximum": 4096
+                                                }
+                                              }
+                                            ]
+                                          },
+                                          "blocks": {
+                                            "type": "array",
+                                            "maxItems": 80,
+                                            "items": {
+                                              "type": "object",
+                                              "additionalProperties": false,
+                                              "required": [
+                                                "text",
+                                                "confidence",
+                                                "source"
+                                              ],
+                                              "properties": {
+                                                "text": {
+                                                  "type": "string",
+                                                  "minLength": 1,
+                                                  "maxLength": 500
+                                                },
+                                                "confidence": {
+                                                  "type": [
+                                                    "number",
+                                                    "null"
+                                                  ],
+                                                  "minimum": 0,
+                                                  "maximum": 1
+                                                },
+                                                "source": {
+                                                  "oneOf": [
+                                                    {
+                                                      "type": "object",
+                                                      "additionalProperties": false,
+                                                      "required": [
+                                                        "kind",
+                                                        "start",
+                                                        "end"
+                                                      ],
+                                                      "properties": {
+                                                        "kind": {
+                                                          "const": "TEXT_OFFSET"
+                                                        },
+                                                        "start": {
+                                                          "type": "integer",
+                                                          "minimum": 0
+                                                        },
+                                                        "end": {
+                                                          "type": "integer",
+                                                          "minimum": 1
+                                                        }
+                                                      }
+                                                    },
+                                                    {
+                                                      "type": "object",
+                                                      "additionalProperties": false,
+                                                      "required": [
+                                                        "kind",
+                                                        "points"
+                                                      ],
+                                                      "properties": {
+                                                        "kind": {
+                                                          "const": "RASTER_POLYGON"
+                                                        },
+                                                        "points": {
+                                                          "type": "array",
+                                                          "minItems": 4,
+                                                          "maxItems": 4,
+                                                          "items": {
+                                                            "type": "array",
+                                                            "minItems": 2,
+                                                            "maxItems": 2,
+                                                            "items": {
+                                                              "type": "number",
+                                                              "minimum": 0,
+                                                              "maximum": 4096
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  ]
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "description": "整份最多4096 UTF16单元/80块，每块500；页码连续，page_count等于上传元数据；hash绑定私有源字节。原生块完整覆盖非空行，偏移UTF16末端不含，confidence=null；OCR块有实际凸四边形/原置信度，坐标在raster_size内且面积预算600万像素。all_pages_processed=true，不得构造部分成功。"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "正文/ID/同意/幂等键无效，额外或重复键/尾随JSON/query均拒绝",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "当前会话失效或账号停用/删除",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非OWNER或绑定凭证",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "非本人当前车辆、同用途图片/PDF或任务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "关闭、数据或任务服务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-implementation-status": "document-durable-job-implemented-local",
+        "x-roles": "当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
+        "description": "严格JSON、no-store、无query；创建DOCUMENT_EXTRACT_V1独立同意，UUID幂等。JPEG/PNG<=4MiB/4096边长/600万像素或PDF<=10MiB，提取最多4页；超页整份LIMIT_EXCEEDED，不返回部分成功。每类型每车主每UTC分钟5次；DOCUMENT及DOCUMENT合计最多2个活动任务，按类型领取/访问/清理。租约180秒，不自动重试，候选自创建起10分钟；来源及原会话在存储前后、推理后和GET重新校验。撤销可清空已成功候选但不删除原材料，不承诺立即停算。人工逐段选择/修改/核对并重新GET后仅带入问题或备注，仍需原发送/保存；不产生日期/金额/里程事实。"
+      }
+    },
+    "/api/recognition/documents/jobs/{id}/cancel": {
+      "post": {
+        "summary": "本人取消图文提取任务并清空候选",
+        "operationId": "post_api_recognition_documents_jobs_id_cancel",
+        "tags": [
+          "recognition"
+        ],
+        "x-feature-ids": [
+          "F05"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "取消受理回执仅job_id；终态与过期状态以再次查询为准。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "job_id"
+                          ],
+                          "properties": {
+                            "job_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "正文/ID/同意/幂等键无效，额外或重复键/尾随JSON/query均拒绝",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "当前会话失效或账号停用/删除",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非OWNER或绑定凭证",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "非本人当前车辆、同用途图片/PDF或任务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "关闭、数据或任务服务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "maxProperties": 0
+              }
+            }
+          }
+        },
+        "x-implementation-status": "document-durable-job-implemented-local",
+        "x-roles": "当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
+        "description": "严格JSON、no-store、无query；创建DOCUMENT_EXTRACT_V1独立同意，UUID幂等。JPEG/PNG<=4MiB/4096边长/600万像素或PDF<=10MiB，提取最多4页；超页整份LIMIT_EXCEEDED，不返回部分成功。每类型每车主每UTC分钟5次；DOCUMENT及DOCUMENT合计最多2个活动任务，按类型领取/访问/清理。租约180秒，不自动重试，候选自创建起10分钟；来源及原会话在存储前后、推理后和GET重新校验。撤销可清空已成功候选但不删除原材料，不承诺立即停算。人工逐段选择/修改/核对并重新GET后仅带入问题或备注，仍需原发送/保存；不产生日期/金额/里程事实。"
       }
     }
   },

@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "operations": 359,
-  "anonymous_probes": 345,
+  "operations": 362,
+  "anonymous_probes": 348,
   "full_api_acceptance_passed": false,
   "note": "Generated inventory, not test evidence. Anonymous 401 does not prove controller implementation or role/ownership validation.",
   "items": [
@@ -5413,6 +5413,58 @@
       "path": "/api/recognition/asr/jobs/{id}/cancel",
       "roles": "当前有效OWNER；本人当前车辆与任务；新有效会话可取消自己的旧任务",
       "implementation_status": "asr-durable-job-cancel-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_recognition_documents_jobs",
+      "method": "POST",
+      "path": "/api/recognition/documents/jobs",
+      "roles": "当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
+      "implementation_status": "document-durable-job-implemented-local",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_recognition_documents_jobs_id",
+      "method": "GET",
+      "path": "/api/recognition/documents/jobs/{id}",
+      "roles": "当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
+      "implementation_status": "document-durable-job-implemented-local",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_recognition_documents_jobs_id_cancel",
+      "method": "POST",
+      "path": "/api/recognition/documents/jobs/{id}/cancel",
+      "roles": "当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
+      "implementation_status": "document-durable-job-implemented-local",
       "content_types": [
         "application/json"
       ],

@@ -2,7 +2,7 @@
 
 由 `python scripts/miniapp_handover.py` 生成；请修改来源后重生成。
 
-注册页面110项，三份环境模板共124条变量记录（同名跨模板分别计数）。
+注册页面110项，三份环境模板共139条变量记录（同名跨模板分别计数）。
 这是源码存在性与文档链接核对，不是入口可达性、权限、视觉、真实身份或真机通过证明。按目录归入阅读指南，共用页可能服务多个角色，实际权限以服务端为准。
 
 [车主](../user-guides/OWNER.md) · [商家](../user-guides/MERCHANT.md) · [技师](../user-guides/TECHNICIAN.md) · [受限运营](../user-guides/OPERATOR.md) · [剩余验收](REMAINING_ACCEPTANCE.md)
@@ -213,6 +213,15 @@
 - `ASR_ALLOW_PRIVATE_HTTP`；模板值 `false`。
 - `ASR_JOB_INTERVAL_MS`。
 - `ASR_CLEANUP_INTERVAL_MS`。
+- `DOCUMENT_ENABLED`；模板值 `false`。
+- `DOCUMENT_URL`。
+- `DOCUMENT_SERVICE_TOKEN`。
+- `DOCUMENT_ALLOW_PRIVATE_HTTP`；模板值 `false`。
+- `DOCUMENT_JOB_INTERVAL_MS`。
+- `DOCUMENT_CLEANUP_INTERVAL_MS`。
+- `DOCUMENT_SERVICE_ENABLED`；模板值 `false`。
+- `DOCUMENT_CORE_ENABLED`；模板值 `false`。
+- `DOCUMENT_PORT`。
 
 ### apps/miniapp/.env.example
 
@@ -262,5 +271,11 @@
 - `ASR_ALLOW_PRIVATE_HTTP`；模板值 `false`。
 - `ASR_JOB_INTERVAL_MS`。
 - `ASR_CLEANUP_INTERVAL_MS`。
+- `DOCUMENT_ENABLED`；模板值 `false`。
+- `DOCUMENT_URL`。
+- `DOCUMENT_SERVICE_TOKEN`。
+- `DOCUMENT_ALLOW_PRIVATE_HTTP`；模板值 `false`。
+- `DOCUMENT_JOB_INTERVAL_MS`。
+- `DOCUMENT_CLEANUP_INTERVAL_MS`。
 
 网络配置和启用前置条件见[网络运维](../operations/MINIAPP_NETWORK_ENVIRONMENTS.md)及[剩余验收](REMAINING_ACCEPTANCE.md)。

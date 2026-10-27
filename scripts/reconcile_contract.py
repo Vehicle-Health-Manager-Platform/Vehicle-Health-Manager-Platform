@@ -18,7 +18,7 @@ KINDS = OrderedDict([
     ('no-success-path', '实现存在但无成功路径'),
     ('dev-only', '仅本地演示或开发端点'),
 ])
-TOTAL_CONTRACT = 359
+TOTAL_CONTRACT = 362
 MIN_EVIDENCED = 317
 
 

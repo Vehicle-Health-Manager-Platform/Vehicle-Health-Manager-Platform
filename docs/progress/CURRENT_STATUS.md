@@ -497,3 +497,7 @@ A7.2b 施工档案回写已实现：[规格 #53](https://github.com/Vehicle-Heal
 ## 2026-10-21 A4d-4c：共用退款页收口（已上传PR195）
 
 车主/店长退款页统一阶段、资金事实、表单缺口与错误恢复；新增确认前后账号/路由/版本/正文复检，页面隐藏或账号变化取消旧弹窗；未知结果保留原正文原键重试。新增15项测试，全量1030/1030（0失败/跳过），微信与H5构建及两项原生门禁通过；产物17锚点、2个textarea。后端/API/渠道未改；真机、正式资金及全量后端本轮未执行。后续路线与上传策略见[执行计划](NEXT_EXECUTION_PLAN_2026_10_21.md)，[阶段记录](R9_A4D4C_REFUNDS_EXECUTION.md)。实现提交6a8835b已推送并创建[草稿PR195](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/195)，远程CI待完成；未合并、未上线。
+
+## 2026-10-27 R4b当前增量
+
+[图文持久任务与车主逐块核对](RECOGNITION_R4B_DOCUMENT_JOBS.md)已在codex/document-owner-jobs完成本地开发/选定回归，默认关闭；64迁移/132表、362契约，历史317项及45结论保持分界。真实模型私有HTTP与合成业务测试分开，不代表全部API、中文材料/真实存储扫描、真机、生产或R5向量已验。下一步R5先核对现有知识授权/撤回路径，再固定embedding资源及评估，不用KEYWORD冒称向量。

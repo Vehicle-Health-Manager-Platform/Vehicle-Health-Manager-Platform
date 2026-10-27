@@ -35,7 +35,7 @@ class JdbcInputMaterialTest {
     @BeforeAll static void schema()throws Exception{
         var ds=new DriverManagerDataSource(mysql.getJdbcUrl(),mysql.getUsername(),mysql.getPassword());jdbc=new JdbcTemplate(ds);
         try(var c=ds.getConnection()){
-            for(String name:List.of("V001__baseline.sql","V002__staff_wechat_identity.sql","V003__auth_lifecycle.sql","V004__upload_http.sql","V010__pickup_inspection.sql","V062__input_material.sql","V062__input_material.sql"))
+            for(String name:List.of("V001__baseline.sql","V002__staff_wechat_identity.sql","V003__auth_lifecycle.sql","V004__upload_http.sql","V010__pickup_inspection.sql","V062__input_material.sql","V062__input_material.sql","V063__recognition_job.sql","V064__document_candidate_jobs.sql"))
                 ScriptUtils.executeSqlScript(c,new FileSystemResource(Path.of("..","docs","sql","migrations",name)));
         }
     }
@@ -67,6 +67,13 @@ class JdbcInputMaterialTest {
         var result=service().upload(owner,new InputMaterialScope("ARCHIVE",11),key(),"material.pdf",new ByteArrayInputStream(InputMaterialValidatorTest.pdf(2)));
         assertEquals(2,result.path("data").path("pages").asInt());assertEquals(0,result.path("data").path("duration_ms").asInt());
         assertEquals("application/pdf",jdbc.queryForObject("SELECT content_type FROM input_material",String.class));assertEquals(0,count("file_object"));
+    }
+    @Test void auxiliaryImageIsScannedPrivateAndNotBusinessFile()throws Exception{
+        String key=key();byte[] bytes=InputMaterialValidatorTest.image("png",32,16);
+        var first=service().upload(owner,scope,key,"material.image",new ByteArrayInputStream(bytes));
+        assertEquals(first,service().upload(owner,scope,key,"material.image",new ByteArrayInputStream(bytes)));
+        assertEquals("image/png",first.path("data").path("content_type").asText());assertEquals(1,first.path("data").path("pages").asInt());assertEquals(0,first.path("data").path("duration_ms").asInt());assertEquals(0,count("file_object"));assertEquals(1,puts);assertFalse(first.toString().contains("object_key"));
+        scanner=b->VirusScanner.Result.INFECTED;assertEquals(422,error(()->service().upload(owner,scope,key(),"material.image",new ByteArrayInputStream(bytes))));assertEquals(1,count("input_material"));
     }
     @Test void wrongVehicleAndDeletedOrTransferredVehicleRejectedBeforeScanning(){
         scanner=b->{fail("must reject before scan");return VirusScanner.Result.CLEAN;};

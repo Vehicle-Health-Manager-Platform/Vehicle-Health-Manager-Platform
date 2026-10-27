@@ -22,9 +22,10 @@ const safe=e=>e instanceof AsrError?e:new AsrError('network','转写请求未完
 const uncertain=e=>['network','server','unavailable','protocol','cancelled'].includes(e.kind)
 const signature=r=>JSON.stringify([r.status,r.language,r.duration_ms,r.segments.map(s=>[s.start_ms,s.end_ms,s.text,s.confidence])])
 
-export function createAsrFlow({state,actor,scope,material,value,allowed=()=>true,apply,api=asrApi,receipts=asrReceipts,keyFactory=imageRequestKey,now=Date.now,schedule=setTimeout,cancelTimer=clearTimeout}){
+export function createAsrFlow({state,actor,scope,material,value,allowed=()=>true,apply,api=asrApi,receipts=asrReceipts,keyFactory=imageRequestKey,now=Date.now,schedule=setTimeout,cancelTimer=clearTimeout,adapter=null}){
  let epoch=0,visible=true,timer=null,operation=null,receipt=null,baseline='',polls=0
- const context=()=>JSON.stringify([actor(),scope(),material()?.materialId,material()?.durationMs])
+ const context=()=>JSON.stringify([actor(),scope(),material()?.materialId,adapter?adapter.context(material()):material()?.durationMs])
+ const resultSignature=adapter?.signature||signature
  const current=(e,c)=>visible&&epoch===e&&context()===c&&Boolean(actor())&&allowed()&&state.consent
  function stop(){epoch++;if(timer!==null)cancelTimer(timer);timer=null;operation?.abort?.();operation=null}
  async function cancelKnown(row){
@@ -52,25 +53,25 @@ export function createAsrFlow({state,actor,scope,material,value,allowed=()=>true
   if(!current(e,c)||!receipt?.jobId)return
   if(now()>=receipt.deadline||polls++>=300){cancel();state.message='已停止等待，任务候选已到本地等待期限，请手动填写。';return}
   state.busy=true;state.phase='polling';const row=receipt
-  try{operation=api.get(row.actor,state.created,row.durationMs);const job=await operation.promise;if(!current(e,c))return
+  try{operation=api.get(row.actor,state.created,row.validationContext??row.durationMs);const job=await operation.promise;if(!current(e,c))return
    state.job=job;state.result=null;state.text='';state.reviewed=false
    if(Date.parse(job.expires_at)<=now()||job.state==='EXPIRED'){state.phase='terminal';state.message='转写候选已过期，请重新录制或手动填写';return}
    if(['QUEUED','RUNNING'].includes(job.state)){state.message=job.state==='QUEUED'?'任务已排队，可取消；尚未得到转写。':'正在转写，可取消；不会自动发送或保存。';schedulePoll(e,c);return}
    if(job.state==='SUCCEEDED'){
-    state.result=job.result;state.text=job.result.segments.map(s=>s.text).join('\n');state.phase=job.result.status==='EMPTY'?'empty':'ready';state.message=job.result.status==='EMPTY'?'未提取到语音文字，请手动填写。':'请核对转写片段，可修正后勾选带入；仍需原发送或保存按钮。';expireCandidate(e,c,job.expires_at);return
+    state.result=job.result;state.text=adapter?adapter.text(job.result):job.result.segments.map(s=>s.text).join('\n');state.phase=job.result.status==='EMPTY'?'empty':'ready';state.message=job.result.status==='EMPTY'?'未提取到语音文字，请手动填写。':'请核对转写片段，可修正后勾选带入；仍需原发送或保存按钮。';expireCandidate(e,c,job.expires_at);return
    }
-   state.phase='terminal';state.message={CANCELLED:'任务已取消或原授权失效，请手动填写。',FAILED:'转写未成功，请检查音频或服务配置后重新创建。'}[job.state]||'任务不可用，请手动填写。'
+   state.phase='terminal';state.message=adapter?.failure?.(job)||{CANCELLED:'任务已取消或原授权失效，请手动填写。',FAILED:'转写未成功，请检查音频或服务配置后重新创建。'}[job.state]||'任务不可用，请手动填写。'
   }catch(error){if(current(e,c)){state.phase='poll-error';report(error)}}finally{if(epoch===e){state.busy=false;operation=null}}
  }
  async function start(){
   if(state.busy||!visible||!allowed())return
   if(!state.consent){report(new AsrError('invalid','请先同意本次语音转写用途'));return}
   if(receipt?.jobId){await poll();return}
-  const m=material();let input
-  try{input=asrInput(materialScope(scope()),m?.materialId);if(!actor()||!Number.isInteger(m?.durationMs)||m.durationMs<1000||m.durationMs>60000)throw new AsrError('invalid','请登录并上传当前车辆的合规音频')}
+  const m=material();let input,validationContext
+  try{if(adapter){({input,validationContext}=adapter.prepare(materialScope(scope()),m));if(!actor())throw new AsrError('invalid','请登录车主账号')}else{input=asrInput(materialScope(scope()),m?.materialId);if(!actor()||!Number.isInteger(m?.durationMs)||m.durationMs<1000||m.durationMs>60000)throw new AsrError('invalid','请登录并上传当前车辆的合规音频')}}
   catch(error){report(error);return}
   const c=context();stop();const e=epoch
-  if(!receipt||receipt.context!==c){receipt={actor:actor(),scope:scope(),context:c,input,key:keyFactory(),cancelKey:keyFactory(),durationMs:m.durationMs,deadline:now()+600000,jobId:null};baseline=String(value()||'')}
+  if(!receipt||receipt.context!==c){receipt={actor:actor(),scope:scope(),context:c,input,key:keyFactory(),cancelKey:keyFactory(),durationMs:m.durationMs,validationContext,deadline:now()+600000,jobId:null};baseline=String(value()||'')}
   const row=receipt
   try{receipts.add(row);state.busy=true;state.phase='creating';state.message='正在创建转写任务…';state.failureKind=''
    operation=api.create(row.actor,row.input,row.key);const created=await operation.promise;row.jobId=created.job_id
@@ -85,10 +86,10 @@ export function createAsrFlow({state,actor,scope,material,value,allowed=()=>true
   if(state.busy||state.phase!=='ready'||!state.reviewed||!receipt?.jobId||!current(epoch,receipt.context))return false
   const text=state.text.trim();if(!text||text.length>1000||/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f-\u009f]/.test(text)){report(new AsrError('invalid','请核对1至1000字的转写内容'));return false}
   if(String(value()||'')!==baseline){state.reviewed=false;state.message='原表单已变化，不能覆盖新内容；请取消后重新核对。';return false}
-  const e=epoch,c=receipt.context,source=signature(state.result);state.busy=true
-  try{operation=api.get(receipt.actor,state.created,receipt.durationMs);const fresh=await operation.promise
+  const e=epoch,c=receipt.context,source=resultSignature(state.result);state.busy=true
+  try{operation=api.get(receipt.actor,state.created,receipt.validationContext??receipt.durationMs);const fresh=await operation.promise
    if(!current(e,c)||!state.reviewed||String(value()||'')!==baseline||text!==state.text.trim())return false
-   if(fresh.state!=='SUCCEEDED'||Date.parse(fresh.expires_at)<=now()||signature(fresh.result)!==source){state.reviewed=false;state.result=null;state.text='';state.phase='terminal';state.message='任务已失效、取消或来源变化，未带入表单。';return false}
+   if(fresh.state!=='SUCCEEDED'||Date.parse(fresh.expires_at)<=now()||resultSignature(fresh.result)!==source){state.reviewed=false;state.result=null;state.text='';state.phase='terminal';state.message='任务已失效、取消或来源变化，未带入表单。';return false}
    state.phase='applied';state.reviewed=false;state.message='文字已带入，尚未发送或保存。';apply(text);return true
   }catch(error){if(current(e,c)){state.reviewed=false;report(error)}return false}finally{if(epoch===e){state.busy=false;operation=null}}
  }

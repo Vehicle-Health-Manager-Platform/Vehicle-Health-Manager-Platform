@@ -896,3 +896,5 @@ R3c最终：50 Java/13真实进程检查/实际OOM通过，default gate单独验
 R4a：Java/Paddle真实内核20项通过，扫描/混合/旋转实际读出合成123456；源文字为UTF16页内偏移，OCR位置来自实际rec_polys。发现并修复旧OCR镜像缺license_fields（复制完整当前源码）、JDK NIO及ImageIO磁盘缓存socketpair与seccomp冲突（普通IO+私有JVM禁diskcache，不放松网络）。补内联图片/绘图内容避免只读页脚。PR247覆盖率审计因默认跳过的真实ASR套件失败，普通core-coverage仅排除该非必需显式套件，6项真实profile验证零跳过，门禁本身保持严格。Windows原子发布测试允许有界真实额外共享拒绝，最终模型内容仍实际校验。
 
 R4a收口补充：源码COPY限定.py并固定无写入的临时pycache前缀，避免宿主字节码不在源码摘要中却进入镜像。最终版本重新进行内核/统一回归；前置PR247为覆盖率跳过门禁失败，Compose未执行，不能写成全部CI成功。
+
+R4b：共享候选核心按task隔离；图片独立input_material授权，JPEG/PNG4MiB/4096/6M。JDK PNG单帧判断忽略APNG，额外检查动画chunk与尾随；ImageIO内存缓存。页面空候选逐块选择，超1000字拒绝不截断，freshGET全来源签名/原表单保护。真实私有HTTP/PDFBox/Paddle与合成OWNER/MySQL证据分开，不能声称完整真实存储扫描模型同链路。V064原子可重放，132表不新增；362契约=317历史+45结论。

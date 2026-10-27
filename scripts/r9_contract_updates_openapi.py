@@ -169,3 +169,31 @@ def add_r9_contract_updates(document, operation):
     cancel['requestBody']={'required':True,'content':{'application/json':{'schema':{'type':'object','additionalProperties':False,'maxProperties':0}}}}
     cancel['responses']=asr_responses({'type':'object','additionalProperties':False,'required':['job_id'],'properties':{'job_id':copy.deepcopy(identity['job_id'])}},[('200','取消受理回执仅job_id；终态与过期状态以再次查询为准。'),*common])
     paths[path+'/{id}/cancel']={'post':cancel}
+
+    # R4b: task lifecycle is shared, but document scopes and result protocol are independent.
+    docpath='/api/recognition/documents/jobs'
+    for method,suffix,template in [('post','',create),('get','/{id}',detail),('post','/{id}/cancel',cancel)]:
+        item=copy.deepcopy(template)
+        # Generated ids must follow the actual path, never retain the ASR operation id.
+        item['operationId']=operation(method,docpath+suffix,'','F05')['operationId']
+        item['summary']=template['summary'].replace('ASR','图文提取').replace('音频','图片/PDF')
+        item['x-roles']='当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id'
+        item['x-implementation-status']='document-durable-job-implemented-local'
+        item['description']='严格JSON、no-store、无query；创建DOCUMENT_EXTRACT_V1独立同意，UUID幂等。JPEG/PNG<=4MiB/4096边长/600万像素或PDF<=10MiB，提取最多4页；超页整份LIMIT_EXCEEDED，不返回部分成功。每类型每车主每UTC分钟5次；ASR及DOCUMENT合计最多2个活动任务，按类型领取/访问/清理。租约180秒，不自动重试，候选自创建起10分钟；来源及原会话在存储前后、推理后和GET重新校验。撤销可清空已成功候选但不删除原材料，不承诺立即停算。人工逐段选择/修改/核对并重新GET后仅带入问题或备注，仍需原发送/保存；不产生日期/金额/里程事实。'
+        def replace(value):
+            if isinstance(value,dict):return {k:replace(v) for k,v in value.items()}
+            if isinstance(value,list):return [replace(v) for v in value]
+            if isinstance(value,str):return value.replace('ASR_TRANSCRIBE_V1','DOCUMENT_EXTRACT_V1').replace('ASR','DOCUMENT').replace('音频','图片/PDF').replace('转写','图文提取')
+            return value
+        item=replace(item)
+        if method=='get':
+            schema=item['responses']['200']['content']['application/json']['schema']['allOf'][1]['properties']['data']
+            schema['properties']['error_code']['enum']+=['INVALID_DOCUMENT','LIMIT_EXCEEDED']
+            docresult=obj({'version':{'const':1},'task':{'const':'DOCUMENT'},'source':{'const':'PDFBOX_PADDLE'},'content_type':{'enum':['application/pdf','image/jpeg','image/png']},'content_sha256':{'type':'string','pattern':'^[a-f0-9]{64}$'},'page_count':{'type':'integer','minimum':1,'maximum':4},'status':{'enum':['EXTRACTED','EMPTY']},'requires_confirmation':{'const':True},'image_recognition_performed':{'type':'boolean'},'all_pages_processed':{'const':True},'pages':{'type':'array','minItems':1,'maxItems':4,'items':obj({'page':{'type':'integer','minimum':1,'maximum':4},'method':{'enum':['NATIVE_TEXT','OCR','EMPTY']},'text':{'type':'string','maxLength':4096},'raster_size':{'anyOf':[{'type':'null'},{'type':'array','minItems':2,'maxItems':2,'items':{'type':'integer','minimum':1,'maximum':4096}}]},'blocks':{'type':'array','maxItems':80,'items':obj({'text':{'type':'string','minLength':1,'maxLength':500},'confidence':{'type':['number','null'],'minimum':0,'maximum':1},'source':{'oneOf':[obj({'kind':{'const':'TEXT_OFFSET'},'start':{'type':'integer','minimum':0},'end':{'type':'integer','minimum':1}}),obj({'kind':{'const':'RASTER_POLYGON'},'points':{'type':'array','minItems':4,'maxItems':4,'items':{'type':'array','minItems':2,'maxItems':2,'items':{'type':'number','minimum':0,'maximum':4096}}}})]}})}})}})
+            docresult['description']='整份最多4096 UTF16单元/80块，每块500；页码连续，page_count等于上传元数据；hash绑定私有源字节。原生块完整覆盖非空行，偏移UTF16末端不含，confidence=null；OCR块有实际凸四边形/原置信度，坐标在raster_size内且面积预算600万像素。all_pages_processed=true，不得构造部分成功。'
+            schema['properties']['result']={'anyOf':[{'type':'null'},docresult]}
+        paths[docpath+suffix]={method:item}
+    upload=paths['/api/input-materials/{purpose}/{vehicleId}/upload']['post']
+    upload['description']=upload.get('description','')+' R4b独立辅助图片通道：X-Material-Kind=image，通过字节解码校验JPEG/PNG，<=4MiB/4096边长/600万像素/单帧，duration_ms=0/pages=1；复用本人车辆/用途授权、扫描及私有存储，不扩展业务图片白名单。'
+    for parameter in upload.get('parameters',[]):
+        if parameter.get('name')=='X-Material-Kind':parameter['schema']={'type':'string','enum':['audio','pdf','image']}

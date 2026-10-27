@@ -74,6 +74,7 @@ services:
       - ../../docs/sql/migrations/V061__licensed_knowledge.sql:/docker-entrypoint-initdb.d/061-licensed-knowledge.sql:ro
       - ../../docs/sql/migrations/V062__input_material.sql:/docker-entrypoint-initdb.d/062-input-material.sql:ro
       - ../../docs/sql/migrations/V063__recognition_job.sql:/docker-entrypoint-initdb.d/063-recognition-job.sql:ro
+      - ../../docs/sql/migrations/V064__document_candidate_jobs.sql:/docker-entrypoint-initdb.d/064-document-candidate-jobs.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent"]
       interval: 10s
@@ -200,6 +201,12 @@ services:
       MILEAGE_OCR_SERVICE_TOKEN: ${MILEAGE_OCR_SERVICE_TOKEN:-}
       MILEAGE_OCR_ALLOW_PRIVATE_HTTP: ${MILEAGE_OCR_ALLOW_PRIVATE_HTTP:-false}
       LICENSE_OCR_ENABLED: ${LICENSE_OCR_ENABLED:-false}
+      DOCUMENT_ENABLED: ${DOCUMENT_ENABLED:-false}
+      DOCUMENT_URL: ${DOCUMENT_URL:-}
+      DOCUMENT_SERVICE_TOKEN: ${DOCUMENT_SERVICE_TOKEN:-}
+      DOCUMENT_ALLOW_PRIVATE_HTTP: ${DOCUMENT_ALLOW_PRIVATE_HTTP:-false}
+      DOCUMENT_JOB_INTERVAL_MS: ${DOCUMENT_JOB_INTERVAL_MS:-1000}
+      DOCUMENT_CLEANUP_INTERVAL_MS: ${DOCUMENT_CLEANUP_INTERVAL_MS:-60000}
       ASR_ENABLED: ${ASR_ENABLED:-false}
       ASR_URL: ${ASR_URL:-}
       ASR_SERVICE_TOKEN: ${ASR_SERVICE_TOKEN:-}

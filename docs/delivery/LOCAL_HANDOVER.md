@@ -63,3 +63,7 @@ R3b最新证据：[固定离线资源、Linux真实模型合成样本及静音�
 R3c最新记录：[Java真实模型联调与进程/OOM故障](../progress/RECOGNITION_R3C_ASR_REAL_JOURNEY.md)。选定50项Java（含4项实际模型任务/3项继承核心旅程）、13项进程检查及实际OOM通过；身份/CLEAN/存储仍为夹具。原R3b的Java/进程待验已由本轮补充，中文/用户效果和真机另验。前置Compose CI旧表数断言已修正并通过独立真实MySQL门禁；完整本地Compose因Docker Hub连接超时未完成，不冒称通过。
 
 R4a增量：[受限图文/PDF内核、来源与实测](../progress/RECOGNITION_R4A_DOCUMENT_CORE.md)。原生文字偏移与扫描/混合/图片实际Paddle多边形已实现，预算超限整次拒绝；没有新增公开HTTP接口、持久任务或小程序入口，R4b还需接入同意/鉴权/撤销/TTL和人工核对。不能据内核通过宣布车主图文业务完成。
+
+## R4b增量（2026-10-27）
+
+[图文任务及配置/操作/API](../api/DOCUMENT_JOBS.md)、[模型准备与测试Compose](../../services/documents/README.md)、[测试与问题记录](../progress/RECOGNITION_R4B_DOCUMENT_JOBS.md)。当前64迁移/132表、362项契约；历史证据仍317项，45项单独结论。本轮不合并上线，不关闭真实中文/真机、私有文件删除政策或R5向量待办。

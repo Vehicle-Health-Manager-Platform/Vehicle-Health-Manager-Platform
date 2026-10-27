@@ -871,3 +871,5 @@ R3c最终：50 Java/13真实进程检查/实际OOM通过，default gate单独验
 R4a最终：18 Java、21真实PDFBox/Paddle/负向/超时检查，11组559 Python/80 OCR通过+1跳过/40 ASR/14文档/1189 miniapp及构建契约均过；同一源码摘要，峰值约823MiB。前置PR247因显式ASR跳过触发覆盖门禁失败，core-coverage仅排除非必需外部套件，保留严格门禁并实际profile6项零跳过验证。没有公开文档接口/持久任务/页面；R4b继续授权/撤销/TTL及人工核对接入。
 
 上传：实现f8c43b3，草稿[PR248](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/248)依赖PR247；本轮临时容器已清理，资源/原始合成材料和日志仅在忽略缓存。新head CI独立跟踪，未结束不计通过；未合并部署。
+
+R4b本地收口：99选定Java零失败/跳过，11组全过（1223 miniapp/559 Python/80 OCR+1平台跳过/40 ASR/26文档及构建契约），gstack浏览器17合成检查，实际内核21+私有HTTP13、内核Java21（与99重叠9）通过；最终源b4a22c70一致，峰值约829MiB，自有容器清理。测试Compose config通过但未启动整栈；真实中文/同版存储扫描模型全链路/真机/生产/向量仍另验。文档见RECOGNITION_R4B_DOCUMENT_JOBS.md与DOCUMENT_JOBS.md。

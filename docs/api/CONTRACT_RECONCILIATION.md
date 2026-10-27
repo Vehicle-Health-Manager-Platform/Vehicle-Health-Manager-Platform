@@ -2,7 +2,7 @@
 
 本文件由 `python scripts/reconcile_contract.py` 生成，请勿手工编辑；结论数据在 [CONTRACT_VERDICTS.json](CONTRACT_VERDICTS.json)。
 
-- 契约操作：**359** 项；具备四类历史证据：**317** 项；有明确结论但**不计证据**：**42** 项。
+- 契约操作：**362** 项；具备四类历史证据：**317** 项；有明确结论但**不计证据**：**45** 项。
 - 未解释的操作：**0** 项（脚本 `--check` 会在出现未结案条目时失败）。
 
 结论只回答"这一项为什么没有四类证据"，**不等于**该功能已验收、已上线或已可用。真实执行证据见 [API_COVERAGE.md](../testing/API_COVERAGE.md)，全 API 验收仍为 `false`。
@@ -13,7 +13,7 @@
 | --- | --- | --- |
 | `superseded` | 已被具名实现替代 | 17 |
 | `internal-only` | 由服务内部事务完成 | 1 |
-| `implemented-local` | 本地软件已实现，完整历史HTTP证据待补 | 7 |
+| `implemented-local` | 本地软件已实现，完整历史HTTP证据待补 | 10 |
 | `blocked-external` | 依赖未接入的外部上游 | 11 |
 | `not-implemented` | 尚未实现(需先立项) | 2 |
 | `no-success-path` | 实现存在但无成功路径 | 1 |
@@ -49,7 +49,7 @@
 | --- | --- | --- |
 | `POST /api/coupon/release` | `未标记` | 订单取消/退款时的券释放由事务内的 CouponRecovery 完成,不存在独立 HTTP 入口;单独暴露会被滥用为手动改券状态。 |
 
-### 本地软件已实现，完整历史HTTP证据待补（7 项）
+### 本地软件已实现，完整历史HTTP证据待补（10 项）
 
 | 操作 | 当前实现标记 | 说明 |
 | --- | --- | --- |
@@ -57,6 +57,9 @@
 | `POST /api/recognition/asr/jobs` | `asr-durable-job-create-implemented-requires-model-acceptance` | R3持久ASR任务、当前OWNER/同车辆同用途权限、幂等/取消/租约/TTL及人工转写核对软件已实现；真实faster-whisper模型与授权语音效果尚未验收，局部替身流程不作为全部历史四类HTTP证据。 |
 | `GET /api/recognition/asr/jobs/{id}` | `asr-durable-job-read-implemented-requires-model-acceptance` | R3持久ASR任务、当前OWNER/同车辆同用途权限、幂等/取消/租约/TTL及人工转写核对软件已实现；真实faster-whisper模型与授权语音效果尚未验收，局部替身流程不作为全部历史四类HTTP证据。 |
 | `POST /api/recognition/asr/jobs/{id}/cancel` | `asr-durable-job-cancel-implemented` | R3持久ASR任务、当前OWNER/同车辆同用途权限、幂等/取消/租约/TTL及人工转写核对软件已实现；真实faster-whisper模型与授权语音效果尚未验收，局部替身流程不作为全部历史四类HTTP证据。 |
+| `POST /api/recognition/documents/jobs` | `document-durable-job-implemented-local` | R4b持久文档任务、独立图片材料与人工逐块核对软件已实现；本地替身HTTP/MySQL不代表真实证件或模型效果，真实中文单据/手机与历史四类API全覆盖另验，默认关闭。 |
+| `GET /api/recognition/documents/jobs/{id}` | `document-durable-job-implemented-local` | R4b持久文档任务、独立图片材料与人工逐块核对软件已实现；本地替身HTTP/MySQL不代表真实证件或模型效果，真实中文单据/手机与历史四类API全覆盖另验，默认关闭。 |
+| `POST /api/recognition/documents/jobs/{id}/cancel` | `document-durable-job-implemented-local` | R4b持久文档任务、独立图片材料与人工逐块核对软件已实现；本地替身HTTP/MySQL不代表真实证件或模型效果，真实中文单据/手机与历史四类API全覆盖另验，默认关闭。 |
 | `POST /api/vehicle/license-recognition` | `license-owner-candidate-implemented-requires-document-acceptance` | R2b新车用途行驶证候选网关与本地受限OCR场景已实现；新车图片复用当前OWNER私有上传，无vehicle_id。授权真实证件效果、真机及国内车型映射另验，不据替身或合成样本扩称全部历史HTTP证据齐全。 |
 | `POST /api/vehicle/mileage-recognition` | `mileage-recognition-gateway-implemented-requires-model` | 默认关闭的里程识别网关已实现；真实OCR模型、小程序接线及完整四类真实HTTP执行证据待补。 |
 | `POST /api/vehicle/vin-decode` | `vin-owner-candidate-implemented-requires-provider-acceptance` | R2a车主网关与小程序候选/人工选车型闭环已实现；HTTP/JWT/MySQL使用合成供应商验证，不作为真实NHTSA覆盖或中国车型来源验收，也不扩称历史四类证据齐全。 |

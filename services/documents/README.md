@@ -1,3 +1,35 @@
+# 图文提取服务：当前接入与R4a内核
+
+R4b已新增私有`POST /extract`、Java持久任务和车主逐块核对；[公开接口/状态/错误](../../docs/api/DOCUMENT_JOBS.md)、[R4b交付记录](../../docs/progress/RECOGNITION_R4B_DOCUMENT_JOBS.md)。下方R4a范围与旧待办保留为历史说明，以此处和R4b文档为当前接入依据。
+
+## 私有HTTP配置
+
+服务启动：`python services/documents/src/document_server.py`，仅支持已经准备JDK/PDFBox闭包、固定Paddle模型和Linux受限运行时的环境。DOCUMENT_SERVICE_ENABLED=false默认不构造引擎；开启还需DOCUMENT_CORE_ENABLED=true和DOCUMENT_SERVICE_TOKEN（32..512可见ASCII）。DOCUMENT_PORT默认8092。关闭时/extract返回503，不输出测试结果；/health只说明CONFIG_VERIFIED或UNAVAILABLE，**不表示模型已推理通过**。
+
+严格Bearer、JSON/长度/编码/重复头、最大正文/3秒读取截止；4条连接、1个执行槽，忙时429，无无界队列。不接受URL/路径、query、重试或重定向。安全错误只含码；私有token只在父进程，子进程继承环境白名单。服务单元测试使用明确Engine替身；实际HTTP验证运行在无网络容器内，真实PDFBox/Paddle处理生成英文夹具，不能代替车主全栈或真实中文样本验收。
+
+Java后端独立配置DOCUMENT_ENABLED=false、DOCUMENT_URL、DOCUMENT_SERVICE_TOKEN、DOCUMENT_ALLOW_PRIVATE_HTTP=false、DOCUMENT_JOB_INTERVAL_MS=1000、DOCUMENT_CLEANUP_INTERVAL_MS=60000。关闭时创建503，已存在候选读取失效且清空；恢复开关不会复活已取消候选。先部署V064；它保留132表并以原子ALTER扩展约束与按类型领取索引。不是可用DROP COLUMN回退的迁移，需停写、备份恢复至新库并核对。
+
+## 本地/测试完整接线
+
+先按下方实际内核入口生成并验收本地`autocare-document-core:acceptance`镜像，它只使用已经核验的本机资源；不要把验收镜像称为生产已发布。默认Compose不启动模型。需要显式在隔离测试项目追加覆盖：
+
+```powershell
+# token由测试环境管理者生成并放在本机环境中，不要提交或输出。
+$env:DOCUMENT_MODELS_DIR=(Resolve-Path '.cache/ocr-prepared').Path
+# DOCUMENT_SERVICE_TOKEN须已配置；其余MySQL/扫描/私有存储见项目本地启动指南。
+docker compose -f deploy/compose/compose.yml -f deploy/compose/document-test.yml config --quiet
+docker compose -f deploy/compose/compose.yml -f deploy/compose/document-test.yml up -d
+```
+
+覆盖只让后端加入独立internal网络，模型服务无宿主端口、无外网，非root/只读rootfs和模型、cap-drop ALL、2GiB/CPU2/PID128、256MiB受限tmpfs。Java通过固定document-extractor:8092/extract访问；服务和内核都显式开启。该覆盖是可检查的测试配置；是否完整启动及真实私有存储/扫描验证需看本轮报告，不能用config --quiet通过代替启动通过。
+
+使用微信开发配置指向测试后端，在本人当前车辆的AI/档案页，选择材料→单独上传→同意提取→逐段加入→编辑核对→重新验证后带入→原发送/保存。不要用业务file_id、第三方文档或生产身份做本地夹具。停止模型时关闭DOCUMENT_ENABLED及两个服务开关，按同一项目和覆盖停止document-extractor；**不要使用down -v删除数据库**。TTL/取消不删除原文件；本人删除/保留政策仍需验收。
+
+`python scripts/run_document_core_acceptance.py --allow-isolated-document-core`现在除内核分项，还执行linux_http_acceptance.py实际私有HTTP/模型源绑定、错误/单槽和清理验证；仍没有把它当作公开OWNER路由/真实上传扫描/真机联调证据。
+
+---
+
 # R4a 私有文档提取内核
 
 本目录是内部提取库与本地验收工具，没有公开HTTP接口、任务记录或小程序入口。默认不启用，不能把本轮内核实测称为完整车主图文业务已交付。R4b才复用持久任务的原会话/材料重验、同意/撤销/TTL与页面人工核对；正式微信、短信和生产发布继续后置。

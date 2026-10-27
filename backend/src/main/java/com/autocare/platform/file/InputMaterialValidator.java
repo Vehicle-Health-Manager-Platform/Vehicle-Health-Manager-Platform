@@ -8,22 +8,52 @@ import org.apache.pdfbox.cos.*;
 
 /** Separate policy: this never broadens the existing business image whitelist. */
 public final class InputMaterialValidator {
-    public static final int AUDIO_MAX = 3 * 1024 * 1024, PDF_MAX = 10 * 1024 * 1024;
+    public static final int AUDIO_MAX = 3 * 1024 * 1024, PDF_MAX = 10 * 1024 * 1024, IMAGE_MAX=4*1024*1024;
     public record Validated(FileValidator.Validated file, int durationMs, int pages) {}
     public Validated validate(String filename, InputStream input) {
         if (filename == null || filename.isBlank() || filename.length() > 200 || filename.contains("/") || filename.contains("\\")
                 || filename.codePoints().anyMatch(Character::isISOControl)) throw invalid();
         String lower = filename.toLowerCase(Locale.ROOT);
         boolean audio = lower.endsWith(".mp3");
-        if (!audio && !lower.endsWith(".pdf")) throw invalid();
+        boolean image=lower.endsWith(".image")||lower.endsWith(".png")||lower.endsWith(".jpg")||lower.endsWith(".jpeg");
+        if (!audio && !image && !lower.endsWith(".pdf")) throw invalid();
         byte[] bytes;
-        int limit = audio ? AUDIO_MAX : PDF_MAX;
+        int limit = audio ? AUDIO_MAX : image?IMAGE_MAX:PDF_MAX;
         try { bytes = input.readNBytes(limit + 1); }
         catch (Exception e) { throw invalid(); }
         if (bytes.length > limit) throw new UploadHttpException(413, "辅助材料过大");
         if (bytes.length == 0) throw invalid();
+        if(image)return image(bytes,lower);
         return audio ? new Validated(new FileValidator.Validated("audio/mpeg", bytes), mp3(bytes), 0)
             : new Validated(new FileValidator.Validated("application/pdf", bytes), 0, pdf(bytes));
+    }
+    private Validated image(byte[] bytes,String filename){
+        try(var input=new javax.imageio.stream.MemoryCacheImageInputStream(new java.io.ByteArrayInputStream(bytes))){
+            var readers=javax.imageio.ImageIO.getImageReaders(input);if(!readers.hasNext())throw invalid();var reader=readers.next();
+            try{
+                reader.setInput(input,false,false);String format=reader.getFormatName().toLowerCase(Locale.ROOT);
+                if(!Set.of("jpeg","png").contains(format)||reader.getNumImages(true)!=1)throw invalid();
+                // JDK PNG readers may ignore APNG animation chunks and report one frame.
+                if(format.equals("png"))staticPng(bytes);
+                if(filename.endsWith(".png")&&!format.equals("png")||(filename.endsWith(".jpg")||filename.endsWith(".jpeg"))&&!format.equals("jpeg"))throw invalid();
+                int width=reader.getWidth(0),height=reader.getHeight(0);
+                if(width<1||height<1||width>4096||height>4096||(long)width*height>6000000)throw invalid();
+                var decoded=reader.read(0);if(decoded==null)throw invalid();decoded.flush();
+                return new Validated(new FileValidator.Validated(format.equals("png")?"image/png":"image/jpeg",bytes),0,1);
+            }finally{reader.dispose();}
+        }catch(Exception error){throw invalid();}
+    }
+    private void staticPng(byte[] bytes){
+        int offset=8;boolean ended=false;
+        while(offset<=bytes.length-12){
+            long length=Integer.toUnsignedLong(java.nio.ByteBuffer.wrap(bytes,offset,4).getInt());
+            if(length>bytes.length-offset-12)throw invalid();
+            String type=new String(bytes,offset+4,4,StandardCharsets.US_ASCII);
+            if(Set.of("acTL","fcTL","fdAT").contains(type))throw invalid();
+            offset+=(int)length+12;
+            if(type.equals("IEND")){if(length!=0||offset!=bytes.length)throw invalid();ended=true;break;}
+        }
+        if(!ended)throw invalid();
     }
     private int mp3(byte[] b) {
         int pos = 0, frames = 0;
@@ -91,5 +121,5 @@ public final class InputMaterialValidator {
             return pages;
         } catch (Exception e) { throw invalid(); }
     }
-    private UploadHttpException invalid() { return new UploadHttpException(422, "材料格式不支持或内容无效，请使用合规录音或静态PDF"); }
+    private UploadHttpException invalid() { return new UploadHttpException(422, "材料格式不支持或内容无效，请使用合规录音、JPEG/PNG或静态PDF"); }
 }
