@@ -139,6 +139,11 @@
               <argLine>@{coreCoverageArgLine}</argLine>
               <forkCount>1</forkCount>
               <reuseForks>true</reuseForks>
+              <!-- This explicit real-model suite is run by its isolated runner.
+                   Keep the ordinary coverage audit strict: no skipped evidence. -->
+              <excludes>
+                <exclude>**/RealAsrModelJourneyTest.java</exclude>
+              </excludes>
             </configuration>
           </plugin>
         </plugins>

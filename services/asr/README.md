@@ -88,3 +88,5 @@ python services/asr/prepare_manifest.py --root "$ASR_MODEL_ROOT" --revision "$AS
 python -m unittest discover -s services/asr -p 'test_*.py'验证资源/协议/替身边界；python -m unittest discover -s scripts -p 'test_linux_asr_acceptance.py'验证验收入口的权限与资源约束。统一python scripts/run_local_delivery.py包括这两组和既有构建检查，不自动下载模型或执行真实容器验收。
 
 授权普通话/方言/噪声/静音/长短音频、坏编码/超限、时间片段/准确性、CPU时延与内存压力、父进程退出、重启、Java任务取消/撤销/材料变化/TTL及原表单保存、iOS/Android与云上传仍须分别记录版本/授权/结果。公开MIT模型声明不等于语音样本授权。正式微信、短信、支付与生产发布继续后置。
+
+普通core-coverage配置明确排除显式外部资源套件RealAsrModelJourneyTest，避免把其默认跳过当成覆盖证据；覆盖门禁继续拒绝失败/跳过，必需核心套件不排除。独立真实ASR入口仍按原显式选择执行，此处不等于真实模型在普通CI通过。

@@ -54,7 +54,7 @@ class LocalDeliveryTest(unittest.TestCase):
 
     def test_asr_is_a_default_check_and_its_sources_are_bound(self):
         base = steps(ROOT)
-        self.assertEqual(10, len(base))
+        self.assertEqual(11, len(base))
         command = next(row[1] for row in base if row[0] == 'asr-regression')
         self.assertIn('services/asr', command)
         with tempfile.TemporaryDirectory() as directory:
@@ -72,6 +72,15 @@ class LocalDeliveryTest(unittest.TestCase):
             before = source_digest(root)
             requirements.write_text('changed dependency')
             self.assertNotEqual(before, source_digest(root))
+
+    def test_document_kernel_is_checked_and_source_changes_invalidate_evidence(self):
+        self.assertIn('document-regression',[row[0] for row in steps(ROOT)])
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);(root/'apps').mkdir()
+            for name in ('package.json','package-lock.json','backend/pom.xml','services/documents/src/document_core.py'):
+                path=root/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_text('first')
+            before=source_digest(root);(root/'services/documents/src/document_core.py').write_text('changed')
+            self.assertNotEqual(before,source_digest(root))
 
     def test_missing_command_does_not_hide_later_results(self):
         def execute(command, **kwargs):

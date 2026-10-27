@@ -10,6 +10,7 @@ MAX_IMAGE = 4 * 1024 * 1024
 MAX_BODY = 6 * 1024 * 1024
 
 class InvalidImage(ValueError): pass
+class DocumentLinesLimit(ValueError): pass
 
 
 def load_request(raw):
@@ -56,15 +57,34 @@ class PaddleEngine:
             text_detection_model_name='PP-OCRv5_mobile_det', text_recognition_model_name='PP-OCRv5_mobile_rec',
             text_detection_model_dir=detection_dir, text_recognition_model_dir=recognition_dir,
             use_doc_orientation_classify=False, use_doc_unwarping=False, use_textline_orientation=False)
-    def recognize(self, image):
+    def _prediction(self, image):
         import numpy as np
         results = iter(self.model.predict(np.asarray(image)[:, :, ::-1].copy()))
         first = next(results, None)
         if first is None or next(results, None) is not None: raise ValueError('invalid model result')
+        return first
+
+    def recognize(self, image):
+        first = self._prediction(image)
         texts, scores = first['rec_texts'], first['rec_scores']
         if not isinstance(texts, list) or len(texts) != len(scores) or len(texts) > 100: raise ValueError('invalid model result')
         if any(isinstance(score, bool) or not isinstance(score, Real) for score in scores): raise ValueError('invalid model confidence')
         return [{'text': text, 'confidence': float(score)} for text, score in zip(texts, scores)]
+
+    def recognize_document(self, image):
+        # Document locations must come from this prediction's actual rec_polys.
+        # This is an internal adapter, not a new scene on the existing HTTP API.
+        first = self._prediction(image)
+        texts, scores, polygons = first['rec_texts'], first['rec_scores'], first['rec_polys']
+        if not isinstance(texts,list) or len(texts)!=len(scores) or len(texts)!=len(polygons):
+            raise ValueError('invalid document model result')
+        if len(texts)>80:raise DocumentLinesLimit('document line budget')
+        rows=[]
+        for text,score,polygon in zip(texts,scores,polygons):
+            if isinstance(score,bool) or not isinstance(score,Real):raise ValueError('invalid model confidence')
+            points=polygon.tolist() if hasattr(polygon,'tolist') else polygon
+            rows.append({'text':text,'confidence':float(score),'points':points})
+        return rows
 
 def recognize_image(image, engine, scene='mileage'):
     if scene not in ('mileage', 'license'): raise InvalidImage('invalid scene')

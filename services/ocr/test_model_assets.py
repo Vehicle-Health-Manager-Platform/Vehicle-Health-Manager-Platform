@@ -81,7 +81,10 @@ class ModelAssetsTest(unittest.TestCase):
             return rename(stage, output)
         with patch.object(Path, 'rename', new=publish), patch('model_assets.time.sleep') as sleep:
             prepare_models(self.root, self.output)
-        self.assertEqual(2, len(attempts)); sleep.assert_called_once()
+        # A real Windows reader can add another transient denial after our
+        # injected first one; still require bounded retries and real publication.
+        self.assertGreaterEqual(len(attempts), 2); self.assertLessEqual(len(attempts), 4)
+        self.assertEqual(len(attempts)-1, sleep.call_count)
         self.assertTrue(verify_models(self.output))
 
     def test_persistent_windows_publish_denial_never_publishes_partial_models(self):

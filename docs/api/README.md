@@ -143,3 +143,5 @@ PR #14 实现[本人车辆列表、有效车型查询与手动添加](VEHICLE_MA
 - [R7c1 站内通知协议](SERVICE_NOTIFICATIONS.md)：本地阶段，整R7完成后代码与文档统一上传。
 
 - [R7c2 非实时人工诊断](ASYNC_DIAGNOSIS.md)：本地完成，整R7完成后代码与文档统一上传。
+
+R4a增量：[受限图文/PDF内核、来源与实测](../progress/RECOGNITION_R4A_DOCUMENT_CORE.md)。原生文字偏移与扫描/混合/图片实际Paddle多边形已实现，预算超限整次拒绝；没有新增公开HTTP接口、持久任务或小程序入口，R4b还需接入同意/鉴权/撤销/TTL和人工核对。不能据内核通过宣布车主图文业务完成。

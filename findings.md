@@ -892,3 +892,7 @@ R3b：固定官方模型536b0662742c02347bc0e980a01041f333bce120及24 wheel全�
 R3c运行入口：Docker internal网络不生成宿主发布端口；改为仅连接内部网络的ASR加独立127.0.0.1转发器，转发器只接本轮内部/桥接两网络。NGINX只读根需要显式/tmp下所有temp路径；Docker cp即使目标tmpfs也拒绝只读rootfs，改用有界stdin写固定/tmp测试夹具，保持非root和只读根。测试初次默认沙箱Temp写入被拒，工作区TEMP回归通过。PID/启动时间/命令校验及pidfd阻止PID复用误杀；真实信号只在本轮容器内。
 
 R3c最终：50 Java/13真实进程检查/实际OOM通过，default gate单独验证7跳过；10组源码一致，1189 miniapp、553 Python、40 ASR、OCR76+1跳过。修复新测试JSON档案断言、故障脚本seccomp继承计数及pidfd保护。PR245/246最终7 CI成功但Compose旧131表断言失败；现修132/V063且5组SQL在新MySQL63迁移全过，本地整栈受Docker Hub auth网络超时阻断未验。源码摘要纳入.sh/.ps1。所有本轮容器网络已清理；下一步R4，真实中文/存储扫描/真机及生产仍另验。
+
+R4a：Java/Paddle真实内核20项通过，扫描/混合/旋转实际读出合成123456；源文字为UTF16页内偏移，OCR位置来自实际rec_polys。发现并修复旧OCR镜像缺license_fields（复制完整当前源码）、JDK NIO及ImageIO磁盘缓存socketpair与seccomp冲突（普通IO+私有JVM禁diskcache，不放松网络）。补内联图片/绘图内容避免只读页脚。PR247覆盖率审计因默认跳过的真实ASR套件失败，普通core-coverage仅排除该非必需显式套件，6项真实profile验证零跳过，门禁本身保持严格。Windows原子发布测试允许有界真实额外共享拒绝，最终模型内容仍实际校验。
+
+R4a收口补充：源码COPY限定.py并固定无写入的临时pycache前缀，避免宿主字节码不在源码摘要中却进入镜像。最终版本重新进行内核/统一回归；前置PR247为覆盖率跳过门禁失败，Compose未执行，不能写成全部CI成功。
