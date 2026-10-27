@@ -217,7 +217,8 @@ class RealMaterialWorkbenchJourneyTest {
         material("audio_archive","normal","other","/api/input-materials/ARCHIVE/2/upload",CLEAN,"audio",key,200);
         material("pdf_ai","normal","other","/api/input-materials/AI/2/upload",pdf,"pdf",key,200);
         material("same_key_other_vehicle","boundary","owner","/api/input-materials/AI/3/upload",CLEAN,"audio",key,200);
-        material("unknown_kind","error","owner",ai,CLEAN,"image",UUID.randomUUID().toString(),400);
+        // R4b supports image: an unsupported kind must remain distinct from bad image bytes.
+        material("unknown_kind","error","owner",ai,CLEAN,"webp",UUID.randomUUID().toString(),400);
         material("upload_query","error","owner",ai+"?owner_id=2",CLEAN,"audio",UUID.randomUUID().toString(),400);
         var infected=material("infected_bytes","error","owner",ai,INFECTED,"audio",UUID.randomUUID().toString(),422);
         assertEquals("上传文件未通过病毒检查",infected.path("message").asText());
