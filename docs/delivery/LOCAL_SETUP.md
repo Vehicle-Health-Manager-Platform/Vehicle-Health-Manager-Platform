@@ -1,5 +1,7 @@
 # 本地启动、配置与测试
 
+当前R5c2（2026-10-28）：默认回归为12组，库版本65迁移/134表。ASR、图文/PDF、真实中文嵌入、自动索引及公开VECTOR均已具备显式测试配置，仍默认关闭。分别参照[ASR](../api/ASR_JOBS.md)、[图文](../api/DOCUMENT_JOBS.md)、[公开检索](../api/KNOWLEDGE_VECTOR_RETRIEVAL.md)与[实际结果](../progress/RECOGNITION_R5C2_PUBLIC_VECTOR.md)。下方ASR段落中的63迁移/10组为R3时的阶段记录，不是当前启动上限。正式认证缺失时，业务验收继续使用明确标识的隔离合成会话，不在正常包中增加伪造身份入口。
+
 ## 环境
 
 使用Node.js 22、npm锁文件、Python 3.11+、Java17、Maven3.9和Docker Linux Engine。Java/Maven可配置到当前终端PATH，不需更改全局设置。首次安装依赖/镜像需要网络；测试HTTP需要本机回环访问权限。
@@ -78,7 +80,7 @@ mvn -f backend/pom.xml spring-boot:run
 - 前端：`apps/miniapp/.env.example` 对应 `VITE_API_BASE_URL` 或成对的云环境/服务名。VITE值公开，绝不放服务端密钥。
 - 私有附件：MinIO应用级凭据、私有桶、签名URL期限及ClamAV地址/超时；根账号不能当应用账号。真实供应商选择及维护风险见[部署说明](../../deploy/README.md)。
 - OCR：内部服务token、固定模型目录/摘要、推理运行锁、受限容器；默认关闭。不得将内部token发给客户端。
-- AI：`AI_PROVIDER`、`DEEPSEEK_API_KEY`、地址/模型；缺少时503降级。语音/照片/PDF自动理解和向量检索仍有未实现项。
+- AI：`AI_PROVIDER`、`DEEPSEEK_API_KEY`、地址/模型；缺少时503降级。ASR/图文提取及向量检索使用各自独立开关、私有模型与用途许可，不能仅配置文本AI密钥就开启；领域质量及真实上游另验。
 - 异步业务：归档、通知、经验卡、入驻、员工、支付/退款恢复、积分、邀请、公开内容等开关，见[模板变量索引](MINIAPP_REFERENCE.md)及对应运维手册；默认关闭不等于故障，开启前须迁移、配置和局部验收。
 - Redis、RabbitMQ为Compose基础设施；不能仅因容器健康认定所有业务消费链路通过。Milvus存在部署位置不代表已实现向量检索。
 - H5辅助产物使用uni-app完整API包；本轮浏览观察到框架自动加载阿里云验证SDK及设备token脚本。该加载不是微信/短信认证成功，也不是当前业务主动启用人脸验证的证明；若后续交付H5，须专项审查并裁剪未使用的第三方加载，不能以关闭树摇造成的完整包行为代替用户用途同意。小程序普通包和H5分别验收。

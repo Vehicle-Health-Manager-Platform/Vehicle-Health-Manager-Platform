@@ -8,14 +8,32 @@ import static com.autocare.platform.order.ReservationStore.*;
 /** Explicit, bounded lifecycle. Never changes knowledge payloads, receipts or business rows. */
 final class KnowledgeEmbeddingRuntime implements AutoCloseable {
  private final ReservationStore db;private final LicensedKnowledge knowledge;private final EmbeddingProfile profile;
- private final boolean enabled,cleanup;private final KnowledgeVectorIndex index;
+ private final boolean enabled,cleanup,publicEnabled;private final KnowledgeVectorIndex index;
  private final AtomicBoolean busy=new AtomicBoolean();private volatile boolean closed,cycleFailed;
  private long documentCursor,cleanupCursor;
  KnowledgeEmbeddingRuntime(ReservationStore db,LicensedKnowledge knowledge,EmbeddingProfile profile,EmbeddingProvider provider,boolean enabled,boolean cleanup){
+  this(db,knowledge,profile,provider,enabled,cleanup,false);
+ }
+ KnowledgeEmbeddingRuntime(ReservationStore db,LicensedKnowledge knowledge,EmbeddingProfile profile,EmbeddingProvider provider,boolean enabled,boolean cleanup,boolean publicEnabled){
   if(enabled&&(profile==null||provider==null))throw new IllegalArgumentException("Embedding runtime not configured");
   if(enabled&&cleanup)throw new IllegalArgumentException("Cleanup-only maintenance cannot run with indexing");
+  if(publicEnabled&&!enabled)throw new IllegalArgumentException("Vector retrieval requires embedding configuration");
   this.db=db;this.knowledge=knowledge;this.profile=profile;this.enabled=enabled;this.cleanup=cleanup||enabled;
-  index=enabled?new KnowledgeVectorIndex(db,knowledge,profile,provider,true):null;
+  this.publicEnabled=publicEnabled;index=enabled?new KnowledgeVectorIndex(db,knowledge,profile,provider,true):null;
+ }
+ boolean publicConfigured(){return publicEnabled;}
+ boolean vectorActive(){return publicEnabled&&enabled&&!closed;}
+ List<KnowledgeVectorIndex.Hit> rank(com.autocare.platform.vehicle.VehicleOwner owner,long vehicle,String query,int limit,boolean ai){
+  if(!vectorActive())throw new ResponseStatusException(org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE,"向量检索暂不可用");
+  return index.rank(owner,vehicle,query,limit,ai);
+ }
+ // Caller holds the knowledge control lock in a fresh transaction. No nested TX/IO.
+ boolean complete(List<Map<String,Object>> rows){
+  if(!vectorActive()||rows.isEmpty())return false;
+  for(var row:rows){if(!KnowledgeInput.embeddingAllowed(db.parse(row.get("payload"))))return false;
+   var jobs=db.jdbc.queryForList("SELECT id FROM knowledge_embedding_job WHERE document_id=? AND document_revision=? AND source_hash=? AND profile_hash=? AND profile_json=CAST(? AS JSON) AND state='SUCCEEDED'",row.get("id"),row.get("revision"),row.get("source_hash"),profile.fingerprint(),profile.json());
+   if(jobs.size()!=1)return false;
+  }return true;
  }
  private void guard(){db.one("SELECT id FROM knowledge_control WHERE id=1 FOR UPDATE");}
  boolean configured(){return enabled||cleanup;}

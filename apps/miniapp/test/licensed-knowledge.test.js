@@ -125,3 +125,41 @@ test('admin list validates new embedding state while legacy receipts stay accept
  row.embedding.private_token='must never arrive';await assert.rejects(api.admin('operator'),e=>e.kind==='protocol')
  delete row.embedding;assert.equal((await api.admin('operator')).items.length,1)
 })
+
+test('vector references preserve Unicode and boundary whitespace with exact positions',()=>{
+ const excerpt=' 片段😀\n',r={...reference(),excerpt,chunk:1,start_offset:224,end_offset:224+excerpt.length}
+ assert.ok(validKnowledgeReference(r,1));assert.ok(validKnowledgeReference({...r,body:excerpt},1,true))
+ for(const bad of [{...r,end_offset:r.end_offset+1},{...r,chunk:64},{...r,start_offset:-1},{...r,body:'wrong'}, {...r,excerpt:'x\u0085'}, {...r,score:.9}])assert.equal(validKnowledgeReference(bad,1,Boolean(bad.body)),false)
+ assert.ok(validKnowledgeReference({...reference(),excerpt:'边界空白 '},1))
+})
+test('positioned knowledge routes carry only a bounded chunk and reference',()=>{
+ assert.deepEqual(knowledgeRoute({reference:key,chunk:'0'}),{reference:key,chunk:0});assert.match(knowledgeReference(key,63),/&chunk=63$/)
+ for(const chunk of ['-1','64','00','1.0','NaN'])assert.equal(knowledgeRoute({reference:key,chunk}),null)
+ assert.equal(knowledgeRoute({chunk:'0'}),null);assert.equal(knowledgeReference(key,64),'')
+})
+test('search accepts complete vector shape and rejects mislabeled mixed or paginated results',async()=>{
+ const r={...reference(),chunk:0,start_offset:0,end_offset:reference().excerpt.length}
+ let value={vehicle_id:1,state:'AVAILABLE',method:'VECTOR',items:[r],next_cursor:null}
+ const api=createKnowledgeApi({baseUrl:'https://example.test',runtime:()=>({request:q=>q.success({statusCode:200,data:{code:0,data:value}})})})
+ assert.equal((await api.search('owner',1,1,'刹车')).method,'VECTOR')
+ for(const change of [{fallback_reason:'VECTOR_UNAVAILABLE'},{next_cursor:5},{items:[reference()]},{state:'UNKNOWN'},{items:[r,r]},{items:[]}]){const old=value;value={...old,...change};await assert.rejects(api.search('owner',1,1,'刹车'),e=>e.kind==='protocol');value=old}
+ await assert.rejects(api.search('owner',1,1,'刹车',5),e=>e.kind==='protocol')
+})
+test('keyword fallbacks are explicit known reasons and never carry vector chunks',async()=>{
+ let value={vehicle_id:1,state:'AVAILABLE',method:'KEYWORD',items:[reference()],next_cursor:null,fallback_reason:'VECTOR_UNAVAILABLE'}
+ const api=createKnowledgeApi({baseUrl:'https://example.test',runtime:()=>({request:q=>q.success({statusCode:200,data:{code:0,data:value}})})})
+ assert.equal((await api.search('owner',1,1,'冷却')).fallback_reason,'VECTOR_UNAVAILABLE');value.fallback_reason='private upstream details';await assert.rejects(api.search('owner',1,1,'冷却'),e=>e.kind==='protocol')
+ value.fallback_reason='INDEX_NOT_READY';value.items=[{...reference(),chunk:0,start_offset:0,end_offset:reference().excerpt.length}];await assert.rejects(api.search('owner',1,1,'冷却'),e=>e.kind==='protocol')
+})
+test('positioned detail binds requested chunk and copies an independently verifiable route',async()=>{
+ const r={...reference(),body:reference().excerpt,chunk:1,start_offset:224,end_offset:224+reference().excerpt.length};let value={vehicle_id:1,document:r},sent
+ const api=createKnowledgeApi({baseUrl:'https://example.test',runtime:()=>({request:q=>{sent=q;q.success({statusCode:200,data:{code:0,data:value}})}})})
+ assert.equal((await api.detail('owner',1,1,key,1)).document.body,r.excerpt);assert.match(sent.url,/&chunk=1$/)
+ value.document.chunk=2;await assert.rejects(api.detail('owner',1,1,key,1),e=>e.kind==='protocol');await assert.rejects(api.detail('owner',1,1,key),e=>e.kind==='protocol')
+})
+test('AI vector sources require positions and keyword fallbacks retain source semantics',async()=>{
+ let value={vehicle_id:1,reply:'合成AI参考',model:'synthetic-ai',method:'VECTOR',provided_sources:[{...reference(),chunk:0,start_offset:0,end_offset:reference().excerpt.length}]}
+ const api=createKnowledgeApi({baseUrl:'https://example.test',runtime:()=>({request:q=>q.success({statusCode:200,data:{code:0,data:value}})})})
+ assert.equal((await api.answer('owner',1,1,'冷却')).method,'VECTOR');value.provided_sources=[reference()];await assert.rejects(api.answer('owner',1,1,'冷却'),e=>e.kind==='protocol')
+ value.method='KEYWORD';value.fallback_reason='QUERY_LIMIT';assert.equal((await api.answer('owner',1,1,'冷却')).method,'KEYWORD');value.fallback_reason='CURSOR_PAGING';await assert.rejects(api.answer('owner',1,1,'冷却'),e=>e.kind==='protocol')
+})

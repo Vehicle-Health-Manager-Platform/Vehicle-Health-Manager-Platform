@@ -43,4 +43,18 @@ class RealEmbeddingIndexJourneyTest extends JdbcLicensedKnowledgeTest {
    knowledge.status(manager,id,key(),state(2,"STOPPED"));runtime.tick();assertEquals(0,count("knowledge_embedding_chunk"));assertEquals("NOT_ALLOWED",runtime.status(jdbc.queryForMap("SELECT * FROM knowledge_document WHERE id=?",id)).get("state"));
   }
  }
+ @Test void actualPublicVectorUsesCurrentExactChunkAndOwnerScope(){
+  long id=publish("合成背景资料。".repeat(50)+"轮胎胎压不足时应到店检查漏气并按标准补充气压。");index.enqueue(id);assertTrue(index.workOne());
+  try(var runtime=new KnowledgeEmbeddingRuntime(db,knowledge,profile,provider,true,false,true)){
+   knowledge.embeddingRuntime(runtime);var out=json.valueToTree(knowledge.search(owner,1,"轮胎胎压不足如何处理",null));assertEquals("VECTOR",out.path("method").asText());var item=out.path("items").get(0);assertTrue(item.has("chunk"));var detail=json.valueToTree(knowledge.detail(owner,1,item.path("reference").asText(),item.path("chunk").asInt()));assertEquals(item.path("excerpt"),detail.path("document").path("body"));assertEquals(404,code(()->knowledge.search(owner,2,"胎压",null)));
+  }
+ }
+ @Test void actualVectorAiSourcesAreRecheckedAfterMockUpstream(){
+  long id=publish("轮胎气压合成资料，仅用于测试。");index.enqueue(id);index.workOne();
+  try(var runtime=new KnowledgeEmbeddingRuntime(db,knowledge,profile,provider,true,false,true)){
+   knowledge.embeddingRuntime(runtime);org.mockito.Mockito.when(ai.complete(org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.anyList(),org.mockito.ArgumentMatchers.anyInt())).thenReturn(new com.autocare.platform.ai.DeepSeekClient.Completion("合成AI回答","synthetic-ai",1,1));
+   var q=json.createObjectNode().put("vehicle_id",1).put("question","轮胎气压检查");var out=json.valueToTree(knowledge.answer(owner,q));assertEquals("VECTOR",out.path("method").asText());assertTrue(out.path("provided_sources").get(0).has("chunk"));
+   org.mockito.Mockito.when(ai.complete(org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.anyList(),org.mockito.ArgumentMatchers.anyInt())).thenAnswer(i->{knowledge.status(manager,id,key(),state(2,"STOPPED"));return new com.autocare.platform.ai.DeepSeekClient.Completion("must be withheld","synthetic-ai",1,1);});assertEquals(404,code(()->knowledge.answer(owner,q)));
+  }
+ }
 }

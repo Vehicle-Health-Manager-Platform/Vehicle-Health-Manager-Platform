@@ -8801,7 +8801,7 @@
       "name": "get_api_knowledge_documents_reference",
       "request": {
         "method": "GET",
-        "url": "{{base_url}}/api/knowledge/documents/{{get_api_knowledge_documents_reference_reference}}?vehicle_id={{get_api_knowledge_documents_reference_vehicle_id}}",
+        "url": "{{base_url}}/api/knowledge/documents/{{get_api_knowledge_documents_reference_reference}}?vehicle_id={{get_api_knowledge_documents_reference_vehicle_id}}&chunk={{get_api_knowledge_documents_reference_chunk}}",
         "header": [],
         "description": "许可资料治理与可追溯关键词检索\nRoles: OWNER",
         "auth": {
@@ -8823,7 +8823,7 @@
             "exec": [
               "if (pm.variables.get(\"enable_prepared_requests\") !== \"true\") { pm.execution.skipRequest(); }",
               "else {",
-              "  const missing = [\"status_get_api_knowledge_documents_reference\", \"get_api_knowledge_documents_reference_reference\", \"get_api_knowledge_documents_reference_vehicle_id\", \"access_token\"].filter(k => !pm.variables.get(k));",
+              "  const missing = [\"status_get_api_knowledge_documents_reference\", \"get_api_knowledge_documents_reference_reference\", \"get_api_knowledge_documents_reference_vehicle_id\", \"get_api_knowledge_documents_reference_chunk\", \"access_token\"].filter(k => !pm.variables.get(k));",
               "  if (missing.length) { pm.execution.skipRequest(); throw new Error(\"Configure fixture variables before sending: \" + missing.join(\",\")); }",
               "}"
             ]

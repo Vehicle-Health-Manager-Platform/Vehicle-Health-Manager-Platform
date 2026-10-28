@@ -1,5 +1,7 @@
 # 当前微信小程序剩余验收与交接
 
+2026-10-28最新R5c2：VIN/行驶证候选、ASR持久任务与实际模型、图文/PDF提取、真实中文嵌入/自动索引及公开VECTOR/精确片段已分批实现。见[当前统一验收清单](FINAL_ACCEPTANCE_2026_10_28.md)、[本轮结果](../progress/RECOGNITION_R5C2_PUBLIC_VECTOR.md)。当前362操作/65迁移/134表；以下A4/B阶段数量及“尚需接入”的旧描述保留历史含义。领域授权样本、真机、容量、材料保留/删除及全部当前版验收仍分别待办，不以已接线代替验证。
+
 2026-10-26上传后续：上一批1df7dd7已上传草稿PR241，未合并/发布；[识别与向量路线](../superpowers/plans/2026-10-26-recognition-vector-roadmap.md)已落实，开始[R1 VIN内部适配](../progress/RECOGNITION_R1_VIN_FOUNDATION.md)。R2a已接通[VIN车主网关/候选页面及手动录车](../api/VIN_OWNER_GATEWAY.md)，默认关闭；R2b新增[行驶证专用提取与新车人工确认流程](../api/LICENSE_RECOGNITION.md)，默认关闭；真实VIN覆盖/精确车型、授权真实证件/保留删除政策、ASR、图文和向量仍需推进，不扩称全部开发完成。
 
 2026-10-26最新用户范围：正式微信认证、短信开通、生产发布等需外部账号/资质或人工办理的工作由后续人员接手，本地开发与测试继续。[本地交接入口](LOCAL_HANDOVER.md)、[启动与配置](LOCAL_SETUP.md)、[外部接入清单](EXTERNAL_INTEGRATIONS.md)、[开发和验收缺口](LOCAL_BACKLOG.md)、[本轮结果](../testing/LOCAL_DELIVERY_2026_10_26.md)作为当前执行入口；下文B阶段规划保留历史依据，不能因暂缓外部接入就认定其余所有独立开发已完成。

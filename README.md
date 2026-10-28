@@ -1,5 +1,7 @@
 ## 本地阶段交接（2026-10-28）
 
+R5c2已接通[公开向量检索、明确关键词降级与精确片段引用](docs/api/KNOWLEDGE_VECTOR_RETRIEVAL.md)，默认关闭，需独立嵌入许可和当前完整索引。AI只使用许可摘录，调用后重新核验来源；实际BGE模型与模拟AI分开验证。[阶段结果](docs/progress/RECOGNITION_R5C2_PUBLIC_VECTOR.md)与[最终版本统一验收清单](docs/delivery/FINAL_ACCEPTANCE_2026_10_28.md)列出当前证据及剩余工作。以下各阶段记录描述当时状态，以此处最新入口为准。
+
 R5c1新增[默认关闭的自动索引、运营状态与独立清理维护](docs/operations/KNOWLEDGE_EMBEDDING_LIFECYCLE.md)。公开VECTOR/降级和AI引用接线列为R5c2，当前公开检索仍KEYWORD；测试结果见[阶段报告](docs/progress/RECOGNITION_R5C1_EMBEDDING_LIFECYCLE.md)。
 
 R5b已实现[私有真实中文嵌入及Java/MySQL内部索引联调](docs/progress/RECOGNITION_R5B_REAL_EMBEDDING.md)，含固定资源/依赖锁、受限离线推理和token预算；[配置、接口和本地复现](services/embedding/README.md)。公开检索仍KEYWORD，自动索引、公开VECTOR、领域质量、真机及正式微信/SMS/生产待后续验收。当前362项公开操作、65迁移/134表。以下保留阶段历史，未验事项以最新交接和报告为准。

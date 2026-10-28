@@ -2,7 +2,7 @@
 
 由 `python scripts/miniapp_handover.py` 生成；请修改来源后重生成。
 
-注册页面110项，三份环境模板共146条变量记录（同名跨模板分别计数）。
+注册页面110项，三份环境模板共147条变量记录（同名跨模板分别计数）。
 这是源码存在性与文档链接核对，不是入口可达性、权限、视觉、真实身份或真机通过证明。按目录归入阅读指南，共用页可能服务多个角色，实际权限以服务端为准。
 
 [车主](../user-guides/OWNER.md) · [商家](../user-guides/MERCHANT.md) · [技师](../user-guides/TECHNICIAN.md) · [受限运营](../user-guides/OPERATOR.md) · [剩余验收](REMAINING_ACCEPTANCE.md)
@@ -196,6 +196,7 @@
 - `KNOWLEDGE_ENABLED`；模板值 `false`。
 - `KNOWLEDGE_AI_ENABLED`；模板值 `false`。
 - `KNOWLEDGE_EMBEDDING_ENABLED`；模板值 `false`。
+- `KNOWLEDGE_VECTOR_ENABLED`；模板值 `false`。
 - `KNOWLEDGE_EMBEDDING_CLEANUP_ENABLED`；模板值 `false`。
 - `KNOWLEDGE_EMBEDDING_PROFILE_JSON`。
 - `KNOWLEDGE_EMBEDDING_URL`。

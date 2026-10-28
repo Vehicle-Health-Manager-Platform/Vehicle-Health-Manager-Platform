@@ -1,5 +1,7 @@
 # 授权嵌入与向量索引基础（R5a）
 
+最新R5c2已接通[公开VECTOR/明确降级、精确片段和AI引用复核](KNOWLEDGE_VECTOR_RETRIEVAL.md)，默认关闭。R5b实际模型及R5c1自动索引均有独立验收；下方“无provider/无自动调度/仍KEYWORD”说明只描述R5a当时范围。
+
 R5c1增量：[默认关闭自动任务与运营状态、清理步骤](../operations/KNOWLEDGE_EMBEDDING_LIFECYCLE.md)。既有运营列表新增可选embedding状态，不改写回执；公开接口仍KEYWORD。以下无自动任务描述为R5a历史范围。
 
 R5b增量：[私有真实中文嵌入协议/配置/运行](../../services/embedding/README.md)、[实际模型与Java/MySQL结果](../progress/RECOGNITION_R5B_REAL_EMBEDDING.md)。下文R5a替身范围保留历史含义；公开接口仍KEYWORD，无自动调度或VECTOR入口。

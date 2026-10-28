@@ -1,5 +1,7 @@
 # 本地与测试环境交接入口
 
+最新R5c2：[公开VECTOR、降级原因、片段详情及AI引用复核](../api/KNOWLEDGE_VECTOR_RETRIEVAL.md)、[测试/修复/交付边界](../progress/RECOGNITION_R5C2_PUBLIC_VECTOR.md)、[统一验收待办](FINAL_ACCEPTANCE_2026_10_28.md)。默认关闭；开启前先完成索引配置和授权检查。以下R5c1及更早记录保留阶段历史含义，不代表当前缺少已完成的接线。当前契约362操作、65迁移/134表。
+
 R5c1（2026-10-28）：[自动索引/配置/运营状态/跨配置维护](../operations/KNOWLEDGE_EMBEDDING_LIFECYCLE.md)、[测试与交付边界](../progress/RECOGNITION_R5C1_EMBEDDING_LIFECYCLE.md)。默认关闭；R5b的无自动接线描述保留历史含义，当前公开检索仍KEYWORD。
 
 2026-10-28 R5b：[真实中文嵌入接入与验证边界](../progress/RECOGNITION_R5B_REAL_EMBEDDING.md)、[独立运行/配置/私有接口/资源](../../services/embedding/README.md)。固定真实模型可显式隔离测试，主业务仍KEYWORD，自动索引与公开VECTOR后续接线。
@@ -40,7 +42,7 @@ R5c1（2026-10-28）：[自动索引/配置/运营状态/跨配置维护](../ope
 ## 部署交接顺序
 
 1. 固定提交、依赖锁、镜像摘要和环境；先在隔离库跑测试，再备份目标库并演练恢复。不要在已有库重复执行初始化。
-2. 核对V001基线及V002–V063的有序迁移记录；执行 `python scripts/verify_compose_migrations.py` 校验新库Compose挂载。已有卷不会自动执行新增迁移。迁移失败先核查部分DDL，不盲目重试全部SQL。
+2. 核对V001基线及V002–V065的有序迁移记录；执行 `python scripts/verify_compose_migrations.py` 校验新库Compose挂载。已有卷不会自动执行新增迁移。迁移失败先核查部分DDL，不盲目重试全部SQL。
 3. 通过私有环境注入配置，选择直连HTTPS或可信云托管。云通道开启前须关闭服务公网身份入口并校验可信身份头。小程序所有VITE变量均会进入客户端。
 4. 配置维护中的私有存储、扫描、OCR内部网络；逐个启用业务开关并执行关联业务测试。不能用上传成功证明扫描或识别成功。
 5. 外部服务负责人按[外部清单](EXTERNAL_INTEGRATIONS.md)完成接入与真实验收，再执行真机、完整接口、性能、安全和恢复门禁。

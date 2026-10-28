@@ -17,7 +17,8 @@ def digest():
     paths = [p for p in (ROOT / 'services/embedding').rglob('*') if p.is_file() and
         (p.suffix in ('.py', '.json', '.txt', '.in') or p.name == 'Dockerfile')]
     paths += [ROOT / 'services/ocr/src/process_limits.py', ROOT / 'services/ocr/src/network_guard.py', Path(__file__), ROOT / 'scripts/embedding_java_bridge.py', ROOT / 'backend/src/test/java/com/autocare/platform/order/RealEmbeddingIndexJourneyTest.java']
-    paths += [ROOT / 'backend/src/main/java/com/autocare/platform/order' / (name + '.java') for name in ('KnowledgeEmbeddingRuntime','KnowledgeEmbeddingConfiguration','LicensedKnowledge','KnowledgeVectorIndex','EmbeddingProfile','EmbeddingProvider','EmbeddingExecutor','EmbeddingHttpClient')]
+    paths += [ROOT / 'backend/src/main/java/com/autocare/platform/order' / (name + '.java') for name in ('KnowledgeEmbeddingRuntime','KnowledgeEmbeddingConfiguration','LicensedKnowledge','LicensedKnowledgeController','KnowledgeVectorIndex','EmbeddingProfile','EmbeddingProvider','EmbeddingExecutor','EmbeddingHttpClient')]
+    paths += [ROOT/'backend/src/test/java/com/autocare/platform/order/RealKnowledgeVectorHttpJourneyTest.java']
     value = hashlib.sha256()
     for path in sorted(paths):
         value.update(path.relative_to(ROOT).as_posix().encode())
@@ -105,7 +106,7 @@ def main(argv=None):
             '--tmpfs', '/tmp:rw,noexec,nosuid,size=256m,mode=1777',
             '--mount', f'type=bind,src={models},dst=/models,readonly',
             '--mount', f'type=bind,src={ROOT / "services/embedding"},dst=/workspace/services/embedding,readonly',
-            IMAGE, 'python', '-c', 'import time;time.sleep(600)'])
+            IMAGE, 'python', '-c', 'import time;time.sleep(1200)'])
         item = inspect()
         if item is None or not owned(item, run):
             raise RuntimeError('Container owner mismatch')
@@ -125,12 +126,15 @@ def main(argv=None):
             docker(['exec',name,'python','-c',"import http.client,time\nfor i in range(60):\n try:\n  c=http.client.HTTPConnection('127.0.0.1',8093,timeout=1);c.request('GET','/health');r=c.getresponse();assert r.status==200;r.read();c.close();break\n except OSError:time.sleep(.2)\nelse:raise RuntimeError('private server unavailable')"])
             with Bridge(name) as bridge:
                 env=dict(os.environ,REAL_EMBEDDING_ACCEPTANCE='true',REAL_EMBEDDING_URL=bridge.url,REAL_EMBEDDING_TOKEN=TOKEN,REAL_EMBEDDING_PROFILE=json.dumps(report['runtime']['profile'],ensure_ascii=False))
-                java=subprocess.run([str(args.java_maven.resolve()),'-B','-o','-Dmaven.repo.local='+str(args.maven_repository.resolve()),'-f',str(ROOT/'backend/pom.xml'),'-Dtest=RealEmbeddingIndexJourneyTest','test'],env=env,capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=500)
+                java=subprocess.run([str(args.java_maven.resolve()),'-B','-o','-Dmaven.repo.local='+str(args.maven_repository.resolve()),'-f',str(ROOT/'backend/pom.xml'),'-Dtest=RealEmbeddingIndexJourneyTest,RealKnowledgeVectorHttpJourneyTest','test'],env=env,capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=750)
                 (work/'java.private.log').write_text(java.stdout+java.stderr,encoding='utf-8')
                 import xml.etree.ElementTree as ET
                 suite=ET.parse(ROOT/'backend/target/surefire-reports/TEST-com.autocare.platform.order.RealEmbeddingIndexJourneyTest.xml').getroot()
                 report['java_mysql_actual_model']={key:int(suite.attrib[key]) for key in ('tests','failures','errors','skipped')}
-                if java.returncode or report['java_mysql_actual_model']!={'tests':32,'failures':0,'errors':0,'skipped':0}:raise RuntimeError('Java/MySQL actual model checks failed')
+                if java.returncode or report['java_mysql_actual_model']!={'tests':34,'failures':0,'errors':0,'skipped':0}:raise RuntimeError('Java/MySQL actual model checks failed')
+                http_suite=ET.parse(ROOT/'backend/target/surefire-reports/TEST-com.autocare.platform.order.RealKnowledgeVectorHttpJourneyTest.xml').getroot()
+                report['java_public_http_actual_model']={key:int(http_suite.attrib[key]) for key in ('tests','failures','errors','skipped')}
+                if report['java_public_http_actual_model']!={'tests':5,'failures':0,'errors':0,'skipped':0}:raise RuntimeError('Actual public HTTP/model checks failed')
         report['memory_peak_bytes'] = int(docker(['exec', name, 'cat', '/sys/fs/cgroup/memory.peak']).stdout)
         report['passed'] = True
     except Exception as error:

@@ -25,6 +25,7 @@ public class KnowledgeEmbeddingConfiguration {
  @Bean ThreadPoolTaskScheduler taskScheduler(){var scheduler=new ThreadPoolTaskScheduler();scheduler.setPoolSize(1);scheduler.setThreadNamePrefix("business-schedule-");scheduler.setRemoveOnCancelPolicy(true);return scheduler;}
  @Bean(destroyMethod="close") KnowledgeEmbeddingRuntime knowledgeEmbeddingRuntime(ReservationStore db,LicensedKnowledge knowledge,Environment env){
   boolean enabled=flag(env.getProperty("KNOWLEDGE_EMBEDDING_ENABLED","false")),cleanup=flag(env.getProperty("KNOWLEDGE_EMBEDDING_CLEANUP_ENABLED","false"));
+  boolean vector=flag(env.getProperty("KNOWLEDGE_VECTOR_ENABLED","false"));
   EmbeddingProfile p=null;EmbeddingProvider provider=null;
   String delay=env.getProperty("KNOWLEDGE_EMBEDDING_DELAY_MS","5000");
   if(!delay.matches("[0-9]{4,6}")||Long.parseLong(delay)<1000||Long.parseLong(delay)>300000)throw new IllegalArgumentException("Invalid embedding schedule delay");
@@ -32,7 +33,7 @@ public class KnowledgeEmbeddingConfiguration {
    p=profile(env.getProperty("KNOWLEDGE_EMBEDDING_PROFILE_JSON",""));
    provider=new EmbeddingHttpClient(env.getProperty("KNOWLEDGE_EMBEDDING_URL",""),env.getProperty("KNOWLEDGE_EMBEDDING_TOKEN",""),flag(env.getProperty("KNOWLEDGE_EMBEDDING_ALLOW_PRIVATE_HTTP","false")),p);
   }
-  var runtime=new KnowledgeEmbeddingRuntime(db,knowledge,p,provider,enabled,cleanup);knowledge.embeddingRuntime(runtime);return runtime;
+  var runtime=new KnowledgeEmbeddingRuntime(db,knowledge,p,provider,enabled,cleanup,vector);knowledge.embeddingRuntime(runtime);return runtime;
  }
  @Bean EmbeddingSchedule embeddingSchedule(KnowledgeEmbeddingRuntime runtime){return new EmbeddingSchedule(runtime);}
  static final class EmbeddingSchedule {

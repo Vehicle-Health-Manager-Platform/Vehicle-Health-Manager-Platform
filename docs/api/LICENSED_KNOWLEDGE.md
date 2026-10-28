@@ -1,5 +1,7 @@
 # 有来源许可资料、检索与AI参考
 
+最新R5c2已在原路由接入[默认关闭的公开VECTOR/明确降级、片段详情与AI引用复核](KNOWLEDGE_VECTOR_RETRIEVAL.md)，R5a新增独立embedding_allowed许可，R5c1新增自动索引。以下为R8c3原始范围，method固定KEYWORD等描述保留历史含义；默认配置仍兼容旧形状。
+
 R8c3，V061；全库130表，运营登录17字段（15个独立布尔权限加id/role）。用户确认暂无授权资料/嵌入服务，先实现配置和检索闭环。**method固定KEYWORD，未实现或验收Milvus向量效果，不创建正式语料种子。**
 
 ## 配置与独立权限

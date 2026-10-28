@@ -10,9 +10,9 @@ import static com.autocare.platform.order.ReservationStore.*;
 /** Internal R5a foundation. No Spring bean, public route, scheduler or default provider. */
 final class KnowledgeVectorIndex implements AutoCloseable {
  record Hit(long documentId,String reference,long revision,int ordinal,int start,int end,double score){}
- private final ReservationStore db;private final LicensedKnowledge knowledge;private final EmbeddingProfile profile;private final String profileHash,profileJson;private final boolean enabled;private final EmbeddingExecutor executor;
+ private final ReservationStore db;private final LicensedKnowledge knowledge;private final EmbeddingProfile profile;private final String profileHash,profileJson;private final boolean enabled;private final EmbeddingExecutor executor,queries;
  KnowledgeVectorIndex(ReservationStore db,LicensedKnowledge knowledge,EmbeddingProfile profile,EmbeddingProvider provider,boolean enabled){this(db,knowledge,profile,provider,enabled,Duration.ofSeconds(30));}
- KnowledgeVectorIndex(ReservationStore db,LicensedKnowledge knowledge,EmbeddingProfile profile,EmbeddingProvider provider,boolean enabled,Duration deadline){this.db=db;this.knowledge=knowledge;this.profile=Objects.requireNonNull(profile);this.profileHash=profile.fingerprint();this.profileJson=profile.json();this.enabled=enabled;this.executor=provider==null?null:new EmbeddingExecutor(profile,provider,deadline);}
+ KnowledgeVectorIndex(ReservationStore db,LicensedKnowledge knowledge,EmbeddingProfile profile,EmbeddingProvider provider,boolean enabled,Duration deadline){this.db=db;this.knowledge=knowledge;this.profile=Objects.requireNonNull(profile);this.profileHash=profile.fingerprint();this.profileJson=profile.json();this.enabled=enabled;this.executor=provider==null?null:new EmbeddingExecutor(profile,provider,deadline);this.queries=provider==null?null:new EmbeddingExecutor(profile,provider,deadline.compareTo(Duration.ofSeconds(12))<0?deadline:Duration.ofSeconds(12));}
  private void guard(){db.one("SELECT id FROM knowledge_control WHERE id=1 FOR UPDATE");}
  private static ResponseStatusException unavailable(){return new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"向量索引基础未启用或暂不可用；现有检索仍为关键词");}
  private void ready(){if(!enabled||executor==null)throw unavailable();}
@@ -55,15 +55,16 @@ final class KnowledgeVectorIndex implements AutoCloseable {
    db.jdbc.update("UPDATE knowledge_embedding_job SET state=?,error_code=?,lease_token=NULL,lease_until=NULL,updated_at=? WHERE id=?",savedVectors==null?"FAILED":"SUCCEEDED",savedVectors==null?error:null,time(db.now()),job.get("id"));
   });return true;
  }
- List<Hit> rank(VehicleOwner owner,long vehicle,String query,int limit){
+ List<Hit> rank(VehicleOwner owner,long vehicle,String query,int limit){return rank(owner,vehicle,query,limit,false);}
+ List<Hit> rank(VehicleOwner owner,long vehicle,String query,int limit,boolean forAi){
   ready();if(limit<1||limit>10)throw new IllegalArgumentException("Invalid vector result budget");KnowledgeInput.text(db.mapper.getNodeFactory().textNode(query),80,false);
   Object before=db.reads.execute(t->knowledge.embeddingModel(owner,vehicle));if(before==null)return List.of();
-  double[] question;try{question=executor.call(List.of(profile.queryPrefix()+query)).get(0);}catch(EmbeddingExecutor.Failed e){throw unavailable();}
+  double[] question;try{question=queries.call(List.of(profile.queryPrefix()+query)).get(0);}catch(EmbeddingExecutor.Failed e){throw unavailable();}
   return db.transactions.execute(t->{guard();Object model=knowledge.embeddingModel(owner,vehicle);if(!Objects.equals(before,model))throw unavailable();
    var rows=db.jdbc.queryForList("SELECT c.*,j.document_id,j.document_revision,j.source_hash,j.profile_hash,j.profile_json FROM knowledge_embedding_job j LEFT JOIN knowledge_embedding_chunk c ON c.job_id=j.id JOIN knowledge_document d ON d.id=j.document_id WHERE j.profile_hash=? AND j.state='SUCCEEDED' AND d.model_id=? ORDER BY j.document_id DESC,c.ordinal LIMIT 513",profileHash,model);
    var valid=new ArrayList<Map<String,Object>>();var sources=new HashMap<Long,Map<String,Object>>();var hidden=new HashSet<Long>();
    // Invalid/revoked jobs never become usable, even if cleanup has not run.
-   for(var row:rows){long document=number(row,"document_id");if(!sources.containsKey(document)&&!hidden.contains(document))try{sources.put(document,knowledge.embeddingSource(document));}catch(ResponseStatusException e){hidden.add(document);}var source=sources.get(document);if(source!=null&&matches(row,source))valid.add(row);}
+   for(var row:rows){long document=number(row,"document_id");if(!sources.containsKey(document)&&!hidden.contains(document))try{sources.put(document,knowledge.embeddingSource(document));}catch(ResponseStatusException e){hidden.add(document);}var source=sources.get(document);if(source!=null&&matches(row,source)&&(!forAi||db.parse(source.get("payload")).path("ai_allowed").asBoolean()))valid.add(row);}
    if(rows.size()>512)throw unavailable();
    var expected=new HashMap<Long,List<KnowledgeChunks.Chunk>>();var best=new HashMap<Long,Hit>();
    try{for(var row:valid){
@@ -77,5 +78,5 @@ final class KnowledgeVectorIndex implements AutoCloseable {
    return best.values().stream().sorted(Comparator.comparingDouble(Hit::score).reversed().thenComparing(Comparator.comparingLong(Hit::documentId).reversed()).thenComparingInt(Hit::ordinal)).limit(limit).toList();
   });
  }
- public void close(){if(executor!=null)executor.close();}
+ public void close(){if(executor!=null)executor.close();if(queries!=null)queries.close();}
 }
