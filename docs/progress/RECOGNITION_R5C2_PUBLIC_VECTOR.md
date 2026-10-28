@@ -2,7 +2,7 @@
 
 承接PR252/81f74df，分支codex/public-vector-retrieval。公开检索、片段详情和AI参考复用既有路由，默认关闭；本轮不合并或部署。前置PR251与252的实际head均已核对八项CI成功，不能据此代替本分支CI。
 
-实现c492ab2已上传[草稿PR253](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/253)，依赖codex/embedding-lifecycle/PR252。完整本地后端/API仍运行，远端新head CI单独跟踪，未结束的不计通过。
+实现c492ab2及交接修复9f35677已上传[草稿PR253](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/253)，依赖codex/embedding-lifecycle/PR252。9f35677八项远端CI已核对成功，收尾文档提交的检查另记；未合并或部署。
 
 ## 已完成的业务变化
 
@@ -23,7 +23,11 @@ AI保持独立开关与独立ai_allowed用途，只向上游提供本次问题�
 - 默认12组全部通过，源码稳定：小程序1237、Python566、OCR80通过/1平台跳过、ASR40、文档26、embedding27，以及微信/H5构建、OpenAPI/迁移挂载/交接/独立契约结论门禁。默认组没有假称已经运行完整后端。
 - gstack浏览器15项不同检查、两场景21执行项通过，390px无横向溢出。覆盖准确Unicode片段、详情/复制/独立深链接、降级/分页、畸形位置拒绝、AI明确确认/引用说明、旧账号迟到拒绝。页面API、身份与AI为合成夹具，真实模型HTTP另验；不代表微信真机。
 
-完整后端核心覆盖率及当前版业务API分套重跑结果在下方独立补记，以实际完成报告为准；运行中不计通过。
+完整后端核心模式clean verify完成249套/2568执行项，零失败/错误/跳过，源码稳定。JaCoCo分析420类，六个指定核心组全部通过70%行/70%方法门限：行覆盖93.91%至99.21%、方法89.29%至100%。该门限范围为指定六组，不是全部420类统一达标。三个真实资源opt-in套件明确排除，实际模型结果按上文分列。
+
+当前版29套Postman业务验收全部通过，每套新建独立库并清理：3207业务请求、10092次匿名请求执行、41223条Newman断言，零失败。重复匿名执行仍只对应348个不同受保护操作。另以原严格审计器复核同次完整clean verify新生成的七套真实文件/扫描/图片/奖励旅程，共618次业务请求，源码/JUnit/原始响应绑定、SQL检查和清理均有效；这是核对刚结束的执行，不是再发618次请求。
+
+36套当前记录合并去重，317/362操作具备normal/boundary/error/unauthorized四类当前证据，共3825次业务请求执行。其余45项保留独立契约结论；10个本地已实现的新识别接口的分项测试存在，但未被这36套完整四类HTTP清单覆盖，不据此声称全362项验收。两项原生UI辅助明确未启用，不计微信真机。真实文件存储/扫描和实际模型按各自旅程分开说明。
 
 ## 解决的问题与故障记录
 
@@ -35,9 +39,11 @@ AI保持独立开关与独立ai_allowed用途，只向上游提供本次问题�
 
 首个远端c492ab2的schema-and-ocr因交接清单摘要过期失败：默认12组之后更新了REMAINING_ACCEPTANCE.md，却未重新生成其guide_content摘要。本地--check复现同一失败，重新生成miniapp-handover.json后，8项交接测试、13项本地运行器测试及--check通过。只改生成文档，未更改后端/测试源码，不用前一次默认组通过掩盖这次文档失配。后续新head远端结果单独核对。
 
+完整功能测试虽成功，第一份覆盖率门禁因预期位置无数据失败。隔离九项探针及直接dump确认Windows中文路径传入Java agent后编码错位/选项截断，实际数据写入乱码目录的core-coverage.exec,a。按SHA256将本次762734字节真实数据原样恢复（45fd723c353363166a271111ee0ec57f41071b974106e083612dd361151aca8f），仅重新执行jacoco:report及原严格门禁，未重造JUnit或执行数据，六组通过。初始缺文件报告继续保留，恢复前后内容摘要相同。后续Windows覆盖率应使用ASCII路径的隔离工作副本或Linux环境；宿主JDK路径编码问题仍记录为环境限制，并未声称修复JDK。
+
 ## 交接位置及剩余工作
 
-[公开协议/配置/复现](../api/KNOWLEDGE_VECTOR_RETRIEVAL.md)、[索引启动/停止/维护](../operations/KNOWLEDGE_EMBEDDING_LIFECYCLE.md)、[车主手册](../user-guides/OWNER.md)、[运营手册](../user-guides/OPERATOR.md)、[统一交接](../delivery/LOCAL_HANDOVER.md)、[设计](../superpowers/specs/2026-10-28-public-vector-retrieval-design.md)、[实施计划](../superpowers/plans/2026-10-28-public-vector-retrieval.md)。根.env.example和Compose均默认关闭；私有模型不得直接暴露给小程序。
+[公开协议/配置](../api/KNOWLEDGE_VECTOR_RETRIEVAL.md)、[验收复现](../testing/PUBLIC_VECTOR_RETRIEVAL.md)、[索引启动/停止/维护](../operations/KNOWLEDGE_EMBEDDING_LIFECYCLE.md)、[车主手册](../user-guides/OWNER.md)、[运营手册](../user-guides/OPERATOR.md)、[统一交接](../delivery/LOCAL_HANDOVER.md)、[设计](../superpowers/specs/2026-10-28-public-vector-retrieval-design.md)、[实施计划](../superpowers/plans/2026-10-28-public-vector-retrieval.md)。根.env.example和Compose均默认关闭；私有模型不得直接暴露给小程序。
 
 当前362操作/348受保护、65迁移/134表，无新增路由或迁移。历史317项四类证据及45独立结论不自动升级为当前全部验收；本轮分套实际结果另记。正式微信、短信、支付证书/真实回调和生产办理继续按[外部清单](../delivery/EXTERNAL_INTEGRATIONS.md)交接。正式支付/退款回调的两个not-implemented结论属于已后置外部渠道，LOCAL_TEST不代表它们真实通过。
 
