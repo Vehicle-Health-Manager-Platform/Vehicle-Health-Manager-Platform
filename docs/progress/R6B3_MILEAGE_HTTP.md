@@ -1,6 +1,6 @@
 # R6b3 里程HTTP证据与统一识别入口（2026-10-28）
 
-承接PR256/841378b，分支codex/mileage-http-evidence。用户授权规划后实施，补最后车主/商家接车里程两项，并把十项识别审计可选接入统一运行器，不合并部署。
+承接PR256/841378b，分支codex/mileage-http-evidence。实现08a8a85已上传[草稿PR257](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/257)，依赖PR256；新head CI单独跟踪，未结束不计通过。用户授权规划后实施，补最后车主/商家接车里程两项，并把十项识别审计可选接入统一运行器，不合并部署。
 
 ## 完成
 
