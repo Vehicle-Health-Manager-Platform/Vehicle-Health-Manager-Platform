@@ -16,7 +16,9 @@ import static com.autocare.platform.order.ReservationStore.*;
 /** Licensed manual text, deterministic retrieval and independently revalidated AI references. */
 public class LicensedKnowledge {
  private final ReservationStore db;private final OperatorIdentity operators;private final ExperienceModeration experiences;
- private final DeepSeekClient ai;private final boolean enabled,aiEnabled;
+ private final DeepSeekClient ai;private final boolean enabled,aiEnabled;private volatile KnowledgeEmbeddingRuntime embedding;
+ void embeddingRuntime(KnowledgeEmbeddingRuntime runtime){if(embedding!=null)throw new IllegalStateException("Embedding runtime already attached");embedding=Objects.requireNonNull(runtime);}
+ private Map<String,Object> adminView(Map<String,Object> row){var result=view(row);var runtime=embedding;if(runtime!=null&&runtime.configured())result.put("embedding",runtime.status(row));return result;}
  public LicensedKnowledge(ReservationStore db,OperatorIdentity operators,ExperienceModeration experiences,DeepSeekClient ai,boolean enabled,boolean aiEnabled){this.db=db;this.operators=operators;this.experiences=experiences;this.ai=ai;this.enabled=enabled;this.aiEnabled=aiEnabled;}
  private void guard(){db.one("SELECT id FROM knowledge_control WHERE id=1 FOR UPDATE");}
  private String hash(Object v){return CommunityQuestionSource.hash(db,v);}
@@ -36,7 +38,7 @@ public class LicensedKnowledge {
   var p=db.parse(r.get("payload"));if(!enabled||!"PUBLISHED".equals(r.get("status"))||r.get("public_id")==null||!trusted(r)||instant(r.get("valid_from")).isAfter(db.now())||!instant(r.get("valid_to")).isAfter(db.now())||!p.path("license_confirmed").asBoolean()||!p.path("search_allowed").asBoolean()||!p.path("excerpt_allowed").asBoolean()||forAi&&!p.path("ai_allowed").asBoolean())return false;
   try{model(number(r,"model_id"),false);return true;}catch(ResponseStatusException e){return false;}
  }
- public Map<String,Object> admin(OperatorActor a,int p){return db.reads.execute(t->{operators.authorize(a,OperatorIdentity.Permission.KNOWLEDGE,false);long total=db.jdbc.queryForObject("SELECT COUNT(*) FROM knowledge_document",Long.class);return page(db.jdbc.queryForList("SELECT * FROM knowledge_document ORDER BY id DESC LIMIT 20 OFFSET ?",(p-1)*20L).stream().map(this::view).toList(),total,p,20);});}
+ public Map<String,Object> admin(OperatorActor a,int p){return db.reads.execute(t->{operators.authorize(a,OperatorIdentity.Permission.KNOWLEDGE,false);long total=db.jdbc.queryForObject("SELECT COUNT(*) FROM knowledge_document",Long.class);return page(db.jdbc.queryForList("SELECT * FROM knowledge_document ORDER BY id DESC LIMIT 20 OFFSET ?",(p-1)*20L).stream().map(this::adminView).toList(),total,p,20);});}
  // Internal embedding foundation only: never bypass the existing publication trust chain.
  Map<String,Object> embeddingSource(long id){var r=row(id,false);if(!usable(r,false)||!KnowledgeInput.embeddingAllowed(db.parse(r.get("payload"))))throw missing();return r;}
  Object embeddingModel(VehicleOwner a,long vehicle){return experiences.recipient(a,vehicle);}

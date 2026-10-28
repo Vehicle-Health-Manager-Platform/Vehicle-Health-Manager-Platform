@@ -34,4 +34,13 @@ class RealEmbeddingIndexJourneyTest extends JdbcLicensedKnowledgeTest {
   try(var executor=new EmbeddingExecutor(profile,provider,java.time.Duration.ofSeconds(30))){assertEquals("LIMIT_EXCEEDED",assertThrows(EmbeddingExecutor.Failed.class,()->executor.call(List.of("车".repeat(511)))).code);}
   assertEquals(1,provider.embed(profile,List.of("合成恢复检查")).vectors().size());assertEquals(0,count("knowledge_embedding_chunk"));
  }
+ @Test void actualRuntimeDiscoversGeneratesReportsAndPurgesStoppedSource(){
+  long id=publish("合成生命周期检查：轮胎气压不足时到店检查。");int audits=count("audit_log");
+  try(var runtime=new KnowledgeEmbeddingRuntime(db,knowledge,profile,provider,true,false)){
+   knowledge.embeddingRuntime(runtime);runtime.tick();assertFalse(runtime.cycleFailed());assertEquals(1,count("knowledge_embedding_job"));assertEquals(1,count("knowledge_embedding_chunk"));
+   var status=runtime.status(jdbc.queryForMap("SELECT * FROM knowledge_document WHERE id=?",id));assertEquals("SUCCEEDED",status.get("state"));assertEquals(profile.fingerprint(),status.get("profile_hash"));assertEquals(audits,count("audit_log"));
+   runtime.tick();assertEquals(1,count("knowledge_embedding_job"));assertEquals("KEYWORD",knowledge.search(owner,1,"轮胎",null).get("method"));
+   knowledge.status(manager,id,key(),state(2,"STOPPED"));runtime.tick();assertEquals(0,count("knowledge_embedding_chunk"));assertEquals("NOT_ALLOWED",runtime.status(jdbc.queryForMap("SELECT * FROM knowledge_document WHERE id=?",id)).get("state"));
+  }
+ }
 }

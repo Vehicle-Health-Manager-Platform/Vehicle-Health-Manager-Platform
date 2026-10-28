@@ -1,5 +1,7 @@
 # 授权嵌入与向量索引基础（R5a）
 
+R5c1增量：[默认关闭自动任务与运营状态、清理步骤](../operations/KNOWLEDGE_EMBEDDING_LIFECYCLE.md)。既有运营列表新增可选embedding状态，不改写回执；公开接口仍KEYWORD。以下无自动任务描述为R5a历史范围。
+
 R5b增量：[私有真实中文嵌入协议/配置/运行](../../services/embedding/README.md)、[实际模型与Java/MySQL结果](../progress/RECOGNITION_R5B_REAL_EMBEDDING.md)。下文R5a替身范围保留历史含义；公开接口仍KEYWORD，无自动调度或VECTOR入口。
 
 当前交付是**内部索引基础和运营授权字段**。现有车主`/api/knowledge/search`和`/api/knowledge/answer`仍为KEYWORD，没有新的公开向量接口、默认provider、Spring索引bean或自动调度；不会因勾选许可自动建立索引。真实中文embedding、tokenizer、召回效果和向量降级页面尚未接入。

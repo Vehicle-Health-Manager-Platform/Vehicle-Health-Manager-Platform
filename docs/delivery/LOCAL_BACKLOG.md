@@ -1,5 +1,7 @@
 # 已知问题与后续任务
 
+R5c1已接通默认关闭的自动索引、运营状态和独立清理，见[维护指南](../operations/KNOWLEDGE_EMBEDDING_LIFECYCLE.md)。下一批R5c2为公开VECTOR、明确KEYWORD降级和AI引用复核；失败任务有限重试/审计重排队、领域评估、容量及真机仍待。旧profile清理需先停止所有索引实例，不承诺与索引并行清理。
+
 R5b新增：[真实嵌入及内部MySQL联调](../progress/RECOGNITION_R5B_REAL_EMBEDDING.md)。R5c仍需自动索引/运营状态、跨配置清理、公开VECTOR/明确降级和AI引用复核；领域质量、容量和真机待验。私有provider可运行不等于向量业务整体完成。
 
 2026-10-26。本轮执行结果见[测试报告](../testing/LOCAL_DELIVERY_2026_10_26.md)，阶段历史见[路线图](../progress/STATUS_AND_ROADMAP_2026_10_26.md)。本清单不把所有未完成项都归为外部阻塞。

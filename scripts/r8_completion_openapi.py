@@ -36,7 +36,11 @@ def add_r8_completion(d, operation):
     s['KnowledgeUpdate'] = {'oneOf':[strict({**payload,'expected_revision':ident}),strict({**payload,'embedding_allowed':boolean,'embedding_policy_version':{'const':'KNOWLEDGE_EMBEDDING_V1'},'expected_revision':ident})]}
     s['KnowledgeStatus'] = strict({'expected_revision': ident, 'status': {'enum': ['PUBLISHED', 'STOPPED']}})
     s['KnowledgeDocument'] = strict({'id': ident, 'revision': ident, 'status': {'enum': ['DRAFT', 'PUBLISHED', 'STOPPED']}, 'source_hash': digest, 'public_id': nullable(uuid), 'payload': ref('KnowledgePayload'), 'created_at': stamp, 'published_at': nullable(stamp)})
-    s['KnowledgeAdminPage'] = paged('KnowledgeDocument')
+    status_fields = {'state': {'enum': ['DISABLED','NOT_ALLOWED','NOT_QUEUED','QUEUED','RUNNING','SUCCEEDED','FAILED','CANCELLED']}, 'error_code': nullable({'enum': ['WORKER_LOST','UNAVAILABLE','INVALID_VECTOR','LIMIT_EXCEEDED','SOURCE_CHANGED','FEATURE_DISABLED']}), 'profile_hash': nullable(digest), 'updated_at': nullable(stamp)}
+    s['KnowledgeEmbeddingState'] = strict(status_fields)
+    s['KnowledgeEmbeddingState']['description'] = '仅运营可见的当前配置索引状态，非公开VECTOR或领域效果证明；FAILED不自动重试。DISABLED其余字段为空；NOT_ALLOWED/NOT_QUEUED保留profile且时间/错误为空；任务状态须有更新时间，成功/排队/运行无错误。'
+    s['KnowledgeAdminRow'] = {'oneOf': [ref('KnowledgeDocument'), strict({**s['KnowledgeDocument']['properties'], 'embedding': ref('KnowledgeEmbeddingState')})]}
+    s['KnowledgeAdminPage'] = paged('KnowledgeAdminRow')
     s['KnowledgeModel'] = strict({'model_id': ident, **{k: nullable(text(256)) for k in ['brand', 'series', 'year', 'config_name']}})
     s['KnowledgeModelPage'] = paged('KnowledgeModel')
     public = {'reference': uuid, 'revision': ident, 'model_id': ident, 'title': text(120), 'publisher': text(120), 'document_version': text(80), 'source_reference': text(500), 'valid_from': stamp, 'valid_to': stamp, 'excerpt': text(800), 'ai_allowed': boolean}

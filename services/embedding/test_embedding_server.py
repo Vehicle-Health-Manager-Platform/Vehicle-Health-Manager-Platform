@@ -50,7 +50,8 @@ class ServerTest(unittest.TestCase):
             if name!='Authorization':c.putheader('Authorization','Bearer '+TOKEN)
             if name!='Content-Length':c.putheader('Content-Length','2')
             for value in values:c.putheader(name,value)
-            c.endheaders();c.send(b'{}');r=c.getresponse();self.assertEqual(r.status,status);r.read();c.close()
+            # Ambiguous framing is refused from headers, without an unread body.
+            c.endheaders(b'{}' if name=='Authorization' else None);r=c.getresponse();self.assertEqual(r.status,status);r.read();c.close()
         self.assertEqual(self.engine.calls,0)
     def test_invalid_json_does_not_reach_engine(self):
         for raw in [b'{}',body()+b'{}',b'{"version":1,"version":1}']:

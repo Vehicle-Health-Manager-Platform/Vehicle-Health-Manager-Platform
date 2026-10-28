@@ -908,3 +908,5 @@ R5a收口额外发现：前置PR249/b1完整2399项只有RealMaterialWorkbench u
 R5b官方核对：BAAI/bge-small-zh-v1.5 revision7999e1d3359715c523056ef9478215996d62a620，safetensors95827648字节、LFS354763b9...；MIT/512维/CLS+L2，查询前缀与正文区分。官方无ONNX，因此选原始安全权重+固定CPU Torch/Transformers，不用第三方转换。官方示例truncation=True不适用项目整批预算承诺，须显式关闭并拒绝超token。小文件以Gitblob对照再SHA256锁，真实模型与领域效果分开。
 
 R5b最终：固定BAAI safetensors11文件与Linux CPU wheel24文件；实际模型16项和Java/MySQL31项通过，默认12组通过，源码稳定及自有资源清理。公开检索/AI仍KEYWORD，领域准确率/容量/真机未验。初轮源码漂移报告未采用；巨大整数边界及可选模型核心排除断言已修复。
+
+R5c1：发现扫描持锁外层事务调用REQUIRES_NEW入队会自锁，已合并入队/授权/重新启用事务。多实例需数据库全局活跃任务单槽。不同profile不能互相取消，全配置删除为停止全部索引实例后的独立互斥维护；正常索引仅清当前profile。最终模型16/Java真实32、浏览器19与选定回归分项记录，不称公开VECTOR完成。

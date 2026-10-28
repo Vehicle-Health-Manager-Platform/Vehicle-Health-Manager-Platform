@@ -64,10 +64,10 @@ class HttpTest(unittest.TestCase):
         self.thread=threading.Thread(target=self.server.serve_forever,daemon=True);self.thread.start()
         self.addCleanup(self.close)
     def close(self): self.server.shutdown();self.server.server_close();self.thread.join()
-    def call(self,body=None,token=TOKEN,path='/recognize',extra=None):
+    def call(self,body=None,token=TOKEN,path='/recognize',extra=None,raw=None):
         connection=HTTPConnection('127.0.0.1',self.server.server_port,timeout=5)
         headers={'Content-Type':'application/json','Authorization':'Bearer '+token};headers.update(extra or {})
-        connection.request('POST',path,json.dumps(body if body is not None else request_image()).encode(),headers)
+        connection.request('POST',path,json.dumps(body if body is not None else request_image()).encode() if raw is None else raw,headers)
         response=connection.getresponse();status=response.status;cache=response.getheader('Cache-Control');data=json.loads(response.read());connection.close()
         self.assertEqual('no-store',cache)
         return status,data
@@ -78,8 +78,11 @@ class HttpTest(unittest.TestCase):
     def test_bad_image_and_media_type_never_infer(self):
         self.assertEqual(422,self.call(body={'scene':'mileage','image_base64':'bad'})[0]);self.assertEqual(415,self.call(extra={'Content-Type':'text/plain'})[0]);self.assertEqual(0,self.engine.calls)
     def test_framing_and_request_limit(self):
-        self.assertEqual(413,self.call(extra={'Content-Length':'7000000'})[0])
-        self.assertEqual(411,self.call(extra={'Transfer-Encoding':'chunked'})[0])
+        # Refuse framing from headers before reading a body. Sending an unread
+        # malformed body races TCP close/reset on Windows and can hide the reply;
+        # the server must not drain an attacker-declared unbounded payload.
+        self.assertEqual(413,self.call(extra={'Content-Length':'7000000'},raw=b'')[0])
+        self.assertEqual(411,self.call(extra={'Transfer-Encoding':'chunked'},raw=b'')[0])
         self.assertEqual(0,self.engine.calls)
     def test_inference_errors_are_not_success_or_leaked(self):
         with patch.object(self.engine,'recognize',side_effect=RuntimeError('private upstream detail')):

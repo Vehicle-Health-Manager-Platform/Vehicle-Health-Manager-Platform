@@ -17,6 +17,7 @@ def digest():
     paths = [p for p in (ROOT / 'services/embedding').rglob('*') if p.is_file() and
         (p.suffix in ('.py', '.json', '.txt', '.in') or p.name == 'Dockerfile')]
     paths += [ROOT / 'services/ocr/src/process_limits.py', ROOT / 'services/ocr/src/network_guard.py', Path(__file__), ROOT / 'scripts/embedding_java_bridge.py', ROOT / 'backend/src/test/java/com/autocare/platform/order/RealEmbeddingIndexJourneyTest.java']
+    paths += [ROOT / 'backend/src/main/java/com/autocare/platform/order' / (name + '.java') for name in ('KnowledgeEmbeddingRuntime','KnowledgeEmbeddingConfiguration','LicensedKnowledge','KnowledgeVectorIndex','EmbeddingProfile','EmbeddingProvider','EmbeddingExecutor','EmbeddingHttpClient')]
     value = hashlib.sha256()
     for path in sorted(paths):
         value.update(path.relative_to(ROOT).as_posix().encode())
@@ -129,7 +130,7 @@ def main(argv=None):
                 import xml.etree.ElementTree as ET
                 suite=ET.parse(ROOT/'backend/target/surefire-reports/TEST-com.autocare.platform.order.RealEmbeddingIndexJourneyTest.xml').getroot()
                 report['java_mysql_actual_model']={key:int(suite.attrib[key]) for key in ('tests','failures','errors','skipped')}
-                if java.returncode or report['java_mysql_actual_model']!={'tests':31,'failures':0,'errors':0,'skipped':0}:raise RuntimeError('Java/MySQL actual model checks failed')
+                if java.returncode or report['java_mysql_actual_model']!={'tests':32,'failures':0,'errors':0,'skipped':0}:raise RuntimeError('Java/MySQL actual model checks failed')
         report['memory_peak_bytes'] = int(docker(['exec', name, 'cat', '/sys/fs/cgroup/memory.peak']).stdout)
         report['passed'] = True
     except Exception as error:

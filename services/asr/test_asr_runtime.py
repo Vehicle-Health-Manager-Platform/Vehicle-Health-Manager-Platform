@@ -95,8 +95,8 @@ class HttpTest(unittest.TestCase):
         for code,kwargs in [(401,{'token':'wrong'}),(404,{'path':'/transcribe?x=1'}),(415,{'headers':{'Content-Type':'text/plain'}}),(422,{'raw':b'{}'})]:self.assertEqual(code,self.call(**kwargs)[0])
         self.assertEqual(1,self.engine.calls)
     def test_framing_and_encoding_ambiguity_refused_before_engine(self):
-        self.assertEqual(411,self.call(headers={'Transfer-Encoding':'chunked'})[0])
-        self.assertEqual(413,self.call(headers={'Content-Length':'5000000'})[0])
+        self.assertEqual(411,self.call(raw=b'',headers={'Transfer-Encoding':'chunked'})[0])
+        self.assertEqual(413,self.call(raw=b'',headers={'Content-Length':'5000000'})[0])
         conn=HTTPConnection('127.0.0.1',self.server.server_port,timeout=5);raw=request()
         conn.putrequest('POST','/transcribe');conn.putheader('Authorization','Bearer '+TOKEN);conn.putheader('Content-Type','application/json');conn.putheader('Content-Length',str(len(raw)));conn.putheader('Content-Encoding','identity');conn.putheader('Content-Encoding','gzip');conn.endheaders(raw)
         response=conn.getresponse();self.assertEqual(415,response.status);response.read();conn.close();self.assertEqual(0,self.engine.calls)

@@ -16,21 +16,27 @@ final class KnowledgeVectorIndex implements AutoCloseable {
  private void guard(){db.one("SELECT id FROM knowledge_control WHERE id=1 FOR UPDATE");}
  private static ResponseStatusException unavailable(){return new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"向量索引基础未启用或暂不可用；现有检索仍为关键词");}
  private void ready(){if(!enabled||executor==null)throw unavailable();}
- private boolean same(Map<String,Object> job){
+ boolean same(Map<String,Object> job){
   try{return matches(job,knowledge.embeddingSource(number(job,"document_id")));}catch(ResponseStatusException e){return false;}
  }
  private boolean matches(Map<String,Object> job,Map<String,Object> source){return profileHash.equals(job.get("profile_hash"))&&db.parse(job.get("profile_json")).equals(db.parse(profileJson))&&number(source,"revision")==number(job,"document_revision")&&Objects.equals(source.get("source_hash"),job.get("source_hash"));}
  private void invalidate(long id,String code){db.jdbc.update("DELETE FROM knowledge_embedding_chunk WHERE job_id=?",id);db.jdbc.update("UPDATE knowledge_embedding_job SET state='CANCELLED',error_code=?,lease_token=NULL,lease_until=NULL,updated_at=? WHERE id=?",code,time(db.now()),id);}
- long enqueue(long document){ready();return db.transactions.execute(t->{
+ long enqueue(long document){return enqueue(document,false);}
+ long enqueue(long document,boolean reenable){ready();return db.transactions.execute(t->{
   guard();var source=knowledge.embeddingSource(document);
   db.jdbc.update("INSERT IGNORE INTO knowledge_embedding_job(document_id,document_revision,source_hash,profile_hash,profile_json,created_at,updated_at) VALUES(?,?,?,?,?,?,?)",document,source.get("revision"),source.get("source_hash"),profileHash,profileJson,time(db.now()),time(db.now()));
-  return db.jdbc.queryForObject("SELECT id FROM knowledge_embedding_job WHERE document_id=? AND document_revision=? AND source_hash=? AND profile_hash=?",Long.class,document,source.get("revision"),source.get("source_hash"),profileHash);
+  long id=db.jdbc.queryForObject("SELECT id FROM knowledge_embedding_job WHERE document_id=? AND document_revision=? AND source_hash=? AND profile_hash=?",Long.class,document,source.get("revision"),source.get("source_hash"),profileHash);
+  if(reenable)db.jdbc.update("UPDATE knowledge_embedding_job SET state='QUEUED',error_code=NULL,updated_at=? WHERE id=? AND state='CANCELLED' AND error_code='FEATURE_DISABLED' AND NOT EXISTS(SELECT 1 FROM knowledge_embedding_chunk WHERE job_id=?)",time(db.now()),id,id);
+  return id;
  });}
  void cleanup(){db.transactions.executeWithoutResult(t->{guard();
   var jobs=db.jdbc.queryForList("SELECT * FROM knowledge_embedding_job WHERE profile_hash=? AND state<>'CANCELLED' ORDER BY updated_at,id LIMIT 100 FOR UPDATE",profileHash);
   for(var job:jobs){long id=number(job,"id");if(!enabled||!same(job))invalidate(id,enabled?"SOURCE_CHANGED":"FEATURE_DISABLED");else if("RUNNING".equals(job.get("state"))&&!instant(job.get("lease_until")).isAfter(db.now()))db.jdbc.update("UPDATE knowledge_embedding_job SET state='FAILED',error_code='WORKER_LOST',lease_token=NULL,lease_until=NULL,updated_at=? WHERE id=?",time(db.now()),id);else db.jdbc.update("UPDATE knowledge_embedding_job SET updated_at=? WHERE id=?",time(db.now()),id);}
  });}
  Map<String,Object> claim(){if(!enabled||executor==null)return null;cleanup();return db.transactions.execute(t->{guard();
+  // The private model has one execution slot. Admission is serialized by the
+  // existing control lock across all application instances, not just one JVM.
+  if(!db.jdbc.queryForList("SELECT id FROM knowledge_embedding_job WHERE state='RUNNING' AND lease_until>? LIMIT 1",time(db.now())).isEmpty())return null;
   var rows=db.jdbc.queryForList("SELECT * FROM knowledge_embedding_job WHERE profile_hash=? AND state='QUEUED' ORDER BY id LIMIT 1 FOR UPDATE SKIP LOCKED",profileHash);if(rows.isEmpty())return null;
   var job=rows.get(0);if(!same(job)){invalidate(number(job,"id"),"SOURCE_CHANGED");return null;}
   String lease=UUID.randomUUID().toString();db.jdbc.update("UPDATE knowledge_embedding_job SET state='RUNNING',lease_token=?,lease_until=?,updated_at=? WHERE id=?",lease,time(db.now().plusSeconds(180)),time(db.now()),job.get("id"));return db.jdbc.queryForMap("SELECT * FROM knowledge_embedding_job WHERE id=?",job.get("id"));

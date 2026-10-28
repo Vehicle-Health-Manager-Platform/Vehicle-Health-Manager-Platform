@@ -27,7 +27,8 @@ BOUNDARIES = [
 def source_digest(root):
     """Bind evidence to code/config, excluding generated outputs and private env files."""
     paths = [root / 'package.json', root / 'package-lock.json', root / 'backend/pom.xml']
-    for directory in ('backend/src', 'scripts', 'services/ocr', 'services/asr', 'services/documents', 'services/embedding', 'docs/sql/migrations'):
+    paths += [root / '.env.example'] if (root / '.env.example').is_file() else []
+    for directory in ('backend/src', 'scripts', 'services/ocr', 'services/asr', 'services/documents', 'services/embedding', 'deploy/compose', 'docs/sql/migrations'):
         paths += [p for p in (root / directory).rglob('*') if p.is_file()
                   and (p.suffix in ('.py', '.java', '.sql', '.js', '.mjs', '.cjs', '.yml', '.yaml', '.json', '.txt', '.in', '.sh', '.ps1')
                        or p.name.startswith('Dockerfile'))]

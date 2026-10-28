@@ -107,3 +107,21 @@ test('malformed primitive payloads reject safely instead of throwing inside resp
  for(const value of [undefined,null,true,5,'invalid',[],{}]){assert.equal(validKnowledgePayload(value),false);assert.equal(validKnowledgeBody(value,'create'),false)}
  const calls=[],api=createKnowledgeApi({baseUrl:'https://fixture.test',runtime:()=>({request:o=>calls.push(o)})});const pending=api.admin('operator');calls[0].success({statusCode:200,data:{code:0,data:page([{...document(),payload:'invalid'}])}});await assert.rejects(pending,e=>e.kind==='protocol')
 })
+
+test('operator embedding status is optional, strict and never implies public VECTOR',async()=>{
+ const {validKnowledgeEmbedding,embeddingStateLabel,validKnowledgeRow}=await import('../src/services/licensed-knowledge.js')
+ const enabled={state:'SUCCEEDED',error_code:null,profile_hash:'a'.repeat(64),updated_at:stamp}
+ assert.ok(validKnowledgeEmbedding(enabled));assert.ok(validKnowledgeRow({...document(),embedding:enabled}))
+ assert.ok(validKnowledgeEmbedding({state:'DISABLED',error_code:null,profile_hash:null,updated_at:null}))
+ for(const state of ['NOT_ALLOWED','NOT_QUEUED'])assert.ok(validKnowledgeEmbedding({...enabled,state,updated_at:null}))
+ for(const error_code of ['WORKER_LOST','UNAVAILABLE','INVALID_VECTOR','LIMIT_EXCEEDED'])assert.ok(validKnowledgeEmbedding({...enabled,state:'FAILED',error_code}))
+ assert.match(embeddingStateLabel('SUCCEEDED'),/已生成/);assert.match(embeddingStateLabel('FAILED'),/不自动重试/)
+ for(const bad of [{...enabled,state:'VECTOR'},{...enabled,error_code:'UNAVAILABLE'},{...enabled,profile_hash:'bad'},{...enabled,updated_at:null},{...enabled,vector:[1]},{...enabled,state:'FAILED',error_code:'private diagnostic'},{...enabled,state:'DISABLED'},{...enabled,state:'CANCELLED',error_code:'LIMIT_EXCEEDED'},null])assert.equal(validKnowledgeEmbedding(bad),false)
+})
+test('admin list validates new embedding state while legacy receipts stay accepted',async()=>{
+ let row={...document(),embedding:{state:'QUEUED',error_code:null,profile_hash:'a'.repeat(64),updated_at:stamp}}
+ const api=createKnowledgeApi({baseUrl:'https://example.test',runtime:()=>({request:r=>r.success({statusCode:200,data:{code:0,data:page([row])}})})})
+ assert.equal((await api.admin('operator')).items[0].embedding.state,'QUEUED')
+ row.embedding.private_token='must never arrive';await assert.rejects(api.admin('operator'),e=>e.kind==='protocol')
+ delete row.embedding;assert.equal((await api.admin('operator')).items.length,1)
+})

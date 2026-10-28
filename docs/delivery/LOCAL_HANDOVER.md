@@ -1,5 +1,7 @@
 # 本地与测试环境交接入口
 
+R5c1（2026-10-28）：[自动索引/配置/运营状态/跨配置维护](../operations/KNOWLEDGE_EMBEDDING_LIFECYCLE.md)、[测试与交付边界](../progress/RECOGNITION_R5C1_EMBEDDING_LIFECYCLE.md)。默认关闭；R5b的无自动接线描述保留历史含义，当前公开检索仍KEYWORD。
+
 2026-10-28 R5b：[真实中文嵌入接入与验证边界](../progress/RECOGNITION_R5B_REAL_EMBEDDING.md)、[独立运行/配置/私有接口/资源](../../services/embedding/README.md)。固定真实模型可显式隔离测试，主业务仍KEYWORD，自动索引与公开VECTOR后续接线。
 
 本阶段范围（2026-10-26）：正式微信认证、短信开通、生产环境部署由后续负责人办理。本地允许合成身份、LOCAL_TEST资金与明确标识的模拟服务。它们均不代表正式渠道验收。
