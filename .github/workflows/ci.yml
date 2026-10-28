@@ -203,6 +203,7 @@ jobs:
           python -m unittest discover -s scripts -p test_miniapp_handover.py -v
           python -m unittest discover -s scripts -p test_local_delivery.py -v
           python -m unittest discover -s scripts -p test_business_api_acceptance.py -v
+          python -m unittest discover -s scripts -p test_recognition_http_acceptance.py -v
           python scripts/miniapp_handover.py --check
       - run: python scripts/owner_api_cases.py
       - run: python -m unittest discover -s scripts -p test_owner_api_cases.py -v

@@ -35,4 +35,19 @@ class VinHttpJourneyTest extends IsolatedCoreJourneysTest {
         String temporary=token(2,"user","OWNER","isolated-journeys",null,null);
         jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id=?",issuedSessions.get(temporary));request("POST",path,temporary,null,body,401);
     }
+
+    @Test void vin_four_kind_http_evidence()throws Exception{
+        String path="/api/vehicle/vin-decode";var e=new RecognitionHttpEvidence(this,path);
+        var body=Map.of("vin","LTEST223456789012","consent",true,"consent_version","VIN_VPIC_V1");
+        String actor=token(1,"user","OWNER","isolated-journeys",null,null);
+        int vehicles=jdbc.queryForObject("SELECT COUNT(*) FROM vehicle",Integer.class),archives=jdbc.queryForObject("SELECT COUNT(*) FROM vehicle_archive",Integer.class);
+        var first=e.send("candidate","normal","owner",path,actor,body,200);assertEquals("CANDIDATE",first.path("data").path("status").asText());assertTrue(first.path("data").path("requires_confirmation").asBoolean());
+        assertEquals(first.path("data"),e.send("repeat","boundary","owner",path,actor,body,200).path("data"));
+        e.send("no_consent","error","owner",path,actor,Map.of("vin","LTEST223456789012","consent",false,"consent_version","VIN_VPIC_V1"),400);
+        e.send("query","error","owner",path+"?unexpected=1",actor,body,400);
+        e.send("anonymous","unauthorized","anonymous",path,null,body,401);
+        e.send("wrong_role","unauthorized","merchant",path,merchant,body,403);
+        assertEquals(vehicles,jdbc.queryForObject("SELECT COUNT(*) FROM vehicle",Integer.class));assertEquals(archives,jdbc.queryForObject("SELECT COUNT(*) FROM vehicle_archive",Integer.class));
+        e.finish("vin-http-evidence.json",Map.of("no_vehicle_write",true,"no_archive_write",true,"candidate_requires_confirmation",true));
+    }
 }

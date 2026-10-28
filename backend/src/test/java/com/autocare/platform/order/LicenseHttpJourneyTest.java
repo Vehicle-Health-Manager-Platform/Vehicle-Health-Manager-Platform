@@ -63,4 +63,22 @@ class LicenseHttpJourneyTest extends IsolatedCoreJourneysTest {
         var saved=request("POST","/api/vehicle/add",owner,key(),Map.of("add_type",4,"model_id",1,"current_mileage",42,"plate_no",plate,"vin",vin),200).path("data");long vehicle=saved.path("vehicle_id").asLong();assertTrue(vehicle>0);assertEquals(42,jdbc.queryForObject("SELECT current_mileage FROM vehicle WHERE id=?",Integer.class,vehicle));assertEquals(1,jdbc.queryForObject("SELECT model_id FROM vehicle WHERE id=?",Integer.class,vehicle));
         var fresh=token(1,"user","OWNER","isolated-journeys",null,null);jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id=?",issuedSessions.get(fresh));request("POST",path,fresh,null,body,401);
     }
+
+    @Test void license_four_kind_http_evidence()throws Exception{
+        String path="/api/vehicle/license-recognition";var e=new RecognitionHttpEvidence(this,path);
+        String actor=token(1,"user","OWNER","isolated-journeys",null,null);
+        byte[] image=Base64.getDecoder().decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=");
+        long file=upload(image,actor,key(),200).path("data").path("file_id").asLong();assertTrue(file>0);
+        var body=Map.of("file_id",file,"purpose","NEW_VEHICLE","consent",true,"consent_version","NEW_VEHICLE_LICENSE_OCR_V1");
+        int vehicles=jdbc.queryForObject("SELECT COUNT(*) FROM vehicle",Integer.class),archives=jdbc.queryForObject("SELECT COUNT(*) FROM vehicle_archive",Integer.class);
+        var first=e.send("candidate","normal","owner",path,actor,body,200);assertEquals("CANDIDATE",first.path("data").path("review_status").asText());assertTrue(first.path("data").path("requires_confirmation").asBoolean());
+        assertEquals(first.path("data"),e.send("repeat","boundary","owner",path,actor,body,200).path("data"));
+        e.send("no_consent","error","owner",path,actor,Map.of("file_id",file,"purpose","NEW_VEHICLE","consent",false,"consent_version","NEW_VEHICLE_LICENSE_OCR_V1"),400);
+        e.send("query","error","owner",path+"?unexpected=1",actor,body,400);
+        e.send("anonymous","unauthorized","anonymous",path,null,body,401);
+        e.send("wrong_role","unauthorized","merchant",path,merchant,body,403);
+        e.send("foreign_file","unauthorized","foreign",path,foreign,body,404);
+        assertEquals(vehicles,jdbc.queryForObject("SELECT COUNT(*) FROM vehicle",Integer.class));assertEquals(archives,jdbc.queryForObject("SELECT COUNT(*) FROM vehicle_archive",Integer.class));
+        e.finish("license-http-evidence.json",Map.of("no_vehicle_write",true,"no_archive_write",true,"candidate_requires_confirmation",true));
+    }
 }
