@@ -2,6 +2,8 @@
 
 承接PR253/b1c2bfc，分支codex/current-api-acceptance。用户授权完成R5c2后规划并实施，本批将私有调度整理为[仓库运行器](../../scripts/run_business_api_acceptance.py)，[完整用法](../testing/CURRENT_API_ACCEPTANCE.md)。不修改业务接口/表/许可，不合并部署。
 
+实现f4236d1已上传[草稿PR254](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/254)，依赖PR253；新head远端CI单独跟踪，未结束不计通过。
+
 ## 完成
 
 默认串行29套业务新库和七套Docker文件/扫描/图片/奖励旅程；可选业务范围及run/audit/none模式。复用原严格审计器，重新核对真实Newman请求/返回与私有身份绑定、集合/源码/SQL和资源清理。输出分开统计新执行与已有复核，按接口四类去重，未选范围不当作未实现。
