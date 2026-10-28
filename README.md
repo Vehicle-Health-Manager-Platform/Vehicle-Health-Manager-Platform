@@ -1,3 +1,9 @@
+## 2026-10-28 阶段更新合并
+
+本次将 PR238–257 的代码和交接资料完整集成至 main，保留全部阶段提交历史。[合并范围、门禁与提交覆盖](docs/progress/MERGE_2026_10_28.md)记录20个原 PR、已有测试和未验边界；实际合并状态以 GitHub 为准。包括 VIN/行驶证、ASR、图文/PDF、真实私有embedding与公开向量检索，以及10项识别接口HTTP补证；不部署生产环境。
+
+当前入口：[本地交接](docs/delivery/LOCAL_HANDOVER.md)、[最终验收与剩余工作](docs/delivery/FINAL_ACCEPTANCE_2026_10_28.md)、[统一业务验收](docs/testing/CURRENT_API_ACCEPTANCE.md)。以下内容为阶段历史，历史“未合并”或能力待接说明不覆盖本次集成范围。
+
 ## 本地阶段交接（2026-10-28）
 
 R6a新增[当前版API统一运行器](docs/testing/CURRENT_API_ACCEPTANCE.md)，复用严格审计器，逐套新库、失败继续、源码/清理校验和覆盖缺口汇总。[阶段验证](docs/progress/R6A_CURRENT_API_ACCEPTANCE.md)独立记录新执行与已有复核。
