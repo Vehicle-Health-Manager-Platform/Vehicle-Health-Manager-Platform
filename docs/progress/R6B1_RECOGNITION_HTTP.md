@@ -1,6 +1,6 @@
 # R6b1 VIN/行驶证四类HTTP证据（2026-10-28）
 
-承接PR254/2e3a6ce，分支codex/recognition-http-evidence。用户授权下一步规划后实施，10项识别接口分批补证；本批先完成VIN与行驶证两项，剩余八项按计划另验，不声称全部识别验收已完成。
+承接PR254/2e3a6ce，分支codex/recognition-http-evidence。实现1b674ca已上传[草稿PR255](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/255)，依赖PR254；新head的CI独立跟踪，未结束不计通过。用户授权下一步规划后实施，10项识别接口分批补证；本批先完成VIN与行驶证两项，剩余八项按计划另验，不声称全部识别验收已完成。
 
 复用现有真实TCP/JWT/MySQL正式控制器/服务测试，在请求发生处记录具名清单、实际状态、角色、规范操作/实际路径和请求/响应SHA256；不从测试名推断请求已发送，不存凭证/证件正文。候选要求人工确认，识别前后SQL核对车辆和档案数量不变；重复请求不自动录车。行驶证还验他人文件404。
 
