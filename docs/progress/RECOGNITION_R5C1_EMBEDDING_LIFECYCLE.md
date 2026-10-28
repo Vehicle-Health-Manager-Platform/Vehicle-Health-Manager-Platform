@@ -25,3 +25,5 @@ Compose覆盖解析及内部网络、无宿主端口、非root、只读和资源
 [配置、启动/停止、状态、清理和故障操作](../operations/KNOWLEDGE_EMBEDDING_LIFECYCLE.md)、[运营手册](../user-guides/OPERATOR.md)、[统一交接](../delivery/LOCAL_HANDOVER.md)、[设计](../superpowers/specs/2026-10-28-embedding-lifecycle-design.md)、[计划](../superpowers/plans/2026-10-28-embedding-lifecycle.md)。根.env.example与Compose默认关闭，显式测试覆盖deploy/compose/embedding-test.yml不进入默认启动。
 
 保持362操作/348受保护、65迁移/134表，历史317完整证据/45独立结论不作本轮全API通过。未重跑全后端核心覆盖率/全部API/恢复/500并发。公开VECTOR、降级、AI引用接线列R5c2；任务有限重试/审计重排队、生产监控、授权领域评估、容量和真机仍待。独立清理模式需运维停掉其他索引实例，不提供跨运行实例的自动停机承诺。正式微信/SMS/支付/生产办理继续后置，不能据本轮声明全部开发已完成。
+
+实现aff0882已上传[草稿PR252](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/252)，依赖PR251/codex/embedding-real-provider。上传时PR251七项成功、compose-smoke进行中；PR252同版远端CI另核，未完成不计通过。未合并或部署。
