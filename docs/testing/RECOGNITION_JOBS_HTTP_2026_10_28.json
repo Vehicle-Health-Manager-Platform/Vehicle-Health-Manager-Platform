@@ -1,0 +1,272 @@
+{
+  "version": 1,
+  "date": "2026-10-28",
+  "phase": "R6b2 ASR/document job HTTP evidence",
+  "selected_checks_passed": true,
+  "full_api_acceptance_passed": false,
+  "production_acceptance_passed": false,
+  "source_sha256": "4191d6f771829ff7e5dd09f19ac6e81254bb7ae98ad7a0db003d60e03bedccce",
+  "actual_http": {
+    "passed": true,
+    "source_sha256": "20a995ddd8111b256bc076ad1614803305afe4e57224440dc2788724cab6ef23",
+    "full_api_acceptance_passed": false,
+    "production_acceptance_passed": false,
+    "execution_mode": "EXECUTED",
+    "suites": [
+      {
+        "name": "vin",
+        "passed": true,
+        "requests": 6,
+        "tests": 5,
+        "coverage": {
+          "POST /api/vehicle/vin-decode": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "checks": {
+          "no_archive_write": true,
+          "candidate_requires_confirmation": true,
+          "no_vehicle_write": true
+        },
+        "bindings": {},
+        "mysql_container_id": "8c93a3d01ff78cdadf845e1c1f4c3113e2f5f71293119b5575f805e718bf2a42",
+        "source_sha256": "20a995ddd8111b256bc076ad1614803305afe4e57224440dc2788724cab6ef23",
+        "raw_sha256": "2a102b94471c5c48e5f1b1bbde5f13a4af66016b40afe407170858fc83c95066"
+      },
+      {
+        "name": "license",
+        "passed": true,
+        "requests": 7,
+        "tests": 5,
+        "coverage": {
+          "POST /api/vehicle/license-recognition": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "checks": {
+          "no_archive_write": true,
+          "candidate_requires_confirmation": true,
+          "no_vehicle_write": true
+        },
+        "bindings": {},
+        "mysql_container_id": "6f5c78ff37896f237569c051f6379623dbec6fb66df49cb84df6d82b87351963",
+        "source_sha256": "20a995ddd8111b256bc076ad1614803305afe4e57224440dc2788724cab6ef23",
+        "raw_sha256": "37ee4aedc2856ebc7e6d80ea44c2bfe99d54c8e6e00f2f34ec8dcfaaa6fde1a6"
+      },
+      {
+        "name": "asr",
+        "passed": true,
+        "requests": 20,
+        "tests": 6,
+        "coverage": {
+          "POST /api/recognition/asr/jobs": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "GET /api/recognition/asr/jobs/{id}": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "POST /api/recognition/asr/jobs/{id}/cancel": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "checks": {
+          "job_binding_verified": true,
+          "cancelled_result_withheld": true,
+          "idempotent_replay_verified": true,
+          "no_archive_write": true,
+          "no_vehicle_write": true
+        },
+        "bindings": {
+          "job_id": 1
+        },
+        "mysql_container_id": "1a1be9a4693ac7bdbe311b862799bc555ef5625fef327b4d782a7958353b1c9a",
+        "source_sha256": "20a995ddd8111b256bc076ad1614803305afe4e57224440dc2788724cab6ef23",
+        "raw_sha256": "db5f43101dbd3e0b5fd5c221a033f693cfbc6af32f255c7ebbbd10482b978323"
+      },
+      {
+        "name": "document",
+        "passed": true,
+        "requests": 20,
+        "tests": 6,
+        "coverage": {
+          "POST /api/recognition/documents/jobs": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "GET /api/recognition/documents/jobs/{id}": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "POST /api/recognition/documents/jobs/{id}/cancel": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "checks": {
+          "job_binding_verified": true,
+          "cancelled_result_withheld": true,
+          "idempotent_replay_verified": true,
+          "no_archive_write": true,
+          "no_vehicle_write": true
+        },
+        "bindings": {
+          "job_id": 1
+        },
+        "mysql_container_id": "e98554e5c26d05357f65bc1347f6cc2ad3e39766ad2109d03dfdd48d0aa58235",
+        "source_sha256": "20a995ddd8111b256bc076ad1614803305afe4e57224440dc2788724cab6ef23",
+        "raw_sha256": "58b7f9239a6dea22fc106f6fbee4202ce570f10c9f828ee89ed93e42e0b8ae6b"
+      }
+    ],
+    "maven_exit_code": 0,
+    "owned_databases_removed": true,
+    "sources_unchanged": true,
+    "duration_seconds": 480.437
+  },
+  "audit_unit_tests": 8,
+  "default_regression": {
+    "version": 1,
+    "finished_at": "2026-10-28T14:52:46.561991+00:00",
+    "selected_checks_passed": true,
+    "source_sha256": "4191d6f771829ff7e5dd09f19ac6e81254bb7ae98ad7a0db003d60e03bedccce",
+    "sources_unchanged": true,
+    "backend_requested": false,
+    "backend_runtime_verified": false,
+    "production_acceptance_passed": false,
+    "boundaries": [
+      "Synthetic identities and LOCAL_TEST funds in backend integration tests.",
+      "No real WeChat/SMS/payment/model provider or mobile-device acceptance.",
+      "Builds and unit tests do not certify rendered page interactions.",
+      "Selected regression checks are not all-API business or performance acceptance."
+    ],
+    "checks": [
+      {
+        "name": "miniapp-unit",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 2.5,
+        "log": "miniapp-unit.log"
+      },
+      {
+        "name": "python-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 111.047,
+        "log": "python-regression.log"
+      },
+      {
+        "name": "ocr-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 21.125,
+        "log": "ocr-regression.log"
+      },
+      {
+        "name": "asr-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 5.218,
+        "log": "asr-regression.log"
+      },
+      {
+        "name": "document-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 8.344,
+        "log": "document-regression.log"
+      },
+      {
+        "name": "embedding-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 8.859,
+        "log": "embedding-regression.log"
+      },
+      {
+        "name": "wechat-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 13.891,
+        "log": "wechat-build.log"
+      },
+      {
+        "name": "h5-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 16.594,
+        "log": "h5-build.log"
+      },
+      {
+        "name": "openapi-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.344,
+        "log": "openapi-consistency.log"
+      },
+      {
+        "name": "migration-mounts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.14,
+        "log": "migration-mounts.log"
+      },
+      {
+        "name": "handover-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.344,
+        "log": "handover-consistency.log"
+      },
+      {
+        "name": "contract-verdicts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.187,
+        "log": "contract-verdicts.log"
+      }
+    ]
+  },
+  "reviewed_http_requests": 53,
+  "selected_java_executions": 22,
+  "operation_count": 8,
+  "new_job_operation_count": 6,
+  "initial_failed_attempt": {
+    "passed": false,
+    "source_sha256": "5a7800ee6bfa8a42413de47b556549be9cfaf54c61abcc55fe0bd6783ac96c1d",
+    "full_api_acceptance_passed": false,
+    "production_acceptance_passed": false,
+    "execution_mode": "EXECUTED",
+    "suites": [],
+    "maven_exit_code": 1,
+    "reason": "ValueError",
+    "duration_seconds": 468.125
+  },
+  "initial_failure_reason": "New test incorrectly expected state in creation receipt; its pending fixture then contaminated single-worker legacy scenarios. Fixed receipt assertions and added scoped AfterEach cleanup, then reran everything.",
+  "boundaries": [
+    "Real TCP/controllers/JWT/MySQL; model/store/material inputs are explicit fixtures.",
+    "ASR/document each 20 reviewed requests, VIN/license 13 regression requests; other inherited HTTP traffic is not added to 53.",
+    "22 execution items include inherited core journeys; not 22 newly authored tests.",
+    "No real ASR/document accuracy, NHTSA coverage, real upstream provider, mobile or production acceptance.",
+    "Last two mileage endpoints and unified coverage integration remain planned; old 317/45 statistics not relabelled."
+  ]
+}

@@ -16,13 +16,17 @@ final class RecognitionHttpEvidence {
  RecognitionHttpEvidence(IsolatedCoreJourneysTest test,String operation){this.test=test;this.operation=operation;}
  static String hash(byte[] bytes)throws Exception{return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(bytes));}
  JsonNode send(String name,String kind,String role,String path,String token,Object body,int expected)throws Exception{
-  byte[] raw=test.mapper.writeValueAsBytes(body);
+  return send(name,kind,role,"POST",operation,path,token,null,body,expected);
+ }
+ JsonNode send(String name,String kind,String role,String method,String op,String path,String token,String key,Object body,int expected)throws Exception{
+  byte[] raw=body==null?new byte[0]:test.mapper.writeValueAsBytes(body);
   var builder=HttpRequest.newBuilder(URI.create("http://127.0.0.1:"+test.port+path)).timeout(Duration.ofSeconds(20)).header("Content-Type","application/json");
   if(token!=null)builder.header("Authorization","Bearer "+token);
-  var response=test.http.send(builder.POST(HttpRequest.BodyPublishers.ofByteArray(raw)).build(),HttpResponse.BodyHandlers.ofByteArray());
+  if(key!=null)builder.header("Idempotency-Key",key);
+  var response=test.http.send(builder.method(method,body==null?HttpRequest.BodyPublishers.noBody():HttpRequest.BodyPublishers.ofByteArray(raw)).build(),HttpResponse.BodyHandlers.ofByteArray());
   assertEquals(expected,response.statusCode(),name);assertTrue(response.headers().firstValue("Cache-Control").orElse("").contains("no-store"));
   var json=test.mapper.readTree(response.body());if(expected==200)assertEquals(0,json.path("code").asInt(-1));
-  cases.add(Map.of("name",name,"kind",kind,"role",role,"method","POST","operation",operation,"path",path,"status",response.statusCode(),"passed",true,"request_sha256",hash(raw),"response_sha256",hash(response.body())));
+  cases.add(Map.of("name",name,"kind",kind,"role",role,"method",method,"operation",op,"path",path,"status",response.statusCode(),"passed",true,"request_sha256",hash(raw),"response_sha256",hash(response.body())));
   return json;
  }
  static String sourceDigest()throws Exception{
@@ -32,7 +36,10 @@ final class RecognitionHttpEvidence {
   var digest=MessageDigest.getInstance("SHA-256");for(var file:files){digest.update(root.relativize(file).toString().replace('\\','/').getBytes(StandardCharsets.UTF_8));digest.update(Files.readAllBytes(file));}return HexFormat.of().formatHex(digest.digest());
  }
  void finish(String filename,Map<String,Boolean> checks)throws Exception{
+  finish(filename,checks,Map.of());
+ }
+ void finish(String filename,Map<String,Boolean> checks,Map<String,Long> bindings)throws Exception{
   assertTrue(checks.values().stream().allMatch(Boolean.TRUE::equals));
-  test.mapper.writerWithDefaultPrettyPrinter().writeValue(Path.of("target",filename).toFile(),Map.of("version",1,"passed",true,"source_sha256",sourceDigest(),"cases",cases,"checks",checks,"provider_fixture",true,"mysql_container_id",test.MYSQL.getContainerId()));
+  test.mapper.writerWithDefaultPrettyPrinter().writeValue(Path.of("target",filename).toFile(),Map.of("version",1,"passed",true,"source_sha256",sourceDigest(),"cases",cases,"checks",checks,"provider_fixture",true,"mysql_container_id",test.MYSQL.getContainerId(),"bindings",bindings));
  }
 }

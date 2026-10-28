@@ -36,4 +36,31 @@ class RecognitionEvidenceTest(unittest.TestCase):
  def test_only_reviewed_inventory_counts_as_four_kind(self):
   self.assertEqual(6,len(r.inventory('vin')));self.assertEqual(7,len(r.inventory('license')))
   self.assertEqual({'normal','boundary','error','unauthorized'},{v['kind'] for v in r.inventory('license')})
+
+class JobEvidenceTest(unittest.TestCase):
+ def setUp(self):
+  self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup);self.root=Path(self.tmp.name)
+ def make(self,name):
+  cls,method,_=r.SPECS[name];junit=self.root/'job.xml';raw=self.root/'job.json'
+  junit.write_text(f'<testsuite name="com.autocare.platform.order.{cls}" tests="1" failures="0" errors="0" skipped="0"><testcase classname="com.autocare.platform.order.{cls}" name="{method}"/></testsuite>')
+  d=dict(version=1,passed=True,provider_fixture=True,source_sha256='a'*64,mysql_container_id='b'*64,bindings={'job_id':7},checks={k:True for k in r.JOB_CHECKS},cases=[dict(v,request_sha256='c'*64,response_sha256='d'*64) for v in r.inventory(name,{'job_id':7})])
+  return junit,raw,d
+ def audit(self,name,junit,raw,d):
+  raw.write_text(json.dumps(d),encoding='utf-8')
+  with patch.object(r,'source_digest',return_value='a'*64):return r.audit(name,junit,raw)
+ def test_six_operations_have_independent_four_kind_proof(self):
+  for name in ('asr','document'):
+   j,p,d=self.make(name);proof=self.audit(name,j,p,d)
+   self.assertEqual(20,proof['requests']);self.assertEqual(3,len(proof['coverage']))
+   self.assertTrue(all(set(v)=={'normal','boundary','error','unauthorized'} for v in proof['coverage'].values()))
+ def test_invalid_and_mismatched_actual_job_bindings_are_rejected(self):
+  j,p,original=self.make('asr')
+  for binding in ({},{'job_id':0},{'job_id':-1},{'job_id':True},{'job_id':'7'},{'job_id':7.0},{'job_id':9007199254740992},{'job_id':8},{'job_id':7,'secret':'bad'}):
+   d=copy.deepcopy(original);d['bindings']=binding
+   with self.subTest(binding=binding),self.assertRaises(ValueError):self.audit('asr',j,p,d)
+ def test_wrong_method_missing_operation_or_job_sql_checks_are_rejected(self):
+  j,p,original=self.make('document')
+  for change in (lambda d:d['cases'][7].update(method='POST'),lambda d:d.update(cases=d['cases'][:13]),lambda d:d['checks'].update(job_binding_verified=False),lambda d:d['checks'].update(cancelled_result_withheld=False)):
+   d=copy.deepcopy(original);change(d)
+   with self.assertRaises(ValueError):self.audit('document',j,p,d)
 if __name__=='__main__':unittest.main()

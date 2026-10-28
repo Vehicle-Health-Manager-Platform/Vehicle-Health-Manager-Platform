@@ -1,5 +1,7 @@
 # 本地与测试环境交接入口
 
+R6b2扩展[识别HTTP运行器](../testing/RECOGNITION_HTTP_ACCEPTANCE.md)，默认覆盖VIN/行驶证及ASR/图文创建查询取消八项；[最新边界](../progress/R6B2_RECOGNITION_JOBS_HTTP.md)区分合成模型与真实HTTP数据库。
+
 R6b1新增[VIN/行驶证当前HTTP证据运行器](../testing/RECOGNITION_HTTP_ACCEPTANCE.md)，明确替身识别上游；10接口分批补证，不修改旧覆盖数量。
 
 R6a提供[当前版API统一运行器](../testing/CURRENT_API_ACCEPTANCE.md)，默认新执行29业务加七套真实旅程，支持选定范围和明确复核模式。实际本批范围见[阶段记录](../progress/R6A_CURRENT_API_ACCEPTANCE.md)，不代替全API或真实服务验收。
