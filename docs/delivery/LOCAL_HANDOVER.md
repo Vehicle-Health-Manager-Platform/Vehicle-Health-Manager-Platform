@@ -1,5 +1,7 @@
 # 本地与测试环境交接入口
 
+R6a提供[当前版API统一运行器](../testing/CURRENT_API_ACCEPTANCE.md)，默认新执行29业务加七套真实旅程，支持选定范围和明确复核模式。实际本批范围见[阶段记录](../progress/R6A_CURRENT_API_ACCEPTANCE.md)，不代替全API或真实服务验收。
+
 最新R5c2：[公开VECTOR、降级原因、片段详情及AI引用复核](../api/KNOWLEDGE_VECTOR_RETRIEVAL.md)、[测试/修复/交付边界](../progress/RECOGNITION_R5C2_PUBLIC_VECTOR.md)、[统一验收待办](FINAL_ACCEPTANCE_2026_10_28.md)。默认关闭；开启前先完成索引配置和授权检查。以下R5c1及更早记录保留阶段历史含义，不代表当前缺少已完成的接线。当前契约362操作、65迁移/134表。
 
 R5c1（2026-10-28）：[自动索引/配置/运营状态/跨配置维护](../operations/KNOWLEDGE_EMBEDDING_LIFECYCLE.md)、[测试与交付边界](../progress/RECOGNITION_R5C1_EMBEDDING_LIFECYCLE.md)。默认关闭；R5b的无自动接线描述保留历史含义，当前公开检索仍KEYWORD。

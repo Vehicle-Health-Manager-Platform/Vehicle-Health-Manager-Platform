@@ -1,5 +1,7 @@
 ## 本地阶段交接（2026-10-28）
 
+R6a新增[当前版API统一运行器](docs/testing/CURRENT_API_ACCEPTANCE.md)，复用严格审计器，逐套新库、失败继续、源码/清理校验和覆盖缺口汇总。[阶段验证](docs/progress/R6A_CURRENT_API_ACCEPTANCE.md)独立记录新执行与已有复核。
+
 R5c2已接通[公开向量检索、明确关键词降级与精确片段引用](docs/api/KNOWLEDGE_VECTOR_RETRIEVAL.md)，默认关闭，需独立嵌入许可和当前完整索引。AI只使用许可摘录，调用后重新核验来源；实际BGE模型与模拟AI分开验证。[阶段结果](docs/progress/RECOGNITION_R5C2_PUBLIC_VECTOR.md)与[最终版本统一验收清单](docs/delivery/FINAL_ACCEPTANCE_2026_10_28.md)列出当前证据及剩余工作。以下各阶段记录描述当时状态，以此处最新入口为准。
 
 R5c1新增[默认关闭的自动索引、运营状态与独立清理维护](docs/operations/KNOWLEDGE_EMBEDDING_LIFECYCLE.md)。公开VECTOR/降级和AI引用接线列为R5c2，当前公开检索仍KEYWORD；测试结果见[阶段报告](docs/progress/RECOGNITION_R5C1_EMBEDDING_LIFECYCLE.md)。
