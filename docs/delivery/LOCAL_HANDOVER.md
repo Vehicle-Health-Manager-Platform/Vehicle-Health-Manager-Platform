@@ -1,5 +1,7 @@
 # 本地与测试环境交接入口
 
+R6b3补车主/接车里程四类证据，并接通统一入口的可选--recognition run/audit；[本轮范围](../progress/R6B3_MILEAGE_HTTP.md)区分当前选择、历史覆盖和模拟模型。
+
 R6b2扩展[识别HTTP运行器](../testing/RECOGNITION_HTTP_ACCEPTANCE.md)，默认覆盖VIN/行驶证及ASR/图文创建查询取消八项；[最新边界](../progress/R6B2_RECOGNITION_JOBS_HTTP.md)区分合成模型与真实HTTP数据库。
 
 R6b1新增[VIN/行驶证当前HTTP证据运行器](../testing/RECOGNITION_HTTP_ACCEPTANCE.md)，明确替身识别上游；10接口分批补证，不修改旧覆盖数量。

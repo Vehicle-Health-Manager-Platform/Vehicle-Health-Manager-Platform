@@ -13,8 +13,11 @@ ROOT=Path(__file__).resolve().parents[1]
 SPECS={'vin':('VinHttpJourneyTest','vin_four_kind_http_evidence','/api/vehicle/vin-decode'),
        'license':('LicenseHttpJourneyTest','license_four_kind_http_evidence','/api/vehicle/license-recognition'),
        'asr':('AsrHttpJourneyTest','asr_four_kind_http_evidence','/api/recognition/asr/jobs'),
-       'document':('DocumentHttpJourneyTest','document_four_kind_http_evidence','/api/recognition/documents/jobs')}
+       'document':('DocumentHttpJourneyTest','document_four_kind_http_evidence','/api/recognition/documents/jobs'),
+       'mileage':('PickupMileageHttpJourneyTest','mileage_four_kind_http_evidence','/api/vehicle/mileage-recognition'),
+       'pickup':('PickupMileageHttpJourneyTest','pickup_four_kind_http_evidence','/api/check/pickup/mileage-recognition')}
 CHECKS={'no_vehicle_write','no_archive_write','candidate_requires_confirmation'}
+MILEAGE_CHECKS={'no_vehicle_write','no_archive_write','mileage_unchanged','candidate_requires_confirmation','rejected_requests_no_model_calls'}
 JOB_CHECKS={'no_vehicle_write','no_archive_write','job_binding_verified','cancelled_result_withheld','idempotent_replay_verified'}
 
 def source_digest():
@@ -26,6 +29,11 @@ def source_digest():
 
 def inventory(name,bindings=None):
     path=SPECS[name][2]
+    if name in ('mileage','pickup'):
+        role='owner' if name=='mileage' else 'merchant'
+        rows=[('candidate','normal',role,path,200),('repeat','boundary',role,path,200),('no_consent','error',role,path,400),('query','error',role,path+'?unexpected=1',400),('anonymous','unauthorized','anonymous',path,401),('wrong_role','unauthorized','merchant' if name=='mileage' else 'owner',path,403),('foreign_owner' if name=='mileage' else 'foreign_shop','unauthorized','foreign' if name=='mileage' else 'other_merchant',path,404),('foreign_file','unauthorized',role,path,404)]
+        if name=='pickup':rows.append(('order_state','boundary',role,path,409))
+        return [dict(name=n,kind=k,role=r,method='POST',operation=path,path=p,status=status,passed=True) for n,k,r,p,status in rows]
     if name in ('asr','document'):
         job='{{job_id}}' if bindings is None else str(bindings['job_id'])
         read=path+'/'+job;cancel=read+'/cancel';read_op=path+'/{id}';cancel_op=read_op+'/cancel'
@@ -53,18 +61,21 @@ def audit(name,junit,evidence):
     bindings=d.get('bindings',{})
     if name in ('asr','document'):
         if set(bindings)!= {'job_id'} or type(bindings['job_id']) is not int or not 0<bindings['job_id']<=9007199254740991:raise ValueError('Invalid observed job binding')
+    elif name in ('mileage','pickup'):
+        keys={'vehicle_id','file_id'}|({'order_id'} if name=='pickup' else set())
+        if set(bindings)!=keys or any(type(v) is not int or not 0<v<=9007199254740991 for v in bindings.values()):raise ValueError('Invalid mileage scope binding')
     elif bindings:raise ValueError('Unexpected binding')
     actual=d.get('cases');expected=inventory(name,bindings)
     if not isinstance(actual,list) or len(actual)!=len(expected):raise ValueError('Incomplete observed requests')
     for row,want in zip(actual,expected):
         if set(row)!=set(want)|{'request_sha256','response_sha256'} or any(row.get(k)!=v for k,v in want.items()) or any(not re.fullmatch('[a-f0-9]{64}',str(row.get(k,''))) for k in ('request_sha256','response_sha256')):raise ValueError('Observed HTTP differs from reviewed inventory')
-    required=JOB_CHECKS if name in ('asr','document') else CHECKS
+    required=JOB_CHECKS if name in ('asr','document') else (MILEAGE_CHECKS|({'no_pickup_write','order_state_preserved'} if name=='pickup' else set()) if name in ('mileage','pickup') else CHECKS)
     if set(d.get('checks',{}))!=required or any(v is not True for v in d['checks'].values()):raise ValueError('SQL or confirmation checks missing')
     if not re.fullmatch('[a-f0-9]{64}',str(d.get('mysql_container_id',''))):raise ValueError('Missing owned database identity')
     coverage={}
     for row in actual:coverage.setdefault(row['method']+' '+row['operation'],set()).add(row['kind'])
     if any(v!={'normal','boundary','error','unauthorized'} for v in coverage.values()):raise ValueError('Incomplete operation categories')
-    return dict(passed=True,requests=len(actual),tests=len(cases),coverage={k:sorted(v) for k,v in coverage.items()},checks=d['checks'],bindings=bindings,mysql_container_id=d['mysql_container_id'],source_sha256=d['source_sha256'],raw_sha256=hashlib.sha256(evidence.read_bytes()).hexdigest())
+    return dict(passed=True,test_class=cls,requests=len(actual),tests=len(cases),coverage={k:sorted(v) for k,v in coverage.items()},checks=d['checks'],bindings=bindings,mysql_container_id=d['mysql_container_id'],source_sha256=d['source_sha256'],raw_sha256=hashlib.sha256(evidence.read_bytes()).hexdigest())
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--check-only',action='store_true');parser.add_argument('--docker',action='store_true');args=parser.parse_args()
@@ -74,7 +85,7 @@ def main():
         if not args.check_only:
             for name,(cls,_,_) in SPECS.items():
                 for p in (ROOT/'backend/target'/f'{name}-http-evidence.json',ROOT/'backend/target/surefire-reports'/f'TEST-com.autocare.platform.order.{cls}.xml'):p.unlink(missing_ok=True)
-            command=['mvn','-B','-Dtest='+','.join(spec[0] for spec in SPECS.values()),'test']
+            command=['mvn','-B','-Dtest='+','.join(dict.fromkeys(spec[0] for spec in SPECS.values())),'test']
             if args.docker:
                 command=['docker','run','--rm','--mount',f'type=bind,source={ROOT},target=/workspace','--mount','type=volume,source=autocare-maven-cache,target=/root/.m2','--mount','type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock','-e','TESTCONTAINERS_HOST_OVERRIDE=host.docker.internal','-e','JAVA_TOOL_OPTIONS=-Dapi.version=1.44','-w','/workspace/backend','maven:3.9-eclipse-temurin-17',*command]
             with (work/'maven.private.log').open('wb') as log:
@@ -88,8 +99,10 @@ def main():
                 check=subprocess.run(['docker','ps','-aq','--no-trunc','--filter','id='+row['mysql_container_id']],capture_output=True)
                 if check.returncode or check.stdout.strip():raise ValueError('Owned database cleanup not verified')
             report['owned_databases_removed']=True
+            report['owned_database_count']=len({v['mysql_container_id'] for v in report['suites']})
         report['sources_unchanged']=before==source_digest()
         if not report['sources_unchanged']:raise ValueError('Sources changed')
+        report['selected_java_executions']=sum({v['test_class']:v['tests'] for v in report['suites']}.values())
         report['passed']=True
     except Exception as exc:report['reason']=type(exc).__name__; (work/'failure.private.txt').write_text(str(exc),encoding='utf-8')
     report['duration_seconds']=round(time.monotonic()-started,3)

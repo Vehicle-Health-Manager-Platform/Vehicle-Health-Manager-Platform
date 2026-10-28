@@ -63,4 +63,32 @@ class JobEvidenceTest(unittest.TestCase):
   for change in (lambda d:d['cases'][7].update(method='POST'),lambda d:d.update(cases=d['cases'][:13]),lambda d:d['checks'].update(job_binding_verified=False),lambda d:d['checks'].update(cancelled_result_withheld=False)):
    d=copy.deepcopy(original);change(d)
    with self.assertRaises(ValueError):self.audit('document',j,p,d)
+
+class MileageEvidenceTest(unittest.TestCase):
+ def setUp(self):
+  self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup);self.root=Path(self.tmp.name)
+ def make(self,name):
+  cls,method,_=r.SPECS[name];j=self.root/'m.xml';p=self.root/'m.json'
+  j.write_text(f'<testsuite name="com.autocare.platform.order.{cls}" tests="1" failures="0" errors="0" skipped="0"><testcase classname="com.autocare.platform.order.{cls}" name="{method}"/></testsuite>')
+  bindings=dict(vehicle_id=1,file_id=52)
+  if name=='pickup':bindings['order_id']=506
+  checks=r.MILEAGE_CHECKS|({'no_pickup_write','order_state_preserved'} if name=='pickup' else set())
+  d=dict(version=1,passed=True,provider_fixture=True,source_sha256='a'*64,mysql_container_id='b'*64,bindings=bindings,checks={k:True for k in checks},cases=[dict(v,request_sha256='c'*64,response_sha256='d'*64) for v in r.inventory(name)])
+  return j,p,d
+ def audit(self,name,j,p,d):
+  p.write_text(json.dumps(d))
+  with patch.object(r,'source_digest',return_value='a'*64):return r.audit(name,j,p)
+ def test_both_mileage_operations_have_complete_categories(self):
+  for name,count in [('mileage',8),('pickup',9)]:
+   j,p,d=self.make(name);v=self.audit(name,j,p,d);self.assertEqual(count,v['requests']);self.assertEqual(1,len(v['coverage']))
+ def test_rejected_model_call_or_changed_mileage_checks_fail(self):
+  j,p,original=self.make('pickup')
+  for key in ('mileage_unchanged','rejected_requests_no_model_calls','no_pickup_write','order_state_preserved'):
+   d=copy.deepcopy(original);d['checks'][key]=False
+   with self.assertRaises(ValueError):self.audit('pickup',j,p,d)
+ def test_invalid_scope_bindings_and_missing_foreign_case_fail(self):
+  j,p,original=self.make('mileage')
+  for change in (lambda d:d.update(bindings={}),lambda d:d['bindings'].update(vehicle_id=True),lambda d:d['bindings'].update(file_id=0),lambda d:d['cases'].pop()):
+   d=copy.deepcopy(original);change(d)
+   with self.assertRaises(ValueError):self.audit('mileage',j,p,d)
 if __name__=='__main__':unittest.main()

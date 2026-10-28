@@ -222,6 +222,37 @@ def execute_journey(name, mode, work, cat, env):
                 checks=proof['checks'], cleanup=proof['cleanup'])
 
 
+def execute_recognition(mode, work, cat, env):
+    module=importlib.import_module('run_recognition_http_acceptance')
+    before=set((ROOT/'.cache').glob('recognition-http-*'))
+    arguments=[str(Path(module.__file__)), '--docker' if mode=='run' else '--check-only']
+    code=run_child(arguments,work/'recognition.private.log',env)
+    added=set((ROOT/'.cache').glob('recognition-http-*'))-before
+    if code!=0 or len(added)!=1:raise ValueError('Recognition execution missing or ambiguous')
+    directory=added.pop()
+    if not directory.resolve().is_relative_to((ROOT/'.cache').resolve()):raise ValueError('Unexpected recognition evidence location')
+    report=load(directory/'report.json')
+    origin='EXECUTED' if mode=='run' else 'AUDIT_EXISTING'
+    if (report.get('passed') is not True or report.get('sources_unchanged') is not True
+            or report.get('source_sha256')!=module.source_digest() or report.get('execution_mode')!=origin
+            or mode=='run' and (report.get('maven_exit_code')!=0 or report.get('owned_databases_removed') is not True)):
+        raise ValueError('Recognition source/execution/cleanup failed')
+    audited=[];coverage={};routes={v['method']+' '+v['path']:k for k,v in cat.items()}
+    for name,(cls,_,_) in module.SPECS.items():
+        proof=module.audit(name,ROOT/'backend/target/surefire-reports'/('TEST-com.autocare.platform.order.'+cls+'.xml'),ROOT/'backend/target'/(name+'-http-evidence.json'))
+        audited.append(dict(name=name,**proof))
+        for route,kinds in proof['coverage'].items():
+            if route not in routes or routes[route] in coverage:raise ValueError('Unknown or duplicate recognition operation')
+            coverage[routes[route]]=kinds
+    if audited!=report.get('suites'):raise ValueError('Recognition raw evidence differs')
+    return dict(kind='recognition',name='recognition',passed=True,origin=origin,
+                requests=sum(v['requests'] for v in audited),coverage=coverage,
+                source_sha256=module.source_digest(),report_sha256=digest(directory/'report.json'),
+                selected_java_executions=sum({v['test_class']:v['tests'] for v in audited}.values()),
+                owned_databases_removed=report.get('owned_databases_removed') is True,
+                scope_count=len(coverage),provider_fixture=True)
+
+
 def verdicts(cat):
     by_route = {v['method'] + ' ' + v['path']: key for key, v in cat.items()}
     result = {}
@@ -272,11 +303,11 @@ def summarize(rows, cat, conclusions):
                 full_api_acceptance_passed=False)
 
 
-def plan(suites, mode):
+def plan(suites, mode, recognition="none"):
     if not suites or len(set(suites)) != len(suites) or any(s not in SUITES for s in suites):
         raise ValueError('Empty, duplicate or unknown business suites')
     return [('business', name) for name in suites] + ([('journey', name) for name in JOURNEYS]
-                                                        if mode != 'none' else [])
+                                                        if mode != 'none' else []) + ([('recognition','recognition')] if recognition!='none' else [])
 
 
 def run_plan(items, execute, accept):
@@ -296,9 +327,10 @@ def main(argv=None):
     parser.add_argument('--suites', nargs='+', choices=SUITES, default=list(SUITES))
     parser.add_argument('--journeys', choices=('run', 'audit', 'none'), default='run',
                         help='run seven new Docker journeys; audit existing source-bound evidence; or omit')
+    parser.add_argument('--recognition', choices=('none','run','audit'), default='none')
     args = parser.parse_args(argv)
     try:
-        items = plan(args.suites, args.journeys)
+        items = plan(args.suites, args.journeys, args.recognition)
     except ValueError:
         parser.error('Business suites must be nonempty and unique')
     lock = RunLock(ROOT / '.cache/business-api-acceptance.lock')
@@ -321,7 +353,7 @@ def main(argv=None):
     report = dict(version=1, passed=False, in_progress=True,
                   started_at=datetime.now(timezone.utc).isoformat(),
                   requested=[dict(kind=kind, name=name) for kind, name in items],
-                  journey_mode=args.journeys, suites=[],
+                  journey_mode=args.journeys, recognition_mode=args.recognition, suites=[],
                   production_acceptance_passed=False, full_api_acceptance_passed=False,
                   native_ui_verified=False, real_upstream_verified=False,
                   full_backend_revalidated=False)
@@ -343,6 +375,7 @@ def main(argv=None):
         def execute(kind, name):
             print('Starting ' + kind + '/' + name, flush=True)
             try:
+                if kind=='recognition':return execute_recognition(args.recognition,work,cat,env)
                 return (execute_business(name, work, report['api_source_sha256'], cat, env)
                         if kind == 'business' else execute_journey(name, args.journeys, work, cat, env))
             except Exception:

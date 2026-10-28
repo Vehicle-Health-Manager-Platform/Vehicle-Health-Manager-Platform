@@ -45,3 +45,15 @@ run模式重新执行，audit模式标为AUDIT_EXISTING并检查当前源码绑�
 ## 验证范围
 
 本批的运行器故障测试、实际选定新库执行及七套复核、默认回归结果见[阶段记录](../progress/R6A_CURRENT_API_ACCEPTANCE.md)。R5c2的完整249套/2568项及36套317项当前四类证据见[独立报告](../progress/RECOGNITION_R5C2_PUBLIC_VECTOR.md)，不冒称在每次工具测试中重新执行。下一批仍需10项已实现识别接口的完整四类HTTP归档、材料保留/删除、有限重试等。
+
+## 可选识别补证（R6b3）
+
+默认--recognition none保持原36套范围。显式新跑全部十项识别（VIN、行驶证、ASR/图文创建查询取消、车主/接车里程）：
+
+```powershell
+python scripts/run_business_api_acceptance.py --suites community --journeys none --recognition run
+```
+
+--recognition audit只复核已有当前源码的十项记录，不声称新请求或新清理。适配器重审每份JUnit/现场证据及源码/清理，把规范方法和路径匹配到现行OpenAPI operation_id，未知或重复映射失败。局部报告只汇总该次实际选择，不把旧317历史数相加冒充本轮全库覆盖。
+
+识别的六组证据来自五个测试类，里程两组共享同一JUnit/数据库；执行项和数据库数量去重统计。识别模型、图片元数据/材料和存储为明确替身，不能当成真实供应商或仪表效果。结果见[R6b3报告](../progress/R6B3_MILEAGE_HTTP.md)。

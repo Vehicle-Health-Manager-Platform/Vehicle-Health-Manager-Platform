@@ -229,4 +229,37 @@ class BusinessEvidenceAuditTest(unittest.TestCase):
                 with self.assertRaises(ValueError):self.audit()
 
 
+
+class RecognitionIntegrationTest(unittest.TestCase):
+    def setUp(self):
+        self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup);self.root=Path(self.tmp.name);(self.root/'.cache').mkdir();self.work=self.root/'work';self.work.mkdir()
+        self.proof=dict(passed=True,test_class='FixtureTest',tests=6,requests=4,coverage={'GET /api/one':list(runner.KINDS)})
+        self.report=dict(passed=True,sources_unchanged=True,source_sha256='source',execution_mode='EXECUTED',maven_exit_code=0,owned_databases_removed=True,suites=[dict(name='fixture',**self.proof)])
+        self.module=SimpleNamespace(__file__=str(self.root/'helper.py'),SPECS={'fixture':('FixtureTest','test','/api/one')},source_digest=lambda:'source',audit=lambda *a:self.proof)
+    def execute(self,mode='run',exit_code=0,count=1):
+        def child(*args):
+            for i in range(count):
+                path=self.root/'.cache'/('recognition-http-'+str(i));path.mkdir();(path/'report.json').write_text(json.dumps(self.report))
+            return exit_code
+        with patch.object(runner,'ROOT',self.root),patch.object(runner.importlib,'import_module',return_value=self.module),patch.object(runner,'run_child',side_effect=child):return runner.execute_recognition(mode,self.work,CAT,{})
+    def test_optional_plan_keeps_default_scope_and_adds_only_one_batch(self):
+        self.assertEqual(36,len(runner.plan(list(runner.SUITES),'run')))
+        self.assertEqual([('business','owner'),('recognition','recognition')],runner.plan(['owner'],'none','run'))
+    def test_executed_results_are_reaudited_and_mapped_to_contract(self):
+        row=self.execute();self.assertEqual({'one':list(runner.KINDS)},row['coverage']);self.assertEqual(4,row['requests']);self.assertEqual('EXECUTED',row['origin'])
+    def test_audit_is_never_labelled_new_execution_or_cleanup(self):
+        self.report.update(execution_mode='AUDIT_EXISTING');self.report.pop('owned_databases_removed')
+        row=self.execute('audit');self.assertEqual('AUDIT_EXISTING',row['origin']);self.assertFalse(row['owned_databases_removed'])
+    def test_stale_failed_wrong_mode_or_missing_cleanup_is_rejected(self):
+        original=copy.deepcopy(self.report)
+        for change in (dict(source_sha256='old'),dict(passed=False),dict(sources_unchanged=False),dict(execution_mode='AUDIT_EXISTING'),dict(owned_databases_removed=False),dict(suites=[])):
+            with self.subTest(change=change):
+                for p in (self.root/'.cache').glob('recognition-http-*'):(p/'report.json').unlink();p.rmdir()
+                self.report=copy.deepcopy(original);self.report.update(change)
+                with self.assertRaises(ValueError):self.execute()
+    def test_unknown_operation_or_ambiguous_reports_are_rejected(self):
+        self.proof['coverage']={'GET /unknown':list(runner.KINDS)};self.report['suites']=[dict(name='fixture',**self.proof)]
+        with self.assertRaises(ValueError):self.execute()
+        for p in (self.root/'.cache').glob('recognition-http-*'):(p/'report.json').unlink();p.rmdir()
+        with self.assertRaises(ValueError):self.execute(count=2)
 if __name__=='__main__':unittest.main()
