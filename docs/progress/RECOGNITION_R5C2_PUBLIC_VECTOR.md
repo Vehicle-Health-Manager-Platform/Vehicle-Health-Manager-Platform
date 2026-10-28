@@ -2,6 +2,8 @@
 
 承接PR252/81f74df，分支codex/public-vector-retrieval。公开检索、片段详情和AI参考复用既有路由，默认关闭；本轮不合并或部署。前置PR251与252的实际head均已核对八项CI成功，不能据此代替本分支CI。
 
+实现c492ab2已上传[草稿PR253](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/253)，依赖codex/embedding-lifecycle/PR252。完整本地后端/API仍运行，远端新head CI单独跟踪，未结束的不计通过。
+
 ## 已完成的业务变化
 
 新增服务端KNOWLEDGE_VECTOR_ENABLED=false，显式开启需同时启用许可知识与自动索引、实际profile/私有模型配置，且不处于清理模式。当前车主、当前精确车型的有效合法资料均有独立嵌入授权和同profile成功索引才使用VECTOR；最多100候选，返回最多五份去重资料，无关键词游标。仍采用有界MySQL精确余弦排序，无Milvus依赖或生产容量承诺。
@@ -30,6 +32,8 @@ AI保持独立开关与独立ai_allowed用途，只向上游提供本次问题�
 资料、车型、会话或用途许可可能在模型/AI IO期间变化，本轮增加前后复核与迟到结果丢弃。AI独立许可不从嵌入许可继承；身份错误不被模型失败降级吞掉。测试注入来源撤回、车型变化、会话失效、新资料发布、索引/运行实例关闭、坏向量与坏位置，验证无业务写入及失败处理。
 
 第一次完整后端执行在Testcontainers动态构建测试MinIO镜像时长期停滞，已中断本轮自有进程，保存未通过报告。改用仓库原已支持的upload.test.images.prebuilt=true，固定记录已有MinIO/init/ClamAV镜像ID后重跑，未跳过上传/扫描测试，未把中断运行计为通过。Windows默认TEMP权限和浏览器异步启动/测试选择器问题属于执行环境/夹具问题；最终通过使用工作区TEMP和独立深链接场景，未将其虚构为产品缺陷。
+
+首个远端c492ab2的schema-and-ocr因交接清单摘要过期失败：默认12组之后更新了REMAINING_ACCEPTANCE.md，却未重新生成其guide_content摘要。本地--check复现同一失败，重新生成miniapp-handover.json后，8项交接测试、13项本地运行器测试及--check通过。只改生成文档，未更改后端/测试源码，不用前一次默认组通过掩盖这次文档失配。后续新head远端结果单独核对。
 
 ## 交接位置及剩余工作
 
