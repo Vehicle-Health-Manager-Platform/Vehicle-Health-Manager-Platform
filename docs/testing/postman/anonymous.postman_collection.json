@@ -3881,6 +3881,40 @@
       ]
     },
     {
+      "name": "post_api_check_pickup_mileage_recognition",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "url": "{{base_url}}/api/check/pickup/mileage-recognition",
+        "description": "从本店接车仪表图片读取里程候选，员工核对后才带入表单",
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"anonymous is rejected\", () => pm.response.to.have.status(401));",
+              "pm.test(\"safe JSON envelope\", () => pm.expect(pm.response.json().code).to.eql(40100));",
+              "pm.test(\"private response is not cached\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "name": "post_api_check_pickup_submit",
       "request": {
         "method": "POST",
@@ -8770,6 +8804,192 @@
       ]
     },
     {
+      "name": "post_api_recognition_asr_jobs",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "url": "{{base_url}}/api/recognition/asr/jobs",
+        "description": "本人同车辆同用途音频创建持久ASR候选任务",
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"anonymous is rejected\", () => pm.response.to.have.status(401));",
+              "pm.test(\"safe JSON envelope\", () => pm.expect(pm.response.json().code).to.eql(40100));",
+              "pm.test(\"private response is not cached\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "get_api_recognition_asr_jobs_id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "url": "{{base_url}}/api/recognition/asr/jobs/1",
+        "description": "本人查询ASR排队状态与短期转写候选"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"anonymous is rejected\", () => pm.response.to.have.status(401));",
+              "pm.test(\"safe JSON envelope\", () => pm.expect(pm.response.json().code).to.eql(40100));",
+              "pm.test(\"private response is not cached\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "post_api_recognition_asr_jobs_id_cancel",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "url": "{{base_url}}/api/recognition/asr/jobs/1/cancel",
+        "description": "本人取消ASR任务并清空候选",
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"anonymous is rejected\", () => pm.response.to.have.status(401));",
+              "pm.test(\"safe JSON envelope\", () => pm.expect(pm.response.json().code).to.eql(40100));",
+              "pm.test(\"private response is not cached\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "post_api_recognition_documents_jobs",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "url": "{{base_url}}/api/recognition/documents/jobs",
+        "description": "本人同车辆同用途图片/PDF创建持久图文提取候选任务",
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"anonymous is rejected\", () => pm.response.to.have.status(401));",
+              "pm.test(\"safe JSON envelope\", () => pm.expect(pm.response.json().code).to.eql(40100));",
+              "pm.test(\"private response is not cached\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "get_api_recognition_documents_jobs_id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "url": "{{base_url}}/api/recognition/documents/jobs/1",
+        "description": "本人查询图文提取排队状态与短期图文提取候选"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"anonymous is rejected\", () => pm.response.to.have.status(401));",
+              "pm.test(\"safe JSON envelope\", () => pm.expect(pm.response.json().code).to.eql(40100));",
+              "pm.test(\"private response is not cached\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "post_api_recognition_documents_jobs_id_cancel",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "url": "{{base_url}}/api/recognition/documents/jobs/1/cancel",
+        "description": "本人取消图文提取任务并清空候选",
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"anonymous is rejected\", () => pm.response.to.have.status(401));",
+              "pm.test(\"safe JSON envelope\", () => pm.expect(pm.response.json().code).to.eql(40100));",
+              "pm.test(\"private response is not cached\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "name": "post_api_refunds_create",
       "request": {
         "method": "POST",
@@ -9619,6 +9839,40 @@
       ]
     },
     {
+      "name": "post_api_vehicle_license_recognition",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "url": "{{base_url}}/api/vehicle/license-recognition",
+        "description": "本人新车登记图片提取车牌/VIN候选，人工核对后手动选车型",
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"anonymous is rejected\", () => pm.response.to.have.status(401));",
+              "pm.test(\"safe JSON envelope\", () => pm.expect(pm.response.json().code).to.eql(40100));",
+              "pm.test(\"private response is not cached\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "name": "get_api_vehicle_list",
       "request": {
         "method": "GET",
@@ -9771,6 +10025,40 @@
         },
         "url": "{{base_url}}/api/vehicle/vin-decode",
         "description": "VIN解码"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"anonymous is rejected\", () => pm.response.to.have.status(401));",
+              "pm.test(\"safe JSON envelope\", () => pm.expect(pm.response.json().code).to.eql(40100));",
+              "pm.test(\"private response is not cached\", () => pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"no-store\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "post_api_vehicle_vin_decode",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "url": "{{base_url}}/api/vehicle/vin-decode",
+        "description": "车主明确同意后查询NHTSA有限覆盖VIN候选，人工选车型",
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
       },
       "event": [
         {

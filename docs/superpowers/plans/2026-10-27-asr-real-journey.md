@@ -1,0 +1,13 @@
+# R3c实施计划
+
+1. [x] 核对既有真实模型、Java任务/调度/原表单与安全边界，记录设计。
+2. [x] 实现显式开关的Java真实ASR旅程和本地内部网络运行入口。
+3. [x] 实现真实worker/父进程/OOM故障检查，定位问题并回归。
+4. [x] 冻结源码完成相关Java、Python/ASR和构建/契约回归，整理分项证据与交接。
+5. [x] 上传独立草稿PR并核对远端head，清理本轮资源，不合并发布。
+
+下一阶段R4图文/PDF复用已验任务约束，R5向量独立embedding许可与版本；中文授权声音效果集另行准备。
+
+最终：5套50项Java、13项真实进程检查、实际256MiB OOM、10组交付回归（1189/553/40/OCR76+1跳过）通过；同一源码摘要。完整Compose本地因Docker Hub连接超时未完成；其修正后5组SQL门禁在63迁移新库通过，远程新head另核。报告见RECOGNITION_R3C_ASR_REAL_JOURNEY.md。
+
+上传：实现a57452a已推送codex/asr-real-journey，草稿[PR247](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/247)依赖PR246；远程新head CI独立跟踪，未完成不计通过，不合并部署。

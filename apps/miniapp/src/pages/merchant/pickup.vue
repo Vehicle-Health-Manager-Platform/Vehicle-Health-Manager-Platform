@@ -10,9 +10,13 @@ import {
 import { merchantImageApi as images, imageRequestKey, DEVTOOLS_NOTICE } from '../../services/private-images.js'
 import { createReservationReadFlow, initialReservationReadState, createReservationWriteFlow, initialReservationWriteState } from '../../services/reservations.js'
 import { toneClass } from '../../services/ui-tone.js'
+import InputCandidateReview from '../../components/InputCandidateReview.vue'
+import { candidateFields } from '../../services/input-candidates.js'
 
 const fresh = () => ({code:'',mileage:'',mileageReason:'',arrivalReason:'',fuel:'',damageStatus:'',damages:[],photos:Object.fromEntries(PICKUP_SLOTS.map(slot=>[slot,{candidate:null,key:'',fileId:0,url:'',message:''}]))})
 const form=reactive(fresh()), read=reactive(initialReservationReadState()), write=reactive(initialReservationWriteState()), imageBusy=ref(false), message=ref(''), permission=ref(false)
+const ocrBusy=ref(false)
+const mileageFields=candidateFields.archive.filter(field=>field.key==='mileage').map(field=>({...field,max:7,maxValue:9999999}))
 let order=0, generation=0, visible=false
 const token=()=>merchantSession.accessToken
 const flow=createReservationReadFlow({state:read,token,request:t=>pickupApi.context(t,order)})
@@ -26,7 +30,7 @@ const fuel=computed(()=>pickupFuelView(form.fuel))
 const damage=computed(()=>pickupDamageView(form))
 const readFailure=computed(()=>pickupReadFailureView(read))
 const writeView=computed(()=>pickupWriteView(write))
-const submitView=computed(()=>pickupSubmitView(form,{busy:disabled.value,saved:!!write.saved}))
+const submitView=computed(()=>pickupSubmitView(form,{busy:disabled.value||ocrBusy.value,saved:!!write.saved}))
 const slots=computed(()=>PICKUP_SLOTS.map(slot=>{
   const photo=form.photos[slot]
   return {
@@ -64,6 +68,7 @@ function mark(slot,event){
   }).exec()
 }
 function submit(){
+  if(ocrBusy.value)return
   try{pickupBody(order,form)}catch(error){write.message=error.message;return}
   const version=generation,actor=token();uni.showModal({title:'提交接车单',content:'确认检查信息完整？提交后不可修改，车主可以在订单中查看，仍需车主确认后才能派工。',success:r=>{if(r.confirm&&visible&&version===generation&&actor===token())save.save()}})
 }
@@ -106,6 +111,7 @@ function sheet(){uni.redirectTo({url:`/pages/check/pickup-detail?id=${order}&rol
           </view>
           <text class="ux-card-note">{{ facts.appointmentCopy }}</text>
           <text class="ux-card-note">{{ facts.baseline.copy }}</text>
+          <InputCandidateReview :actor="token()" :scope="`pickup:${read.value.order_id}`" scene="archive" :fields="mileageFields" :values="{mileage:form.mileage}" :order-id="read.value.order_id" :file-ids="form.photos.DASHBOARD.fileId?[form.photos.DASHBOARD.fileId]:[]" :disabled="disabled" @busy="ocrBusy=$event" @apply="form.mileage=$event.mileage" />
           <view class="ux-divider"></view>
           <text class="ux-card-note">{{ facts.guide }}</text>
           <text v-if="progress.blockedCopy" class="ux-card-note risk-line">{{ progress.blockedCopy }}</text>

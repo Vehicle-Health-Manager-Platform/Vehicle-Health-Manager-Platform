@@ -97,13 +97,18 @@ def gateway_audit(proof):
             raise ValueError('Gateway method/path/status changed')
     return {'requests': len(rows), 'checks': {name: True for name in sorted(CHECKS)}, 'cases': rows}
 
-def native_audit(ui, database):
+def native_audit(ui, database, reliability=False):
     if ui.get('sdk_version') != '3.17.2': raise ValueError('Native mileage SDK evidence missing or changed')
     rows = ui.get('checks', [])
     if len(rows) != len(NATIVE_CHECKS) or {r['name'] for r in rows} != NATIVE_CHECKS or any(r.get('passed') is not True for r in rows): raise ValueError('Missing native journey checks')
     if any(ui.get(k) is not True for k in ['passed','session_cleared','system_api_restored','proxy_closed','local_reference_released']): raise ValueError('Native cleanup incomplete')
-    if ui.get('counts') != {'upload':1,'recognition':2,'archive':1}: raise ValueError('Unexpected native API count')
-    if set(database.get('checkpoints', [])) != {'candidate','cancelled','applied'} or len(database['checkpoints']) != 3: raise ValueError('Missing database checkpoints')
+    if ui.get('counts') != {'upload':6 if reliability else 1,'recognition':7 if reliability else 2,'archive':1}: raise ValueError('Unexpected native API count')
+    phases = {'candidate','cancelled','applied'}
+    if reliability:
+        from linux_mileage_faults import inflight_audit
+        inflight_audit(ui.get('inflight', {}))
+        phases |= {'inflight-'+name for name in ('cancel','hide','leave','actor','context')}
+    if set(database.get('checkpoints', [])) != phases or len(database['checkpoints']) != len(phases): raise ValueError('Missing database checkpoints')
     if any(database.get(k) is not True for k in ['passed','zero_archives_before_save','one_archive_saved','correct_mileage_and_file','vehicle_mileage_unchanged','signed_download_matches','no_input_material_created']): raise ValueError('Native database proof incomplete')
     return {'ui':ui,'database':database}
 
@@ -111,7 +116,7 @@ def digest():
     value = hashlib.sha256(source_digest().encode())
     paths = [Path(__file__), *sorted((ROOT / 'services/ocr').glob('*.py')),
         *sorted((ROOT / 'services/ocr/src').glob('*.py')), *sorted((ROOT / 'services/ocr').glob('requirements*.txt')), ROOT / 'services/ocr/models.lock.json']
-    paths += [ROOT / p for p in ['scripts/native-mileage-e2e.cjs','scripts/native-mileage-proxy.cjs','scripts/native-acceptance-plugin.mjs','apps/miniapp/src/components/InputCandidateReview.vue','apps/miniapp/src/pages/archive/record-add.vue','apps/miniapp/src/services/mileage-recognition.js','apps/miniapp/src/services/input-candidates.js','apps/miniapp/src/services/archive-flow.js','apps/miniapp/src/services/archives.js','apps/miniapp/test/helpers/native-elements.cjs','apps/miniapp/test/helpers/devtools-rpc.cjs']]
+    paths += [ROOT / p for p in ['scripts/native-mileage-inflight.cjs','scripts/native-mileage-e2e.cjs','scripts/native-mileage-proxy.cjs','scripts/native-acceptance-plugin.mjs','apps/miniapp/src/components/InputCandidateReview.vue','apps/miniapp/src/pages/archive/record-add.vue','apps/miniapp/src/services/mileage-recognition.js','apps/miniapp/src/services/input-candidates.js','apps/miniapp/src/services/archive-flow.js','apps/miniapp/src/services/archives.js','apps/miniapp/test/helpers/native-elements.cjs','apps/miniapp/test/helpers/devtools-rpc.cjs']]
     for path in paths: value.update(path.relative_to(ROOT).as_posix().encode()); value.update(path.read_bytes())
     return value.hexdigest()
 

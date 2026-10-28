@@ -2,7 +2,7 @@
 
 由 `python scripts/miniapp_handover.py` 生成；请修改来源后重生成。
 
-注册页面110项，三份环境模板共100条变量记录（同名跨模板分别计数）。
+注册页面110项，三份环境模板共147条变量记录（同名跨模板分别计数）。
 这是源码存在性与文档链接核对，不是入口可达性、权限、视觉、真实身份或真机通过证明。按目录归入阅读指南，共用页可能服务多个角色，实际权限以服务端为准。
 
 [车主](../user-guides/OWNER.md) · [商家](../user-guides/MERCHANT.md) · [技师](../user-guides/TECHNICIAN.md) · [受限运营](../user-guides/OPERATOR.md) · [剩余验收](REMAINING_ACCEPTANCE.md)
@@ -195,12 +195,41 @@
 - `PUBLIC_IMAGES_ENABLED`；模板值 `false`。
 - `KNOWLEDGE_ENABLED`；模板值 `false`。
 - `KNOWLEDGE_AI_ENABLED`；模板值 `false`。
+- `KNOWLEDGE_EMBEDDING_ENABLED`；模板值 `false`。
+- `KNOWLEDGE_VECTOR_ENABLED`；模板值 `false`。
+- `KNOWLEDGE_EMBEDDING_CLEANUP_ENABLED`；模板值 `false`。
+- `KNOWLEDGE_EMBEDDING_PROFILE_JSON`。
+- `KNOWLEDGE_EMBEDDING_URL`。
+- `KNOWLEDGE_EMBEDDING_TOKEN`。
+- `KNOWLEDGE_EMBEDDING_ALLOW_PRIVATE_HTTP`；模板值 `false`。
+- `KNOWLEDGE_EMBEDDING_DELAY_MS`。
 - `MILEAGE_OCR_ENABLED`；模板值 `false`。
 - `MILEAGE_OCR_URL`。
 - `MILEAGE_OCR_SERVICE_TOKEN`。
 - `MILEAGE_OCR_ALLOW_PRIVATE_HTTP`；模板值 `false`。
 - `OCR_MODELS_ROOT`。
 - `OCR_WHEELHOUSE_ROOT`。
+- `VIN_DECODE_ENABLED`；模板值 `false`。
+- `VIN_DECODER_PROVIDER`。
+- `LICENSE_OCR_ENABLED`；模板值 `false`。
+- `LICENSE_OCR_URL`。
+- `LICENSE_OCR_SERVICE_TOKEN`。
+- `LICENSE_OCR_ALLOW_PRIVATE_HTTP`；模板值 `false`。
+- `ASR_ENABLED`；模板值 `false`。
+- `ASR_URL`。
+- `ASR_SERVICE_TOKEN`。
+- `ASR_ALLOW_PRIVATE_HTTP`；模板值 `false`。
+- `ASR_JOB_INTERVAL_MS`。
+- `ASR_CLEANUP_INTERVAL_MS`。
+- `DOCUMENT_ENABLED`；模板值 `false`。
+- `DOCUMENT_URL`。
+- `DOCUMENT_SERVICE_TOKEN`。
+- `DOCUMENT_ALLOW_PRIVATE_HTTP`；模板值 `false`。
+- `DOCUMENT_JOB_INTERVAL_MS`。
+- `DOCUMENT_CLEANUP_INTERVAL_MS`。
+- `DOCUMENT_SERVICE_ENABLED`；模板值 `false`。
+- `DOCUMENT_CORE_ENABLED`；模板值 `false`。
+- `DOCUMENT_PORT`。
 
 ### apps/miniapp/.env.example
 
@@ -238,5 +267,23 @@
 - `REVIEW_SUMMARY_ENABLED`；模板值 `false`。
 - `AI_SERVICE_PLAN_ENABLED`；模板值 `false`。
 - `INVITE_REWARD_ENABLED`；模板值 `false`。
+- `VIN_DECODE_ENABLED`；模板值 `false`。
+- `VIN_DECODER_PROVIDER`。
+- `LICENSE_OCR_ENABLED`；模板值 `false`。
+- `LICENSE_OCR_URL`。
+- `LICENSE_OCR_SERVICE_TOKEN`。
+- `LICENSE_OCR_ALLOW_PRIVATE_HTTP`；模板值 `false`。
+- `ASR_ENABLED`；模板值 `false`。
+- `ASR_URL`。
+- `ASR_SERVICE_TOKEN`。
+- `ASR_ALLOW_PRIVATE_HTTP`；模板值 `false`。
+- `ASR_JOB_INTERVAL_MS`。
+- `ASR_CLEANUP_INTERVAL_MS`。
+- `DOCUMENT_ENABLED`；模板值 `false`。
+- `DOCUMENT_URL`。
+- `DOCUMENT_SERVICE_TOKEN`。
+- `DOCUMENT_ALLOW_PRIVATE_HTTP`；模板值 `false`。
+- `DOCUMENT_JOB_INTERVAL_MS`。
+- `DOCUMENT_CLEANUP_INTERVAL_MS`。
 
 网络配置和启用前置条件见[网络运维](../operations/MINIAPP_NETWORK_ENVIRONMENTS.md)及[剩余验收](REMAINING_ACCEPTANCE.md)。

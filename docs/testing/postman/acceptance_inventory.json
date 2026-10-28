@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "operations": 353,
-  "anonymous_probes": 339,
+  "operations": 362,
+  "anonymous_probes": 348,
   "full_api_acceptance_passed": false,
   "note": "Generated inventory, not test evidence. Anonymous 401 does not prove controller implementation or role/ownership validation.",
   "items": [
@@ -2391,6 +2391,24 @@
       "path": "/api/check/pickup/dispute/review",
       "roles": "OWNER",
       "implementation_status": "dispute-resolution-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_check_pickup_mileage_recognition",
+      "method": "POST",
+      "path": "/api/check/pickup/mileage-recognition",
+      "roles": "本店有效MERCHANT/STAFF会话、PAID订单、仍归订单车主的车辆、当前员工本人CLEAN JPEG/PNG",
+      "implementation_status": "pickup-mileage-recognition-implemented",
       "content_types": [
         "application/json"
       ],
@@ -5356,6 +5374,110 @@
       }
     },
     {
+      "operation_id": "post_api_recognition_asr_jobs",
+      "method": "POST",
+      "path": "/api/recognition/asr/jobs",
+      "roles": "当前有效OWNER；本人车辆/同用途CLEAN input_material音频；ASR_ENABLED默认false",
+      "implementation_status": "asr-durable-job-create-implemented-requires-model-acceptance",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_recognition_asr_jobs_id",
+      "method": "GET",
+      "path": "/api/recognition/asr/jobs/{id}",
+      "roles": "当前有效OWNER；本人车辆/同用途CLEAN input_material音频；ASR_ENABLED默认false",
+      "implementation_status": "asr-durable-job-read-implemented-requires-model-acceptance",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_recognition_asr_jobs_id_cancel",
+      "method": "POST",
+      "path": "/api/recognition/asr/jobs/{id}/cancel",
+      "roles": "当前有效OWNER；本人当前车辆与任务；新有效会话可取消自己的旧任务",
+      "implementation_status": "asr-durable-job-cancel-implemented",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_recognition_documents_jobs",
+      "method": "POST",
+      "path": "/api/recognition/documents/jobs",
+      "roles": "当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
+      "implementation_status": "document-durable-job-implemented-local",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "get_api_recognition_documents_jobs_id",
+      "method": "GET",
+      "path": "/api/recognition/documents/jobs/{id}",
+      "roles": "当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
+      "implementation_status": "document-durable-job-implemented-local",
+      "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_recognition_documents_jobs_id_cancel",
+      "method": "POST",
+      "path": "/api/recognition/documents/jobs/{id}/cancel",
+      "roles": "当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
+      "implementation_status": "document-durable-job-implemented-local",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
       "operation_id": "post_api_refunds_callback_LOCAL_TEST",
       "method": "POST",
       "path": "/api/refunds/callback/LOCAL_TEST",
@@ -5901,6 +6023,24 @@
       }
     },
     {
+      "operation_id": "post_api_vehicle_license_recognition",
+      "method": "POST",
+      "path": "/api/vehicle/license-recognition",
+      "roles": "当前有效OWNER会话；本人CLEAN JPEG/PNG 1..4MiB；LICENSE_OCR_ENABLED默认false",
+      "implementation_status": "license-owner-candidate-implemented-requires-document-acceptance",
+      "content_types": [
+        "application/json"
+      ],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
       "operation_id": "get_api_vehicle_list",
       "method": "GET",
       "path": "/api/vehicle/list",
@@ -5993,6 +6133,24 @@
       "roles": null,
       "implementation_status": "unspecified",
       "content_types": [],
+      "required_query": [],
+      "anonymous_expected": 401,
+      "cases": {
+        "normal": "NOT_RUN",
+        "boundary": "NOT_RUN",
+        "error": "NOT_RUN",
+        "unauthorized": "NOT_RUN"
+      }
+    },
+    {
+      "operation_id": "post_api_vehicle_vin_decode",
+      "method": "POST",
+      "path": "/api/vehicle/vin-decode",
+      "roles": "当前有效OWNER会话；VIN_DECODE_ENABLED默认false，显式NHTSA_VPIC来源",
+      "implementation_status": "vin-owner-candidate-implemented-requires-provider-acceptance",
+      "content_types": [
+        "application/json"
+      ],
       "required_query": [],
       "anonymous_expected": 401,
       "cases": {

@@ -1,0 +1,209 @@
+{
+  "version": 2,
+  "finished_at": "2026-10-26T11:40:39.951973+00:00",
+  "stage_delivery_complete": false,
+  "production_acceptance_passed": false,
+  "baseline_backend": {
+    "evidence": "LOCAL_BASELINE_EVIDENCE_2026_10_26.json",
+    "passed": true,
+    "counts": {
+      "tests": 2201,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "suites": 223,
+    "scope": "Complete baseline before pickup feature; not a rerun of final source"
+  },
+  "final_affected_backend": {
+    "passed": true,
+    "counts": {
+      "tests": 63,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "suites": {
+      "com.autocare.platform.MileageRecognitionHttpTest": {
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.IsolatedCoreJourneysTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcMileageRecognitionTest": {
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcPickupInspectionTest": {
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcPickupMileageRecognitionTest": {
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.MileageOcrClientTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PickupMileageHttpJourneyTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.ProductionMileageBoundaryTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "scope": "Final pickup change and affected regressions; real TCP HTTP/JWT/MySQL, storage and OCR test doubles; inherited core tests included",
+    "java_and_migrations_sha256_at_summary": "bcb55b856eebc83177e8c13386758b7d6523dba40e4b68dc9a2d116e4fa637a1",
+    "core_junit_evidence_checked": true
+  },
+  "final_local_regression": {
+    "version": 1,
+    "finished_at": "2026-10-26T11:37:43.711178+00:00",
+    "selected_checks_passed": true,
+    "source_sha256": "376f1358827fc83e5b63e3fed17e3f33e7dd779fef554be3a8bb68c163936476",
+    "sources_unchanged": true,
+    "backend_requested": false,
+    "backend_runtime_verified": false,
+    "production_acceptance_passed": false,
+    "boundaries": [
+      "Synthetic identities and LOCAL_TEST funds in backend integration tests.",
+      "No real WeChat/SMS/payment/model provider or mobile-device acceptance.",
+      "Builds and unit tests do not certify rendered page interactions.",
+      "Selected regression checks are not all-API business or performance acceptance."
+    ],
+    "checks": [
+      {
+        "name": "miniapp-unit",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 2.796,
+        "log": "miniapp-unit.log"
+      },
+      {
+        "name": "python-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 116.235,
+        "log": "python-regression.log"
+      },
+      {
+        "name": "ocr-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 21.094,
+        "log": "ocr-regression.log"
+      },
+      {
+        "name": "wechat-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 17.609,
+        "log": "wechat-build.log"
+      },
+      {
+        "name": "h5-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 19.547,
+        "log": "h5-build.log"
+      },
+      {
+        "name": "openapi-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.297,
+        "log": "openapi-consistency.log"
+      },
+      {
+        "name": "migration-mounts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.156,
+        "log": "migration-mounts.log"
+      },
+      {
+        "name": "handover-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.328,
+        "log": "handover-consistency.log"
+      },
+      {
+        "name": "contract-verdicts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.203,
+        "log": "contract-verdicts.log"
+      }
+    ]
+  },
+  "prior_failed_local_regression": {
+    "path": ".cache/local-delivery-fbd5779bce12/report.json",
+    "selected_checks_passed": false,
+    "reason": "Windows atomic directory rename PermissionError winerror=5"
+  },
+  "browser_checks": {
+    "tool": "gstack /browse",
+    "target": "local auxiliary H5",
+    "checks": [
+      "owner, merchant and technician entry pages render",
+      "anonymous merchant pickup page requires merchant login",
+      "empty operator credentials show local validation error",
+      "synthetic valid credentials with no backend config show unavailable message",
+      "missing SMS code rejected locally"
+    ],
+    "not_covered": [
+      "authenticated UI business journey",
+      "native WeChat/device capabilities",
+      "real SMS delivery"
+    ],
+    "observations": [
+      "framework deprecation warning",
+      "uni-app H5 automatically loads third-party cloud verification scripts; recorded as a dependency"
+    ]
+  },
+  "contract": {
+    "operations": 354,
+    "protected": 340,
+    "historical_four_kind": 317,
+    "verdicts": 37,
+    "full_api_acceptance_passed": false
+  },
+  "boundaries": [
+    "No final-source full 225-suite backend rerun; baseline plus affected tests are separate.",
+    "Synthetic identity and LOCAL_TEST funds; no real WeChat/SMS/payment provider acceptance.",
+    "Pickup OCR/storage responses are explicit test doubles; no new real instrument/model/device acceptance.",
+    "One Linux-only OCR test skipped on Windows.",
+    "Independent integration gaps and performance/device acceptance remain in LOCAL_BACKLOG.md."
+  ],
+  "cleanup": {
+    "passed": true,
+    "containers_removed_and_rechecked": 12,
+    "networks_removed_and_rechecked": 3,
+    "ownership": "Exact IDs in this run logs and matching Testcontainers labels; network endpoints all owned",
+    "business_resources_touched": false,
+    "verification": "Successful Docker list commands; every identified container and network absent",
+    "initial_verification_issue": "Docker lowercase no such object was not recognized by first helper; successful list-based check used instead"
+  }
+}

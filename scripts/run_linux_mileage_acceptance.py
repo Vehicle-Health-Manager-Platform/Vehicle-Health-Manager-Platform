@@ -23,7 +23,7 @@ from run_material_workbench_acceptance import JUNIT, EVIDENCE, audit
 
 def digest():
     value = hashlib.sha256((image_digest() + journey_digest()).encode())
-    for name in ('run_linux_mileage_acceptance.py', 'linux_mileage_ingress.py'):
+    for name in ('run_linux_mileage_acceptance.py', 'linux_mileage_ingress.py', 'linux_mileage_faults.py'):
         value.update(name.encode()); value.update((ROOT/'scripts'/name).read_bytes())
     return value.hexdigest()
 
@@ -109,6 +109,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--allow-isolated-linux-mileage', action='store_true')
     parser.add_argument('--native', action='store_true')
+    parser.add_argument('--reliability', action='store_true', help='Inject owned worker faults and verify real recovery')
     parser.add_argument('--models-root', type=Path, default=ROOT/'.cache/ocr-prepared')
     parser.add_argument('--wheelhouse', type=Path, default=ROOT/'.cache/ocr-linux-wheels')
     parser.add_argument('--host-tools', type=Path, default=ROOT/'.cache/host-tools/host-tools.private.json')
@@ -128,7 +129,7 @@ def main():
     ingress = 'ocr-mileage-ingress-'+run[:10]; client = 'ocr-mileage-client-'+run[:10]
     containers = [server, ingress, client]
     environment = work/'runtime.private.env'; config = work/'config.private.json'
-    process = native = None
+    process = native = controls = None
 
     def docker(arguments, timeout=120, required=True):
         result = subprocess.run(['docker', *arguments], capture_output=True, text=True,
@@ -147,6 +148,21 @@ def main():
 
     def remove(name, network=False):
         docker(['network', 'rm', name] if network else ['rm', '--force', name])
+
+    def pause_ingress(paused):
+        from run_linux_ocr_acceptance import owned
+        target = inspect(ingress)
+        if not target or not owned(target, run) or not target.get('State', {}).get('Running'):
+            raise ValueError('Transport is not this running acceptance ingress')
+        # Use the immutable container ID after label validation, not a reusable name.
+        target_id = target['Id']
+        docker(['pause' if paused else 'unpause', target_id])
+        state = inspect(target_id)
+        if not state or state['State']['Paused'] is not paused: raise ValueError('Transport fault was not observed')
+        if not paused:
+            # Let the abandoned connection drain before the next independent
+            # request; never retry the failed gateway call or replay its bytes.
+            time.sleep(.5); faults.wait('READY')
 
     try:
         sys.path.insert(0, str(ROOT/'services/ocr'))
@@ -197,7 +213,17 @@ def main():
             ImageDraw.Draw(picture).text((40, 65), 'ODO 123456 km', font=ImageFont.load_default(size=80), fill='black')
             encoded = io.BytesIO(); picture.save(encoded, format='PNG')
         config.write_text(json.dumps({'port': ingress_port, 'token': token,
-            'image': base64.b64encode(encoded.getvalue()).decode('ascii'), 'native': args.native, 'linux_runtime': True}), encoding='utf-8')
+            'image': base64.b64encode(encoded.getvalue()).decode('ascii'), 'native': args.native, 'linux_runtime': True,
+            'reliability': args.reliability}), encoding='utf-8')
+        if args.reliability:
+            from linux_mileage_faults import Faults
+            faults = Faults(run=run, server=server, inspect=inspect, execute=execute,
+                identity=identity, port=ingress_port, token=token,
+                raw=json.dumps({'scene': 'mileage', 'image_base64': base64.b64encode(encoded.getvalue()).decode('ascii')}).encode())
+            report['reliability_direct'] = faults.run_direct()
+            initial = identity()
+            from linux_mileage_faults import GatewayControls
+            controls = GatewayControls(faults, work, pause_ingress); controls.thread.start()
         for path in (JUNIT, EVIDENCE): path.unlink(missing_ok=True)
         env = os.environ.copy(); env.update({'JAVA_HOME': tools['java_home'], 'DOCKER_HOST': endpoint,
             'JAVA_TOOL_OPTIONS': '-Dapi.version=1.44 -Dfile.encoding=UTF-8',
@@ -220,8 +246,17 @@ def main():
         report['material_workbench'] = audit(JUNIT, EVIDENCE)
         gateway = json.loads((work/'gateway.json').read_text(encoding='utf-8'))
         report['gateway'] = gateway_audit(gateway)
-        report['gateway_transport'] = transport_audit(gateway, args.native)
-        if args.native: report['native'] = native_audit(json.loads((work/'native.json').read_text(encoding='utf-8')), gateway['native_database'])
+        if args.reliability:
+            report['reliability_controls'] = controls.proof()
+            from linux_mileage_faults import gateway_fault_audit
+            report['reliability_gateway'] = gateway_fault_audit(json.loads((work/'gateway-faults.json').read_text()))
+            initial = controls.final_identity
+            # Seven extra upstream TCP connections, including the paused transport.
+            # Successful TCP connect is not successful inference or a model-call count.
+            if gateway['provider_tcp_connections'] != (15 if args.native else 8): raise ValueError('Gateway fault connection count changed')
+            report['gateway_transport'] = {'successful_provider_tcp_connections': gateway['provider_tcp_connections'], 'model_internal_calls_measured': False}
+        else: report['gateway_transport'] = transport_audit(gateway, args.native)
+        if args.native: report['native'] = native_audit(json.loads((work/'native.json').read_text(encoding='utf-8')), gateway['native_database'], args.reliability)
         if identity() != initial or execute(ready) != {'ready': True}: raise ValueError('Warm worker changed or stopped')
         report['same_ready_filtered_worker'] = True
         report['uploaded_image_sha256'] = hashlib.sha256(encoded.getvalue()).hexdigest()
@@ -233,6 +268,9 @@ def main():
         (work/'error.private.log').write_text(traceback.format_exc(), encoding='utf-8')
     finally:
         cleanup = {}
+        if controls:
+            try: controls.close(); cleanup['fault_controller_stopped'] = True
+            except Exception: cleanup['fault_controller_stopped'] = False
         for name, child in [('host_jvm_stopped', process), ('native_runner_stopped', native)]:
             try: stop_process(child); cleanup[name] = child is None or child.poll() is not None
             except Exception: cleanup[name] = False

@@ -1,0 +1,126 @@
+{
+  "passed": true,
+  "scope": "B1a offline opening/deployment preparation; no live cloud environment or formal identity acceptance",
+  "cloud_deployed": false,
+  "formal_identity_accepted": false,
+  "full_api_acceptance_passed": false,
+  "sms_deferred": true,
+  "source_sha256": {
+    "scripts/check-wechat-identity-readiness.mjs": "33f0c31e46e59129ad8e48c58f71664d4208b0b97f9aea4854e2ec595722f52d",
+    "apps/miniapp/test/cloud-deployment-readiness.test.js": "02086c25cfae3e77b661c6d69741e1f7784909fa4e7aa15ed2ad82e0a2c4755b",
+    "apps/miniapp/test/identity-readiness.test.js": "19ceae65631fa58893488af41d9a65dd2b33c37265b403a62969dfdfaf5a5736",
+    "deploy/cloudrun/deployment.example.json": "8ca326f74d09a88e62403a60c6ea542180a017b7776226ab41124fe03bffaece",
+    "deploy/cloudrun/Dockerfile": "5e877f213e4f4fa5933f993054f3a971940e06a47066a75b7a0d3e24c942d12a",
+    "apps/miniapp/src/manifest.json": "df5a9ad1ecf1662feab2e37846d06118d0ebf4b236b8251efd1c8cc54db0f3cb",
+    "apps/miniapp/src/services/api-config.js": "e750723c9fcd3f20dfabf52a7fed5459fefccceb05abb0d7afc2b3c8d53f734f",
+    "apps/miniapp/src/services/api-runtime.js": "324246bdf8da547caa8aaec7ebe864534951f53713ae759d4287a646c1c99b02"
+  },
+  "preflight": {
+    "schemaVersion": 1,
+    "scope": "B1a-offline-cloud-deployment-configuration",
+    "target": "WeChat mini-program and existing Java/MySQL backend",
+    "configurationReady": false,
+    "cloudDeployed": false,
+    "formalIdentityAccepted": false,
+    "trustEvidence": "local-declaration-only",
+    "checks": [
+      {
+        "key": "DEPLOYMENT_DECLARATION",
+        "status": "configured"
+      },
+      {
+        "key": "CLOUD_BACKEND_ENABLED",
+        "status": "configured"
+      },
+      {
+        "key": "BACKEND_MYSQL_HOST",
+        "status": "blocked"
+      },
+      {
+        "key": "BACKEND_MYSQL_DATABASE",
+        "status": "blocked"
+      },
+      {
+        "key": "BACKEND_MYSQL_USER",
+        "status": "blocked"
+      },
+      {
+        "key": "BACKEND_MYSQL_PASSWORD",
+        "status": "blocked"
+      },
+      {
+        "key": "BACKEND_JWT_SECRET",
+        "status": "blocked"
+      },
+      {
+        "key": "BACKEND_WECHAT_APP_ID",
+        "status": "configured"
+      },
+      {
+        "key": "EXTERNAL_MYSQL_HOST",
+        "status": "blocked"
+      },
+      {
+        "key": "MINIAPP_APP_ID_MATCH",
+        "status": "configured"
+      },
+      {
+        "key": "ENVIRONMENT_ID_MATCH",
+        "status": "blocked"
+      },
+      {
+        "key": "SERVICE_NAME_MATCH",
+        "status": "blocked"
+      },
+      {
+        "key": "REGION_DECLARED",
+        "status": "blocked"
+      },
+      {
+        "key": "PRIVATE_GATEWAY_DECLARED",
+        "status": "blocked"
+      }
+    ],
+    "capabilities": {
+      "cloudLogin": "configuration-blocked",
+      "phoneBinding": "configuration-blocked",
+      "technicianBinding": "existing-code-real-account-unverified",
+      "merchantSmsLogin": "deferred-no-bypass",
+      "operatorSmsLogin": "deferred-no-bypass",
+      "fileUpload": "cloud-storage-adapter-required"
+    },
+    "pending": [
+      "CLOUD_ENVIRONMENT_OWNERSHIP",
+      "CALL_CONTAINER_AND_IDENTITY_HEADER_COMPATIBILITY",
+      "PUBLIC_DIRECT_ACCESS_DISABLED",
+      "MYSQL_CONNECTIVITY_AND_MIGRATIONS",
+      "REAL_OWNER_AND_TECHNICIAN_LOGIN",
+      "WECHAT_PHONE_PERMISSION_AND_REAL_BINDING",
+      "PRIVATE_STORAGE_AND_SCAN_INTEGRATION",
+      "IOS_ANDROID_ACCEPTANCE"
+    ],
+    "cli_exit_code": 2
+  },
+  "validation": {
+    "identity_and_cloud_tests": 19,
+    "new_cloud_tests": 10,
+    "miniapp_tests": 1088,
+    "miniapp_failures": 0,
+    "miniapp_skipped": 0,
+    "normal_wechat_build": true,
+    "normal_styles_and_no_test_bridge": true,
+    "handover_tests": 8,
+    "handover_source_bound_check": true,
+    "contract_and_coverage_checks": true
+  },
+  "cloud_artifact": {
+    "passed": true,
+    "scope": "offline placeholder cloud configuration; build artifacts only; no live cloud calls",
+    "cloud_channel_selected": true,
+    "placeholder_configuration_only": true,
+    "native_style_guard": true,
+    "no_test_identity_bridge": true,
+    "compiled_appid_matches_source": true,
+    "js_files_scanned": 278
+  }
+}

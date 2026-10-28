@@ -1,3 +1,8 @@
+# 2026-10-26 合并后核查
+- main/afa7e93和8项CI、42个原PR均已核验合并。A4d45局部里程真实链路通过，不代表接车页OCR/手机/真实仪表或正式发布通过。
+- 四种录车仅手工链路完整；WECHAT支付/退款仍显式503，知识检索KEYWORD，正式ASR和图片/PDF提取未接；本地资金记录已完成，不重复列入开发任务。
+- 历史500并发延迟未达标，CI performance-baseline只验错误预算；36项契约结论不等于36项未开发功能。以docs/progress/STATUS_AND_ROADMAP_2026_10_26.md为当前路线，A4d46先补故障/在途真实证据。
+
 # A4d45 Linux OCR共享网关与微信旅程
 - 基线5358ef6/PR235最终8项CI成功。新增宿主JVM+Linux OCR运行器和loopback固定目标入口，关闭Ryuk、无新增容器Docker控制挂载。最终网关80+12/TCP1次、微信80+12+9项/TCP3次、三SQL和唯一正确档案通过，源码稳定及完整清理通过；TCP连接与模型内部调用分开。
 
@@ -818,3 +823,104 @@ POST /api/check/delivery/compare 实测：齐备订单 READY/deliverable=true、
 - 原确认弹窗没有确认后上下文复检；新流程冻结并复检，隐藏/切账号取消epoch，旧弹窗不影响新弹窗。
 - REQUESTED订单状态变化不可批准，仍可拒绝/撤回；拒绝原因必填，未知状态无操作。
 - 未决请求只允许原正文原键重试；写回执先更新详情再刷新，不把保存等同到账。
+## A4d46 既有设计核对
+
+- worker 生产推理截止 8 秒、启动 30 秒；已有 watchdog/自动单次恢复及并发令牌。已有测试多为合成子进程，需补受限 Linux 真模型 HTTP。
+- 小程序候选已有 epoch、AbortController、actor/scope 复检与生命周期取消，先验收再决定是否修改。
+- 既有 Linux/JVM/微信运行器可以扩展；模型、71 包 Linux wheels、Java17/Maven 和 SDK3.17.2 的隔离工程已准备。
+- 普通微信产物与隔离身份桥产物分别验；H5 不作为交付验收。
+
+- 最终真实故障与微信旅程通过，生产候选/取消/恢复机制无须修改。推理8.071秒与传输15.057秒分别验证；8个网关SQL/8个微信SQL点无提前写入，最终仅原保存按钮写1条档案。
+- 仍需手机/真实仪表/正式身份/支付/性能；页面隐藏仅以navigateTo触发，表单类型变化是辅助强制事件，不宣称手机后台/触摸效果。
+## B1a 云部署准备核对
+
+- 用户确认云环境尚未开通，短信后续接入。工作区4个常用私有env文件不存在，进程配置预检也缺MySQL/JWT/微信配置；只记录状态没有打印值。
+- 现有deploy/cloudrun/Dockerfile、CloudRunAuthController、api-runtime.callContainer可复用；MySQL事务/迁移与私有MinIO上传不可直接当作云开发文档数据库/云存储实现。
+- 腾讯官方2026-10-26文档说明CloudBase Run支持Java容器和VPC访问MySQL；环境可从微信开发者工具云开发入口创建。开通含服务条款/角色授权及可能付费，当前不执行开通或部署。
+- 本机无cloudbase/tcb CLI命令；可先准备代码/镜像/配置和控制台步骤。真实云环境、身份与云上传必须另验。
+
+## 本地阶段交付范围核查（2026-10-26）
+- 当前HEAD 5269e8a，开始时git工作区干净；已有353项契约、317项选定历史四类证据，不能作为本轮通过数。
+- 生产微信/短信/资金仍拒绝式降级；本地已有三条真实HTTP/MySQL核心旅程和隔离测试夹具，演示工程仅只读，不代替业务集成。
+- 沿用已批准架构和现有设计，优先完整回归与故障修复，避免重复开发已有流程。
+
+## 本轮根因与边界
+- JdbcCouponInventoryTest基类使用未固定时区的DriverManagerDataSource，Timestamp写入与业务按UTC解读LocalDateTime在北京时间宿主出现偏差；原失败集合UTC对照54项无失败。固定测试UTC保持业务断言，完整干净回归独立记账。
+- 最终默认统一入口证据.cache/local-delivery-1590dcb03aba/report.json为selected_checks_passed=true，backend_requested/production_acceptance_passed=false；源码摘要稳定。不把它与独立后端运行拼接为一次全栈测试。
+- 本机gstack浏览记录的验证SDK网络加载来自uni-h5-vite框架插件，H5完整API包为了动态API保留，不能草率开启树摇丢掉原生能力。对外H5交付须专项裁剪，当前仅辅助。
+
+## 接车增量核查
+- 本轮在基线223套2201项通过后补接车OCR，避免旧全量结果冒称新源码全跑。新增13项JDBC、4项HTTP组件及真实TCP旅程，8套63项受影响回归通过。
+- 独立PICKUP_MILEAGE_OCR_V1确认，本店PAID/车辆仍归原车主/当前员工CLEAN未用图片，调用前后复核；仅DASHBOARD可选、人工核对后带入，原提交仍标MANUAL。
+- 模型资产曾一次Win5原子rename失败，具体占用进程未证实；有限重试只认Windows5/32，不复制/覆盖/吞持续错误。最终统一回归通过，上一轮false证据保留。
+
+## 识别/向量规划前现状
+- 用户要求先上传再规划实施。上一批已提交并推送1df7dd7，PR241已建，base=codex/b1a-cloud-deployment-readiness。PR240核对8项SUCCESS、仍OPEN；不擅自合并。
+- 现行未实现GET /api/vehicle/vin-decode与GET /api/vehicle/ocr-license仅占位无参数。后续含敏感输入和用途同意应设计POST，旧GET具名替代，不能把VIN/文档信息塞进query日志。
+- 微信录车已有内存60秒VIN/车牌预填与手工车型目录选择；识别候选支持人工核对。辅助音频严格MP3（16kHz单声道、最多60秒/3MiB）、PDF10MiB；不应直接扩张上传白名单。
+- LicensedKnowledge已有授权、版本、当前来源哈希/事件/审计和撤回校验，当前KEYWORD；后续向量层必须保留这些校验，不把哈希特征冒称语义embedding。
+- gstack /browse核对NHTSA官方vPIC API：厂商565申报来源，支持flat/extended解码、建议显式modelyear，有自动流量控制。只作候选/有限来源试点，不等于内部精确配置匹配或全量中国车型库。官方来源https://vpic.nhtsa.dot.gov/api/，未发送用户VIN。
+
+## R1首阶段边界与来源确认
+- 已增加内部VinDecoder/VpicVinDecoder/严格结果解析，没有REST路由、Spring生产Bean或数据库写入，GET vin-decode仍维持未实现结论；不将基础代码当成端到端录车完成。
+- 26项首轮通过；最终额外MIME/编码边界复验中。所有完整VIN和服务响应均合成，仅使用本机真实HTTP；浏览器读取官方文档公开部分VIN示例得到ErrorCode6，即使有品牌/车型也不应升级为完整成功。
+- 官方FAQ明确国外车辆依赖美国市场登记、1980年前无数据，故不作中国全量来源。模型路线按官方faster-whisper CPU/int8/PyAV与BGE-small-zh-v1.5（MIT/512维）作本地试点，未下载模型/测准确率。
+- R3/R4采用异步任务/取消/TTL，避免60秒音频或50页PDF阻塞微信云通道15秒；R5新增独立embedding许可，旧资料默认无，先MySQL精确向量再按测量评估Milvus。
+
+R2a：现有VIN模式仅校验带入；复用账号隔离60秒prefill和手动车型选择，候选绝不产生内部model_id。ReservationStore.owner可复核会话/账号；共享auth_rate_limit适用固定分钟窗口，计数不包含VIN。
+
+R2a最终5套54项后端通过；新增HTTP用例合成VIN与继承用例重复触发409，已隔离样本复测。全量小程序1123、Python538、OCR63通过/1跳过及9组回归/MP和H5构建通过。gstack H5合成旅程13断言/截图通过，真实供应商与手机未验。PR242最终8项CI通过且OPEN。
+
+R2b核对：现有Paddle decode_image只允许mileage，worker/server复用受限子进程；里程网关需既有vehicle_id，行驶证新车流程不能套用此授权。当前工作区干净、基于7f3b19c；PR243六项CI成功/backend运行。
+
+R2b方案：已有/api/file/upload提供当前OWNER/私有/扫描/幂等，不要求vehicle_id，可直接复用新车照片上传；识别单独限制本人CLEAN JPEG/PNG<=4MiB及NEW_VEHICLE用途同意，不借用需车辆ID的input-materials。通用私有附件当前无本功能自动删除承诺，界面和交接须明确保留边界。
+
+R2b前端32项新增与原录车/VIN共66项通过；处理当前账号选图绑定、同意前零上传、unknown上传同键重试、已上传图片复用、人工修正重置核对、隐藏/取消/身份/同意迟到保护。OCR首轮76项中75通过/1平台跳过，真实模型合成图正在独立验证。
+
+R2b最终：后端9套81项、miniapp1155、Python539、OCR76通过/1跳过、MP/H5/门禁与9组回归全部通过，源码前后一致。gstack390px页面20+4断言与两图检查通过。真Paddle5场景运行/清理通过，但粤→粵导致PARTIAL，all_synthetic_fields_matched=false；沪图双字段正确，真实证件/手机/Linux仍未验。
+
+R3核对：input_material已按OWNER/vehicle_id/AI或ARCHIVE用途隔离，合法MP3固定16kHz mono、1..60秒/<=3MiB；需要新增持久异步任务，不能把60秒音频推理放入15秒云请求。工作区干净，基于a611312；PR244六项成功/backend运行，未合并。
+
+R3前端设计落实：未知创建保留仅内存的原键/原正文句柄，重试需重新明确同意；已知ID可best-effort取消，隐藏不冒称服务端取消完成。恢复入口只确认原创建并请求取消，不自动带入旧文本。
+
+R3前端33项增量通过，全小程序1188通过；首次默认沙箱4项loopback EACCES，升级运行后全过，不改代码绕过权限。修复已知任务取消失败后句柄被创建成功移除导致无法恢复的问题，增加回归。
+
+R3最终软件证据：12套159项Java分项通过，1189 miniapp/541 Python/76 OCR通过1跳过/26 ASR；17 H5合成断言。修复取消句柄、缓存TTL、GET过期lease、child密钥继承和扁平runtime导入，最终10组源码前后一致；真实模型/权重/Linux镜像未验。
+
+R3b：固定官方模型536b0662742c02347bc0e980a01041f333bce120及24 wheel全锁，准备工具完整重下载验证。真实Linux英文合成语音正常，数字静音初轮幻觉You，增加精确零能量保护，最终17检查及10组回归通过；1189/546/36，OCR76+1跳过，峰值约822MiB。源码摘要一致且自有容器已清理；未验中文/用户效果、跨容器Java真实ASR联调、OOM/父进程故障、手机或生产。交接见RECOGNITION_R3B_ASR_LINUX.md。
+
+R3c运行入口：Docker internal网络不生成宿主发布端口；改为仅连接内部网络的ASR加独立127.0.0.1转发器，转发器只接本轮内部/桥接两网络。NGINX只读根需要显式/tmp下所有temp路径；Docker cp即使目标tmpfs也拒绝只读rootfs，改用有界stdin写固定/tmp测试夹具，保持非root和只读根。测试初次默认沙箱Temp写入被拒，工作区TEMP回归通过。PID/启动时间/命令校验及pidfd阻止PID复用误杀；真实信号只在本轮容器内。
+
+R3c最终：50 Java/13真实进程检查/实际OOM通过，default gate单独验证7跳过；10组源码一致，1189 miniapp、553 Python、40 ASR、OCR76+1跳过。修复新测试JSON档案断言、故障脚本seccomp继承计数及pidfd保护。PR245/246最终7 CI成功但Compose旧131表断言失败；现修132/V063且5组SQL在新MySQL63迁移全过，本地整栈受Docker Hub auth网络超时阻断未验。源码摘要纳入.sh/.ps1。所有本轮容器网络已清理；下一步R4，真实中文/存储扫描/真机及生产仍另验。
+
+R4a：Java/Paddle真实内核20项通过，扫描/混合/旋转实际读出合成123456；源文字为UTF16页内偏移，OCR位置来自实际rec_polys。发现并修复旧OCR镜像缺license_fields（复制完整当前源码）、JDK NIO及ImageIO磁盘缓存socketpair与seccomp冲突（普通IO+私有JVM禁diskcache，不放松网络）。补内联图片/绘图内容避免只读页脚。PR247覆盖率审计因默认跳过的真实ASR套件失败，普通core-coverage仅排除该非必需显式套件，6项真实profile验证零跳过，门禁本身保持严格。Windows原子发布测试允许有界真实额外共享拒绝，最终模型内容仍实际校验。
+
+R4a收口补充：源码COPY限定.py并固定无写入的临时pycache前缀，避免宿主字节码不在源码摘要中却进入镜像。最终版本重新进行内核/统一回归；前置PR247为覆盖率跳过门禁失败，Compose未执行，不能写成全部CI成功。
+
+R4b：共享候选核心按task隔离；图片独立input_material授权，JPEG/PNG4MiB/4096/6M。JDK PNG单帧判断忽略APNG，额外检查动画chunk与尾随；ImageIO内存缓存。页面空候选逐块选择，超1000字拒绝不截断，freshGET全来源签名/原表单保护。真实私有HTTP/PDFBox/Paddle与合成OWNER/MySQL证据分开，不能声称完整真实存储扫描模型同链路。V064原子可重放，132表不新增；362契约=317历史+45结论。
+
+R5a：LicensedKnowledge.trusted核对原payload哈希、最新事件及审计；usable包括开关/发布/许可/摘录/检索/有效期/精确车型。当前公开检索与AI方法严格KEYWORD。旧payload13字段须原样保持哈希和幂等回执，不推导embedding许可。现有缓存无embedding资源，本阶段明确内部替身管道，非真实语义模型验收。
+
+R5a测试发现：V065增加两表，旧schema总数门禁需134/65；已同步当前Java/脚本，不改历史证据。gstack运营页面冷登录复现actorId=0：setOperatorSession先写actor再expiry，flush:sync的operatorToken监听按旧expiry=0清掉半写入身份。改为expiry先行，保留token最后发布，新增挂载同步watch回归。索引rank另用LEFT JOIN识别成功任务全部缺块，并按文档缓存当前授权复检，避免每块重复SQL。
+
+R5a收口额外发现：前置PR249/b1完整2399项只有RealMaterialWorkbench unknown_kind仍用image并期望400；R4b已支持image，MP3伪装正确422。改webp保持不支持类型400，不削弱校验；独立小修5aacb52已回传PR249，本阶段真实ClamAV/MinIO材料+工作台59项通过。恢复新SQL夹具纳入执行摘要，缺输入也落安全失败报告，17项runner guard通过。
+
+R5b官方核对：BAAI/bge-small-zh-v1.5 revision7999e1d3359715c523056ef9478215996d62a620，safetensors95827648字节、LFS354763b9...；MIT/512维/CLS+L2，查询前缀与正文区分。官方无ONNX，因此选原始安全权重+固定CPU Torch/Transformers，不用第三方转换。官方示例truncation=True不适用项目整批预算承诺，须显式关闭并拒绝超token。小文件以Gitblob对照再SHA256锁，真实模型与领域效果分开。
+
+R5b最终：固定BAAI safetensors11文件与Linux CPU wheel24文件；实际模型16项和Java/MySQL31项通过，默认12组通过，源码稳定及自有资源清理。公开检索/AI仍KEYWORD，领域准确率/容量/真机未验。初轮源码漂移报告未采用；巨大整数边界及可选模型核心排除断言已修复。
+
+R5c1：发现扫描持锁外层事务调用REQUIRES_NEW入队会自锁，已合并入队/授权/重新启用事务。多实例需数据库全局活跃任务单槽。不同profile不能互相取消，全配置删除为停止全部索引实例后的独立互斥维护；正常索引仅清当前profile。最终模型16/Java真实32、浏览器19与选定回归分项记录，不称公开VECTOR完成。
+
+R5c1收口：清理游标必须在提交后推进，故障注入证明回滚后重新处理原页；当前源119选定Java/16模型+32联调/12组/19浏览器均通过。aff0882上传草稿PR252，前置PR251后端已成功、compose进行中；公开VECTOR留R5c2。
+
+R5c2：当前语料全部合法/明确嵌入授权且同profile成功才返回VECTOR；独立查询槽12秒模型预算（SQL另计），事务外IO及前后身份/车型/资料集合复核。片段UTF16位置和正文一致，AI独立用途/返回前重验；默认KEYWORD兼容。选定173、实际BGE16/内部34/公开HTTP5、默认12组/1237 miniapp及浏览器15不同检查通过。完整核心clean verify和29套当前API独立新库验收仍在运行，不能记为全部完成。
+
+R5c2收尾：完整249套2568项零失败/错误/跳过，实际同次JaCoCo数据因Windows中文agent路径编码错位写为core-coverage.exec,a；762734字节SHA256原样恢复后六组行/方法门限均过，初始缺文件失败保留。29套新库API全部通过3207业务/10092匿名/41223 Newman断言；同次后端七套实际文件扫描旅程518业务请求严格复核，共36套/3725业务请求去重317项当前四类。45项独立结论保留，全API/生产仍false；9f35677/PR253八CI成功，收尾文档新head另核。
+
+R6a：统一运行器复用原审计器、29业务/七旅程白名单、私有原始Newman重验、旧证据备份清除、互斥/中断与安全汇总。21工具测试和12组587Python/1237miniapp通过，源0a891770稳定；真实CLI社区176业务/348匿名加七套518既有请求复核、73项四类通过，另实际新上传53请求及清理通过。修复ChildStillRunning被普通异常吞掉造成提前释锁。R5c2文字计数已回传b1c2bfc/PR253修为518/3725，原机器值正确。下一批10识别接口补证仍未关闭，不合并部署。
+
+R6b1：VIN与行驶证现场四类HTTP证据完成，13显式请求/两类10执行项（含继承）零失败错误跳过；两新MySQL移除、源c8b00e26稳定。5审计测试及12组592Python/1237miniapp通过，OCR80+1平台跳过。识别上游/存储扫描明确替身，不计真实NHTSA或证件效果；剩余ASR3/图文3/里程2按计划另验，旧317/45统计不变。
+
+R6b2：ASR/图文六接口和VIN/行驶证回归共八项53显式HTTP请求，四类22执行项零失败错误跳过、四MySQL移除，源码稳定。8审计及最终12组595Python/1237miniapp通过，OCR80+1平台跳过。修正创建回执误断言state导致留下QUEUED夹具并污染两单worker旅程的问题，增加仅材料93失败清理和唯一任务SQL核对。首轮失败未计通过，最后两类里程及统一覆盖仍待；上游材料/模型明确替身，不合并部署。
+
+R6b3：车主8/接车9里程请求补齐，拒绝场景模型调用计数不增加、里程/接车/档案无自动写入。全部十识别70请求、五类28执行项零失败错误跳过，五MySQL移除；默认12组603Python/1237miniapp全过（OCR80+1平台跳过）。统一入口可选recognition run/audit/none接通，真实社区176+识别70和348匿名、当前去重33项四类。11识别审计/26运行器测试通过，源稳定；未修改业务逻辑、未重跑全后端/全362API、不合并部署。下一步可靠性/保留删除/容量及领域真机仍待。

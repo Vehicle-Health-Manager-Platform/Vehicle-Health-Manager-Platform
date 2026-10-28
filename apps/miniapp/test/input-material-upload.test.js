@@ -19,7 +19,7 @@ test('cloud/sentinel/unconfigured service cannot leak multipart or fake success'
  for(const config of [{cloudMode:true},{baseUrl:''},{baseUrl:'https://local-preview.invalid'}]){const h=harness(config);await assert.rejects(h.api.upload('session',scope,item,key).promise,/后端地址/);assert.equal(h.calls.length,0)}
 })
 test('remote paths, invalid kind/size and wrong vehicle are rejected before upload',async()=>{
- for(const bad of [{...item,path:'https://attacker.test/file.mp3'},{...item,size:0},{...item,size:4*1024*1024},{...item,kind:'image'}]){const h=harness();await assert.rejects(h.api.upload('session',scope,bad,key).promise);assert.equal(h.calls.length,0)}
+ for(const bad of [{...item,path:'https://attacker.test/file.mp3'},{...item,size:0},{...item,size:4*1024*1024},{...item,kind:'webp'}]){const h=harness();await assert.rejects(h.api.upload('session',scope,bad,key).promise);assert.equal(h.calls.length,0)}
 })
 test('status and malformed responses expose fixed messages only',async()=>{
  for(const status of [401,403,404,409,413,422,429,503]){const h=harness(),op=h.api.upload('session',scope,item,key);h.calls[0].success({statusCode:status,data:{message:'secret filename'}});await assert.rejects(op.promise,e=>!e.message.includes('secret'))}
@@ -34,8 +34,14 @@ function flowHarness(){let token='owner',current='ai:11';const state={busyId:'',
  return {state,flow,items,operations,keys,setActor:v=>token=v,setScope:v=>current=v}}
 test('flow prevents duplicate clicks, retries same key, and never resubmits successful material',async()=>{
  const h=flowHarness(),first=h.flow.upload('a');await h.flow.upload('a');assert.equal(h.operations.length,1);h.operations[0].reject(new Error('network'));await first
- const next=h.flow.upload('a');assert.deepEqual(h.keys,[key,key]);h.operations[1].resolve({materialId:9});await next;await h.flow.upload('a');assert.equal(h.operations.length,2);assert.match(h.state.message,/尚未识别/)
+ const next=h.flow.upload('a');assert.deepEqual(h.keys,[key,key]);h.operations[1].resolve({materialId:9});await next;await h.flow.upload('a');assert.equal(h.operations.length,2);assert.match(h.state.message,/识别需单独同意/)
 })
 test('context change, remove and hide/reset fence late responses',async()=>{
  for(const action of ['actor','scope','remove','reset']){const h=flowHarness(),pending=h.flow.upload('a');if(action==='actor')h.setActor('another');if(action==='scope')h.setScope('archive:11:1');if(action==='remove')h.items.length=0;if(action==='reset')h.flow.reset();h.operations[0].resolve({materialId:9});await pending;assert.deepEqual(h.state.results,{});if(action==='reset')assert.equal(h.operations[0].aborted,true)}
+})
+
+test('auxiliary images use scoped upload and strict JPEG/PNG one-page metadata',async()=>{
+ for(const type of ['image/jpeg','image/png']){const h=harness(),image={...item,kind:'image'},op=h.api.upload('session',scope,image,key);assert.equal(h.calls[0].header['X-Material-Kind'],'image');h.calls[0].success({statusCode:200,data:{code:0,data:{...data,content_type:type,duration_ms:0,pages:1}}});assert.deepEqual(await op.promise,{materialId:9,contentType:type,durationMs:0,pages:1})}
+ for(const changes of [{content_type:'image/webp'},{pages:2},{duration_ms:1}]){const h=harness(),op=h.api.upload('session',scope,{...item,kind:'image'},key);h.calls[0].success({statusCode:200,data:{code:0,data:{...data,content_type:'image/png',duration_ms:0,pages:1,...changes}}});await assert.rejects(op.promise,/校验失败/)}
+ const h=harness();await assert.rejects(h.api.upload('session',scope,{...item,kind:'image',size:4*1024*1024+1},key).promise);assert.equal(h.calls.length,0)
 })

@@ -1,0 +1,31 @@
+# R5b 真实中文嵌入接入（2026-10-28收尾）
+
+分支codex/embedding-real-provider承接PR250/6766042；前置PR249/250本轮核对均8项CI成功。当前私有真实模型provider和内部索引联调已实现，车主检索/AI仍KEYWORD，无默认业务bean、自动调度或公开VECTOR入口。不合并、不部署。
+
+## 开发与修复
+
+固定BAAI/bge-small-zh-v1.5的11个模型文件和24个Linux CPU wheel，记录来源、字节数和完整SHA256。采用MIT原始safetensors、CPU Torch2.8.0+cpu和Transformers4.52.4，无第三方转换权重、pickle或远程代码。下载中断时完整校验拒绝，随后改有界分段重试，未放宽摘要；准备阶段流式哈希，已有目录只核验。
+
+固定BERT/FP32/CLS/L2、精确tokenizer512预算，关闭截断，超限整批失败。独立私有HTTP严格认证、头/JSON/指纹/批量/单位向量、安全错误，无正文日志。真实模型自有进程、内核禁socket、20秒硬截止/父退出绑定，不排队，不继承token/云凭据/JVM选项。Java客户端总25秒、128KiB响应上限，保留预算错误；旧四参数profile原JSON/指纹兼容，新encoder/runtime身份成对出现。
+
+复核修复巨大整数校验可能发生数值转换异常的边界，补负向用例；同步可选真实模型套件与严格核心审计排除清单。仅两个需模型资源的显式opt-in套件排除，普通核心审计继续拒绝缺失、失败、跳过和源码漂移。早期测试夹具的导入/编码和断言问题已修正复测。
+
+## 最终验证
+
+[机器汇总](../testing/REAL_EMBEDDING_2026_10_28.json)保存最终运行的源摘要、实际资源证明和各组结果。首轮16项模型检查及Java31项虽分别成功，但执行期间源码更新使sources_unchanged=false，因此另跑最终版本，不采用旧报告充当最终验收。
+
+最终实际16项覆盖固定资源/依赖、token512/513、加载前拒绝、实际CPU向量/单位范数、成功回收、重复稳定、合成相关排名、整批超限/恢复、关闭拒绝、私有HTTP认证/实际输出/预算、内核socket EPERM。实际容器2GiB、CPU2、PID128、非root、只读、无网络/宿主端口，资源和清理均核验，源码稳定。
+
+Java/MySQL真实模型31执行项为3新增及28继承知识/问答回归，覆盖当前车主/车型、持久化/排名、停用后立即隐藏/删除、推理中撤回不写块，以及真实token预算错误和恢复。测试桥仅把Java请求经Docker stdin转发到自有禁网容器的实际HTTP，不生成模型输出。身份、知识许可与资料为合成夹具，不代表授权生产语料。
+
+最终默认12组全部通过：小程序1229、Python566、OCR80通过/1平台跳过、ASR40、文档26、embedding27，微信/H5构建、契约、迁移挂载、交接和独立结论门禁通过。embedding单测采用测试向量/子进程，覆盖认证、重复头/JSON、超限、忙、错误投影、崩溃/超时回收、凭据不继承，不替代实际模型验证。独立Java客户端/旧profile/数学和MySQL索引回归65项（9+9+47）通过，零失败/错误/跳过，另记机器汇总；未重跑完整后端全部套件。
+
+## 交接与后续
+
+[资源/配置/私有接口/运行停止](../../services/embedding/README.md)、[设计](../superpowers/specs/2026-10-27-embedding-real-provider-design.md)、[计划](../superpowers/plans/2026-10-27-embedding-real-provider.md)、[统一交接](../delivery/LOCAL_HANDOVER.md)。独立.env.example默认双开关关闭。无新增UI/公开接口/迁移，保持65迁移/134表、362项业务操作/348受保护。本轮未重新浏览器验收旧页面；仅构建/单测回归。
+
+未验证：真实汽车领域召回率和引用质量、授权手册、生产容量/并发吞吐、用户效果/真机、R5b专用OOM/父退出故障注入、完整许可证NOTICE审计和OS守卫库供应链固定。共享守卫测试不等于本模型所有故障已测，单组合成相关得分不作为准确率。
+
+R5c顺序为显式开关/自动索引和重试政策、运营状态/跨配置清理、车主VECTOR/明确KEYWORD降级、AI引用返回前许可复核，再做授权评估集和容量。正式微信/SMS/支付、生产由外部负责人办理并单独验收。整体“其余全部开发完成”尚未成立，独立开发待办继续记录。
+
+实现1ecf3fe已上传[草稿PR251](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/251)，依赖PR250/codex/knowledge-vector-foundation；远端CI另行核对，尚未完成不计通过。未合并或部署。

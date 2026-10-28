@@ -389,7 +389,165 @@
           {
             "bearerAuth": []
           }
-        ]
+        ],
+        "deprecated": true,
+        "description": "旧GET没有解码实现；迁移POST并提供VIN_VPIC_V1用途同意，勿将VIN置于查询参数。"
+      },
+      "post": {
+        "summary": "车主明确同意后查询NHTSA有限覆盖VIN候选，人工选车型",
+        "operationId": "post_api_vehicle_vin_decode",
+        "tags": [
+          "vehicle"
+        ],
+        "x-feature-ids": [
+          "F03"
+        ],
+        "responses": {
+          "200": {
+            "description": "vin/model_year_hint(整数或null)/status(CANDIDATE|PARTIAL|NO_MATCH)/source=NHTSA_VPIC/coverage=US_MARKET_REGISTRATION_ONLY/requires_confirmation=true/fields。fields仅make/model/model_year/trim/vehicle_type非空文本；完整候选需make/model/model_year；NO_MATCH为空。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "VIN/年款/用途同意无效，额外字段/重复键/尾随JSON/query均拒绝",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "会话失效或账号停用/删除",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非OWNER角色",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "每车主分钟限额或本实例并发满",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "关闭、来源不可用/超时/响应无效或数据库不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "vin",
+                  "consent",
+                  "consent_version"
+                ],
+                "properties": {
+                  "vin": {
+                    "type": "string",
+                    "description": "首尾空白可去除，原始ASCII合法17位；服务端规范为大写",
+                    "pattern": "^[ \\t\\r\\n]*[A-HJ-NPR-Za-hj-npr-z0-9]{17}[ \\t\\r\\n]*$"
+                  },
+                  "model_year": {
+                    "type": "integer",
+                    "minimum": 1980,
+                    "maximum": 2100
+                  },
+                  "consent": {
+                    "const": true
+                  },
+                  "consent_version": {
+                    "const": "VIN_VPIC_V1"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-implementation-status": "vin-owner-candidate-implemented-requires-provider-acceptance",
+        "x-roles": "当前有效OWNER会话；VIN_DECODE_ENABLED默认false，显式NHTSA_VPIC来源",
+        "description": "仅POST JSON正文，禁止query，不自动登记车辆。VIN_VPIC_V1同意将VIN/可选年款发送美国NHTSA；仅美国市场登记覆盖，不保证中国车辆或内部车型精确匹配。调用前后复核会话/账号（失败也复核）；共享数据库每车主每UTC分钟5次，实例并发2。供应商10秒总期限、64KiB响应、不重定向、无应用级重试。返回需人工核对的CANDIDATE/PARTIAL/NO_MATCH，不提供model_id。旧GET未提供业务实现，应迁移本POST。"
       }
     },
     "/api/vehicle/ocr-license": {
@@ -435,7 +593,9 @@
           {
             "bearerAuth": []
           }
-        ]
+        ],
+        "deprecated": true,
+        "description": "旧GET没有行驶证识别业务实现；迁移POST /api/vehicle/license-recognition并提供当前本人file_id及新车用途同意。"
       }
     },
     "/api/brand/list": {
@@ -31990,7 +32150,7 @@
         "x-roles": "OWNER",
         "x-read-only": true,
         "x-implementation-status": "r8-remaining-implemented",
-        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。检索method=KEYWORD，不冒充Milvus向量效果；AI只发送问题与许可摘录，调用后重验所有引用。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
+        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。默认检索KEYWORD；KNOWLEDGE_VECTOR_ENABLED显式开启后，当前范围全部许可/索引完整才VECTOR，否则带原因降级。段落引用可独立核验，AI只发送实际许可摘录并在调用后重验；不宣称领域准确率或Milvus接入。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
       }
     },
     "/api/owner/community/images/preview": {
@@ -32066,7 +32226,7 @@
         "x-roles": "OWNER",
         "x-read-only": true,
         "x-implementation-status": "r8-remaining-implemented",
-        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。检索method=KEYWORD，不冒充Milvus向量效果；AI只发送问题与许可摘录，调用后重验所有引用。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
+        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。默认检索KEYWORD；KNOWLEDGE_VECTOR_ENABLED显式开启后，当前范围全部许可/索引完整才VECTOR，否则带原因降级。段落引用可独立核验，AI只发送实际许可摘录并在调用后重验；不宣称领域准确率或Milvus接入。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
       }
     },
     "/api/owner/community/images": {
@@ -32149,7 +32309,7 @@
         "x-roles": "OWNER",
         "x-read-only": true,
         "x-implementation-status": "r8-remaining-implemented",
-        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。检索method=KEYWORD，不冒充Milvus向量效果；AI只发送问题与许可摘录，调用后重验所有引用。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
+        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。默认检索KEYWORD；KNOWLEDGE_VECTOR_ENABLED显式开启后，当前范围全部许可/索引完整才VECTOR，否则带原因降级。段落引用可独立核验，AI只发送实际许可摘录并在调用后重验；不宣称领域准确率或Milvus接入。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
       },
       "post": {
         "summary": "独立图片公开副本",
@@ -32233,7 +32393,7 @@
         "x-roles": "OWNER",
         "x-read-only": false,
         "x-implementation-status": "r8-remaining-implemented",
-        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。检索method=KEYWORD，不冒充Milvus向量效果；AI只发送问题与许可摘录，调用后重验所有引用。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
+        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。默认检索KEYWORD；KNOWLEDGE_VECTOR_ENABLED显式开启后，当前范围全部许可/索引完整才VECTOR，否则带原因降级。段落引用可独立核验，AI只发送实际许可摘录并在调用后重验；不宣称领域准确率或Milvus接入。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
       }
     },
     "/api/owner/community/images/{id}/withdraw": {
@@ -32329,7 +32489,7 @@
         "x-roles": "OWNER",
         "x-read-only": false,
         "x-implementation-status": "r8-remaining-implemented",
-        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。检索method=KEYWORD，不冒充Milvus向量效果；AI只发送问题与许可摘录，调用后重验所有引用。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
+        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。默认检索KEYWORD；KNOWLEDGE_VECTOR_ENABLED显式开启后，当前范围全部许可/索引完整才VECTOR，否则带原因降级。段落引用可独立核验，AI只发送实际许可摘录并在调用后重验；不宣称领域准确率或Milvus接入。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
       }
     },
     "/api/owner/community/images/{id}/preview": {
@@ -32421,7 +32581,7 @@
         "x-roles": "OWNER",
         "x-read-only": true,
         "x-implementation-status": "r8-remaining-implemented",
-        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。检索method=KEYWORD，不冒充Milvus向量效果；AI只发送问题与许可摘录，调用后重验所有引用。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
+        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。默认检索KEYWORD；KNOWLEDGE_VECTOR_ENABLED显式开启后，当前范围全部许可/索引完整才VECTOR，否则带原因降级。段落引用可独立核验，AI只发送实际许可摘录并在调用后重验；不宣称领域准确率或Milvus接入。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
       }
     },
     "/api/admin/community/images": {
@@ -32504,7 +32664,7 @@
         "x-roles": "OPERATOR(can_review)",
         "x-read-only": true,
         "x-implementation-status": "r8-remaining-implemented",
-        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。检索method=KEYWORD，不冒充Milvus向量效果；AI只发送问题与许可摘录，调用后重验所有引用。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
+        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。默认检索KEYWORD；KNOWLEDGE_VECTOR_ENABLED显式开启后，当前范围全部许可/索引完整才VECTOR，否则带原因降级。段落引用可独立核验，AI只发送实际许可摘录并在调用后重验；不宣称领域准确率或Milvus接入。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
       }
     },
     "/api/admin/community/images/{id}/preview": {
@@ -32596,7 +32756,7 @@
         "x-roles": "OPERATOR(can_review)",
         "x-read-only": true,
         "x-implementation-status": "r8-remaining-implemented",
-        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。检索method=KEYWORD，不冒充Milvus向量效果；AI只发送问题与许可摘录，调用后重验所有引用。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
+        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。默认检索KEYWORD；KNOWLEDGE_VECTOR_ENABLED显式开启后，当前范围全部许可/索引完整才VECTOR，否则带原因降级。段落引用可独立核验，AI只发送实际许可摘录并在调用后重验；不宣称领域准确率或Milvus接入。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
       }
     },
     "/api/admin/community/images/{id}/moderate": {
@@ -32692,7 +32852,7 @@
         "x-roles": "OPERATOR(can_review)",
         "x-read-only": false,
         "x-implementation-status": "r8-remaining-implemented",
-        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。检索method=KEYWORD，不冒充Milvus向量效果；AI只发送问题与许可摘录，调用后重验所有引用。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
+        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。默认检索KEYWORD；KNOWLEDGE_VECTOR_ENABLED显式开启后，当前范围全部许可/索引完整才VECTOR，否则带原因降级。段落引用可独立核验，AI只发送实际许可摘录并在调用后重验；不宣称领域准确率或Milvus接入。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
       }
     },
     "/api/community/images": {
@@ -32778,7 +32938,7 @@
         "x-roles": "OWNER",
         "x-read-only": true,
         "x-implementation-status": "r8-remaining-implemented",
-        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。检索method=KEYWORD，不冒充Milvus向量效果；AI只发送问题与许可摘录，调用后重验所有引用。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
+        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。默认检索KEYWORD；KNOWLEDGE_VECTOR_ENABLED显式开启后，当前范围全部许可/索引完整才VECTOR，否则带原因降级。段落引用可独立核验，AI只发送实际许可摘录并在调用后重验；不宣称领域准确率或Milvus接入。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
       }
     },
     "/api/community/images/{publicId}": {
@@ -32879,7 +33039,7 @@
         "x-roles": "OWNER",
         "x-read-only": true,
         "x-implementation-status": "r8-remaining-implemented",
-        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。检索method=KEYWORD，不冒充Milvus向量效果；AI只发送问题与许可摘录，调用后重验所有引用。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
+        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。默认检索KEYWORD；KNOWLEDGE_VECTOR_ENABLED显式开启后，当前范围全部许可/索引完整才VECTOR，否则带原因降级。段落引用可独立核验，AI只发送实际许可摘录并在调用后重验；不宣称领域准确率或Milvus接入。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
       }
     },
     "/api/admin/knowledge/models": {
@@ -32962,7 +33122,7 @@
         "x-roles": "OPERATOR(can_knowledge)",
         "x-read-only": true,
         "x-implementation-status": "r8-remaining-implemented",
-        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。检索method=KEYWORD，不冒充Milvus向量效果；AI只发送问题与许可摘录，调用后重验所有引用。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
+        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。默认检索KEYWORD；KNOWLEDGE_VECTOR_ENABLED显式开启后，当前范围全部许可/索引完整才VECTOR，否则带原因降级。段落引用可独立核验，AI只发送实际许可摘录并在调用后重验；不宣称领域准确率或Milvus接入。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
       }
     },
     "/api/admin/knowledge/documents": {
@@ -33045,7 +33205,7 @@
         "x-roles": "OPERATOR(can_knowledge)",
         "x-read-only": true,
         "x-implementation-status": "r8-remaining-implemented",
-        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。检索method=KEYWORD，不冒充Milvus向量效果；AI只发送问题与许可摘录，调用后重验所有引用。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
+        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。默认检索KEYWORD；KNOWLEDGE_VECTOR_ENABLED显式开启后，当前范围全部许可/索引完整才VECTOR，否则带原因降级。段落引用可独立核验，AI只发送实际许可摘录并在调用后重验；不宣称领域准确率或Milvus接入。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
       },
       "post": {
         "summary": "许可资料治理与可追溯关键词检索",
@@ -33129,7 +33289,7 @@
         "x-roles": "OPERATOR(can_knowledge)",
         "x-read-only": false,
         "x-implementation-status": "r8-remaining-implemented",
-        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。检索method=KEYWORD，不冒充Milvus向量效果；AI只发送问题与许可摘录，调用后重验所有引用。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
+        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。默认检索KEYWORD；KNOWLEDGE_VECTOR_ENABLED显式开启后，当前范围全部许可/索引完整才VECTOR，否则带原因降级。段落引用可独立核验，AI只发送实际许可摘录并在调用后重验；不宣称领域准确率或Milvus接入。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
       }
     },
     "/api/admin/knowledge/documents/{id}": {
@@ -33225,7 +33385,7 @@
             }
           }
         },
-        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。检索method=KEYWORD，不冒充Milvus向量效果；AI只发送问题与许可摘录，调用后重验所有引用。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
+        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。默认检索KEYWORD；KNOWLEDGE_VECTOR_ENABLED显式开启后，当前范围全部许可/索引完整才VECTOR，否则带原因降级。段落引用可独立核验，AI只发送实际许可摘录并在调用后重验；不宣称领域准确率或Milvus接入。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
       }
     },
     "/api/admin/knowledge/documents/{id}/status": {
@@ -33321,7 +33481,7 @@
         "x-roles": "OPERATOR(can_knowledge)",
         "x-read-only": false,
         "x-implementation-status": "r8-remaining-implemented",
-        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。检索method=KEYWORD，不冒充Milvus向量效果；AI只发送问题与许可摘录，调用后重验所有引用。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
+        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。默认检索KEYWORD；KNOWLEDGE_VECTOR_ENABLED显式开启后，当前范围全部许可/索引完整才VECTOR，否则带原因降级。段落引用可独立核验，AI只发送实际许可摘录并在调用后重验；不宣称领域准确率或Milvus接入。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
       }
     },
     "/api/knowledge/search": {
@@ -33417,7 +33577,7 @@
         "x-roles": "OWNER",
         "x-read-only": true,
         "x-implementation-status": "r8-remaining-implemented",
-        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。检索method=KEYWORD，不冒充Milvus向量效果；AI只发送问题与许可摘录，调用后重验所有引用。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
+        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。默认检索KEYWORD；KNOWLEDGE_VECTOR_ENABLED显式开启后，当前范围全部许可/索引完整才VECTOR，否则带原因降级。段落引用可独立核验，AI只发送实际许可摘录并在调用后重验；不宣称领域准确率或Milvus接入。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
       }
     },
     "/api/knowledge/documents/{reference}": {
@@ -33450,6 +33610,16 @@
               "minimum": 1,
               "maximum": 9007199254740991
             }
+          },
+          {
+            "name": "chunk",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 63
+            },
+            "description": "可选Unicode分块序号，响应给出精确UTF16偏移及摘录；不传保留前800字详情。"
           }
         ],
         "responses": {
@@ -33503,7 +33673,7 @@
         "x-roles": "OWNER",
         "x-read-only": true,
         "x-implementation-status": "r8-remaining-implemented",
-        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。检索method=KEYWORD，不冒充Milvus向量效果；AI只发送问题与许可摘录，调用后重验所有引用。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
+        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。默认检索KEYWORD；KNOWLEDGE_VECTOR_ENABLED显式开启后，当前范围全部许可/索引完整才VECTOR，否则带原因降级。段落引用可独立核验，AI只发送实际许可摘录并在调用后重验；不宣称领域准确率或Milvus接入。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
       }
     },
     "/api/knowledge/answer": {
@@ -33579,7 +33749,7 @@
         "x-roles": "OWNER",
         "x-read-only": true,
         "x-implementation-status": "r8-remaining-implemented",
-        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。检索method=KEYWORD，不冒充Milvus向量效果；AI只发送问题与许可摘录，调用后重验所有引用。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
+        "description": "no-store。V060/V061，130表，17字段运营登录。图片独立逐张授权、另传脱敏副本，重新编码PNG移除元数据；原图不公开。实际图像隐私由车主与人工审核确认，父内容/来源/当前同款失效拒绝新读取；每父经验最多20张有效申请。图片副本最多2MiB/600万像素/4096边长，原始读取有10MiB上限；二进制默认响应或format=base64兼容云托管JSON。资料独立can_knowledge，许可/摘录/AI分别确认，发布冻结、停止终止当前读取，不提供内部许可凭证。默认检索KEYWORD；KNOWLEDGE_VECTOR_ENABLED显式开启后，当前范围全部许可/索引完整才VECTOR，否则带原因降级。段落引用可独立核验，AI只发送实际许可摘录并在调用后重验；不宣称领域准确率或Milvus接入。PUBLIC_IMAGES_ENABLED/KNOWLEDGE_ENABLED/KNOWLEDGE_AI_ENABLED默认false，正式身份/供应商/真机/发布仍最后R9。"
       }
     },
     "/api/input-materials/{purpose}/{vehicleId}/upload": {
@@ -33629,9 +33799,11 @@
             "in": "header",
             "required": true,
             "schema": {
+              "type": "string",
               "enum": [
                 "audio",
-                "pdf"
+                "pdf",
+                "image"
               ]
             }
           }
@@ -33716,7 +33888,7 @@
           }
         },
         "x-roles": "OWNER",
-        "description": "no-store。默认关闭 INPUT_MATERIAL_UPLOAD_ENABLED；仅本人有效车辆、正式会话。独立input_material表，不接受或返回业务图片file_id，不做ASR/OCR。MP3 16kHz单声道48kbps、1–60秒、3MiB；静态PDF 1–50页10MiB，无加密/表单/注释/动作/附件。CLEAN才写入；用途及车辆隔离幂等，同键不同内容409。签发60秒强制attachment/no-store，复核会话/车辆/用途及对象元数据。详见CONTROLLED_INPUT_MATERIALS.md。",
+        "description": "no-store。默认关闭 INPUT_MATERIAL_UPLOAD_ENABLED；仅本人有效车辆、正式会话。独立input_material表，不接受或返回业务图片file_id，不做ASR/OCR。MP3 16kHz单声道48kbps、1–60秒、3MiB；静态PDF 1–50页10MiB，无加密/表单/注释/动作/附件。CLEAN才写入；用途及车辆隔离幂等，同键不同内容409。签发60秒强制attachment/no-store，复核会话/车辆/用途及对象元数据。详见CONTROLLED_INPUT_MATERIALS.md。 R4b独立辅助图片通道：X-Material-Kind=image，通过字节解码校验JPEG/PNG，<=4MiB/4096边长/600万像素/单帧，duration_ms=0/pages=1；复用本人车辆/用途授权、扫描及私有存储，不扩展业务图片白名单。",
         "x-implementation-status": "controlled-input-material-upload-implemented"
       }
     },
@@ -33970,6 +34142,2020 @@
         "x-implementation-status": "mileage-recognition-gateway-implemented-requires-model",
         "x-roles": "当前有效OWNER会话、本人有效车辆、本人CLEAN JPEG/PNG；MILEAGE_OCR_ENABLED默认false",
         "description": "no-store、无query、无自动落库。MILEAGE_OCR_V1用途确认，图片1–4MiB，服务端读取私有字节；调用前后复核会话/车辆/文件。实例并发2，私有HTTP15秒硬截止、64KiB响应上限，无重试/重定向。低置信度保留；歧义不自动选值。服务凭据不下发客户端，真实模型与小程序接线另验。"
+      }
+    },
+    "/api/check/pickup/mileage-recognition": {
+      "post": {
+        "summary": "从本店接车仪表图片读取里程候选，员工核对后才带入表单",
+        "operationId": "post_api_check_pickup_mileage_recognition",
+        "tags": [
+          "check"
+        ],
+        "x-feature-ids": [
+          "F03"
+        ],
+        "responses": {
+          "200": {
+            "description": "order_id/file_id/review_status/requires_confirmation=true/recognition（archive场景、仅mileage候选）。歧义不选值，低置信保留。人工核对仅带入原表单，不自动提交接车、不改变车辆或订单。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "正文、重复键、用途确认或query无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "会话撤销/过期或用户失效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非MERCHANT/STAFF角色或绑定凭证",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "非本店订单、车辆已转移、非当前员工图片、图片不安全或已用于接车单",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "当前订单不可接车或在途订单/车辆/图片事实已变化",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "本实例已有两个识别在处理",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "关闭、数据/存储/OCR不可用、结果无效或超时",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "order_id",
+                  "file_id",
+                  "consent",
+                  "consent_version"
+                ],
+                "properties": {
+                  "file_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740990
+                  },
+                  "consent": {
+                    "const": true
+                  },
+                  "consent_version": {
+                    "const": "PICKUP_MILEAGE_OCR_V1"
+                  },
+                  "order_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740990
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-implementation-status": "pickup-mileage-recognition-implemented",
+        "x-roles": "本店有效MERCHANT/STAFF会话、PAID订单、仍归订单车主的车辆、当前员工本人CLEAN JPEG/PNG",
+        "description": "默认随MILEAGE_OCR_ENABLED关闭；no-store、无query、无自动落库。PICKUP_MILEAGE_OCR_V1独立用途同意；只读1–4MiB私有图片，调用前后复核门店/员工会话、订单、车辆和未用于接车单的图片。与车主端共享实例两项并发限额及15秒供应商截止。仅候选，原八张照片、预约码、里程回退原因、车主确认/派工约束不变。"
+      }
+    },
+    "/api/vehicle/license-recognition": {
+      "post": {
+        "summary": "本人新车登记图片提取车牌/VIN候选，人工核对后手动选车型",
+        "operationId": "post_api_vehicle_license_recognition",
+        "tags": [
+          "vehicle"
+        ],
+        "x-feature-ids": [
+          "F03"
+        ],
+        "responses": {
+          "200": {
+            "description": "file_id/purpose=NEW_VEHICLE/source=LOCAL_OCR/review_status/requires_confirmation=true/fields。整体优先AMBIGUOUS再LOW_CONFIDENCE；两个高可信单值为CANDIDATE，一个为PARTIAL，均无值为NO_CANDIDATE。每字段保留所有候选及原始置信度，超10个报来源错误，不截断。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "file_id",
+                            "purpose",
+                            "source",
+                            "review_status",
+                            "requires_confirmation",
+                            "fields"
+                          ],
+                          "properties": {
+                            "file_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "purpose": {
+                              "const": "NEW_VEHICLE"
+                            },
+                            "source": {
+                              "const": "LOCAL_OCR"
+                            },
+                            "review_status": {
+                              "enum": [
+                                "CANDIDATE",
+                                "PARTIAL",
+                                "LOW_CONFIDENCE",
+                                "AMBIGUOUS",
+                                "NO_CANDIDATE"
+                              ]
+                            },
+                            "requires_confirmation": {
+                              "const": true
+                            },
+                            "fields": {
+                              "type": "array",
+                              "minItems": 2,
+                              "maxItems": 2,
+                              "items": {
+                                "type": "object",
+                                "additionalProperties": false,
+                                "required": [
+                                  "key",
+                                  "status",
+                                  "candidates"
+                                ],
+                                "properties": {
+                                  "key": {
+                                    "enum": [
+                                      "plate",
+                                      "vin"
+                                    ]
+                                  },
+                                  "status": {
+                                    "enum": [
+                                      "CANDIDATE",
+                                      "LOW_CONFIDENCE",
+                                      "AMBIGUOUS",
+                                      "NO_CANDIDATE"
+                                    ]
+                                  },
+                                  "candidates": {
+                                    "type": "array",
+                                    "maxItems": 10,
+                                    "items": {
+                                      "type": "object",
+                                      "additionalProperties": false,
+                                      "required": [
+                                        "value",
+                                        "confidence"
+                                      ],
+                                      "properties": {
+                                        "value": {
+                                          "type": "string",
+                                          "minLength": 7,
+                                          "maxLength": 17
+                                        },
+                                        "confidence": {
+                                          "type": "number",
+                                          "minimum": 0,
+                                          "maximum": 1
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                "description": "固定先plate后vin；字段值不重复。无值NO_CANDIDATE；多值AMBIGUOUS；单值confidence>=0.9为CANDIDATE，否则LOW_CONFIDENCE；不修复O/0、不删除内部空白或猜测。"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "图片ID/新车用途/同意无效，额外字段/重复键/尾随JSON/query拒绝",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "会话过期/撤销或账号停用/删除",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非OWNER身份或绑定凭证",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "非本人/已删/非CLEAN/非JPEG或PNG/超大小图片",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "调用期间文件元数据变化",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "每车主分钟限额或本实例并发满",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "关闭、数据/私有存储/来源不可用、超时或来源协议错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "file_id",
+                  "purpose",
+                  "consent",
+                  "consent_version"
+                ],
+                "properties": {
+                  "file_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740990
+                  },
+                  "purpose": {
+                    "const": "NEW_VEHICLE"
+                  },
+                  "consent": {
+                    "const": true
+                  },
+                  "consent_version": {
+                    "const": "NEW_VEHICLE_LICENSE_OCR_V1"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-implementation-status": "license-owner-candidate-implemented-requires-document-acceptance",
+        "x-roles": "当前有效OWNER会话；本人CLEAN JPEG/PNG 1..4MiB；LICENSE_OCR_ENABLED默认false",
+        "description": "仅POST JSON正文，无query、不接收vehicle_id、URL或对象key。复用当前车主私有图片上传，不要求尚未创建的车辆ID；NEW_VEHICLE_LICENSE_OCR_V1明确新车用途。调用前后复核会话/账号及文件归属/扫描/元数据，存储读取后推理前再复核；来源失败也复核。每车主UTC分钟5次、实例并发2，来源10秒期限/64KiB，无应用级重试/重定向；受限worker推理8秒且单任务无队列。只返回完整合法标签旁车牌/VIN，不返回姓名/住址/证件原文，不证明真伪或归属，不自动建车/匹配车型/关联证件附件。取消不承诺删除已上传照片，按既有私有附件策略保留。"
+      }
+    },
+    "/api/recognition/asr/jobs": {
+      "post": {
+        "summary": "本人同车辆同用途音频创建持久ASR候选任务",
+        "operationId": "post_api_recognition_asr_jobs",
+        "tags": [
+          "recognition"
+        ],
+        "x-feature-ids": [
+          "F05"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "创建回执仅job_id/vehicle_id/material_id/purpose/task；同键同正文返回原任务引用，不重放候选文本。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "job_id",
+                            "vehicle_id",
+                            "material_id",
+                            "purpose",
+                            "task"
+                          ],
+                          "properties": {
+                            "job_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "vehicle_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "material_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "purpose": {
+                              "enum": [
+                                "AI",
+                                "ARCHIVE"
+                              ]
+                            },
+                            "task": {
+                              "const": "ASR"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "正文/ID/同意/幂等键无效，额外或重复键/尾随JSON/query均拒绝",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "当前会话失效或账号停用/删除",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非OWNER或绑定凭证",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "非本人当前车辆、同用途音频或任务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "关闭、数据或任务服务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "每分钟新任务限额或已有2个活动任务",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "vehicle_id",
+                  "material_id",
+                  "purpose",
+                  "consent",
+                  "consent_version"
+                ],
+                "properties": {
+                  "vehicle_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740990
+                  },
+                  "material_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740990
+                  },
+                  "purpose": {
+                    "enum": [
+                      "AI",
+                      "ARCHIVE"
+                    ]
+                  },
+                  "consent": {
+                    "const": true
+                  },
+                  "consent_version": {
+                    "const": "ASR_TRANSCRIBE_V1"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-implementation-status": "asr-durable-job-create-implemented-requires-model-acceptance",
+        "x-roles": "当前有效OWNER；本人车辆/同用途CLEAN input_material音频；ASR_ENABLED默认false",
+        "description": "严格JSON、无query、UUID幂等键；仅接受同一车辆及AI/ARCHIVE用途的本人audio/mpeg，现有16kHz mono/48kbps、1..60秒、<=3MiB政策保持。ASR_TRANSCRIBE_V1明确本次转写同意。每owner每UTC分钟5次新任务、最多2个未过期活动任务；幂等重放不重复排队或消耗限额。仅持久化作用域/原会话标识/源元数据hash/状态，不将JWT、原音频、对象key或转写放入普通回执/审计，不自动发送问题或保存档案。"
+      }
+    },
+    "/api/recognition/asr/jobs/{id}": {
+      "get": {
+        "summary": "本人查询ASR排队状态与短期转写候选",
+        "operationId": "get_api_recognition_asr_jobs_id",
+        "tags": [
+          "recognition"
+        ],
+        "x-feature-ids": [
+          "F05"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "固定任务作用域/状态/到期/error_code/result；只在SUCCEEDED返回经过严格校验的候选，其他状态result=null。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "job_id",
+                            "vehicle_id",
+                            "material_id",
+                            "purpose",
+                            "task",
+                            "state",
+                            "expires_at",
+                            "error_code",
+                            "result"
+                          ],
+                          "properties": {
+                            "job_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "vehicle_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "material_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "purpose": {
+                              "enum": [
+                                "AI",
+                                "ARCHIVE"
+                              ]
+                            },
+                            "task": {
+                              "const": "ASR"
+                            },
+                            "state": {
+                              "enum": [
+                                "QUEUED",
+                                "RUNNING",
+                                "SUCCEEDED",
+                                "FAILED",
+                                "CANCELLED",
+                                "EXPIRED"
+                              ]
+                            },
+                            "expires_at": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "error_code": {
+                              "enum": [
+                                null,
+                                "UNAVAILABLE",
+                                "SOURCE_CHANGED",
+                                "AUTH_REVOKED",
+                                "WORKER_LOST",
+                                "INVALID_RESULT",
+                                "EXPIRED",
+                                "USER_CANCELLED",
+                                "FEATURE_DISABLED"
+                              ]
+                            },
+                            "result": {
+                              "anyOf": [
+                                {
+                                  "type": "null"
+                                },
+                                {
+                                  "type": "object",
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "version",
+                                    "task",
+                                    "source",
+                                    "status",
+                                    "language",
+                                    "duration_ms",
+                                    "segments",
+                                    "requires_confirmation",
+                                    "audio_recognition_performed"
+                                  ],
+                                  "properties": {
+                                    "version": {
+                                      "const": 1
+                                    },
+                                    "task": {
+                                      "const": "ASR"
+                                    },
+                                    "source": {
+                                      "const": "FASTER_WHISPER"
+                                    },
+                                    "status": {
+                                      "enum": [
+                                        "TRANSCRIBED",
+                                        "EMPTY"
+                                      ]
+                                    },
+                                    "language": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ],
+                                      "pattern": "^[a-z]{2,3}$"
+                                    },
+                                    "duration_ms": {
+                                      "type": "integer",
+                                      "minimum": 1000,
+                                      "maximum": 60000
+                                    },
+                                    "requires_confirmation": {
+                                      "const": true
+                                    },
+                                    "audio_recognition_performed": {
+                                      "const": true
+                                    },
+                                    "segments": {
+                                      "type": "array",
+                                      "maxItems": 50,
+                                      "items": {
+                                        "type": "object",
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "start_ms",
+                                          "end_ms",
+                                          "text",
+                                          "confidence"
+                                        ],
+                                        "properties": {
+                                          "start_ms": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "maximum": 59999
+                                          },
+                                          "end_ms": {
+                                            "type": "integer",
+                                            "minimum": 1,
+                                            "maximum": 60000
+                                          },
+                                          "text": {
+                                            "type": "string",
+                                            "minLength": 1,
+                                            "maxLength": 500
+                                          },
+                                          "confidence": {
+                                            "type": [
+                                              "number",
+                                              "null"
+                                            ],
+                                            "minimum": 0,
+                                            "maximum": 1
+                                          }
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "description": "duration_ms必须等于原音频声明并经读取校验；时间单调不重叠且0<=start<end<=duration_ms，文本无控制或孤立代理字符、无首尾空白。以换行连接全部片段最多1000 UTF16单元，不静默截断。TRANSCRIBED非空，EMPTY空且language可null。faster-whisper平均logprob不转换可信百分比，实际适配confidence=null。"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "正文/ID/同意/幂等键无效，额外或重复键/尾随JSON/query均拒绝",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "当前会话失效或账号停用/删除",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非OWNER或绑定凭证",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "非本人当前车辆、同用途音频或任务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "关闭、数据或任务服务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-implementation-status": "asr-durable-job-read-implemented-requires-model-acceptance",
+        "x-roles": "当前有效OWNER；本人车辆/同用途CLEAN input_material音频；ASR_ENABLED默认false",
+        "description": "无query、no-store；返回前重新验证当前会话/本人车辆、同用途材料与原创建会话。原会话撤销不再交付候选；取消/来源变化/关闭/TTL到期清空结果。候选TTL自创建10分钟，查询失效后不可见，后台清理正文；任务元数据与原音频保留策略另管。"
+      }
+    },
+    "/api/recognition/asr/jobs/{id}/cancel": {
+      "post": {
+        "summary": "本人取消ASR任务并清空候选",
+        "operationId": "post_api_recognition_asr_jobs_id_cancel",
+        "tags": [
+          "recognition"
+        ],
+        "x-feature-ids": [
+          "F05"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "取消受理回执仅job_id；终态与过期状态以再次查询为准。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "job_id"
+                          ],
+                          "properties": {
+                            "job_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "正文/ID/同意/幂等键无效，额外或重复键/尾随JSON/query均拒绝",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "当前会话失效或账号停用/删除",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非OWNER或绑定凭证",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "非本人当前车辆、同用途音频或任务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "关闭、数据或任务服务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "maxProperties": 0
+              }
+            }
+          }
+        },
+        "x-implementation-status": "asr-durable-job-cancel-implemented",
+        "x-roles": "当前有效OWNER；本人当前车辆与任务；新有效会话可取消自己的旧任务",
+        "description": "严格空对象{}、无query、UUID幂等键。可取消排队/运行或已成功候选并清空；重复取消安全，不删除原音频。取消请求失败或创建结果未知不能声称服务端已取消；未知创建可经重新同意后同正文同键确认原任务，再立即发取消。"
+      }
+    },
+    "/api/recognition/documents/jobs": {
+      "post": {
+        "summary": "本人同车辆同用途图片/PDF创建持久图文提取候选任务",
+        "operationId": "post_api_recognition_documents_jobs",
+        "tags": [
+          "recognition"
+        ],
+        "x-feature-ids": [
+          "F05"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "创建回执仅job_id/vehicle_id/material_id/purpose/task；同键同正文返回原任务引用，不重放候选文本。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "job_id",
+                            "vehicle_id",
+                            "material_id",
+                            "purpose",
+                            "task"
+                          ],
+                          "properties": {
+                            "job_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "vehicle_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "material_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "purpose": {
+                              "enum": [
+                                "AI",
+                                "ARCHIVE"
+                              ]
+                            },
+                            "task": {
+                              "const": "DOCUMENT"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "正文/ID/同意/幂等键无效，额外或重复键/尾随JSON/query均拒绝",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "当前会话失效或账号停用/删除",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非OWNER或绑定凭证",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "非本人当前车辆、同用途图片/PDF或任务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "关闭、数据或任务服务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "每分钟新任务限额或已有2个活动任务",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "vehicle_id",
+                  "material_id",
+                  "purpose",
+                  "consent",
+                  "consent_version"
+                ],
+                "properties": {
+                  "vehicle_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740990
+                  },
+                  "material_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740990
+                  },
+                  "purpose": {
+                    "enum": [
+                      "AI",
+                      "ARCHIVE"
+                    ]
+                  },
+                  "consent": {
+                    "const": true
+                  },
+                  "consent_version": {
+                    "const": "DOCUMENT_EXTRACT_V1"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-implementation-status": "document-durable-job-implemented-local",
+        "x-roles": "当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
+        "description": "严格JSON、no-store、无query；创建DOCUMENT_EXTRACT_V1独立同意，UUID幂等。JPEG/PNG<=4MiB/4096边长/600万像素或PDF<=10MiB，提取最多4页；超页整份LIMIT_EXCEEDED，不返回部分成功。每类型每车主每UTC分钟5次；DOCUMENT及DOCUMENT合计最多2个活动任务，按类型领取/访问/清理。租约180秒，不自动重试，候选自创建起10分钟；来源及原会话在存储前后、推理后和GET重新校验。撤销可清空已成功候选但不删除原材料，不承诺立即停算。人工逐段选择/修改/核对并重新GET后仅带入问题或备注，仍需原发送/保存；不产生日期/金额/里程事实。"
+      }
+    },
+    "/api/recognition/documents/jobs/{id}": {
+      "get": {
+        "summary": "本人查询图文提取排队状态与短期图文提取候选",
+        "operationId": "get_api_recognition_documents_jobs_id",
+        "tags": [
+          "recognition"
+        ],
+        "x-feature-ids": [
+          "F05"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "固定任务作用域/状态/到期/error_code/result；只在SUCCEEDED返回经过严格校验的候选，其他状态result=null。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "job_id",
+                            "vehicle_id",
+                            "material_id",
+                            "purpose",
+                            "task",
+                            "state",
+                            "expires_at",
+                            "error_code",
+                            "result"
+                          ],
+                          "properties": {
+                            "job_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "vehicle_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "material_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            },
+                            "purpose": {
+                              "enum": [
+                                "AI",
+                                "ARCHIVE"
+                              ]
+                            },
+                            "task": {
+                              "const": "DOCUMENT"
+                            },
+                            "state": {
+                              "enum": [
+                                "QUEUED",
+                                "RUNNING",
+                                "SUCCEEDED",
+                                "FAILED",
+                                "CANCELLED",
+                                "EXPIRED"
+                              ]
+                            },
+                            "expires_at": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "error_code": {
+                              "enum": [
+                                null,
+                                "UNAVAILABLE",
+                                "SOURCE_CHANGED",
+                                "AUTH_REVOKED",
+                                "WORKER_LOST",
+                                "INVALID_RESULT",
+                                "EXPIRED",
+                                "USER_CANCELLED",
+                                "FEATURE_DISABLED",
+                                "INVALID_DOCUMENT",
+                                "LIMIT_EXCEEDED"
+                              ]
+                            },
+                            "result": {
+                              "anyOf": [
+                                {
+                                  "type": "null"
+                                },
+                                {
+                                  "type": "object",
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "version",
+                                    "task",
+                                    "source",
+                                    "content_type",
+                                    "content_sha256",
+                                    "page_count",
+                                    "status",
+                                    "requires_confirmation",
+                                    "image_recognition_performed",
+                                    "all_pages_processed",
+                                    "pages"
+                                  ],
+                                  "properties": {
+                                    "version": {
+                                      "const": 1
+                                    },
+                                    "task": {
+                                      "const": "DOCUMENT"
+                                    },
+                                    "source": {
+                                      "const": "PDFBOX_PADDLE"
+                                    },
+                                    "content_type": {
+                                      "enum": [
+                                        "application/pdf",
+                                        "image/jpeg",
+                                        "image/png"
+                                      ]
+                                    },
+                                    "content_sha256": {
+                                      "type": "string",
+                                      "pattern": "^[a-f0-9]{64}$"
+                                    },
+                                    "page_count": {
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 4
+                                    },
+                                    "status": {
+                                      "enum": [
+                                        "EXTRACTED",
+                                        "EMPTY"
+                                      ]
+                                    },
+                                    "requires_confirmation": {
+                                      "const": true
+                                    },
+                                    "image_recognition_performed": {
+                                      "type": "boolean"
+                                    },
+                                    "all_pages_processed": {
+                                      "const": true
+                                    },
+                                    "pages": {
+                                      "type": "array",
+                                      "minItems": 1,
+                                      "maxItems": 4,
+                                      "items": {
+                                        "type": "object",
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "page",
+                                          "method",
+                                          "text",
+                                          "raster_size",
+                                          "blocks"
+                                        ],
+                                        "properties": {
+                                          "page": {
+                                            "type": "integer",
+                                            "minimum": 1,
+                                            "maximum": 4
+                                          },
+                                          "method": {
+                                            "enum": [
+                                              "NATIVE_TEXT",
+                                              "OCR",
+                                              "EMPTY"
+                                            ]
+                                          },
+                                          "text": {
+                                            "type": "string",
+                                            "maxLength": 4096
+                                          },
+                                          "raster_size": {
+                                            "anyOf": [
+                                              {
+                                                "type": "null"
+                                              },
+                                              {
+                                                "type": "array",
+                                                "minItems": 2,
+                                                "maxItems": 2,
+                                                "items": {
+                                                  "type": "integer",
+                                                  "minimum": 1,
+                                                  "maximum": 4096
+                                                }
+                                              }
+                                            ]
+                                          },
+                                          "blocks": {
+                                            "type": "array",
+                                            "maxItems": 80,
+                                            "items": {
+                                              "type": "object",
+                                              "additionalProperties": false,
+                                              "required": [
+                                                "text",
+                                                "confidence",
+                                                "source"
+                                              ],
+                                              "properties": {
+                                                "text": {
+                                                  "type": "string",
+                                                  "minLength": 1,
+                                                  "maxLength": 500
+                                                },
+                                                "confidence": {
+                                                  "type": [
+                                                    "number",
+                                                    "null"
+                                                  ],
+                                                  "minimum": 0,
+                                                  "maximum": 1
+                                                },
+                                                "source": {
+                                                  "oneOf": [
+                                                    {
+                                                      "type": "object",
+                                                      "additionalProperties": false,
+                                                      "required": [
+                                                        "kind",
+                                                        "start",
+                                                        "end"
+                                                      ],
+                                                      "properties": {
+                                                        "kind": {
+                                                          "const": "TEXT_OFFSET"
+                                                        },
+                                                        "start": {
+                                                          "type": "integer",
+                                                          "minimum": 0
+                                                        },
+                                                        "end": {
+                                                          "type": "integer",
+                                                          "minimum": 1
+                                                        }
+                                                      }
+                                                    },
+                                                    {
+                                                      "type": "object",
+                                                      "additionalProperties": false,
+                                                      "required": [
+                                                        "kind",
+                                                        "points"
+                                                      ],
+                                                      "properties": {
+                                                        "kind": {
+                                                          "const": "RASTER_POLYGON"
+                                                        },
+                                                        "points": {
+                                                          "type": "array",
+                                                          "minItems": 4,
+                                                          "maxItems": 4,
+                                                          "items": {
+                                                            "type": "array",
+                                                            "minItems": 2,
+                                                            "maxItems": 2,
+                                                            "items": {
+                                                              "type": "number",
+                                                              "minimum": 0,
+                                                              "maximum": 4096
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  ]
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "description": "整份最多4096 UTF16单元/80块，每块500；页码连续，page_count等于上传元数据；hash绑定私有源字节。原生块完整覆盖非空行，偏移UTF16末端不含，confidence=null；OCR块有实际凸四边形/原置信度，坐标在raster_size内且面积预算600万像素。all_pages_processed=true，不得构造部分成功。"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "正文/ID/同意/幂等键无效，额外或重复键/尾随JSON/query均拒绝",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "当前会话失效或账号停用/删除",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非OWNER或绑定凭证",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "非本人当前车辆、同用途图片/PDF或任务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "关闭、数据或任务服务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-implementation-status": "document-durable-job-implemented-local",
+        "x-roles": "当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
+        "description": "严格JSON、no-store、无query；创建DOCUMENT_EXTRACT_V1独立同意，UUID幂等。JPEG/PNG<=4MiB/4096边长/600万像素或PDF<=10MiB，提取最多4页；超页整份LIMIT_EXCEEDED，不返回部分成功。每类型每车主每UTC分钟5次；DOCUMENT及DOCUMENT合计最多2个活动任务，按类型领取/访问/清理。租约180秒，不自动重试，候选自创建起10分钟；来源及原会话在存储前后、推理后和GET重新校验。撤销可清空已成功候选但不删除原材料，不承诺立即停算。人工逐段选择/修改/核对并重新GET后仅带入问题或备注，仍需原发送/保存；不产生日期/金额/里程事实。"
+      }
+    },
+    "/api/recognition/documents/jobs/{id}/cancel": {
+      "post": {
+        "summary": "本人取消图文提取任务并清空候选",
+        "operationId": "post_api_recognition_documents_jobs_id_cancel",
+        "tags": [
+          "recognition"
+        ],
+        "x-feature-ids": [
+          "F05"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "取消受理回执仅job_id；终态与过期状态以再次查询为准。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "data"
+                      ],
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "job_id"
+                          ],
+                          "properties": {
+                            "job_id": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740990
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "正文/ID/同意/幂等键无效，额外或重复键/尾随JSON/query均拒绝",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "当前会话失效或账号停用/删除",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非OWNER或绑定凭证",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "非本人当前车辆、同用途图片/PDF或任务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "关闭、数据或任务服务不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "maxProperties": 0
+              }
+            }
+          }
+        },
+        "x-implementation-status": "document-durable-job-implemented-local",
+        "x-roles": "当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
+        "description": "严格JSON、no-store、无query；创建DOCUMENT_EXTRACT_V1独立同意，UUID幂等。JPEG/PNG<=4MiB/4096边长/600万像素或PDF<=10MiB，提取最多4页；超页整份LIMIT_EXCEEDED，不返回部分成功。每类型每车主每UTC分钟5次；DOCUMENT及DOCUMENT合计最多2个活动任务，按类型领取/访问/清理。租约180秒，不自动重试，候选自创建起10分钟；来源及原会话在存储前后、推理后和GET重新校验。撤销可清空已成功候选但不删除原材料，不承诺立即停算。人工逐段选择/修改/核对并重新GET后仅带入问题或备注，仍需原发送/保存；不产生日期/金额/里程事实。"
       }
     }
   },
@@ -51863,162 +54049,345 @@
         }
       },
       "KnowledgePayload": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "title",
-          "publisher",
-          "document_version",
-          "source_reference",
-          "license_reference",
-          "license_confirmed",
-          "model_id",
-          "valid_from",
-          "valid_to",
-          "search_allowed",
-          "excerpt_allowed",
-          "ai_allowed",
-          "body"
-        ],
-        "properties": {
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 120
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "title",
+              "publisher",
+              "document_version",
+              "source_reference",
+              "license_reference",
+              "license_confirmed",
+              "model_id",
+              "valid_from",
+              "valid_to",
+              "search_allowed",
+              "excerpt_allowed",
+              "ai_allowed",
+              "body"
+            ],
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "publisher": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "document_version": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              },
+              "source_reference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "license_reference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "license_confirmed": {
+                "type": "boolean"
+              },
+              "model_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "valid_from": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "valid_to": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "search_allowed": {
+                "type": "boolean"
+              },
+              "excerpt_allowed": {
+                "type": "boolean"
+              },
+              "ai_allowed": {
+                "type": "boolean"
+              },
+              "body": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              }
+            }
           },
-          "publisher": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 120
-          },
-          "document_version": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 80
-          },
-          "source_reference": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 500
-          },
-          "license_reference": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 500
-          },
-          "license_confirmed": {
-            "type": "boolean"
-          },
-          "model_id": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 9007199254740991
-          },
-          "valid_from": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "valid_to": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "search_allowed": {
-            "type": "boolean"
-          },
-          "excerpt_allowed": {
-            "type": "boolean"
-          },
-          "ai_allowed": {
-            "type": "boolean"
-          },
-          "body": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 10000
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "title",
+              "publisher",
+              "document_version",
+              "source_reference",
+              "license_reference",
+              "license_confirmed",
+              "model_id",
+              "valid_from",
+              "valid_to",
+              "search_allowed",
+              "excerpt_allowed",
+              "ai_allowed",
+              "body",
+              "embedding_allowed",
+              "embedding_policy_version"
+            ],
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "publisher": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "document_version": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              },
+              "source_reference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "license_reference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "license_confirmed": {
+                "type": "boolean"
+              },
+              "model_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "valid_from": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "valid_to": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "search_allowed": {
+                "type": "boolean"
+              },
+              "excerpt_allowed": {
+                "type": "boolean"
+              },
+              "ai_allowed": {
+                "type": "boolean"
+              },
+              "body": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              },
+              "embedding_allowed": {
+                "type": "boolean"
+              },
+              "embedding_policy_version": {
+                "const": "KNOWLEDGE_EMBEDDING_V1"
+              }
+            }
           }
-        }
+        ],
+        "description": "旧13字段payload原样保存/哈希，嵌入默认未授权；新授权必须同时提交embedding_allowed布尔和策略版本。仅本地私有嵌入，不推导外部模型许可；默认公开检索KEYWORD，显式开启及完整性通过后可用VECTOR。"
       },
       "KnowledgeUpdate": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "title",
-          "publisher",
-          "document_version",
-          "source_reference",
-          "license_reference",
-          "license_confirmed",
-          "model_id",
-          "valid_from",
-          "valid_to",
-          "search_allowed",
-          "excerpt_allowed",
-          "ai_allowed",
-          "body",
-          "expected_revision"
-        ],
-        "properties": {
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 120
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "title",
+              "publisher",
+              "document_version",
+              "source_reference",
+              "license_reference",
+              "license_confirmed",
+              "model_id",
+              "valid_from",
+              "valid_to",
+              "search_allowed",
+              "excerpt_allowed",
+              "ai_allowed",
+              "body",
+              "expected_revision"
+            ],
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "publisher": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "document_version": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              },
+              "source_reference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "license_reference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "license_confirmed": {
+                "type": "boolean"
+              },
+              "model_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "valid_from": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "valid_to": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "search_allowed": {
+                "type": "boolean"
+              },
+              "excerpt_allowed": {
+                "type": "boolean"
+              },
+              "ai_allowed": {
+                "type": "boolean"
+              },
+              "body": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              },
+              "expected_revision": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              }
+            }
           },
-          "publisher": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 120
-          },
-          "document_version": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 80
-          },
-          "source_reference": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 500
-          },
-          "license_reference": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 500
-          },
-          "license_confirmed": {
-            "type": "boolean"
-          },
-          "model_id": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 9007199254740991
-          },
-          "valid_from": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "valid_to": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "search_allowed": {
-            "type": "boolean"
-          },
-          "excerpt_allowed": {
-            "type": "boolean"
-          },
-          "ai_allowed": {
-            "type": "boolean"
-          },
-          "body": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 10000
-          },
-          "expected_revision": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 9007199254740991
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "title",
+              "publisher",
+              "document_version",
+              "source_reference",
+              "license_reference",
+              "license_confirmed",
+              "model_id",
+              "valid_from",
+              "valid_to",
+              "search_allowed",
+              "excerpt_allowed",
+              "ai_allowed",
+              "body",
+              "embedding_allowed",
+              "embedding_policy_version",
+              "expected_revision"
+            ],
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "publisher": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "document_version": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              },
+              "source_reference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "license_reference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "license_confirmed": {
+                "type": "boolean"
+              },
+              "model_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "valid_from": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "valid_to": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "search_allowed": {
+                "type": "boolean"
+              },
+              "excerpt_allowed": {
+                "type": "boolean"
+              },
+              "ai_allowed": {
+                "type": "boolean"
+              },
+              "body": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              },
+              "embedding_allowed": {
+                "type": "boolean"
+              },
+              "embedding_policy_version": {
+                "const": "KNOWLEDGE_EMBEDDING_V1"
+              },
+              "expected_revision": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              }
+            }
           }
-        }
+        ]
       },
       "KnowledgeStatus": {
         "type": "object",
@@ -52107,6 +54476,147 @@
           }
         }
       },
+      "KnowledgeEmbeddingState": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "state",
+          "error_code",
+          "profile_hash",
+          "updated_at"
+        ],
+        "properties": {
+          "state": {
+            "enum": [
+              "DISABLED",
+              "NOT_ALLOWED",
+              "NOT_QUEUED",
+              "QUEUED",
+              "RUNNING",
+              "SUCCEEDED",
+              "FAILED",
+              "CANCELLED"
+            ]
+          },
+          "error_code": {
+            "anyOf": [
+              {
+                "enum": [
+                  "WORKER_LOST",
+                  "UNAVAILABLE",
+                  "INVALID_VECTOR",
+                  "LIMIT_EXCEEDED",
+                  "SOURCE_CHANGED",
+                  "FEATURE_DISABLED"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "profile_hash": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "description": "仅运营可见的当前配置索引状态，非公开VECTOR或领域效果证明；FAILED不自动重试。DISABLED其余字段为空；NOT_ALLOWED/NOT_QUEUED保留profile且时间/错误为空；任务状态须有更新时间，成功/排队/运行无错误。"
+      },
+      "KnowledgeAdminRow": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/KnowledgeDocument"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "revision",
+              "status",
+              "source_hash",
+              "public_id",
+              "payload",
+              "created_at",
+              "published_at",
+              "embedding"
+            ],
+            "properties": {
+              "id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "status": {
+                "enum": [
+                  "DRAFT",
+                  "PUBLISHED",
+                  "STOPPED"
+                ]
+              },
+              "source_hash": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "public_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "payload": {
+                "$ref": "#/components/schemas/KnowledgePayload"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "published_at": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "embedding": {
+                "$ref": "#/components/schemas/KnowledgeEmbeddingState"
+              }
+            }
+          }
+        ]
+      },
       "KnowledgeAdminPage": {
         "type": "object",
         "additionalProperties": false,
@@ -52121,7 +54631,7 @@
             "type": "array",
             "maxItems": 20,
             "items": {
-              "$ref": "#/components/schemas/KnowledgeDocument"
+              "$ref": "#/components/schemas/KnowledgeAdminRow"
             }
           },
           "total": {
@@ -52304,53 +54814,188 @@
           }
         }
       },
-      "KnowledgeSearch": {
+      "KnowledgeVectorReference": {
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "vehicle_id",
-          "state",
-          "method",
-          "items",
-          "next_cursor"
+          "reference",
+          "revision",
+          "model_id",
+          "title",
+          "publisher",
+          "document_version",
+          "source_reference",
+          "valid_from",
+          "valid_to",
+          "excerpt",
+          "ai_allowed",
+          "chunk",
+          "start_offset",
+          "end_offset"
         ],
         "properties": {
-          "vehicle_id": {
+          "reference": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
             "type": "integer",
             "minimum": 1,
             "maximum": 9007199254740991
           },
-          "state": {
-            "enum": [
-              "AVAILABLE",
-              "UNKNOWN",
-              "NO_MATCH",
-              "UNAVAILABLE"
-            ]
+          "model_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
           },
-          "method": {
-            "const": "KEYWORD"
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
           },
-          "items": {
-            "type": "array",
-            "maxItems": 20,
-            "items": {
-              "$ref": "#/components/schemas/KnowledgeReference"
-            }
+          "publisher": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
           },
-          "next_cursor": {
-            "anyOf": [
-              {
+          "document_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "source_reference": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "valid_to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "excerpt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "ai_allowed": {
+            "type": "boolean"
+          },
+          "chunk": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 63
+          },
+          "start_offset": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 19999
+          },
+          "end_offset": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20000
+          }
+        }
+      },
+      "KnowledgeSearch": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "vehicle_id",
+              "state",
+              "method",
+              "items",
+              "next_cursor"
+            ],
+            "properties": {
+              "vehicle_id": {
                 "type": "integer",
                 "minimum": 1,
                 "maximum": 9007199254740991
               },
-              {
+              "state": {
+                "enum": [
+                  "AVAILABLE",
+                  "UNKNOWN",
+                  "NO_MATCH",
+                  "UNAVAILABLE"
+                ]
+              },
+              "method": {
+                "const": "KEYWORD"
+              },
+              "items": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {
+                  "$ref": "#/components/schemas/KnowledgeReference"
+                }
+              },
+              "next_cursor": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "fallback_reason": {
+                "enum": [
+                  "INDEX_NOT_READY",
+                  "VECTOR_UNAVAILABLE",
+                  "QUERY_LIMIT",
+                  "CURSOR_PAGING"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "vehicle_id",
+              "state",
+              "method",
+              "items",
+              "next_cursor"
+            ],
+            "properties": {
+              "vehicle_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "state": {
+                "const": "AVAILABLE"
+              },
+              "method": {
+                "const": "VECTOR"
+              },
+              "items": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 5,
+                "items": {
+                  "$ref": "#/components/schemas/KnowledgeVectorReference"
+                }
+              },
+              "next_cursor": {
                 "type": "null"
               }
-            ]
+            }
           }
-        }
+        ],
+        "description": "默认KEYWORD兼容旧响应；明确开启且当前范围语料/许可/完整索引全部就绪才VECTOR。KEYWORD可带明确降级原因；VECTOR无游标/降级原因/分数，最多5份。"
       },
       "KnowledgeDetail": {
         "type": "object",
@@ -52366,79 +55011,176 @@
             "maximum": 9007199254740991
           },
           "document": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "reference",
-              "revision",
-              "model_id",
-              "title",
-              "publisher",
-              "document_version",
-              "source_reference",
-              "valid_from",
-              "valid_to",
-              "excerpt",
-              "ai_allowed",
-              "body"
-            ],
-            "properties": {
-              "reference": {
-                "type": "string",
-                "format": "uuid"
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "reference",
+                  "revision",
+                  "model_id",
+                  "title",
+                  "publisher",
+                  "document_version",
+                  "source_reference",
+                  "valid_from",
+                  "valid_to",
+                  "excerpt",
+                  "ai_allowed",
+                  "body"
+                ],
+                "properties": {
+                  "reference": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "model_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "publisher": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "document_version": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "source_reference": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  },
+                  "valid_from": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "valid_to": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "excerpt": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 800
+                  },
+                  "ai_allowed": {
+                    "type": "boolean"
+                  },
+                  "body": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 800
+                  }
+                }
               },
-              "revision": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 9007199254740991
-              },
-              "model_id": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 9007199254740991
-              },
-              "title": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 120
-              },
-              "publisher": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 120
-              },
-              "document_version": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 80
-              },
-              "source_reference": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 500
-              },
-              "valid_from": {
-                "type": "string",
-                "format": "date-time"
-              },
-              "valid_to": {
-                "type": "string",
-                "format": "date-time"
-              },
-              "excerpt": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 800
-              },
-              "ai_allowed": {
-                "type": "boolean"
-              },
-              "body": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 800
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "reference",
+                  "revision",
+                  "model_id",
+                  "title",
+                  "publisher",
+                  "document_version",
+                  "source_reference",
+                  "valid_from",
+                  "valid_to",
+                  "excerpt",
+                  "ai_allowed",
+                  "chunk",
+                  "start_offset",
+                  "end_offset",
+                  "body"
+                ],
+                "properties": {
+                  "reference": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "model_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "publisher": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "document_version": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "source_reference": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  },
+                  "valid_from": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "valid_to": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "excerpt": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "ai_allowed": {
+                    "type": "boolean"
+                  },
+                  "chunk": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 63
+                  },
+                  "start_offset": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 19999
+                  },
+                  "end_offset": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 20000
+                  },
+                  "body": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  }
+                }
               }
-            }
+            ]
           }
         }
       },
@@ -52463,43 +55205,94 @@
         }
       },
       "KnowledgeAnswer": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "vehicle_id",
-          "reply",
-          "model",
-          "provided_sources",
-          "method"
-        ],
-        "properties": {
-          "vehicle_id": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 9007199254740991
-          },
-          "reply": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 20000
-          },
-          "model": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 256
-          },
-          "provided_sources": {
-            "type": "array",
-            "minItems": 1,
-            "maxItems": 3,
-            "items": {
-              "$ref": "#/components/schemas/KnowledgeReference"
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "vehicle_id",
+              "reply",
+              "model",
+              "provided_sources",
+              "method"
+            ],
+            "properties": {
+              "vehicle_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "reply": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 20000
+              },
+              "model": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "provided_sources": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 3,
+                "items": {
+                  "$ref": "#/components/schemas/KnowledgeReference"
+                }
+              },
+              "method": {
+                "const": "KEYWORD"
+              },
+              "fallback_reason": {
+                "enum": [
+                  "INDEX_NOT_READY",
+                  "VECTOR_UNAVAILABLE",
+                  "QUERY_LIMIT"
+                ]
+              }
             }
           },
-          "method": {
-            "const": "KEYWORD"
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "vehicle_id",
+              "reply",
+              "model",
+              "provided_sources",
+              "method"
+            ],
+            "properties": {
+              "vehicle_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "reply": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 20000
+              },
+              "model": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "provided_sources": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 3,
+                "items": {
+                  "$ref": "#/components/schemas/KnowledgeVectorReference"
+                }
+              },
+              "method": {
+                "const": "VECTOR"
+              }
+            }
           }
-        }
+        ],
+        "description": "只接收允许AI的当前实际摘录，返回前重验当前车主/车型/来源及片段；失效丢弃回答。provided_sources是实际提供的资料，不表示每句话事实已核实。"
       },
       "InputMaterialReceipt": {
         "type": "object",

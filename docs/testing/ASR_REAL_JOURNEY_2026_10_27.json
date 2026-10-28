@@ -1,0 +1,307 @@
+{
+  "version": 1,
+  "recorded_at": "2026-10-27T05:54:06.493714+00:00",
+  "stage": "R3c real Java ASR journey and exact process faults",
+  "base_commit": "864ac3e101cda2810ea58b0c96ada50474cae398",
+  "branch": "codex/asr-real-journey",
+  "runtime": {
+    "passed": true,
+    "source_sha256": "5794030d97f8c9d20e84d9a980efbc5f7a51a990cfd9bfb65732e4310c752302",
+    "scope": "Real Java scheduler/HTTP/JWT/MySQL and model; synthetic identity, CLEAN metadata, object store and English audio",
+    "chinese_or_user_accuracy_accepted": false,
+    "production_acceptance_passed": false,
+    "checks": {
+      "java_real_journey": true
+    },
+    "resource_proof": {
+      "Memory": 2147483648,
+      "MemorySwap": 2147483648,
+      "NanoCpus": 2000000000,
+      "PidsLimit": 128,
+      "ShmSize": 16777216,
+      "ReadonlyRootfs": true,
+      "NetworkMode": "asr-private-60bdd26a7933",
+      "nonroot": true,
+      "capabilities_dropped": true,
+      "no_new_privileges": true,
+      "host_ports": false,
+      "resource_binds_readonly": true,
+      "internal_network_only": true
+    },
+    "image_id": "sha256:a24b7a9093e02cab3c4182d8a570ecf307eeb4a39c406d8a810e9090bb816ec8",
+    "relay_proof": {
+      "host_port_loopback_only": true,
+      "nonroot": true,
+      "readonly_rootfs": true,
+      "memory_bytes": 67108864,
+      "dedicated_networks": true
+    },
+    "relay_image_id": "sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10",
+    "java_suites": [
+      {
+        "suite": "RealAsrModelJourneyTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report_sha256": "27dce9387335371276d1517293f5d2566c8a2b9a6fc44133d2b58508e1c5ba38"
+      },
+      {
+        "suite": "JdbcAsrJobsTest",
+        "tests": 27,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report_sha256": "03e551237d01b6227418009d862e4f472685f591c00132c4548934e1f9d4a1d4"
+      },
+      {
+        "suite": "AsrHttpJourneyTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report_sha256": "e247c89b78d6352c40e817bfbc841b783a7ba8ef528f1a92e08fcae18d2177d2"
+      },
+      {
+        "suite": "AsrResultTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report_sha256": "97e432e038a432f5f17390e655a908ce224a201eac1835a26c9286f06cdf3a07"
+      },
+      {
+        "suite": "AsrHttpClientTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report_sha256": "b33396b8c0ccd72f69e5836ebbdbe38193372feba9e690bdfc9a734fb1fad646"
+      }
+    ],
+    "process_faults": {
+      "passed": true,
+      "real_user_accuracy_accepted": false,
+      "checks": {
+        "subreaper_enabled": true,
+        "owned_worker_identity": true,
+        "killed_worker_safe_failure": true,
+        "killed_worker_reaped": true,
+        "real_model_recovers_after_kill": true,
+        "owned_supervisor_identity": true,
+        "supervisor_reports_real_child": true,
+        "bounded_supervisor_receipt": true,
+        "child_guard_installed": true,
+        "supervisor_not_replaced": true,
+        "kernel_parent_death_sigkill": true,
+        "orphan_reaped_without_residual_worker": true,
+        "cleanup_complete": true
+      }
+    },
+    "oom_fault": {
+      "passed": true,
+      "safe_503": true,
+      "oom_kill_increased": true,
+      "supervisor_survived": true,
+      "memory_max": 268435456,
+      "memory_events_before": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "memory_events_after": {
+        "low": 0,
+        "high": 0,
+        "max": 56,
+        "oom": 2,
+        "oom_kill": 1,
+        "oom_group_kill": 0
+      }
+    },
+    "cleanup_complete": true,
+    "sources_unchanged": true
+  },
+  "selected_delivery": {
+    "version": 1,
+    "finished_at": "2026-10-27T05:49:09.284510+00:00",
+    "selected_checks_passed": true,
+    "source_sha256": "5794030d97f8c9d20e84d9a980efbc5f7a51a990cfd9bfb65732e4310c752302",
+    "sources_unchanged": true,
+    "backend_requested": false,
+    "backend_runtime_verified": false,
+    "production_acceptance_passed": false,
+    "boundaries": [
+      "Synthetic identities and LOCAL_TEST funds in backend integration tests.",
+      "No real WeChat/SMS/payment/model provider or mobile-device acceptance.",
+      "Builds and unit tests do not certify rendered page interactions.",
+      "Selected regression checks are not all-API business or performance acceptance."
+    ],
+    "checks": [
+      {
+        "name": "miniapp-unit",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 3.515,
+        "log": "miniapp-unit.log"
+      },
+      {
+        "name": "python-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 114.844,
+        "log": "python-regression.log"
+      },
+      {
+        "name": "ocr-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 21.594,
+        "log": "ocr-regression.log"
+      },
+      {
+        "name": "asr-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 5.265,
+        "log": "asr-regression.log"
+      },
+      {
+        "name": "wechat-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 54.891,
+        "log": "wechat-build.log"
+      },
+      {
+        "name": "h5-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 16.5,
+        "log": "h5-build.log"
+      },
+      {
+        "name": "openapi-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.281,
+        "log": "openapi-consistency.log"
+      },
+      {
+        "name": "migration-mounts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.203,
+        "log": "migration-mounts.log"
+      },
+      {
+        "name": "handover-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.329,
+        "log": "handover-consistency.log"
+      },
+      {
+        "name": "contract-verdicts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.156,
+        "log": "contract-verdicts.log"
+      }
+    ]
+  },
+  "counts": {
+    "selected_java_suites": 5,
+    "selected_java_passed": 50,
+    "real_model_journey_tests": 4,
+    "inherited_core_journey_tests": 3,
+    "miniapp_passed": 1189,
+    "python_passed": 553,
+    "asr_passed": 40,
+    "ocr_passed": 76,
+    "ocr_skipped": 1,
+    "process_fault_checks": 13
+  },
+  "default_gate": {
+    "explicit_opt_in_required": true,
+    "without_opt_in_tests": 7,
+    "without_opt_in_skipped": 7,
+    "build_success": true,
+    "log_sha256": "8947a4550808a1ae91d2e1bf2c66c81244278cef1add78dedd8b327b66320e8f"
+  },
+  "compose": {
+    "prior_pr245_pr246_smoke_failed_stale_131_table_gate": true,
+    "gate_updated_to_v063_132": true,
+    "actual_fresh_mysql_gate_result": {
+      "passed": true,
+      "full_compose_passed": false,
+      "scope": "Only exact Compose SQL gates on fresh MySQL with all63 migrations; no web stack claim",
+      "checks": {
+        "schema_count": {
+          "expected": 15,
+          "actual": 15,
+          "passed": true
+        },
+        "table_count": {
+          "expected": 132,
+          "actual": 132,
+          "passed": true
+        },
+        "recognition_count": {
+          "expected": 7,
+          "actual": 7,
+          "passed": true
+        },
+        "invite_count": {
+          "expected": 3,
+          "actual": 3,
+          "passed": true
+        },
+        "reward_count": {
+          "expected": 4,
+          "actual": 4,
+          "passed": true
+        }
+      },
+      "migrations": 63,
+      "script_sha256": "a45215169d475ca86139f0e6c6cd22f271a5121312231d93fa8c20be0ff05c54",
+      "cleanup_complete": true
+    },
+    "full_local_stack_passed": false,
+    "local_stack_blocker": "Docker Hub auth.docker.io connection timeout while building uncached base images",
+    "remote_new_head_not_verified": true,
+    "log_sha256": "7e46507bf355390f797ab6b79844036d64774c5d762297f7890c0afbf31985f7"
+  },
+  "source_sha256": {
+    "backend/src/test/java/com/autocare/platform/order/RealAsrModelJourneyTest.java": "2141cc1f5c7edcfa900a7061e22108eb4b4719836a7781d2ab34d709f6db2201",
+    "scripts/run_real_asr_journey.py": "2afc1f4b37c532c85fa401f4153ac8fedfc320f721e3c18935c134fe3c1aeb76",
+    "scripts/test_real_asr_journey.py": "15408faee2a425ae8b431c5627a02bac17605f76f304e5623c2b7dfbdfe0c5a9",
+    "scripts/run_local_delivery.py": "46a3382a8bdef8d4ad7055994523e223f5518b38100e219f02d696bd196f8276",
+    "scripts/verify_compose.sh": "a45215169d475ca86139f0e6c6cd22f271a5121312231d93fa8c20be0ff05c54",
+    "services/asr/linux_fault_acceptance.py": "1de96bc49cffee69681352fee04a590c4fd5d073fe20d32d8647c59cb0d9cfe6",
+    "services/asr/linux_oom_acceptance.py": "566bb2b08d3c820c7948756d0210bb564c1a283d7e48bfdb8c750e3c5f3f285a",
+    "services/asr/serve_acceptance.py": "d01d2f95a5458fde7bc77ce2f64c154f15240aff354e261bc9f01e4b3fcebc91",
+    "services/asr/test_asr_fault_proof.py": "129a88808cf3c7aa50cbe24be13cb4aa34fa56cdc94e27fb77bca7e4678df700",
+    ".gitattributes": "d1a7869c1043d0076bc7537d15dae09bd2ee1f1d494cdd0db89efd742aea386f"
+  },
+  "boundaries": {
+    "identity_and_clean_material_metadata_are_fixtures": true,
+    "object_store_is_fixture": true,
+    "english_audio_is_local_synthetic_tts": true,
+    "real_faster_whisper_model_used": true,
+    "real_java_scheduler_and_http_client_used": true,
+    "full_backend_rerun": false,
+    "full_api_acceptance_passed": false,
+    "chinese_dialect_noise_user_accuracy_accepted": false,
+    "new_rendered_frontend_with_real_model_accepted": false,
+    "wechat_device_cloud_upload_accepted": false,
+    "production_acceptance_passed": false
+  },
+  "logs_sha256": {
+    "asr-real-current.log": "ae44a9248e937de6147f1ff92031b315ed31d3343bacc832d766eb6f24eff351",
+    "asr-real-delivery-final.log": "4be744b0f1ba321f437d55bcf5ea45080e309eac1b0839652c1929446fe08b84",
+    "asr-compose-schema.log": "15180e5cbd36ee82f0928bc620068bebe7892ee15e3436b3e4e9ad8cd0bd2a7c"
+  }
+}

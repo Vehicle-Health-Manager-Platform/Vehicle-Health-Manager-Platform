@@ -1,6 +1,7 @@
 package com.autocare.platform.order;
 import com.autocare.platform.common.ApiResponse;
 import com.autocare.platform.vehicle.VehicleOwner;
+import com.autocare.platform.service.MerchantActor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,12 @@ public class MileageRecognitionController {
         var owner=VehicleOwner.from(jwt);if(request.getQueryString()!=null)throw MileageRecognition.invalid();var input=MileageRecognition.input(raw);
         var service=services.getIfAvailable();if(service==null)throw MileageRecognition.unavailable();
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(ApiResponse.success(service.recognize(owner,input)));
+    }
+    @PostMapping(value="/api/check/pickup/mileage-recognition",consumes="application/json")
+    public ResponseEntity<?> pickup(@AuthenticationPrincipal Jwt jwt,@RequestBody String raw,jakarta.servlet.http.HttpServletRequest request){
+        var actor=MerchantActor.from(jwt);if(request.getQueryString()!=null)throw MileageRecognition.invalid();var input=MileageRecognition.pickupInput(raw);
+        var service=services.getIfAvailable();if(service==null)throw MileageRecognition.unavailable();
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(ApiResponse.success(service.recognizePickup(actor,input)));
     }
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<?> failure(ResponseStatusException e){int status=e.getStatusCode().value();return ResponseEntity.status(status).cacheControl(CacheControl.noStore()).body(ApiResponse.error(status==400?40001:status*100,e.getReason()));}

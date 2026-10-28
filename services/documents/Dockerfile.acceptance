@@ -1,0 +1,14 @@
+# Local acceptance: operator-prepared OCR runtime and cached JDK; no model download.
+FROM maven:3.9-eclipse-temurin-17 AS jdk
+FROM autocare-ocr-runtime:acceptance
+COPY --from=jdk /opt/java/openjdk /opt/java/openjdk
+COPY services/ocr/src/*.py /app/
+COPY services/ocr/model_assets.py services/ocr/models.lock.json /app/
+COPY services/documents/src/*.py /document/src/
+COPY --from=document_java / /document/java/
+ENV DOCUMENT_CORE_ENABLED=false PYTHONPATH=/document/src:/app \
+    HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 JAVA_HOME=/opt/java/openjdk \
+    PYTHONPYCACHEPREFIX=/tmp/document-pycache PYTHONDONTWRITEBYTECODE=1
+WORKDIR /document
+USER 10001:10001
+CMD ["python", "-c", "import time;time.sleep(1800)"]

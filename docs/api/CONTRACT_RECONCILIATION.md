@@ -2,7 +2,7 @@
 
 本文件由 `python scripts/reconcile_contract.py` 生成，请勿手工编辑；结论数据在 [CONTRACT_VERDICTS.json](CONTRACT_VERDICTS.json)。
 
-- 契约操作：**353** 项；具备四类历史证据：**317** 项；有明确结论但**不计证据**：**36** 项。
+- 契约操作：**362** 项；具备四类历史证据：**317** 项；有明确结论但**不计证据**：**45** 项。
 - 未解释的操作：**0** 项（脚本 `--check` 会在出现未结案条目时失败）。
 
 结论只回答"这一项为什么没有四类证据"，**不等于**该功能已验收、已上线或已可用。真实执行证据见 [API_COVERAGE.md](../testing/API_COVERAGE.md)，全 API 验收仍为 `false`。
@@ -11,17 +11,17 @@
 
 | 结论 | 含义 | 项数 |
 | --- | --- | --- |
-| `superseded` | 已被具名实现替代 | 15 |
+| `superseded` | 已被具名实现替代 | 17 |
 | `internal-only` | 由服务内部事务完成 | 1 |
-| `implemented-local` | 本地软件已实现，完整历史HTTP证据待补 | 1 |
+| `implemented-local` | 本地软件已实现，完整历史HTTP证据待补 | 10 |
 | `blocked-external` | 依赖未接入的外部上游 | 11 |
-| `not-implemented` | 尚未实现(需先立项) | 4 |
+| `not-implemented` | 尚未实现(需先立项) | 2 |
 | `no-success-path` | 实现存在但无成功路径 | 1 |
 | `dev-only` | 仅本地演示或开发端点 | 3 |
 
 ## 明细
 
-### 已被具名实现替代（15 项）
+### 已被具名实现替代（17 项）
 
 | 操作 | 替代实现 | 说明 |
 | --- | --- | --- |
@@ -40,6 +40,8 @@
 | `GET /api/notifications` | `GET /api/owner/notifications` | 通知按收件角色拆分(owner/merchant/tech 与 diagnosis 两类),避免单入口混合三类投影与已读状态。 |
 | `POST /api/order/verify` | `POST /api/merchant/orders/{id}/redeem` | 核销改为本店商家对订单的显式核销,带幂等键与免佣事实;早期 verify 只有 order_id/verify_code 两个字段。 |
 | `POST /api/refunds/create` | `POST /api/order/{id}/refund` | 退款申请改为订单维度资源,含撤销、商家决策与与支付对账,不再是独立 create。 |
+| `GET /api/vehicle/ocr-license` | `POST /api/vehicle/license-recognition` | 旧GET不执行行驶证识别；迁移当前OWNER、本人CLEAN图片与NEW_VEHICLE_LICENSE_OCR_V1独立用途同意的POST，候选须人工核对并手动选择车型。 |
+| `GET /api/vehicle/vin-decode` | `POST /api/vehicle/vin-decode` | 旧GET不执行解码；迁移具备OWNER会话复核、明确NHTSA用途同意和人工确认的POST，VIN不得放在查询参数。 |
 
 ### 由服务内部事务完成（1 项）
 
@@ -47,11 +49,20 @@
 | --- | --- | --- |
 | `POST /api/coupon/release` | `未标记` | 订单取消/退款时的券释放由事务内的 CouponRecovery 完成,不存在独立 HTTP 入口;单独暴露会被滥用为手动改券状态。 |
 
-### 本地软件已实现，完整历史HTTP证据待补（1 项）
+### 本地软件已实现，完整历史HTTP证据待补（10 项）
 
 | 操作 | 当前实现标记 | 说明 |
 | --- | --- | --- |
+| `POST /api/check/pickup/mileage-recognition` | `pickup-mileage-recognition-implemented` | 本店接车OCR候选及人工核对已接线，默认关闭；本地HTTP组件/MySQL权限与状态测试，上游和存储使用明确替身，真实模型、手机和完整供应商证据另验。 |
+| `POST /api/recognition/asr/jobs` | `asr-durable-job-create-implemented-requires-model-acceptance` | R3持久ASR任务、当前OWNER/同车辆同用途权限、幂等/取消/租约/TTL及人工转写核对软件已实现；真实faster-whisper模型与授权语音效果尚未验收，局部替身流程不作为全部历史四类HTTP证据。 |
+| `GET /api/recognition/asr/jobs/{id}` | `asr-durable-job-read-implemented-requires-model-acceptance` | R3持久ASR任务、当前OWNER/同车辆同用途权限、幂等/取消/租约/TTL及人工转写核对软件已实现；真实faster-whisper模型与授权语音效果尚未验收，局部替身流程不作为全部历史四类HTTP证据。 |
+| `POST /api/recognition/asr/jobs/{id}/cancel` | `asr-durable-job-cancel-implemented` | R3持久ASR任务、当前OWNER/同车辆同用途权限、幂等/取消/租约/TTL及人工转写核对软件已实现；真实faster-whisper模型与授权语音效果尚未验收，局部替身流程不作为全部历史四类HTTP证据。 |
+| `POST /api/recognition/documents/jobs` | `document-durable-job-implemented-local` | R4b持久文档任务、独立图片材料与人工逐块核对软件已实现；本地替身HTTP/MySQL不代表真实证件或模型效果，真实中文单据/手机与历史四类API全覆盖另验，默认关闭。 |
+| `GET /api/recognition/documents/jobs/{id}` | `document-durable-job-implemented-local` | R4b持久文档任务、独立图片材料与人工逐块核对软件已实现；本地替身HTTP/MySQL不代表真实证件或模型效果，真实中文单据/手机与历史四类API全覆盖另验，默认关闭。 |
+| `POST /api/recognition/documents/jobs/{id}/cancel` | `document-durable-job-implemented-local` | R4b持久文档任务、独立图片材料与人工逐块核对软件已实现；本地替身HTTP/MySQL不代表真实证件或模型效果，真实中文单据/手机与历史四类API全覆盖另验，默认关闭。 |
+| `POST /api/vehicle/license-recognition` | `license-owner-candidate-implemented-requires-document-acceptance` | R2b新车用途行驶证候选网关与本地受限OCR场景已实现；新车图片复用当前OWNER私有上传，无vehicle_id。授权真实证件效果、真机及国内车型映射另验，不据替身或合成样本扩称全部历史HTTP证据齐全。 |
 | `POST /api/vehicle/mileage-recognition` | `mileage-recognition-gateway-implemented-requires-model` | 默认关闭的里程识别网关已实现；真实OCR模型、小程序接线及完整四类真实HTTP执行证据待补。 |
+| `POST /api/vehicle/vin-decode` | `vin-owner-candidate-implemented-requires-provider-acceptance` | R2a车主网关与小程序候选/人工选车型闭环已实现；HTTP/JWT/MySQL使用合成供应商验证，不作为真实NHTSA覆盖或中国车型来源验收，也不扩称历史四类证据齐全。 |
 
 ### 依赖未接入的外部上游（11 项）
 
@@ -69,14 +80,12 @@
 | `POST /api/auth/wx-login` | `core-implemented` | 微信登录需要真实 code2session 上游;本地用自签会话夹具,不计真实微信登录。 |
 | `POST /api/knowledge/answer` | `r8-remaining-implemented` | 实现存在(LicensedKnowledge.answer),未配置 AI 即 503,配置后需真实上游生成并复核来源未变更。 |
 
-### 尚未实现(需先立项)（4 项）
+### 尚未实现(需先立项)（2 项）
 
 | 操作 | 当前实现标记 | 说明 |
 | --- | --- | --- |
 | `POST /api/payments/callback/{channel}` | `未标记` | 真实渠道回调未接入;当前只有 LOCAL_TEST 渠道回调用于隔离验收。接入需渠道证书、验签密钥与生产商户号。 |
 | `POST /api/refunds/callback/{channel}` | `未标记` | 同上:退款回调只有 LOCAL_TEST,真实渠道回调未接入。 |
-| `GET /api/vehicle/ocr-license` | `未标记` | 行驶证 OCR 未实现,需要外部 OCR 供应商与合规存储方案;当前车辆信息由车主手填。 |
-| `GET /api/vehicle/vin-decode` | `未标记` | VIN 解码未实现,需要外部 VIN 库供应商;车型由品牌/车系/配置枚举录入。 |
 
 ### 实现存在但无成功路径（1 项）
 

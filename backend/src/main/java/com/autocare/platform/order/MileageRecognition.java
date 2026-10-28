@@ -1,10 +1,12 @@
 package com.autocare.platform.order;
 
 import com.autocare.platform.file.SignedObjectStore;
+import com.autocare.platform.service.MerchantActor;
 import com.autocare.platform.vehicle.VehicleOwner;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.*;
 import java.util.concurrent.Semaphore;
+import java.util.function.Supplier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -35,7 +37,31 @@ public final class MileageRecognition {
     public Map<String,Object> recognize(VehicleOwner owner,JsonNode input){
         input=input(input.toString());
         long vehicle=input.path("vehicle_id").asLong(),file=input.path("file_id").asLong();
-        var before=facts(owner,vehicle,file);
+        return recognize(()->facts(owner,vehicle,file),"vehicle_id",vehicle,file);
+    }
+    public static JsonNode pickupInput(String raw){
+        try{if(raw==null||raw.length()>4096)throw invalid();var b=CouponInput.parse(raw);CouponInput.exact(b,"order_id","file_id","consent","consent_version");CouponInput.id(b.get("order_id"));CouponInput.id(b.get("file_id"));
+            if(!b.path("consent").isBoolean()||!b.path("consent").asBoolean()||!b.path("consent_version").isTextual()||!"PICKUP_MILEAGE_OCR_V1".equals(b.path("consent_version").asText()))throw invalid();return b;
+        }catch(RuntimeException e){throw invalid();}
+    }
+    private Map<String,Object> pickupFacts(MerchantActor actor,long order,long file){
+        return db.reads.execute(t->{
+            db.merchant(actor,false);
+            if(!enabled||store==null||provider==null)throw unavailable();
+            var o=db.one("SELECT id,merchant_id,user_id,vehicle_id,status,updated_at FROM `order` WHERE id=? AND merchant_id=? AND is_deleted=0",order,actor.merchantId());
+            if(!OrderStatus.PAID.equals(o.get("status")))throw new ResponseStatusException(HttpStatus.CONFLICT,"当前订单不可接车，请重新读取");
+            var v=db.one("SELECT id,user_id,updated_at FROM vehicle WHERE id=? AND user_id=? AND is_deleted=0",o.get("vehicle_id"),o.get("user_id"));
+            var f=db.one("SELECT id,object_key,content_type,size_bytes,scan_status,updated_at FROM file_object WHERE id=? AND owner_type='staff_account' AND owner_id=? AND is_deleted=0 AND scan_status='CLEAN' AND content_type IN ('image/jpeg','image/png') AND size_bytes BETWEEN 1 AND 4194304 AND NOT EXISTS(SELECT 1 FROM pickup_check_file p WHERE p.file_id=file_object.id)",file,actor.staffId());
+            return Map.of("order",o,"vehicle",v,"file",f);
+        });
+    }
+    public Map<String,Object> recognizePickup(MerchantActor actor,JsonNode input){
+        input=pickupInput(input.toString());
+        long order=input.path("order_id").asLong(),file=input.path("file_id").asLong();
+        return recognize(()->pickupFacts(actor,order,file),"order_id",order,file);
+    }
+    private Map<String,Object> recognize(Supplier<Map<String,Object>> facts,String scope,long id,long file){
+        var before=facts.get();
         if(!permits.tryAcquire())throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,"识别繁忙，请稍后重试");
         try{
             var f=(Map<?,?>)before.get("file");byte[] bytes;
@@ -45,12 +71,12 @@ public final class MileageRecognition {
             }catch(RuntimeException e){throw unavailable();}
             JsonNode result;
             try{result=validate(provider.recognize(bytes));}catch(RuntimeException e){throw unavailable();}
-            if(!before.equals(facts(owner,vehicle,file)))throw new ResponseStatusException(HttpStatus.CONFLICT,"车辆或图片已变化，请重新选择");
+            if(!before.equals(facts.get()))throw new ResponseStatusException(HttpStatus.CONFLICT,"订单、车辆或图片已变化，请重新选择");
             var fields=new ArrayList<Map<String,Object>>();
             if(Set.of("CANDIDATE","LOW_CONFIDENCE").contains(result.path("status").asText())){
                 var row=result.path("candidates").get(0);fields.add(Map.of("key","mileage","value",Integer.toString(row.path("mileage_km").asInt()),"confidence",row.path("confidence").doubleValue()));
             }
-            return Map.of("vehicle_id",vehicle,"file_id",file,"review_status",result.path("status").asText(),"requires_confirmation",true,
+            return Map.of(scope,id,"file_id",file,"review_status",result.path("status").asText(),"requires_confirmation",true,
                 "recognition",Map.of("version",1,"scene","archive","status",fields.isEmpty()?"EMPTY":"CANDIDATE","fields",fields));
         }finally{permits.release();}
     }

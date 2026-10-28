@@ -14,7 +14,7 @@ function transportCommand(host_backend,run,config,headersPath){
  if(typeof host_backend!=='boolean')throw Error('Invalid transport mode')
  return host_backend?['curl.exe',['--config',config,'--dump-header',headersPath,'--data-binary','@-']]:['docker',['exec','-i','autocare-real-mileage-'+run.slice(0,8),'curl','--config','/workspace/.cache/real-mileage-'+run+'/native-curl.private.cfg','--dump-header','/workspace/.cache/real-mileage-'+run+'/native-headers.private.txt','--data-binary','@-']]
 }
-async function createMileageProxy({token,port,image,work,run,listenPort=18080,host_backend=false}){
+async function createMileageProxy({token,port,image,work,run,listenPort=18080,host_backend=false,responseGate=null}){
  if(path.resolve(work)!==path.resolve(__dirname,'..','.cache','real-mileage-'+run)||!/^[a-f0-9]{32}$/.test(run)||!/^eyJ[\w.-]+$/.test(token)||!Number.isInteger(port)||port<1||port>65535)throw Error('Invalid fixture')
  const config=path.join(work,'native-curl.private.cfg'),headersPath=path.join(work,'native-headers.private.txt')
  const [executable,arguments_]=transportCommand(host_backend,run,config,headersPath)
@@ -32,10 +32,11 @@ async function createMileageProxy({token,port,image,work,run,listenPort=18080,ho
    const bytes=await new Promise((resolve,reject)=>{const child=spawn(executable,arguments_,{windowsHide:true,stdio:['pipe','pipe','ignore']});let output=[];child.stdout.on('data',c=>output.push(c));child.on('error',reject);child.on('close',code=>code===0?resolve(Buffer.concat(output)):reject(Error('Transport failed')));child.stdin.on('error',()=>{});child.stdin.end(body)})
    const status=[...fs.readFileSync(headersPath,'utf8').matchAll(/HTTP\/[\d.]+ (\d+)/g)].at(-1);if(!status)throw Error('Missing status')
    counts[mode]++;if(mode==='upload'&&Number(status[1])===200){file=JSON.parse(bytes).data.file_id;if(!Number.isSafeInteger(file)||file<1)throw Error('Invalid file receipt')}
+   if(responseGate)await responseGate({mode,status:Number(status[1]),bytes})
    res.writeHead(Number(status[1]),{'content-type':'application/json','cache-control':'no-store'}).end(bytes)
   }catch{res.writeHead(502).end()}finally{busy=false;for(const p of [config,headersPath])try{fs.unlinkSync(p)}catch{}}
  })
  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(listenPort,'127.0.0.1',resolve)})
- return {server,counts,async close(){server.closeAllConnections();await new Promise(resolve=>server.close(resolve));for(const p of [config,headersPath])try{fs.unlinkSync(p)}catch{}}}
+ return {server,counts,isBusy:()=>busy,async close(){server.closeAllConnections();await new Promise(resolve=>server.close(resolve));for(const p of [config,headersPath])try{fs.unlinkSync(p)}catch{}}}
 }
 module.exports={admitted,createMileageProxy,transportCommand}

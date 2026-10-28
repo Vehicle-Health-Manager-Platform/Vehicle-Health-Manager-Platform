@@ -5,11 +5,11 @@
   "current_backend_revalidated": false,
   "scope": "Selected recorded synthetic-identity/LOCAL_TEST suites only; other tests are not indexed. Reconciled with current definitions; no new HTTP execution or production acceptance.",
   "counts": {
-    "contract_operations": 353,
-    "protected_operations": 339,
+    "contract_operations": 362,
+    "protected_operations": 348,
     "four_kind_definitions": 317,
     "historical_four_kind_operations": 317,
-    "without_complete_historical_evidence": 36,
+    "without_complete_historical_evidence": 45,
     "current_run_operations": 0,
     "suites": 36
   },
@@ -5993,6 +5993,30 @@
           ]
         }
       ]
+    },
+    {
+      "operation_id": "post_api_check_pickup_mileage_recognition",
+      "method": "POST",
+      "path": "/api/check/pickup/mileage-recognition",
+      "roles": "本店有效MERCHANT/STAFF会话、PAID订单、仍归订单车主的车辆、当前员工本人CLEAN JPEG/PNG",
+      "protected": true,
+      "implementation_status": "pickup-mileage-recognition-implemented",
+      "defined_kinds": [],
+      "historical_kinds": [],
+      "missing_definition_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "missing_historical_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "current_acceptance": "NOT_RUN",
+      "sources": []
     },
     {
       "operation_id": "post_api_check_pickup_submit",
@@ -13545,6 +13569,150 @@
       ]
     },
     {
+      "operation_id": "post_api_recognition_asr_jobs",
+      "method": "POST",
+      "path": "/api/recognition/asr/jobs",
+      "roles": "当前有效OWNER；本人车辆/同用途CLEAN input_material音频；ASR_ENABLED默认false",
+      "protected": true,
+      "implementation_status": "asr-durable-job-create-implemented-requires-model-acceptance",
+      "defined_kinds": [],
+      "historical_kinds": [],
+      "missing_definition_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "missing_historical_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "current_acceptance": "NOT_RUN",
+      "sources": []
+    },
+    {
+      "operation_id": "get_api_recognition_asr_jobs_id",
+      "method": "GET",
+      "path": "/api/recognition/asr/jobs/{id}",
+      "roles": "当前有效OWNER；本人车辆/同用途CLEAN input_material音频；ASR_ENABLED默认false",
+      "protected": true,
+      "implementation_status": "asr-durable-job-read-implemented-requires-model-acceptance",
+      "defined_kinds": [],
+      "historical_kinds": [],
+      "missing_definition_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "missing_historical_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "current_acceptance": "NOT_RUN",
+      "sources": []
+    },
+    {
+      "operation_id": "post_api_recognition_asr_jobs_id_cancel",
+      "method": "POST",
+      "path": "/api/recognition/asr/jobs/{id}/cancel",
+      "roles": "当前有效OWNER；本人当前车辆与任务；新有效会话可取消自己的旧任务",
+      "protected": true,
+      "implementation_status": "asr-durable-job-cancel-implemented",
+      "defined_kinds": [],
+      "historical_kinds": [],
+      "missing_definition_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "missing_historical_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "current_acceptance": "NOT_RUN",
+      "sources": []
+    },
+    {
+      "operation_id": "post_api_recognition_documents_jobs",
+      "method": "POST",
+      "path": "/api/recognition/documents/jobs",
+      "roles": "当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
+      "protected": true,
+      "implementation_status": "document-durable-job-implemented-local",
+      "defined_kinds": [],
+      "historical_kinds": [],
+      "missing_definition_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "missing_historical_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "current_acceptance": "NOT_RUN",
+      "sources": []
+    },
+    {
+      "operation_id": "get_api_recognition_documents_jobs_id",
+      "method": "GET",
+      "path": "/api/recognition/documents/jobs/{id}",
+      "roles": "当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
+      "protected": true,
+      "implementation_status": "document-durable-job-implemented-local",
+      "defined_kinds": [],
+      "historical_kinds": [],
+      "missing_definition_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "missing_historical_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "current_acceptance": "NOT_RUN",
+      "sources": []
+    },
+    {
+      "operation_id": "post_api_recognition_documents_jobs_id_cancel",
+      "method": "POST",
+      "path": "/api/recognition/documents/jobs/{id}/cancel",
+      "roles": "当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
+      "protected": true,
+      "implementation_status": "document-durable-job-implemented-local",
+      "defined_kinds": [],
+      "historical_kinds": [],
+      "missing_definition_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "missing_historical_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "current_acceptance": "NOT_RUN",
+      "sources": []
+    },
+    {
       "operation_id": "post_api_refunds_callback_LOCAL_TEST",
       "method": "POST",
       "path": "/api/refunds/callback/LOCAL_TEST",
@@ -14943,6 +15111,30 @@
       ]
     },
     {
+      "operation_id": "post_api_vehicle_license_recognition",
+      "method": "POST",
+      "path": "/api/vehicle/license-recognition",
+      "roles": "当前有效OWNER会话；本人CLEAN JPEG/PNG 1..4MiB；LICENSE_OCR_ENABLED默认false",
+      "protected": true,
+      "implementation_status": "license-owner-candidate-implemented-requires-document-acceptance",
+      "defined_kinds": [],
+      "historical_kinds": [],
+      "missing_definition_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "missing_historical_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "current_acceptance": "NOT_RUN",
+      "sources": []
+    },
+    {
       "operation_id": "get_api_vehicle_list",
       "method": "GET",
       "path": "/api/vehicle/list",
@@ -15150,6 +15342,30 @@
       "sources": []
     },
     {
+      "operation_id": "post_api_vehicle_vin_decode",
+      "method": "POST",
+      "path": "/api/vehicle/vin-decode",
+      "roles": "当前有效OWNER会话；VIN_DECODE_ENABLED默认false，显式NHTSA_VPIC来源",
+      "protected": true,
+      "implementation_status": "vin-owner-candidate-implemented-requires-provider-acceptance",
+      "defined_kinds": [],
+      "historical_kinds": [],
+      "missing_definition_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "missing_historical_kinds": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "current_acceptance": "NOT_RUN",
+      "sources": []
+    },
+    {
       "operation_id": "get_api_vehicle_vehicle_health_dashboard",
       "method": "GET",
       "path": "/api/vehicle/{vehicle}/health-dashboard",
@@ -15270,6 +15486,6 @@
       ]
     }
   ],
-  "contract_sha256": "4463302f9ccc7f91bb490b36079be4147ca08338d353a6b3c7efaaad1d9f3e5d",
+  "contract_sha256": "a6a8a6b4d6f9e9fe748a9a6f99855b9739122682d2235f1c065199abda5fbfdd",
   "input_hash_policy": "Input SHA256 uses CRLF-to-LF normalization. Historical raw collection digests must match its LF or CRLF byte form; content changes are rejected."
 }

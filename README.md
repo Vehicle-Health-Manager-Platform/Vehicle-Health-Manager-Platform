@@ -1,3 +1,29 @@
+## 2026-10-28 阶段更新合并
+
+本次将 PR238–257 的代码和交接资料完整集成至 main，保留全部阶段提交历史。[合并范围、门禁与提交覆盖](docs/progress/MERGE_2026_10_28.md)记录20个原 PR、已有测试和未验边界；实际合并状态以 GitHub 为准。包括 VIN/行驶证、ASR、图文/PDF、真实私有embedding与公开向量检索，以及10项识别接口HTTP补证；不部署生产环境。
+
+当前入口：[本地交接](docs/delivery/LOCAL_HANDOVER.md)、[最终验收与剩余工作](docs/delivery/FINAL_ACCEPTANCE_2026_10_28.md)、[统一业务验收](docs/testing/CURRENT_API_ACCEPTANCE.md)。以下内容为阶段历史，历史“未合并”或能力待接说明不覆盖本次集成范围。
+
+## 本地阶段交接（2026-10-28）
+
+R6a新增[当前版API统一运行器](docs/testing/CURRENT_API_ACCEPTANCE.md)，复用严格审计器，逐套新库、失败继续、源码/清理校验和覆盖缺口汇总。[阶段验证](docs/progress/R6A_CURRENT_API_ACCEPTANCE.md)独立记录新执行与已有复核。
+
+R5c2已接通[公开向量检索、明确关键词降级与精确片段引用](docs/api/KNOWLEDGE_VECTOR_RETRIEVAL.md)，默认关闭，需独立嵌入许可和当前完整索引。AI只使用许可摘录，调用后重新核验来源；实际BGE模型与模拟AI分开验证。[阶段结果](docs/progress/RECOGNITION_R5C2_PUBLIC_VECTOR.md)与[最终版本统一验收清单](docs/delivery/FINAL_ACCEPTANCE_2026_10_28.md)列出当前证据及剩余工作。以下各阶段记录描述当时状态，以此处最新入口为准。
+
+R5c1新增[默认关闭的自动索引、运营状态与独立清理维护](docs/operations/KNOWLEDGE_EMBEDDING_LIFECYCLE.md)。公开VECTOR/降级和AI引用接线列为R5c2，当前公开检索仍KEYWORD；测试结果见[阶段报告](docs/progress/RECOGNITION_R5C1_EMBEDDING_LIFECYCLE.md)。
+
+R5b已实现[私有真实中文嵌入及Java/MySQL内部索引联调](docs/progress/RECOGNITION_R5B_REAL_EMBEDDING.md)，含固定资源/依赖锁、受限离线推理和token预算；[配置、接口和本地复现](services/embedding/README.md)。公开检索仍KEYWORD，自动索引、公开VECTOR、领域质量、真机及正式微信/SMS/生产待后续验收。当前362项公开操作、65迁移/134表。以下保留阶段历史，未验事项以最新交接和报告为准。
+
+R3新增[ASR持久任务与人工转写核对](docs/api/ASR_JOBS.md)，默认关闭；离线真实模型/完整依赖锁/Linux镜像及授权语音效果仍待准备与验收。当前契约359项/345受保护，局部流程不代表全部开发或全API验收完成。
+
+上一批VIN阶段已上传草稿PR243，未合并发布。按[识别与向量路线](docs/superpowers/plans/2026-10-26-recognition-vector-roadmap.md)，R2b新增[行驶证车牌/VIN候选与人工录车](docs/api/LICENSE_RECOGNITION.md)，复用本人私有上传和受限本地OCR，默认关闭；真实证件效果、图片保留/删除政策、国内精确车型与真机仍待验。R2a历史验证见[VIN记录](docs/progress/RECOGNITION_R2A_VIN_GATEWAY.md)。
+
+按最新范围暂缓正式微信身份、短信开通与生产发布，先完成本地开发、测试和资料交接。[统一交接入口](docs/delivery/LOCAL_HANDOVER.md)包括启动/配置、四角色手册、API、部署、外部接入步骤及已知问题；[本轮测试报告](docs/testing/LOCAL_DELIVERY_2026_10_26.md)区分新执行与历史依据。复跑命令：`python scripts/run_local_delivery.py`，含真实MySQL/HTTP的后端扩展为 `--backend`。待开发和待验收事项尚未全部关闭，不能据此认定项目全部完成。
+
+## 当前进度与后续计划（2026-10-26，历史路线）
+
+已完成到A4d45，42个阶段PR通过PR237合入main/afa7e93，主分支8项CI全部成功。产品为微信小程序及共享后端，主要软件流程已具备；正式接入、手机与发布验收仍待完成。详见[F01–F20现状和阶段路线](docs/progress/STATUS_AND_ROADMAP_2026_10_26.md)及[下一项A4d46可靠性补验](docs/superpowers/plans/2026-10-26-a4d46-ocr-reliability.md)。
+
 ## 2026-10-26 阶段更新集成
 
 本次集成PR195及PR196–236完整阶段栈，包含退款页、权限和业务验收、微信原生旅程及Linux OCR联调。[合并核查](docs/progress/MERGE_2026_10_26.md)记录范围、历史CI修复及最终验证方式；合并状态以GitHub记录为准。产品交付目标仍为微信小程序和共享后端。
@@ -397,3 +423,9 @@ docker compose --env-file .env -f deploy/compose/compose.yml up --build -d
 ## 2026-10-21 A4d-4c：共用退款页收口（已上传PR195）
 
 车主/店长退款页统一阶段、资金事实、表单缺口与错误恢复；新增确认前后账号/路由/版本/正文复检，页面隐藏或账号变化取消旧弹窗；未知结果保留原正文原键重试。新增15项测试，全量1030/1030（0失败/跳过），微信与H5构建及两项原生门禁通过；产物17锚点、2个textarea。后端/API/渠道未改；真机、正式资金及全量后端本轮未执行。后续路线与上传策略见[执行计划](docs/progress/NEXT_EXECUTION_PLAN_2026_10_21.md)，[阶段记录](docs/progress/R9_A4D4C_REFUNDS_EXECUTION.md)。实现提交6a8835b已推送并创建[草稿PR195](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/195)，远程CI待完成；未合并、未上线。
+
+2026-10-26 R2a：[VIN车主候选与人工录车](docs/api/VIN_OWNER_GATEWAY.md)已接通，默认关闭，明确NHTSA美国市场数据限制；[阶段验证](docs/progress/RECOGNITION_R2A_VIN_GATEWAY.md)。行驶证、ASR、图文及向量按路线继续，真实服务与生产尚未验收。
+
+2026-10-27 R4b：[图文持久任务与车主逐块核对](docs/api/DOCUMENT_JOBS.md)已实现，默认关闭；[测试范围、已修复问题及交接](docs/progress/RECOGNITION_R4B_DOCUMENT_JOBS.md)。实际模型与合成业务旅程分开记录，中文真实单据/真机及生产未验收。
+
+2026-10-27 R5a：[授权嵌入与内部向量索引基础](docs/api/KNOWLEDGE_VECTOR_FOUNDATION.md)，旧资料不隐式授权；车主检索仍KEYWORD，真实模型与公开向量接线待R5b/R5c。

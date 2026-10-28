@@ -8,6 +8,7 @@ import { createVehicleFlow, initialVehicleState } from '../../services/vehicle-f
 import { vehicleEntryPrefill } from '../../services/vehicle-entry-session.js'
 import InputCandidateReview from '../../components/InputCandidateReview.vue'
 import {candidateFields} from '../../services/input-candidates.js'
+import {vinSummary} from '../../services/vin-candidate.js'
 const sourceMessage = ref('')
 const state = reactive(initialVehicleState())
 const flow = createVehicleFlow({ state, api: vehicleApi, token: () => ownerSession.accessToken, newKey: imageRequestKey })
@@ -17,7 +18,7 @@ const locked = computed(() => state.busy || Boolean(state.saved) || ['unauthoriz
 watch(() => ownerSession.accessToken, () => { flow.reset(); sourceMessage.value = '' }, { flush: 'sync' })
 onLoad(() => {
  const incoming=vehicleEntryPrefill.take(ownerSession.accessToken)
- if(incoming){state.plate=incoming.plate;state.vin=incoming.vin;sourceMessage.value={plate:'车牌已带入，请确认车型与里程后保存。',vin:'VIN已校验并带入，尚未解码车型，请手动选择确认。',license:'请按证件手动填写；行驶证识别尚未开通。'}[incoming.source]}
+ if(incoming){state.plate=incoming.plate;state.vin=incoming.vin;sourceMessage.value=incoming.vinFacts?`NHTSA候选（需人工选车型）：${vinSummary(incoming.vinFacts)}。美国市场登记数据可能不完整，请对照实车选择品牌、车系、年款与配置。`:{plate:'车牌已带入，请确认车型与里程后保存。',vin:'VIN已校验并带入，请手动选择确认车型。',license:'请核对证件车牌/VIN与本人修改，手动选择车型和里程；照片未作为档案附件带入。'}[incoming.source]}
 })
 onShow(() => {
   if (state.saved) return

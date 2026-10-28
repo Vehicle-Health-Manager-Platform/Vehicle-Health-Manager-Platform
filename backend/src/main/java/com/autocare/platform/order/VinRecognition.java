@@ -1,0 +1,83 @@
+package com.autocare.platform.order;
+
+import com.autocare.platform.gateway.identity.AuthTokens;
+import com.autocare.platform.vehicle.VehicleOwner;
+import com.autocare.platform.vehicle.vin.VinDecoder;
+import com.fasterxml.jackson.databind.JsonNode;
+import java.time.Instant;
+import java.util.concurrent.Semaphore;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
+/** Read-only business operation; admission counters never contain VIN or provider output. */
+public final class VinRecognition {
+    public static final String CONSENT_VERSION = "VIN_VPIC_V1";
+    public record Input(String vin, Integer modelYear) {}
+    private final ReservationStore db;
+    private final VinDecoder decoder;
+    private final boolean enabled;
+    private final Semaphore permits = new Semaphore(2);
+
+    public VinRecognition(ReservationStore db, VinDecoder decoder, boolean enabled) {
+        this.db = db; this.decoder = decoder; this.enabled = enabled;
+    }
+
+    public static Input input(String raw) {
+        try {
+            if (raw == null || raw.length() > 1024) throw invalid();
+            var body = CouponInput.parse(raw);
+            if (body.has("model_year")) CouponInput.exact(body,"vin","model_year","consent","consent_version");
+            else CouponInput.exact(body,"vin","consent","consent_version");
+            if (!body.get("vin").isTextual() || !body.get("consent").isBoolean() || !body.get("consent").booleanValue()
+                    || !body.get("consent_version").isTextual() || !CONSENT_VERSION.equals(body.get("consent_version").textValue())) throw invalid();
+            Integer year = null;
+            if (body.has("model_year")) {
+                var value = body.get("model_year");
+                if (!value.isIntegralNumber() || !value.canConvertToInt()) throw invalid();
+                year = value.intValue();
+            }
+            VinDecoder.checkYear(year);
+            return new Input(VinDecoder.normalize(body.get("vin").textValue()),year);
+        } catch (RuntimeException e) { throw invalid(); }
+    }
+
+    public JsonNode recognize(VehicleOwner owner, Input input) {
+        // Also enforce the protocol for in-process callers, not only controller callers.
+        if (input == null) throw invalid();
+        try { if (!VinDecoder.normalize(input.vin()).equals(input.vin())) throw invalid(); VinDecoder.checkYear(input.modelYear()); }
+        catch (IllegalArgumentException e) { throw invalid(); }
+        db.reads.executeWithoutResult(t -> db.owner(owner,false));
+        if (!enabled || decoder == null) throw unavailable();
+        if (!permits.tryAcquire()) throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,"VIN服务繁忙，请稍后重试或手动录车");
+        try {
+            boolean admitted = db.transactions.execute(t -> {
+                db.owner(owner,true);
+                String hash = AuthTokens.sha256("owner:" + owner.id());
+                var window = ReservationStore.time(Instant.ofEpochSecond(Math.floorDiv(db.now().getEpochSecond(),60)*60));
+                db.jdbc.update("DELETE FROM auth_rate_limit WHERE scope='vin_decode' AND key_hash=? AND window_start<?",hash,ReservationStore.time(db.now().minusSeconds(86400)));
+                db.jdbc.update("INSERT IGNORE INTO auth_rate_limit(scope,key_hash,window_start,attempts) VALUES('vin_decode',?,?,0)",hash,window);
+                int count = db.jdbc.queryForObject("SELECT attempts FROM auth_rate_limit WHERE scope='vin_decode' AND key_hash=? AND window_start=? FOR UPDATE",Integer.class,hash,window);
+                if (count >= 5) return false;
+                db.jdbc.update("UPDATE auth_rate_limit SET attempts=attempts+1 WHERE scope='vin_decode' AND key_hash=? AND window_start=?",hash,window);
+                return true;
+            });
+            if (!admitted) throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,"VIN查询过于频繁，请下一分钟重试或手动录车");
+            VinDecoder.Result result = null;
+            try { result = decoder.decode(input.vin(),input.modelYear(),true); }
+            catch (RuntimeException ignored) { /* Never propagate supplier text or a VIN-bearing URL. */ }
+            db.reads.executeWithoutResult(t -> db.owner(owner,false));
+            if (result == null || !"NHTSA_VPIC".equals(result.source())) throw unavailable();
+            String year = result.fields().get("model_year");
+            if (year != null && (!year.matches("[0-9]{4}") || Integer.parseInt(year)<1980 || Integer.parseInt(year)>2100
+                    || input.modelYear()!=null && !year.equals(input.modelYear().toString()))) throw unavailable();
+            var response = db.mapper.createObjectNode().put("vin",input.vin()).put("status",result.status().name())
+                .put("source",result.source()).put("coverage","US_MARKET_REGISTRATION_ONLY").put("requires_confirmation",true);
+            if (input.modelYear()==null) response.putNull("model_year_hint"); else response.put("model_year_hint",input.modelYear());
+            response.set("fields",db.mapper.valueToTree(result.fields()));
+            return response;
+        } finally { permits.release(); }
+    }
+
+    static ResponseStatusException invalid() { return new ResponseStatusException(HttpStatus.BAD_REQUEST,"请核对17位VIN、可选年款及NHTSA用途同意"); }
+    static ResponseStatusException unavailable() { return new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"VIN解码未配置或暂不可用，请手动确认车型"); }
+}

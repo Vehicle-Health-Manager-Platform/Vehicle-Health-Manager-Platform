@@ -1,0 +1,2696 @@
+{
+  "version": 1,
+  "stage": "R5a",
+  "recorded_at": "2026-10-27T12:51:08.754568+00:00",
+  "source_sha256": "34291543f6e6376a9e382006d94648a98facbeca5407cdafd29170aed9c77e01",
+  "selected_checks_passed": true,
+  "production_acceptance_passed": false,
+  "full_api_acceptance_passed": false,
+  "real_embedding_model_executed": false,
+  "public_vector_search_enabled": false,
+  "public_search_method": "KEYWORD",
+  "synthetic_vectors_only": true,
+  "scope": "Internal embedding/index foundation, explicit local-private operator consent and legacy compatibility. Actual MySQL/JWT/HTTP; embedding providers are explicit synthetic basis vectors, not semantic models.",
+  "java_selected": {
+    "executions": 189,
+    "suites": [
+      {
+        "suite": "com.autocare.platform.order.EmbeddingFoundationTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "com.autocare.platform.order.JdbcAsrJobsTest",
+        "tests": 27,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "com.autocare.platform.order.JdbcCouponTransactionsTest",
+        "tests": 37,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "com.autocare.platform.order.JdbcDocumentJobsTest",
+        "tests": 31,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "com.autocare.platform.order.JdbcKnowledgeVectorIndexTest",
+        "tests": 47,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "com.autocare.platform.order.JdbcLicensedKnowledgeTest",
+        "tests": 28,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "com.autocare.platform.order.KnowledgeEmbeddingHttpJourneyTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "com.autocare.platform.order.LicensedKnowledgeHttpTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ],
+    "log_sha256": "b5066ed3de61bd984cf099fddc461d9b299838df670610109ea92f17993e0fbc"
+  },
+  "material_supplement": {
+    "executions": 59,
+    "suites": [
+      {
+        "suite": "com.autocare.platform.InputMaterialValidatorTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "com.autocare.platform.JdbcInputMaterialTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "com.autocare.platform.order.JdbcServiceWorkspaceTest",
+        "tests": 32,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "com.autocare.platform.order.ServiceWorkspaceHttpTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "com.autocare.platform.RealMaterialWorkbenchJourneyTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ],
+    "log_sha256": "ae9970ed79bd6de7f66236108de3d23243b84c02e32a58e58ccd287170e1f95a"
+  },
+  "material_actual_services": {
+    "version": 1,
+    "passed": true,
+    "full_api_acceptance_passed": false,
+    "finished_at": "2026-10-27T12:47:22.101312+00:00",
+    "duration_seconds": 0.297,
+    "source_sha256": "55447ffe5735cc21b04e7bd303ead88539bf4b84f3dc85ff1add9580bf113afd",
+    "sources_unchanged": true,
+    "maven_exit_code": null,
+    "execution_mode": "ci-report-check",
+    "proof": {
+      "requests": 80,
+      "operations": 4,
+      "coverage": {
+        "POST /api/input-materials/{purpose}/{vehicleId}/upload": [
+          "boundary",
+          "error",
+          "normal",
+          "unauthorized"
+        ],
+        "GET /api/input-materials/{purpose}/{vehicleId}/{id}/access": [
+          "boundary",
+          "error",
+          "normal",
+          "unauthorized"
+        ],
+        "GET /api/merchant/workbench": [
+          "boundary",
+          "error",
+          "normal",
+          "unauthorized"
+        ],
+        "GET /api/tech/workbench": [
+          "boundary",
+          "error",
+          "normal",
+          "unauthorized"
+        ]
+      },
+      "checks": {
+        "five_isolated_materials": true,
+        "materials_never_become_images": true,
+        "five_successful_uploads": true,
+        "four_type_purpose_downloads": true,
+        "scope_and_query_enforced": true,
+        "private_bucket_and_signature_enforced": true,
+        "material_current_facts_rechecked": true,
+        "workbench_actor_isolation": true,
+        "eight_mutually_exclusive_buckets": true,
+        "assignment_and_closed_tasks_rechecked": true,
+        "pagination_has_no_duplicate_or_missing_tasks": true,
+        "workbench_minimal_private_fields": true,
+        "current_staff_and_binding_required": true,
+        "current_owner_session_required": true,
+        "no_payment_archive_or_rewards": true
+      },
+      "cleanup": {
+        "initializer": true,
+        "clamav": true,
+        "minio": true,
+        "mysql": true,
+        "network": true
+      },
+      "cases": [
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/upload",
+          "kind": "normal",
+          "status": 200,
+          "method": "POST",
+          "passed": true,
+          "name": "audio_ai"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/upload",
+          "kind": "boundary",
+          "status": 200,
+          "method": "POST",
+          "passed": true,
+          "name": "audio_replay"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/upload",
+          "kind": "boundary",
+          "status": 409,
+          "method": "POST",
+          "passed": true,
+          "name": "changed_content"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/upload",
+          "kind": "error",
+          "status": 422,
+          "method": "POST",
+          "passed": true,
+          "name": "invalid_bytes"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/ARCHIVE/1/upload",
+          "kind": "normal",
+          "status": 200,
+          "method": "POST",
+          "passed": true,
+          "name": "pdf_archive"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "other",
+          "path": "/api/input-materials/ARCHIVE/2/upload",
+          "kind": "normal",
+          "status": 200,
+          "method": "POST",
+          "passed": true,
+          "name": "audio_archive"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "other",
+          "path": "/api/input-materials/AI/2/upload",
+          "kind": "normal",
+          "status": 200,
+          "method": "POST",
+          "passed": true,
+          "name": "pdf_ai"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/AI/3/upload",
+          "kind": "boundary",
+          "status": 200,
+          "method": "POST",
+          "passed": true,
+          "name": "same_key_other_vehicle"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/upload",
+          "kind": "error",
+          "status": 400,
+          "method": "POST",
+          "passed": true,
+          "name": "unknown_kind"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/upload?owner_id=2",
+          "kind": "error",
+          "status": 400,
+          "method": "POST",
+          "passed": true,
+          "name": "upload_query"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/upload",
+          "kind": "error",
+          "status": 422,
+          "method": "POST",
+          "passed": true,
+          "name": "infected_bytes"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "anonymous",
+          "path": "/api/input-materials/AI/1/upload",
+          "kind": "unauthorized",
+          "status": 401,
+          "method": "POST",
+          "passed": true,
+          "name": "upload_anonymous"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "merchant",
+          "path": "/api/input-materials/AI/1/upload",
+          "kind": "unauthorized",
+          "status": 403,
+          "method": "POST",
+          "passed": true,
+          "name": "upload_merchant"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/AI/2/upload",
+          "kind": "unauthorized",
+          "status": 404,
+          "method": "POST",
+          "passed": true,
+          "name": "upload_foreign_vehicle"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/upload",
+          "role": "owner",
+          "path": "/api/input-materials/UNKNOWN/1/upload",
+          "kind": "error",
+          "status": 400,
+          "method": "POST",
+          "passed": true,
+          "name": "upload_unknown_purpose"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/1/access",
+          "kind": "normal",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "access_audio"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/ARCHIVE/1/2/access",
+          "kind": "normal",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "access_pdf"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "other",
+          "path": "/api/input-materials/ARCHIVE/2/3/access",
+          "kind": "normal",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "access_other_audio"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "other",
+          "path": "/api/input-materials/AI/2/4/access",
+          "kind": "normal",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "access_other_pdf"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/999999/access",
+          "kind": "boundary",
+          "status": 404,
+          "method": "GET",
+          "passed": true,
+          "name": "access_missing"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/1/access?owner_id=2",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "access_query"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/1/access?page=1&page=1",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "access_duplicate_query"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/0/access",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "access_zero_id"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/9007199254740992/access",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "access_unsafe_id"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/ARCHIVE/1/1/access",
+          "kind": "unauthorized",
+          "status": 404,
+          "method": "GET",
+          "passed": true,
+          "name": "access_wrong_purpose"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/3/1/access",
+          "kind": "unauthorized",
+          "status": 404,
+          "method": "GET",
+          "passed": true,
+          "name": "access_other_owned_vehicle"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "other",
+          "path": "/api/input-materials/AI/1/1/access",
+          "kind": "unauthorized",
+          "status": 404,
+          "method": "GET",
+          "passed": true,
+          "name": "access_foreign_owner"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "anonymous",
+          "path": "/api/input-materials/AI/1/1/access",
+          "kind": "unauthorized",
+          "status": 401,
+          "method": "GET",
+          "passed": true,
+          "name": "access_anonymous"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "merchant",
+          "path": "/api/input-materials/AI/1/1/access",
+          "kind": "unauthorized",
+          "status": 403,
+          "method": "GET",
+          "passed": true,
+          "name": "access_merchant"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "technician",
+          "path": "/api/input-materials/AI/1/1/access",
+          "kind": "unauthorized",
+          "status": 403,
+          "method": "GET",
+          "passed": true,
+          "name": "access_technician"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/1/access",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "access_scan_constraint"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/1/access",
+          "kind": "unauthorized",
+          "status": 404,
+          "method": "GET",
+          "passed": true,
+          "name": "access_deleted"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/1/access",
+          "kind": "unauthorized",
+          "status": 404,
+          "method": "GET",
+          "passed": true,
+          "name": "access_transferred"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench",
+          "kind": "normal",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bench_merchant"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?page=2",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "empty_page_merchant"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?owner_id=2",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_merchant_owner_id=2"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?bucket=BAD",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_merchant_bucket=BAD"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?bucket=SERVICE&bucket=SERVICE",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_merchant_bucket=SERVICE&bucket=SERVICE"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?page=0",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_merchant_page=0"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?page_size=100",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_merchant_page_size=100"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?page=1&page=1",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_merchant_page=1&page=1"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "anonymous",
+          "path": "/api/merchant/workbench",
+          "kind": "unauthorized",
+          "status": 401,
+          "method": "GET",
+          "passed": true,
+          "name": "anonymous_merchant"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "owner",
+          "path": "/api/merchant/workbench",
+          "kind": "unauthorized",
+          "status": 403,
+          "method": "GET",
+          "passed": true,
+          "name": "wrong_role_merchant"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench",
+          "kind": "normal",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bench_technician"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?page=2",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "empty_page_technician"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?owner_id=2",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_technician_owner_id=2"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?bucket=BAD",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_technician_bucket=BAD"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?bucket=SERVICE&bucket=SERVICE",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_technician_bucket=SERVICE&bucket=SERVICE"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?page=0",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_technician_page=0"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?page_size=100",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_technician_page_size=100"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?page=1&page=1",
+          "kind": "error",
+          "status": 400,
+          "method": "GET",
+          "passed": true,
+          "name": "bad_technician_page=1&page=1"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "anonymous",
+          "path": "/api/tech/workbench",
+          "kind": "unauthorized",
+          "status": 401,
+          "method": "GET",
+          "passed": true,
+          "name": "anonymous_technician"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "owner",
+          "path": "/api/tech/workbench",
+          "kind": "unauthorized",
+          "status": 403,
+          "method": "GET",
+          "passed": true,
+          "name": "wrong_role_technician"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "other_merchant",
+          "path": "/api/merchant/workbench",
+          "kind": "unauthorized",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "other_shop"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "peer",
+          "path": "/api/tech/workbench",
+          "kind": "unauthorized",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "unassigned_peer"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?bucket=SERVICE",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_SERVICE_merchant"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?bucket=SERVICE",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_SERVICE_technician"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?bucket=RECEIVE",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_RECEIVE_merchant"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?bucket=RECEIVE",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_RECEIVE_technician"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?bucket=CONFIRM",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_CONFIRM_merchant"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?bucket=CONFIRM",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_CONFIRM_technician"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?bucket=WAIT_ACCEPT",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_WAIT_ACCEPT_merchant"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?bucket=WAIT_ACCEPT",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_WAIT_ACCEPT_technician"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?bucket=REVIEW_SOURCE",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_REVIEW_SOURCE_merchant"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?bucket=REVIEW_SOURCE",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_REVIEW_SOURCE_technician"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?bucket=VERIFY",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_VERIFY_merchant"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?bucket=VERIFY",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_VERIFY_technician"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?bucket=DISPUTE",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_DISPUTE_merchant"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench?bucket=DISPUTE",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_DISPUTE_technician"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?bucket=ASSIGN",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "bucket_ASSIGN_merchant"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "no_assignment_tech"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "technician",
+          "path": "/api/tech/workbench",
+          "kind": "unauthorized",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "former_tech"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "peer",
+          "path": "/api/tech/workbench",
+          "kind": "normal",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "new_tech"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "closed_merchant"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "peer",
+          "path": "/api/tech/workbench",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "closed_tech"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?page=1&page_size=20",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "page_one"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench?page=2&page_size=20",
+          "kind": "boundary",
+          "status": 200,
+          "method": "GET",
+          "passed": true,
+          "name": "page_two"
+        },
+        {
+          "operation": "/api/tech/workbench",
+          "role": "peer",
+          "path": "/api/tech/workbench",
+          "kind": "unauthorized",
+          "status": 401,
+          "method": "GET",
+          "passed": true,
+          "name": "unbound_tech"
+        },
+        {
+          "operation": "/api/merchant/workbench",
+          "role": "merchant",
+          "path": "/api/merchant/workbench",
+          "kind": "unauthorized",
+          "status": 401,
+          "method": "GET",
+          "passed": true,
+          "name": "disabled_merchant"
+        },
+        {
+          "operation": "/api/input-materials/{purpose}/{vehicleId}/{id}/access",
+          "role": "owner",
+          "path": "/api/input-materials/AI/1/1/access",
+          "kind": "unauthorized",
+          "status": 401,
+          "method": "GET",
+          "passed": true,
+          "name": "revoked_owner"
+        }
+      ]
+    },
+    "error": null,
+    "boundaries": [
+      "synthetic identities; real HTTP/MySQL/MinIO/ClamAV",
+      "synthetic scan database injected only in test configuration; production freshness unchanged",
+      "synthetic task/dispatch/closure fixtures; real material writes and workbench reads; structural audio is not playback or recognition acceptance; material TTL is 60 seconds, natural expiry not measured",
+      "no production malware coverage, real identity, external cloud supplier or device acceptance"
+    ]
+  },
+  "local_delivery": {
+    "version": 1,
+    "finished_at": "2026-10-27T12:59:23.535326+00:00",
+    "selected_checks_passed": true,
+    "source_sha256": "34291543f6e6376a9e382006d94648a98facbeca5407cdafd29170aed9c77e01",
+    "sources_unchanged": true,
+    "backend_requested": false,
+    "backend_runtime_verified": false,
+    "production_acceptance_passed": false,
+    "boundaries": [
+      "Synthetic identities and LOCAL_TEST funds in backend integration tests.",
+      "No real WeChat/SMS/payment/model provider or mobile-device acceptance.",
+      "Builds and unit tests do not certify rendered page interactions.",
+      "Selected regression checks are not all-API business or performance acceptance."
+    ],
+    "checks": [
+      {
+        "name": "miniapp-unit",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 2.235,
+        "log": "miniapp-unit.log"
+      },
+      {
+        "name": "python-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 105.812,
+        "log": "python-regression.log"
+      },
+      {
+        "name": "ocr-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 20.781,
+        "log": "ocr-regression.log"
+      },
+      {
+        "name": "asr-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 5.172,
+        "log": "asr-regression.log"
+      },
+      {
+        "name": "document-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 8.219,
+        "log": "document-regression.log"
+      },
+      {
+        "name": "wechat-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 12.844,
+        "log": "wechat-build.log"
+      },
+      {
+        "name": "h5-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 15.14,
+        "log": "h5-build.log"
+      },
+      {
+        "name": "openapi-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.282,
+        "log": "openapi-consistency.log"
+      },
+      {
+        "name": "migration-mounts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.125,
+        "log": "migration-mounts.log"
+      },
+      {
+        "name": "handover-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.265,
+        "log": "handover-consistency.log"
+      },
+      {
+        "name": "contract-verdicts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.172,
+        "log": "contract-verdicts.log"
+      }
+    ]
+  },
+  "browser": {
+    "passed": 10,
+    "checks": [
+      "existing keyword boundary clearly displayed",
+      "embedding is independent optional fifth choice",
+      "legacy draft readable and all purposes reset",
+      "license search excerpt do not imply embedding",
+      "complete confirmation names embedding policy and permission",
+      "confirmation alone has no write",
+      "cancelled confirmation has no write",
+      "explicit submit preserves independent consent and UUID",
+      "successful save clears embedding consent",
+      "390px no horizontal overflow"
+    ],
+    "fixture": "Synthetic operator/session/document/API only; no real embedding model, indexing job or WeChat device",
+    "viewport": "390x844"
+  },
+  "database_recovery": {
+    "version": 1,
+    "passed": true,
+    "image": "mysql:8.0",
+    "checks": [
+      {
+        "name": "start_owned_source",
+        "passed": true,
+        "duration_seconds": 14.594
+      },
+      {
+        "name": "migrate_V001_V064",
+        "passed": true,
+        "duration_seconds": 20.468
+      },
+      {
+        "name": "snapshot_before_upgrade",
+        "passed": true,
+        "duration_seconds": 4.532
+      },
+      {
+        "name": "backup_before_upgrade",
+        "passed": true,
+        "duration_seconds": 0.828
+      },
+      {
+        "name": "injected_failure_leaves_committed_DDL",
+        "passed": true
+      },
+      {
+        "name": "restore_pre_upgrade_to_new_database",
+        "passed": true,
+        "duration_seconds": 12.0
+      },
+      {
+        "name": "verify_backup_based_rollback",
+        "passed": true,
+        "duration_seconds": 4.625
+      },
+      {
+        "name": "retry_V065",
+        "passed": true,
+        "duration_seconds": 0.375
+      },
+      {
+        "name": "snapshot_current",
+        "passed": true,
+        "duration_seconds": 4.532
+      },
+      {
+        "name": "backup_current",
+        "passed": true,
+        "duration_seconds": 0.812
+      },
+      {
+        "name": "start_independent_restore_server",
+        "passed": true,
+        "duration_seconds": 14.406
+      },
+      {
+        "name": "restore_current_on_independent_server",
+        "passed": true,
+        "duration_seconds": 11.328
+      },
+      {
+        "name": "snapshot_independent_restore",
+        "passed": true,
+        "duration_seconds": 4.578
+      },
+      {
+        "name": "detect_synthetic_damage",
+        "passed": true,
+        "duration_seconds": 4.484
+      },
+      {
+        "name": "restore_damaged_data_to_new_database",
+        "passed": true,
+        "duration_seconds": 11.266
+      },
+      {
+        "name": "verify_repair",
+        "passed": true,
+        "duration_seconds": 4.531
+      },
+      {
+        "name": "reapply_all_migrations",
+        "passed": true,
+        "duration_seconds": 1.515
+      },
+      {
+        "name": "verify_migration_replay",
+        "passed": true,
+        "duration_seconds": 4.594
+      },
+      {
+        "name": "restored_unique_check_trigger_procedure_event",
+        "passed": true
+      }
+    ],
+    "started_at": "2026-10-27T12:37:26.092039+00:00",
+    "boundaries": [
+      "synthetic MySQL data only; LOCAL_TEST payment fixture",
+      "logical backup at a fixed point, no concurrent writes/DDL",
+      "rollback by backup into a new database, not transactional DDL/down migration",
+      "no zero-RPO/PITR, production failover, object-store backup or performance acceptance"
+    ],
+    "implementation_inputs_sha256": {
+      "scripts/run_database_recovery.py": "3704fe87c36bcfa0f7c5adf1afb4a1bd1510911db682c32eb8b9cbfd26933b5c",
+      "scripts/fixtures/database_recovery.sql": "4acc664639867c8168c1443079c21c80c33daef9ab71d72bc46f19523c1a3463",
+      "scripts/fixtures/knowledge_embedding_recovery.sql": "c584a7c724c21a305d5cf23f1dc8fd96f40854fa07cd1c76563018a9d9cbaaad"
+    },
+    "started_from_commit": "b1a26cce62d7d6fe21205be4513ac6aa2f6cc12c",
+    "migrations": {
+      "V001__baseline.sql": "e29a99c73fe549d23c00367557ecb16cbae76f1fcdd73c3c503662c2bcc0c540",
+      "V002__staff_wechat_identity.sql": "33b70f444b01c9829965ab836d7fe2ef6eb9a9e159a45af5661818f4167612f4",
+      "V003__auth_lifecycle.sql": "c637d1cdd71c017d3e47aafde37553f3498c466295e786d8b6232ea67f76de9d",
+      "V004__upload_http.sql": "c97e202cc31b95153f3ace7dbba9e170a9f06cff1efcf6869d1891f3c012f7c3",
+      "V005__vehicle_archive_files.sql": "76fd75ae351264e968ac945c2e6a9dfadbd889d117a3a480212a1c863f8c32c8",
+      "V006__merchant_project_versions.sql": "f61e1983788e8d0e4ff0cd57df73179b12b5613a83bbf30b3647f2f5db0eebdf",
+      "V007__reservation_orders.sql": "bde32fba46cf0694543e91bb0a3925d25a4e120f61e052bdb7d52791b7b29cd3",
+      "V008__payment_foundation.sql": "44cf544e2d227ef3ea3d046b566a22167fd2104d1cc21be4b60cdc953bd645dc",
+      "V009__order_fulfillment_states.sql": "3201956105ac802986793bf0a28b5d05e0496e63e9442a2d5b596a220b68f66f",
+      "V010__pickup_inspection.sql": "7af0c7af546d4b5e220f0f6f04c4d891396d00722da97e7d0a3d03a9e7d7a734",
+      "V011__pickup_owner_decision.sql": "f78a5a0a6ad6bea9506f1ee65564f37e57879053a4907f8930b888bddb11375a",
+      "V012__technician_dispatch.sql": "e35494639489662a4ce2d2664954ffcb6660c35434323c6e7a964ca640001b3e",
+      "V013__dispute_resolution.sql": "d2b6086edbe8a41dd51763ed9e051cccf59de141b6acfb4910654ff546a7cad7",
+      "V014__service_work.sql": "aa7b279d0d4accec6fb548ad2d58e2a364f8c413a2d58419afba898b1ef97451",
+      "V015__order_redemption.sql": "d48e46dbb23adb73aea7e3b3eb4fcfd72e3ddf0f0f94f2a2b61ef3ef2b6af846",
+      "V016__order_reviews.sql": "b606da4afeefab268e048628a31f7401a3e35a0bf861fe585090b8fbae7e5eaf",
+      "V017__service_archive_jobs.sql": "4663dbd221d76e028048a2a977cc3c92e31aff0e9ab8589c68349c608f977043",
+      "V018__experience_cards.sql": "25ccaa141fe5018aaac4f885fbae8b07e6859b00969c09c349093431ec4fe30f",
+      "V019__experience_moderation.sql": "88d8f2f0ac057c22f1320be1982972ddf0a9edaf5bd626daf5553c52356f41ef",
+      "V020__merchant_onboarding.sql": "0078132eac6cc12e8722d1dacc555fc3ec5f69a08487f092195da613ec5e94df",
+      "V021__merchant_staff_store.sql": "c01a5906c1d7e653328004436e3d63e791e83ce42eb1e9d2c364636c00554432",
+      "V022__catalog_governance.sql": "a07a8f7ceb673224f390e61f88f18a5e516c7b1c10ff1f3bc76f379fde72d812",
+      "V023__completion_archive_jobs.sql": "3717790eb76b55c8c13079cd01ee4d10a256415a0e5af717b9b27929802c22ba",
+      "V024__payment_query_recovery.sql": "2a6ea19de4d4368504c1f99bf0b75f5c2a1f493859f6475746944aa9d2f76941",
+      "V025__order_refunds.sql": "3497b20dd3a204d7244922f2376cac34179d95bb70e00db240cd110074c20fa7",
+      "V026__commission_ledger.sql": "6c7c0134567856b40ed56b26c0075a9cf9529412ffd048018223b06d42a601a5",
+      "V027__archive_report_shares.sql": "c012312cf4d4c6e92d84cf46d0ee80583f4eee49174ff6a48e1704aec2a7fa76",
+      "V028__archive_reminders.sql": "11815741dd6e939f9ea57807101bcc37b02ce52b940949aa1aa88fefd7700eae",
+      "V029__archive_structured_details.sql": "834435949553e1757022e4f99bbd420d9493492179d234a7e37e2210e9799209",
+      "V030__vehicle_health_observations.sql": "e03a886a00e38f8752ecaea842077b447bc0e566dbe429e43462e362b5bed540",
+      "V031__vehicle_health_observation_history.sql": "804638901d061f95c738c6b8cf3b82fef712a5de1412712335a6307f426b77c1",
+      "V032__merchant_location.sql": "2667594da3f65ac8935ad27b0ba770a752e0608b44918df30805ae93b503b337",
+      "V033__review_publication.sql": "f2d85fa2bd51c080aa117bcffb6aa55e58b97a37247556db829f4ef486933d56",
+      "V034__public_review_text.sql": "757fcd0fd1ace08f5e6eebb2f3ae402daf8c5937e8f3813b0a4d82018832fb3e",
+      "V035__review_summary_consent.sql": "3096fef4796a6c650b31308af397b6450d68e5d57cf3d4626692c9e62035f146",
+      "V036__project_model_applicability.sql": "eb09b5e37e56a7b84ec46ba51fe2730c0870e6afc5e9eb725fd1f8f4a37c136c",
+      "V037__health_policies_and_confirmations.sql": "1286e1354787db8dab8a39e1c4da8983a0e6367f04f424583eaade4603602802",
+      "V038__coupon_inventory_and_claims.sql": "c667fe68a5726a11f416704715f22e99eb9b8559d4fdfc0ba378cdcf696298f7",
+      "V039__coupon_transactions.sql": "4a5e7a251f2dda50e092317f2c0777afed0bb55ec0a38256efac37a9e70b19eb",
+      "V040__invitation_attribution.sql": "aba24bf24f847842ce3254d4afc6f1fdb9554634c914cb6bb65ef69ae94ec9cf",
+      "V041__invitation_reward_policies.sql": "762ff3244fddd8ca337d17114fc5745de3698411376e321a26dda60fb1c77e24",
+      "V042__invitation_reward_delivery.sql": "ed849ed9bf56bb9d5b763ab4dc06d2aaa96340ac64854843fb234a7ff7a2222d",
+      "V043__invitation_diagnosis_unlock.sql": "d6f3246e382b7b7bab87bbce5d4cb2f6eea10ee30d272d5c66338481f7868e94",
+      "V044__order_archive_grants.sql": "1772cd8a11d37c82b6a1568a711b9641b138af81d6a49dbd4c61a60341b19246",
+      "V045__service_notification_outbox.sql": "55631f6cfb7e8e74473fc701de989734c7d13b62f20b0da0147d6504a4321707",
+      "V046__async_diagnosis.sql": "01280905afef8275ea1845944b677905a2c30a1ee5775c1fb33c61e5727ce375",
+      "V047__order_notification_sources.sql": "914541c96812beaa7f32dcf82ed18484eee16977931ea230c52329be55c5eeb8",
+      "V048__diagnosis_notifications.sql": "fd5ff9018e42df1c5eb0cc3e2c06060d613f767e0fe91d1ff0a670d30193b57b",
+      "V049__point_task_policies.sql": "dac308e2ada2193cae5e01eafdffc64dd8ff934fbe29805d7aac89ddce85da3a",
+      "V050__verified_points_ledger.sql": "d1290fd55f86a17876bd67f066cf127bdaf31c351596d3675efbdc132ea98933",
+      "V051__point_exchange_catalog.sql": "6a5b65f48ed40382794e856456c7ae61bd20c5414a56c58619626413bbff3b1e",
+      "V052__atomic_point_exchange.sql": "af839efccbcfd3497b29f5d01775b193f48416504b3cad68c6ea4e3cb3ba62fb",
+      "V053__assessment_policies.sql": "b88faa531a3a934aff831fbf57456d5b2d11bf58ccbb0be34719764c80d89bb5",
+      "V054__assessment_monthly_snapshots.sql": "fd16dbabf0b1e76b7bbfcc4a70d306391a1a4de48fbb1a48e6e82502543bb631",
+      "V055__business_dashboard_permission.sql": "56c7bdaa8193235a9ad9f682ba61174be6c67ce54921b0fd46de66619b8084b5",
+      "V056__price_monitor_policies.sql": "751306246222ff26598229260e5ff44376d909136fe18aec9d78652fb52f09c9",
+      "V057__curated_experiences.sql": "83d684c43ae4e30378727dbee73ebaac59436e2dc6c810fb162b044fd1e07e1e",
+      "V058__private_community_questions.sql": "12471412bcfd8719c881d03b63e057001ccae7a2d1e8bdfbd774f406737f79f9",
+      "V059__public_community_questions.sql": "2080998ec8917a07aaf3ffe942713094e5e7d5b0e19c8605902b7fdddc26e3b9",
+      "V060__public_image_copies.sql": "4e741cdf07b36cf9dd2fcfd44d26eb0386043a77206560ab5df11df3a65d288c",
+      "V061__licensed_knowledge.sql": "ac325ff9cd9bc9545d124077efa600caa74b120ed1a0b043edb4c3103c0fe2f8",
+      "V062__input_material.sql": "f3df4a442d5684872437a8b282c1f5348b90bdd8ddf006e6f189365d672881aa",
+      "V063__recognition_job.sql": "2e2161ce4e22436dca9b3de76c95da8a5884f4221ccefecff639b6b7b33ac5df",
+      "V064__document_candidate_jobs.sql": "be73549cf798f5dc03f831e48ad73b0a474cc84449c5d775059bbfe0cef62223",
+      "V065__knowledge_embedding_index.sql": "f5457cffe134338ed5a3e47aecb9a7dfbf06cf9fc48e6a4b511f1dda4e7be086"
+    },
+    "active_step": null,
+    "mysql_version": "8.0.46",
+    "source_server_uuid": "2ad1fcb9-d203-11f1-a148-3663b025879e",
+    "pre_upgrade": {
+      "table_count": 132,
+      "row_count": 13,
+      "tables": {
+        "ai_plan_rule": {
+          "rows": 0,
+          "schema_sha256": "e3a1ed3ae589ad781a992d4d571258f0c732b8d77d17fdbc7a3c5fc11d7f37a8",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "appointment_slot": {
+          "rows": 0,
+          "schema_sha256": "40e5f05f0b6d43cf0296d2d7fd46f37d5823d2c854b8db09fdb541f0664cce1a",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "archive_reminder": {
+          "rows": 0,
+          "schema_sha256": "10f0a623b6378ba437e4ab7f297740dc7f33e66671e528aad87aef110bd69993",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "archive_report_share": {
+          "rows": 0,
+          "schema_sha256": "4281f4232c7269347d5697eab9669b84884d32981dc11d88585087c46ebd68c0",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "archive_structured_detail": {
+          "rows": 0,
+          "schema_sha256": "29bc9c6cf7b77721e68008ff2d9338f88d36bf651a4c42cdb6661f667ecdc5ab",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "assessment": {
+          "rows": 0,
+          "schema_sha256": "0cd63246a8bccf86937bf4a10abbe8e421e4bd03fc45998ea59bf65af96400a4",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "assessment_month": {
+          "rows": 0,
+          "schema_sha256": "d10f9b2277016fc6c062af6d606d372b7fac7f3eb7f9041f2b874e75bc0c6bc4",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "assessment_policy": {
+          "rows": 0,
+          "schema_sha256": "2fff16f81a1c824350d7f066a2f761767f37baecd9a24fbac6223115af89f15e",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "assessment_snapshot": {
+          "rows": 0,
+          "schema_sha256": "81de474148550971e885de63fa2e239a25282ba2d558763ce83c1dd008b4864f",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "assessment_snapshot_fact": {
+          "rows": 0,
+          "schema_sha256": "255963a1019722405b90416b35f624dfd768cf32d0d1f5f45ed01007f812c046",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "audit_log": {
+          "rows": 0,
+          "schema_sha256": "87a3ca4528976c595b768274028bb663e133a8d9593c08683d50d0c4fcea513f",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "auth_rate_limit": {
+          "rows": 0,
+          "schema_sha256": "61e92cce515d7b494e81179b55e09acb38d15d572e596595e49bea97d245a0b5",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "auth_session": {
+          "rows": 1,
+          "schema_sha256": "aff22a29ab43fe991f8a9b901cfad16d44f1d69e7e2531e733771c869611700d",
+          "data_sha256": "c9bfc9e4652c5898e513ee5a2e48c8b83c4636175d93d552c26aaeef7ab973f8"
+        },
+        "brand": {
+          "rows": 0,
+          "schema_sha256": "2078873ae885d459e83b2215f3618224e5251daf135254ec018f25938b561784",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "circle_follow": {
+          "rows": 0,
+          "schema_sha256": "992c647db83d949377a4c3766eddb8eb0bc618aa81f1cf652e24fd3e31cb2d48",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "community_content": {
+          "rows": 0,
+          "schema_sha256": "8a7ab9dd8d080935b30c35990ce412b9af7d76ec3022774d8dd4b5835b9cd64c",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "community_interaction": {
+          "rows": 0,
+          "schema_sha256": "29a0c02983a346eac7f3a4df3600506e7d0bc72566302029264ee4073e97c197",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "community_qa_case": {
+          "rows": 0,
+          "schema_sha256": "5f9075fd0180c361a1f79b679b699e47abedcb3033179f6d44ea7435320ed432",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "community_qa_case_event": {
+          "rows": 0,
+          "schema_sha256": "71e1482fc1889180636ee66276fb93085ce4b4e657e0d6cb15a3a7215c4e2619",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "community_qa_control": {
+          "rows": 1,
+          "schema_sha256": "62f672163453f7d4c0d3029025c18d9dd73cc2647a1ad4de58a928f54dc51486",
+          "data_sha256": "43de3a417d75f4818c5a553268b80ce3a5805109a3bbc6b605e9fb0b8f50b485"
+        },
+        "community_qa_message": {
+          "rows": 0,
+          "schema_sha256": "c486d503487f1a38abd4d537b8a91e44e81d1e4553f8fb5564ebe1d1e9eef4d3",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "community_qa_publication": {
+          "rows": 0,
+          "schema_sha256": "39645626fbe8418becc8a4bf541b63b92b379b1ec83944b8ddf7b14015dd3a23",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "community_qa_publication_event": {
+          "rows": 0,
+          "schema_sha256": "f8742100ba82c969352277b456c725e6162ff3a0902d3bf11c910d0d5643a9cc",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "community_qa_service_policy": {
+          "rows": 0,
+          "schema_sha256": "7db9b62fe622020ec4ef13ab7e5a9a357847fd42018f8126be0827c69b7285b6",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "coupon": {
+          "rows": 0,
+          "schema_sha256": "46bffb200d7247eb51b736221db1b4f1637139d9910cdc413818843d84bb913b",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "coupon_issue": {
+          "rows": 0,
+          "schema_sha256": "92cf82fedef1b53a7c28aed8e36df196cd3d997d6bffebb10aca24a452b1b261",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "coupon_publication": {
+          "rows": 0,
+          "schema_sha256": "79e33bb2e1def3348e246d4254b76302b2cb183938d15f9577808564416e0c7c",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "coupon_service_authorization": {
+          "rows": 0,
+          "schema_sha256": "6614431a1bb0a2bb2d9e95eb97d83e4c395ed54a370eee0a0dfea1378566a4cc",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "coupon_service_redemption": {
+          "rows": 0,
+          "schema_sha256": "496a5ab542a4ec84d16a2343957346f4000529da2631cb76e26d6336f3c1a8bc",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "coupon_source": {
+          "rows": 0,
+          "schema_sha256": "27f92523b89f25f44c3db289cf199cad164c22268133dd6935e03e6ae4fbe8e3",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "coupon_stock_event": {
+          "rows": 0,
+          "schema_sha256": "75b6cea693fc96a4409e04a74f57df9211a27deecee835fae3197f32aa166a1c",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "coupon_transaction_event": {
+          "rows": 0,
+          "schema_sha256": "82da10398c6ed770ea1ad4ed7afc2efe2c6258372e14486656a5b7af29ce0a99",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "delivery_compare": {
+          "rows": 0,
+          "schema_sha256": "d9238ed7d373c2cdad8c42c4b7b08aafb867a7118baffb7e3ee02fce0f2192b0",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "diagnosis_case": {
+          "rows": 0,
+          "schema_sha256": "d23302afeae76dd4c6c8892344ce98732f792a49a3d8c975b3b9bbefa491ab86",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "diagnosis_case_event": {
+          "rows": 0,
+          "schema_sha256": "236e7eaf1bb1c83e945923d89bf21d1e4644b307a96b2bf515fd46ba255c324c",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "diagnosis_control": {
+          "rows": 1,
+          "schema_sha256": "54819025d674d2001e96cd9f58dbedbc7474b8bf0f889d5b174627e646515ee0",
+          "data_sha256": "43de3a417d75f4818c5a553268b80ce3a5805109a3bbc6b605e9fb0b8f50b485"
+        },
+        "diagnosis_message": {
+          "rows": 0,
+          "schema_sha256": "03644422f05ff37712ef1391bc6c51e9eff54e93297d71db9bf90652c36d40a9",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "diagnosis_notification_outbox": {
+          "rows": 0,
+          "schema_sha256": "119b69e12ec89bc122a13e1151a18ddb7307bea0fea551fc49493473040ceb20",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "diagnosis_notification_target": {
+          "rows": 0,
+          "schema_sha256": "edfba5a3452fd6acf643bd11047b9d76d6caf68d9d502ee61ec182f47cca249d",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "diagnosis_service_policy": {
+          "rows": 0,
+          "schema_sha256": "dad94ca40fc54674087084b3d8f7b1f833562e043e251217fd79b02413a7f9e3",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "experience_card": {
+          "rows": 0,
+          "schema_sha256": "f594db8fe8177f165f230b6f2f8e022ab18114bc92ced4be2f8c021ac2be7b87",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "experience_card_moderation": {
+          "rows": 0,
+          "schema_sha256": "57d566b0815ddfe7ebaec57c7866e975a56d7bc6569ca5f3027154d014e02a5b",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "experience_curation": {
+          "rows": 0,
+          "schema_sha256": "a85c3b2b59e6d12e34446514c3a180cc19ef49a5bdb4ce94a094ced0cb4728e9",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "file_object": {
+          "rows": 0,
+          "schema_sha256": "382a0e9aba2164ed8223424a8859b364a9b387389cb22e9e02c33eb6ae7be949",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "health_evidence_confirmation": {
+          "rows": 0,
+          "schema_sha256": "e8db0d5d831f674c1e528f289871ae373c603b40ae9c4948319ca173012f7bd4",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "idempotency_record": {
+          "rows": 0,
+          "schema_sha256": "ede6112a718bc3aacba93b331cf5ff6d5b8724c77683576b20545cb2dce69074",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "input_material": {
+          "rows": 0,
+          "schema_sha256": "111f6c51bb866cdc22c2ef6f0ceae5007a6c8b2ed73611d1cb6f13cf2f84da2e",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "invite_code": {
+          "rows": 0,
+          "schema_sha256": "6b8d5f81034b4f46491a72334a5f3963af7497e4c71bf37dc3ee5b1b231bf4e9",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "invite_diagnosis_policy": {
+          "rows": 0,
+          "schema_sha256": "1d0e4142bf3945925f8c6ddc0afdf721d474c11248b44c7472ae1ea4a7d3fd0f",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "invite_phone_evidence": {
+          "rows": 0,
+          "schema_sha256": "e93aef3a7dac3e5664ee9b39048b4fcf9186cf4ce159ebb5a12adb9179d7d831",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "invite_record": {
+          "rows": 0,
+          "schema_sha256": "d979e54361d10c3ee26237637da506659a732898b5b5acac7a5f298f415e3125",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "invite_registration": {
+          "rows": 0,
+          "schema_sha256": "99edafebb813b985398d1baa5d8ff0de6b07d59f189d6f7ac98764d0f016e48f",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "invite_reward_batch": {
+          "rows": 0,
+          "schema_sha256": "f2068714f3d36b0bfa580de64fc049d315b6fab98468dd7e42cdffa047c3867c",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "invite_reward_item": {
+          "rows": 0,
+          "schema_sha256": "7ca432acc45a4797b9f1dc5c0bd705d7681c1f1a33cd88efff4c6c79c47036d6",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "invite_reward_policy": {
+          "rows": 0,
+          "schema_sha256": "59dc38ffd432b0c5d68ad49e0aa2d3bbeaab62bd950277aea8109c3a02275705",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "knowledge_control": {
+          "rows": 1,
+          "schema_sha256": "8e1fd4f2cf096b8fbcf2be42e21ae91564de07e5af362778a38de794e7baae0a",
+          "data_sha256": "43de3a417d75f4818c5a553268b80ce3a5805109a3bbc6b605e9fb0b8f50b485"
+        },
+        "knowledge_document": {
+          "rows": 0,
+          "schema_sha256": "479a7c98835f91a55e15149862b059465fa9bf5a4e42ca3056924f7e25f13ca0",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "knowledge_document_event": {
+          "rows": 0,
+          "schema_sha256": "2860f2d7e61a81061557758d259f0921f9d69843b7de64cc1faea7a5e36b7a75",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "maintenance_rule": {
+          "rows": 0,
+          "schema_sha256": "de60241fa6903627158253565290a325e4493c140a1957f1d2abe03bde7a22bd",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "merchant": {
+          "rows": 1,
+          "schema_sha256": "36e30d8679895012de378097aaf96bd2c6d88334cc142c94572f188a433ea810",
+          "data_sha256": "b2897fe6a905a8253ccc3c1c9be810d29b27053038eaab23d23d05ef380a4e4d"
+        },
+        "merchant_application": {
+          "rows": 0,
+          "schema_sha256": "d6f08dc9d3814269844a77f4fe6451daa0453e6e2127de0f5403c0fc041ae65f",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "merchant_application_review": {
+          "rows": 0,
+          "schema_sha256": "fcd900d911b5c7c26952d26accd3d0097a48063539f4439ef0cfd1d607ec6ddf",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "merchant_commission_entry": {
+          "rows": 0,
+          "schema_sha256": "7523db693192502528550ece84b27fabd89be995ea50d63dd20fbd0557749282",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "merchant_commission_policy": {
+          "rows": 0,
+          "schema_sha256": "1cef65e5aa66a8af252ea21fd6f57a46b4584dda8fd629914d23bc8d22869572",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "merchant_location": {
+          "rows": 0,
+          "schema_sha256": "6b9b0af6038812b1abe6fdeb209f521bed29066e2c0c2a6b24549f0b8fefc3af",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "merchant_project": {
+          "rows": 0,
+          "schema_sha256": "82d1b3653e4faffa2320aebbfb91089424bad9012f829572c27a4cee42b6b971",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "merchant_project_version": {
+          "rows": 0,
+          "schema_sha256": "43c484b9ec7f44ca4dc56dea927443c56e125a5303647556089dc883a80eb4ce",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "merchant_region_category_quota": {
+          "rows": 0,
+          "schema_sha256": "94e44abd76a07bac762b9926ececa30cb9303a1f9ade7249874a01f4d680bd8a",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "model": {
+          "rows": 0,
+          "schema_sha256": "88480d6fca3eee413725df599536d806c71a94ab70aba6fd8c73d69f62e0f1d0",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "model_health_policy": {
+          "rows": 0,
+          "schema_sha256": "1439ebb148e601abd116f93b605145c555b451e861e1fc03213c47d582e0783f",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "notification": {
+          "rows": 0,
+          "schema_sha256": "564fbc376496f5e90412634ad48b3f6845ca64f782bb038424ad140975d13b55",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "operator_account": {
+          "rows": 0,
+          "schema_sha256": "875474e70f733f06b62a843b111fbd47ccbdfa163faec82b6b8f8bc11cfbc962",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order": {
+          "rows": 1,
+          "schema_sha256": "7f289ca5f3d889247e193bf5f62d9fc6fdb4bc0b715b0f4a382f414cd5816040",
+          "data_sha256": "1efbcd11f2a8ccdf1197058fd26093ddedb7a3d53e9f21cdbfe0a54c8b7fbee8"
+        },
+        "order_archive_grant": {
+          "rows": 0,
+          "schema_sha256": "5d4e19ab406bfd5cd4acee01b969a38703b931923b517c0153c9916402078d47",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_commission_snapshot": {
+          "rows": 0,
+          "schema_sha256": "687fabd96cadcdc67cabf9e1a5be45bfd6d8354d269f92c4653457de95ebc1be",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_coupon_allocation": {
+          "rows": 0,
+          "schema_sha256": "c0c465f697af3477df50cbad02fff30610dc3e0f26541c61e59971c73d5b6e7f",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_dispute": {
+          "rows": 0,
+          "schema_sha256": "2daf48e98c66913559839d1ae225036d4ba104c95c3876cb25d34574686cc6e1",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_dispute_record": {
+          "rows": 0,
+          "schema_sha256": "1feaf5bf3327326f8f0478e7369b5f32f4513e5bafe4dfe77e28316de6fef890",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_redemption": {
+          "rows": 0,
+          "schema_sha256": "fa3a5b6d68244e7693db3cb6cf39593de46f72846956dec194d6b50e1d2cd402",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_review": {
+          "rows": 0,
+          "schema_sha256": "94c7b3e1f118c7bc2c1badda39e49b45982d89f74fe85a9937bdb4b0e878ba3e",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_review_file": {
+          "rows": 0,
+          "schema_sha256": "8bc6dd8e6cc20a089f847e360cefcc411f36f4fdd169a05ce30523a8500eec00",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_status_transition": {
+          "rows": 0,
+          "schema_sha256": "6d4a9305ccb5475fb36395833b6aa626a90773e57b00065c010261291857b851",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "package": {
+          "rows": 0,
+          "schema_sha256": "44a68029fb98d6199a76ef749fb89fba01e98cbb7c11ea1c050a18ece7750ac8",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "payment": {
+          "rows": 1,
+          "schema_sha256": "f5e7f7b5a4c8298f96cef0ddcfcb598990b7f18ae52a1320d76f0a742013ea5a",
+          "data_sha256": "37eee5837dd53c0244db6b501d78577e5cd2810ada52706f85149c0b9f8462d2"
+        },
+        "payment_event": {
+          "rows": 1,
+          "schema_sha256": "714d9d0c92e2326de1bbdff1f40fb85cb2fb9665d846b752df49c3d6544ebac3",
+          "data_sha256": "32305af7244eeea01ceffe389a2e9bc7b8a48ae42913ed10f7d9f6cfc6be0bb2"
+        },
+        "payment_exception": {
+          "rows": 0,
+          "schema_sha256": "14fc674638b0438c6a75515eb542b36961c90adef160c63646fef5129bbfa150",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "pickup_check": {
+          "rows": 0,
+          "schema_sha256": "a2ab1d218b91fdc46216e06299fc97c22488b16c9718b388a1b8a4bfac8a46e1",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "pickup_check_file": {
+          "rows": 0,
+          "schema_sha256": "9b6ad954319c41efdf2f028b7132bccbd245b8ced4b969c6f4b5fb65e99dd2e5",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "point_checkin_request": {
+          "rows": 0,
+          "schema_sha256": "1c57e6dc8941b1b2781d006887b49c5aca5952c331817487b6e7914ee0fab0b9",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "point_exchange": {
+          "rows": 0,
+          "schema_sha256": "02cad5fa7a8890659bb14eb2f3a6f97066a67e91d3e52c71f5125eb76384efc6",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "point_exchange_catalog": {
+          "rows": 0,
+          "schema_sha256": "7c955d9e148d550eab37093c3634ffe93c464a75c87e2b8e05fb5b2b4fc294c5",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "point_exchange_record": {
+          "rows": 0,
+          "schema_sha256": "7bfd70523cf4399e61f321ea0f32fe71c417b62f4f17514508c5ce04a93c8748",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "point_flow": {
+          "rows": 0,
+          "schema_sha256": "7bc59f6265e5f452da90a90b20c8ad428f15daf05437463e8fbfb9abb427ddf4",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "point_task_event": {
+          "rows": 0,
+          "schema_sha256": "6c8c41d37576b3387d8aa04368e7e4dcfa8f109808a918fdd91c2b919268710a",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "point_task_policy": {
+          "rows": 0,
+          "schema_sha256": "ff721adc4e2a3b62afdc837977bd8961108e956e9a580e4561d1d488119b8d79",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "point_verified_account": {
+          "rows": 0,
+          "schema_sha256": "b238b6ad3c2322a1d8a0f574c7aaa24706f3125f938925b312c2ae3f915e006f",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "point_verified_entry": {
+          "rows": 0,
+          "schema_sha256": "454edf6b8d53693b71ec749e98c8aadbcc721a3c73abd45bd1294a7a34a90011",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "price_monitor_policy": {
+          "rows": 0,
+          "schema_sha256": "7c8a0bd6ef9bfbffbf502f000dd81da95b21e659158d1c8ae6dc93689add8d40",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "project_model_applicability": {
+          "rows": 0,
+          "schema_sha256": "7a7b4c352f64b9468a3cd9de39ae53dc136d9d4d2626e3d3a7938c004770d66b",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "public_image_application": {
+          "rows": 0,
+          "schema_sha256": "3c47f87fedc115a0e05e129b0dd46de6b8dba818dee72b2141e6bf7b7cabde42",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "public_image_control": {
+          "rows": 1,
+          "schema_sha256": "0092704c2e634565dc11f57857df4c3b950234f85e9522405343d3a2339746ff",
+          "data_sha256": "43de3a417d75f4818c5a553268b80ce3a5805109a3bbc6b605e9fb0b8f50b485"
+        },
+        "public_image_event": {
+          "rows": 0,
+          "schema_sha256": "4f3f47b424eb023159287a252e234e8ee45e31d3412f6006968b83c7219b5b2a",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "public_review_text": {
+          "rows": 0,
+          "schema_sha256": "ee7597acba48f6fba645a45fceaa79748359577d5f3c375c5caac4ac06be32b6",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "public_review_text_moderation": {
+          "rows": 0,
+          "schema_sha256": "c017b436eb8098d5734381ba57c02920667fb9dd897bb719ab5b92a460cee852",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "recognition_job": {
+          "rows": 0,
+          "schema_sha256": "69452723722374e7b8457cd7ce851e1149e769702ab29eaeb697913643a5c435",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "reconciliation": {
+          "rows": 0,
+          "schema_sha256": "1ba3e2c6184ed86152ccef05366ceb81cd00afa52387944a2d7218b622bb751f",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "refund": {
+          "rows": 0,
+          "schema_sha256": "2ad6e37e8a44a2d880a39c55e88e45de9392ab3d13e11d07ed1c52d7809fd20c",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "refund_event": {
+          "rows": 0,
+          "schema_sha256": "9cbf93b5e249bfca5b3e6151046a056d4ebcd1145a8f5d06fd73b530d2fbee2c",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "repair_protection": {
+          "rows": 0,
+          "schema_sha256": "7092d586a66b09b1b164d2d7b1c3b17f325a8d2d7a016d2b6dfa77ca68fb1aa1",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "review_publication": {
+          "rows": 0,
+          "schema_sha256": "3e9c2542017ca907ca49a4ffe702eb9bbb3630aa0f478b78d4b2cac95828f090",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "review_summary_consent": {
+          "rows": 0,
+          "schema_sha256": "ed88ec6369d14c26d7c2d6ea042cb60b874c930d01c1e7054d7e5222858ac509",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "series": {
+          "rows": 0,
+          "schema_sha256": "c1123b76e5408b1a7715efc766f83d675e0c176cbbd70c7a16a9f1fc7143f17e",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "service_archive_job": {
+          "rows": 0,
+          "schema_sha256": "69dd12fb3b68300c557843523d4003175bd1a5282467f88ea999b3c1f23328d2",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "service_evidence_file": {
+          "rows": 0,
+          "schema_sha256": "0a764329617525b1379cedc713880b2f0fd78d1be8fc3348b8e1194abea6b029",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "service_notification_outbox": {
+          "rows": 0,
+          "schema_sha256": "15c83c0a15c166f42e5e01e794419e69fbcb0180829ad235d9e04d840978a143",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "service_report_submission": {
+          "rows": 0,
+          "schema_sha256": "3365ab0807ffaccb2f8bd89b33b2fbd80ee93b48a60a356b42fde0195d223f20",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "sms_code": {
+          "rows": 0,
+          "schema_sha256": "4a491da6534f022b3bc5bd80bcf75f3cf534b6d5c3abb1d9cdf9acd134bd3d4b",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "staff_account": {
+          "rows": 1,
+          "schema_sha256": "d5ad41d9b3d891d107cb7b4bfcf694c51a44c2a12bd35b4a0a950c3680deb72f",
+          "data_sha256": "2210b4f600ed4744334449106828a715eefdf75f1a5dd56ba50a3a85fc24bfd9"
+        },
+        "staff_wechat_identity": {
+          "rows": 0,
+          "schema_sha256": "452e307c39b0745c8cecd5efa65543fccdf5df7069aaebb92c17b9bd90bff097",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "standard_project": {
+          "rows": 0,
+          "schema_sha256": "c416c4c468d33cb7db0e9811f59dbcfa819df34ec163ad1672e803a5e7772f86",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "technician_assignment": {
+          "rows": 0,
+          "schema_sha256": "5099f5c130aa971b69fddc145881e997700e4758876a53e5d36d94c72f620c90",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "technician_report": {
+          "rows": 0,
+          "schema_sha256": "bca353d485e51073cee7951b7c99f84d56de7aebe20a0cdea34032576070ba0f",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "upload_cleanup_task": {
+          "rows": 0,
+          "schema_sha256": "051a09e8d2ad42bceb6a125bffb405751c1b7eafd7f07b9926b43ecd7590993a",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "upload_request": {
+          "rows": 0,
+          "schema_sha256": "6afccdeefb95d3e1773ee21efda6aa8deb9c70902d0e2cd05c398010672981e8",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "user": {
+          "rows": 1,
+          "schema_sha256": "36891eeacf9d465a2db4e1b450e3a45637e95b3914015ccd973a134496902972",
+          "data_sha256": "a8c9d1ca6afe91ab15b42a77e20f51bb6e275aaed2b34c0282074aff6d4fcf5a"
+        },
+        "user_coupon": {
+          "rows": 0,
+          "schema_sha256": "1b2c608d7f628e6e2ff4b80acff9374ffa417abdc9fd25e340c0a7e6ab21526a",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "vehicle": {
+          "rows": 1,
+          "schema_sha256": "5d818675be691508fb79444d30b98d3e8278c64a09f65f705085eb3917f92d76",
+          "data_sha256": "b6c9f0516285839c5be1a4a0952d4e5c61d46d8c7dd77c2582d213ce30d84c7e"
+        },
+        "vehicle_archive": {
+          "rows": 1,
+          "schema_sha256": "ff85a52b82d4e0975a1ecf9df4afd3054fd2e55adbe184ce0fdde3f343f547aa",
+          "data_sha256": "d0f4da5c856faf955dc133470d172772fa67e64ee87d755ba241065e8961f36f"
+        },
+        "vehicle_archive_file": {
+          "rows": 0,
+          "schema_sha256": "f80bba12098b57e152ecc628f5e6d3b7bc70f96ebb657f9113dd69250c485f7b",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "vehicle_health_observation": {
+          "rows": 0,
+          "schema_sha256": "3882fa60d6a9c6290332ff4d7699d9eee8180022e02f64d7de15246b7057e355",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "vehicle_health_observation_history": {
+          "rows": 0,
+          "schema_sha256": "ee77b1ac8332209ea10fdc26aa6da4e8af42604ec53b3004e2c4c6e8472ee349",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "vehicle_reminder_preference": {
+          "rows": 0,
+          "schema_sha256": "cf503ad040e2217784b8ab92eaf2f3c8ff9455b9bc1ae50105898c88778046ad",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "objects": {
+        "TRIGGER:recovery_mileage_guard": "ea22b8a5c1d29ca72626fc9174d0029359a8144631160e6e4a725f5681ab7411",
+        "PROCEDURE:recovery_vehicle_count": "d8c97d53f730dc1f7e23cc6b7c2af5c1ccd22da4c931beafa41eebda898dad58",
+        "EVENT:recovery_disabled_event": "403967ea8b1a93b80f656fa5c4c3ed409adaee83830d8c08e80d980b74c0ae6f"
+      },
+      "sha256": "48afe3aec93acf3932ce55c75812bcc71e7fc85bfad8f2dd317d91406f5a56f5"
+    },
+    "pre_upgrade_backup": {
+      "file": "pre-upgrade.sql",
+      "bytes": 170127,
+      "sha256": "48a838c23faca0f9928affb47b96c534a83c5a96a65f2551ffbc88fd1ae00b7b"
+    },
+    "current": {
+      "table_count": 134,
+      "row_count": 19,
+      "tables": {
+        "ai_plan_rule": {
+          "rows": 0,
+          "schema_sha256": "e3a1ed3ae589ad781a992d4d571258f0c732b8d77d17fdbc7a3c5fc11d7f37a8",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "appointment_slot": {
+          "rows": 0,
+          "schema_sha256": "40e5f05f0b6d43cf0296d2d7fd46f37d5823d2c854b8db09fdb541f0664cce1a",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "archive_reminder": {
+          "rows": 0,
+          "schema_sha256": "10f0a623b6378ba437e4ab7f297740dc7f33e66671e528aad87aef110bd69993",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "archive_report_share": {
+          "rows": 0,
+          "schema_sha256": "4281f4232c7269347d5697eab9669b84884d32981dc11d88585087c46ebd68c0",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "archive_structured_detail": {
+          "rows": 0,
+          "schema_sha256": "29bc9c6cf7b77721e68008ff2d9338f88d36bf651a4c42cdb6661f667ecdc5ab",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "assessment": {
+          "rows": 0,
+          "schema_sha256": "0cd63246a8bccf86937bf4a10abbe8e421e4bd03fc45998ea59bf65af96400a4",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "assessment_month": {
+          "rows": 0,
+          "schema_sha256": "d10f9b2277016fc6c062af6d606d372b7fac7f3eb7f9041f2b874e75bc0c6bc4",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "assessment_policy": {
+          "rows": 0,
+          "schema_sha256": "2fff16f81a1c824350d7f066a2f761767f37baecd9a24fbac6223115af89f15e",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "assessment_snapshot": {
+          "rows": 0,
+          "schema_sha256": "81de474148550971e885de63fa2e239a25282ba2d558763ce83c1dd008b4864f",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "assessment_snapshot_fact": {
+          "rows": 0,
+          "schema_sha256": "255963a1019722405b90416b35f624dfd768cf32d0d1f5f45ed01007f812c046",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "audit_log": {
+          "rows": 0,
+          "schema_sha256": "87a3ca4528976c595b768274028bb663e133a8d9593c08683d50d0c4fcea513f",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "auth_rate_limit": {
+          "rows": 0,
+          "schema_sha256": "61e92cce515d7b494e81179b55e09acb38d15d572e596595e49bea97d245a0b5",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "auth_session": {
+          "rows": 1,
+          "schema_sha256": "aff22a29ab43fe991f8a9b901cfad16d44f1d69e7e2531e733771c869611700d",
+          "data_sha256": "c9bfc9e4652c5898e513ee5a2e48c8b83c4636175d93d552c26aaeef7ab973f8"
+        },
+        "brand": {
+          "rows": 0,
+          "schema_sha256": "2078873ae885d459e83b2215f3618224e5251daf135254ec018f25938b561784",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "circle_follow": {
+          "rows": 0,
+          "schema_sha256": "992c647db83d949377a4c3766eddb8eb0bc618aa81f1cf652e24fd3e31cb2d48",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "community_content": {
+          "rows": 0,
+          "schema_sha256": "8a7ab9dd8d080935b30c35990ce412b9af7d76ec3022774d8dd4b5835b9cd64c",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "community_interaction": {
+          "rows": 0,
+          "schema_sha256": "29a0c02983a346eac7f3a4df3600506e7d0bc72566302029264ee4073e97c197",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "community_qa_case": {
+          "rows": 0,
+          "schema_sha256": "5f9075fd0180c361a1f79b679b699e47abedcb3033179f6d44ea7435320ed432",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "community_qa_case_event": {
+          "rows": 0,
+          "schema_sha256": "71e1482fc1889180636ee66276fb93085ce4b4e657e0d6cb15a3a7215c4e2619",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "community_qa_control": {
+          "rows": 1,
+          "schema_sha256": "62f672163453f7d4c0d3029025c18d9dd73cc2647a1ad4de58a928f54dc51486",
+          "data_sha256": "43de3a417d75f4818c5a553268b80ce3a5805109a3bbc6b605e9fb0b8f50b485"
+        },
+        "community_qa_message": {
+          "rows": 0,
+          "schema_sha256": "c486d503487f1a38abd4d537b8a91e44e81d1e4553f8fb5564ebe1d1e9eef4d3",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "community_qa_publication": {
+          "rows": 0,
+          "schema_sha256": "39645626fbe8418becc8a4bf541b63b92b379b1ec83944b8ddf7b14015dd3a23",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "community_qa_publication_event": {
+          "rows": 0,
+          "schema_sha256": "f8742100ba82c969352277b456c725e6162ff3a0902d3bf11c910d0d5643a9cc",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "community_qa_service_policy": {
+          "rows": 0,
+          "schema_sha256": "7db9b62fe622020ec4ef13ab7e5a9a357847fd42018f8126be0827c69b7285b6",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "coupon": {
+          "rows": 0,
+          "schema_sha256": "46bffb200d7247eb51b736221db1b4f1637139d9910cdc413818843d84bb913b",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "coupon_issue": {
+          "rows": 0,
+          "schema_sha256": "92cf82fedef1b53a7c28aed8e36df196cd3d997d6bffebb10aca24a452b1b261",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "coupon_publication": {
+          "rows": 0,
+          "schema_sha256": "79e33bb2e1def3348e246d4254b76302b2cb183938d15f9577808564416e0c7c",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "coupon_service_authorization": {
+          "rows": 0,
+          "schema_sha256": "6614431a1bb0a2bb2d9e95eb97d83e4c395ed54a370eee0a0dfea1378566a4cc",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "coupon_service_redemption": {
+          "rows": 0,
+          "schema_sha256": "496a5ab542a4ec84d16a2343957346f4000529da2631cb76e26d6336f3c1a8bc",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "coupon_source": {
+          "rows": 0,
+          "schema_sha256": "27f92523b89f25f44c3db289cf199cad164c22268133dd6935e03e6ae4fbe8e3",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "coupon_stock_event": {
+          "rows": 0,
+          "schema_sha256": "75b6cea693fc96a4409e04a74f57df9211a27deecee835fae3197f32aa166a1c",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "coupon_transaction_event": {
+          "rows": 0,
+          "schema_sha256": "82da10398c6ed770ea1ad4ed7afc2efe2c6258372e14486656a5b7af29ce0a99",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "delivery_compare": {
+          "rows": 0,
+          "schema_sha256": "d9238ed7d373c2cdad8c42c4b7b08aafb867a7118baffb7e3ee02fce0f2192b0",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "diagnosis_case": {
+          "rows": 0,
+          "schema_sha256": "d23302afeae76dd4c6c8892344ce98732f792a49a3d8c975b3b9bbefa491ab86",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "diagnosis_case_event": {
+          "rows": 0,
+          "schema_sha256": "236e7eaf1bb1c83e945923d89bf21d1e4644b307a96b2bf515fd46ba255c324c",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "diagnosis_control": {
+          "rows": 1,
+          "schema_sha256": "54819025d674d2001e96cd9f58dbedbc7474b8bf0f889d5b174627e646515ee0",
+          "data_sha256": "43de3a417d75f4818c5a553268b80ce3a5805109a3bbc6b605e9fb0b8f50b485"
+        },
+        "diagnosis_message": {
+          "rows": 0,
+          "schema_sha256": "03644422f05ff37712ef1391bc6c51e9eff54e93297d71db9bf90652c36d40a9",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "diagnosis_notification_outbox": {
+          "rows": 0,
+          "schema_sha256": "119b69e12ec89bc122a13e1151a18ddb7307bea0fea551fc49493473040ceb20",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "diagnosis_notification_target": {
+          "rows": 0,
+          "schema_sha256": "edfba5a3452fd6acf643bd11047b9d76d6caf68d9d502ee61ec182f47cca249d",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "diagnosis_service_policy": {
+          "rows": 0,
+          "schema_sha256": "dad94ca40fc54674087084b3d8f7b1f833562e043e251217fd79b02413a7f9e3",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "experience_card": {
+          "rows": 0,
+          "schema_sha256": "f594db8fe8177f165f230b6f2f8e022ab18114bc92ced4be2f8c021ac2be7b87",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "experience_card_moderation": {
+          "rows": 0,
+          "schema_sha256": "57d566b0815ddfe7ebaec57c7866e975a56d7bc6569ca5f3027154d014e02a5b",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "experience_curation": {
+          "rows": 0,
+          "schema_sha256": "a85c3b2b59e6d12e34446514c3a180cc19ef49a5bdb4ce94a094ced0cb4728e9",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "file_object": {
+          "rows": 0,
+          "schema_sha256": "382a0e9aba2164ed8223424a8859b364a9b387389cb22e9e02c33eb6ae7be949",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "health_evidence_confirmation": {
+          "rows": 0,
+          "schema_sha256": "e8db0d5d831f674c1e528f289871ae373c603b40ae9c4948319ca173012f7bd4",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "idempotency_record": {
+          "rows": 0,
+          "schema_sha256": "ede6112a718bc3aacba93b331cf5ff6d5b8724c77683576b20545cb2dce69074",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "input_material": {
+          "rows": 2,
+          "schema_sha256": "427a537c4874e8c805fb04994a41b5bb98fe452c3b9743b559eb50b41e060c38",
+          "data_sha256": "07e5bfb25e4328464c55e80d17da34ee2b885148b982185cd8bbe79f1b533bca"
+        },
+        "invite_code": {
+          "rows": 0,
+          "schema_sha256": "6b8d5f81034b4f46491a72334a5f3963af7497e4c71bf37dc3ee5b1b231bf4e9",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "invite_diagnosis_policy": {
+          "rows": 0,
+          "schema_sha256": "1d0e4142bf3945925f8c6ddc0afdf721d474c11248b44c7472ae1ea4a7d3fd0f",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "invite_phone_evidence": {
+          "rows": 0,
+          "schema_sha256": "e93aef3a7dac3e5664ee9b39048b4fcf9186cf4ce159ebb5a12adb9179d7d831",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "invite_record": {
+          "rows": 0,
+          "schema_sha256": "d979e54361d10c3ee26237637da506659a732898b5b5acac7a5f298f415e3125",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "invite_registration": {
+          "rows": 0,
+          "schema_sha256": "99edafebb813b985398d1baa5d8ff0de6b07d59f189d6f7ac98764d0f016e48f",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "invite_reward_batch": {
+          "rows": 0,
+          "schema_sha256": "f2068714f3d36b0bfa580de64fc049d315b6fab98468dd7e42cdffa047c3867c",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "invite_reward_item": {
+          "rows": 0,
+          "schema_sha256": "7ca432acc45a4797b9f1dc5c0bd705d7681c1f1a33cd88efff4c6c79c47036d6",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "invite_reward_policy": {
+          "rows": 0,
+          "schema_sha256": "59dc38ffd432b0c5d68ad49e0aa2d3bbeaab62bd950277aea8109c3a02275705",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "knowledge_control": {
+          "rows": 1,
+          "schema_sha256": "8e1fd4f2cf096b8fbcf2be42e21ae91564de07e5af362778a38de794e7baae0a",
+          "data_sha256": "43de3a417d75f4818c5a553268b80ce3a5805109a3bbc6b605e9fb0b8f50b485"
+        },
+        "knowledge_document": {
+          "rows": 1,
+          "schema_sha256": "983e17fff616834403e394605f7370d3e2eed2bfef9fa927ffb4d00d8a5c6ccd",
+          "data_sha256": "8fa7bbc7ed1036a42f531b19a8acc620af34a09811293ea22d67e07e7c9d0eb1"
+        },
+        "knowledge_document_event": {
+          "rows": 0,
+          "schema_sha256": "2860f2d7e61a81061557758d259f0921f9d69843b7de64cc1faea7a5e36b7a75",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "knowledge_embedding_chunk": {
+          "rows": 1,
+          "schema_sha256": "053363061d44a64aa59fe78bc9eaaa7e07ea07814c18631d8cdbfb5513e0bf90",
+          "data_sha256": "acbc76c77e42ba99daaf1d48321c6fdcf14dca02e1034bf76f38149de632030e"
+        },
+        "knowledge_embedding_job": {
+          "rows": 1,
+          "schema_sha256": "4936397f047b68c2f7828c1b41fced5bb05dd1e50ba33232e3b389fcb59639e3",
+          "data_sha256": "fbd9360562568702cef9d3cc9a97b77cda1f1ba4554d503a18252fa09f862b41"
+        },
+        "maintenance_rule": {
+          "rows": 0,
+          "schema_sha256": "de60241fa6903627158253565290a325e4493c140a1957f1d2abe03bde7a22bd",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "merchant": {
+          "rows": 1,
+          "schema_sha256": "36e30d8679895012de378097aaf96bd2c6d88334cc142c94572f188a433ea810",
+          "data_sha256": "b2897fe6a905a8253ccc3c1c9be810d29b27053038eaab23d23d05ef380a4e4d"
+        },
+        "merchant_application": {
+          "rows": 0,
+          "schema_sha256": "d6f08dc9d3814269844a77f4fe6451daa0453e6e2127de0f5403c0fc041ae65f",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "merchant_application_review": {
+          "rows": 0,
+          "schema_sha256": "fcd900d911b5c7c26952d26accd3d0097a48063539f4439ef0cfd1d607ec6ddf",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "merchant_commission_entry": {
+          "rows": 0,
+          "schema_sha256": "7523db693192502528550ece84b27fabd89be995ea50d63dd20fbd0557749282",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "merchant_commission_policy": {
+          "rows": 0,
+          "schema_sha256": "1cef65e5aa66a8af252ea21fd6f57a46b4584dda8fd629914d23bc8d22869572",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "merchant_location": {
+          "rows": 0,
+          "schema_sha256": "6b9b0af6038812b1abe6fdeb209f521bed29066e2c0c2a6b24549f0b8fefc3af",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "merchant_project": {
+          "rows": 0,
+          "schema_sha256": "82d1b3653e4faffa2320aebbfb91089424bad9012f829572c27a4cee42b6b971",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "merchant_project_version": {
+          "rows": 0,
+          "schema_sha256": "43c484b9ec7f44ca4dc56dea927443c56e125a5303647556089dc883a80eb4ce",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "merchant_region_category_quota": {
+          "rows": 0,
+          "schema_sha256": "94e44abd76a07bac762b9926ececa30cb9303a1f9ade7249874a01f4d680bd8a",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "model": {
+          "rows": 0,
+          "schema_sha256": "88480d6fca3eee413725df599536d806c71a94ab70aba6fd8c73d69f62e0f1d0",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "model_health_policy": {
+          "rows": 0,
+          "schema_sha256": "1439ebb148e601abd116f93b605145c555b451e861e1fc03213c47d582e0783f",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "notification": {
+          "rows": 0,
+          "schema_sha256": "564fbc376496f5e90412634ad48b3f6845ca64f782bb038424ad140975d13b55",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "operator_account": {
+          "rows": 0,
+          "schema_sha256": "875474e70f733f06b62a843b111fbd47ccbdfa163faec82b6b8f8bc11cfbc962",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order": {
+          "rows": 1,
+          "schema_sha256": "7f289ca5f3d889247e193bf5f62d9fc6fdb4bc0b715b0f4a382f414cd5816040",
+          "data_sha256": "1efbcd11f2a8ccdf1197058fd26093ddedb7a3d53e9f21cdbfe0a54c8b7fbee8"
+        },
+        "order_archive_grant": {
+          "rows": 0,
+          "schema_sha256": "5d4e19ab406bfd5cd4acee01b969a38703b931923b517c0153c9916402078d47",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_commission_snapshot": {
+          "rows": 0,
+          "schema_sha256": "687fabd96cadcdc67cabf9e1a5be45bfd6d8354d269f92c4653457de95ebc1be",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_coupon_allocation": {
+          "rows": 0,
+          "schema_sha256": "c0c465f697af3477df50cbad02fff30610dc3e0f26541c61e59971c73d5b6e7f",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_dispute": {
+          "rows": 0,
+          "schema_sha256": "2daf48e98c66913559839d1ae225036d4ba104c95c3876cb25d34574686cc6e1",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_dispute_record": {
+          "rows": 0,
+          "schema_sha256": "1feaf5bf3327326f8f0478e7369b5f32f4513e5bafe4dfe77e28316de6fef890",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_redemption": {
+          "rows": 0,
+          "schema_sha256": "fa3a5b6d68244e7693db3cb6cf39593de46f72846956dec194d6b50e1d2cd402",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_review": {
+          "rows": 0,
+          "schema_sha256": "94c7b3e1f118c7bc2c1badda39e49b45982d89f74fe85a9937bdb4b0e878ba3e",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_review_file": {
+          "rows": 0,
+          "schema_sha256": "8bc6dd8e6cc20a089f847e360cefcc411f36f4fdd169a05ce30523a8500eec00",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_status_transition": {
+          "rows": 0,
+          "schema_sha256": "6d4a9305ccb5475fb36395833b6aa626a90773e57b00065c010261291857b851",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "package": {
+          "rows": 0,
+          "schema_sha256": "44a68029fb98d6199a76ef749fb89fba01e98cbb7c11ea1c050a18ece7750ac8",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "payment": {
+          "rows": 1,
+          "schema_sha256": "f5e7f7b5a4c8298f96cef0ddcfcb598990b7f18ae52a1320d76f0a742013ea5a",
+          "data_sha256": "37eee5837dd53c0244db6b501d78577e5cd2810ada52706f85149c0b9f8462d2"
+        },
+        "payment_event": {
+          "rows": 1,
+          "schema_sha256": "714d9d0c92e2326de1bbdff1f40fb85cb2fb9665d846b752df49c3d6544ebac3",
+          "data_sha256": "32305af7244eeea01ceffe389a2e9bc7b8a48ae42913ed10f7d9f6cfc6be0bb2"
+        },
+        "payment_exception": {
+          "rows": 0,
+          "schema_sha256": "14fc674638b0438c6a75515eb542b36961c90adef160c63646fef5129bbfa150",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "pickup_check": {
+          "rows": 0,
+          "schema_sha256": "a2ab1d218b91fdc46216e06299fc97c22488b16c9718b388a1b8a4bfac8a46e1",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "pickup_check_file": {
+          "rows": 0,
+          "schema_sha256": "9b6ad954319c41efdf2f028b7132bccbd245b8ced4b969c6f4b5fb65e99dd2e5",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "point_checkin_request": {
+          "rows": 0,
+          "schema_sha256": "1c57e6dc8941b1b2781d006887b49c5aca5952c331817487b6e7914ee0fab0b9",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "point_exchange": {
+          "rows": 0,
+          "schema_sha256": "02cad5fa7a8890659bb14eb2f3a6f97066a67e91d3e52c71f5125eb76384efc6",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "point_exchange_catalog": {
+          "rows": 0,
+          "schema_sha256": "7c955d9e148d550eab37093c3634ffe93c464a75c87e2b8e05fb5b2b4fc294c5",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "point_exchange_record": {
+          "rows": 0,
+          "schema_sha256": "7bfd70523cf4399e61f321ea0f32fe71c417b62f4f17514508c5ce04a93c8748",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "point_flow": {
+          "rows": 0,
+          "schema_sha256": "7bc59f6265e5f452da90a90b20c8ad428f15daf05437463e8fbfb9abb427ddf4",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "point_task_event": {
+          "rows": 0,
+          "schema_sha256": "6c8c41d37576b3387d8aa04368e7e4dcfa8f109808a918fdd91c2b919268710a",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "point_task_policy": {
+          "rows": 0,
+          "schema_sha256": "ff721adc4e2a3b62afdc837977bd8961108e956e9a580e4561d1d488119b8d79",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "point_verified_account": {
+          "rows": 0,
+          "schema_sha256": "b238b6ad3c2322a1d8a0f574c7aaa24706f3125f938925b312c2ae3f915e006f",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "point_verified_entry": {
+          "rows": 0,
+          "schema_sha256": "454edf6b8d53693b71ec749e98c8aadbcc721a3c73abd45bd1294a7a34a90011",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "price_monitor_policy": {
+          "rows": 0,
+          "schema_sha256": "7c8a0bd6ef9bfbffbf502f000dd81da95b21e659158d1c8ae6dc93689add8d40",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "project_model_applicability": {
+          "rows": 0,
+          "schema_sha256": "7a7b4c352f64b9468a3cd9de39ae53dc136d9d4d2626e3d3a7938c004770d66b",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "public_image_application": {
+          "rows": 0,
+          "schema_sha256": "3c47f87fedc115a0e05e129b0dd46de6b8dba818dee72b2141e6bf7b7cabde42",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "public_image_control": {
+          "rows": 1,
+          "schema_sha256": "0092704c2e634565dc11f57857df4c3b950234f85e9522405343d3a2339746ff",
+          "data_sha256": "43de3a417d75f4818c5a553268b80ce3a5805109a3bbc6b605e9fb0b8f50b485"
+        },
+        "public_image_event": {
+          "rows": 0,
+          "schema_sha256": "4f3f47b424eb023159287a252e234e8ee45e31d3412f6006968b83c7219b5b2a",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "public_review_text": {
+          "rows": 0,
+          "schema_sha256": "ee7597acba48f6fba645a45fceaa79748359577d5f3c375c5caac4ac06be32b6",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "public_review_text_moderation": {
+          "rows": 0,
+          "schema_sha256": "c017b436eb8098d5734381ba57c02920667fb9dd897bb719ab5b92a460cee852",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "recognition_job": {
+          "rows": 1,
+          "schema_sha256": "e2e949a91a445656231bdd182a0a9c4d12f8c6412e38a9e860b724e9ac475837",
+          "data_sha256": "620e7f83f5027c79f6ce00a05593db8ca76886288a087a09fa18d48200f08a97"
+        },
+        "reconciliation": {
+          "rows": 0,
+          "schema_sha256": "1ba3e2c6184ed86152ccef05366ceb81cd00afa52387944a2d7218b622bb751f",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "refund": {
+          "rows": 0,
+          "schema_sha256": "2ad6e37e8a44a2d880a39c55e88e45de9392ab3d13e11d07ed1c52d7809fd20c",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "refund_event": {
+          "rows": 0,
+          "schema_sha256": "9cbf93b5e249bfca5b3e6151046a056d4ebcd1145a8f5d06fd73b530d2fbee2c",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "repair_protection": {
+          "rows": 0,
+          "schema_sha256": "7092d586a66b09b1b164d2d7b1c3b17f325a8d2d7a016d2b6dfa77ca68fb1aa1",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "review_publication": {
+          "rows": 0,
+          "schema_sha256": "3e9c2542017ca907ca49a4ffe702eb9bbb3630aa0f478b78d4b2cac95828f090",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "review_summary_consent": {
+          "rows": 0,
+          "schema_sha256": "ed88ec6369d14c26d7c2d6ea042cb60b874c930d01c1e7054d7e5222858ac509",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "series": {
+          "rows": 0,
+          "schema_sha256": "c1123b76e5408b1a7715efc766f83d675e0c176cbbd70c7a16a9f1fc7143f17e",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "service_archive_job": {
+          "rows": 0,
+          "schema_sha256": "69dd12fb3b68300c557843523d4003175bd1a5282467f88ea999b3c1f23328d2",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "service_evidence_file": {
+          "rows": 0,
+          "schema_sha256": "0a764329617525b1379cedc713880b2f0fd78d1be8fc3348b8e1194abea6b029",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "service_notification_outbox": {
+          "rows": 0,
+          "schema_sha256": "15c83c0a15c166f42e5e01e794419e69fbcb0180829ad235d9e04d840978a143",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "service_report_submission": {
+          "rows": 0,
+          "schema_sha256": "3365ab0807ffaccb2f8bd89b33b2fbd80ee93b48a60a356b42fde0195d223f20",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "sms_code": {
+          "rows": 0,
+          "schema_sha256": "4a491da6534f022b3bc5bd80bcf75f3cf534b6d5c3abb1d9cdf9acd134bd3d4b",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "staff_account": {
+          "rows": 1,
+          "schema_sha256": "d5ad41d9b3d891d107cb7b4bfcf694c51a44c2a12bd35b4a0a950c3680deb72f",
+          "data_sha256": "2210b4f600ed4744334449106828a715eefdf75f1a5dd56ba50a3a85fc24bfd9"
+        },
+        "staff_wechat_identity": {
+          "rows": 0,
+          "schema_sha256": "452e307c39b0745c8cecd5efa65543fccdf5df7069aaebb92c17b9bd90bff097",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "standard_project": {
+          "rows": 0,
+          "schema_sha256": "c416c4c468d33cb7db0e9811f59dbcfa819df34ec163ad1672e803a5e7772f86",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "technician_assignment": {
+          "rows": 0,
+          "schema_sha256": "5099f5c130aa971b69fddc145881e997700e4758876a53e5d36d94c72f620c90",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "technician_report": {
+          "rows": 0,
+          "schema_sha256": "bca353d485e51073cee7951b7c99f84d56de7aebe20a0cdea34032576070ba0f",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "upload_cleanup_task": {
+          "rows": 0,
+          "schema_sha256": "051a09e8d2ad42bceb6a125bffb405751c1b7eafd7f07b9926b43ecd7590993a",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "upload_request": {
+          "rows": 0,
+          "schema_sha256": "6afccdeefb95d3e1773ee21efda6aa8deb9c70902d0e2cd05c398010672981e8",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "user": {
+          "rows": 1,
+          "schema_sha256": "36891eeacf9d465a2db4e1b450e3a45637e95b3914015ccd973a134496902972",
+          "data_sha256": "a8c9d1ca6afe91ab15b42a77e20f51bb6e275aaed2b34c0282074aff6d4fcf5a"
+        },
+        "user_coupon": {
+          "rows": 0,
+          "schema_sha256": "1b2c608d7f628e6e2ff4b80acff9374ffa417abdc9fd25e340c0a7e6ab21526a",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "vehicle": {
+          "rows": 1,
+          "schema_sha256": "5d818675be691508fb79444d30b98d3e8278c64a09f65f705085eb3917f92d76",
+          "data_sha256": "b6c9f0516285839c5be1a4a0952d4e5c61d46d8c7dd77c2582d213ce30d84c7e"
+        },
+        "vehicle_archive": {
+          "rows": 1,
+          "schema_sha256": "ff85a52b82d4e0975a1ecf9df4afd3054fd2e55adbe184ce0fdde3f343f547aa",
+          "data_sha256": "d0f4da5c856faf955dc133470d172772fa67e64ee87d755ba241065e8961f36f"
+        },
+        "vehicle_archive_file": {
+          "rows": 0,
+          "schema_sha256": "f80bba12098b57e152ecc628f5e6d3b7bc70f96ebb657f9113dd69250c485f7b",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "vehicle_health_observation": {
+          "rows": 0,
+          "schema_sha256": "3882fa60d6a9c6290332ff4d7699d9eee8180022e02f64d7de15246b7057e355",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "vehicle_health_observation_history": {
+          "rows": 0,
+          "schema_sha256": "ee77b1ac8332209ea10fdc26aa6da4e8af42604ec53b3004e2c4c6e8472ee349",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "vehicle_reminder_preference": {
+          "rows": 0,
+          "schema_sha256": "cf503ad040e2217784b8ab92eaf2f3c8ff9455b9bc1ae50105898c88778046ad",
+          "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "objects": {
+        "TRIGGER:recovery_mileage_guard": "ea22b8a5c1d29ca72626fc9174d0029359a8144631160e6e4a725f5681ab7411",
+        "PROCEDURE:recovery_vehicle_count": "d8c97d53f730dc1f7e23cc6b7c2af5c1ccd22da4c931beafa41eebda898dad58",
+        "EVENT:recovery_disabled_event": "403967ea8b1a93b80f656fa5c4c3ed409adaee83830d8c08e80d980b74c0ae6f"
+      },
+      "sha256": "f1e0c833f8bb6f525f1cb9235dd048afd63317c7056a4b9baa9a580645b7b028"
+    },
+    "current_backup": {
+      "file": "current.sql",
+      "bytes": 174992,
+      "sha256": "7015a849d3e0872166ec01181bb5b237f3b672d19631f6192423d4efc0e624b5"
+    },
+    "restore_server_uuid": "522d7816-d203-11f1-9276-9a966b80c194",
+    "damaged_tables": [
+      "vehicle",
+      "vehicle_archive"
+    ],
+    "migration_sources_unchanged": true,
+    "cleanup": [
+      {
+        "role": "restore",
+        "passed": true
+      },
+      {
+        "role": "source",
+        "passed": true
+      }
+    ],
+    "implementation_sources_unchanged": true,
+    "finished_at": "2026-10-27T12:39:36.695690+00:00",
+    "duration_seconds": 130.609
+  },
+  "prior_ci": {
+    "failed_head": "b1a26cc",
+    "executions": 2399,
+    "failures": 1,
+    "reason": "Old material unknown_kind case still used supported image header with MP3 bytes: expected400, correct422. Changed header to unsupported webp; validation retained.",
+    "fixed_parent_head": "5aacb52",
+    "fixed_parent_ci_verified": false
+  },
+  "boundaries": [
+    "Counts include inherited regression executions, not all newly introduced or globally unique cases.",
+    "Unicode character chunks are not actual model tokenizer budget acceptance.",
+    "No embedding resource download/inference, semantic recall/precision evaluation or public VECTOR wiring.",
+    "No automatic index scheduler/status UI, cross-profile retention/erasure schedule or external model authorization.",
+    "Recovery uses synthetic structural vectors, not trusted published knowledge/model evidence.",
+    "Selected local tests and prior CI failure are not a same-version full backend/all-362-API pass.",
+    "No production deployment, WeChat/SMS/physical-device/capacity acceptance."
+  ],
+  "final_protocol_regression": {
+    "licensed_knowledge_cases": 16,
+    "malformed_primitive_payloads_rejected_without_pending_callback": true
+  },
+  "github": {
+    "draft_pr": "https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/250",
+    "base": "codex/document-owner-jobs",
+    "parent_fix": "5aacb52",
+    "ci_completed": false
+  }
+}

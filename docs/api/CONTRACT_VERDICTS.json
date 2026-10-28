@@ -104,13 +104,15 @@
     },
     {
       "operation": "GET /api/vehicle/ocr-license",
-      "verdict": "not-implemented",
-      "reason": "行驶证 OCR 未实现,需要外部 OCR 供应商与合规存储方案;当前车辆信息由车主手填。"
+      "verdict": "superseded",
+      "reason": "旧GET不执行行驶证识别；迁移当前OWNER、本人CLEAN图片与NEW_VEHICLE_LICENSE_OCR_V1独立用途同意的POST，候选须人工核对并手动选择车型。",
+      "replacement": "POST /api/vehicle/license-recognition"
     },
     {
       "operation": "GET /api/vehicle/vin-decode",
-      "verdict": "not-implemented",
-      "reason": "VIN 解码未实现,需要外部 VIN 库供应商;车型由品牌/车系/配置枚举录入。"
+      "verdict": "superseded",
+      "reason": "旧GET不执行解码；迁移具备OWNER会话复核、明确NHTSA用途同意和人工确认的POST，VIN不得放在查询参数。",
+      "replacement": "POST /api/vehicle/vin-decode"
     },
     {
       "operation": "POST /api/payments/callback/{channel}",
@@ -196,6 +198,51 @@
       "operation": "POST /api/vehicle/mileage-recognition",
       "verdict": "implemented-local",
       "reason": "默认关闭的里程识别网关已实现；真实OCR模型、小程序接线及完整四类真实HTTP执行证据待补。"
+    },
+    {
+      "operation": "POST /api/check/pickup/mileage-recognition",
+      "verdict": "implemented-local",
+      "reason": "本店接车OCR候选及人工核对已接线，默认关闭；本地HTTP组件/MySQL权限与状态测试，上游和存储使用明确替身，真实模型、手机和完整供应商证据另验。"
+    },
+    {
+      "operation": "POST /api/vehicle/vin-decode",
+      "verdict": "implemented-local",
+      "reason": "R2a车主网关与小程序候选/人工选车型闭环已实现；HTTP/JWT/MySQL使用合成供应商验证，不作为真实NHTSA覆盖或中国车型来源验收，也不扩称历史四类证据齐全。"
+    },
+    {
+      "operation": "POST /api/vehicle/license-recognition",
+      "verdict": "implemented-local",
+      "reason": "R2b新车用途行驶证候选网关与本地受限OCR场景已实现；新车图片复用当前OWNER私有上传，无vehicle_id。授权真实证件效果、真机及国内车型映射另验，不据替身或合成样本扩称全部历史HTTP证据齐全。"
+    },
+    {
+      "operation": "POST /api/recognition/asr/jobs",
+      "verdict": "implemented-local",
+      "reason": "R3持久ASR任务、当前OWNER/同车辆同用途权限、幂等/取消/租约/TTL及人工转写核对软件已实现；真实faster-whisper模型与授权语音效果尚未验收，局部替身流程不作为全部历史四类HTTP证据。"
+    },
+    {
+      "operation": "GET /api/recognition/asr/jobs/{id}",
+      "verdict": "implemented-local",
+      "reason": "R3持久ASR任务、当前OWNER/同车辆同用途权限、幂等/取消/租约/TTL及人工转写核对软件已实现；真实faster-whisper模型与授权语音效果尚未验收，局部替身流程不作为全部历史四类HTTP证据。"
+    },
+    {
+      "operation": "POST /api/recognition/asr/jobs/{id}/cancel",
+      "verdict": "implemented-local",
+      "reason": "R3持久ASR任务、当前OWNER/同车辆同用途权限、幂等/取消/租约/TTL及人工转写核对软件已实现；真实faster-whisper模型与授权语音效果尚未验收，局部替身流程不作为全部历史四类HTTP证据。"
+    },
+    {
+      "operation": "POST /api/recognition/documents/jobs",
+      "verdict": "implemented-local",
+      "reason": "R4b持久文档任务、独立图片材料与人工逐块核对软件已实现；本地替身HTTP/MySQL不代表真实证件或模型效果，真实中文单据/手机与历史四类API全覆盖另验，默认关闭。"
+    },
+    {
+      "operation": "GET /api/recognition/documents/jobs/{id}",
+      "verdict": "implemented-local",
+      "reason": "R4b持久文档任务、独立图片材料与人工逐块核对软件已实现；本地替身HTTP/MySQL不代表真实证件或模型效果，真实中文单据/手机与历史四类API全覆盖另验，默认关闭。"
+    },
+    {
+      "operation": "POST /api/recognition/documents/jobs/{id}/cancel",
+      "verdict": "implemented-local",
+      "reason": "R4b持久文档任务、独立图片材料与人工逐块核对软件已实现；本地替身HTTP/MySQL不代表真实证件或模型效果，真实中文单据/手机与历史四类API全覆盖另验，默认关闭。"
     }
   ]
 }

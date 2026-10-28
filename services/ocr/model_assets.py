@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import tarfile
 import tempfile
+import time
 
 LOCK = Path(__file__).with_name('models.lock.json')
 
@@ -29,6 +30,21 @@ def verify_models(root):
         for name, record in model['files'].items():
             checked_bytes(directory / name, record)
     return {model['name']: str(root / (model['name'] + '_infer')) for model in model_lock()}
+
+
+def publish_models(stage, output):
+    # Windows readers may briefly deny an atomic directory rename. Never fall
+    # back to copying partial models or overwrite an output created meanwhile.
+    for attempt in range(4):
+        if output.exists() or output.is_symlink():
+            raise ValueError('Choose a new output directory; existing assets are never overwritten')
+        try:
+            stage.rename(output)
+            return
+        except PermissionError as error:
+            if getattr(error, 'winerror', None) not in (5, 32) or attempt == 3:
+                raise
+            time.sleep(.05 * (attempt + 1))
 
 def prepare_models(archives, output):
     archives, output = Path(archives), Path(output)
@@ -57,7 +73,7 @@ def prepare_models(archives, output):
                     with tar.extractfile(member) as source:
                         (directory / name).write_bytes(source.read())
         verify_models(stage)
-        stage.rename(output)
+        publish_models(stage, output)
     return verify_models(output)
 
 def main():

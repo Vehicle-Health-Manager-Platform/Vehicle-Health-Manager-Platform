@@ -1,0 +1,6091 @@
+{
+  "version": 1,
+  "date": "2026-10-28",
+  "phase": "R5c2 public vector and exact reference",
+  "evidence_generated_at": "2026-10-28T09:21:38.971623+00:00",
+  "source_sha256": "5ec84dda6e28bf9aa4e143e3922ee640402564ff8c352f08846aa06a7f037e10",
+  "selected_checks_passed": true,
+  "production_acceptance_passed": false,
+  "full_api_acceptance_passed": false,
+  "full_compose_runtime_verified": false,
+  "domain_accuracy_accepted": false,
+  "mobile_device_accepted": false,
+  "public_vector_default_enabled": false,
+  "selected_java": {
+    "source_sha256": "5ec84dda6e28bf9aa4e143e3922ee640402564ff8c352f08846aa06a7f037e10",
+    "suites": [
+      {
+        "suite": "JdbcKnowledgeVectorRetrievalTest",
+        "tests": 48,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "JdbcKnowledgeVectorIndexTest",
+        "tests": 47,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "JdbcKnowledgeEmbeddingRuntimeTest",
+        "tests": 42,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "KnowledgeEmbeddingConfigurationTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "LicensedKnowledgeHttpTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "EmbeddingHttpClientTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "EmbeddingFoundationTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "KnowledgeEmbeddingHttpJourneyTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ],
+    "total": 173
+  },
+  "actual_model": {
+    "passed": true,
+    "source_sha256": "422603e3b3987f4e872bbafd7c4b864679f817ea6c437c38bbc8f7a81d56d2e6",
+    "production_acceptance_passed": false,
+    "real_user_accuracy_accepted": false,
+    "automotive_semantic_accuracy_accepted": false,
+    "resource_proof": {
+      "Memory": 2147483648,
+      "MemorySwap": 2147483648,
+      "NanoCpus": 2000000000,
+      "PidsLimit": 128,
+      "ShmSize": 16777216,
+      "ReadonlyRootfs": true,
+      "NetworkMode": "none",
+      "nonroot": true,
+      "capabilities_dropped": true,
+      "no_new_privileges": true,
+      "host_ports": false,
+      "resource_binds_readonly": true
+    },
+    "image_id": "sha256:0d18248717189b99cc6c7cedd1b71c229136b32fe1dbe62dc3c2a6c41d8dab1c",
+    "guard_image_id": "sha256:a24b7a9093e02cab3c4182d8a570ecf307eeb4a39c406d8a810e9090bb816ec8",
+    "guard_library_sha256": [
+      "f9a9ad78a8dc39c0e90a265ffa551fae6c92a40f360889b44a7e141f9a2adfb1  /usr/lib/x86_64-linux-gnu/libgomp.so.1",
+      "df79d556924ecb71a946482802a0a0d584c30a7a25e564eccf19b7b72996bbbe  /usr/lib/x86_64-linux-gnu/libseccomp.so.2"
+    ],
+    "os_packages": [
+      "adduser=3.134",
+      "apt=2.6.1",
+      "base-files=12.4+deb12u15",
+      "base-passwd=3.6.1",
+      "bash=5.2.15-2+b13",
+      "bsdutils=1:2.38.1-5+deb12u3",
+      "ca-certificates=20250419~deb12u2",
+      "coreutils=9.1-1",
+      "dash=0.5.12-2",
+      "debconf=1.5.82",
+      "debian-archive-keyring=2023.3+deb12u2",
+      "debianutils=5.7-0.5~deb12u1",
+      "diffutils=1:3.8-4",
+      "dpkg=1.21.23",
+      "e2fsprogs=1.47.0-2+b2",
+      "findutils=4.9.0-4",
+      "gcc-12-base=12.2.0-14+deb12u1",
+      "gpgv=2.2.40-1.1+deb12u2",
+      "grep=3.8-5",
+      "gzip=1.12-1",
+      "hostname=3.23+nmu1",
+      "init-system-helpers=1.65.2+deb12u1",
+      "libacl1=2.3.1-3",
+      "libapt-pkg6.0=2.6.1",
+      "libattr1=1:2.5.1-4",
+      "libaudit-common=1:3.0.9-1",
+      "libaudit1=1:3.0.9-1",
+      "libblkid1=2.38.1-5+deb12u3",
+      "libbz2-1.0=1.0.8-5+b1",
+      "libc-bin=2.36-9+deb12u14",
+      "libc6=2.36-9+deb12u14",
+      "libcap-ng0=0.8.3-1+b3",
+      "libcap2=1:2.66-4+deb12u3+b1",
+      "libcom-err2=1.47.0-2+b2",
+      "libcrypt1=1:4.4.33-2",
+      "libdb5.3=5.3.28+dfsg2-1",
+      "libdebconfclient0=0.270",
+      "libext2fs2=1.47.0-2+b2",
+      "libffi8=3.4.4-1",
+      "libgcc-s1=12.2.0-14+deb12u1",
+      "libgcrypt20=1.10.1-3+deb12u1",
+      "libgdbm6=1.23-3",
+      "libgmp10=2:6.2.1+dfsg1-1.1",
+      "libgnutls30=3.7.9-2+deb12u7",
+      "libgpg-error0=1.46-1",
+      "libgssapi-krb5-2=1.20.1-2+deb12u5",
+      "libhogweed6=3.8.1-2",
+      "libidn2-0=2.3.3-1+b1",
+      "libk5crypto3=1.20.1-2+deb12u5",
+      "libkeyutils1=1.6.3-2",
+      "libkrb5-3=1.20.1-2+deb12u5",
+      "libkrb5support0=1.20.1-2+deb12u5",
+      "liblz4-1=1.9.4-1",
+      "liblzma5=5.4.1-1+deb12u2",
+      "libmd0=1.0.4-2",
+      "libmount1=2.38.1-5+deb12u3",
+      "libncursesw6=6.4-4",
+      "libnettle8=3.8.1-2",
+      "libnsl2=1.3.0-2",
+      "libp11-kit0=0.24.1-2",
+      "libpam-modules=1.5.2-6+deb12u2",
+      "libpam-modules-bin=1.5.2-6+deb12u2",
+      "libpam-runtime=1.5.2-6+deb12u2",
+      "libpam0g=1.5.2-6+deb12u2",
+      "libpcre2-8-0=10.42-1+deb12u2",
+      "libreadline8=8.2-1.3",
+      "libseccomp2=2.5.4-1+deb12u1",
+      "libselinux1=3.4-1+b6",
+      "libsemanage-common=3.4-1",
+      "libsemanage2=3.4-1+b5",
+      "libsepol2=3.4-2.1",
+      "libsmartcols1=2.38.1-5+deb12u3",
+      "libsqlite3-0=3.40.1-2+deb12u2",
+      "libss2=1.47.0-2+b2",
+      "libssl3=3.0.22-1~deb12u1",
+      "libstdc++6=12.2.0-14+deb12u1",
+      "libsystemd0=252.39-1~deb12u2",
+      "libtasn1-6=4.19.0-2+deb12u1",
+      "libtinfo6=6.4-4",
+      "libtirpc-common=1.3.3+ds-1",
+      "libtirpc3=1.3.3+ds-1",
+      "libudev1=252.39-1~deb12u2",
+      "libunistring2=1.0-2",
+      "libuuid1=2.38.1-5+deb12u3",
+      "libxxhash0=0.8.1-1",
+      "libzstd1=1.5.4+dfsg2-5",
+      "login=1:4.13+dfsg1-1+deb12u2",
+      "logsave=1.47.0-2+b2",
+      "mawk=1.3.4.20200120-3.1",
+      "mount=2.38.1-5+deb12u3",
+      "ncurses-base=6.4-4",
+      "ncurses-bin=6.4-4",
+      "netbase=6.4",
+      "openssl=3.0.22-1~deb12u1",
+      "passwd=1:4.13+dfsg1-1+deb12u2",
+      "perl-base=5.36.0-7+deb12u4",
+      "readline-common=8.2-1.3",
+      "sed=4.9-1+deb12u1",
+      "sysvinit-utils=3.06-4",
+      "tar=1.34+dfsg-1.2+deb12u1",
+      "tzdata=2026c-0+deb12u1",
+      "usr-is-merged=37~deb12u1",
+      "util-linux=2.38.1-5+deb12u3",
+      "util-linux-extra=2.38.1-5+deb12u3",
+      "zlib1g=1:1.2.13.dfsg-1"
+    ],
+    "runtime": {
+      "passed": true,
+      "synthetic_text_only": true,
+      "automotive_semantic_accuracy_accepted": false,
+      "checks": [
+        {
+          "name": "fixed_resources_and_complete_installed_versions",
+          "passed": true
+        },
+        {
+          "name": "actual_tokenizer_512_boundary",
+          "passed": true
+        },
+        {
+          "name": "actual_tokenizer_513_boundary",
+          "passed": true
+        },
+        {
+          "name": "reject_before_model_load_no_silent_truncation",
+          "passed": true
+        },
+        {
+          "name": "actual_guarded_cpu_model_vectors",
+          "passed": true
+        },
+        {
+          "name": "finite_unit_norm",
+          "passed": true
+        },
+        {
+          "name": "owned_worker_reaped_after_success",
+          "passed": true
+        },
+        {
+          "name": "repeat_stability",
+          "passed": true
+        },
+        {
+          "name": "synthetic_related_text_ranks_before_unrelated",
+          "passed": true
+        },
+        {
+          "name": "whole_batch_token_budget_no_partial_result",
+          "passed": true
+        },
+        {
+          "name": "recovery_after_budget_rejection",
+          "passed": true
+        },
+        {
+          "name": "close_refuses_new_inference",
+          "passed": true
+        },
+        {
+          "name": "private_http_authentication",
+          "passed": true
+        },
+        {
+          "name": "private_http_actual_inference",
+          "passed": true
+        },
+        {
+          "name": "private_http_actual_token_budget",
+          "passed": true
+        },
+        {
+          "name": "kernel_worker_socket_denial",
+          "passed": true
+        }
+      ],
+      "profile": {
+        "model": "BAAI/bge-small-zh-v1.5",
+        "revision": "7999e1d3359715c523056ef9478215996d62a620",
+        "dimension": 512,
+        "query_prefix": "为这个句子生成表示以用于检索相关文章：",
+        "normalization": "L2_V1",
+        "chunk_policy": "UNICODE_256_OVERLAP32_V1",
+        "encoder_policy": "BGE_CLS_FP32_TOKENIZER512_V1",
+        "runtime_sha256": "9fea14976049ee9e3488f460daf9baa4c3112e235be95384077d756db445feb1"
+      },
+      "profile_hash": "7867812db47b8f007bd3af13b23fd157f6a3312f69f349ddfc255d1020dde6f6",
+      "batch_seconds": 7.926,
+      "synthetic_cosines": [
+        0.8110351702571826,
+        0.2440664959372179
+      ]
+    },
+    "java_mysql_actual_model": {
+      "tests": 34,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "java_public_http_actual_model": {
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "memory_peak_bytes": 597176320,
+    "cleanup_complete": true,
+    "sources_unchanged": true
+  },
+  "default_regression": {
+    "version": 1,
+    "finished_at": "2026-10-28T02:41:59.081940+00:00",
+    "selected_checks_passed": true,
+    "source_sha256": "5ec84dda6e28bf9aa4e143e3922ee640402564ff8c352f08846aa06a7f037e10",
+    "sources_unchanged": true,
+    "backend_requested": false,
+    "backend_runtime_verified": false,
+    "production_acceptance_passed": false,
+    "boundaries": [
+      "Synthetic identities and LOCAL_TEST funds in backend integration tests.",
+      "No real WeChat/SMS/payment/model provider or mobile-device acceptance.",
+      "Builds and unit tests do not certify rendered page interactions.",
+      "Selected regression checks are not all-API business or performance acceptance."
+    ],
+    "checks": [
+      {
+        "name": "miniapp-unit",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 2.781,
+        "log": "miniapp-unit.log"
+      },
+      {
+        "name": "python-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 112.562,
+        "log": "python-regression.log"
+      },
+      {
+        "name": "ocr-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 21.688,
+        "log": "ocr-regression.log"
+      },
+      {
+        "name": "asr-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 5.578,
+        "log": "asr-regression.log"
+      },
+      {
+        "name": "document-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 8.312,
+        "log": "document-regression.log"
+      },
+      {
+        "name": "embedding-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 9.141,
+        "log": "embedding-regression.log"
+      },
+      {
+        "name": "wechat-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 18.016,
+        "log": "wechat-build.log"
+      },
+      {
+        "name": "h5-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 16.797,
+        "log": "h5-build.log"
+      },
+      {
+        "name": "openapi-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.328,
+        "log": "openapi-consistency.log"
+      },
+      {
+        "name": "migration-mounts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.156,
+        "log": "migration-mounts.log"
+      },
+      {
+        "name": "handover-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.312,
+        "log": "handover-consistency.log"
+      },
+      {
+        "name": "contract-verdicts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.172,
+        "log": "contract-verdicts.log"
+      }
+    ]
+  },
+  "browser": {
+    "passed": true,
+    "unique_checks": 15,
+    "execution_items": 21,
+    "checks": [
+      "loading feedback shown",
+      "vector label and exact Unicode excerpt",
+      "vector has no keyword pagination",
+      "detail request carries chunk",
+      "detail body is actual selected excerpt",
+      "copied reference preserves chunk",
+      "unavailability explicitly keyword",
+      "keyword cursor preserved",
+      "malformed position clears prior evidence",
+      "AI waits for explicit confirmation",
+      "AI provided excerpts and limitation visible",
+      "AI reference opens its exact chunk",
+      "late old-owner evidence is withheld",
+      "390px no horizontal overflow",
+      "deep link opens a bounded chunk route"
+    ],
+    "runs": [
+      {
+        "passed": 14,
+        "checks": [
+          "loading feedback shown",
+          "vector label and exact Unicode excerpt",
+          "vector has no keyword pagination",
+          "detail request carries chunk",
+          "detail body is actual selected excerpt",
+          "copied reference preserves chunk",
+          "unavailability explicitly keyword",
+          "keyword cursor preserved",
+          "malformed position clears prior evidence",
+          "AI waits for explicit confirmation",
+          "AI provided excerpts and limitation visible",
+          "AI reference opens its exact chunk",
+          "late old-owner evidence is withheld",
+          "390px no horizontal overflow"
+        ],
+        "fixture": "Synthetic owner/vehicle/API and AI only; no real model or device in this browser run",
+        "viewport": "390x844"
+      },
+      {
+        "passed": 7,
+        "checks": [
+          "loading feedback shown",
+          "vector label and exact Unicode excerpt",
+          "vector has no keyword pagination",
+          "detail request carries chunk",
+          "detail body is actual selected excerpt",
+          "copied reference preserves chunk",
+          "deep link opens a bounded chunk route"
+        ],
+        "fixture": "Synthetic owner/vehicle/API only; copied reference opens a separate current-authorized chunk page",
+        "viewport": "390x844"
+      }
+    ],
+    "fixture": "Synthetic owner/vehicle/API/AI only; actual model+HTTP checked separately"
+  },
+  "post_document_update_regression": {
+    "passed": true,
+    "tests": 21,
+    "handover_tests": 8,
+    "delivery_runner_tests": 13,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "check_passed": true,
+    "original_reproduction": "miniapp_handover.py --check failed: stale REMAINING_ACCEPTANCE.md guide digest",
+    "fix": "Regenerated docs/delivery/miniapp-handover.json; production and test source unchanged",
+    "ci_first_attempt": "40651593666/schema-and-ocr failed at c492ab2"
+  },
+  "full_backend": {
+    "prebuilt_images": [
+      {
+        "id": "sha256:0a32bfd215e858e5b22c08ebc343e8123c9d192f6a5cf2510c1f7557fe0d09a2",
+        "tags": [
+          "autocare-upload-minio-ci:latest"
+        ]
+      },
+      {
+        "id": "sha256:088dabd3858d38612b53125e7f7be594e2bf370187b205dd29994e3c8af63934",
+        "tags": [
+          "autocare-upload-init-ci:latest"
+        ]
+      },
+      {
+        "id": "sha256:629a3050df6a706aedb31859fbb8139e9aaf8f56b0ffefbf251b8358a7c9e76c",
+        "tags": [
+          "clamav/clamav:1.4.3_base"
+        ]
+      }
+    ],
+    "passed": true,
+    "full_core_suite": true,
+    "production_acceptance_passed": false,
+    "source_sha256": "5ec84dda6e28bf9aa4e143e3922ee640402564ff8c352f08846aa06a7f037e10",
+    "maven_exit_code": 0,
+    "sources_unchanged": true,
+    "tests": {
+      "tests": 2568,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "suites": 249,
+      "required_core_suites": 19
+    },
+    "coverage": {
+      "version": 1,
+      "metric": "LINE",
+      "minimum_percent": 70,
+      "passed": true,
+      "minimum_method_percent": 70,
+      "overall": {
+        "missed": 41,
+        "covered": 1181,
+        "total": 1222,
+        "percent": 96.64,
+        "passed": true
+      },
+      "overall_method": {
+        "missed": 32,
+        "covered": 503,
+        "total": 535,
+        "percent": 94.02,
+        "passed": true
+      },
+      "overall_branch": {
+        "missed": 665,
+        "covered": 1856,
+        "total": 2521,
+        "percent": 73.62
+      },
+      "groups": {
+        "coupons": {
+          "line": {
+            "missed": 7,
+            "covered": 108,
+            "total": 115,
+            "percent": 93.91,
+            "passed": true
+          },
+          "method": {
+            "missed": 10,
+            "covered": 96,
+            "total": 106,
+            "percent": 90.57,
+            "passed": true
+          },
+          "branch": {
+            "missed": 141,
+            "covered": 337,
+            "total": 478,
+            "percent": 70.5
+          },
+          "classes": {
+            "order/CouponInventory": {
+              "line": {
+                "missed": 2,
+                "covered": 18,
+                "total": 20,
+                "percent": 90.0,
+                "passed": true
+              },
+              "method": {
+                "missed": 4,
+                "covered": 30,
+                "total": 34,
+                "percent": 88.24,
+                "passed": true
+              },
+              "branch": {
+                "missed": 11,
+                "covered": 65,
+                "total": 76,
+                "percent": 85.53
+              },
+              "member_count": 1
+            },
+            "order/CouponInput": {
+              "line": {
+                "missed": 2,
+                "covered": 15,
+                "total": 17,
+                "percent": 88.24,
+                "passed": true
+              },
+              "method": {
+                "missed": 2,
+                "covered": 12,
+                "total": 14,
+                "percent": 85.71,
+                "passed": true
+              },
+              "branch": {
+                "missed": 17,
+                "covered": 55,
+                "total": 72,
+                "percent": 76.39
+              },
+              "member_count": 1
+            },
+            "order/CouponTransactions": {
+              "line": {
+                "missed": 0,
+                "covered": 34,
+                "total": 34,
+                "percent": 100.0,
+                "passed": true
+              },
+              "method": {
+                "missed": 0,
+                "covered": 23,
+                "total": 23,
+                "percent": 100.0,
+                "passed": true
+              },
+              "branch": {
+                "missed": 70,
+                "covered": 126,
+                "total": 196,
+                "percent": 64.29
+              },
+              "member_count": 2
+            },
+            "order/CouponOrderInput": {
+              "line": {
+                "missed": 2,
+                "covered": 5,
+                "total": 7,
+                "percent": 71.43,
+                "passed": true
+              },
+              "method": {
+                "missed": 2,
+                "covered": 5,
+                "total": 7,
+                "percent": 71.43,
+                "passed": true
+              },
+              "branch": {
+                "missed": 4,
+                "covered": 8,
+                "total": 12,
+                "percent": 66.67
+              },
+              "member_count": 2
+            },
+            "order/CouponServiceRedemption": {
+              "line": {
+                "missed": 1,
+                "covered": 15,
+                "total": 16,
+                "percent": 93.75,
+                "passed": true
+              },
+              "method": {
+                "missed": 2,
+                "covered": 22,
+                "total": 24,
+                "percent": 91.67,
+                "passed": true
+              },
+              "branch": {
+                "missed": 30,
+                "covered": 72,
+                "total": 102,
+                "percent": 70.59
+              },
+              "member_count": 1
+            },
+            "order/CouponRecovery": {
+              "line": {
+                "missed": 0,
+                "covered": 21,
+                "total": 21,
+                "percent": 100.0,
+                "passed": true
+              },
+              "method": {
+                "missed": 0,
+                "covered": 4,
+                "total": 4,
+                "percent": 100.0,
+                "passed": true
+              },
+              "branch": {
+                "missed": 9,
+                "covered": 11,
+                "total": 20,
+                "percent": 55.0
+              },
+              "member_count": 1
+            }
+          }
+        },
+        "invitations": {
+          "line": {
+            "missed": 11,
+            "covered": 206,
+            "total": 217,
+            "percent": 94.93,
+            "passed": true
+          },
+          "method": {
+            "missed": 12,
+            "covered": 100,
+            "total": 112,
+            "percent": 89.29,
+            "passed": true
+          },
+          "branch": {
+            "missed": 103,
+            "covered": 365,
+            "total": 468,
+            "percent": 77.99
+          },
+          "classes": {
+            "order/Invitations": {
+              "line": {
+                "missed": 3,
+                "covered": 42,
+                "total": 45,
+                "percent": 93.33,
+                "passed": true
+              },
+              "method": {
+                "missed": 6,
+                "covered": 22,
+                "total": 28,
+                "percent": 78.57,
+                "passed": true
+              },
+              "branch": {
+                "missed": 6,
+                "covered": 26,
+                "total": 32,
+                "percent": 81.25
+              },
+              "member_count": 1
+            },
+            "order/InvitationInput": {
+              "line": {
+                "missed": 1,
+                "covered": 7,
+                "total": 8,
+                "percent": 87.5,
+                "passed": true
+              },
+              "method": {
+                "missed": 1,
+                "covered": 8,
+                "total": 9,
+                "percent": 88.89,
+                "passed": true
+              },
+              "branch": {
+                "missed": 8,
+                "covered": 32,
+                "total": 40,
+                "percent": 80.0
+              },
+              "member_count": 1
+            },
+            "order/InvitationRegistration": {
+              "line": {
+                "missed": 5,
+                "covered": 61,
+                "total": 66,
+                "percent": 92.42,
+                "passed": true
+              },
+              "method": {
+                "missed": 2,
+                "covered": 13,
+                "total": 15,
+                "percent": 86.67,
+                "passed": true
+              },
+              "branch": {
+                "missed": 14,
+                "covered": 60,
+                "total": 74,
+                "percent": 81.08
+              },
+              "member_count": 2
+            },
+            "order/InvitationRewards": {
+              "line": {
+                "missed": 0,
+                "covered": 63,
+                "total": 63,
+                "percent": 100.0,
+                "passed": true
+              },
+              "method": {
+                "missed": 0,
+                "covered": 15,
+                "total": 15,
+                "percent": 100.0,
+                "passed": true
+              },
+              "branch": {
+                "missed": 28,
+                "covered": 116,
+                "total": 144,
+                "percent": 80.56
+              },
+              "member_count": 1
+            },
+            "order/InviteRewardPolicies": {
+              "line": {
+                "missed": 0,
+                "covered": 15,
+                "total": 15,
+                "percent": 100.0,
+                "passed": true
+              },
+              "method": {
+                "missed": 0,
+                "covered": 22,
+                "total": 22,
+                "percent": 100.0,
+                "passed": true
+              },
+              "branch": {
+                "missed": 11,
+                "covered": 63,
+                "total": 74,
+                "percent": 85.14
+              },
+              "member_count": 1
+            },
+            "order/InvitePolicyInput": {
+              "line": {
+                "missed": 1,
+                "covered": 4,
+                "total": 5,
+                "percent": 80.0,
+                "passed": true
+              },
+              "method": {
+                "missed": 1,
+                "covered": 2,
+                "total": 3,
+                "percent": 66.67,
+                "passed": false
+              },
+              "branch": {
+                "missed": 10,
+                "covered": 20,
+                "total": 30,
+                "percent": 66.67
+              },
+              "member_count": 1
+            },
+            "order/InviteDiagnosisPolicies": {
+              "line": {
+                "missed": 1,
+                "covered": 14,
+                "total": 15,
+                "percent": 93.33,
+                "passed": true
+              },
+              "method": {
+                "missed": 2,
+                "covered": 18,
+                "total": 20,
+                "percent": 90.0,
+                "passed": true
+              },
+              "branch": {
+                "missed": 26,
+                "covered": 48,
+                "total": 74,
+                "percent": 64.86
+              },
+              "member_count": 1
+            }
+          }
+        },
+        "assessment": {
+          "line": {
+            "missed": 3,
+            "covered": 134,
+            "total": 137,
+            "percent": 97.81,
+            "passed": true
+          },
+          "method": {
+            "missed": 4,
+            "covered": 115,
+            "total": 119,
+            "percent": 96.64,
+            "passed": true
+          },
+          "branch": {
+            "missed": 177,
+            "covered": 440,
+            "total": 617,
+            "percent": 71.31
+          },
+          "classes": {
+            "order/AssessmentCalculation": {
+              "line": {
+                "missed": 1,
+                "covered": 17,
+                "total": 18,
+                "percent": 94.44,
+                "passed": true
+              },
+              "method": {
+                "missed": 1,
+                "covered": 11,
+                "total": 12,
+                "percent": 91.67,
+                "passed": true
+              },
+              "branch": {
+                "missed": 2,
+                "covered": 42,
+                "total": 44,
+                "percent": 95.45
+              },
+              "member_count": 1
+            },
+            "order/AssessmentFacts": {
+              "line": {
+                "missed": 0,
+                "covered": 52,
+                "total": 52,
+                "percent": 100.0,
+                "passed": true
+              },
+              "method": {
+                "missed": 0,
+                "covered": 29,
+                "total": 29,
+                "percent": 100.0,
+                "passed": true
+              },
+              "branch": {
+                "missed": 140,
+                "covered": 241,
+                "total": 381,
+                "percent": 63.25
+              },
+              "member_count": 2
+            },
+            "order/AssessmentPolicies": {
+              "line": {
+                "missed": 0,
+                "covered": 19,
+                "total": 19,
+                "percent": 100.0,
+                "passed": true
+              },
+              "method": {
+                "missed": 0,
+                "covered": 25,
+                "total": 25,
+                "percent": 100.0,
+                "passed": true
+              },
+              "branch": {
+                "missed": 9,
+                "covered": 51,
+                "total": 60,
+                "percent": 85.0
+              },
+              "member_count": 2
+            },
+            "order/AssessmentPolicyInput": {
+              "line": {
+                "missed": 1,
+                "covered": 9,
+                "total": 10,
+                "percent": 90.0,
+                "passed": true
+              },
+              "method": {
+                "missed": 1,
+                "covered": 7,
+                "total": 8,
+                "percent": 87.5,
+                "passed": true
+              },
+              "branch": {
+                "missed": 18,
+                "covered": 46,
+                "total": 64,
+                "percent": 71.88
+              },
+              "member_count": 1
+            },
+            "order/AssessmentSnapshots": {
+              "line": {
+                "missed": 1,
+                "covered": 21,
+                "total": 22,
+                "percent": 95.45,
+                "passed": true
+              },
+              "method": {
+                "missed": 2,
+                "covered": 19,
+                "total": 21,
+                "percent": 90.48,
+                "passed": true
+              },
+              "branch": {
+                "missed": 6,
+                "covered": 24,
+                "total": 30,
+                "percent": 80.0
+              },
+              "member_count": 2
+            },
+            "order/AssessmentViews": {
+              "line": {
+                "missed": 0,
+                "covered": 16,
+                "total": 16,
+                "percent": 100.0,
+                "passed": true
+              },
+              "method": {
+                "missed": 0,
+                "covered": 24,
+                "total": 24,
+                "percent": 100.0,
+                "passed": true
+              },
+              "branch": {
+                "missed": 2,
+                "covered": 36,
+                "total": 38,
+                "percent": 94.74
+              },
+              "member_count": 1
+            }
+          }
+        },
+        "mileage_and_vehicle": {
+          "line": {
+            "missed": 1,
+            "covered": 126,
+            "total": 127,
+            "percent": 99.21,
+            "passed": true
+          },
+          "method": {
+            "missed": 0,
+            "covered": 32,
+            "total": 32,
+            "percent": 100.0,
+            "passed": true
+          },
+          "branch": {
+            "missed": 26,
+            "covered": 94,
+            "total": 120,
+            "percent": 78.33
+          },
+          "classes": {
+            "vehicle/LocalMileageService": {
+              "line": {
+                "missed": 0,
+                "covered": 20,
+                "total": 20,
+                "percent": 100.0,
+                "passed": true
+              },
+              "method": {
+                "missed": 0,
+                "covered": 5,
+                "total": 5,
+                "percent": 100.0,
+                "passed": true
+              },
+              "branch": {
+                "missed": 2,
+                "covered": 8,
+                "total": 10,
+                "percent": 80.0
+              },
+              "member_count": 1
+            },
+            "vehicle/VehicleService": {
+              "line": {
+                "missed": 1,
+                "covered": 74,
+                "total": 75,
+                "percent": 98.67,
+                "passed": true
+              },
+              "method": {
+                "missed": 0,
+                "covered": 19,
+                "total": 19,
+                "percent": 100.0,
+                "passed": true
+              },
+              "branch": {
+                "missed": 9,
+                "covered": 41,
+                "total": 50,
+                "percent": 82.0
+              },
+              "member_count": 1
+            },
+            "vehicle/VehicleInput": {
+              "line": {
+                "missed": 0,
+                "covered": 32,
+                "total": 32,
+                "percent": 100.0,
+                "passed": true
+              },
+              "method": {
+                "missed": 0,
+                "covered": 8,
+                "total": 8,
+                "percent": 100.0,
+                "passed": true
+              },
+              "branch": {
+                "missed": 15,
+                "covered": 45,
+                "total": 60,
+                "percent": 75.0
+              },
+              "member_count": 1
+            }
+          }
+        },
+        "order_states": {
+          "line": {
+            "missed": 15,
+            "covered": 540,
+            "total": 555,
+            "percent": 97.3,
+            "passed": true
+          },
+          "method": {
+            "missed": 6,
+            "covered": 144,
+            "total": 150,
+            "percent": 96.0,
+            "passed": true
+          },
+          "branch": {
+            "missed": 204,
+            "covered": 580,
+            "total": 784,
+            "percent": 73.98
+          },
+          "classes": {
+            "order/ReservationOrders": {
+              "line": {
+                "missed": 0,
+                "covered": 51,
+                "total": 51,
+                "percent": 100.0,
+                "passed": true
+              },
+              "method": {
+                "missed": 1,
+                "covered": 15,
+                "total": 16,
+                "percent": 93.75,
+                "passed": true
+              },
+              "branch": {
+                "missed": 9,
+                "covered": 49,
+                "total": 58,
+                "percent": 84.48
+              },
+              "member_count": 1
+            },
+            "order/ReservationSlots": {
+              "line": {
+                "missed": 7,
+                "covered": 21,
+                "total": 28,
+                "percent": 75.0,
+                "passed": true
+              },
+              "method": {
+                "missed": 3,
+                "covered": 10,
+                "total": 13,
+                "percent": 76.92,
+                "passed": true
+              },
+              "branch": {
+                "missed": 3,
+                "covered": 5,
+                "total": 8,
+                "percent": 62.5
+              },
+              "member_count": 1
+            },
+            "order/ReservationInput": {
+              "line": {
+                "missed": 1,
+                "covered": 17,
+                "total": 18,
+                "percent": 94.44,
+                "passed": true
+              },
+              "method": {
+                "missed": 1,
+                "covered": 9,
+                "total": 10,
+                "percent": 90.0,
+                "passed": true
+              },
+              "branch": {
+                "missed": 12,
+                "covered": 30,
+                "total": 42,
+                "percent": 71.43
+              },
+              "member_count": 3
+            },
+            "order/ReservationExpiry": {
+              "line": {
+                "missed": 0,
+                "covered": 19,
+                "total": 19,
+                "percent": 100.0,
+                "passed": true
+              },
+              "method": {
+                "missed": 0,
+                "covered": 6,
+                "total": 6,
+                "percent": 100.0,
+                "passed": true
+              },
+              "branch": {
+                "missed": 5,
+                "covered": 9,
+                "total": 14,
+                "percent": 64.29
+              },
+              "member_count": 1
+            },
+            "order/ServiceWork": {
+              "line": {
+                "missed": 0,
+                "covered": 98,
+                "total": 98,
+                "percent": 100.0,
+                "passed": true
+              },
+              "method": {
+                "missed": 0,
+                "covered": 31,
+                "total": 31,
+                "percent": 100.0,
+                "passed": true
+              },
+              "branch": {
+                "missed": 52,
+                "covered": 144,
+                "total": 196,
+                "percent": 73.47
+              },
+              "member_count": 1
+            },
+            "order/ServiceWorkInput": {
+              "line": {
+                "missed": 0,
+                "covered": 22,
+                "total": 22,
+                "percent": 100.0,
+                "passed": true
+              },
+              "method": {
+                "missed": 0,
+                "covered": 11,
+                "total": 11,
+                "percent": 100.0,
+                "passed": true
+              },
+              "branch": {
+                "missed": 24,
+                "covered": 54,
+                "total": 78,
+                "percent": 69.23
+              },
+              "member_count": 1
+            },
+            "order/OrderRedemption": {
+              "line": {
+                "missed": 1,
+                "covered": 60,
+                "total": 61,
+                "percent": 98.36,
+                "passed": true
+              },
+              "method": {
+                "missed": 0,
+                "covered": 17,
+                "total": 17,
+                "percent": 100.0,
+                "passed": true
+              },
+              "branch": {
+                "missed": 22,
+                "covered": 72,
+                "total": 94,
+                "percent": 76.6
+              },
+              "member_count": 2
+            },
+            "order/PickupInspection": {
+              "line": {
+                "missed": 1,
+                "covered": 109,
+                "total": 110,
+                "percent": 99.09,
+                "passed": true
+              },
+              "method": {
+                "missed": 0,
+                "covered": 23,
+                "total": 23,
+                "percent": 100.0,
+                "passed": true
+              },
+              "branch": {
+                "missed": 13,
+                "covered": 95,
+                "total": 108,
+                "percent": 87.96
+              },
+              "member_count": 1
+            },
+            "order/PickupInput": {
+              "line": {
+                "missed": 5,
+                "covered": 21,
+                "total": 26,
+                "percent": 80.77,
+                "passed": true
+              },
+              "method": {
+                "missed": 1,
+                "covered": 7,
+                "total": 8,
+                "percent": 87.5,
+                "passed": true
+              },
+              "branch": {
+                "missed": 43,
+                "covered": 43,
+                "total": 86,
+                "percent": 50.0
+              },
+              "member_count": 1
+            },
+            "order/ServiceArchiveJobs": {
+              "line": {
+                "missed": 0,
+                "covered": 122,
+                "total": 122,
+                "percent": 100.0,
+                "passed": true
+              },
+              "method": {
+                "missed": 0,
+                "covered": 15,
+                "total": 15,
+                "percent": 100.0,
+                "passed": true
+              },
+              "branch": {
+                "missed": 21,
+                "covered": 79,
+                "total": 100,
+                "percent": 79.0
+              },
+              "member_count": 2
+            }
+          }
+        },
+        "write_integrity": {
+          "line": {
+            "missed": 4,
+            "covered": 67,
+            "total": 71,
+            "percent": 94.37,
+            "passed": true
+          },
+          "method": {
+            "missed": 0,
+            "covered": 16,
+            "total": 16,
+            "percent": 100.0,
+            "passed": true
+          },
+          "branch": {
+            "missed": 14,
+            "covered": 40,
+            "total": 54,
+            "percent": 74.07
+          },
+          "classes": {
+            "common/write/WriteIntegrityService": {
+              "line": {
+                "missed": 4,
+                "covered": 67,
+                "total": 71,
+                "percent": 94.37,
+                "passed": true
+              },
+              "method": {
+                "missed": 0,
+                "covered": 16,
+                "total": 16,
+                "percent": 100.0,
+                "passed": true
+              },
+              "branch": {
+                "missed": 14,
+                "covered": 40,
+                "total": 54,
+                "percent": 74.07
+              },
+              "member_count": 4
+            }
+          }
+        }
+      },
+      "failures": [],
+      "scope_note": "Declared business roots and all their nested classes only; not whole-platform coverage.",
+      "tests": {
+        "tests": 2568,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "suites": 249,
+        "required_core_suites": 19
+      },
+      "scope_sha256": "e06c4b848c331c8cd326ad648cfd244089315d17a04eb97ae1f70b0ef6ea72d0",
+      "xml_sha256": "d37826c165096557ba27270bdad9176cd59a09bd297481b839d585fe65a352f4"
+    },
+    "duration_seconds": 5225.219,
+    "log_sha256": "81b2608d9cc2b928668bb0b1c2378af3efd3a70c3d0055af8a4dab9a42041328",
+    "initial_coverage_report_passed": false,
+    "coverage_data_recovery": {
+      "recovered_unmodified": true,
+      "source_size": 762734,
+      "sha256": "45fd723c353363166a271111ee0ec57f41071b974106e083612dd361151aca8f",
+      "target_sha256": "45fd723c353363166a271111ee0ec57f41071b974106e083612dd361151aca8f",
+      "mtime": 1793175424.2471523,
+      "reason": "Actual agent data saved under mojibake native Windows path with truncated ,a suffix; isolated probe reproduced same naming."
+    },
+    "coverage_recovery_log_sha256": "98aee70e910261d5dcc6e52ac607eff6d2120c7f0dcd4a4933798500fe4850dd",
+    "coverage_source": "Exact unmodified agent data from the same 2568-execution clean verify; original missing-path failure preserved separately"
+  },
+  "full_backend_command": "mvn -B -o -f backend/pom.xml -Pcore-coverage -Dupload.test.images.prebuilt=true clean verify",
+  "current_api": {
+    "passed": true,
+    "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+    "snapshot_proof": {
+      "exact_backend_and_contract_copy": true,
+      "sha256": "69f760464e14956a7b08d681169822ede25d591675339febafeea15548f5e11a",
+      "files": 575,
+      "production": false
+    },
+    "final_snapshot_comparison": {
+      "passed": true,
+      "files": 601,
+      "current_api_source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+      "scope": "All backend main inputs, pom, OpenAPI, migration and script files byte-equal to tested snapshot"
+    },
+    "suites": [
+      {
+        "suite": "community",
+        "passed": true,
+        "report_sha256": "a47d9fdb2b24145eb4f01cc967a5fc5fc954a24db40b5cfb5abff33c5e153af5",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 383.687,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 176,
+        "business_assertions": 590,
+        "business_failures": 0,
+        "coverage": {
+          "get_api_owner_community_questions_context": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_community_questions_policies": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_community_questions_policies": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_community_questions_policies_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_community_questions_policies_id_status": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_community_questions_handlers": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_owner_community_questions_cases": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_owner_community_questions_cases": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_owner_community_questions_cases_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_community_questions_cases": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_community_questions_cases_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_community_questions_cases_id_assignment": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_community_questions_cases_id_reply": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_owner_community_questions_cases_id_message": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_owner_community_questions_cases_id_close": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_community_questions_cases_id_close": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_knowledge_models": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_knowledge_documents": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_knowledge_documents": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_knowledge_documents_id_status": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_knowledge_search": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_knowledge_documents_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_knowledge_documents_reference": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "row_counts": {
+            "policies": 1,
+            "cases": 2,
+            "messages": 5,
+            "case_events": 10,
+            "documents": 1,
+            "document_events": 4,
+            "publications": 0,
+            "diagnoses": 0,
+            "payments": 0
+          },
+          "checks": {
+            "cases_closed_at_expected_revisions": true,
+            "policy_stopped": true,
+            "document_stopped": true,
+            "no_private_text_in_audit": true,
+            "no_foreign_questions": true,
+            "ai_use_not_permitted": true,
+            "independent_operator_permissions": true
+          }
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "owner",
+        "passed": true,
+        "report_sha256": "5674a934b2cab3538445a70a57aa9ffee65419f79c13941a7faa1f6f33349c7d",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 234.187,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 61,
+        "business_assertions": 204,
+        "business_failures": 0,
+        "coverage": {
+          "get_api_brand_list": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_series_list": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_model_list": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_vehicle_add": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_vehicle_list": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "generated_post_fe032ea229a821bb": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_archive_add": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_archive_list": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "keys": 2,
+          "audits": 2,
+          "archives": 2,
+          "vehicles": 2,
+          "owner_archives": 1,
+          "owner_vehicles": 1
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "fulfillment",
+        "passed": true,
+        "report_sha256": "c5faa15e2a4a2a9de5a7d6cd99b2478e4f1f3d9a05863cf725ab4849c4e867fb",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 260.672,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 102,
+        "business_assertions": 341,
+        "business_failures": 0,
+        "coverage": {
+          "post_api_merchant_slots": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_order_quote_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_order_create": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_order_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_orders_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_payments_create": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_payments_callback_LOCAL_TEST": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_check_pickup_submit": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_orders_id_assign": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_check_pickup_confirm": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_tech_orders_id_accept": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_tech_report_submit": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_check_protection_upload": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_tech_sign": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_orders_id_redeem": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_archive_list": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "row_counts": {
+            "orders": 1,
+            "payments": 1,
+            "payment_events": 1,
+            "pickups": 1,
+            "assignments": 1,
+            "protections": 1,
+            "reports": 1,
+            "redemptions": 1,
+            "archive_jobs": 1,
+            "archives": 1
+          },
+          "checks": {
+            "order_completed": true,
+            "local_payment_only": true,
+            "redemption_test_mode": true,
+            "report_signed": true,
+            "foreign_vehicle_unchanged": true,
+            "no_foreign_orders": true
+          }
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "coupon",
+        "passed": true,
+        "report_sha256": "b0dec57a1e20ff0f1e4dc4405b78e8524b6a166c86847e50c153c414bd37a10a",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 265.734,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 160,
+        "business_assertions": 547,
+        "business_failures": 0,
+        "coverage": {
+          "post_api_merchant_coupons": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_merchant_coupons_id_status": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_coupon_receive": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_coupon_mine": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_slots": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_order_coupon_preview": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_order_coupon_create": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_order_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_order_cancel": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_payments_create": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_payments_callback_LOCAL_TEST": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_order_id_refund": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_order_id_refund": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_orders_id_refund_decision": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_refunds_callback_LOCAL_TEST": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_coupon_id_service_redemption": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_coupon_id_service_authorization": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_coupons_service_preview": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_coupons_service_redeem": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_coupons_service_redemptions": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "row_counts": {
+            "coupons": 2,
+            "issued": 2,
+            "instances": 2,
+            "stock_events": 2,
+            "orders": 3,
+            "allocations": 3,
+            "coupon_events": 8,
+            "payments": 1,
+            "payment_events": 1,
+            "refunds": 1,
+            "refund_events": 2,
+            "service_redemptions": 1,
+            "archives": 0
+          },
+          "checks": {
+            "cash_available_service_used": true,
+            "contracts_preserve_history": true,
+            "cash_refunded": true,
+            "single_consume_return": true,
+            "no_validity_extension": true,
+            "service_zero_commission": true,
+            "authorization_code_not_audited": true,
+            "no_foreign_transactions": true,
+            "no_reserved_slots": true
+          }
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "merchant",
+        "passed": true,
+        "report_sha256": "9fd1eb3211a9486a1bf06ec4bac9c18e2bd8b87a5779bebeda6c7b1af5c3d8d1",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 250.109,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 119,
+        "business_assertions": 397,
+        "business_failures": 0,
+        "coverage": {
+          "post_api_merchant_applications": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_applications_mine": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_merchant_applications": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_merchant_applications_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_merchant_applications_id_moderate": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_merchant_quotas": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_merchant_quotas": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_orders": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_staff": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_staff": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_tech_orders": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_staff_id_disable": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_staff_id_enable": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_staff_id_employee_code": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "delete_api_merchant_staff_id_employee_code": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_profile": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_merchant_profile": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "row_counts": {
+            "applications": 1,
+            "reviews": 2,
+            "merchants": 3,
+            "staff": 5
+          },
+          "checks": {
+            "approved_revision_two": true,
+            "pending_activation_has_no_password": true,
+            "staff_created_active_hashed_password": true,
+            "tech_enabled_without_code": true,
+            "tech_sessions_revoked": true,
+            "tech_binding_stays_revoked": true,
+            "foreign_shop_unchanged": true,
+            "profile_canonical_coordinates": true,
+            "quota_not_below_active": true,
+            "no_code_in_audit": true
+          }
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "publication",
+        "passed": true,
+        "report_sha256": "9c059f3e49b31390220fcc4b841306fa302098baed23b8622c43534e2d208173",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 246.156,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 134,
+        "business_assertions": 456,
+        "business_failures": 0,
+        "coverage": {
+          "post_api_admin_community_questions_policies": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_community_questions_policies_id_status": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_owner_community_questions_cases": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_community_questions_cases_id_assignment": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_community_questions_cases_id_reply": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_owner_community_questions_cases_caseId_publication_preview": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_owner_community_questions_cases_caseId_publications": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_owner_community_questions_cases_caseId_publications": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_community_question_publications": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_community_questions": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_community_question_publications_id_moderate": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_community_questions_publicId": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_owner_community_questions_cases_id_message": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_owner_community_question_publications_id_withdraw": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "row_counts": {
+            "cases": 2,
+            "messages": 5,
+            "case_events": 7,
+            "publications": 3,
+            "publication_events": 9,
+            "point_events": 0,
+            "payments": 0
+          },
+          "checks": {
+            "all_applications_withdrawn": true,
+            "two_distinct_public_ids": true,
+            "no_sensitive_audit_text": true,
+            "unknown_identity_not_promoted": true
+          },
+          "identity_scope": "synthetic protocol fixture; no real WeChat verification"
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "experience",
+        "passed": true,
+        "report_sha256": "197ae0e04de3bb60967bad3dbfe09c9618be0393363014f3786db4c1b7a5adc8",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 298.328,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 131,
+        "business_assertions": 448,
+        "business_failures": 0,
+        "coverage": {
+          "get_api_experience_cards": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_experience_cards_id_consent": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_experience_cards": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_community_experiences": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_experience_cards_id_moderate": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_community_experiences_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_community_curation_sources": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_community_curations": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_community_curations": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_community_curations_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_community_curations_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_community_curations_id_status": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_community_hot": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_experience_cards_id_withdraw": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "row_counts": {
+            "cards": 2,
+            "moderations": 3,
+            "curations": 1,
+            "archives": 2,
+            "archive_jobs": 2,
+            "reviews": 2,
+            "payments": 2,
+            "payment_events": 2
+          },
+          "checks": {
+            "withdrawn_revision_9": true,
+            "test_card_never_authorized": true,
+            "curation_stopped": true,
+            "distinct_approved_ids": true,
+            "consumer_not_retried": true,
+            "no_private_text_in_governance_audit": true
+          },
+          "payment_scope": "two SQL synthetic source fixtures including WECHAT channel field; no supplier IO or real funds"
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "health",
+        "passed": true,
+        "report_sha256": "558e5ca49071ccd173e98b2b8a7606acdc9eed88fdd54e58dc8d9aca008d464b",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 268.094,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 199,
+        "business_assertions": 668,
+        "business_failures": 0,
+        "coverage": {
+          "get_api_archive_id_structured": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_archive_id_structured": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_vehicle_health_observations": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_archive_id_health_observation": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_archive_id_health_observation": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_vehicle_vehicle_health_dashboard": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_health_policies_model_metric": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_health_policies_model_metric": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_vehicle_vehicle_health_metric_confirmation": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_vehicle_health_observation_history": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_archive_id_reminder": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_archive_id_reminder": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_vehicle_reminders": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_vehicle_vehicle_reminder_preference": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "row_counts": {
+            "structured": 3,
+            "observations": 3,
+            "history": 7,
+            "confirmations": 1,
+            "policies": 1,
+            "reminders": 3,
+            "preferences": 1,
+            "archives": 5,
+            "payments": 0
+          },
+          "checks": {
+            "structured_clear_keeps_revision": true,
+            "current_revisions": true,
+            "policy_withdrawn": true,
+            "confirmation_not_rebound": true,
+            "reminder_revisions": true,
+            "other_owner_untouched": true,
+            "private_values_not_in_audit": true
+          },
+          "rule_scope": "synthetic protocol values, no production thresholds or official verification"
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "export",
+        "passed": true,
+        "report_sha256": "6c53ac29409d9572acc460393f5ef4b9b2623b9f38185e648df5dabe07cf43b8",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 209.125,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 66,
+        "business_assertions": 228,
+        "business_failures": 0,
+        "coverage": {
+          "get_api_archive_report": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_archive_shares": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_archive_shares": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_archive_shares_id_link": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_archive_share_view": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_archive_add": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_archive_shares_id_revoke": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "row_counts": {
+            "shares": 2,
+            "archives": 11,
+            "payments": 0
+          },
+          "checks": {
+            "both_shares_revoked": true,
+            "frozen_summary_sizes": true,
+            "three_successful_views_only": true,
+            "no_token_in_receipts_or_audit": true,
+            "no_capability_token_in_write_receipts": true,
+            "no_private_values_in_summary": true
+          }
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "points",
+        "passed": true,
+        "report_sha256": "6dbcdbfbb0e9e44db21a655fd894f7962fb3cdb09b3e09038b41b2b1b0123413",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 223.765,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 116,
+        "business_assertions": 397,
+        "business_failures": 0,
+        "coverage": {
+          "get_api_admin_point_task_policies": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_point_tasks": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_point_overview": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_point_task_policies": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_point_task_policies_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_point_task_policies_id_status": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_point_check_in": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_point_flow": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "row_counts": {
+            "policies": 4,
+            "events": 1,
+            "accounts": 1,
+            "entries": 1,
+            "checkins": 3,
+            "legacy_flows": 0,
+            "exchanges": 0,
+            "payments": 0
+          },
+          "checks": {
+            "one_frozen_daily_credit": true,
+            "new_rule_does_not_rewrite_snapshot": true,
+            "one_entry_and_balance": true,
+            "legacy_balance_not_imported": true,
+            "no_other_owner_reward": true,
+            "stopped_rule_not_resurrected": true,
+            "replacement_published": true,
+            "independent_points_permission": true,
+            "one_capture_and_credit_audit": true
+          },
+          "identity_scope": "SQL synthetic VERIFIED_WECHAT versus UNKNOWN; no real identity supplier"
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "exchange",
+        "passed": true,
+        "report_sha256": "6e8ea8fb3b81d1acd3cdcdfe262a96966c96bafe66ab06e0a80b5a387872eba4",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 246.047,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 196,
+        "business_assertions": 668,
+        "business_failures": 0,
+        "coverage": {
+          "get_api_admin_point_exchange_catalog": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_point_exchange_sources": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_point_exchange_catalog": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_coupons": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_merchant_coupons_id_status": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_coupons_id_pool": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_point_exchange_catalog": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_point_exchange_catalog_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_point_exchange_catalog_id_status": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_point_exchange": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_point_task_policies": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_point_task_policies_id_status": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_point_check_in": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_point_overview": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_point_exchanges": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_coupon_mine": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_point_flow": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "row_counts": {
+            "catalogs": 3,
+            "exchanges": 2,
+            "accounts": 1,
+            "entries": 3,
+            "task_events": 1,
+            "user_coupons": 2,
+            "issues": 2,
+            "stock_events": 2,
+            "payments": 0
+          },
+          "checks": {
+            "earned_then_spent_once": true,
+            "debit_flow_matches_receipts": true,
+            "coupon_issue_links_exchange": true,
+            "stock_charged_once": true,
+            "catalogs_stay_stopped": true,
+            "frozen_exchange_terms": true,
+            "legacy_untouched": true,
+            "other_owner_untouched": true,
+            "distinct_operator_permissions": true,
+            "two_exchange_audits": true
+          },
+          "scope": "synthetic verified identity; real earned 20 points, two atomic exchanges; no external supplier or money"
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "invitation",
+        "passed": true,
+        "report_sha256": "eb82c012bb32eca7134371136b8956e0fd7e04e501b5fd6e9a0d522e434b8bb9",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 256.391,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 136,
+        "business_assertions": 462,
+        "business_failures": 0,
+        "coverage": {
+          "get_api_invite_qrcode": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_invite_code": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_invite_code": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_invite_code": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_invite_records": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_invite_records": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_invite_progress": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_invite_progress": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_invite_registration": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_invite_diagnosis_policies": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_invite_diagnosis_eligibility": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_invite_diagnosis_policies": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_invite_diagnosis_policies_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_invite_diagnosis_policies_id_status": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "row_counts": {
+            "codes": 4,
+            "registrations": 19,
+            "phone_fixtures": 15,
+            "policies": 3,
+            "reward_batches": 0,
+            "coupon_issues": 0,
+            "point_events": 0,
+            "payments": 0
+          },
+          "checks": {
+            "codes_unique_per_actor": true,
+            "only_new_actors_audited": true,
+            "old_policy_not_revived": true,
+            "test_identity_not_promoted": true,
+            "two_original_source_codes_unchanged": true,
+            "independent_invite_permission": true,
+            "no_private_identity_in_audit": true
+          },
+          "scope": "SQL synthetic attribution/phone/qualification fixtures; HTTP code and monthly policy writes; no registration provider or reward delivery"
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "diagnosis",
+        "passed": true,
+        "report_sha256": "f1bd2e6df96315cbfcf9e17d753b83f4f5064c9ed627f04efef2398c6c7078be",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 270.172,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 169,
+        "business_assertions": 566,
+        "business_failures": 0,
+        "coverage": {
+          "get_api_owner_diagnosis_context": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_owner_diagnosis_cases": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_diagnosis_policies": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_diagnosis_policies_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_diagnosis_policies_id_status": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_diagnosis_policies": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_diagnosis_handlers": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_owner_diagnosis_cases": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_owner_diagnosis_cases_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_diagnosis_cases": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_diagnosis_cases_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_diagnosis_cases_id_assignment": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_diagnosis_cases_id_reply": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_owner_diagnosis_cases_id_message": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_diagnosis_notifications": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_owner_diagnosis_cases_id_close": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_diagnosis_cases_id_close": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_owner_diagnosis_notifications": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_owner_diagnosis_notifications_id_read": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_diagnosis_notifications_id_read": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "row_counts": {
+            "cases": 2,
+            "messages": 5,
+            "events": 9,
+            "outbox": 9,
+            "targets": 24,
+            "notifications": 24,
+            "policies": 2,
+            "rewards": 0,
+            "points": 0,
+            "payments": 0
+          },
+          "checks": {
+            "both_cases_closed": true,
+            "outbox_delivered_once": true,
+            "notifications_match_captured_targets": true,
+            "only_two_read_audits": true,
+            "only_own_and_manager_read": true,
+            "policies_not_revived": true,
+            "frozen_admission": true,
+            "independent_permissions": true,
+            "audit_has_no_private_text": true
+          },
+          "scope": "SQL synthetic identity/monthly eligibility only; HTTP diagnosis writes and real scheduled local notification delivery; no external message supplier"
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "discovery",
+        "passed": true,
+        "report_sha256": "f71f043bb030224a5579009996ad40348a964b38148b82b7700673bfe658d22d",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 220.047,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 105,
+        "business_assertions": 349,
+        "business_failures": 0,
+        "coverage": {
+          "get_api_service_projects": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_service_project_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_service_project_id_merchants": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_service_merchant_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_service_project_search": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_location": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_merchant_location": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_service_project_id_nearby_merchants": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_service_merchant_id_distance": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "row_counts": {
+            "merchant_location": 2,
+            "merchant_project": 3,
+            "merchant_project_version": 4,
+            "standard_project": 4,
+            "idempotency_record": 3,
+            "audit_log": 3,
+            "order": 0,
+            "payment": 0,
+            "vehicle_archive": 0
+          },
+          "checks": {
+            "own_location_stays_cleared": true,
+            "other_store_unchanged": true,
+            "only_location_writes_audited": true,
+            "ephemeral_owner_coordinates_not_audited": true,
+            "latest_quote_and_inactive_sources_unchanged": true,
+            "read_only_distance_does_not_add_writes": true
+          },
+          "scope": "synthetic identities/catalog/quote inputs; HTTP confirmed locations; local straight-line estimates only"
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "quotes",
+        "passed": true,
+        "report_sha256": "2cd4a97d2760bf55d034040466b238d50e030268def86f68cfb1b6f8b3154117",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 222.703,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 105,
+        "business_assertions": 361,
+        "business_failures": 0,
+        "coverage": {
+          "get_api_merchant_standard_projects": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_projects": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_projects": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_service_project_id_merchants": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "row_counts": {
+            "merchant_project": 5,
+            "merchant_project_version": 14,
+            "idempotency_record": 9,
+            "audit_log": 9,
+            "order": 0,
+            "payment": 0,
+            "vehicle_archive": 0
+          },
+          "checks": {
+            "own_quotes_all_off": true,
+            "monotonic_current_versions": true,
+            "other_store_untouched": true,
+            "original_versions_immutable": true,
+            "failed_audit_has_no_partial_version": true,
+            "failed_key_can_be_committed_once": true,
+            "exact_audits": true,
+            "inactive_and_deleted_sources_not_reactivated": true
+          },
+          "scope": "synthetic identity/catalog/prior quote fixtures and conditional audit failure; all nine subsequent quote writes via HTTP"
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "reviews",
+        "passed": true,
+        "report_sha256": "16f17da82f02c45420e242be800250131580d8ecc8980038e69d1f5d2dd622a7",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 211.0,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 139,
+        "business_assertions": 465,
+        "business_failures": 0,
+        "coverage": {
+          "get_api_order_id_review": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_order_review": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_order_id_review_publication": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_order_id_review_publication": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_service_merchant_id_ratings": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_order_id_public_review_text": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_order_id_public_review_text_preview": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_order_id_public_review_text": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_review_texts": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_review_texts_id_moderate": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_service_merchant_id_review_texts": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_order_id_review_summary_consent": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_order_id_review_summary_consent": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_service_merchant_id_review_summary": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "row_counts": {
+            "order_review": 2,
+            "order_review_file": 2,
+            "review_publication": 1,
+            "public_review_text": 1,
+            "public_review_text_moderation": 1,
+            "review_summary_consent": 1,
+            "idempotency_record": 10,
+            "audit_log": 8
+          },
+          "checks": {
+            "two_immutable_reviews": true,
+            "test_flag_follows_redemption": true,
+            "photo_positions_kept": true,
+            "orders_still_completed": true,
+            "star_consent_withdrawn": true,
+            "test_order_never_public": true,
+            "text_withdrawn_but_history_kept": true,
+            "moderation_history_kept": true,
+            "moderation_audited_once": true,
+            "summary_consent_recorded": true,
+            "other_owner_untouched": true
+          },
+          "scope": "synthetic identity, order, payment, redemption and image fixtures; every review/publication write via HTTP"
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "dispute",
+        "passed": true,
+        "report_sha256": "ca3959a9a71f7a2edc64260845b3c7f0671ccab33d1c4434766237e6205ccfb1",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 251.813,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 144,
+        "business_assertions": 485,
+        "business_failures": 0,
+        "coverage": {
+          "post_api_merchant_slots": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_order_quote_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_order_create": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_order_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_orders_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_payments_create": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_payments_callback_LOCAL_TEST": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_check_pickup_submit": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_orders_id_assign": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_check_pickup_confirm": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_check_pickup_dispute_review": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_orders_id_dispute_handle": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_tech_orders_id_accept": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_tech_report_submit": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_check_protection_upload": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_tech_sign": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_orders_id_redeem": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_archive_list": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "row_counts": {
+            "orders": 1,
+            "payments": 1,
+            "payment_events": 1,
+            "pickups": 1,
+            "assignments": 1,
+            "protections": 1,
+            "reports": 1,
+            "redemptions": 1,
+            "archive_jobs": 1,
+            "archives": 1
+          },
+          "checks": {
+            "order_completed": true,
+            "local_payment_only": true,
+            "redemption_test_mode": true,
+            "report_signed": true,
+            "foreign_vehicle_unchanged": true,
+            "no_foreign_orders": true
+          },
+          "dispute_checks": {
+            "resolved_once": true,
+            "four_append_only_records": true,
+            "original_received_state": true,
+            "one_open_and_resume_transition": true,
+            "resolution_confirmed": true,
+            "five_dispute_audits": true,
+            "eleven_unique_events": true,
+            "exact_notification_fanout": true,
+            "no_foreign_dispute": true
+          }
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "workflow",
+        "passed": true,
+        "report_sha256": "01067f0983abe3f40976522bbbbe9688e4412e053db94363411d81d280882424",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 240.297,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 171,
+        "business_assertions": 567,
+        "business_failures": 0,
+        "coverage": {
+          "post_api_merchant_slots": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_order_quote_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_order_create": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_order_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_orders_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_payments_create": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_payments_callback_LOCAL_TEST": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_check_pickup_context": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_check_pickup_submit": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_check_pickup_order": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_orders_id_assign": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_check_pickup_confirm": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_tech_orders_id_accept": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_tech_orders_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_tech_report_submit": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_check_protection_upload": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_tech_orders_id_work": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_tech_sign": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_orders_id_redeem": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_archive_list": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_owner_notifications": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_owner_notifications_id_read": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_notifications": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_merchant_notifications_id_read": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_tech_notifications": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_tech_notifications_id_read": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "row_counts": {
+            "orders": 1,
+            "payments": 1,
+            "payment_events": 1,
+            "pickups": 1,
+            "assignments": 1,
+            "protections": 1,
+            "reports": 1,
+            "redemptions": 1,
+            "archive_jobs": 1,
+            "archives": 1
+          },
+          "checks": {
+            "order_completed": true,
+            "local_payment_only": true,
+            "redemption_test_mode": true,
+            "report_signed": true,
+            "foreign_vehicle_unchanged": true,
+            "no_foreign_orders": true
+          },
+          "notification_checks": {
+            "six_unique_order_events": true,
+            "outbox_delivered": true,
+            "exact_recipient_fanout": true,
+            "three_read_notifications": true,
+            "three_read_audits": true,
+            "no_foreign_notifications": true
+          }
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "finance",
+        "passed": true,
+        "report_sha256": "640ece56901bb0c8b3b927fbbf29989fb3ada10e5b3fdc5029d87a03f76d4eb3",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 203.188,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 72,
+        "business_assertions": 238,
+        "business_failures": 0,
+        "coverage": {
+          "get_api_payments_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_payments_id_reconcile": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_orders_id_refund": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_order_id_refund": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_order_id_refund_withdraw": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_orders_id_refund_decision": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_orders_id_refund_reconcile": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_commissions": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "checks": {
+            "payment_recovered_once": true,
+            "invalid_amount_not_paid": true,
+            "one_recovered_payment_event": true,
+            "fresh_refund_success": true,
+            "failed_refund_success": true,
+            "unique_refunds": true,
+            "two_success_events": true,
+            "commission_reversed_once": true,
+            "uncompleted_refund_no_charge": true,
+            "commission_test_only": true,
+            "foreign_payment_unchanged": true,
+            "foreign_shop_no_commission": true,
+            "lease_cleared": true,
+            "appointment_capacity_released": true
+          },
+          "boundary": "Synthetic identity/order/payment/failed-refund/accrual fixtures; recovery and current refund writes via HTTP"
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "assessment",
+        "passed": true,
+        "report_sha256": "89cf492a7cf0a93d4fdfc7ae7f7fe492c490bc2807e20db71e27eca20465a6cb",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 230.938,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 153,
+        "business_assertions": 530,
+        "business_failures": 0,
+        "coverage": {
+          "get_api_admin_assessment_policies": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_assessment_merchants": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_assessment_policy": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_assessment_policies": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_assessment_policies_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_assessment_policies_id_status": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_assessment_month": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_assessment_snapshots": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_assessment_snapshots": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_assessment_snapshots_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_assessment_snapshots_id_facts": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_assessment_history": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_assessment_month": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_assessment_history": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_assessment_snapshots_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_assessment_snapshots_id_facts": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_assessment_staff": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_business_merchants": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_business_dashboard": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_business_dashboard": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "row_counts": {
+            "policies": 2,
+            "months": 2,
+            "snapshots": 3,
+            "facts": 4,
+            "idempotency": 7,
+            "audits": 7
+          },
+          "checks": {
+            "policy_states": true,
+            "one_published_per_shop": true,
+            "seeded_policy_covers_closed_month": true,
+            "month_heads": true,
+            "only_closed_month_settled": true,
+            "snapshot_revisions": true,
+            "unknown_summary_never_scored": true,
+            "policy_less_settlement_kept_null_policy": true,
+            "facts_are_minimal": true,
+            "facts_never_audited": true,
+            "audit_actions": true,
+            "no_foreign_settlement": true,
+            "failed_settlements_left_no_head": true
+          },
+          "scope": "synthetic identity, order, payment and historical policy fixtures; every policy and settlement write via HTTP"
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "plan-evidence",
+        "passed": true,
+        "report_sha256": "1a18b4f08e3f6b75c11689f1269befdbfa70fde0d7c35e0bc6c8fd43f04691b5",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 214.187,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 70,
+        "business_assertions": 237,
+        "business_failures": 0,
+        "coverage": {
+          "get_api_admin_project_applicability_project_model": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_ai_service_plan_catalog": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_ai_service_plan": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_ai_service_plan_vehicle_evidence": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_project_applicability_project_model": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_slots": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_order_plan_booking_context": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "checks": {
+            "withdrawn_rule_keeps_version": true,
+            "three_rule_audits": true,
+            "four_receipts": true,
+            "one_slot": true,
+            "no_orders_or_payments": true,
+            "no_observation_inference": true,
+            "no_private_source_writes": true,
+            "no_foreign_rule": true,
+            "registered_vehicle_unchanged": true
+          }
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "fulfillment-reads",
+        "passed": true,
+        "report_sha256": "3b1aaa957fe7ec359c461ee63f0248fd637d1c4aa8eabbde02235dc229967d37",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 239.844,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 170,
+        "business_assertions": 569,
+        "business_failures": 0,
+        "coverage": {
+          "post_api_merchant_slots": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_slots": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_order_slots": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_order_quote_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_order_create": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_order_list": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_order_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_orders_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_payments_create": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_payments_callback_LOCAL_TEST": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_check_pickup_submit": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_orders_id_assign": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_check_pickup_confirm": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_technicians": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_orders_id_assignment": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_tech_orders_id_accept": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_tech_report_submit": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_check_protection_upload": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_tech_sign": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_orders_id_work": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_order_id_work": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_order_id_redemption": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_orders_id_redemption": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_orders_id_redeem": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_archive_list": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_slots_id_close": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "row_counts": {
+            "orders": 1,
+            "payments": 1,
+            "payment_events": 1,
+            "pickups": 1,
+            "assignments": 1,
+            "protections": 1,
+            "reports": 1,
+            "redemptions": 1,
+            "archive_jobs": 1,
+            "archives": 1
+          },
+          "checks": {
+            "order_completed": true,
+            "local_payment_only": true,
+            "redemption_test_mode": true,
+            "report_signed": true,
+            "foreign_vehicle_unchanged": true,
+            "no_foreign_orders": true
+          },
+          "read_checks": {
+            "single_closed_slot": true,
+            "closure_audited_once": true,
+            "one_published_slot": true,
+            "no_foreign_slots": true,
+            "accepted_assignment_preserved": true,
+            "completed_order_keeps_slot": true
+          }
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "governance",
+        "passed": true,
+        "report_sha256": "13b06f1e80fd2055e42b08f39a2ce60293102497a704f801a9bc03c921a8a6b0",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 212.985,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 56,
+        "business_assertions": 218,
+        "business_failures": 0,
+        "coverage": {
+          "get_api_admin_price_monitor_quotes": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_catalog_kind": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_catalog_kind": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_catalog_kind_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_price_monitor_policies": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_price_monitor_policies": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_price_monitor_policies_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_price_monitor_policies_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_price_monitor_policies_id_status": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "row_counts": {
+            "brands": 2,
+            "projects": 1,
+            "policies": 1,
+            "idempotency": 6,
+            "audits": 7
+          },
+          "checks": {
+            "created_catalog_item_stays_draft": true,
+            "project_source_note_published": true,
+            "duplicate_series_never_created": true,
+            "policy_final_state": true,
+            "policy_source_bound_to_current_quote": true,
+            "policy_hash_is_hex64": true,
+            "policy_range_and_window": true,
+            "policy_publish_and_stop_stamped": true,
+            "one_published_policy_per_quote": true,
+            "idempotent_receipts_kept": true,
+            "single_current_quote_evidence": true,
+            "catalog_draft_never_audited_as_published": true,
+            "audit_actions": true,
+            "audit_request_ids_present": true
+          },
+          "scope": "synthetic identity, catalog and quote-version fixtures; every catalog and policy write via HTTP"
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "relations-price",
+        "passed": true,
+        "report_sha256": "1f8ba7f7ce5be29350c65266af4f17d61b07e05f03f7deb00bed8f85848fa340",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 260.343,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 58,
+        "business_assertions": 216,
+        "business_failures": 0,
+        "coverage": {
+          "get_api_merchant_customer_relations": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_customer_relations_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_price_monitor_comparisons": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_price_monitor_comparisons_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "checks": {
+            "unchanged_user": true,
+            "unchanged_vehicle": true,
+            "unchanged_order": true,
+            "unchanged_pickup_check": true,
+            "unchanged_order_status_transition": true,
+            "unchanged_invite_registration": true,
+            "unchanged_merchant_project": true,
+            "unchanged_merchant_project_version": true,
+            "unchanged_price_monitor_policy": true,
+            "unchanged_audit_log": true,
+            "unchanged_idempotency_record": true,
+            "unchanged_order_archive_grant": true,
+            "unchanged_vehicle_archive": true
+          },
+          "scope": "SQL synthetic identities, historical orders and quote/policy audit fixtures; real HTTP reads only"
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "coupon-catalog",
+        "passed": true,
+        "report_sha256": "9d68c9e0a247aef9c6f0e780e147eb3ea89e87bb1b7e678376780eac1b8dc3fd",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 216.312,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 96,
+        "business_assertions": 354,
+        "business_failures": 0,
+        "coverage": {
+          "post_api_merchant_coupons": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_merchant_coupons_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_merchant_coupons_id_status": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_coupons_id_pool": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_coupons": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_coupons": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_coupon_offers": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_coupon_receive": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_coupon_mine": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "checks": {
+            "five_sources": true,
+            "four_frozen_publications": true,
+            "cash_revision_frozen": true,
+            "service_stopped_pool_withdrawn": true,
+            "exact_stock": true,
+            "two_public_issues": true,
+            "two_stock_events": true,
+            "no_foreign_issues": true,
+            "seventeen_audits": true,
+            "seventeen_receipts": true,
+            "no_money_or_orders": true,
+            "read_content_unchanged": true,
+            "read_probes_passed": true
+          },
+          "read_probe_requests": 4,
+          "scope": "Synthetic identities and shop/project fixtures; coupon changes and issuance via real HTTP; no money or supplier calls"
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "auth-sessions",
+        "passed": true,
+        "report_sha256": "adc453671814f575d2c6cb99d89d5922b17954c1cc9c8fe273b00d6832bbf885",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 214.609,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 45,
+        "business_assertions": 149,
+        "business_failures": 0,
+        "coverage": {
+          "get_api_vehicle_list": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_auth_refresh": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_auth_logout": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_auth_operator_logout": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "checks": {
+            "same_session_count": true,
+            "four_rotations": true,
+            "failed_refresh_hashes_unchanged": true,
+            "failed_refresh_rows_unchanged": true,
+            "revoked_sessions_expired_credentials": true,
+            "rejected_old_refresh": true,
+            "no_new_identity": true,
+            "no_business_writes": true,
+            "no_plain_refresh_storage": true,
+            "race_one_success": true,
+            "race_winner_bound": true,
+            "race_logout_invalidates": true,
+            "untouched_other_session": true
+          },
+          "concurrent_refresh_requests": 2,
+          "additional_http_requests": 7,
+          "scope": "Synthetic prior login/identities; real refresh/logout, JWT checks, MySQL rollback and concurrent rotation; no supplier login or SMS"
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "rating-quotes",
+        "passed": true,
+        "report_sha256": "724c2a9e353512ba6e52cd506945cd90e3c9486f7e5b43c62dc9571cf3803e9f",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 201.109,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 18,
+        "business_assertions": 67,
+        "business_failures": 0,
+        "coverage": {
+          "get_api_service_project_id_rating_quotes": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "row_counts": {
+            "order": 2,
+            "payment": 2,
+            "order_review": 2,
+            "review_publication": 2,
+            "merchant_project": 6
+          },
+          "checks": {
+            "unchanged_user": true,
+            "unchanged_vehicle": true,
+            "unchanged_order": true,
+            "unchanged_payment": true,
+            "unchanged_payment_event": true,
+            "unchanged_order_redemption": true,
+            "unchanged_order_review": true,
+            "unchanged_review_publication": true,
+            "unchanged_merchant": true,
+            "unchanged_merchant_project": true,
+            "unchanged_merchant_project_version": true,
+            "unchanged_standard_project": true,
+            "unchanged_audit_log": true,
+            "unchanged_idempotency_record": true
+          },
+          "scope": "SQL synthetic identities, completed orders, consenting reviews and on-shelf quotes; real HTTP reads only"
+        },
+        "ui": null,
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "delivery-compare",
+        "passed": true,
+        "report_sha256": "da94fd7fa3de3e036efc62c31b669ecdd3595b90af9dd7c163d78a8e0bca3ad3",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 186.344,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 16,
+        "business_assertions": 60,
+        "business_failures": 0,
+        "coverage": {
+          "post_api_check_delivery_compare": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "checks": {
+            "unchanged_order": true,
+            "unchanged_pickup_check": true,
+            "unchanged_pickup_check_file": true,
+            "unchanged_repair_protection": true,
+            "unchanged_technician_report": true,
+            "unchanged_service_report_submission": true,
+            "unchanged_service_evidence_file": true,
+            "unchanged_file_object": true,
+            "unchanged_delivery_compare": true,
+            "unchanged_order_status_transition": true,
+            "unchanged_audit_log": true,
+            "unchanged_idempotency_record": true,
+            "no_delivery_compare_rows": true
+          },
+          "scope": "SQL synthetic orders, pickup sheets, protection and report evidence; real HTTP reads only, delivery confirmation still belongs to redemption"
+        },
+        "ui": {
+          "executed": false,
+          "passed": false,
+          "reason": "WeChat Devtools not opted in; no device acceptance claimed"
+        },
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      },
+      {
+        "suite": "local-finance",
+        "passed": true,
+        "report_sha256": "034a21cadd6be223e3b52e07a70409a1a7a68124b349811a88e020dfb32ca92d",
+        "source_sha256": "54e4b6ba8de506755741ef2e7bf47c302868d5b4d6e49d16f90c39bb9b36090c",
+        "jar_sha256": "8a68a126960f34fcd2ce894953b14558113fc1ff861aab0d44557f78b58aa5a7",
+        "duration_seconds": 224.734,
+        "cleanup": [
+          {
+            "role": "backend",
+            "passed": true
+          },
+          {
+            "role": "mysql",
+            "passed": true
+          },
+          {
+            "role": "network",
+            "passed": true
+          }
+        ],
+        "anonymous_requests": 348,
+        "business_requests": 24,
+        "business_assertions": 110,
+        "business_failures": 0,
+        "coverage": {
+          "get_api_admin_reconciliation": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "database": {
+          "checks": {
+            "unchanged_payment": true,
+            "unchanged_payment_event": true,
+            "unchanged_payment_exception": true,
+            "unchanged_refund": true,
+            "unchanged_refund_event": true,
+            "unchanged_order": true,
+            "unchanged_auth_session": true,
+            "unchanged_operator_account": true,
+            "unchanged_audit_log": true,
+            "unchanged_idempotency_record": true,
+            "unchanged_merchant_commission_entry": true,
+            "unchanged_order_status_transition": true,
+            "unchanged_user": true,
+            "unchanged_merchant": true,
+            "unchanged_vehicle": true
+          },
+          "scope": "SQL synthetic identities, local payment/refund facts and events; no official identity or funds, no channel statements"
+        },
+        "ui": {
+          "executed": false,
+          "passed": false,
+          "reason": "WeChat Devtools not opted in; no device acceptance claimed"
+        },
+        "prepared_default_disabled_verified": true,
+        "business_default_disabled_verified": true,
+        "anonymous_table_counts_unchanged": true
+      }
+    ],
+    "fresh_backend_journeys": [
+      {
+        "suite": "upload",
+        "passed": true,
+        "source_sha256": "b8780d412662c33362848868f93868e4e71d0c9eea06be9a23c1f3ab8b93153d",
+        "raw_sha256": "b929c12074927caf559942b74717d93351d0c05445bbc2b01532ae2efc33354e",
+        "junit_sha256": "01522d5c53c034dcd978b38b80711c0630831ecbc71f50d250bc39cfbef2b139",
+        "requests": 53,
+        "coverage": {
+          "get_api_archive_archiveId_files_fileId_access": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_file_id_access": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_files_id_access": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_tech_files_id_access": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_archive_add": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_file_upload": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_files_upload": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_tech_files_upload": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "checks": {
+          "anonymous_object_denied": true,
+          "tampered_signature_denied": true,
+          "expired_signature_denied": true,
+          "only_three_clean_files": true,
+          "three_successful_uploads": true,
+          "three_scan_rejections": true,
+          "one_owned_archive_attachment": true
+        },
+        "cleanup": {
+          "initializer": true,
+          "clamav": true,
+          "minio": true,
+          "mysql": true,
+          "network": true
+        },
+        "origin": "Same successful 2568-execution clean verify; existing strict audit rechecks current raw evidence, no new HTTP execution"
+      },
+      {
+        "suite": "service_archive",
+        "passed": true,
+        "source_sha256": "5f5848fd41a77d9b50b74c51d1e30ee80718ebe66b0ffdcbf7592f21cf28eac3",
+        "raw_sha256": "570ad300a67004df1a7228b035e0d79549e3de1fc946c63f0c33660d3f65d212",
+        "junit_sha256": "58fb140edfa4955cb8722a8305d72bb2f3cb75c72bfac8eeaaedf338a845949d",
+        "requests": 105,
+        "coverage": {
+          "get_api_merchant_orders_id_service_context": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_orders_id_service_context_archives_archive_files_file_access": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_order_id_archive_grants": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_order_id_archive_grants_archive_files_file_preview": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_tech_orders_id_service_context": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_tech_orders_id_service_context_archives_archive_files_file_access": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_archive_add": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_file_upload": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_archive_id_structured": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_order_id_archive_grants_archive": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "checks": {
+          "no_default_grants": true,
+          "only_selected_archive_shared": true,
+          "audit_failure_rolls_back_grant": true,
+          "old_receipt_never_revives_grant": true,
+          "source_hash_changes_with_fields": true,
+          "changed_source_hidden": true,
+          "updated_safe_fields_visible": true,
+          "current_assignment_required": true,
+          "vehicle_owner_rechecked": true,
+          "scan_status_rechecked": true,
+          "closed_task_denies_new_access": true,
+          "issued_bearer_url_has_bounded_lease": true,
+          "old_url_expires_naturally": true,
+          "one_final_revoked_grant": true,
+          "exact_five_grant_audits": true,
+          "one_scanned_upload_two_archives": true,
+          "grant_audit_contains_no_source_text": true,
+          "no_payment_or_rewards": true
+        },
+        "cleanup": {
+          "initializer": true,
+          "clamav": true,
+          "minio": true,
+          "mysql": true,
+          "network": true
+        },
+        "origin": "Same successful 2568-execution clean verify; existing strict audit rechecks current raw evidence, no new HTTP execution"
+      },
+      {
+        "suite": "material_workbench",
+        "passed": true,
+        "source_sha256": "89d7fcb0f113e46e5d2650b2812d69d72119f03dbc0914d0e3bf6cfc9c26a2ce",
+        "raw_sha256": "4d62ea533073041aa754bc8f54c97e3e6c5136c832babf4dff06c3e52dae7b8a",
+        "junit_sha256": "cb67ebade542cf91067761fc49a909b46de42e3f6f5d9bd007e529b047979bfa",
+        "requests": 80,
+        "coverage": {
+          "get_api_input_materials_purpose_vehicleId_id_access": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_workbench": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_tech_workbench": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_input_materials_purpose_vehicleId_upload": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "checks": {
+          "five_isolated_materials": true,
+          "materials_never_become_images": true,
+          "five_successful_uploads": true,
+          "four_type_purpose_downloads": true,
+          "scope_and_query_enforced": true,
+          "private_bucket_and_signature_enforced": true,
+          "material_current_facts_rechecked": true,
+          "workbench_actor_isolation": true,
+          "eight_mutually_exclusive_buckets": true,
+          "assignment_and_closed_tasks_rechecked": true,
+          "pagination_has_no_duplicate_or_missing_tasks": true,
+          "workbench_minimal_private_fields": true,
+          "current_staff_and_binding_required": true,
+          "current_owner_session_required": true,
+          "no_payment_archive_or_rewards": true
+        },
+        "cleanup": {
+          "initializer": true,
+          "clamav": true,
+          "minio": true,
+          "mysql": true,
+          "network": true
+        },
+        "origin": "Same successful 2568-execution clean verify; existing strict audit rechecks current raw evidence, no new HTTP execution"
+      },
+      {
+        "suite": "pickup_work_files",
+        "passed": true,
+        "source_sha256": "e78448cd360ee31038ea6827f9a2d45033ae8f7d20fee4e4f3a3d2351296e862",
+        "raw_sha256": "6ad6083e84c0755d2a8614ad82052e2528f89e23accb4dba7fe3f5d10deaa8a7",
+        "junit_sha256": "4c244bb2a6f5d89c66ed200e548539c1d652b73d45ecb94cf329a5c2428acce5",
+        "requests": 39,
+        "coverage": {
+          "get_api_check_pickup_order_files_file_access": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_orders_id_work_files_file_access": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_order_id_work_files_file_access": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_tech_orders_id_work_files_file_access": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "checks": {
+          "nineteen_clean_uploads": true,
+          "pickup_and_work_links_exact": true,
+          "files_owned_by_this_shop_only": true,
+          "unsigned_object_denied": true,
+          "tampered_signature_denied": true,
+          "expired_signature_denied": true,
+          "signature_lease_bounded": true,
+          "two_orders_only": true,
+          "orders_keep_expected_states": true
+        },
+        "cleanup": {
+          "initializer": true,
+          "clamav": true,
+          "minio": true,
+          "mysql": true,
+          "network": true
+        },
+        "origin": "Same successful 2568-execution clean verify; existing strict audit rechecks current raw evidence, no new HTTP execution"
+      },
+      {
+        "suite": "merchant_onboarding_files",
+        "passed": true,
+        "source_sha256": "8b01a034680f704bc15912c51e312ccd19191b2e5b216b9b8f657cc59bbb07f4",
+        "raw_sha256": "7975b3d538055b15a1f4c968585a5f2bd6af47ad3bf90fb0421d4509a62c61a3",
+        "junit_sha256": "2e5ab7b61785ba9c9b51294fb0fe5fab4d6d8d6a0ae5fcba4ee8b031ad1c7719",
+        "requests": 12,
+        "coverage": {
+          "get_api_admin_merchant_applications_id_files_file_access": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "checks": {
+          "three_clean_uploads": true,
+          "files_owned_by_applicants_only": true,
+          "applications_exact_two": true,
+          "qualification_snapshots_exact": true,
+          "one_application_per_applicant": true,
+          "no_merchant_activation": true,
+          "cross_application_files_never_linked": true,
+          "unsigned_object_denied": true,
+          "tampered_signature_denied": true,
+          "expired_signature_denied": true,
+          "signature_lease_bounded": true
+        },
+        "cleanup": {
+          "initializer": true,
+          "clamav": true,
+          "minio": true,
+          "mysql": true,
+          "network": true
+        },
+        "origin": "Same successful 2568-execution clean verify; existing strict audit rechecks current raw evidence, no new HTTP execution"
+      },
+      {
+        "suite": "community_images",
+        "passed": true,
+        "source_sha256": "8dee405f9b9e805fdf86584ec949af8a21b3483bc1b456c0f2574770e042424a",
+        "raw_sha256": "8d5155d576e5b6482ea7d1ee4b22457c758d96c1fa3b784277c81e6c302feae4",
+        "junit_sha256": "b036ad611b146f01f5ec817ca5a264ad92965cd5bb6a8adaca366fe952d3b615",
+        "requests": 85,
+        "coverage": {
+          "get_api_admin_community_images": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_community_images_id_preview": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_community_images": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_community_images_publicId": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_owner_community_image_sources": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_owner_community_images": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_owner_community_images_id_preview": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_community_images_id_moderate": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_owner_community_images": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_owner_community_images_id_withdraw": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_owner_community_images_preview": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "checks": {
+          "two_real_scanned_uploads": true,
+          "metadata_removed_pixels_preserved": true,
+          "approval_failure_rolls_back": true,
+          "public_projection_minimal": true,
+          "new_uuid_never_revives_old": true,
+          "private_original_unsigned_denied": true,
+          "three_withdrawn_applications": true,
+          "nine_events_and_audits": true,
+          "only_independent_copy_persisted": true,
+          "stored_png_bytes_match_preview": true,
+          "parent_approval_and_withdrawal_real": true,
+          "bindings_from_real_responses": true
+        },
+        "cleanup": {
+          "initializer": true,
+          "clamav": true,
+          "minio": true,
+          "mysql": true,
+          "network": true
+        },
+        "origin": "Same successful 2568-execution clean verify; existing strict audit rechecks current raw evidence, no new HTTP execution"
+      },
+      {
+        "suite": "invitation_rewards",
+        "passed": true,
+        "source_sha256": "78536a49a7b95e23c8b4144be32583a50324186e8cdb260fd3010faa4151f0f7",
+        "raw_sha256": "5732e672a3cd4f0bce771cd75431eb0c7a9cdcca9c246c0608705ca6f229d920",
+        "junit_sha256": "1f91ce1e761154c189c6de52482eb99461bd1900425849416002bbee8abf2dce",
+        "requests": 144,
+        "coverage": {
+          "get_api_admin_invite_reward_coupons": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_admin_invite_reward_policies": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_coupon_mine": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_invite_reward_policy": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_invite_rewards": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "get_api_merchant_invite_rewards": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_admin_invite_reward_policies": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_invite_code": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_coupons": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "post_api_merchant_invite_code": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_coupons_id_pool": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_invite_reward_policies_id": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_admin_invite_reward_policies_id_status": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "put_api_merchant_coupons_id_status": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "checks": {
+          "missing_policy_is_terminal": true,
+          "audit_failure_rolls_back_entire_pair": true,
+          "policy_snapshot_frozen": true,
+          "retry_uses_old_snapshot_once": true,
+          "insufficient_stock_never_partially_issues": true,
+          "staff_reward_is_invitee_only": true,
+          "test_unknown_and_unverified_phone_have_no_rewards": true,
+          "stopped_source_does_not_issue": true,
+          "recipient_sees_only_own_coupon_id": true,
+          "staff_owner_id_overlap_does_not_leak_coupon": true,
+          "reads_never_issue_rewards": true,
+          "unknown_policy_not_backfilled": true,
+          "final_inventory_and_audit_unique": true,
+          "no_money_or_points": true,
+          "policy_stops_not_undone": true,
+          "completed_batches_never_issue_twice": true,
+          "public_projection_has_no_identity_evidence": true
+        },
+        "cleanup": {
+          "mysql": true
+        },
+        "origin": "Same successful 2568-execution clean verify; existing strict audit rechecks current raw evidence, no new HTTP execution"
+      }
+    ],
+    "suite_count": 36,
+    "postman_suite_count": 29,
+    "fresh_journey_suite_count": 7,
+    "postman_four_kind_operations_count": 275,
+    "unique_four_kind_operations": [
+      "delete_api_merchant_staff_id_employee_code",
+      "generated_post_fe032ea229a821bb",
+      "get_api_admin_assessment_history",
+      "get_api_admin_assessment_merchants",
+      "get_api_admin_assessment_month",
+      "get_api_admin_assessment_policies",
+      "get_api_admin_assessment_snapshots",
+      "get_api_admin_assessment_snapshots_id",
+      "get_api_admin_assessment_snapshots_id_facts",
+      "get_api_admin_business_dashboard",
+      "get_api_admin_business_merchants",
+      "get_api_admin_catalog_kind",
+      "get_api_admin_community_curation_sources",
+      "get_api_admin_community_curations",
+      "get_api_admin_community_curations_id",
+      "get_api_admin_community_images",
+      "get_api_admin_community_images_id_preview",
+      "get_api_admin_community_question_publications",
+      "get_api_admin_community_questions_cases",
+      "get_api_admin_community_questions_cases_id",
+      "get_api_admin_community_questions_handlers",
+      "get_api_admin_community_questions_policies",
+      "get_api_admin_coupons",
+      "get_api_admin_diagnosis_cases",
+      "get_api_admin_diagnosis_cases_id",
+      "get_api_admin_diagnosis_handlers",
+      "get_api_admin_diagnosis_notifications",
+      "get_api_admin_diagnosis_policies",
+      "get_api_admin_experience_cards",
+      "get_api_admin_health_policies_model_metric",
+      "get_api_admin_invite_diagnosis_policies",
+      "get_api_admin_invite_reward_coupons",
+      "get_api_admin_invite_reward_policies",
+      "get_api_admin_knowledge_documents",
+      "get_api_admin_knowledge_models",
+      "get_api_admin_merchant_applications",
+      "get_api_admin_merchant_applications_id",
+      "get_api_admin_merchant_applications_id_files_file_access",
+      "get_api_admin_merchant_quotas",
+      "get_api_admin_point_exchange_catalog",
+      "get_api_admin_point_exchange_sources",
+      "get_api_admin_point_task_policies",
+      "get_api_admin_price_monitor_comparisons",
+      "get_api_admin_price_monitor_comparisons_id",
+      "get_api_admin_price_monitor_policies",
+      "get_api_admin_price_monitor_policies_id",
+      "get_api_admin_price_monitor_quotes",
+      "get_api_admin_project_applicability_project_model",
+      "get_api_admin_reconciliation",
+      "get_api_admin_review_texts",
+      "get_api_ai_service_plan_catalog",
+      "get_api_archive_archiveId_files_fileId_access",
+      "get_api_archive_id_health_observation",
+      "get_api_archive_id_reminder",
+      "get_api_archive_id_structured",
+      "get_api_archive_list",
+      "get_api_archive_report",
+      "get_api_archive_shares",
+      "get_api_archive_shares_id_link",
+      "get_api_brand_list",
+      "get_api_check_pickup_context",
+      "get_api_check_pickup_order",
+      "get_api_check_pickup_order_files_file_access",
+      "get_api_community_experiences",
+      "get_api_community_experiences_id",
+      "get_api_community_hot",
+      "get_api_community_images",
+      "get_api_community_images_publicId",
+      "get_api_community_questions",
+      "get_api_community_questions_publicId",
+      "get_api_coupon_id_service_redemption",
+      "get_api_coupon_mine",
+      "get_api_coupon_offers",
+      "get_api_experience_cards",
+      "get_api_file_id_access",
+      "get_api_input_materials_purpose_vehicleId_id_access",
+      "get_api_invite_diagnosis_eligibility",
+      "get_api_invite_progress",
+      "get_api_invite_qrcode",
+      "get_api_invite_records",
+      "get_api_invite_registration",
+      "get_api_invite_reward_policy",
+      "get_api_invite_rewards",
+      "get_api_knowledge_documents_reference",
+      "get_api_knowledge_search",
+      "get_api_merchant_applications_mine",
+      "get_api_merchant_assessment_history",
+      "get_api_merchant_assessment_month",
+      "get_api_merchant_assessment_policy",
+      "get_api_merchant_assessment_snapshots_id",
+      "get_api_merchant_assessment_snapshots_id_facts",
+      "get_api_merchant_assessment_staff",
+      "get_api_merchant_business_dashboard",
+      "get_api_merchant_commissions",
+      "get_api_merchant_coupons",
+      "get_api_merchant_coupons_service_redemptions",
+      "get_api_merchant_customer_relations",
+      "get_api_merchant_customer_relations_id",
+      "get_api_merchant_files_id_access",
+      "get_api_merchant_invite_code",
+      "get_api_merchant_invite_progress",
+      "get_api_merchant_invite_records",
+      "get_api_merchant_invite_rewards",
+      "get_api_merchant_location",
+      "get_api_merchant_notifications",
+      "get_api_merchant_orders",
+      "get_api_merchant_orders_id",
+      "get_api_merchant_orders_id_assignment",
+      "get_api_merchant_orders_id_redemption",
+      "get_api_merchant_orders_id_refund",
+      "get_api_merchant_orders_id_service_context",
+      "get_api_merchant_orders_id_service_context_archives_archive_files_file_access",
+      "get_api_merchant_orders_id_work",
+      "get_api_merchant_orders_id_work_files_file_access",
+      "get_api_merchant_profile",
+      "get_api_merchant_projects",
+      "get_api_merchant_slots",
+      "get_api_merchant_staff",
+      "get_api_merchant_standard_projects",
+      "get_api_merchant_technicians",
+      "get_api_merchant_workbench",
+      "get_api_model_list",
+      "get_api_order_id",
+      "get_api_order_id_archive_grants",
+      "get_api_order_id_archive_grants_archive_files_file_preview",
+      "get_api_order_id_public_review_text",
+      "get_api_order_id_redemption",
+      "get_api_order_id_refund",
+      "get_api_order_id_review",
+      "get_api_order_id_review_publication",
+      "get_api_order_id_review_summary_consent",
+      "get_api_order_id_work",
+      "get_api_order_id_work_files_file_access",
+      "get_api_order_list",
+      "get_api_order_quote_id",
+      "get_api_order_slots",
+      "get_api_owner_community_image_sources",
+      "get_api_owner_community_images",
+      "get_api_owner_community_images_id_preview",
+      "get_api_owner_community_questions_cases",
+      "get_api_owner_community_questions_cases_caseId_publications",
+      "get_api_owner_community_questions_cases_id",
+      "get_api_owner_community_questions_context",
+      "get_api_owner_diagnosis_cases",
+      "get_api_owner_diagnosis_cases_id",
+      "get_api_owner_diagnosis_context",
+      "get_api_owner_diagnosis_notifications",
+      "get_api_owner_notifications",
+      "get_api_payments_id",
+      "get_api_point_exchange_catalog",
+      "get_api_point_exchanges",
+      "get_api_point_flow",
+      "get_api_point_overview",
+      "get_api_point_tasks",
+      "get_api_series_list",
+      "get_api_service_merchant_id",
+      "get_api_service_merchant_id_ratings",
+      "get_api_service_merchant_id_review_texts",
+      "get_api_service_project_id",
+      "get_api_service_project_id_merchants",
+      "get_api_service_project_id_rating_quotes",
+      "get_api_service_projects",
+      "get_api_tech_files_id_access",
+      "get_api_tech_notifications",
+      "get_api_tech_orders",
+      "get_api_tech_orders_id",
+      "get_api_tech_orders_id_service_context",
+      "get_api_tech_orders_id_service_context_archives_archive_files_file_access",
+      "get_api_tech_orders_id_work",
+      "get_api_tech_orders_id_work_files_file_access",
+      "get_api_tech_workbench",
+      "get_api_vehicle_health_observation_history",
+      "get_api_vehicle_health_observations",
+      "get_api_vehicle_list",
+      "get_api_vehicle_reminders",
+      "get_api_vehicle_vehicle_health_dashboard",
+      "post_api_admin_assessment_policies",
+      "post_api_admin_assessment_snapshots",
+      "post_api_admin_catalog_kind",
+      "post_api_admin_community_curations",
+      "post_api_admin_community_images_id_moderate",
+      "post_api_admin_community_question_publications_id_moderate",
+      "post_api_admin_community_questions_cases_id_close",
+      "post_api_admin_community_questions_cases_id_reply",
+      "post_api_admin_community_questions_policies",
+      "post_api_admin_diagnosis_cases_id_close",
+      "post_api_admin_diagnosis_cases_id_reply",
+      "post_api_admin_diagnosis_policies",
+      "post_api_admin_experience_cards_id_moderate",
+      "post_api_admin_invite_diagnosis_policies",
+      "post_api_admin_invite_reward_policies",
+      "post_api_admin_knowledge_documents",
+      "post_api_admin_knowledge_documents_id_status",
+      "post_api_admin_merchant_applications_id_moderate",
+      "post_api_admin_point_exchange_catalog",
+      "post_api_admin_point_task_policies",
+      "post_api_admin_price_monitor_policies",
+      "post_api_admin_review_texts_id_moderate",
+      "post_api_ai_service_plan",
+      "post_api_ai_service_plan_vehicle_evidence",
+      "post_api_archive_add",
+      "post_api_archive_share_view",
+      "post_api_archive_shares",
+      "post_api_archive_shares_id_revoke",
+      "post_api_auth_logout",
+      "post_api_auth_operator_logout",
+      "post_api_auth_refresh",
+      "post_api_check_delivery_compare",
+      "post_api_check_pickup_confirm",
+      "post_api_check_pickup_dispute_review",
+      "post_api_check_pickup_submit",
+      "post_api_check_protection_upload",
+      "post_api_coupon_id_service_authorization",
+      "post_api_coupon_receive",
+      "post_api_experience_cards_id_consent",
+      "post_api_experience_cards_id_withdraw",
+      "post_api_file_upload",
+      "post_api_input_materials_purpose_vehicleId_upload",
+      "post_api_invite_code",
+      "post_api_merchant_applications",
+      "post_api_merchant_coupons",
+      "post_api_merchant_coupons_service_preview",
+      "post_api_merchant_coupons_service_redeem",
+      "post_api_merchant_files_upload",
+      "post_api_merchant_invite_code",
+      "post_api_merchant_orders_id_assign",
+      "post_api_merchant_orders_id_dispute_handle",
+      "post_api_merchant_orders_id_redeem",
+      "post_api_merchant_orders_id_refund_decision",
+      "post_api_merchant_orders_id_refund_reconcile",
+      "post_api_merchant_projects",
+      "post_api_merchant_slots",
+      "post_api_merchant_slots_id_close",
+      "post_api_merchant_staff",
+      "post_api_merchant_staff_id_disable",
+      "post_api_merchant_staff_id_employee_code",
+      "post_api_merchant_staff_id_enable",
+      "post_api_order_cancel",
+      "post_api_order_coupon_create",
+      "post_api_order_coupon_preview",
+      "post_api_order_create",
+      "post_api_order_id_public_review_text_preview",
+      "post_api_order_id_refund",
+      "post_api_order_id_refund_withdraw",
+      "post_api_order_plan_booking_context",
+      "post_api_order_review",
+      "post_api_owner_community_images",
+      "post_api_owner_community_images_id_withdraw",
+      "post_api_owner_community_images_preview",
+      "post_api_owner_community_question_publications_id_withdraw",
+      "post_api_owner_community_questions_cases",
+      "post_api_owner_community_questions_cases_caseId_publication_preview",
+      "post_api_owner_community_questions_cases_caseId_publications",
+      "post_api_owner_community_questions_cases_id_close",
+      "post_api_owner_community_questions_cases_id_message",
+      "post_api_owner_diagnosis_cases",
+      "post_api_owner_diagnosis_cases_id_close",
+      "post_api_owner_diagnosis_cases_id_message",
+      "post_api_payments_callback_LOCAL_TEST",
+      "post_api_payments_create",
+      "post_api_payments_id_reconcile",
+      "post_api_point_check_in",
+      "post_api_point_exchange",
+      "post_api_refunds_callback_LOCAL_TEST",
+      "post_api_service_merchant_id_distance",
+      "post_api_service_merchant_id_review_summary",
+      "post_api_service_project_id_nearby_merchants",
+      "post_api_service_project_search",
+      "post_api_tech_files_upload",
+      "post_api_tech_orders_id_accept",
+      "post_api_tech_report_submit",
+      "post_api_tech_sign",
+      "post_api_vehicle_add",
+      "put_api_admin_assessment_policies_id",
+      "put_api_admin_assessment_policies_id_status",
+      "put_api_admin_catalog_kind_id",
+      "put_api_admin_community_curations_id",
+      "put_api_admin_community_curations_id_status",
+      "put_api_admin_community_questions_cases_id_assignment",
+      "put_api_admin_community_questions_policies_id",
+      "put_api_admin_community_questions_policies_id_status",
+      "put_api_admin_coupons_id_pool",
+      "put_api_admin_diagnosis_cases_id_assignment",
+      "put_api_admin_diagnosis_notifications_id_read",
+      "put_api_admin_diagnosis_policies_id",
+      "put_api_admin_diagnosis_policies_id_status",
+      "put_api_admin_health_policies_model_metric",
+      "put_api_admin_invite_diagnosis_policies_id",
+      "put_api_admin_invite_diagnosis_policies_id_status",
+      "put_api_admin_invite_reward_policies_id",
+      "put_api_admin_invite_reward_policies_id_status",
+      "put_api_admin_knowledge_documents_id",
+      "put_api_admin_merchant_quotas",
+      "put_api_admin_point_exchange_catalog_id",
+      "put_api_admin_point_exchange_catalog_id_status",
+      "put_api_admin_point_task_policies_id",
+      "put_api_admin_point_task_policies_id_status",
+      "put_api_admin_price_monitor_policies_id",
+      "put_api_admin_price_monitor_policies_id_status",
+      "put_api_admin_project_applicability_project_model",
+      "put_api_archive_id_health_observation",
+      "put_api_archive_id_reminder",
+      "put_api_archive_id_structured",
+      "put_api_merchant_coupons_id",
+      "put_api_merchant_coupons_id_status",
+      "put_api_merchant_location",
+      "put_api_merchant_notifications_id_read",
+      "put_api_merchant_profile",
+      "put_api_order_id_archive_grants_archive",
+      "put_api_order_id_public_review_text",
+      "put_api_order_id_review_publication",
+      "put_api_order_id_review_summary_consent",
+      "put_api_owner_diagnosis_notifications_id_read",
+      "put_api_owner_notifications_id_read",
+      "put_api_tech_notifications_id_read",
+      "put_api_vehicle_vehicle_health_metric_confirmation",
+      "put_api_vehicle_vehicle_reminder_preference"
+    ],
+    "unique_four_kind_operations_count": 317,
+    "anonymous_request_executions": 10092,
+    "unique_anonymous_operations": 348,
+    "postman_business_request_executions": 3207,
+    "fresh_journey_business_request_executions": 518,
+    "business_request_executions": 3725,
+    "newman_assertions": 41223,
+    "native_ui_opted_in": false,
+    "full_api_acceptance_passed": false
+  },
+  "interrupted_attempt": {
+    "passed": false,
+    "full_core_suite": true,
+    "production_acceptance_passed": false,
+    "source_sha256": "5ec84dda6e28bf9aa4e143e3922ee640402564ff8c352f08846aa06a7f037e10",
+    "interrupted": true,
+    "reason": "Stalled during Testcontainers dynamic storage image build; no success claim. Restart with supported prebuilt-image flag and actual cached storage/scanner images.",
+    "completed_partial_tests": {
+      "tests": 2441,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "boundaries": [
+    "BGE runtime and Java/JWT/HTTP/MySQL are real; identity/license/text are synthetic; upstream AI is mocked.",
+    "Selected Java and real model suites include inherited test executions; they are not all newly authored tests.",
+    "Current business API suites bind to an exact backend/contract source snapshot; every suite owns a new database and cleans its resources.",
+    "Repeated anonymous runs do not increase the 348 unique protected-operation count.",
+    "Default regression excludes full backend by design; full clean verify is recorded independently.",
+    "OCR default regression has one explicitly reported platform skip; selected/full Java no skips are accepted.",
+    "Browser fixtures do not certify a real model UI, native WeChat, authorized domain samples or production.",
+    "No real WeChat/SMS/payment certificates, production deployment, whole API acceptance or 500-user capacity claim."
+  ]
+}

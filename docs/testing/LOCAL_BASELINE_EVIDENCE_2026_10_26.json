@@ -1,0 +1,2064 @@
+{
+  "version": 1,
+  "finished_at": "2026-10-26T11:16:00.626527+00:00",
+  "stage_delivery_complete": false,
+  "production_acceptance_passed": false,
+  "default_local_regression": {
+    "version": 1,
+    "finished_at": "2026-10-26T10:15:50.714069+00:00",
+    "selected_checks_passed": true,
+    "source_sha256": "df1c80c7d0023ebd00164e4fac4ddce1c77409c87d9273a64f4ab63971f6b6d6",
+    "sources_unchanged": true,
+    "backend_requested": false,
+    "backend_runtime_verified": false,
+    "production_acceptance_passed": false,
+    "boundaries": [
+      "Synthetic identities and LOCAL_TEST funds in backend integration tests.",
+      "No real WeChat/SMS/payment/model provider or mobile-device acceptance.",
+      "Builds and unit tests do not certify rendered page interactions.",
+      "Selected regression checks are not all-API business or performance acceptance."
+    ],
+    "checks": [
+      {
+        "name": "miniapp-unit",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 2.531,
+        "log": "miniapp-unit.log"
+      },
+      {
+        "name": "python-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 109.578,
+        "log": "python-regression.log"
+      },
+      {
+        "name": "ocr-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 20.625,
+        "log": "ocr-regression.log"
+      },
+      {
+        "name": "wechat-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 18.047,
+        "log": "wechat-build.log"
+      },
+      {
+        "name": "h5-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 17.875,
+        "log": "h5-build.log"
+      },
+      {
+        "name": "openapi-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.391,
+        "log": "openapi-consistency.log"
+      },
+      {
+        "name": "migration-mounts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.172,
+        "log": "migration-mounts.log"
+      },
+      {
+        "name": "handover-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.359,
+        "log": "handover-consistency.log"
+      },
+      {
+        "name": "contract-verdicts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.203,
+        "log": "contract-verdicts.log"
+      }
+    ]
+  },
+  "backend": {
+    "passed": true,
+    "execution": "clean serial run; remaining classes in three forks; usage-limit interruption resumed for 25 incomplete suites; no passed suite re-executed",
+    "first_segment_suites": 102,
+    "remaining_declared_suites": 121,
+    "expected_suites": 223,
+    "actual_suites": 223,
+    "counts": {
+      "tests": 2201,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "missing": [],
+    "unexpected": [],
+    "inputs_unchanged_between_segments": true,
+    "first_segment_counts_preserved": true,
+    "remaining_maven_build_success": true,
+    "input_hashes": {
+      "backend/src/main/java/com/autocare/platform/PlatformApplication.java": "9f2af66ee1e748f62e1bab49d7202d55b302fa29ddb35d08f2f1a657a83f90bb",
+      "backend/src/main/java/com/autocare/platform/admin/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "backend/src/main/java/com/autocare/platform/ai/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "backend/src/main/java/com/autocare/platform/ai/AiChatController.java": "4fb7fbb379980885bb2d0454eb594a23ccff598c06e0483b98aa01ebc8337ad4",
+      "backend/src/main/java/com/autocare/platform/ai/AiConfiguration.java": "699e84e5b860d9b94a440ac3370c8a77bef9751a4edc58b7c39e54719034da5f",
+      "backend/src/main/java/com/autocare/platform/ai/AiContextProvider.java": "d99e736c31709a1ad93d03d39869156249b2e91778bf76f1ce62fb0be78428db",
+      "backend/src/main/java/com/autocare/platform/ai/AiUpstreamException.java": "9f76b34a56cfc1ad962efea1ff39fbe90883694c2f47d8681dee1eb5872dfb17",
+      "backend/src/main/java/com/autocare/platform/ai/DeepSeekClient.java": "ff1673fae3091c18d695b7869ea092b53d347ce32c941082049b777592134cd5",
+      "backend/src/main/java/com/autocare/platform/check/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "backend/src/main/java/com/autocare/platform/common/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "backend/src/main/java/com/autocare/platform/common/ApiExceptionHandler.java": "0a4e8b46103f45dc11df004ae1b11578f7bafce1487b147f8e6df44ee4f452dd",
+      "backend/src/main/java/com/autocare/platform/common/ApiResponse.java": "d5201944a47f4165451bf8cac25982714d17f121f4ae4c4047fe437711bab2f6",
+      "backend/src/main/java/com/autocare/platform/common/write/WriteIntegrityConfiguration.java": "1e5b34411dc62c53f177cbea222f245415419a6e9a593521debc3dc28a7a7832",
+      "backend/src/main/java/com/autocare/platform/common/write/WriteIntegrityService.java": "1e4cf65a6ae4c9b26019b38ce7026678d808339640fa2f1aa6180d4b954af204",
+      "backend/src/main/java/com/autocare/platform/community/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "backend/src/main/java/com/autocare/platform/coupon/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "backend/src/main/java/com/autocare/platform/file/ClamdVirusScanner.java": "8a2881b4ab046f1464e035e14f0595b7cf70ba650f81dea26cf6d7f57271db7b",
+      "backend/src/main/java/com/autocare/platform/file/FileMetadataRepository.java": "d5a22e77a20ff1d45318bc5ea6f71f04cc9380343d5e97d98a35b598b0e6fb50",
+      "backend/src/main/java/com/autocare/platform/file/FileValidator.java": "baa70391d7368cc9cc494715d0f9088cfd8af1097279e920d471124178062747",
+      "backend/src/main/java/com/autocare/platform/file/InputMaterialController.java": "05fe6b4d3472568adb915dcd57829cd26f6ec8501a5666f4d24585c6a97dcda0",
+      "backend/src/main/java/com/autocare/platform/file/InputMaterialScope.java": "c01fd091c9882841084ca852c7c0a04481877017e095ad7718d34a3efcc3f423",
+      "backend/src/main/java/com/autocare/platform/file/InputMaterialService.java": "a619be728424531393f2154445efdc7cb48438e11b1335ffe151084bad2075d7",
+      "backend/src/main/java/com/autocare/platform/file/InputMaterialValidator.java": "01eb3b7ca7568048a822742ac95e85290dff1c3a844494c1089afdd83bf4978d",
+      "backend/src/main/java/com/autocare/platform/file/JdbcFileMetadataRepository.java": "f99abce7ee59dfd9e541444ec23a0cad2174a1fed35d186ee31c7299e5f8527c",
+      "backend/src/main/java/com/autocare/platform/file/JdbcUploadRequests.java": "8fc488b00808fe814fdfb09132219745141e7bd82ca926f5d981765b5b607572",
+      "backend/src/main/java/com/autocare/platform/file/MinioPrivateObjectStore.java": "46933fb175fa8d493aa2700c41c233eb02ecfa043048951f150feb64dbdbee50",
+      "backend/src/main/java/com/autocare/platform/file/PrivateFileAccessService.java": "9048a880396cf3d56dbcdb4a13aab9fac11f8e981edb1fe48affafe50f7bf7b5",
+      "backend/src/main/java/com/autocare/platform/file/PrivateObjectStore.java": "ba018549ce5f2cde5d8527f465cc15ab9edc8b89eac4148c374c22201265e6ed",
+      "backend/src/main/java/com/autocare/platform/file/PrivateUploadConfiguration.java": "fa60366d8cc2e28139483c960ef3e0e9192afbb3c0c2e47a4b73e692c9a9a4c0",
+      "backend/src/main/java/com/autocare/platform/file/PrivateUploadService.java": "3be4a0982ffb4d51900c46fc9e2603e57fa55c341e3b2693eec2f763af8daf11",
+      "backend/src/main/java/com/autocare/platform/file/PublicImageRenderer.java": "85b906bd527f9b7477c8b8c658521a2b97f461f45f58ba81f386bc4bd85a0b6c",
+      "backend/src/main/java/com/autocare/platform/file/SignedObjectStore.java": "5796c4268eb061aca939c1146fe8367a916db98489a6dcccb4e62df8899e8eb0",
+      "backend/src/main/java/com/autocare/platform/file/UploadAdapterConfiguration.java": "c9e5a8253b6644a73e6c08fda0d9ec9513f7743ec05dfbfe7b8d52774354b297",
+      "backend/src/main/java/com/autocare/platform/file/UploadAdmissionFilter.java": "87b75fda0b28ad9d4f804be153b02a56491740c8fd7cb284ab9c4bcb930b7961",
+      "backend/src/main/java/com/autocare/platform/file/UploadEndpoints.java": "750a8de6ef272d12645ba59ae7ab9de4a1d9b35351ec241a21cf0388da5365c2",
+      "backend/src/main/java/com/autocare/platform/file/UploadException.java": "81032576fc15a79d79eab32244ca3c772040686f31d6dda5c0d477e28382cd26",
+      "backend/src/main/java/com/autocare/platform/file/UploadHttpConfiguration.java": "9c16908f9f4c77fdc4b22252e5b78050177f16844c62e58aff0460a0df108abd",
+      "backend/src/main/java/com/autocare/platform/file/UploadHttpController.java": "bcdac5c772a434d6a13c0123fbd5f5d87365f9520410334dc7b603eb2cca91f0",
+      "backend/src/main/java/com/autocare/platform/file/UploadHttpException.java": "e6a690219b553f6ecd98d0f5b499d72ab129e020cc149fb64aabb05b10fa9177",
+      "backend/src/main/java/com/autocare/platform/file/UploadHttpService.java": "bcc66b0c0c351d93451e5026feb75e280ce46a2969a85e5c974e5eff7fe42502",
+      "backend/src/main/java/com/autocare/platform/file/UploadOwner.java": "26c43ff50196a411763f253e59f15af40e9952825d992965c97be8dadcd5ac1c",
+      "backend/src/main/java/com/autocare/platform/file/VirusScanner.java": "84ae38f10e679a4012d39c585527dc8d9239186b5bec9c0b4a88b3033eb2f18d",
+      "backend/src/main/java/com/autocare/platform/gateway/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "backend/src/main/java/com/autocare/platform/gateway/LocalTokenController.java": "dd6af8cdb439add686e380041983e201e4fdf10442bc9876b9b7504c331cfb29",
+      "backend/src/main/java/com/autocare/platform/gateway/SecurityConfig.java": "e407d898208ef62325e27ba8d23ebcc12bb635a09c8b3d8e42073d61d3a945ac",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/AuthRateLimiter.java": "cb3b07611df3a6533f1ed3554640c594590cfe4183e076f3878578a5eef58f62",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/AuthSessionRepository.java": "c755a11c111f0f4187a87fb4f7765339669b82479a2b2b762ec73a861b4963c3",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/AuthTokens.java": "88202ec611beb7600d9f6550c3f73d1c13d136d576762449c66ecd8c7e844926",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/CloudRunAuthController.java": "6a5acb2c3eac4bea2fdbdebe71d8658d99d773ca94c5557a6f5431ff22cb8342",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/IdentityDatabaseConfig.java": "7a57925ca662aee10308cec8fa7e6a6e4d489b10b94c5fb321fe2e6298f76607",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/IdentityRepository.java": "c90d778881f0196f26dcf18b00a97245dafd1e9b4d7a9fd0a7cc1b047821e89e",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/JdbcAuthSessionRepository.java": "75c6841947bf54159ec68e8fbe04a75023f168f3f119a73f2924ba3e5d31ddb3",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/JdbcIdentityRepository.java": "03bdbb1cf2651b00fd264a278e814a1b2e02a73bea257694f34246b044a1f156",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/JdbcMerchantIdentityRepository.java": "208e0604524afe24ff125906bc7f7678419558acb3970eab82d199e7c40057d4",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/MerchantAuthController.java": "1f39f2d9c59e26f26cb276b30f2f0e921ae099e8abf780201d3525b9d0f3e0f1",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/MerchantIdentityRepository.java": "9c95f88dec115983943e3822934b5a89d4244b305f56d0b4a07b3e8b5dc41334",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/MerchantSmsSender.java": "489134b5f3a4f8dda70012fc3598b7f61f748363bee5fa7ab151a2664c335b6b",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/OperatorActor.java": "aee940a2f663256371c1122a9c40a575d7e219eefb4769d0fb1f65e5e255268b",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/OperatorAdminCli.java": "09e84757d0f9133bd2aefed4d1b5969d023d058a6bd0b20062f5759da2559d2c",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/OperatorAuthController.java": "127e8f3bcdfbc9e611a012c0a5e9cfacce7f86557acbba9e02b8a8d90a1b6ff8",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/OperatorIdentity.java": "2344a9ba19840d9a08752afe601cd02274d6c0706559d33ae4833aa66a0dee84",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/OperatorInput.java": "8bcec5ad129b7bc2fc098582b31cd9d1d9bd87b2a3a7da6cae051326dc3e8e9d",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/OperatorSmsSender.java": "91c37e1f1539b55c2cee94ca32751d7594b1290b6c61467423e230dcfd7a507e",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/StaffCodeCli.java": "717b1731bc24d5e979356f9b5dccf3755fece8edce309ce38406321feb8b01df",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/StaffCodeOperations.java": "b5e5ac1cb229fd11d3ab44c366015c637908b0fcafa55470bc54b47cb1578ae0",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/TechnicianIdentityLocks.java": "6de702e245c095bfe5f5e7bd61fe5bbabd5e7041d2a6c55a5e26aaf0e776315a",
+      "backend/src/main/java/com/autocare/platform/gateway/identity/WechatAuthController.java": "c5c7ce36615bd45faedeb83b0f59a80af6ca27aa6a9a9d79eaf26d44b566ed88",
+      "backend/src/main/java/com/autocare/platform/gateway/wechat/WechatCode2SessionClient.java": "609a00df408d40551023ca49b10432a0a501f5a1292d0ed4a0975e9504792e4e",
+      "backend/src/main/java/com/autocare/platform/gateway/wechat/WechatExchangeException.java": "9108846a9a24f53a05e2c92bf8165d939e3eddd38a0bc258825629f4bb542ae9",
+      "backend/src/main/java/com/autocare/platform/gateway/wechat/WechatPhoneClient.java": "f61d09b4a434169e6423350d99a8552d55cf6bd9ba115650f391e573a30894c6",
+      "backend/src/main/java/com/autocare/platform/gateway/wechat/WechatSession.java": "4cb77cc29495448880c658bed861c67db61448ebda24073fa5937261c3acb5aa",
+      "backend/src/main/java/com/autocare/platform/job/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "backend/src/main/java/com/autocare/platform/merchant/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "backend/src/main/java/com/autocare/platform/merchant/MerchantLocation.java": "a85d7b1c24662b776f1751c95501d4706bd2997229b2806a3e89209c0775bd62",
+      "backend/src/main/java/com/autocare/platform/merchant/MerchantLocationController.java": "401455f29c899d1ae508a8f966b11bcfaa4d40057ec9fa30950efcc9c38af76d",
+      "backend/src/main/java/com/autocare/platform/merchant/MerchantProfile.java": "9e120b12226913ddb075273897c4e9cdac5deb4821cdd748580ad8b122f62c67",
+      "backend/src/main/java/com/autocare/platform/merchant/MerchantProfileController.java": "19d7151fa743a28ffa01ab4182fe61427e2b1c9931051582b5733cfa465df3c3",
+      "backend/src/main/java/com/autocare/platform/merchant/MerchantStaff.java": "0a111122dcc9043223355615945b593ac22f1a804d3844fab22cda25151b38dd",
+      "backend/src/main/java/com/autocare/platform/merchant/MerchantStaffConfiguration.java": "5f2514075b40792fe15dbbef78ee0f7338fbb084436df076eb36c2bbb22bbfd6",
+      "backend/src/main/java/com/autocare/platform/merchant/MerchantStaffController.java": "be9fb43579905af29af576e813424e87165c220aaa598eb3464505b55ab3502d",
+      "backend/src/main/java/com/autocare/platform/merchant/MerchantStaffInput.java": "2f0699d2b51a5504a15d402ebb6f9cb25f14d2ae19db5ce37219e7980fe563a9",
+      "backend/src/main/java/com/autocare/platform/order/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "backend/src/main/java/com/autocare/platform/order/AiServicePlans.java": "b0e2ebd8b1c98a9a7c0e3db4729f67d1857e50b92454391315afdc58e74fc0ae",
+      "backend/src/main/java/com/autocare/platform/order/AiServicePlansController.java": "5a45dbaa5ffd5ac5b66078c147980a0319700e72dfee24ff168997e7bf947df4",
+      "backend/src/main/java/com/autocare/platform/order/AppointmentCodes.java": "ae3e818c6cd89f756235f3334a422bf7bd54c21c7b73d041b142ab1712357ed3",
+      "backend/src/main/java/com/autocare/platform/order/AssessmentCalculation.java": "625989daa9f30025f0cd36822bf35cfd780c819f62e46871f6d2fde3813e637f",
+      "backend/src/main/java/com/autocare/platform/order/AssessmentFacts.java": "de5451de7d0098e205bece12bdc7fb903618bcb3058676c748ffa5d61573c411",
+      "backend/src/main/java/com/autocare/platform/order/AssessmentPolicies.java": "951da70983ebe212b4ce84dc027178b7272965d89890c171cb1b0fc57fd12bc4",
+      "backend/src/main/java/com/autocare/platform/order/AssessmentPolicyController.java": "c97ba5a9d303d67695423598e97f8235ac6a71918f7eaa629cce6a4e893d4898",
+      "backend/src/main/java/com/autocare/platform/order/AssessmentPolicyInput.java": "4f4eb8704a22421140c270fae1f295c90cd9d32456491bfa2fe94b851c994946",
+      "backend/src/main/java/com/autocare/platform/order/AssessmentSnapshotController.java": "a5a551b9f0f80456dcecc97f09c4cb52ef5f33d35c5f56eafdc030afdef6a3df",
+      "backend/src/main/java/com/autocare/platform/order/AssessmentSnapshots.java": "fe145ae1cd53bf767b3b5ac30db436b3e6343b67f59686adbcab9636263625aa",
+      "backend/src/main/java/com/autocare/platform/order/AssessmentViewController.java": "ae3d25f714c1d41c7afdc12d83fc7ddcb4cd8eb43250d52e0047f6178ff0e8fd",
+      "backend/src/main/java/com/autocare/platform/order/AssessmentViews.java": "0c398cac217e17efe754270a4994ab1cd61268c20b815c794fa93704ca91c31f",
+      "backend/src/main/java/com/autocare/platform/order/BusinessDashboard.java": "c5a9d6ef6f35ec7bcc1d0267a4245d7b3feffd53709ce34ec58f90ab29c045ec",
+      "backend/src/main/java/com/autocare/platform/order/BusinessDashboardController.java": "57f84dfa3b22861954ec17e878cba3eb2777c76f24b25b2a7f61840a174becd9",
+      "backend/src/main/java/com/autocare/platform/order/CommissionController.java": "b913c9331a60756b9fac1a765d4de28f63a3a8e8a4fc6af200c7b718bf0b6c6e",
+      "backend/src/main/java/com/autocare/platform/order/CommissionLedger.java": "9104eb15502fb05f421b1ca27ec3cc938ab03d05c03eeef76e764f3b596af5bc",
+      "backend/src/main/java/com/autocare/platform/order/CommunityQuestionController.java": "7a6eee49c1c9d036111f99a6ddba4ffac7eab1079c5fc0aba126323247919f60",
+      "backend/src/main/java/com/autocare/platform/order/CommunityQuestionPolicies.java": "492d59c612a5a6578126b61d3065ca1d9418f32709ef7d8aaf2365985cbbc849",
+      "backend/src/main/java/com/autocare/platform/order/CommunityQuestions.java": "cca566cbf37ced6fa14e9e15c1ac0448eccf363a2447d15ef3da48ddc2c62290",
+      "backend/src/main/java/com/autocare/platform/order/CommunityQuestionSource.java": "235a5108f4fdcdbd7a01fda75ed8cf7fe018948fb4f475abf3df8d67969fcf43",
+      "backend/src/main/java/com/autocare/platform/order/CouponController.java": "143b9bf2ba5d0eec7830de26b9ca3747dc5488e8fb5fda83b94ffe9f1b6e30f5",
+      "backend/src/main/java/com/autocare/platform/order/CouponInput.java": "557f3b832be871844593aa6778df9986e6f0faf160016ec0c3afbc878d70edbb",
+      "backend/src/main/java/com/autocare/platform/order/CouponInventory.java": "f5c51f575afd95aa49b8346969460140fa38cba1cf85cad4a773d11a11d94773",
+      "backend/src/main/java/com/autocare/platform/order/CouponOrderInput.java": "eaeb159affad6cee52079c4a2aef79cb5f0723f2423799a1e564137fabd3602b",
+      "backend/src/main/java/com/autocare/platform/order/CouponRecovery.java": "08a1e089bcb7fac648fef0ee3d0d8655621b1cb299ebb1fd905c4b19ace021c6",
+      "backend/src/main/java/com/autocare/platform/order/CouponServiceRedemption.java": "4a31dab0bad10c5b009e000f49122f73f3a2afb6b725381a2e40838fb2a3b1b2",
+      "backend/src/main/java/com/autocare/platform/order/CouponTransactions.java": "f3cb729a75a28268a4ee538aa6bb2d2a4e2a89f5a30b6905c5dfbf46de0cf3fd",
+      "backend/src/main/java/com/autocare/platform/order/CouponTransactionsController.java": "c167ef416d6c08c10237e12dcb98fac92730fa342b005dffe86edf15291c5f9e",
+      "backend/src/main/java/com/autocare/platform/order/CustomerRelations.java": "8a835e281fb37f5d552a87b2d2aeb57df5aa75de1e68026cb66b774aed94e877",
+      "backend/src/main/java/com/autocare/platform/order/CustomerRelationsController.java": "0ac791705a85bc5397f3bdadf95dec4a77191ca413f0b36f9c7797516156a791",
+      "backend/src/main/java/com/autocare/platform/order/DeliveryCompare.java": "62fc9ab1af30f8241fb58bca8efb0780060d404664994f98e5dd25dd8d3b5f20",
+      "backend/src/main/java/com/autocare/platform/order/DeliveryCompareController.java": "eb84062d89e5d93936e6caf97ed78543c107d18172385caa58607dc77d189b3b",
+      "backend/src/main/java/com/autocare/platform/order/DiagnosisCases.java": "154bb93462e507a8d7655079159a586b38ccbcaa8708522b6a2f65a01f52efaa",
+      "backend/src/main/java/com/autocare/platform/order/DiagnosisController.java": "5304c78de6841d1739c1dede00b71f17796b183cfae06e98673b19bc3ce15ecf",
+      "backend/src/main/java/com/autocare/platform/order/DiagnosisNotificationController.java": "0a69e16adca2729877b783ffca98f60d16038099ce92f98ef1e24a3c0d75239c",
+      "backend/src/main/java/com/autocare/platform/order/DiagnosisNotifications.java": "bab1679334671b31f7e897174d6d620d19fbcd45c5d2b8f6e329daed2e5e362a",
+      "backend/src/main/java/com/autocare/platform/order/DiagnosisServicePolicies.java": "47ff02dbca68296e3b233517cffc99682a39e4473036368e9e1826872a836dca",
+      "backend/src/main/java/com/autocare/platform/order/ExperienceCardInput.java": "18257c44004d2524d26c37f0d3e865eea49bcab366bdd9419e13bf1dbbd05770",
+      "backend/src/main/java/com/autocare/platform/order/ExperienceCards.java": "edded8a1d224215e3fcd27a5efa893f52ba87f0ffa0c26fddcb2b2fa48747b5d",
+      "backend/src/main/java/com/autocare/platform/order/ExperienceCardsController.java": "6787c28d29db501459084137d8c073a48d5894ce1a53ad3c46b14180f2f8e46f",
+      "backend/src/main/java/com/autocare/platform/order/ExperienceCurationController.java": "03cef358addf60b727c12e6f0fd4b2e55d0dc6d2c6dad7ad9e87b195565cfc60",
+      "backend/src/main/java/com/autocare/platform/order/ExperienceCurations.java": "cc7910e35445798fc60721446652192fc9a1a9bd5af5237ff5af8ce9157ceec1",
+      "backend/src/main/java/com/autocare/platform/order/ExperienceModeration.java": "a39368c47fb0783fdeace5f38faeee67ea796db66db2cbc119f973b92f07376d",
+      "backend/src/main/java/com/autocare/platform/order/ExperienceModerationController.java": "346db8039fc100bfdd49ef95172d495c8929390a4532824a55a780f5e7f21de0",
+      "backend/src/main/java/com/autocare/platform/order/ExperienceModerationInput.java": "4b9211a7bb127661b023c472ea516b7716244dd695b498f5ecdebfd7ab443eac",
+      "backend/src/main/java/com/autocare/platform/order/FulfillmentConflict.java": "0d154b5120c642cdce781e708a462e45c8ea25aaacfbb485551a8a9bf545037b",
+      "backend/src/main/java/com/autocare/platform/order/HealthDashboard.java": "f47555db6191ac36d84f353ecd141421d3b2e40dcbd57d173b8025beed9d1d20",
+      "backend/src/main/java/com/autocare/platform/order/HealthDashboardController.java": "ceb94cda5a34a3356e4fc54136a04cfbfd1198e04b3802b4387cf14c304be22f",
+      "backend/src/main/java/com/autocare/platform/order/HealthPolicies.java": "f324e9c027cedaac6248f17f496fd8e9850d56566ebd9b8c691779a38eab2c60",
+      "backend/src/main/java/com/autocare/platform/order/HealthPolicyInput.java": "7a77ec8ebf2c86c54872f4c01c7ca9db8f0f0a0a19652e2f1587634b8406e6b1",
+      "backend/src/main/java/com/autocare/platform/order/InvitationController.java": "e7f2abef0a5cfaad366df32052e2954d31039cc9761f27a8c67768ddd1933eb5",
+      "backend/src/main/java/com/autocare/platform/order/InvitationInput.java": "0ae7e5d4852f426f73fbdf709ea96cdb2295345b139ca6424054ec62ca55f606",
+      "backend/src/main/java/com/autocare/platform/order/InvitationRegistration.java": "709b0d48bf85aa537cbb8d6b7fbdcdc48b6d60b5379d56cc4f02d8f88f2b43bd",
+      "backend/src/main/java/com/autocare/platform/order/InvitationRewardController.java": "68a2c7b15e2f2674f7ba00bb6288d78e9b0c2fa2f8edb40c50234ed49e31b391",
+      "backend/src/main/java/com/autocare/platform/order/InvitationRewards.java": "7d69aab1e6e6bbe8c2fa1efe33d42133cbd882ef6f1e4399db166f92fef824d8",
+      "backend/src/main/java/com/autocare/platform/order/Invitations.java": "255ecabba1b5b25e715d797f7d706bfde6d3af76f524a672f2d2e023bf6d6973",
+      "backend/src/main/java/com/autocare/platform/order/InviteDiagnosisController.java": "412e772b8e2e7c89363c1b8e566654474c6d75918512bf29854fd609d536e774",
+      "backend/src/main/java/com/autocare/platform/order/InviteDiagnosisPolicies.java": "5153d9d1b7edc8f20ba9fa23002485a1b011fb59d847ad71d4e3f11f6a658803",
+      "backend/src/main/java/com/autocare/platform/order/InvitePolicyController.java": "c0418f7abc0b819c98508e778ad77b3ede1e168bde9fb345f92913e4e332c681",
+      "backend/src/main/java/com/autocare/platform/order/InvitePolicyInput.java": "01b26eca4659db6c6fe97e34e403325dbbdd0efdc1312be823f07a8dbf106d35",
+      "backend/src/main/java/com/autocare/platform/order/InviteRewardPolicies.java": "2208319bafc7d84d2439f4eb6dde9a3ac3a57cd6a09299a141ea685611038350",
+      "backend/src/main/java/com/autocare/platform/order/KnowledgeInput.java": "ddb1414fbf40d7bd4dedb122b1d2f39cb343072c55901e94dbd8dcf6b6c6e655",
+      "backend/src/main/java/com/autocare/platform/order/LicensedKnowledge.java": "e4280da6bce7998dafe030d1dcf7eb1b04f62c4218c483099abbe6c0209d7c0b",
+      "backend/src/main/java/com/autocare/platform/order/LicensedKnowledgeController.java": "9886f3b2863285e2f709698176d64b9edf8ae4230ff9bf4eb82f16feea100a1a",
+      "backend/src/main/java/com/autocare/platform/order/LocalFinance.java": "a327fcb69ee42860ee984f9f6233fade0587650219a217e91ede1b2a3a3debfe",
+      "backend/src/main/java/com/autocare/platform/order/LocalFinanceController.java": "be1246ed0a628927559f6fa9fdd63d3e89b66b946e8c0715f3f7e77cec28a3e0",
+      "backend/src/main/java/com/autocare/platform/order/LocalTestPaymentChannel.java": "5de270e2370a16593f195373221748ade9572f68a3bfd39404b20f094a8d78d5",
+      "backend/src/main/java/com/autocare/platform/order/LocalTestRefundChannel.java": "430d17ff12d98255616933d46f31711e7179299800914662de44a7e123cdbd74",
+      "backend/src/main/java/com/autocare/platform/order/MerchantApplicationController.java": "6c9e9bafb92ee26158bd9b3846c7a9cffaa212e59c63568d0675c154d50ee87b",
+      "backend/src/main/java/com/autocare/platform/order/MerchantOnboarding.java": "68cc881f2df5f659438d28d003570b6a1d52f543d55dd744a798ab99a37d7fc6",
+      "backend/src/main/java/com/autocare/platform/order/MerchantOnboardingAdminController.java": "b426be8a35e2a6cdc99e6b2858044da111ba617f20e60b5146e96439ee3f928a",
+      "backend/src/main/java/com/autocare/platform/order/MerchantOnboardingInput.java": "86dedfc9c3058f4529c6ca458ca9f0ac1a6d65039c966c09fa5dc35657f49c1b",
+      "backend/src/main/java/com/autocare/platform/order/MerchantOrders.java": "eb55e5dc74102fce7417698edcb17b9ff9bc20ca0908b2d74828fc29432a5fc7",
+      "backend/src/main/java/com/autocare/platform/order/MerchantOrdersController.java": "ca8200460ff980422a7af054d01e4725757da745269e4713265fce2ffdfecf7e",
+      "backend/src/main/java/com/autocare/platform/order/MileageOcrClient.java": "4b30e65e9bfaae31c29721f89b09f174661891194385db048fe8773566ddf8c2",
+      "backend/src/main/java/com/autocare/platform/order/MileageRecognition.java": "9b5d915002cbc0d95ab4638de7055b3c79f21415b24c85c7b709fa757e367b50",
+      "backend/src/main/java/com/autocare/platform/order/MileageRecognitionConfiguration.java": "ac8c17c1c459443b842370a26e2a330cd9da18dd2a98ad1d37e6bd965915d94d",
+      "backend/src/main/java/com/autocare/platform/order/MileageRecognitionController.java": "ab271437ec41e533dffb4c790df987ef95d1834fb5fabc22c336254028d9eadd",
+      "backend/src/main/java/com/autocare/platform/order/OrderArchiveGrants.java": "64f937e253da8063aad0eed441849d56ca79c747c33916242f8ca8790cf5c9bc",
+      "backend/src/main/java/com/autocare/platform/order/OrderDisputes.java": "80066fb6a9df24b60b6227f7c419f1a947beba48a09a5af1f0d680ec902b68fb",
+      "backend/src/main/java/com/autocare/platform/order/OrderDisputesController.java": "c43d073aecd2b5c6b344895cb7f9f971e296552df292a74681e502b755eb4d31",
+      "backend/src/main/java/com/autocare/platform/order/OrderFulfillment.java": "40fe44afee633254a5ffaeb80a40369a4f5562a3bc80f136ebc2a46f3931e53d",
+      "backend/src/main/java/com/autocare/platform/order/OrderRedemption.java": "5aa9535cb53848f9ee91e157f0edb05cf850b1c75c522cb31d306768c82a2827",
+      "backend/src/main/java/com/autocare/platform/order/OrderRedemptionController.java": "4462c0224a399c33cb145e2ebf26319d36bf48cf7e2ac8623926bf06e65263bd",
+      "backend/src/main/java/com/autocare/platform/order/OrderRefunds.java": "4585dfa59a5661a3e0a24a37248c8c75050773c01d433ccc65b6442b02a0b549",
+      "backend/src/main/java/com/autocare/platform/order/OrderRefundsController.java": "afb1c01292aadf745824561d04b08d5db6301856e6485685077e0eaceaeac841",
+      "backend/src/main/java/com/autocare/platform/order/OrderReviewInput.java": "5311802f9d93a54c778a816c08adb1b21b48f3ba9a7f34a499c22c50cdf9472f",
+      "backend/src/main/java/com/autocare/platform/order/OrderReviews.java": "ef5d72cfe0dded5e08d70ca05104b94f5e6b538d5c65704dabd75e85df052e5d",
+      "backend/src/main/java/com/autocare/platform/order/OrderReviewsController.java": "b1401fc3d1ae88fe43bb70cae31df415d523cc635bc13a3f3917df63bcaecad7",
+      "backend/src/main/java/com/autocare/platform/order/OrderStatus.java": "51fa4d98b27511962edf4f567b9578888cb89638182ec71e6ebb7ff1639138ff",
+      "backend/src/main/java/com/autocare/platform/order/OwnerServiceEvidence.java": "29f08379768f610e2b41b76d4b12a422b46d25d5886e64c2be44b03615449290",
+      "backend/src/main/java/com/autocare/platform/order/OwnerServiceEvidenceController.java": "363e2efd3ad0e979ba1d3bcd4299bce75ee998a88cbefa61fb2e91385f81de0f",
+      "backend/src/main/java/com/autocare/platform/order/PaymentChannel.java": "2bc2a471d6e4c1cc235ba6cf53eb20699d3b1aa2cbbe192d1cd930f133bac08f",
+      "backend/src/main/java/com/autocare/platform/order/PaymentChannels.java": "bcdc0cb81aeeac53cdb217c37274e33ad88c85e6a36cb2f8f686c80d3e11a6b7",
+      "backend/src/main/java/com/autocare/platform/order/PaymentConfiguration.java": "b241ad887cc9162014ec64255199d69d6bbd0d5a6c7bc9dea25c11d7dff5e89a",
+      "backend/src/main/java/com/autocare/platform/order/PaymentController.java": "b292d720b8f0834248927583148541b71a45d33e33af7f5463a85fa7d6b83a65",
+      "backend/src/main/java/com/autocare/platform/order/PaymentNotice.java": "75bfbec000d3a2997fe711e06254bef4a921a821c35bb4665828cec3b3e9388b",
+      "backend/src/main/java/com/autocare/platform/order/PaymentQuery.java": "241b52d975f83b4addba9eb486304b99398bb560fcdfcbe036da772ddbcf4a80",
+      "backend/src/main/java/com/autocare/platform/order/PaymentRecovery.java": "366e3fc0cf98aa225199e5c503e53f1f0694ac63afff7fad14c09c4566037bbd",
+      "backend/src/main/java/com/autocare/platform/order/PaymentService.java": "572587786bf00c81341f68b6a4f110007c23c57bdfbf9838bf80d5a09282204d",
+      "backend/src/main/java/com/autocare/platform/order/PickupController.java": "acf445d965575f3dc4f8eef6651399b5e8d42fc18acb42efcbdedf6a0500e7d6",
+      "backend/src/main/java/com/autocare/platform/order/PickupInput.java": "f43b8553bf8af9899ee3b8a0528f01f1d4d0e622a2f1ee1bbd1b48806f898822",
+      "backend/src/main/java/com/autocare/platform/order/PickupInspection.java": "85f8e5de01cc6e231af2dfd0dba695ac4888e37ef83d18f2074639ea32a798be",
+      "backend/src/main/java/com/autocare/platform/order/PlanBookingContext.java": "773d96e25e38b9fae372668e4e6dc47f000b76601a886bcfffa1c0ac4d7e17e5",
+      "backend/src/main/java/com/autocare/platform/order/PlanBookingContextController.java": "77c438ce2460e4dc462c8d7e87fa1820cc07d281f9614006b8b26ab471e1d22b",
+      "backend/src/main/java/com/autocare/platform/order/PointExchangeCatalog.java": "1fa9f5cbcef681634733d1821c6577c15bfbf90f3d66a8d3e188a63dcb8dbf45",
+      "backend/src/main/java/com/autocare/platform/order/PointExchangeCatalogController.java": "9078eb245500ce2617ebee0c47ae87291d8b2d579e772b0393fbc81ac33d8285",
+      "backend/src/main/java/com/autocare/platform/order/PointExchangeController.java": "20388c08cb1ebc1bfd30780b7ab973ca320e0520dd76a9fdd6e1cc2c42a5b7ba",
+      "backend/src/main/java/com/autocare/platform/order/PointExchangeOffers.java": "116970c15af213a15ea62eb2588158633cdae8b20e6cb2ac6e120324847adc1e",
+      "backend/src/main/java/com/autocare/platform/order/PointExchangeOffersController.java": "f1fbccf468165739dbd46421382217317a0ecb0187356d5fa57b33b05e93b292",
+      "backend/src/main/java/com/autocare/platform/order/PointExchanges.java": "dfd7f618f8e59705311d4c064d450c63976fe8ba08c65176bcd7c8510bad6fec",
+      "backend/src/main/java/com/autocare/platform/order/PointLedger.java": "d9ac9a40e63349509e74897fd332929540e70926cb9db0de4cf6a3c320b62f01",
+      "backend/src/main/java/com/autocare/platform/order/PointLedgerController.java": "df38316f47eb5fbb08cc99520bdd084f1462fafe9eb2892dd854922fecd83d53",
+      "backend/src/main/java/com/autocare/platform/order/PointTaskPolicies.java": "4f17e021561f8d1a1f6735851c8fbe1bbdb01e0fc699d737a064ac057f36dde3",
+      "backend/src/main/java/com/autocare/platform/order/PointTaskPolicyController.java": "9605d9277d6be77dd128a54cff871826d0b70e97cb79b721f66d6125d7673739",
+      "backend/src/main/java/com/autocare/platform/order/PriceComparisonController.java": "dd7f73a2461715df6ac213f64cdfba0d5d53b756db7315d785dd67d6dc642eaf",
+      "backend/src/main/java/com/autocare/platform/order/PriceComparisons.java": "be9f97e3c3c9ca39248931813f1abf0f1c1398328d9c1da8024c107023f3889a",
+      "backend/src/main/java/com/autocare/platform/order/PricePolicies.java": "c3b05f56f7a325b61267e36576def53bc31cc3b20272ea576e3c90ea3b4965c3",
+      "backend/src/main/java/com/autocare/platform/order/PricePolicyController.java": "434f1f3e9af5fb3df3bc6e284e3373c1910d39b7a89dd3e78b685b59aa4c110d",
+      "backend/src/main/java/com/autocare/platform/order/PricePolicyInput.java": "abc765c04e8012653ffe12a4ae9a854962011be599574cdeb9ca6a193960e820",
+      "backend/src/main/java/com/autocare/platform/order/PublicCommunityQuestionController.java": "c8e21418fc3ed2fe795cc5e39bdf3e7592276cd1ed1b51967ae8b0e26df52dfb",
+      "backend/src/main/java/com/autocare/platform/order/PublicCommunityQuestions.java": "aa93674b8c5edf10bd0d6a7f2b74e795d8879894aaca811e15898348c05cf511",
+      "backend/src/main/java/com/autocare/platform/order/PublicImageController.java": "a416f383592365ff7a4ac6e62eb6c596ec4c33a238bbd3ed973ddcaa5592c6ff",
+      "backend/src/main/java/com/autocare/platform/order/PublicImages.java": "cc5816a0836108aa290568ac0c0e6c356f197307e24bf2192fd7ce6bacd98939",
+      "backend/src/main/java/com/autocare/platform/order/PublicRatings.java": "79ec1fb8a40939741ea70b878d73a74754544e819e18274b5f7d69721045cc96",
+      "backend/src/main/java/com/autocare/platform/order/PublicRatingsController.java": "9b3efc31852f946c4a34830aa5679a8a09f3550494ee117c77b1057ad3e58e31",
+      "backend/src/main/java/com/autocare/platform/order/PublicReviewTextInput.java": "9e84766bb4a755c91feee03fe7519021cbb98e07c163a1cd232fbbda37a9773a",
+      "backend/src/main/java/com/autocare/platform/order/PublicReviewTexts.java": "8b795e1c7f1687084b0e11212e40f5884c2c0ea316df1d1fe40ea4c10ce7fc47",
+      "backend/src/main/java/com/autocare/platform/order/PublicReviewTextsController.java": "deacacd45e01b4a2238df6196f4f051e067c8d6fc4a7513688fcda63c238b0ef",
+      "backend/src/main/java/com/autocare/platform/order/RefundChannel.java": "251b9645095967bb2b5c4f8d910b5c19847736e4d9291fbc43fcb75f05040c2e",
+      "backend/src/main/java/com/autocare/platform/order/RefundChannels.java": "b4426696f44704fb1e0dfc83d8d429e74167257c9d11737393c70de85580da4a",
+      "backend/src/main/java/com/autocare/platform/order/RefundRecovery.java": "587ae234e7cb787ca25c94ae308c37a1a121689c5a13ca2b76cfe74dc009e3be",
+      "backend/src/main/java/com/autocare/platform/order/ReservationConfiguration.java": "a486d92702f0d4363be5331b328ba1b39664d90e238130e2c01427fab5a650e6",
+      "backend/src/main/java/com/autocare/platform/order/ReservationConflict.java": "0dfad2d88d6693d351c168ce91acaad334c8bd45487e189c61d66768610e9154",
+      "backend/src/main/java/com/autocare/platform/order/ReservationController.java": "4df7ef5aff08e4642d71a694d0954f5190746dc3f5462b5155b435a78fe38644",
+      "backend/src/main/java/com/autocare/platform/order/ReservationExpiry.java": "5f6dae11822acf26395d210077f835b9e624b1a695533a0bf6c88f404268a03c",
+      "backend/src/main/java/com/autocare/platform/order/ReservationInput.java": "d5800f815da4a7a0faec3d58f208a3b21007b88f99d335fb4259c48441996ff6",
+      "backend/src/main/java/com/autocare/platform/order/ReservationOrders.java": "051a6d6f78819d14eac143583f6eeac8499148ee048b55818b50bc5422d7460e",
+      "backend/src/main/java/com/autocare/platform/order/ReservationSlots.java": "7bcc88af1a2935d8079ba50ef43bd43fc4f1ec78f70f854ef8e472a97aed29be",
+      "backend/src/main/java/com/autocare/platform/order/ReservationStore.java": "be7c2f43f6a42140cba90b97617a398f1e283da07a294bf024221c733978cb80",
+      "backend/src/main/java/com/autocare/platform/order/ReviewSummaries.java": "5b20847ae8865f2be1f00089197aa64229be090f02c799958540194ade846540",
+      "backend/src/main/java/com/autocare/platform/order/ReviewSummariesController.java": "130716e92c498ff75034a4fbc97010eda18f7317cb780f9b1aa4b3baa6e3b9ca",
+      "backend/src/main/java/com/autocare/platform/order/ServiceArchiveJobs.java": "61cc5be2b7aa630a8d75b43605d39f7d074ce3068e36aba2a6f65750fe002146",
+      "backend/src/main/java/com/autocare/platform/order/ServiceNotificationController.java": "9aacc332ce2a027fc0b554995ed1c2eaf6ccf1d3f1b255f6ee57546ba32be47d",
+      "backend/src/main/java/com/autocare/platform/order/ServiceNotifications.java": "46aeed2498000003a47d19182b2ed866e9fd6eae0221ac7bea691a02d8063e46",
+      "backend/src/main/java/com/autocare/platform/order/ServiceSearch.java": "217f0e5df31463227303a361881e3deb6325e756a7f425dfba98d587022250db",
+      "backend/src/main/java/com/autocare/platform/order/ServiceSearchController.java": "bb8e3131bc3a14cee70796cb53baa93353a6533c250d6b0be4e89f68c813f4ce",
+      "backend/src/main/java/com/autocare/platform/order/ServiceTaskScope.java": "f9248c3b9aef2d5f1bf81f3e92b19893bdf2bb1d72ad925ea032ba933005a4d6",
+      "backend/src/main/java/com/autocare/platform/order/ServiceWork.java": "820a7a6bea1c92646ec88bc097c54f3bb3fe9408fdf7f300e1cad132483e7246",
+      "backend/src/main/java/com/autocare/platform/order/ServiceWorkbench.java": "e4d029affc73029ace1e797084063849ad492b1fe6908c0e9ef492e0b79423c0",
+      "backend/src/main/java/com/autocare/platform/order/ServiceWorkController.java": "2a78fcfdd8c885aa60b3c9aac029c4795320e6ce9dff4982fab1b93915758233",
+      "backend/src/main/java/com/autocare/platform/order/ServiceWorkInput.java": "006bcf70e249d208021e5067fafe76ee92b8deb2c32e79f58f320854b4f6efd6",
+      "backend/src/main/java/com/autocare/platform/order/ServiceWorkspaceController.java": "e92a32f95ad4673c4d6d7e2885fc4a70ffb80c9c53b7d9cd7b358aad7538822a",
+      "backend/src/main/java/com/autocare/platform/order/TechnicianActor.java": "d152f17e9ccc7b2f0b3436331ad554d06a656b05069de93c23820709a6c6de39",
+      "backend/src/main/java/com/autocare/platform/order/TechnicianAssignments.java": "e8849519dd500c3ea47c96fa17584460db05d94ae8bbb3957ee09583d9d436a4",
+      "backend/src/main/java/com/autocare/platform/order/TechnicianAssignmentsController.java": "cf39aa2b249ee10b7fb766f06f8491a24cee8d4173afd566306f8faeb1551924",
+      "backend/src/main/java/com/autocare/platform/order/VehiclePlanEvidence.java": "134b993502206264468a91f993c4847ed3b91d08e589a56de3a40bf2809a953a",
+      "backend/src/main/java/com/autocare/platform/order/VehiclePlanEvidenceController.java": "f6a8bacc86a3fbc8ec5ec209913b7efd884ebcce82496f7548684a2e9ebcc0c0",
+      "backend/src/main/java/com/autocare/platform/point/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "backend/src/main/java/com/autocare/platform/service/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "backend/src/main/java/com/autocare/platform/service/CatalogGovernance.java": "09cf364691abf1512fdd8de628abe97a9714fafb4679e5c6b23a848cb554d990",
+      "backend/src/main/java/com/autocare/platform/service/CatalogGovernanceController.java": "8969418ca444f3cfff591e90de695941c35db0aac3d3313e6a81dacbf28b94dd",
+      "backend/src/main/java/com/autocare/platform/service/CatalogInput.java": "16efdb2d979ccaf136927732f42dd7a66e9eb865a12c975180131aa6cae5ebf2",
+      "backend/src/main/java/com/autocare/platform/service/CatalogQuery.java": "7025d713be155bfe71b830d59b84c789bcdfa7961a29a9d076c3e2458d5aac54",
+      "backend/src/main/java/com/autocare/platform/service/LocationInput.java": "fd6c7d637dc0f762aceda7b7551b8037f4d72ac0b3b66b4102e682ffef1da2c8",
+      "backend/src/main/java/com/autocare/platform/service/MerchantActor.java": "464b86c08bfc942f5739704130865c635d656252d67d9b75e6c131c1cacc3d3d",
+      "backend/src/main/java/com/autocare/platform/service/MerchantDiscovery.java": "71527866e4593f988163721bdc86f258ee0c38ff6fc5f9f065006b6e0fe19f52",
+      "backend/src/main/java/com/autocare/platform/service/MerchantDiscoveryController.java": "1833e6c0caf62451a9f0540be6611101ad5ad6bc183323bc18cc2895c26bf128",
+      "backend/src/main/java/com/autocare/platform/service/MerchantQuotes.java": "5916beab05290d64b38f6a4e640f2cfb2e68ecce706a174e5744dbe14bdc9712",
+      "backend/src/main/java/com/autocare/platform/service/MerchantQuotesController.java": "d4b304068437bd2b5026f6f4bdb84173fa154c60b7b27cada8a0bedf8e2b86be",
+      "backend/src/main/java/com/autocare/platform/service/NearbyMerchants.java": "771ba227cb99108c001f21f5fcdf85dcb40bcac8a1d2ee75c8555a6f63e197cf",
+      "backend/src/main/java/com/autocare/platform/service/NearbyMerchantsController.java": "63d1d27235d5d0886b8b4cb9908cda47af40c9fbb1daddc6d43816d7d909e92a",
+      "backend/src/main/java/com/autocare/platform/service/QuoteInput.java": "43eec831781aa986f2221bd5718ac51074f8b747d13ee7bf8fcfaf18fcfbb1cd",
+      "backend/src/main/java/com/autocare/platform/service/ServiceCatalog.java": "7e1fd1ef53ec972ba61912fddd9861711b89e9af7caf07cdefc8643c0a113487",
+      "backend/src/main/java/com/autocare/platform/service/ServiceCatalogConfiguration.java": "f5b871b9ffb5349af57cf15bcbd4a9fada1b3b57355271746bc32a773d2d48a8",
+      "backend/src/main/java/com/autocare/platform/service/ServiceCatalogController.java": "e650dad8cb83373f5f192fb6af5cd0e2eef11171a7233fbb852c7e3767ee884a",
+      "backend/src/main/java/com/autocare/platform/user/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "backend/src/main/java/com/autocare/platform/vehicle/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "backend/src/main/java/com/autocare/platform/vehicle/ArchiveConfiguration.java": "0d5fbce4d266f302bd61e05b6dac5e2d102f644f6612bb60f935c5e697eab0d8",
+      "backend/src/main/java/com/autocare/platform/vehicle/ArchiveController.java": "fb3d48dbc19037eb984015890b98ee6961407733ae47932c1bcc34b5820cd7e7",
+      "backend/src/main/java/com/autocare/platform/vehicle/ArchiveEvidenceController.java": "e4d64d04a6579a9d19b633baaef14fabd1c02eafb4b3acb108e3aff2af2f0fb6",
+      "backend/src/main/java/com/autocare/platform/vehicle/ArchiveInput.java": "c4269c02742b26c11d8704ffff22a7157baaa1ca9ef278cb64b7baa0ce24f083",
+      "backend/src/main/java/com/autocare/platform/vehicle/ArchiveReminderController.java": "cc9051e2fd7fb461c9d3770743c93cf39e73459008a76af19c7e47dd53b6cec8",
+      "backend/src/main/java/com/autocare/platform/vehicle/ArchiveReminderInput.java": "2e5ce23202970ff1b3f5f5dd346f86e31a67bd01975e94b845af772d218e9b24",
+      "backend/src/main/java/com/autocare/platform/vehicle/ArchiveReminderService.java": "81e31d8a9872a6d66f4cadc062c94dae0e666b8a04b17b300f6bfb44114dfe75",
+      "backend/src/main/java/com/autocare/platform/vehicle/ArchiveReminderStatus.java": "081843a47354c3dacae2c4bbe62ef3cb5f127c0befb4715a1c394892e5d64126",
+      "backend/src/main/java/com/autocare/platform/vehicle/ArchiveReport.java": "52fbbae6cde49a1359adc4499ce9e46e269aae4b82c2aeeae87891e1db8cefa9",
+      "backend/src/main/java/com/autocare/platform/vehicle/ArchiveReportFilter.java": "14d585279281e56484f06a96b467b8f26d16e98eff21795947d6baca33c941dd",
+      "backend/src/main/java/com/autocare/platform/vehicle/ArchiveReportPdfRenderer.java": "da47d76a1116e2aedfd9e0de019c6c974b007736beb769d3ca8fc9acfee76e41",
+      "backend/src/main/java/com/autocare/platform/vehicle/ArchiveReportService.java": "e018ca40b80618522e36db9e8f3e29acdf15588ca3c4354ea5f6a99467329fe0",
+      "backend/src/main/java/com/autocare/platform/vehicle/ArchiveService.java": "f4e24433bce8dd8c46bc602eefb83e17074989530031cb8c45d018991c9985f4",
+      "backend/src/main/java/com/autocare/platform/vehicle/ArchiveShareController.java": "515cdb1e4a12b36445648aedce3ed45d710364c1b583c255b52d07a2714e8ec6",
+      "backend/src/main/java/com/autocare/platform/vehicle/ArchiveShareInput.java": "00b1705d0c429f1829c7bebf4d1d6e2545bce6638a746e1b03be26616d05307f",
+      "backend/src/main/java/com/autocare/platform/vehicle/ArchiveShareService.java": "4c27f7c075b2d641418d3f2237b6be19816b30693db28b7e54319dc5a3b5fc87",
+      "backend/src/main/java/com/autocare/platform/vehicle/ArchiveShareSummary.java": "ce7dee7598e9c6c2e8c2a5865784ecf94e4ddfb71f40acf893c2471c6788024b",
+      "backend/src/main/java/com/autocare/platform/vehicle/ArchiveShareTokens.java": "aecf4b2379fc4b8b52d665f5ffc623b980ab35997388f20801372cc517bf131f",
+      "backend/src/main/java/com/autocare/platform/vehicle/ArchiveStructuredController.java": "e419c77bd011e204d7706f29d256a6b2085088e2ee5ed9a09ebd405cf448aa4e",
+      "backend/src/main/java/com/autocare/platform/vehicle/ArchiveStructuredInput.java": "13515e4cb681501f84e59b3a2a0e0dec7dfd8b6eb04e000d00bc89e8c634f493",
+      "backend/src/main/java/com/autocare/platform/vehicle/ArchiveStructuredService.java": "aff1dc296619b9d9168ded182febb9d9a35d90e24b1f487c0165092d3b835c55",
+      "backend/src/main/java/com/autocare/platform/vehicle/HealthObservationController.java": "1a32de21a42ca1b9915f5c4461af41e69ff7f6e518302de77e8027b66eac1b48",
+      "backend/src/main/java/com/autocare/platform/vehicle/HealthObservationInput.java": "7b5b09df0185a0f373d5ed640da481bc0bf09babcfef572ca0e7f08a39e60084",
+      "backend/src/main/java/com/autocare/platform/vehicle/HealthObservationService.java": "bda0b2a9926dc7834dc541d81bbce74ce281dbbca38a0ea0ace0a3392642ceca",
+      "backend/src/main/java/com/autocare/platform/vehicle/LocalMileageController.java": "fb47bb4aac6f2db96df8a858dca7aa2fe16be293a4d4b8bf75f82395758b6b8a",
+      "backend/src/main/java/com/autocare/platform/vehicle/LocalMileageService.java": "6fd229fbf6687c21525c8e1329d59f04ee6be306e1d2abd2c5177c19fef50b49",
+      "backend/src/main/java/com/autocare/platform/vehicle/LocalVehicleController.java": "e887316eb1038cf69e95ff8224c45f6327c2923b5dc6367a521c0ab90f8b1976",
+      "backend/src/main/java/com/autocare/platform/vehicle/OwnerArchiveQuery.java": "6fe606dfeeb073150b686eb76a97f9d4c52e9d78e963215440c0d3eba6755a8a",
+      "backend/src/main/java/com/autocare/platform/vehicle/VehicleConfiguration.java": "f4f4aab5c6483221fc9472f5ba3e8bd75848b092425d0f1bf80dfc9837eb4cb5",
+      "backend/src/main/java/com/autocare/platform/vehicle/VehicleController.java": "c31c17c26408828bbf036d9515c584a40b5896a990da1fe17135440837b72499",
+      "backend/src/main/java/com/autocare/platform/vehicle/VehicleInput.java": "4c6b8c67f26010aacc464e9e839ea77f95ee2242b6b4043b672e9f99b1a0a3ef",
+      "backend/src/main/java/com/autocare/platform/vehicle/VehicleOwner.java": "f0553f38e238cff867f01a99deb8745300017a3bc962ee96d713f57fcdf6f7cb",
+      "backend/src/main/java/com/autocare/platform/vehicle/VehicleService.java": "f5b74e19e0167e74349707f53114b46df31e3afed783212e9e85113adf10ad1a",
+      "backend/src/main/resources/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "backend/src/main/resources/application.yml": "012fe3c6c3c213b905ea3275dadff7765033a76f66aca17b052530d1527ade9f",
+      "backend/src/main/resources/fonts/NotoSansSC-OFL.txt": "7accca2f29220c9ab44e4950799b821f36ebf5bbe6b5fb5342724b32228a8daf",
+      "backend/src/main/resources/fonts/NotoSansSC-Regular.ttf": "d45f67f0a7c0ca3f256950777ce6a61cc7ce5f9696d02900cbbaac25f8aa7d16",
+      "backend/src/test/java/com/autocare/platform/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "backend/src/test/java/com/autocare/platform/AiChatHttpTest.java": "9f36bbe38887508ed592d85d05106848acd8bcfbaaa75558267ff781283c30a2",
+      "backend/src/test/java/com/autocare/platform/ArchiveAccessTest.java": "5df53ffcb6519182ea792e36a564de754d966e4905c8f122f05ce95a1911f638",
+      "backend/src/test/java/com/autocare/platform/ArchiveReminderAccessTest.java": "103db5a352ecd8ca10fa01c2cd5c0e3b22b0c6b2b30d70f69efa40599e0d2950",
+      "backend/src/test/java/com/autocare/platform/ArchiveShareAccessTest.java": "87dd33dacf1334649b08be41b76fc79e537688ddfbae36ae6a7c11df1b3c3b3f",
+      "backend/src/test/java/com/autocare/platform/ArchiveStructuredAccessTest.java": "22a172194671261b10ba2063bf36f194f57bc0a057b0970558a7918b934db81c",
+      "backend/src/test/java/com/autocare/platform/ClamdProtocolTest.java": "130d42feb4a000aad0c490210b4d9be8a65c57edf03c815a347af2d69c0a865d",
+      "backend/src/test/java/com/autocare/platform/CloudRunAuthTest.java": "5474b28cfa1c666aa077d54e5b13a762f502ff3f1302684a08b84ae1e96ca3b1",
+      "backend/src/test/java/com/autocare/platform/CloudRunDisabledTest.java": "681ac2a04491fc9233edbc76dd1fa2e4f33e943038220389e71462cf81bc77c8",
+      "backend/src/test/java/com/autocare/platform/HealthObservationAccessTest.java": "06c1ce77fe0085fe0fcfb68407e877cda8cd81fcf8c03094ced34593a7249be0",
+      "backend/src/test/java/com/autocare/platform/InputMaterialValidatorTest.java": "9aac6f15fa9b39ed3550f0e87502b3ffa8cabab445f449932aa3f8d345e172a7",
+      "backend/src/test/java/com/autocare/platform/JdbcArchiveReminderTest.java": "d8f983111ee5856ec4e26d625e6f70419c6537c03860d3b961991992ca368a50",
+      "backend/src/test/java/com/autocare/platform/JdbcArchiveShareTest.java": "bdb0ed988295282e018ff22903009b131f7e35502081594bf1d17c6d87bb3e06",
+      "backend/src/test/java/com/autocare/platform/JdbcArchiveStructuredTest.java": "215768521855d9f32164926776f0f6c6e227251f805802955f284e5bc560ba83",
+      "backend/src/test/java/com/autocare/platform/JdbcArchiveTest.java": "712b3f066a234243cd12013568b36ee1a4c802015eedcff2a938fdb8a007d164",
+      "backend/src/test/java/com/autocare/platform/JdbcHealthObservationTest.java": "49a58ec31b5cbb92ff9ca2e74e67c7d940245299d0e94af062fdfaef1d4c93b0",
+      "backend/src/test/java/com/autocare/platform/JdbcIdentityRepositoryTest.java": "fd3ce95e675e7d010cf64768e3fd4f7296fadb2ed3589e5ef7c0d32667e3e7f2",
+      "backend/src/test/java/com/autocare/platform/JdbcInputMaterialTest.java": "4086d4a93e2d7516e602201053d3ed4c159c0851d5f1272d89c6bcb907a372c4",
+      "backend/src/test/java/com/autocare/platform/JdbcMerchantDiscoveryTest.java": "d3c20431321d16699d329c0fdb4e1c34b9053e64a422886949517da9399e2071",
+      "backend/src/test/java/com/autocare/platform/JdbcMerchantIdentityRepositoryTest.java": "bcf39eff0a96e9195d44aa6a2f68fb395571c277021ea62ebd08f620902dd56b",
+      "backend/src/test/java/com/autocare/platform/JdbcMerchantLocationTest.java": "046b45753832560ff013470c0995426e9b48c364a1ffbc0f4cf4e0aeeb0ad39b",
+      "backend/src/test/java/com/autocare/platform/JdbcMerchantQuotesTest.java": "e29f152f18a77f41d3c3e98a6def275fa179676d03609b2a5d016197849f5371",
+      "backend/src/test/java/com/autocare/platform/JdbcPrivateUploadTest.java": "d3b0a1b5425ffb0657cfc2775e3cafcaeb7a0643f6377c428f2ed253a57b5f59",
+      "backend/src/test/java/com/autocare/platform/JdbcServiceCatalogTest.java": "4c3055e979ac06261d4e7fa942d523a2fbfd6ef2a29bfed7e51473395853765f",
+      "backend/src/test/java/com/autocare/platform/JdbcUploadHttpTest.java": "a76eb862f54bd5e9c23b9207146023415b9410503c86863365124efe0e4ec222",
+      "backend/src/test/java/com/autocare/platform/JdbcVehicleTest.java": "53794663e40215738c6183df91d3d9d67d6615b74fac0fd0a0bac4c5eebb1043",
+      "backend/src/test/java/com/autocare/platform/JdbcWriteIntegrityTest.java": "ca90701119a2318eaf4e3ca32f147db36a205d401fc782dbf0c5f7c85745f72a",
+      "backend/src/test/java/com/autocare/platform/LocalMileageNoDatabaseTest.java": "0f86797376f362172513ed43582bcfe23a610659c1085222821ecb97d2a7973e",
+      "backend/src/test/java/com/autocare/platform/LocalMileageTest.java": "41339b5356c3559b2815fc814636de5925a13960c174f274019e559acb822440",
+      "backend/src/test/java/com/autocare/platform/MerchantAuthNoSenderTest.java": "ff1053a97a18ba291dcbf8e97abfcf80f9d509b61c818d1fdd3b3fce62b48b0f",
+      "backend/src/test/java/com/autocare/platform/MerchantAuthTest.java": "04172ed7c5e4ad289843a8309bdc135b44fc8f7dd4034ace2e258bfa10bfcdc8",
+      "backend/src/test/java/com/autocare/platform/MerchantDiscoveryHttpTest.java": "42481e1b8a9609f93b06bd0c27cf7f4b3b75a2e9794e24fd905f04ec49bf19f4",
+      "backend/src/test/java/com/autocare/platform/MerchantLocationHttpTest.java": "e4db107e847b4872cdf03926751812bd2206df7f4a9d457aac0ff50f3fec2196",
+      "backend/src/test/java/com/autocare/platform/MerchantQuotesHttpTest.java": "5587299b30bf3dd6e8c489e0173bd41a86367e7eca00fffc3774ae0fd2f4ffc3",
+      "backend/src/test/java/com/autocare/platform/MileageFaultAcceptance.java": "53aaec814205c46c9d94991aadb5e287401b33b24bd2e82161e7d7bdeccf6fcc",
+      "backend/src/test/java/com/autocare/platform/MileageRecognitionHttpTest.java": "cee455ca43ac9329f169a82e8d52e79dc92567f32db0a0294974eb7173258551",
+      "backend/src/test/java/com/autocare/platform/NativeMaterialAcceptance.java": "08ae621bc3e3fb953dd386303c75611b2242c152560242eaa0556715552f1cbb",
+      "backend/src/test/java/com/autocare/platform/NativeMileageAcceptance.java": "4e233bab61f95903a12fbdc1fb6543ee437cea1266565566ca2d96efe85b4b8d",
+      "backend/src/test/java/com/autocare/platform/NonWebSecurityContextTest.java": "32fb148d54c9b8ab17fa783a181df60eb5ab4ada730d536dc885192b11f344c1",
+      "backend/src/test/java/com/autocare/platform/OwnerArchiveQueryHttpTest.java": "0dd58c10f7886f1515670aafe6c6d78fb0bd71e5c3001bcbfd83b488672e4e87",
+      "backend/src/test/java/com/autocare/platform/PlatformApplicationTest.java": "9929f7f771dceb364fca1cde390dc7c2a644bb7aead3101022a3b585f5de70d7",
+      "backend/src/test/java/com/autocare/platform/PointAiHookTest.java": "ac48a8d717d60d00d20a343c856da5de767bef5993c9a8add6dffa61cf0879c0",
+      "backend/src/test/java/com/autocare/platform/PointIdentityHookTest.java": "3f18099ba6aa5aee4fadacbbe5d879dc3d3be85b0314608e38bdcceff94609a9",
+      "backend/src/test/java/com/autocare/platform/PrivateFileAccessTest.java": "49dd82eba12bdfa994bb88d3848ee1df8cf5e95b42921415611e657e250262b9",
+      "backend/src/test/java/com/autocare/platform/PrivateUploadTest.java": "e6804f01f4c883821ffb2de92eb80a8445ae945a14ed91444784d58d0d416736",
+      "backend/src/test/java/com/autocare/platform/ProductionMileageBoundaryTest.java": "5e84b9672ced1a4d4d4a55c8902ec39227837326a2b84dd05a726c44b42d3dad",
+      "backend/src/test/java/com/autocare/platform/RealCommunityImageJourneyTest.java": "b0014a2a68d2ac9589c00663a69be3e804b3531b5a26a060a7a7ca936729bd85",
+      "backend/src/test/java/com/autocare/platform/RealInvitationRewardJourneyTest.java": "c7e138aecdecb19b0cd9b3df3440c6d79066cfb8656d423671bd6df52eae5932",
+      "backend/src/test/java/com/autocare/platform/RealMaterialWorkbenchJourneyTest.java": "1239a70d71b237aa95639b0a5e5569bcd523baf59e671941260bc6e3cda52f4e",
+      "backend/src/test/java/com/autocare/platform/RealMerchantOnboardingFileAccessJourneyTest.java": "4158f95964c6f81e7d8fa6b368f19edae2ffd02b404006f5a40aeceea52ccbe2",
+      "backend/src/test/java/com/autocare/platform/RealMileageAcceptance.java": "aff40d8b7ed26e718816685076a75ea9fcf3146a5e7243f18cc9e338e072b511",
+      "backend/src/test/java/com/autocare/platform/RealPickupWorkFileAccessJourneyTest.java": "700c5fa4fdcb355a39f3a26fc4380a066ae80f296af2dc802172f120c591aca8",
+      "backend/src/test/java/com/autocare/platform/RealPrivateUploadJourneyTest.java": "120f7c19d6e0fdf80d4a53412c933c7385468b254233552d837c163ded3bbcc1",
+      "backend/src/test/java/com/autocare/platform/RealServiceArchiveAccessJourneyTest.java": "19632ee71862f5b705bc9fa38589c957753945a141dab4df5508c2b6addcfc65",
+      "backend/src/test/java/com/autocare/platform/RealUploadAdaptersTest.java": "f65fe3e88b457558dc12048631ecb662425a1f2c7a266356601b829aad8343d5",
+      "backend/src/test/java/com/autocare/platform/ServiceCatalogHttpTest.java": "094fd4e095536f44da520eab38b6be2353df9e4002635263a7e168adb233de81",
+      "backend/src/test/java/com/autocare/platform/ServiceCatalogNoDatabaseTest.java": "996814d7de52042fd1535dbe0b85b76c313039d0f03a1e910c8e15d035119b95",
+      "backend/src/test/java/com/autocare/platform/UploadAdapterConfigurationTest.java": "e1d786844c188b027329ff76517dffc7935d5021541429081abb084c239dad8c",
+      "backend/src/test/java/com/autocare/platform/UploadHttpTransportTest.java": "fe9e3800077f136d8a656342f81036e4abeee4ead475b0426a4c1cc7c998b0f3",
+      "backend/src/test/java/com/autocare/platform/VehicleAccessTest.java": "fcee865c83d0d5437cc7278f8c0c3fc31f2d108d53a4507c0818342365f7e71b",
+      "backend/src/test/java/com/autocare/platform/VehicleHttpTest.java": "79a7580a1c44015245a4ae9b193a5789af4e286b6b5c5fbe8894446db7c4fc70",
+      "backend/src/test/java/com/autocare/platform/VehicleNoDatabaseTest.java": "ad57b2f48d0dcbad4bd1bd72a530143ed9605172350175b89c07eac9e2666d35",
+      "backend/src/test/java/com/autocare/platform/WechatAuthTest.java": "e7ea5e56782fe0f152e52a95cda689b509ed81e8762702be68554b190f2af0b4",
+      "backend/src/test/java/com/autocare/platform/ai/AiContextProviderTest.java": "8d8eed97182536e899e9ec4569425eaaf919bfe546ae52df30b72425a7eba600",
+      "backend/src/test/java/com/autocare/platform/ai/DeepSeekClientTest.java": "0d3970aff5c4dda1b7553a583577cca9cb4f9c8629c468be9a44760cfba1adb3",
+      "backend/src/test/java/com/autocare/platform/file/PublicImageRendererTest.java": "efac2ef44e0ac5636b1a5bd708de2784e4380b6f62cf503c68523d23e426bfd7",
+      "backend/src/test/java/com/autocare/platform/gateway/identity/JdbcOperatorAdminAnalyticsTest.java": "562fc0b77640c3462e5875710ab344ef6790254be8d3f6165c1827ad1e4df6df",
+      "backend/src/test/java/com/autocare/platform/gateway/identity/JdbcOperatorAdminAssessmentTest.java": "97c73031d50a481a633e0f6f798a0a3be41b3ffec3cc9f6300379c4395ecf438",
+      "backend/src/test/java/com/autocare/platform/gateway/identity/JdbcOperatorAdminCommunityTest.java": "51db5aadbeff465c0b57f3d2e2e26c9460d1859c091d3185c3be219e4e473e7d",
+      "backend/src/test/java/com/autocare/platform/gateway/identity/JdbcOperatorAdminCurationTest.java": "0ac63fe45bb5f01a83863f48ae5be2b0b2475cad21952048baac1112046dc7a6",
+      "backend/src/test/java/com/autocare/platform/gateway/identity/JdbcOperatorAdminDiagnosisTest.java": "b57be3783d8dee849acad9443fc36d96c661a6980d5e55f350e28397d8d03377",
+      "backend/src/test/java/com/autocare/platform/gateway/identity/JdbcOperatorAdminKnowledgeTest.java": "1e1d1e45a94863ce34317faad8ec3c939b0e41e1173c0c06f3ca46e2ca720030",
+      "backend/src/test/java/com/autocare/platform/gateway/identity/JdbcOperatorAdminPointsTest.java": "6c929ecfb8bf2c0953266ceb10d520e8407d51cc4c444b87e27698c8a1510a15",
+      "backend/src/test/java/com/autocare/platform/gateway/identity/JdbcOperatorAdminPriceTest.java": "494dd5a73df620226caf7df2b9817bcd7a159317df0401bdc88c336ac8835693",
+      "backend/src/test/java/com/autocare/platform/gateway/identity/JdbcOperatorIdentityTest.java": "3e7518fecbd9eaac8ba016678de7ac16bac16955fcceb98e21613b04973d48d0",
+      "backend/src/test/java/com/autocare/platform/gateway/identity/OperatorAuthHttpTest.java": "e8f909ab81d42caa5ba89bb561d8f50ccdaa87c78ba93941df12bec64f25dc97",
+      "backend/src/test/java/com/autocare/platform/gateway/wechat/WechatCode2SessionClientTest.java": "1f73401a677f84525dcc29de66371907d3a28be43d5b1a1a4829426619e40418",
+      "backend/src/test/java/com/autocare/platform/gateway/wechat/WechatPhoneClientTest.java": "12fffc179a1110c51f0932a197752912a74f94f43311d6c14e1bcca6cf2b4c88",
+      "backend/src/test/java/com/autocare/platform/merchant/JdbcMerchantStaffTest.java": "7edac5ff3e9ef5e59523dde607eaa44f8ab0729715e8805ed6c7b8f17946450c",
+      "backend/src/test/java/com/autocare/platform/merchant/MerchantStaffHttpTest.java": "e7e6cf31fd598618b234d0ce297d491b99c9030ca815b3a4c0af083b942431c1",
+      "backend/src/test/java/com/autocare/platform/order/AiServicePlansHttpTest.java": "f219f19408845e62369816473b959c5636bf04657c4294a8b250a1aad691e1ef",
+      "backend/src/test/java/com/autocare/platform/order/AssessmentCalculationTest.java": "e8e6e44b07ee636cc2997663c6ba2118602ddead7e4ef33515e3cc59483348ac",
+      "backend/src/test/java/com/autocare/platform/order/AssessmentPolicyHttpTest.java": "1fc447c820fb05b082147a4a65ebf0e70c2d14d5da81dbbb9fb0b2e6e74873cf",
+      "backend/src/test/java/com/autocare/platform/order/AssessmentPolicyNoDatabaseTest.java": "2e49d1aad51f2ea47f202bbc3e5350526ac36475fb2cdb9508289a0f520926d9",
+      "backend/src/test/java/com/autocare/platform/order/AssessmentSnapshotHttpTest.java": "3c168f7101bcb285d77e5ea9d130acea983f7d73884d016cc2cfad9c3ec950bc",
+      "backend/src/test/java/com/autocare/platform/order/AssessmentSnapshotNoDatabaseTest.java": "81dfac6cfb18e0e8e13b65a83e54101a11ea5977d60a2a23dc7ab4323343aff2",
+      "backend/src/test/java/com/autocare/platform/order/AssessmentViewHttpTest.java": "df5df15d5885384a965b09ed80ff17d99a07f4f76572ad05bdae418d8f4f4a53",
+      "backend/src/test/java/com/autocare/platform/order/AssessmentViewNoDatabaseTest.java": "748c46a5e038635f65deaac3f2fbd6071e85b136e24be96f05d97c0f07671d32",
+      "backend/src/test/java/com/autocare/platform/order/BusinessDashboardHttpTest.java": "1cf4eb30a4b787b0cdb0bcda72cd82d7a6b658c3120f910782ab1ddecd6cb6ee",
+      "backend/src/test/java/com/autocare/platform/order/BusinessDashboardNoDatabaseTest.java": "a0a8312b5edf280c84eccf626c442153f3de7ed9d8a3fcb63914035688e843fc",
+      "backend/src/test/java/com/autocare/platform/order/CommissionHttpTest.java": "b97db51d4a441c6ed8bd16c1e8c688f58cb1fd85ca4c7a8c90144b9d4f177bd0",
+      "backend/src/test/java/com/autocare/platform/order/CommissionRulesTest.java": "6032dcebbaba53cb3c09c92e878a777082b4dc7fff87bd59c172ddbc2f17461b",
+      "backend/src/test/java/com/autocare/platform/order/CommunityQuestionHttpTest.java": "32de5e4cb2ef0b438b841d12b34d3ca4590d7b922a16dfffe8d80393cbc8a8a0",
+      "backend/src/test/java/com/autocare/platform/order/CommunityQuestionNoDatabaseTest.java": "85e8043327e595e1f7d80805f552e8417f817ac8ef9dd206697657784e82baae",
+      "backend/src/test/java/com/autocare/platform/order/CouponHttpTest.java": "578a5d2f4e3890cc06a45e193f7ed18414efd241f628f31f7b37cdb80cfee093",
+      "backend/src/test/java/com/autocare/platform/order/CouponInputTest.java": "e17104870b19f9740b96f994deeab5fb231c16fd51c9e9af9d456b6439c8cc3b",
+      "backend/src/test/java/com/autocare/platform/order/CouponTransactionsHttpTest.java": "ac3681cf54f442aa5a06ce617de9b49c42aec87529430845f08c613dd8463041",
+      "backend/src/test/java/com/autocare/platform/order/CustomerRelationsHttpTest.java": "ce723135e10e56258858ee05717c46f11278a0ad0a370bdc29ed7a442baae4e1",
+      "backend/src/test/java/com/autocare/platform/order/CustomerRelationsNoDatabaseTest.java": "59437fde2f0b7642a6394412a7aa98d59bd7e64755622d80833495192a8b1e72",
+      "backend/src/test/java/com/autocare/platform/order/DiagnosisHttpTest.java": "996c604a24aff67c500bbe0a48d4abf33589bd89af46e7f3ed07f6aebad92650",
+      "backend/src/test/java/com/autocare/platform/order/DiagnosisNotificationHttpTest.java": "5dcb3320311dc372be2eb04fee8fdff0ca05224d2b8424edf418d093894ddd3e",
+      "backend/src/test/java/com/autocare/platform/order/DisputeHttpTest.java": "8624565ae5ae568cc5e93b09fb5cd60d813ece561962697759174512a7fefe16",
+      "backend/src/test/java/com/autocare/platform/order/DisputeNoDatabaseTest.java": "23748baec1258b35abec75fe3fe5c9e3bba44f1469ba6eebb6b1cabd10ab61bf",
+      "backend/src/test/java/com/autocare/platform/order/ExperienceCardsHttpTest.java": "38495c9ea3411baad6cea5bf1504da7c31b384a60222cafe4f4e6b0d3dab6d66",
+      "backend/src/test/java/com/autocare/platform/order/ExperienceCardsNoDatabaseTest.java": "550914bce7e83169228dec84ddba3649f81b0e9c5e2ceef14d024982f3eb6f8c",
+      "backend/src/test/java/com/autocare/platform/order/ExperienceCurationHttpTest.java": "fdc16698e10dbc38515bd6da476ea54d0d6d470a94e2d9fe0068072493d45723",
+      "backend/src/test/java/com/autocare/platform/order/ExperienceCurationNoDatabaseTest.java": "92a08ffc1643c8f5c11a3c64e8c89e0493c94192cecd1c146569773f415339bf",
+      "backend/src/test/java/com/autocare/platform/order/ExperienceModerationHttpTest.java": "f081af6abeec97323cd9f686eba9c4f1af3c117aea63729cf5dbd2eea1d6e75f",
+      "backend/src/test/java/com/autocare/platform/order/HealthDashboardHttpTest.java": "dd52e51a0bcbda783f1b96b49614d6f854c9a33e424ad06d7afd9dd482475a8c",
+      "backend/src/test/java/com/autocare/platform/order/InvitationHttpTest.java": "7907100d31251e7e8cbac244d5cee290722fc129f1f5d623d2d65ccddd5943db",
+      "backend/src/test/java/com/autocare/platform/order/InvitationLoginHttpTest.java": "6b826f7da2c7905331c04a54739ad03c942e6df95cd4ca374d7277384d0250a5",
+      "backend/src/test/java/com/autocare/platform/order/InvitationRewardHttpTest.java": "4cef4c5414369e8452b9ab1470af60db048abac024507d10f990c4fd82e94e16",
+      "backend/src/test/java/com/autocare/platform/order/InviteDiagnosisHttpTest.java": "949939828b4b748dcba9498b9939ee0387db8b0dde6aa098fce3c380d2ade39e",
+      "backend/src/test/java/com/autocare/platform/order/InvitePolicyHttpTest.java": "33ba3f348799da89a06696c51abcbdcbc0f7d42f06ede2cc279c8eeb02910524",
+      "backend/src/test/java/com/autocare/platform/order/IsolatedCoreJourneysTest.java": "38d7e3821de19c3f9ae1b230d19b430e2770e6d66c22275329e021a80f1b6c55",
+      "backend/src/test/java/com/autocare/platform/order/JdbcAiServicePlansTest.java": "14808c1515da5775a1346358d26abb548f1dfee4d554b09a5662f5286201a12d",
+      "backend/src/test/java/com/autocare/platform/order/JdbcAssessmentPoliciesTest.java": "bcb8ef3f4d3fcb6fcad89861bc80e67f9100b6eb4681807c316ed84c239bb714",
+      "backend/src/test/java/com/autocare/platform/order/JdbcAssessmentSnapshotsTest.java": "d558d9af61499d84b76e3dcda8afa8b4a8cecea100ba7015d13bae11a26d9504",
+      "backend/src/test/java/com/autocare/platform/order/JdbcAssessmentViewsTest.java": "633520c201bd38d8ae4dd0dc1c6cc8618b8d04e31d3216c14e66915337fc3634",
+      "backend/src/test/java/com/autocare/platform/order/JdbcBusinessDashboardTest.java": "3f9fcce5368f6240c0a6f64f958c965995c078368bb0424ef500f34aa734a8ab",
+      "backend/src/test/java/com/autocare/platform/order/JdbcCommissionLedgerTest.java": "30240af5b5e87f36cdf274c50900624e9119ea75be1a7f9155039874fe98e3df",
+      "backend/src/test/java/com/autocare/platform/order/JdbcCommunityQuestionsTest.java": "f717345da8b597166a9e1e376d504b176a5b3d6700797f3d63d6c0f3959ff1a0",
+      "backend/src/test/java/com/autocare/platform/order/JdbcCouponInventoryTest.java": "2bdefe27fc039b07df0b46034572b837dc2e97a547af70a2d4ad9bd4be358c31",
+      "backend/src/test/java/com/autocare/platform/order/JdbcCouponTransactionsTest.java": "29f5211febf24790bb1ee11b00d2493755eaf7113e3d3482d391844d2b376df7",
+      "backend/src/test/java/com/autocare/platform/order/JdbcCustomerRelationsTest.java": "c2ebc70d52633b48bfbedc5336187d1b7a4c27f7bf2f5c1a27d699b37871a9a6",
+      "backend/src/test/java/com/autocare/platform/order/JdbcDiagnosisCasesTest.java": "a920d1f9cbacd2340b044c7f3ba4874ff259d02e31a7bf0327bebce248f6588f",
+      "backend/src/test/java/com/autocare/platform/order/JdbcDiagnosisNotificationsTest.java": "9b97593555d32a0d81f8fb4e374c44997157102fdf4274fe266bb738c8c2fab5",
+      "backend/src/test/java/com/autocare/platform/order/JdbcExperienceCurationsTest.java": "aac999624a69acd833e193977fe85eadbeaacfe88770a798f7819437127f25f5",
+      "backend/src/test/java/com/autocare/platform/order/JdbcExperienceDetailTest.java": "8c1d1c609dab05b68c0dd4c3fd1030b8846f2b90dd34666ad12b48c61eca8f9e",
+      "backend/src/test/java/com/autocare/platform/order/JdbcHealthDashboardTest.java": "168b5bfae7cf614a0f61f63ff1be612596e46ad4c68fea16de96c8e26e904f8e",
+      "backend/src/test/java/com/autocare/platform/order/JdbcInvitationRewardsTest.java": "29d1c9eafe8e8d94b8bf1b5be5906a0936da983693d16b20b90d2d32db6843d3",
+      "backend/src/test/java/com/autocare/platform/order/JdbcInvitationsTest.java": "f01064d78fb95b27ead8a9c6a7d6a83e4f097439b6fc3f85993304024d95a86d",
+      "backend/src/test/java/com/autocare/platform/order/JdbcInviteDiagnosisPoliciesTest.java": "98e30200ec2721bbccd04cf6a1672cc530f58e110de4afca339394fac303567d",
+      "backend/src/test/java/com/autocare/platform/order/JdbcInviteRewardPoliciesTest.java": "67ca38df1e454a66ea8264c574ba084095316577dcca191a2ab310ae2fcbb868",
+      "backend/src/test/java/com/autocare/platform/order/JdbcLicensedKnowledgeTest.java": "ffa934eced6977661a7fb343791c7060db65fcac336109f13ed4a6bddb6c09fb",
+      "backend/src/test/java/com/autocare/platform/order/JdbcLocalFinanceTest.java": "8eb0b1ba7a018f0bf4fcb3e88399435993f3af9282d6f0184c6b33919c419fbd",
+      "backend/src/test/java/com/autocare/platform/order/JdbcMileageRecognitionTest.java": "af3ccb92a9e9288467936510256ca89002fd5f632e34811b869817f8ebda0d94",
+      "backend/src/test/java/com/autocare/platform/order/JdbcOrderDisputesTest.java": "64f9b4664648047002b337169bb976d9f657992be4bd1ba3738b404b44ff2336",
+      "backend/src/test/java/com/autocare/platform/order/JdbcOrderFulfillmentTest.java": "f7e7aa501fb6110a3720ff633fcfd1b019a6b1a548dbbb3c34fa267a38e65c6e",
+      "backend/src/test/java/com/autocare/platform/order/JdbcOrderRedemptionTest.java": "fafc5ef63c1307455ad7a29b8533cba2e54399382de3158d619ec502ff6b1d85",
+      "backend/src/test/java/com/autocare/platform/order/JdbcOrderRefundsTest.java": "62491f6b94945e949479068118717db3a97a3c35c9eccefb14463d5b72559ddc",
+      "backend/src/test/java/com/autocare/platform/order/JdbcOrderReviewsTest.java": "ff9242d765148852d1cd3fe2751211e36b9235e686db388cc08152354e516f5e",
+      "backend/src/test/java/com/autocare/platform/order/JdbcOwnerServiceEvidenceTest.java": "bdcac1b4457f79c9ededd4f79478a2eeb5efdb4905ead7e1834e1f953e16af24",
+      "backend/src/test/java/com/autocare/platform/order/JdbcPaymentsTest.java": "245f56e2d81ae25be4774f0ecb3c7fca41ac07d39f0cb67ded08899d85342e4b",
+      "backend/src/test/java/com/autocare/platform/order/JdbcPickupInspectionTest.java": "1996bf74acbfd7083033a36947e5144192e3b5364d19a2bc3c859f9c0d361ee4",
+      "backend/src/test/java/com/autocare/platform/order/JdbcPointExchangeCatalogTest.java": "0bb6b428b947a90bf7a2227c76bb091ad464c97b409c1350a7ecc74cbf753c9f",
+      "backend/src/test/java/com/autocare/platform/order/JdbcPointExchangeCouponTest.java": "e42019b9730983ac48a6827fae78d61c29d90596865e226e2f97e0c8c67b4648",
+      "backend/src/test/java/com/autocare/platform/order/JdbcPointExchangeOffersTest.java": "3e83fff7b47364f1f3f3c49f95dd0071d8111922fdcf522ad93a1e77c5de8f95",
+      "backend/src/test/java/com/autocare/platform/order/JdbcPointExchangesTest.java": "d32856b2e4e92748583fbdd08cc727aac6d7ead38df2d5ed0fe615499692a7e0",
+      "backend/src/test/java/com/autocare/platform/order/JdbcPointLedgerTest.java": "e1794fb986904db6d5dd5d596f8501814aba78d3a8ffb36104fb80c95a8b55e6",
+      "backend/src/test/java/com/autocare/platform/order/JdbcPointTaskPoliciesTest.java": "6fa40f171a394cabd6bc1e455539928a2bd5b4cacf131d756f8425d2248e3341",
+      "backend/src/test/java/com/autocare/platform/order/JdbcPriceComparisonsTest.java": "86520f5a8835b40b9e6b15fef8a4969c337f525818f750d9612277b7ef61811d",
+      "backend/src/test/java/com/autocare/platform/order/JdbcPricePoliciesTest.java": "3dc18319cc860b42d45fdd202d9b7b9e561868f7a7bf589ababe71c8c8aaebaa",
+      "backend/src/test/java/com/autocare/platform/order/JdbcPublicCommunityQuestionsTest.java": "3f25d113d284cccc285415dd4edfb5ebb6c568f9909473a17f5febff4ca6b1fa",
+      "backend/src/test/java/com/autocare/platform/order/JdbcPublicImagesTest.java": "677312c3ea55eb68697bc9e2d955071bf6b90519f6f00ceb923960e5ca32f589",
+      "backend/src/test/java/com/autocare/platform/order/JdbcPublicRatingsTest.java": "4a177a4009fcb7675f06249833c2f199249297947a96e74b8be692961d781a61",
+      "backend/src/test/java/com/autocare/platform/order/JdbcPublicReviewTextsTest.java": "77e4c39d2d49705608e83ddecec262146ca3c0c40b7b46f8330dfac904f189ba",
+      "backend/src/test/java/com/autocare/platform/order/JdbcReservationsTest.java": "8c26a8e792c52e736aa860f567511793cd800924f07b945a500a5dd82d6652b7",
+      "backend/src/test/java/com/autocare/platform/order/JdbcReviewSummariesTest.java": "d5499f636cc48dcb8e4f5e9eece93c9656ca0736b4713656174f2188066cc7be",
+      "backend/src/test/java/com/autocare/platform/order/JdbcServiceArchiveTest.java": "7fbf7ea4094042005e1b13c0baf620ab8900dd1bdbb1a56ae32c04ecf4c116aa",
+      "backend/src/test/java/com/autocare/platform/order/JdbcServiceNotificationsTest.java": "a6b0e71913707c597e0abb5586cea108de4ab442dc2da16c3958c3eea7254757",
+      "backend/src/test/java/com/autocare/platform/order/JdbcServiceWorkspaceTest.java": "04828de2f9eb49b012ff577aaa6b88d5a5fe7c35c391fdad47d76d50983c747a",
+      "backend/src/test/java/com/autocare/platform/order/JdbcServiceWorkTest.java": "ae61249b86ff2327eee28a8f179e2b09347f6f929f2b1da617b8a81d71278cd1",
+      "backend/src/test/java/com/autocare/platform/order/JdbcTechnicianAssignmentsTest.java": "23ffd6ca6c4f7da6e76e27a6d458558b5250c20b48c836953961a969f1d184ae",
+      "backend/src/test/java/com/autocare/platform/order/JdbcTechnicianAssignmentsVerificationTest.java": "55bd6091c578b8a378a8577f8920f2fe1900d3a2f48b63dd16b76c7c31114b24",
+      "backend/src/test/java/com/autocare/platform/order/JdbcVehiclePlanEvidenceTest.java": "47546c9c4084dcad60ddb0fbcf840281ec88b11a76b4999617a5d4bad41fc6fa",
+      "backend/src/test/java/com/autocare/platform/order/LicensedKnowledgeHttpTest.java": "0fd0b442be85d57373690a3e6f75b89096b05f43d66f9b208a71722b20a2dfd9",
+      "backend/src/test/java/com/autocare/platform/order/LocalFinanceHttpTest.java": "b99d6305201fef620dc142192e27d804fa8421fdacd0b1011da7db12080ef792",
+      "backend/src/test/java/com/autocare/platform/order/LocalFinanceNoDatabaseTest.java": "d3243f845b5f88996d2448757e773471707e7eb845008ead419f6a0789335a08",
+      "backend/src/test/java/com/autocare/platform/order/LocalPaymentQueryTest.java": "698e5dcec89df837a6f19d9436601663031078d0f6215fe02182af3ea499a25f",
+      "backend/src/test/java/com/autocare/platform/order/LocalRefundChannelTest.java": "5027d5da4768b66a302b6053e23fad5af43ba093a1970af3c1b5c964a4069b0a",
+      "backend/src/test/java/com/autocare/platform/order/LocalTestPaymentChannelTest.java": "90fa58d1862155b290c94284e32bf8ea4b29e8a108ab3c1578c1b3836370fb62",
+      "backend/src/test/java/com/autocare/platform/order/MerchantOnboardingHttpTest.java": "a0e4626af4e410e87fc34f64896d5c68031efedcd1be92bf975d0b6813bbd70e",
+      "backend/src/test/java/com/autocare/platform/order/MerchantOnboardingMySqlTest.java": "9710de580c39d0e4861695e9ba39769d5f01443d2d166074cf845e5994225de9",
+      "backend/src/test/java/com/autocare/platform/order/MerchantOrdersHttpTest.java": "7408633d7a47398d8366cb365f74742db8138ebf826ef9bfe1578119e09b93f1",
+      "backend/src/test/java/com/autocare/platform/order/MerchantOrdersNoDatabaseTest.java": "400401caa217adea80f1ba2ebf1da1c323006ff8d1cd01b32157103a3d54787f",
+      "backend/src/test/java/com/autocare/platform/order/MileageOcrClientTest.java": "af41a16d99757af65a590506472be5b22a239c7f561120c3e95c9c80a894f367",
+      "backend/src/test/java/com/autocare/platform/order/OrderRedemptionHttpTest.java": "b05b479668a617e7e6d1386c9672e0981f6c7510e15ee5cb856ce59cbd0c599d",
+      "backend/src/test/java/com/autocare/platform/order/OrderRedemptionNoDatabaseTest.java": "e8ad90205e68545178278541058f68bdab5fedb171821be10909eedba596164b",
+      "backend/src/test/java/com/autocare/platform/order/OrderReviewsHttpTest.java": "a6ef9801dc83d47617b263ec0f3ddee1080aed4dbf4a7d01a5e221ef35046688",
+      "backend/src/test/java/com/autocare/platform/order/OrderReviewsNoDatabaseTest.java": "2914013f07d01d3beb5198dfad6c5f615c61fa14c3209f8b426ba406844796b1",
+      "backend/src/test/java/com/autocare/platform/order/OrderStatusTest.java": "0bb32b84fed29d34e9fe7b5cfa7a037bdcbe566cee7616a4788872dec1cccf77",
+      "backend/src/test/java/com/autocare/platform/order/OwnerServiceEvidenceHttpTest.java": "1724bfa86da8b28d3b201132286d4fddc26678120cbdb9a2b7ce8fc6042a8cec",
+      "backend/src/test/java/com/autocare/platform/order/PaymentHttpTest.java": "6cf7fb2fb38bc8705ebd9cd8276ff718334f9cae5ab26d858a9351c2c28d1bb1",
+      "backend/src/test/java/com/autocare/platform/order/PaymentNoDatabaseTest.java": "c0ab375249630de52c8e30d2d811433343fd6b4579e29a7f77f5ade0504137f9",
+      "backend/src/test/java/com/autocare/platform/order/PickupHttpTest.java": "a3fe4d7585cabb5c34bc6d87940676e69b441235e7cd1f092c4f5a79da953dac",
+      "backend/src/test/java/com/autocare/platform/order/PlanBookingContextHttpTest.java": "d7429bd54bf49f2a3c74397b234289c5d533ae710fdbc8792c946205f72668c0",
+      "backend/src/test/java/com/autocare/platform/order/PointExchangeCatalogHttpTest.java": "8d05b0828b0b1917f4bdcf85584f7316f0aa9464e0c07891de0757d1e2e7610c",
+      "backend/src/test/java/com/autocare/platform/order/PointExchangeCatalogNoDatabaseTest.java": "721d282ddd29c637edebcbe8e9c172fe38774150ad40c8c1bbb98757ceeefe19",
+      "backend/src/test/java/com/autocare/platform/order/PointExchangeHttpTest.java": "945bda99da0638423257de3648bdf1f931d7aee891c15f8b31e0c1a81a9eea89",
+      "backend/src/test/java/com/autocare/platform/order/PointExchangeNoDatabaseTest.java": "5bcf46553cb1d04f9ee541db33640dee37462017b0ea3a87ddd8275cf83cb859",
+      "backend/src/test/java/com/autocare/platform/order/PointExchangeOffersHttpTest.java": "5d62078de584b9a1e31dd43236278784c5edf1c74c90b416cd1908dc9ecc6592",
+      "backend/src/test/java/com/autocare/platform/order/PointExchangeOffersNoDatabaseTest.java": "1b3bae0e09de2b1af52a70cc56b32f55d2afd303714d08959beec0a89926079e",
+      "backend/src/test/java/com/autocare/platform/order/PointLedgerHttpTest.java": "21883b7436e65828f9668a2d39b13ea354006ccb1e1e83f183f5ef40da4d33da",
+      "backend/src/test/java/com/autocare/platform/order/PointLedgerNoDatabaseTest.java": "c7bd2bb71ea458ca8908c372a25a156b2632ff6b0b71e4f408a6db02314f6b08",
+      "backend/src/test/java/com/autocare/platform/order/PointTaskPolicyHttpTest.java": "f9ceb0b3159c0c522fa7c38d6066ef5a2b9b2139fbb71e7c8d251f03e0f13f95",
+      "backend/src/test/java/com/autocare/platform/order/PointTaskPolicyNoDatabaseTest.java": "6c82fe732e13b080666a556770c35faa05e5035a56f007586319e18b6108af82",
+      "backend/src/test/java/com/autocare/platform/order/PriceComparisonHttpTest.java": "c0ddd1ed865e609cdca0023d403167bf735390152e38cfda161e992d1150142d",
+      "backend/src/test/java/com/autocare/platform/order/PriceComparisonNoDatabaseTest.java": "9d74031036e4334d305f3d7e1212f78a359de274089136ca98a04b4260850f70",
+      "backend/src/test/java/com/autocare/platform/order/PricePolicyHttpTest.java": "b576e73b141f9c8c78e837104fa4249ad5c474aab8a1fa131d586bdad7d722b9",
+      "backend/src/test/java/com/autocare/platform/order/PricePolicyNoDatabaseTest.java": "c644461eecb9d081f19bc8fd1ebc195768bc49bc74f7f1c6332d634cc8e63f66",
+      "backend/src/test/java/com/autocare/platform/order/PublicCommunityQuestionHttpTest.java": "fdec03ee03d6726f783011e918034e58177abad53f0f1f14c67898efbd097504",
+      "backend/src/test/java/com/autocare/platform/order/PublicCommunityQuestionNoDatabaseTest.java": "bdcc2362d22609763c7cb0c847f2af896126989e276eee0cf91d8c888b89bae9",
+      "backend/src/test/java/com/autocare/platform/order/PublicImageHttpTest.java": "adfe55009ede9e36b3c370d2b0f04606ccb0f4e000abe30784960a989e95c378",
+      "backend/src/test/java/com/autocare/platform/order/PublicRatingsHttpTest.java": "7bbca9c89ae9a31b411b59b7296fd0cf54bfb23dfe5cf17b0f0b41780d062373",
+      "backend/src/test/java/com/autocare/platform/order/PublicReviewTextsHttpTest.java": "07f644c1ba4fdff6727dbc5b7775a418835af31d9d6aa5b431b84d0ae52bb4e0",
+      "backend/src/test/java/com/autocare/platform/order/RefundHttpTest.java": "29f99f1e50ea9c86ef8dde75189319dcfe9ba8c4b4df4e6db48b9374e418cdea",
+      "backend/src/test/java/com/autocare/platform/order/ReservationHttpTest.java": "f020edd09f6c7fe698286841e03ba4398a78e1025fef8fac136654ff20ce1edb",
+      "backend/src/test/java/com/autocare/platform/order/ReservationNoDatabaseTest.java": "9997bfa46a9521c89bdaad4f3758bb2273099c3378f52876a2ffcb5450f80f4d",
+      "backend/src/test/java/com/autocare/platform/order/ReservationTimeTest.java": "804833fa9d6465fe5af9ba74d9da5586b438cfe5497a336811ee9225eb96e94b",
+      "backend/src/test/java/com/autocare/platform/order/ReviewSummariesHttpTest.java": "c9e6f625aeca0acb3efea38a889d94296cdfcb51146350ffd2513ec213d2a002",
+      "backend/src/test/java/com/autocare/platform/order/ServiceNotificationHttpTest.java": "3a0179c5099dec12268996102a4c8bfeb8f67967a2806efe321b9c31ea942935",
+      "backend/src/test/java/com/autocare/platform/order/ServiceWorkHttpTest.java": "6a0ae6aada6ebf14e0ff145e91df0fa050bf35ac7f3f1f10247ccf30ee26fa5f",
+      "backend/src/test/java/com/autocare/platform/order/ServiceWorkNoDatabaseTest.java": "4d850daf20ec919afa4181febf932447170b18abbb22f2fdfdc40e349311cc83",
+      "backend/src/test/java/com/autocare/platform/order/ServiceWorkspaceHttpTest.java": "594c5bc8791b6bfd19c2c592818874b040e00e750a9234e7d20796ae561997b0",
+      "backend/src/test/java/com/autocare/platform/order/TechnicianAssignmentsHttpTest.java": "cf41384449dfae5b6da3eeaec03752d3a5bb06a47beb4114e5ec9f5d854fba2e",
+      "backend/src/test/java/com/autocare/platform/order/TechnicianAssignmentsNoDatabaseTest.java": "7b313f6d1d95c53614e47c4a1cb744775de4b1367529935ceda243831d8f75d4",
+      "backend/src/test/java/com/autocare/platform/order/VehiclePlanEvidenceHttpTest.java": "02928b02a8288127b46778adb6052d2ecd468283f7231a9d77209576881f56be",
+      "backend/src/test/java/com/autocare/platform/service/CatalogGovernanceHttpTest.java": "23b571fb3626e4b1e1fcf385c97eb298f15b8bc4b5b0a6e76fef95646397c30d",
+      "backend/src/test/java/com/autocare/platform/service/CatalogInputTest.java": "4c70e40b487547f51df09744d353770284e0a58aa75b2233bd3cf73bd5d1cbfb",
+      "backend/src/test/java/com/autocare/platform/service/JdbcCatalogGovernanceTest.java": "6740c85019ed33929ac32962bdbcf1a01d3ee357e143822d4c1662c03d80f253",
+      "backend/src/test/java/com/autocare/platform/vehicle/ArchiveControllerReportTest.java": "6cb1c5e3918966c3b2fe43b8c28a57440f4765988952a589a782cf41d0d49819",
+      "backend/src/test/java/com/autocare/platform/vehicle/ArchiveReminderTest.java": "92ca414ef308c40f4610ba3fe136f3ba15dfdf63b46c56f16dc571ccb4d64eed",
+      "backend/src/test/java/com/autocare/platform/vehicle/ArchiveReportFilterTest.java": "0cb519517e102a19c1b2bd543c862fc147b79dc72f7b3e42b312270bcac81972",
+      "backend/src/test/java/com/autocare/platform/vehicle/ArchiveReportPdfRendererTest.java": "140854491b2952736814a33972ef158832a4a02ec6eb1c1339cb609a415a03ce",
+      "backend/src/test/java/com/autocare/platform/vehicle/ArchiveShareTest.java": "85d3be45f392094b739893b3067a37d2753dcc66364244240bf0dabc671f28f6",
+      "backend/src/test/java/com/autocare/platform/vehicle/ArchiveStructuredInputTest.java": "923d0678ac2b386a3c3dd4c741c66e62ba2a5da05f241078c2b581b24bd1ffc9",
+      "backend/src/test/java/com/autocare/platform/vehicle/HealthObservationInputTest.java": "051409f3e439ad54629e87b867656d844251fe70b281e94005d3b38076d2fe46",
+      "backend/src/test/resources/fixtures/native-tone.mp3": "ffe7996981fe65db02cbb88757fa118a392486da3f884b8be41ad57abd7b765b",
+      "docs/sql/migrations/V001__baseline.sql": "e29a99c73fe549d23c00367557ecb16cbae76f1fcdd73c3c503662c2bcc0c540",
+      "docs/sql/migrations/V002__staff_wechat_identity.sql": "33b70f444b01c9829965ab836d7fe2ef6eb9a9e159a45af5661818f4167612f4",
+      "docs/sql/migrations/V003__auth_lifecycle.sql": "c637d1cdd71c017d3e47aafde37553f3498c466295e786d8b6232ea67f76de9d",
+      "docs/sql/migrations/V004__upload_http.sql": "c97e202cc31b95153f3ace7dbba9e170a9f06cff1efcf6869d1891f3c012f7c3",
+      "docs/sql/migrations/V005__vehicle_archive_files.sql": "76fd75ae351264e968ac945c2e6a9dfadbd889d117a3a480212a1c863f8c32c8",
+      "docs/sql/migrations/V006__merchant_project_versions.sql": "f61e1983788e8d0e4ff0cd57df73179b12b5613a83bbf30b3647f2f5db0eebdf",
+      "docs/sql/migrations/V007__reservation_orders.sql": "bde32fba46cf0694543e91bb0a3925d25a4e120f61e052bdb7d52791b7b29cd3",
+      "docs/sql/migrations/V008__payment_foundation.sql": "44cf544e2d227ef3ea3d046b566a22167fd2104d1cc21be4b60cdc953bd645dc",
+      "docs/sql/migrations/V009__order_fulfillment_states.sql": "3201956105ac802986793bf0a28b5d05e0496e63e9442a2d5b596a220b68f66f",
+      "docs/sql/migrations/V010__pickup_inspection.sql": "7af0c7af546d4b5e220f0f6f04c4d891396d00722da97e7d0a3d03a9e7d7a734",
+      "docs/sql/migrations/V011__pickup_owner_decision.sql": "f78a5a0a6ad6bea9506f1ee65564f37e57879053a4907f8930b888bddb11375a",
+      "docs/sql/migrations/V012__technician_dispatch.sql": "e35494639489662a4ce2d2664954ffcb6660c35434323c6e7a964ca640001b3e",
+      "docs/sql/migrations/V013__dispute_resolution.sql": "d2b6086edbe8a41dd51763ed9e051cccf59de141b6acfb4910654ff546a7cad7",
+      "docs/sql/migrations/V014__service_work.sql": "aa7b279d0d4accec6fb548ad2d58e2a364f8c413a2d58419afba898b1ef97451",
+      "docs/sql/migrations/V015__order_redemption.sql": "d48e46dbb23adb73aea7e3b3eb4fcfd72e3ddf0f0f94f2a2b61ef3ef2b6af846",
+      "docs/sql/migrations/V016__order_reviews.sql": "b606da4afeefab268e048628a31f7401a3e35a0bf861fe585090b8fbae7e5eaf",
+      "docs/sql/migrations/V017__service_archive_jobs.sql": "4663dbd221d76e028048a2a977cc3c92e31aff0e9ab8589c68349c608f977043",
+      "docs/sql/migrations/V018__experience_cards.sql": "25ccaa141fe5018aaac4f885fbae8b07e6859b00969c09c349093431ec4fe30f",
+      "docs/sql/migrations/V019__experience_moderation.sql": "88d8f2f0ac057c22f1320be1982972ddf0a9edaf5bd626daf5553c52356f41ef",
+      "docs/sql/migrations/V020__merchant_onboarding.sql": "0078132eac6cc12e8722d1dacc555fc3ec5f69a08487f092195da613ec5e94df",
+      "docs/sql/migrations/V021__merchant_staff_store.sql": "c01a5906c1d7e653328004436e3d63e791e83ce42eb1e9d2c364636c00554432",
+      "docs/sql/migrations/V022__catalog_governance.sql": "a07a8f7ceb673224f390e61f88f18a5e516c7b1c10ff1f3bc76f379fde72d812",
+      "docs/sql/migrations/V023__completion_archive_jobs.sql": "3717790eb76b55c8c13079cd01ee4d10a256415a0e5af717b9b27929802c22ba",
+      "docs/sql/migrations/V024__payment_query_recovery.sql": "2a6ea19de4d4368504c1f99bf0b75f5c2a1f493859f6475746944aa9d2f76941",
+      "docs/sql/migrations/V025__order_refunds.sql": "3497b20dd3a204d7244922f2376cac34179d95bb70e00db240cd110074c20fa7",
+      "docs/sql/migrations/V026__commission_ledger.sql": "6c7c0134567856b40ed56b26c0075a9cf9529412ffd048018223b06d42a601a5",
+      "docs/sql/migrations/V027__archive_report_shares.sql": "c012312cf4d4c6e92d84cf46d0ee80583f4eee49174ff6a48e1704aec2a7fa76",
+      "docs/sql/migrations/V028__archive_reminders.sql": "11815741dd6e939f9ea57807101bcc37b02ce52b940949aa1aa88fefd7700eae",
+      "docs/sql/migrations/V029__archive_structured_details.sql": "834435949553e1757022e4f99bbd420d9493492179d234a7e37e2210e9799209",
+      "docs/sql/migrations/V030__vehicle_health_observations.sql": "e03a886a00e38f8752ecaea842077b447bc0e566dbe429e43462e362b5bed540",
+      "docs/sql/migrations/V031__vehicle_health_observation_history.sql": "804638901d061f95c738c6b8cf3b82fef712a5de1412712335a6307f426b77c1",
+      "docs/sql/migrations/V032__merchant_location.sql": "2667594da3f65ac8935ad27b0ba770a752e0608b44918df30805ae93b503b337",
+      "docs/sql/migrations/V033__review_publication.sql": "f2d85fa2bd51c080aa117bcffb6aa55e58b97a37247556db829f4ef486933d56",
+      "docs/sql/migrations/V034__public_review_text.sql": "757fcd0fd1ace08f5e6eebb2f3ae402daf8c5937e8f3813b0a4d82018832fb3e",
+      "docs/sql/migrations/V035__review_summary_consent.sql": "3096fef4796a6c650b31308af397b6450d68e5d57cf3d4626692c9e62035f146",
+      "docs/sql/migrations/V036__project_model_applicability.sql": "eb09b5e37e56a7b84ec46ba51fe2730c0870e6afc5e9eb725fd1f8f4a37c136c",
+      "docs/sql/migrations/V037__health_policies_and_confirmations.sql": "1286e1354787db8dab8a39e1c4da8983a0e6367f04f424583eaade4603602802",
+      "docs/sql/migrations/V038__coupon_inventory_and_claims.sql": "c667fe68a5726a11f416704715f22e99eb9b8559d4fdfc0ba378cdcf696298f7",
+      "docs/sql/migrations/V039__coupon_transactions.sql": "4a5e7a251f2dda50e092317f2c0777afed0bb55ec0a38256efac37a9e70b19eb",
+      "docs/sql/migrations/V040__invitation_attribution.sql": "aba24bf24f847842ce3254d4afc6f1fdb9554634c914cb6bb65ef69ae94ec9cf",
+      "docs/sql/migrations/V041__invitation_reward_policies.sql": "762ff3244fddd8ca337d17114fc5745de3698411376e321a26dda60fb1c77e24",
+      "docs/sql/migrations/V042__invitation_reward_delivery.sql": "ed849ed9bf56bb9d5b763ab4dc06d2aaa96340ac64854843fb234a7ff7a2222d",
+      "docs/sql/migrations/V043__invitation_diagnosis_unlock.sql": "d6f3246e382b7b7bab87bbce5d4cb2f6eea10ee30d272d5c66338481f7868e94",
+      "docs/sql/migrations/V044__order_archive_grants.sql": "1772cd8a11d37c82b6a1568a711b9641b138af81d6a49dbd4c61a60341b19246",
+      "docs/sql/migrations/V045__service_notification_outbox.sql": "55631f6cfb7e8e74473fc701de989734c7d13b62f20b0da0147d6504a4321707",
+      "docs/sql/migrations/V046__async_diagnosis.sql": "01280905afef8275ea1845944b677905a2c30a1ee5775c1fb33c61e5727ce375",
+      "docs/sql/migrations/V047__order_notification_sources.sql": "914541c96812beaa7f32dcf82ed18484eee16977931ea230c52329be55c5eeb8",
+      "docs/sql/migrations/V048__diagnosis_notifications.sql": "fd5ff9018e42df1c5eb0cc3e2c06060d613f767e0fe91d1ff0a670d30193b57b",
+      "docs/sql/migrations/V049__point_task_policies.sql": "dac308e2ada2193cae5e01eafdffc64dd8ff934fbe29805d7aac89ddce85da3a",
+      "docs/sql/migrations/V050__verified_points_ledger.sql": "d1290fd55f86a17876bd67f066cf127bdaf31c351596d3675efbdc132ea98933",
+      "docs/sql/migrations/V051__point_exchange_catalog.sql": "6a5b65f48ed40382794e856456c7ae61bd20c5414a56c58619626413bbff3b1e",
+      "docs/sql/migrations/V052__atomic_point_exchange.sql": "af839efccbcfd3497b29f5d01775b193f48416504b3cad68c6ea4e3cb3ba62fb",
+      "docs/sql/migrations/V053__assessment_policies.sql": "b88faa531a3a934aff831fbf57456d5b2d11bf58ccbb0be34719764c80d89bb5",
+      "docs/sql/migrations/V054__assessment_monthly_snapshots.sql": "fd16dbabf0b1e76b7bbfcc4a70d306391a1a4de48fbb1a48e6e82502543bb631",
+      "docs/sql/migrations/V055__business_dashboard_permission.sql": "56c7bdaa8193235a9ad9f682ba61174be6c67ce54921b0fd46de66619b8084b5",
+      "docs/sql/migrations/V056__price_monitor_policies.sql": "751306246222ff26598229260e5ff44376d909136fe18aec9d78652fb52f09c9",
+      "docs/sql/migrations/V057__curated_experiences.sql": "83d684c43ae4e30378727dbee73ebaac59436e2dc6c810fb162b044fd1e07e1e",
+      "docs/sql/migrations/V058__private_community_questions.sql": "12471412bcfd8719c881d03b63e057001ccae7a2d1e8bdfbd774f406737f79f9",
+      "docs/sql/migrations/V059__public_community_questions.sql": "2080998ec8917a07aaf3ffe942713094e5e7d5b0e19c8605902b7fdddc26e3b9",
+      "docs/sql/migrations/V060__public_image_copies.sql": "4e741cdf07b36cf9dd2fcfd44d26eb0386043a77206560ab5df11df3a65d288c",
+      "docs/sql/migrations/V061__licensed_knowledge.sql": "ac325ff9cd9bc9545d124077efa600caa74b120ed1a0b043edb4c3103c0fe2f8",
+      "docs/sql/migrations/V062__input_material.sql": "f3df4a442d5684872437a8b282c1f5348b90bdd8ddf006e6f189365d672881aa",
+      "backend/pom.xml": "f592219c524f881bfd60c9448aeeaf8b86208d41616b22a3f1a66baef8918023"
+    },
+    "suites": {
+      "com.autocare.platform.ai.AiContextProviderTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.ai.DeepSeekClientTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.AiChatHttpTest": {
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.ArchiveAccessTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.ArchiveReminderAccessTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.ArchiveShareAccessTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.ArchiveStructuredAccessTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.ClamdProtocolTest": {
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.CloudRunAuthTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.CloudRunDisabledTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.file.PublicImageRendererTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.gateway.identity.JdbcOperatorAdminAnalyticsTest": {
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.gateway.identity.JdbcOperatorAdminAssessmentTest": {
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.gateway.identity.JdbcOperatorAdminCommunityTest": {
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.gateway.identity.JdbcOperatorAdminCurationTest": {
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.gateway.identity.JdbcOperatorAdminDiagnosisTest": {
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.gateway.identity.JdbcOperatorAdminKnowledgeTest": {
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.gateway.identity.JdbcOperatorAdminPointsTest": {
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.gateway.identity.JdbcOperatorAdminPriceTest": {
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.gateway.identity.JdbcOperatorIdentityTest": {
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.gateway.identity.OperatorAuthHttpTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.gateway.wechat.WechatCode2SessionClientTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.gateway.wechat.WechatPhoneClientTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.HealthObservationAccessTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.InputMaterialValidatorTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.JdbcArchiveReminderTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.JdbcArchiveShareTest": {
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.JdbcArchiveStructuredTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.JdbcArchiveTest": {
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.JdbcHealthObservationTest": {
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.JdbcIdentityRepositoryTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.JdbcInputMaterialTest": {
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.JdbcMerchantDiscoveryTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.JdbcMerchantIdentityRepositoryTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.JdbcMerchantLocationTest": {
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.JdbcMerchantQuotesTest": {
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.JdbcPrivateUploadTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.JdbcServiceCatalogTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.JdbcUploadHttpTest": {
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.JdbcVehicleTest": {
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.JdbcWriteIntegrityTest": {
+        "tests": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.LocalMileageNoDatabaseTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.LocalMileageTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.merchant.JdbcMerchantStaffTest": {
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.merchant.MerchantStaffHttpTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.MerchantAuthNoSenderTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.MerchantAuthTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.MerchantDiscoveryHttpTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.MerchantLocationHttpTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.MerchantQuotesHttpTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.MileageRecognitionHttpTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.NonWebSecurityContextTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.AiServicePlansHttpTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.AssessmentCalculationTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.AssessmentPolicyHttpTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.AssessmentPolicyNoDatabaseTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.AssessmentSnapshotHttpTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.AssessmentSnapshotNoDatabaseTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.AssessmentViewHttpTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.AssessmentViewNoDatabaseTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.BusinessDashboardHttpTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.BusinessDashboardNoDatabaseTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.CommissionHttpTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.CommissionRulesTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.CommunityQuestionHttpTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.CommunityQuestionNoDatabaseTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.CouponHttpTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.CouponInputTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.CouponTransactionsHttpTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.CustomerRelationsHttpTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.CustomerRelationsNoDatabaseTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.DiagnosisHttpTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.DiagnosisNotificationHttpTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.DisputeHttpTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.DisputeNoDatabaseTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.ExperienceCardsHttpTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.ExperienceCardsNoDatabaseTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.ExperienceCurationHttpTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.ExperienceCurationNoDatabaseTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.ExperienceModerationHttpTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.HealthDashboardHttpTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.InvitationHttpTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.InvitationLoginHttpTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.InvitationRewardHttpTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.InviteDiagnosisHttpTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.InvitePolicyHttpTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.IsolatedCoreJourneysTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcAiServicePlansTest": {
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcAssessmentPoliciesTest": {
+        "tests": 25,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcAssessmentSnapshotsTest": {
+        "tests": 39,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcAssessmentViewsTest": {
+        "tests": 45,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcBusinessDashboardTest": {
+        "tests": 49,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcCommissionLedgerTest": {
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcCommunityQuestionsTest": {
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcCouponInventoryTest": {
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcCouponTransactionsTest": {
+        "tests": 37,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcCustomerRelationsTest": {
+        "tests": 40,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcDiagnosisCasesTest": {
+        "tests": 61,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcDiagnosisNotificationsTest": {
+        "tests": 73,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcExperienceCurationsTest": {
+        "tests": 55,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcExperienceDetailTest": {
+        "tests": 45,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcHealthDashboardTest": {
+        "tests": 19,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcInvitationRewardsTest": {
+        "tests": 41,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcInvitationsTest": {
+        "tests": 21,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcInviteDiagnosisPoliciesTest": {
+        "tests": 48,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcInviteRewardPoliciesTest": {
+        "tests": 24,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcLicensedKnowledgeTest": {
+        "tests": 28,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcLocalFinanceTest": {
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcMileageRecognitionTest": {
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcOrderDisputesTest": {
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcOrderFulfillmentTest": {
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcOrderRedemptionTest": {
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcOrderRefundsTest": {
+        "tests": 23,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcOrderReviewsTest": {
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcOwnerServiceEvidenceTest": {
+        "tests": 21,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcPaymentsTest": {
+        "tests": 35,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcPickupInspectionTest": {
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcPointExchangeCatalogTest": {
+        "tests": 26,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcPointExchangeCouponTest": {
+        "tests": 40,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcPointExchangeOffersTest": {
+        "tests": 58,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcPointExchangesTest": {
+        "tests": 50,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcPointLedgerTest": {
+        "tests": 30,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcPointTaskPoliciesTest": {
+        "tests": 24,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcPriceComparisonsTest": {
+        "tests": 38,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcPricePoliciesTest": {
+        "tests": 26,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcPublicCommunityQuestionsTest": {
+        "tests": 30,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcPublicImagesTest": {
+        "tests": 55,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcPublicRatingsTest": {
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcPublicReviewTextsTest": {
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcReservationsTest": {
+        "tests": 22,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcReviewSummariesTest": {
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcServiceArchiveTest": {
+        "tests": 38,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcServiceNotificationsTest": {
+        "tests": 35,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcServiceWorkspaceTest": {
+        "tests": 32,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcServiceWorkTest": {
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcTechnicianAssignmentsTest": {
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcTechnicianAssignmentsVerificationTest": {
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.JdbcVehiclePlanEvidenceTest": {
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.LicensedKnowledgeHttpTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.LocalFinanceHttpTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.LocalFinanceNoDatabaseTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.LocalPaymentQueryTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.LocalRefundChannelTest": {
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.LocalTestPaymentChannelTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.MerchantOnboardingHttpTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.MerchantOnboardingMySqlTest": {
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.MerchantOrdersHttpTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.MerchantOrdersNoDatabaseTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.MileageOcrClientTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.OrderRedemptionHttpTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.OrderRedemptionNoDatabaseTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.OrderReviewsHttpTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.OrderReviewsNoDatabaseTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.OrderStatusTest": {
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.OwnerServiceEvidenceHttpTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PaymentHttpTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PaymentNoDatabaseTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PickupHttpTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PlanBookingContextHttpTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PointExchangeCatalogHttpTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PointExchangeCatalogNoDatabaseTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PointExchangeHttpTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PointExchangeNoDatabaseTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PointExchangeOffersHttpTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PointExchangeOffersNoDatabaseTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PointLedgerHttpTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PointLedgerNoDatabaseTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PointTaskPolicyHttpTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PointTaskPolicyNoDatabaseTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PriceComparisonHttpTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PriceComparisonNoDatabaseTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PricePolicyHttpTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PricePolicyNoDatabaseTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PublicCommunityQuestionHttpTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PublicCommunityQuestionNoDatabaseTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PublicImageHttpTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PublicRatingsHttpTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.PublicReviewTextsHttpTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.RefundHttpTest": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.ReservationHttpTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.ReservationNoDatabaseTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.ReservationTimeTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.ReviewSummariesHttpTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.ServiceNotificationHttpTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.ServiceWorkHttpTest": {
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.ServiceWorkNoDatabaseTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.ServiceWorkspaceHttpTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.TechnicianAssignmentsHttpTest": {
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.TechnicianAssignmentsNoDatabaseTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.order.VehiclePlanEvidenceHttpTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.OwnerArchiveQueryHttpTest": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.PlatformApplicationTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.PointAiHookTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.PointIdentityHookTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.PrivateFileAccessTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.PrivateUploadTest": {
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.ProductionMileageBoundaryTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.RealCommunityImageJourneyTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.RealInvitationRewardJourneyTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.RealMaterialWorkbenchJourneyTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.RealMerchantOnboardingFileAccessJourneyTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.RealPickupWorkFileAccessJourneyTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.RealPrivateUploadJourneyTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.RealServiceArchiveAccessJourneyTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.RealUploadAdaptersTest": {
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.service.CatalogGovernanceHttpTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.service.CatalogInputTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.service.JdbcCatalogGovernanceTest": {
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.ServiceCatalogHttpTest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.ServiceCatalogNoDatabaseTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.UploadAdapterConfigurationTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.UploadHttpTransportTest": {
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.vehicle.ArchiveControllerReportTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.vehicle.ArchiveReminderTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.vehicle.ArchiveReportFilterTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.vehicle.ArchiveReportPdfRendererTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.vehicle.ArchiveShareTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.vehicle.ArchiveStructuredInputTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.vehicle.HealthObservationInputTest": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.VehicleAccessTest": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.VehicleHttpTest": {
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.VehicleNoDatabaseTest": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "com.autocare.platform.WechatAuthTest": {
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    }
+  },
+  "browser": {
+    "tool": "gstack /browse",
+    "target": "local auxiliary H5",
+    "checks": [
+      "owner, merchant and technician entry pages render",
+      "anonymous merchant pickup page requires merchant login",
+      "empty operator credentials show local validation error",
+      "synthetic valid credentials with no backend config show unavailable message",
+      "missing SMS code rejected locally"
+    ],
+    "not_covered": [
+      "authenticated UI business journey",
+      "native WeChat/device capabilities",
+      "real SMS delivery"
+    ],
+    "observations": [
+      "framework deprecation warning",
+      "uni-app H5 automatically loads third-party cloud verification scripts; recorded as a dependency"
+    ]
+  },
+  "boundaries": [
+    "backend identities and selected historical facts are synthetic fixtures",
+    "funds are LOCAL_TEST only",
+    "no real WeChat/SMS/payment provider acceptance",
+    "no current 500-concurrency or iOS/Android acceptance",
+    "independent feature and integration gaps remain in LOCAL_BACKLOG.md"
+  ]
+}

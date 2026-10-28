@@ -1,0 +1,532 @@
+{
+  "version": 1,
+  "recorded_at": "2026-10-27T00:33:28.794230+08:00",
+  "stage": "R2b driving-license candidate registration",
+  "branch": "codex/license-recognition",
+  "base_commit": "7f3b19cd7e65349796ff4f0e1f3da330d360d891",
+  "selected_software_regressions_passed": true,
+  "full_backend_rerun": false,
+  "full_api_acceptance_passed": false,
+  "authorized_real_license_accuracy_accepted": false,
+  "wechat_device_acceptance_passed": false,
+  "production_acceptance_passed": false,
+  "backend": {
+    "selected_suites_passed": true,
+    "total_suites": 9,
+    "total_tests": 81,
+    "suites": [
+      {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.LicenseResultTest",
+        "report_sha256": "47332f86037717e97d515fabdb350d65504e0a226e7f8cd38261b659e991f5cf"
+      },
+      {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.LicenseOcrClientTest",
+        "report_sha256": "bb633956ad1fe39bee3b037dcd9a3fdddf522ddab571238e53cc71168c793562"
+      },
+      {
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.JdbcLicenseRecognitionTest",
+        "report_sha256": "a2f563deed69cb6544af653ae5a6e7329dfdcd348ec4631ea9d63cbcd36d3d14"
+      },
+      {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.LicenseHttpJourneyTest",
+        "report_sha256": "21405466b1df9b26c12766464b4735231b7ff2f4bc2b45cb334f6a78e9e4c320"
+      },
+      {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.MileageOcrClientTest",
+        "report_sha256": "fd011f2060c47b511c7ba479b73c7bf005a319f9db1497bad3706a96ce352f92"
+      },
+      {
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.JdbcMileageRecognitionTest",
+        "report_sha256": "2240ce3dc976d8ecf837ac1f9d9fb09f3e7b589e9b398b823839f22160a207f1"
+      },
+      {
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.JdbcVinRecognitionTest",
+        "report_sha256": "9f8ece65fae57abd18d397d426a2879380af80ddcac7b395fc1dcff1d538f448"
+      },
+      {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.VinHttpJourneyTest",
+        "report_sha256": "8d2fd3ce75d328c120b0296379887931aa231f6dc7c2c95c6e872fa4e92bbd67"
+      },
+      {
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.JdbcUploadHttpTest",
+        "report_sha256": "8c10124f841a4bb19dd270c7a72bd77e34cba63dd55180513427023cf9fa8a9c"
+      }
+    ],
+    "log_sha256": "a0a9171675976259177198f3a26d7d3b6ce77069f08cf96c9e527595a8227326",
+    "source_hash_observation": "Recorded after final selected test execution; no before-and-after or full-backend claim.",
+    "sources": {
+      "backend/src/main/java/com/autocare/platform/order/LicensedKnowledge.java": "e4280da6bce7998dafe030d1dcf7eb1b04f62c4218c483099abbe6c0209d7c0b",
+      "backend/src/main/java/com/autocare/platform/order/LicensedKnowledgeController.java": "9886f3b2863285e2f709698176d64b9edf8ae4230ff9bf4eb82f16feea100a1a",
+      "backend/src/main/java/com/autocare/platform/order/LicenseRecognition.java": "3da3ba068f7675f2a6cecb6b034f20472173462d66459f46f4075bfb5993e7bd",
+      "backend/src/main/java/com/autocare/platform/order/LicenseRecognitionConfiguration.java": "0964542ee1f1f23f671e13a3ef52a31ed9df280cfc7f2e84c3ad7dfee8c64087",
+      "backend/src/main/java/com/autocare/platform/order/LicenseRecognitionController.java": "f022515f2e277fa1e3ee865cf1e5159e508734f1cabaa0f640f8fd24d367f863",
+      "backend/src/main/java/com/autocare/platform/order/LicenseResult.java": "c0c3b802e6ba8c99e57afd1b4f3bf0a0d712275a70401c44681cab80fcb21f0d",
+      "backend/src/main/java/com/autocare/platform/order/MileageOcrClient.java": "76c842cff47fbbd9ad93bcf2bb6d8ff1596e2eb72971cb38eb7173217b106e38",
+      "backend/src/test/java/com/autocare/platform/order/LicenseResultTest.java": "f8e89fba8d52ca0853946b21821cc14dd772281705d34019f56384767439983c",
+      "backend/src/test/java/com/autocare/platform/order/LicenseOcrClientTest.java": "5c3acb351df5e348c398f22a3fc45d77c36cb702a9af185f938340e6c9741d9e",
+      "backend/src/test/java/com/autocare/platform/order/LicenseTestData.java": "ca8a89ed9a7e79073251f8b5434d2e3e64c27efc72b180dce7a0de8194e55368",
+      "backend/src/test/java/com/autocare/platform/order/JdbcLicenseRecognitionTest.java": "5720c0f4dff167ee118666d7476b9f96910d850fb6139ddc178cb76e139fdb06",
+      "backend/src/test/java/com/autocare/platform/order/LicenseHttpJourneyTest.java": "b76fa8000a91ad11e7fb724b56a0887108cd334f261c27c33ca006fd1ce077ce"
+    },
+    "full_backend_rerun": false,
+    "full_api_acceptance_passed": false,
+    "real_model_or_scanner_storage_acceptance_passed": false,
+    "boundary": "Real loopback source-client/application HTTP, JWT and isolated MySQL. HTTP upload uses production pipeline but explicit scanner/private-store/OCR doubles; synthetic VIN/plate/identity and LOCAL_TEST funds. HTTP classes include three inherited core journey cases each.",
+    "test_fixture_repairs": [
+      "Use doAnswer().when() when replacing a storage read side-effect; Mockito.when invoked old answer and revoked session during stubbing.",
+      "Use real AuthTokens.binding fixture for wechat_binding 403; invalid user/OWNER_BINDING was correctly rejected with 401. No product authorization was loosened."
+    ]
+  },
+  "local_regression": {
+    "version": 1,
+    "finished_at": "2026-10-26T16:31:04.851204+00:00",
+    "selected_checks_passed": true,
+    "source_sha256": "abc0769521f968e7d2acbedd7f616fb718251594e8ebbdeccf3e4312a9c9cee1",
+    "sources_unchanged": true,
+    "backend_requested": false,
+    "backend_runtime_verified": false,
+    "production_acceptance_passed": false,
+    "boundaries": [
+      "Synthetic identities and LOCAL_TEST funds in backend integration tests.",
+      "No real WeChat/SMS/payment/model provider or mobile-device acceptance.",
+      "Builds and unit tests do not certify rendered page interactions.",
+      "Selected regression checks are not all-API business or performance acceptance."
+    ],
+    "checks": [
+      {
+        "name": "miniapp-unit",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 2.438,
+        "log": "miniapp-unit.log"
+      },
+      {
+        "name": "python-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 111.891,
+        "log": "python-regression.log"
+      },
+      {
+        "name": "ocr-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 21.843,
+        "log": "ocr-regression.log"
+      },
+      {
+        "name": "wechat-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 21.485,
+        "log": "wechat-build.log"
+      },
+      {
+        "name": "h5-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 17.156,
+        "log": "h5-build.log"
+      },
+      {
+        "name": "openapi-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.312,
+        "log": "openapi-consistency.log"
+      },
+      {
+        "name": "migration-mounts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.204,
+        "log": "migration-mounts.log"
+      },
+      {
+        "name": "handover-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.375,
+        "log": "handover-consistency.log"
+      },
+      {
+        "name": "contract-verdicts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.187,
+        "log": "contract-verdicts.log"
+      }
+    ]
+  },
+  "counts": {
+    "miniapp_passed": 1155,
+    "python_passed": 539,
+    "ocr_passed": 76,
+    "ocr_skipped": 1,
+    "contract_operations": 356,
+    "protected_operations": 342,
+    "historical_four_kind_operations": 317,
+    "verdicts": 39
+  },
+  "browser": {
+    "main_journey": {
+      "fixture": "synthetic browser-only session/selection/upload/provider",
+      "checks": [
+        "private storage and purpose disclosure",
+        "upload initially disabled",
+        "selection local only",
+        "consent still required after selection",
+        "upload timeout safe recovery",
+        "unknown upload retries same key and same picture",
+        "POST purpose without vehicle or URL",
+        "candidate values and confidence visible",
+        "confirmation gated",
+        "multiple candidates shown without default VIN",
+        "low confidence remains visible",
+        "no candidate and manual fallback visible",
+        "unconfigured safe error",
+        "inference retries reuse uploaded file",
+        "loading cancel visible",
+        "late canceled candidate discarded",
+        "manual correction resets acknowledgment",
+        "confirmed values transferred to manual page",
+        "model selection stays manual and photo is not attached",
+        "390px viewport no horizontal overflow"
+      ],
+      "passed": 20,
+      "viewport": "390x844",
+      "url": "#/pages/vehicle/manual"
+    },
+    "reauth_journey": {
+      "fixture": "synthetic session/provider only",
+      "passed": 4,
+      "checks": [
+        "candidate ready on 390px",
+        "expired session has safe message and login action",
+        "reauth clears old owner memory",
+        "reauth routes to owner login"
+      ]
+    },
+    "total_assertions": 24,
+    "screenshots_visually_reviewed": true,
+    "screenshot_sha256": {
+      "license-candidate-browser.png": "a97b78d5c24bdcd65c64eabd07b6eb2d0238645c96e1c1b661cd163ad73ba45b",
+      "license-manual-browser.png": "590d2b65eae3df9b70125b8004bc1babd10eadf0f47f6fd4cd8314f99b4820cd"
+    },
+    "script_sha256": {
+      "license-browser-fixture.js": "45b441e69ff8db10c60e3d310f4b64e51023475352064ecdbc7c5d442a1c7c15",
+      "license-browser-journey.js": "facb70f3dcbe12a97fb25afdaad6fe6516c292906d08724bf2766b699d9e49c3",
+      "license-browser-auth.js": "82409e1e1848c06fb6afb9f997b6497b57d1f3653f932d888e1472c45085e25a"
+    },
+    "boundary": "gstack browse at verified390x844; selection/upload/provider/session are explicit synthetic doubles, not WeChat native or real document evidence."
+  },
+  "real_local_model_observation": {
+    "runtime_path_passed": true,
+    "all_synthetic_fields_matched": false,
+    "real_paddle_used": true,
+    "dependencies": {
+      "paddleocr": "3.7.0",
+      "paddlepaddle": "3.3.1",
+      "Pillow": "12.3.0"
+    },
+    "models_verified_locally": true,
+    "model_sha256": {
+      "PP-OCRv5_mobile_det_infer/inference.json": "05feef1acb00aa4cd7362b15f7f501fc4f99d7b1fa73c1c871e0c7b1504b0f5c",
+      "PP-OCRv5_mobile_det_infer/inference.pdiparams": "afa1820cb16c1fd0dad589d0f8b389139061c1ef6d68019685fd07be997dda5b",
+      "PP-OCRv5_mobile_det_infer/inference.yml": "98069072e1b6b37d727fd9d9f11725faa46d6ea0de012f2ed26caea011c37699",
+      "PP-OCRv5_mobile_rec_infer/inference.json": "24587345250c7332d0fc6f9a44e794d078cdaeb64c302fef906f325619de2569",
+      "PP-OCRv5_mobile_rec_infer/inference.pdiparams": "2460da90875937c94db97eba74ae3d9e5d4c4c57c42f1f41531c09a26bcc771a",
+      "PP-OCRv5_mobile_rec_infer/inference.yml": "5dfeb2777f6d0db8177d8128a8acfcf6e6276dc4ac73ea3bf0dc06d6a5e85d8e"
+    },
+    "source_sha256": {
+      "license_fields.py": "b8f8f280e9b213f40a70a61295a3c5252a214fdd003cd730cc956f51f215e5dc",
+      "mileage.py": "a93b4ae87408d8063c4781d76b5e2b2143ebcfa1e9527661fe13b14df9eaced0",
+      "network_guard.py": "9eba3a3cfc10679db75ce6fc90e5a58745a7d3d33a26b3dbc556f6831b35993f",
+      "process_limits.py": "24190a5c2d60b2ebd52ed474af66c1c28e2bc1855e390d01c0f984d380553a80",
+      "recognition.py": "ec3b2db84c10738f7a9340a5ae56b55ba58da2f8976b8ca5e0156877add2f874",
+      "server.py": "f77846f8fcdf04c48b9f703e6783b7d4d674e84966330ea6efd6dd993663bdf0",
+      "worker.py": "62be91110f412c7f408951f22811d69488990c23b1a8a0dce2e8e9293ebcdca1"
+    },
+    "font_sha256": "d79c55e68b1131eea0cc1c47be4f572d964f28c682e143db2ad09c1e4cb07a3f",
+    "private_http_requests": 5,
+    "warm_worker_reused": true,
+    "worker_closed": true,
+    "http_server_stopped": true,
+    "os_limits": {
+      "kind": "windows-job",
+      "memory_bytes": 1610612736,
+      "active_processes": 8,
+      "kill_on_parent_exit": true
+    },
+    "inference_deadline_seconds": 8,
+    "startup_deadline_seconds": 30,
+    "observations": [
+      {
+        "case": "guangdong",
+        "image_sha256": "7c9ae64b570c2ddca0a1df728071b41c6cbfbf9f16c161d0eb37039c9b6cb450",
+        "scene": "license",
+        "http_status": 200,
+        "duration_seconds": 2.734,
+        "expected_fields": {
+          "plate": [
+            "粤B12345"
+          ],
+          "vin": [
+            "LTEST223456789012"
+          ]
+        },
+        "observed_fields": {
+          "plate": [],
+          "vin": [
+            "LTEST223456789012"
+          ]
+        },
+        "all_expected_fields_matched": false,
+        "result": {
+          "version": 1,
+          "scene": "license",
+          "source": "LOCAL_OCR",
+          "status": "PARTIAL",
+          "fields": [
+            {
+              "key": "plate",
+              "status": "NO_CANDIDATE",
+              "candidates": []
+            },
+            {
+              "key": "vin",
+              "status": "CANDIDATE",
+              "candidates": [
+                {
+                  "value": "LTEST223456789012",
+                  "confidence": 0.9986765384674072
+                }
+              ]
+            }
+          ],
+          "requires_confirmation": true,
+          "image_recognition_performed": true
+        }
+      },
+      {
+        "case": "shanghai",
+        "image_sha256": "20faf303efd3c1bff84bf472e3594642cc2612b249ed12bce4c1e23a1e5fb713",
+        "scene": "license",
+        "http_status": 200,
+        "duration_seconds": 2.109,
+        "expected_fields": {
+          "plate": [
+            "沪A12345"
+          ],
+          "vin": [
+            "LTEST223456789012"
+          ]
+        },
+        "observed_fields": {
+          "plate": [
+            "沪A12345"
+          ],
+          "vin": [
+            "LTEST223456789012"
+          ]
+        },
+        "all_expected_fields_matched": true,
+        "result": {
+          "version": 1,
+          "scene": "license",
+          "source": "LOCAL_OCR",
+          "status": "CANDIDATE",
+          "fields": [
+            {
+              "key": "plate",
+              "status": "CANDIDATE",
+              "candidates": [
+                {
+                  "value": "沪A12345",
+                  "confidence": 0.9997069239616394
+                }
+              ]
+            },
+            {
+              "key": "vin",
+              "status": "CANDIDATE",
+              "candidates": [
+                {
+                  "value": "LTEST223456789012",
+                  "confidence": 0.9984881281852722
+                }
+              ]
+            }
+          ],
+          "requires_confirmation": true,
+          "image_recognition_performed": true
+        }
+      },
+      {
+        "case": "unlabelled",
+        "image_sha256": "9329feb18304cd1d98f39aebc7b1f15532d4bea37cc36df67f7a152fb7f04bbb",
+        "scene": "license",
+        "http_status": 200,
+        "duration_seconds": 1.922,
+        "expected_fields": {
+          "plate": [],
+          "vin": []
+        },
+        "observed_fields": {
+          "plate": [],
+          "vin": []
+        },
+        "all_expected_fields_matched": true,
+        "result": {
+          "version": 1,
+          "scene": "license",
+          "source": "LOCAL_OCR",
+          "status": "NO_CANDIDATE",
+          "fields": [
+            {
+              "key": "plate",
+              "status": "NO_CANDIDATE",
+              "candidates": []
+            },
+            {
+              "key": "vin",
+              "status": "NO_CANDIDATE",
+              "candidates": []
+            }
+          ],
+          "requires_confirmation": true,
+          "image_recognition_performed": true
+        }
+      },
+      {
+        "case": "blank",
+        "image_sha256": "3ebb9a0bbfbe74d00689e9ec8566485debe2c2a52aadeb03f82d4545e78b0bcf",
+        "scene": "license",
+        "http_status": 200,
+        "duration_seconds": 1.047,
+        "expected_fields": {
+          "plate": [],
+          "vin": []
+        },
+        "observed_fields": {
+          "plate": [],
+          "vin": []
+        },
+        "all_expected_fields_matched": true,
+        "result": {
+          "version": 1,
+          "scene": "license",
+          "source": "LOCAL_OCR",
+          "status": "NO_CANDIDATE",
+          "fields": [
+            {
+              "key": "plate",
+              "status": "NO_CANDIDATE",
+              "candidates": []
+            },
+            {
+              "key": "vin",
+              "status": "NO_CANDIDATE",
+              "candidates": []
+            }
+          ],
+          "requires_confirmation": true,
+          "image_recognition_performed": true
+        }
+      },
+      {
+        "case": "mileage-control",
+        "image_sha256": "19cfad946fb5c5c575b5fb2af3092f9f157a2cb17afcbd8d184eb1c337a71462",
+        "scene": "mileage",
+        "http_status": 200,
+        "duration_seconds": 1.125,
+        "expected_fields": null,
+        "observed_fields": {
+          "mileage_km": [
+            123456
+          ]
+        },
+        "all_expected_fields_matched": true,
+        "result": {
+          "status": "CANDIDATE",
+          "candidates": [
+            {
+              "mileage_km": 123456,
+              "confidence": 0.984636664390564
+            }
+          ],
+          "requires_confirmation": true,
+          "image_recognition_performed": true,
+          "version": 1,
+          "scene": "mileage"
+        }
+      }
+    ],
+    "authorized_real_license_accuracy_accepted": false,
+    "wechat_device_accepted": false,
+    "linux_runtime_accepted": false,
+    "boundary": "Generated typography only. Field mismatches stay recorded; no model downloads or real certificate inputs. Windows Job limits do not verify Linux seccomp or outbound-network denial."
+  },
+  "real_model_initial_failed_observation_sha256": "e8968ebfd5b7517f4644a65ed1142504124cfd0e9b9939432c2cabb86e408bf9",
+  "real_model_final_report_sha256": "847cd502373e8c6b410f13e134d81ba6831c3e152bfd0ca8cdfa2bd93f0fc605",
+  "source_hash_observation": "Additional hashes observed after selected runs; backend report hashes and OCR runtime source hashes rechecked. Unified local run independently measured unchanged source before/after. Historical full backend reports are not asserted current.",
+  "additional_sources": {
+    "apps/miniapp/src/components/LicenseRecognition.vue": "6ff12ff86ec35d4dfef5f678444c30f6d2938df9acc58276ec8d0007290fa301",
+    "apps/miniapp/src/services/license-recognition.js": "e7e169eb291fc61b4b54ac97a4812c822d1ebe4ae3141fa8ec5c835b63a09cfb",
+    "apps/miniapp/src/services/vehicle-entry.js": "45c32f4752c2a4ba0fedbcbb13c89e501d480685baf57926311fc6d2858acb69",
+    "apps/miniapp/src/pages/vehicle/entry.vue": "cc349e8e7b2fedebe745e733f76588d7dfa0849b97a85a356949adb7fbdfbf61",
+    "apps/miniapp/src/pages/vehicle/manual.vue": "a340316be5ed8b0e1fc3163b19fc7fdf373e2c36133a8cb6caac7e7c9d1ceabd",
+    "apps/miniapp/test/license-recognition.test.js": "338ad5d24d5c60cd447c7290fc84b116a4e6dc7dae996327df1b1e4a5a02a5a7",
+    "services/ocr/license_isolated_check.py": "31335d4be73eed0f193b8f3a0e8d0910ddf23229909150ea0c3595f800544360",
+    "services/ocr/test_license.py": "9c71ff98e75e47dcb9d66c02169fcd47958850461ce1c83ac79ad6e0a7aaa6b7",
+    "services/ocr/test_license_worker_child.py": "9f1ac36874de0b73f2ade00950528d36b339b3a6d26549d5a2bf154243f32331",
+    ".env.example": "eff788dc564379117d4f0d72a74cc0095ad3883a2da94db1d67eccc1c5f88a79",
+    "deploy/cloudrun/env.example": "8fc15cfc09655b00e9dea88ac2ded43c3dfff57885aa43545d280dca3868b8fb",
+    "deploy/compose/compose.yml": "23ad01465f20d2fb960530a4f2f8b3bb2bb4c76eb59d28e73287bb75fa4d2b6d",
+    "deploy/compose/ocr-runtime.yml": "ca6441eea90b3e2b06868f2fc4c7c68720dd10e194fbe6a141cbc447f34910ae",
+    "scripts/r9_contract_updates_openapi.py": "7b9ee8fe04cfe956297cf628eed09460073b8443f9d231302ace539b87bbddc1"
+  },
+  "known_issues": [
+    "Actual Paddle read simplified 粤 as traditional 粵 on one generated layout; strict validation withheld plate and returned PARTIAL. All synthetic expected fields did not match.",
+    "Only a small generated typography observation; no authorized real-license sample set or device effect acceptance.",
+    "Images use existing private attachment retention; this feature does not implement automatic expiry or owner deletion. Define retention/deletion policy before formal certificate rollout.",
+    "No current full-backend, all-API, Linux real-model, formal WeChat/SMS or production acceptance.",
+    "ASR async jobs, image/PDF extraction, embedding/vector retrieval and exact Chinese vehicle catalog source remain future work."
+  ]
+}

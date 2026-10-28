@@ -23,6 +23,11 @@ services:
       MILEAGE_OCR_ENABLED: 'true'
       MILEAGE_OCR_URL: http://ocr:8090/recognize
       MILEAGE_OCR_ALLOW_PRIVATE_HTTP: 'true'
+      # Independent opt-in; use the same private worker/token as this overlay's mileage service.
+      LICENSE_OCR_ENABLED: ${LICENSE_OCR_ENABLED:-false}
+      LICENSE_OCR_URL: http://ocr:8090/recognize
+      LICENSE_OCR_SERVICE_TOKEN: ${MILEAGE_OCR_SERVICE_TOKEN:?Set a private OCR service token}
+      LICENSE_OCR_ALLOW_PRIVATE_HTTP: 'true'
     networks: [default, ocr_private]
 networks:
   ocr_private:

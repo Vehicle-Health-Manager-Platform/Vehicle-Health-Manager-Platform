@@ -1,0 +1,43 @@
+# Explicit local/test opt-in, never included by the default startup.
+# Build/verify the immutable runtime image and model files before use.
+services:
+  backend:
+    environment:
+      KNOWLEDGE_ENABLED: "true"
+      KNOWLEDGE_EMBEDDING_ENABLED: "true"
+      KNOWLEDGE_EMBEDDING_CLEANUP_ENABLED: "false"
+      KNOWLEDGE_EMBEDDING_PROFILE_JSON: ${KNOWLEDGE_EMBEDDING_PROFILE_JSON:?Set the actual verified profile JSON}
+      KNOWLEDGE_EMBEDDING_URL: http://embedding:8093/embed
+      KNOWLEDGE_EMBEDDING_TOKEN: ${KNOWLEDGE_EMBEDDING_TOKEN:?Set a private embedding token}
+      KNOWLEDGE_EMBEDDING_ALLOW_PRIVATE_HTTP: "true"
+    networks: [default, embedding_private]
+    depends_on:
+      embedding:
+        condition: service_started
+  embedding:
+    image: autocare-embedding-runtime:acceptance
+    pull_policy: never
+    user: "10001:10001"
+    environment:
+      EMBEDDING_SERVICE_ENABLED: "true"
+      EMBEDDING_MODEL_ENABLED: "true"
+      EMBEDDING_MODEL_ROOT: /models
+      EMBEDDING_SERVICE_TOKEN: ${KNOWLEDGE_EMBEDDING_TOKEN:?Set a private embedding token}
+      EMBEDDING_PORT: "8093"
+    volumes:
+      - type: bind
+        source: ${EMBEDDING_MODELS_DIR:?Set the verified model directory}
+        target: /models
+        read_only: true
+    networks: [embedding_private]
+    mem_limit: 2g
+    memswap_limit: 2g
+    cpus: 2
+    pids_limit: 128
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=256m,mode=1777"]
+networks:
+  embedding_private:
+    internal: true

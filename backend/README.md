@@ -2,6 +2,8 @@
 
 # 后端
 
+2026-10-26当前本地入口：[启动与测试配置](../docs/delivery/LOCAL_SETUP.md)及[阶段交接](../docs/delivery/LOCAL_HANDOVER.md)。以下S0/A5条目按当时范围保留。当前全新数据库需V001基线及V002–V062，已有卷必须核对并补迁移；不要按下文早期V005上限初始化现行版本。当前小程序已有会话持久化与撤销处理，早期“尚未持久化”不是现状。根目录.env不会自动加载到裸Java进程。
+
 Java 17 + Spring Boot 3.x 模块化单体。`src/main/java/com/autocare/platform/` 下的子包对应交付文档 §6.5。设置至少 32 字节的 `JWT_SECRET` 后执行 `mvn test` 和 `mvn spring-boot:run`，默认监听 8080；`GET /actuator/health` 用于健康检查。
 
 本地权限样例需设置 `SPRING_PROFILES_ACTIVE=local`。`POST /api/dev/token` 的 JSON 请求为 `{ "user_id": "1001" }` 或 `2001`，返回 15 分钟 JWT；以 `Bearer` 令牌访问 `GET /api/demo/vehicles/1001` 时本人成功，用户 1001 访问车辆 2001 返回 HTTP 403、业务码 `40300`。`local` profile 仅供开发环境使用，不可用于生产部署。正式本人车辆与档案接口已实现，见[车辆契约](../docs/api/VEHICLE_MANUAL.md)和[档案契约](../docs/api/ARCHIVE_MANUAL.md)；车主私有图片 HTTP 入口见下文。

@@ -1,0 +1,396 @@
+{
+  "version": 1,
+  "recorded_at": "2026-10-27T09:14:32.822441+08:00",
+  "stage": "R3 ASR durable candidate jobs software",
+  "branch": "codex/asr-durable-jobs",
+  "base_commit": "a611312d95cd944f982e3ed0551a1d19dfc68f1a",
+  "selected_software_regressions_passed": true,
+  "full_backend_rerun": false,
+  "full_api_acceptance_passed": false,
+  "real_asr_model_loaded": false,
+  "model_weights_downloaded": false,
+  "new_asr_dependencies_installed": false,
+  "authorized_audio_accuracy_accepted": false,
+  "wechat_device_acceptance_passed": false,
+  "linux_image_built_or_runtime_accepted": false,
+  "production_acceptance_passed": false,
+  "backend": {
+    "selected_suites_passed": true,
+    "total_suites": 12,
+    "total_tests": 159,
+    "suites": [
+      {
+        "tests": 27,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.JdbcAsrJobsTest",
+        "report_sha256": "5ecccb899eade76cfda6e3e22e79927e968c5d24ff762d2530139ea8c0ca1dbd",
+        "source_run": "asr-backend-lease-recheck.log"
+      },
+      {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.AsrHttpJourneyTest",
+        "report_sha256": "10c172deea120e463fd1f876bbc5f70225e9abc475bc83f9caa140b10699e583",
+        "source_run": "asr-backend-lease-recheck.log"
+      },
+      {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.AsrResultTest",
+        "report_sha256": "ba1c071c8198d0c868e3ca2a5631dfa8ad6dd81f46dca3c61605ef50eecf6451",
+        "source_run": "asr-backend-final.log"
+      },
+      {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.AsrHttpClientTest",
+        "report_sha256": "224b8f41779d64b65a642a7df26738f8dc4f1dff4d0986bfd482d8b253cb3973",
+        "source_run": "asr-backend-final.log"
+      },
+      {
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.JdbcLicenseRecognitionTest",
+        "report_sha256": "97bbc091597650efb12a4013420ba4defb894c4ab5c762795c1739dff0b1d705",
+        "source_run": "asr-backend-final.log"
+      },
+      {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.LicenseHttpJourneyTest",
+        "report_sha256": "cb4c1fc25cc21cff0e8260f746e8f577f111ae38dbdbec7fdb78c4b09e4e0127",
+        "source_run": "asr-backend-final.log"
+      },
+      {
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.JdbcVinRecognitionTest",
+        "report_sha256": "7e80208a1f5859a71ccf75e081a2f5b848ae759d0a2b4710aaf1969cc502ec8f",
+        "source_run": "asr-backend-final.log"
+      },
+      {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.VinHttpJourneyTest",
+        "report_sha256": "14b5adc9b8821b4b6575ed10531beefbef87e5cecca02384740e636ff9a22a33",
+        "source_run": "asr-backend-final.log"
+      },
+      {
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.JdbcUploadHttpTest",
+        "report_sha256": "9081935876e204600d38d6d1bd8c37b04ffba4d11c0a0356692a27676bd395bb",
+        "source_run": "asr-backend-final.log"
+      },
+      {
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.JdbcMileageRecognitionTest",
+        "report_sha256": "5675f01cb59539923ae471c5ddb6d90d4694057520668b618a64f2fc2776d3a2",
+        "source_run": "asr-backend-final.log"
+      },
+      {
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.JdbcCommunityQuestionsTest",
+        "report_sha256": "d6ca0eec5c1734b8a900edd94b3b086a0e8a23ee0549cf467cc72048d83e7689",
+        "source_run": "asr-backend-final.log"
+      },
+      {
+        "tests": 37,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "name": "com.autocare.platform.order.JdbcCouponTransactionsTest",
+        "report_sha256": "b4c0a2e9e275488f097dd72d167da8760090614f0d831eea02e8d74d4e85637e",
+        "source_run": "asr-backend-final.log"
+      }
+    ],
+    "runs": {
+      "matrix": {
+        "log_sha256": "1841e55fb3c01a81e083decc401d54adb25a1e9790cebc25d49ec5cc63739915",
+        "total_tests": 158,
+        "failures": 1,
+        "errors": 0,
+        "note": "One newly added CHECK-constraint test expected a Spring subtype; actual MySQL rejection3819 was correct. All other suites passed."
+      },
+      "affected_recheck": {
+        "log_sha256": "d7b71df0109d615f10ad25de1b81280f4541f42e39db1012854b3ab69976f21b",
+        "suite": "JdbcAsrJobsTest",
+        "tests": 26,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lease_fix_recheck": {
+        "log_sha256": "4d6f8c86fc558e7f892918e771f523e2138372f82cc11c7a9440a825ae1487b2",
+        "suites": [
+          "JdbcAsrJobsTest",
+          "AsrHttpJourneyTest"
+        ],
+        "tests": 32,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "full_backend_rerun": false,
+    "full_api_acceptance_passed": false,
+    "real_asr_or_private_storage_acceptance_passed": false,
+    "source_hash_observation": "Hashes observed after selected matrix, fixture26-test rerun and GET-lease-fix32-test rerun. Ten unrelated suite reports come from matrix; JdbcAsrJobsTest and AsrHttpJourneyTest from final targeted run. Not one all-backend execution or final full matrix rerun.",
+    "sources": {
+      "backend/src/main/java/com/autocare/platform/order/AsrHttpClient.java": "f2543d1eb188c04fd42a94bf4da49a14d7b10ef1830e159c06acc9b63e51a052",
+      "backend/src/main/java/com/autocare/platform/order/AsrJobs.java": "05b91d53f56ba72f8dc9f92db28184510faeb39a259417bb9f530b9f98d0c633",
+      "backend/src/main/java/com/autocare/platform/order/AsrJobsConfiguration.java": "87ac7a55f5af6c19a055869ed95f6b1d43c763de31b6538e84fe2390a53262da",
+      "backend/src/main/java/com/autocare/platform/order/AsrJobsController.java": "6732c48b53ecf0d34e389b5266f83c5351509dbd74bcd8c92b4575a12d27c78c",
+      "backend/src/main/java/com/autocare/platform/order/AsrJobWorker.java": "5b25c1a637a3f2dbc4ac2358853f37a6da8907be7afc0f8497146ab3f78ace66",
+      "backend/src/main/java/com/autocare/platform/order/AsrProvider.java": "abaa2b469f52b0c778e559ae0c76d57b64aeea63d90760c3381240dc9c7873e2",
+      "backend/src/main/java/com/autocare/platform/order/AsrResult.java": "dbb3ec44b0e5557897470b7291f2d9726411f3d697b8fcbc8297dd9e9827db0a",
+      "backend/src/test/java/com/autocare/platform/order/AsrHttpClientTest.java": "b14c130f014246e6be93315cecdb5715acc4fc1ff371151a60c5d145218ae98c",
+      "backend/src/test/java/com/autocare/platform/order/AsrHttpJourneyTest.java": "66cedfa69c6465ae8cd26e3c66f70cb3ae418a736b38897f0d6ebab7178f4542",
+      "backend/src/test/java/com/autocare/platform/order/AsrResultTest.java": "d1894b2f4bf9dee7b6f8ac0c596067a51b2fe034087a42a9c9196b5cb49986dc",
+      "backend/src/test/java/com/autocare/platform/order/IsolatedCoreJourneysTest.java": "320b0bb6f5b2b24d8ae6cc1ab8c90ab91be4b8bb4312c2ed4e615e4b34b0f776",
+      "backend/src/test/java/com/autocare/platform/order/JdbcAsrJobsTest.java": "043fca68ff2432a544de94b96f697b50dc24d01d9da974ac51b2e9d8b73fff00",
+      "backend/src/test/java/com/autocare/platform/order/JdbcCommunityQuestionsTest.java": "b32d68a9371b119498a76be67014b166e5675e14ce4e5489b02414b34765cb8a",
+      "backend/src/test/java/com/autocare/platform/order/JdbcCouponTransactionsTest.java": "e2ca55f7a7824d8f01e6758a073a1ea51dabad29482cc9bbf467ed4947aee775",
+      "backend/src/test/java/com/autocare/platform/RealInvitationRewardJourneyTest.java": "909d1c2a636f9f9e4633e7cd1395fd3558ac0b55073846f9f2a435b57a2376d6",
+      "backend/src/test/java/com/autocare/platform/RealMaterialWorkbenchJourneyTest.java": "705a89a7222b9ab2e1992ed6a514342b85c63cc4390d776701b48c04b24e5344",
+      "backend/src/test/java/com/autocare/platform/RealMerchantOnboardingFileAccessJourneyTest.java": "212cd4963167eb7592e171ab2aee6043e5c6f8f2f4b9340c54452e24970efdbc",
+      "backend/src/test/java/com/autocare/platform/RealPickupWorkFileAccessJourneyTest.java": "04d75ab27de06e5d23279c2fb09c72c1e5b3ebe8e239a91a9883bd332c04b0f8",
+      "backend/src/test/java/com/autocare/platform/RealPrivateUploadJourneyTest.java": "a646b5e3a1a29dd0e52d4b76cd04bc6768f55d2a3b43cf02aca7eaf00f5c5a3a",
+      "backend/src/test/java/com/autocare/platform/RealServiceArchiveAccessJourneyTest.java": "aaafb7e9b2d871479a11d59cacf4526dcaa204d9e65d727d0adfd78c9a1beddd",
+      "docs/sql/migrations/V063__recognition_job.sql": "2e2161ce4e22436dca9b3de76c95da8a5884f4221ccefecff639b6b7b33ac5df"
+    },
+    "boundary": "Real isolated MySQL, TCP application HTTP/JWT, logicalV063132-table migrations and repeated prior migration checks. Synthetic MP3 framing, private-store and ASR provider fixtures; no actual ASR model accuracy or device acceptance. HTTP classes include inherited3 core journeys each. Synthetic identity sessions and LOCAL_TEST funds occur in inherited core journeys.",
+    "repaired_issues": [
+      "Unique synthetic refresh_hash per auth_session fixture instead of colliding value.",
+      "Same-key mismatched-body test now uses another authorized material so authorization remains checked before idempotency mismatch.",
+      "MySQL CHECK tests assert SQL error3819 through DataAccessException rather than assuming translator subtype.",
+      "Fixed actual stale-RUNNING read: GET now checks current lease before projecting state."
+    ],
+    "hardening": [
+      "Cancellation body bounded to32 chars.",
+      "V063 constrains error_code by terminal state, including explicitNOT NULL guard against MySQL CHECK UNKNOWN semantics.",
+      "Fresh GET immediately marks an expired RUNNING lease FAILED/WORKER_LOST rather than waiting for periodic cleanup."
+    ],
+    "covered_boundaries": [
+      "Default disabled zero job/provider I/O",
+      "Strict scope/body/idempotency/auth role/current session/owner",
+      "Two active tasks under concurrent distinct keys and across service instances",
+      "No database transaction around provider/storage I/O",
+      "Current origin JWT/session/vehicle/material source and purpose before/after work",
+      "Cancel-before/after/during work; original audio not deleted",
+      "ExpiredTTL/old-lease CAS/lost-worker recovery without automatic retry",
+      "Corrupt stored result purged; safe error codes constrained",
+      "Shared scheduling thread not blocked; no extra local inference queue",
+      "Explicit original archive endpoint is required to save transcript-derived notes",
+      "Fresh GET invalidates expired lease without maintenance tick."
+    ]
+  },
+  "local_regression": {
+    "version": 1,
+    "finished_at": "2026-10-27T01:11:55.059881+00:00",
+    "selected_checks_passed": true,
+    "source_sha256": "db499a48f9411437076ec1688f75e002dc307ae50be3f4f113b4c40677160da3",
+    "sources_unchanged": true,
+    "backend_requested": false,
+    "backend_runtime_verified": false,
+    "production_acceptance_passed": false,
+    "boundaries": [
+      "Synthetic identities and LOCAL_TEST funds in backend integration tests.",
+      "No real WeChat/SMS/payment/model provider or mobile-device acceptance.",
+      "Builds and unit tests do not certify rendered page interactions.",
+      "Selected regression checks are not all-API business or performance acceptance."
+    ],
+    "checks": [
+      {
+        "name": "miniapp-unit",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 2.266,
+        "log": "miniapp-unit.log"
+      },
+      {
+        "name": "python-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 106.281,
+        "log": "python-regression.log"
+      },
+      {
+        "name": "ocr-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 21.188,
+        "log": "ocr-regression.log"
+      },
+      {
+        "name": "asr-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 5.281,
+        "log": "asr-regression.log"
+      },
+      {
+        "name": "wechat-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 12.75,
+        "log": "wechat-build.log"
+      },
+      {
+        "name": "h5-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 15.172,
+        "log": "h5-build.log"
+      },
+      {
+        "name": "openapi-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.281,
+        "log": "openapi-consistency.log"
+      },
+      {
+        "name": "migration-mounts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.141,
+        "log": "migration-mounts.log"
+      },
+      {
+        "name": "handover-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.296,
+        "log": "handover-consistency.log"
+      },
+      {
+        "name": "contract-verdicts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.172,
+        "log": "contract-verdicts.log"
+      }
+    ]
+  },
+  "counts": {
+    "miniapp_passed": 1189,
+    "miniapp_new_asr_tests": 34,
+    "python_passed": 541,
+    "ocr_passed": 76,
+    "ocr_skipped": 1,
+    "asr_python_passed": 26,
+    "contract_operations": 359,
+    "protected_operations": 345,
+    "historical_four_kind_operations": 317,
+    "verdicts": 42,
+    "tables": 132,
+    "migration_versions": 63
+  },
+  "provider_software": {
+    "python_tests": 26,
+    "failures": 0,
+    "skipped": 0,
+    "test_log_sha256": "2bea61af00fc5dad9d5e65ea1b53f5d3ea758b5a787790137dc565399ce1629a",
+    "initial_24_test_report_sha256": "fffbbc27ea518f39bb15955f4772e92becf947148522d5393ec839f586991bfa",
+    "final_source_hashes": {
+      "services/asr/Dockerfile": "1bb18191f6872aa6ed468374f51dba46ffaeaf235c533ade77d959838d842fd0",
+      "services/asr/prepare_manifest.py": "6d81f6071a6abd205b30fc51152686e453b7633d9da717b513832f0a62b5fee6",
+      "services/asr/requirements.in": "f24f1900a1acb189810fe9391969c526fbdecdad4bb559d7140cd22c07bac4bf",
+      "services/asr/src/asr_model.py": "65906f5e4686180059925c73d5167b7ee7fa7c2e84f72a423bbcd485e036ddcd",
+      "services/asr/src/asr_process.py": "2c07fbb45601ef06fd94155df96e6146be0b423b8decd24caf3800a1fbd201e7",
+      "services/asr/src/asr_protocol.py": "60bd8c7cf49b50cf8936fa5a5d5d89ebf85618f2322789debba0bff20ec73073",
+      "services/asr/src/asr_server.py": "6a076eb45abf68db04b156cf918af2055950c924af6229802b2d0403037e01b3",
+      "services/asr/test_asr_child.py": "5ae0a5bc9db50af2c95d04b9da7321805a04498b27a981cded63326b2340609f",
+      "services/asr/test_asr_model.py": "990272d700985c9257160d26c5769377747fdc1a388bcb0df6693010ba91ce71",
+      "services/asr/test_asr_protocol.py": "785b2e51312d8b078699db83f990554e91b46b74259da19c24c6eb9fb0699e3b",
+      "services/asr/test_asr_runtime.py": "300eeb8fedaa82124a73635c3cd3fd94bf04e7e28df1c8f2de9b050170604e89"
+    },
+    "java_client_protocol_tests_included_in_backend_suites": {
+      "AsrHttpClientTest": 6,
+      "AsrResultTest": 5
+    },
+    "boundary": "Synthetic MP3 framing, explicit library/provider doubles, real Windows owned subprocess/loopback HTTP. No actual Whisper inference, new packages or weights. Dockerfile is an unbuilt preparation entry requiring operator-provided full wheel/hash lock."
+  },
+  "h5_browser": {
+    "fixture": "synthetic recorder/upload/ASR/task/session only; no real speech/model/device",
+    "passed": 17,
+    "checks": [
+      "record options preserve MP3 mono16k48kbps",
+      "local recording did not upload or create",
+      "uploaded material has separate consent and no ASR job",
+      "create disabled without purpose consent",
+      "unknown creation has a recovery handle",
+      "retry same key no duplicate accepted job",
+      "running displayed and AI remains unsent",
+      "timestamps unknown confidence and candidate shown",
+      "original question still empty",
+      "confirmation gated",
+      "manual edit clears acknowledgment",
+      "changed original form is protected",
+      "cancel discards late candidate",
+      "fresh server query before apply",
+      "reviewed text only applied to question",
+      "tasks not audio sent in public JSON",
+      "verified390px no horizontal overflow"
+    ],
+    "viewport": "390x844",
+    "screenshots_visually_reviewed": true,
+    "screenshot_sha256": "aa4fa6172d4672df6d9a3618fd9a7dc71e7ab1782a0276b3ec47f5699f72d700",
+    "script_sha256": {
+      "asr-browser-fixture.js": "cfc178487e171dbf9f41c1ec22c7560a728cb2a5fceac39db7f8ae8351145d60",
+      "asr-browser-journey.js": "2dd16440af922717450bbab1559d0886a4e43767fca106c67a10e44ccc21c8a1"
+    },
+    "boundary": "gstack browse verified390x844; synthetic recorder, upload, session and task API. No microphone/device, actual speech or deployed backend integration claim."
+  },
+  "additional_source_hashes": {
+    "apps/miniapp/src/services/asr-jobs.js": "811f6a297493396f40f1c8e45eb4ac5f0837b977155de62ad5218277d1401768",
+    "apps/miniapp/src/services/asr-flow.js": "5178be5d45b6e78d7a4c1d578aae18f2acee61a79d792167402d738c0b991289",
+    "apps/miniapp/src/components/AsrTranscription.vue": "94931566fac257a37c5866eda651dc9632e4b6109d9143f9482ff013a8c95562",
+    "apps/miniapp/src/components/AsrPendingRequests.vue": "9c7427830c8328534bce6e30ee845a26344e377e6044df22f884d9b53517db72",
+    "apps/miniapp/src/components/LocalInputMaterials.vue": "ba52be364da1834a93df549f342587d80cd138f7729fe72cf081c480f10df252",
+    "apps/miniapp/src/services/input-material-upload.js": "10d96727744b0171b9ece2653df84592efb98524849732948ed067df17fc8eeb",
+    "apps/miniapp/src/pages/ai/index.vue": "620efb57e8f2a4023cd3a10251a1ec9555827b174c8dee9dde03676a88bc45dd",
+    "apps/miniapp/src/pages/archive/record-add.vue": "6edba4ac4f9b41ad5e727d7290a8d034e02b22c82bd76bcd2a48367b5d41bfd6",
+    "apps/miniapp/test/asr-jobs.test.js": "9baea2452d5037d4be104c6063010abe66b4dfebe57c580a7b16710ef8281eb2",
+    ".env.example": "3f220e949207a75f193afed1dfff7bc55202935c68ea6aab9c0684b013eb2465",
+    "deploy/cloudrun/env.example": "f595250f54e0445a7fda77b4b149dda689d0b97ce924d88d7c580934e9902f3f",
+    "deploy/compose/compose.yml": "b721195ee03b2ea1bdc4fc80b7c2006458b33c28ddab68ff9fdbf6a045b98e7d",
+    ".github/workflows/ci.yml": "cbee114cbf8e64a5e4bce25e34ab0305fe6e17cf33208f516015b45a77ce0d7c",
+    "docs/sql/migrations/V063__recognition_job.sql": "2e2161ce4e22436dca9b3de76c95da8a5884f4221ccefecff639b6b7b33ac5df",
+    "scripts/run_local_delivery.py": "25faa4e4ffdaf6ad302531730632b87074863e52f10a80045041d80d48a8ca21"
+  },
+  "source_hash_observation": "Selected backend suite report and source hashes rechecked. Provider/frontend/additional hashes observed after relevant tests, not claimed as two-sided snapshots. Unified final ten-group run independently recorded unchanged source before/after. Earlier snapshots superseded after lease/TTL/environment/flat-layout fixes.",
+  "known_limits": [
+    "No ASR weights/full transitive wheel hash lock or accepted Linux runtime. Real speech accuracy, silence/noise/dialect and resource performance remain unverified.",
+    "Auxiliary audio upload still requires the existing direct HTTP(S) multipart endpoint; callContainer mode only transports JSON task APIs.",
+    "Cancellation is best effort when requests/results are unknown. Reconfirming an unknown create requires renewed consent and may create then cancel if the first request never arrived.",
+    "Task metadata and original audio retention/deletion remain separate; candidate TTL does not delete audio.",
+    "Full current backend/allAPI, formal WeChat/SMS/production and real devices not accepted.",
+    "Document/PDF extraction, authorized vector retrieval and Chinese exact vehicle source remain future work."
+  ]
+}

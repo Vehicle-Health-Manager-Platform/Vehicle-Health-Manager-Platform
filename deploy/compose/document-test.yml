@@ -1,0 +1,44 @@
+# Explicit local/test opt-in. Requires an already verified local acceptance image.
+# Never add this override to the default or production startup command.
+services:
+  backend:
+    environment:
+      DOCUMENT_ENABLED: "true"
+      DOCUMENT_URL: http://document-extractor:8092/extract
+      DOCUMENT_SERVICE_TOKEN: ${DOCUMENT_SERVICE_TOKEN:?Set a private document token}
+      DOCUMENT_ALLOW_PRIVATE_HTTP: "true"
+    networks:
+      - default
+      - document_private
+    depends_on:
+      document-extractor:
+        condition: service_started
+  document-extractor:
+    image: autocare-document-core:acceptance
+    pull_policy: never
+    command: ["python", "-u", "/document/src/document_server.py"]
+    user: "10001:10001"
+    environment:
+      DOCUMENT_SERVICE_ENABLED: "true"
+      DOCUMENT_CORE_ENABLED: "true"
+      DOCUMENT_SERVICE_TOKEN: ${DOCUMENT_SERVICE_TOKEN:?Set a private document token}
+      DOCUMENT_PORT: "8092"
+    volumes:
+      - type: bind
+        source: ${DOCUMENT_MODELS_DIR:?Set the verified OCR model directory}
+        target: /models
+        read_only: true
+    networks:
+      - document_private
+    mem_limit: 2g
+    memswap_limit: 2g
+    cpus: 2
+    pids_limit: 128
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=256m,mode=1777
+networks:
+  document_private:
+    internal: true

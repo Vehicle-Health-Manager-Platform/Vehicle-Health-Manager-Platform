@@ -35,7 +35,7 @@ RUNTIME_IMAGE = 'maven:3.9-eclipse-temurin-17'
 MAVEN_CACHE = 'autocare-maven-cache'
 DATABASE = 'perf_baseline'
 ISSUER = 'vehicle-health-manager'
-TABLES = 131
+TABLES = 134
 
 CONCURRENCY = 500
 READ_ROUNDS = 3
@@ -109,7 +109,7 @@ def free_port():
 
 def migration_files():
     files = sorted(MIGRATIONS.glob('*.sql'))
-    require(len(files) == 62, 'Expected 62 ordered migrations for the performance baseline')
+    require(len(files) == 65, 'Expected 65 ordered migrations for the performance baseline')
     return files
 
 

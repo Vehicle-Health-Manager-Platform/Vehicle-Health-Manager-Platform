@@ -2,6 +2,16 @@
 
 # API 文档
 
+2026-10-28 R5c2：[公开向量/关键词降级、片段详情和AI引用](KNOWLEDGE_VECTOR_RETRIEVAL.md)。复用原三条知识路由，新增可选chunk参数与精确引用字段，仍362操作/348受保护；默认KEYWORD，显式配置及当前完整授权索引才启用VECTOR。下方各阶段数量与状态为历史记录。
+
+2026-10-27 R3：[ASR持久任务](ASR_JOBS.md)新增创建/查询/取消与人工转写核对，默认关闭。软件流程、真实模型资源和授权语音效果分别验收；契约当前359项/345受保护、317历史证据加42项结论，不代表全接口本轮通过。
+
+2026-10-27 R2b：[行驶证新车用途候选接口](LICENSE_RECOGNITION.md)，本人CLEAN JPEG/PNG、明确上传识别用途同意，保留车牌/VIN低可信及多值候选，人工核对后手动选车型；默认关闭，不证明真伪，不自动关联证件附件。
+
+2026-10-26 R2a：[VIN车主POST网关及页面](VIN_OWNER_GATEWAY.md)已接通有限NHTSA候选与人工选车型流程，默认关闭；[内部来源适配](VIN_PROVIDER_FOUNDATION.md)为R1历史记录。真实覆盖、国内精确映射及行驶证另验；五类能力顺序见[规划](../superpowers/plans/2026-10-26-recognition-vector-roadmap.md)。
+
+2026-10-26：[商家接车仪表里程候选](PICKUP_MILEAGE_RECOGNITION.md)，独立门店/订单/图片授权与用途同意，人工核对后带入原表单，不自动提交。
+
 > [本机录音与辅助材料边界](LOCAL_INPUT_MATERIALS.md)：A2a本机采集不新增HTTP接口，不把音频/PDF混入现有图片上传或文本AI正文；受控媒体上传属于下一A2b。
 
 > 2026-10-17当前：[R8图片公开](PUBLIC_IMAGES.md) · [许可资料与检索/AI引用](LICENSED_KNOWLEDGE.md)；实际公开问答页面与恢复已接通，独立权限/17字段、V061/130表，后续历史条目按当时状态保留。
@@ -135,3 +145,9 @@ PR #14 实现[本人车辆列表、有效车型查询与手动添加](VEHICLE_MA
 - [R7c1 站内通知协议](SERVICE_NOTIFICATIONS.md)：本地阶段，整R7完成后代码与文档统一上传。
 
 - [R7c2 非实时人工诊断](ASYNC_DIAGNOSIS.md)：本地完成，整R7完成后代码与文档统一上传。
+
+R4a增量：[受限图文/PDF内核、来源与实测](../progress/RECOGNITION_R4A_DOCUMENT_CORE.md)。原生文字偏移与扫描/混合/图片实际Paddle多边形已实现，预算超限整次拒绝；没有新增公开HTTP接口、持久任务或小程序入口，R4b还需接入同意/鉴权/撤销/TTL和人工核对。不能据内核通过宣布车主图文业务完成。
+
+R4b当前增量：[图文任务/独立图片材料/人工逐块核对](DOCUMENT_JOBS.md)，3项公开操作，当前362项；R4a“无公开入口”描述的是当时内核阶段。
+
+R5a：[显式嵌入许可与内部版本化索引基础](KNOWLEDGE_VECTOR_FOUNDATION.md)。兼容旧知识payload，公开检索/AI保持KEYWORD，不新增向量公开操作，真实模型/tokenizer/召回另验。

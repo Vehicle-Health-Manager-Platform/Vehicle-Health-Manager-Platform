@@ -1,0 +1,1079 @@
+{
+  "version": 1,
+  "stage": "R4b",
+  "recorded_at": "2026-10-27T11:52:38.433344+00:00",
+  "source_sha256": "b4a22c70f74e110da1935d364cd717bb16fac79d5e65f75e7fbaaed9d3d708eb",
+  "selected_checks_passed": true,
+  "production_acceptance_passed": false,
+  "full_api_acceptance_passed": false,
+  "scope": "Durable owner document candidates and UI. Java public HTTP/JWT/MySQL use explicit synthetic storage and extraction provider; actual private HTTP/PDFBox/Paddle separately use generated English fixtures. No combined real public-owner/model/storage journey claim.",
+  "java_selected": {
+    "tests": 99,
+    "suites": [
+      {
+        "suite": "com.autocare.platform.InputMaterialValidatorTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "com.autocare.platform.JdbcInputMaterialTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "com.autocare.platform.order.AsrHttpJourneyTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "com.autocare.platform.order.DocumentHttpClientTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "com.autocare.platform.order.DocumentHttpJourneyTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "com.autocare.platform.order.DocumentResultTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "com.autocare.platform.order.JdbcAsrJobsTest",
+        "tests": 27,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "com.autocare.platform.order.JdbcDocumentJobsTest",
+        "tests": 31,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ],
+    "maven_log_sha256": "f51c7c1b16f6023df5d935fd85099bbf23650aca0ed14c62d4a436556112f76e",
+    "actual_database_and_http": true,
+    "provider_and_storage_synthetic": true,
+    "inherited_core_tests_per_http_suite": 3
+  },
+  "local_delivery": {
+    "version": 1,
+    "finished_at": "2026-10-27T11:47:23.601174+00:00",
+    "selected_checks_passed": true,
+    "source_sha256": "b4a22c70f74e110da1935d364cd717bb16fac79d5e65f75e7fbaaed9d3d708eb",
+    "sources_unchanged": true,
+    "backend_requested": false,
+    "backend_runtime_verified": false,
+    "production_acceptance_passed": false,
+    "boundaries": [
+      "Synthetic identities and LOCAL_TEST funds in backend integration tests.",
+      "No real WeChat/SMS/payment/model provider or mobile-device acceptance.",
+      "Builds and unit tests do not certify rendered page interactions.",
+      "Selected regression checks are not all-API business or performance acceptance."
+    ],
+    "checks": [
+      {
+        "name": "miniapp-unit",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 2.484,
+        "log": "miniapp-unit.log"
+      },
+      {
+        "name": "python-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 115.406,
+        "log": "python-regression.log"
+      },
+      {
+        "name": "ocr-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 22.578,
+        "log": "ocr-regression.log"
+      },
+      {
+        "name": "asr-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 5.735,
+        "log": "asr-regression.log"
+      },
+      {
+        "name": "document-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 8.484,
+        "log": "document-regression.log"
+      },
+      {
+        "name": "wechat-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 15.485,
+        "log": "wechat-build.log"
+      },
+      {
+        "name": "h5-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 19.656,
+        "log": "h5-build.log"
+      },
+      {
+        "name": "openapi-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.453,
+        "log": "openapi-consistency.log"
+      },
+      {
+        "name": "migration-mounts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.219,
+        "log": "migration-mounts.log"
+      },
+      {
+        "name": "handover-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.39,
+        "log": "handover-consistency.log"
+      },
+      {
+        "name": "contract-verdicts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.25,
+        "log": "contract-verdicts.log"
+      }
+    ]
+  },
+  "browser": {
+    "fixture": "synthetic picker/upload/document/task/session only; no actual document/model/device",
+    "passed": 17,
+    "checks": [
+      "local image does not upload or create",
+      "uploaded material has separate consent and no ASR job",
+      "create disabled without purpose consent",
+      "unknown creation has a recovery handle",
+      "retry same key no duplicate accepted job",
+      "running displayed and AI remains unsent",
+      "timestamps unknown confidence and candidate shown",
+      "original question still empty",
+      "empty selection requires manual choice",
+      "confirmation gated",
+      "manual edit clears acknowledgment",
+      "changed original form is protected",
+      "cancel discards late candidate",
+      "fresh server query before apply",
+      "reviewed text only applied to question",
+      "only material reference sent in public JSON",
+      "verified390px no horizontal overflow"
+    ],
+    "viewport": "390x844"
+  },
+  "actual_kernel_and_private_http": {
+    "passed": true,
+    "source_sha256": "b4a22c70f74e110da1935d364cd717bb16fac79d5e65f75e7fbaaed9d3d708eb",
+    "scope": "Internal kernel and private HTTP; generated English documents; no public owner API, persistent task, UI or user accuracy acceptance",
+    "production_acceptance_passed": false,
+    "java_suites": [
+      {
+        "suite": "com.autocare.platform.InputMaterialValidatorTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report_sha256": "b4d57000d738116053100ec33cc44303e9ea55d6231cd3705cc810c2ccc2d2cb"
+      },
+      {
+        "suite": "com.autocare.platform.recognition.DocumentPdfPlanTest",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report_sha256": "cf1e430fab8e624e2cf23b22eaffc1a45638a11733ca7d81486015551fa2b50b"
+      },
+      {
+        "suite": "com.autocare.platform.vehicle.ArchiveReportPdfRendererTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report_sha256": "af3d62d1fdd61dbbdfc32a70028db92a555d6759f65fcce2c0f5084230bdc239"
+      }
+    ],
+    "java_artifacts": [
+      {
+        "path": "classes/com/autocare/platform/file/FileValidator$Validated.class",
+        "bytes": 1746,
+        "sha256": "a22867ba52563149b4ad8ecabf734c4764397a383147693354a7157f839b5912"
+      },
+      {
+        "path": "classes/com/autocare/platform/file/FileValidator.class",
+        "bytes": 3498,
+        "sha256": "97add8484ead4e685c8f6d5d4b78b3e65984bb2d16fa7c942d3b1396d8b76190"
+      },
+      {
+        "path": "classes/com/autocare/platform/file/InputMaterialValidator$Validated.class",
+        "bytes": 2156,
+        "sha256": "1958b957d9650370f2b76dc4c91b4f8fc93e295f6a258e9b8c0f99f6667ca57f"
+      },
+      {
+        "path": "classes/com/autocare/platform/file/InputMaterialValidator.class",
+        "bytes": 11300,
+        "sha256": "e12d719aba73316c46df23aa1fa8e4417e68483c8fff84c0e37f9c6d3a921b81"
+      },
+      {
+        "path": "classes/com/autocare/platform/file/UploadException$1.class",
+        "bytes": 1012,
+        "sha256": "a865122e7a5a75c10674c772dce40402b49a9c69109dbb69bc7cffc5b3d8296e"
+      },
+      {
+        "path": "classes/com/autocare/platform/file/UploadException$Reason.class",
+        "bytes": 1520,
+        "sha256": "c51ecbbcdce951a3f0ccbed7b71281a4474154ffbb18676386d33a5ff74e7b04"
+      },
+      {
+        "path": "classes/com/autocare/platform/file/UploadException.class",
+        "bytes": 1329,
+        "sha256": "e270ca5abe913f2d5f3787e832064c9f56fa03246bf72d0bb2421c35c2958403"
+      },
+      {
+        "path": "classes/com/autocare/platform/file/UploadHttpException.class",
+        "bytes": 1130,
+        "sha256": "a5a3d3bfaea5e1056177ca3d51473fef931c16d5f8ce2db800d304795b29274b"
+      },
+      {
+        "path": "classes/com/autocare/platform/recognition/DocumentPdfMain.class",
+        "bytes": 2431,
+        "sha256": "9a618f5483d78c883e49b5ff35a554ee22ef73c45c133824e75ae8310806cb3d"
+      },
+      {
+        "path": "classes/com/autocare/platform/recognition/DocumentPdfPlan$1.class",
+        "bytes": 1287,
+        "sha256": "3986af5afe416d0f5d1d1123354233105738f3b969b7e694e0f80b1b2d7be74b"
+      },
+      {
+        "path": "classes/com/autocare/platform/recognition/DocumentPdfPlan$Rejected.class",
+        "bytes": 676,
+        "sha256": "96d6f6b193d6cab8e0babf0fc6fd589e2d89d4a4f3490d6af9dc3b32e1225464"
+      },
+      {
+        "path": "classes/com/autocare/platform/recognition/DocumentPdfPlan$Text.class",
+        "bytes": 1167,
+        "sha256": "e34bdc2a5a0c3c50fb7e56d25da2a570c52dcdb46723ab528102d2913e340abb"
+      },
+      {
+        "path": "classes/com/autocare/platform/recognition/DocumentPdfPlan.class",
+        "bytes": 11634,
+        "sha256": "ef863bd1afd883581871b5f1f588afa5e0f00eb3fafc0cf3b656c0aee795d36f"
+      },
+      {
+        "path": "lib/pdfbox-3.0.5.jar",
+        "bytes": 2053368,
+        "sha256": "f0e5d3a1e573c707e4fbcc2ee8e42ea8ca1d5261bdcb3a05a08d2118553c1e5a"
+      },
+      {
+        "path": "lib/pdfbox-io-3.0.5.jar",
+        "bytes": 47716,
+        "sha256": "6df3f3b4db4fd55ef502847ea4e4ebc58e28908800e86eab031345efe219b705"
+      },
+      {
+        "path": "lib/fontbox-3.0.5.jar",
+        "bytes": 1643843,
+        "sha256": "e8a62be2df27a0d44191b6669c0b18df6efe5271232db8dcb8745d5d9774755b"
+      },
+      {
+        "path": "lib/commons-logging-1.3.5.jar",
+        "bytes": 73737,
+        "sha256": "6d7a744e4027649fbb50895df9497d109f98c766a637062fe8d2eabbb3140ba4"
+      },
+      {
+        "path": "lib/jackson-annotations-2.19.2.jar",
+        "bytes": 79309,
+        "sha256": "e516743a316dcf83c572ffc9cb6e8c5e8c134880c8c5155b02f7b34e9c5dc3cf"
+      },
+      {
+        "path": "lib/jackson-core-2.19.2.jar",
+        "bytes": 591418,
+        "sha256": "aa77eaf29293a868c47372194f7c5287d77d9370b04ea25d3fffc1e4904b5880"
+      },
+      {
+        "path": "lib/jackson-databind-2.19.2.jar",
+        "bytes": 1679351,
+        "sha256": "0a1bd4e9b0d670e632d40ee8c625ad376233502f03c2f5889baea95d025b47a7"
+      }
+    ],
+    "fixtures": {
+      "action.pdf": "d27292f397d2512a38afab9487b4d7c86c09e067811effac2643ae58a75cf14c",
+      "blank.pdf": "65e3cdf9bebbeeacc02d14a16475af5fce854fc3eafdc01b2e513fe46e7abc8c",
+      "corrupt.pdf": "d1f6baf6abc491c4596aea6483fcf324dc02b61d68bf17ee2545eaad76e98004",
+      "encrypted.pdf": "3888faec678212830abe7f654f404dfc16082e89134bfad669530096b4e2acb4",
+      "external.pdf": "3b4897129b517d33e82dde21aace14a39f2eb981cb7c305d8c19a53e31ea85d9",
+      "image.png": "bc13384ce3903cb01d7deff2a39041b0d4106a159932eb49d866793906aafa7c",
+      "mixed.pdf": "ca01a0b896c1293cd3e4732b0087389a7b6a76d6046258322b84901699fb1816",
+      "native.pdf": "2a34dcdbb1719dd713400309e1c103980abfa85b8b5e89c6e47531b8f948a04b",
+      "overpages.pdf": "c2ab4dbf19b1077f830c81a3dc5d22e3fda22f9a260c5797c2ebdf19d44cecff",
+      "overtext.pdf": "20b3d2ac600716da5216f819bec6166169ee23ed9e4aa10a3f748320819cb7aa",
+      "rotated.pdf": "5b4b97e670695d426edff54298ca62264f51ed6106b23aaadf97e75636428a81",
+      "scan.pdf": "891206d22370e958b84c8ac2955e4b1a6cb3399aa41469acd6c62c433a79bb40"
+    },
+    "resources": {
+      "Memory": 2147483648,
+      "MemorySwap": 2147483648,
+      "PidsLimit": 128,
+      "NanoCpus": 2000000000,
+      "ReadonlyRootfs": true,
+      "NetworkMode": "none",
+      "nonroot": true,
+      "capabilities_dropped": true,
+      "resource_binds_readonly": true,
+      "host_ports": false
+    },
+    "image_id": "sha256:db3f7274aafa4d11b399ed17514f98d19688cb75b2bc18d175dc673c29ffa3a8",
+    "runtime": {
+      "passed": true,
+      "checks": {
+        "source_modules_without_host_bytecode": true,
+        "native.pdf_all_pages": true,
+        "blank.pdf_all_pages": true,
+        "image.png_all_pages": true,
+        "scan.pdf_all_pages": true,
+        "mixed.pdf_all_pages": true,
+        "rotated.pdf_all_pages": true,
+        "native_two_pages_without_ocr": true,
+        "blank_is_empty_without_ocr": true,
+        "image.png_actual_ocr_expected_number": true,
+        "scan.pdf_actual_ocr_expected_number": true,
+        "mixed.pdf_actual_ocr_expected_number": true,
+        "overpages.pdf_rejected_without_partial": true,
+        "overtext.pdf_rejected_without_partial": true,
+        "corrupt.pdf_rejected_without_partial": true,
+        "encrypted.pdf_rejected_without_partial": true,
+        "action.pdf_rejected_without_partial": true,
+        "external.pdf_rejected_without_partial": true,
+        "real_child_timeout_and_reap": true,
+        "native_recovers_after_timeout": true,
+        "closed_no_child": true
+      },
+      "samples": {
+        "native.pdf": {
+          "elapsed_seconds": 0.758,
+          "result": {
+            "version": 1,
+            "task": "DOCUMENT",
+            "source": "PDFBOX_PADDLE",
+            "content_type": "application/pdf",
+            "content_sha256": "2a34dcdbb1719dd713400309e1c103980abfa85b8b5e89c6e47531b8f948a04b",
+            "page_count": 2,
+            "pages": [
+              {
+                "page": 1,
+                "method": "NATIVE_TEXT",
+                "text": "Service 2026-10-27\nODO 123456 km",
+                "raster_size": null,
+                "blocks": [
+                  {
+                    "text": "Service 2026-10-27",
+                    "confidence": null,
+                    "source": {
+                      "kind": "TEXT_OFFSET",
+                      "start": 0,
+                      "end": 18
+                    }
+                  },
+                  {
+                    "text": "ODO 123456 km",
+                    "confidence": null,
+                    "source": {
+                      "kind": "TEXT_OFFSET",
+                      "start": 19,
+                      "end": 32
+                    }
+                  }
+                ]
+              },
+              {
+                "page": 2,
+                "method": "NATIVE_TEXT",
+                "text": "Service 2026-10-27\nODO 123456 km",
+                "raster_size": null,
+                "blocks": [
+                  {
+                    "text": "Service 2026-10-27",
+                    "confidence": null,
+                    "source": {
+                      "kind": "TEXT_OFFSET",
+                      "start": 0,
+                      "end": 18
+                    }
+                  },
+                  {
+                    "text": "ODO 123456 km",
+                    "confidence": null,
+                    "source": {
+                      "kind": "TEXT_OFFSET",
+                      "start": 19,
+                      "end": 32
+                    }
+                  }
+                ]
+              }
+            ],
+            "status": "EXTRACTED",
+            "requires_confirmation": true,
+            "image_recognition_performed": false,
+            "all_pages_processed": true
+          },
+          "expected_number_present": true
+        },
+        "blank.pdf": {
+          "elapsed_seconds": 0.61,
+          "result": {
+            "version": 1,
+            "task": "DOCUMENT",
+            "source": "PDFBOX_PADDLE",
+            "content_type": "application/pdf",
+            "content_sha256": "65e3cdf9bebbeeacc02d14a16475af5fce854fc3eafdc01b2e513fe46e7abc8c",
+            "page_count": 1,
+            "pages": [
+              {
+                "page": 1,
+                "method": "EMPTY",
+                "text": "",
+                "raster_size": null,
+                "blocks": []
+              }
+            ],
+            "status": "EMPTY",
+            "requires_confirmation": true,
+            "image_recognition_performed": false,
+            "all_pages_processed": true
+          },
+          "expected_number_present": false
+        },
+        "image.png": {
+          "elapsed_seconds": 8.613,
+          "result": {
+            "version": 1,
+            "task": "DOCUMENT",
+            "source": "PDFBOX_PADDLE",
+            "content_type": "image/png",
+            "content_sha256": "bc13384ce3903cb01d7deff2a39041b0d4106a159932eb49d866793906aafa7c",
+            "page_count": 1,
+            "pages": [
+              {
+                "page": 1,
+                "method": "OCR",
+                "text": "ODO 123456 km\nService 2026-10-27",
+                "raster_size": [
+                  1000,
+                  260
+                ],
+                "blocks": [
+                  {
+                    "text": "ODO 123456 km",
+                    "confidence": 0.9858036637306213,
+                    "source": {
+                      "kind": "RASTER_POLYGON",
+                      "points": [
+                        [
+                          31,
+                          61
+                        ],
+                        [
+                          434,
+                          63
+                        ],
+                        [
+                          433,
+                          120
+                        ],
+                        [
+                          31,
+                          118
+                        ]
+                      ]
+                    }
+                  },
+                  {
+                    "text": "Service 2026-10-27",
+                    "confidence": 0.9989988803863525,
+                    "source": {
+                      "kind": "RASTER_POLYGON",
+                      "points": [
+                        [
+                          30,
+                          151
+                        ],
+                        [
+                          501,
+                          151
+                        ],
+                        [
+                          501,
+                          210
+                        ],
+                        [
+                          30,
+                          210
+                        ]
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "status": "EXTRACTED",
+            "requires_confirmation": true,
+            "image_recognition_performed": true,
+            "all_pages_processed": true
+          },
+          "expected_number_present": true
+        },
+        "scan.pdf": {
+          "elapsed_seconds": 6.159,
+          "result": {
+            "version": 1,
+            "task": "DOCUMENT",
+            "source": "PDFBOX_PADDLE",
+            "content_type": "application/pdf",
+            "content_sha256": "891206d22370e958b84c8ac2955e4b1a6cb3399aa41469acd6c62c433a79bb40",
+            "page_count": 1,
+            "pages": [
+              {
+                "page": 1,
+                "method": "OCR",
+                "text": "ODO 123456 km\nService 2026-10-27",
+                "raster_size": [
+                  1000,
+                  366
+                ],
+                "blocks": [
+                  {
+                    "text": "ODO 123456 km",
+                    "confidence": 0.9821566343307495,
+                    "source": {
+                      "kind": "RASTER_POLYGON",
+                      "points": [
+                        [
+                          63,
+                          113
+                        ],
+                        [
+                          439,
+                          116
+                        ],
+                        [
+                          438,
+                          170
+                        ],
+                        [
+                          62,
+                          167
+                        ]
+                      ]
+                    }
+                  },
+                  {
+                    "text": "Service 2026-10-27",
+                    "confidence": 0.9805047512054443,
+                    "source": {
+                      "kind": "RASTER_POLYGON",
+                      "points": [
+                        [
+                          60,
+                          200
+                        ],
+                        [
+                          502,
+                          196
+                        ],
+                        [
+                          502,
+                          250
+                        ],
+                        [
+                          61,
+                          254
+                        ]
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "status": "EXTRACTED",
+            "requires_confirmation": true,
+            "image_recognition_performed": true,
+            "all_pages_processed": true
+          },
+          "expected_number_present": true
+        },
+        "mixed.pdf": {
+          "elapsed_seconds": 6.201,
+          "result": {
+            "version": 1,
+            "task": "DOCUMENT",
+            "source": "PDFBOX_PADDLE",
+            "content_type": "application/pdf",
+            "content_sha256": "ca01a0b896c1293cd3e4732b0087389a7b6a76d6046258322b84901699fb1816",
+            "page_count": 1,
+            "pages": [
+              {
+                "page": 1,
+                "method": "OCR",
+                "text": "Native footer\nODO 123456 km\nService 2026-10-27",
+                "raster_size": [
+                  1000,
+                  366
+                ],
+                "blocks": [
+                  {
+                    "text": "Native footer",
+                    "confidence": 0.9913297891616821,
+                    "source": {
+                      "kind": "RASTER_POLYGON",
+                      "points": [
+                        [
+                          29,
+                          8
+                        ],
+                        [
+                          168,
+                          8
+                        ],
+                        [
+                          168,
+                          37
+                        ],
+                        [
+                          29,
+                          37
+                        ]
+                      ]
+                    }
+                  },
+                  {
+                    "text": "ODO 123456 km",
+                    "confidence": 0.9901183247566223,
+                    "source": {
+                      "kind": "RASTER_POLYGON",
+                      "points": [
+                        [
+                          64,
+                          115
+                        ],
+                        [
+                          438,
+                          115
+                        ],
+                        [
+                          438,
+                          168
+                        ],
+                        [
+                          64,
+                          168
+                        ]
+                      ]
+                    }
+                  },
+                  {
+                    "text": "Service 2026-10-27",
+                    "confidence": 0.9994271397590637,
+                    "source": {
+                      "kind": "RASTER_POLYGON",
+                      "points": [
+                        [
+                          61,
+                          201
+                        ],
+                        [
+                          502,
+                          197
+                        ],
+                        [
+                          502,
+                          250
+                        ],
+                        [
+                          62,
+                          254
+                        ]
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "status": "EXTRACTED",
+            "requires_confirmation": true,
+            "image_recognition_performed": true,
+            "all_pages_processed": true
+          },
+          "expected_number_present": true
+        },
+        "rotated.pdf": {
+          "elapsed_seconds": 6.275,
+          "result": {
+            "version": 1,
+            "task": "DOCUMENT",
+            "source": "PDFBOX_PADDLE",
+            "content_type": "application/pdf",
+            "content_sha256": "5b4b97e670695d426edff54298ca62264f51ed6106b23aaadf97e75636428a81",
+            "page_count": 1,
+            "pages": [
+              {
+                "page": 1,
+                "method": "OCR",
+                "text": "Service 2026-10-27\nODO 123456 km",
+                "raster_size": [
+                  366,
+                  1000
+                ],
+                "blocks": [
+                  {
+                    "text": "Service 2026-10-27",
+                    "confidence": 0.9992895126342773,
+                    "source": {
+                      "kind": "RASTER_POLYGON",
+                      "points": [
+                        [
+                          105,
+                          48
+                        ],
+                        [
+                          176,
+                          48
+                        ],
+                        [
+                          176,
+                          506
+                        ],
+                        [
+                          105,
+                          506
+                        ]
+                      ]
+                    }
+                  },
+                  {
+                    "text": "ODO 123456 km",
+                    "confidence": 0.9921016097068787,
+                    "source": {
+                      "kind": "RASTER_POLYGON",
+                      "points": [
+                        [
+                          191,
+                          51
+                        ],
+                        [
+                          259,
+                          52
+                        ],
+                        [
+                          255,
+                          445
+                        ],
+                        [
+                          186,
+                          444
+                        ]
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "status": "EXTRACTED",
+            "requires_confirmation": true,
+            "image_recognition_performed": true,
+            "all_pages_processed": true
+          },
+          "expected_number_present": true
+        }
+      },
+      "real_user_accuracy_accepted": false
+    },
+    "http_runtime": {
+      "passed": true,
+      "checks": {
+        "health_is_configuration_only": true,
+        "private_token_required": true,
+        "url_query_refused": true,
+        "native.pdf_source_bound_complete": true,
+        "native.pdf_actual_content": true,
+        "scan.pdf_source_bound_complete": true,
+        "scan.pdf_actual_content": true,
+        "image.png_source_bound_complete": true,
+        "image.png_actual_content": true,
+        "invalid_document_safe_error": true,
+        "overpages_no_partial": true,
+        "singleflight_rejects_queue": true,
+        "child_reaped_between_requests": true
+      },
+      "samples": {
+        "native.pdf": {
+          "version": 1,
+          "task": "DOCUMENT",
+          "source": "PDFBOX_PADDLE",
+          "content_type": "application/pdf",
+          "content_sha256": "2a34dcdbb1719dd713400309e1c103980abfa85b8b5e89c6e47531b8f948a04b",
+          "page_count": 2,
+          "pages": [
+            {
+              "page": 1,
+              "method": "NATIVE_TEXT",
+              "text": "Service 2026-10-27\nODO 123456 km",
+              "raster_size": null,
+              "blocks": [
+                {
+                  "text": "Service 2026-10-27",
+                  "confidence": null,
+                  "source": {
+                    "kind": "TEXT_OFFSET",
+                    "start": 0,
+                    "end": 18
+                  }
+                },
+                {
+                  "text": "ODO 123456 km",
+                  "confidence": null,
+                  "source": {
+                    "kind": "TEXT_OFFSET",
+                    "start": 19,
+                    "end": 32
+                  }
+                }
+              ]
+            },
+            {
+              "page": 2,
+              "method": "NATIVE_TEXT",
+              "text": "Service 2026-10-27\nODO 123456 km",
+              "raster_size": null,
+              "blocks": [
+                {
+                  "text": "Service 2026-10-27",
+                  "confidence": null,
+                  "source": {
+                    "kind": "TEXT_OFFSET",
+                    "start": 0,
+                    "end": 18
+                  }
+                },
+                {
+                  "text": "ODO 123456 km",
+                  "confidence": null,
+                  "source": {
+                    "kind": "TEXT_OFFSET",
+                    "start": 19,
+                    "end": 32
+                  }
+                }
+              ]
+            }
+          ],
+          "status": "EXTRACTED",
+          "requires_confirmation": true,
+          "image_recognition_performed": false,
+          "all_pages_processed": true
+        },
+        "scan.pdf": {
+          "version": 1,
+          "task": "DOCUMENT",
+          "source": "PDFBOX_PADDLE",
+          "content_type": "application/pdf",
+          "content_sha256": "891206d22370e958b84c8ac2955e4b1a6cb3399aa41469acd6c62c433a79bb40",
+          "page_count": 1,
+          "pages": [
+            {
+              "page": 1,
+              "method": "OCR",
+              "text": "ODO 123456 km\nService 2026-10-27",
+              "raster_size": [
+                1000,
+                366
+              ],
+              "blocks": [
+                {
+                  "text": "ODO 123456 km",
+                  "confidence": 0.9821566343307495,
+                  "source": {
+                    "kind": "RASTER_POLYGON",
+                    "points": [
+                      [
+                        63,
+                        113
+                      ],
+                      [
+                        439,
+                        116
+                      ],
+                      [
+                        438,
+                        170
+                      ],
+                      [
+                        62,
+                        167
+                      ]
+                    ]
+                  }
+                },
+                {
+                  "text": "Service 2026-10-27",
+                  "confidence": 0.9805047512054443,
+                  "source": {
+                    "kind": "RASTER_POLYGON",
+                    "points": [
+                      [
+                        60,
+                        200
+                      ],
+                      [
+                        502,
+                        196
+                      ],
+                      [
+                        502,
+                        250
+                      ],
+                      [
+                        61,
+                        254
+                      ]
+                    ]
+                  }
+                }
+              ]
+            }
+          ],
+          "status": "EXTRACTED",
+          "requires_confirmation": true,
+          "image_recognition_performed": true,
+          "all_pages_processed": true
+        },
+        "image.png": {
+          "version": 1,
+          "task": "DOCUMENT",
+          "source": "PDFBOX_PADDLE",
+          "content_type": "image/png",
+          "content_sha256": "bc13384ce3903cb01d7deff2a39041b0d4106a159932eb49d866793906aafa7c",
+          "page_count": 1,
+          "pages": [
+            {
+              "page": 1,
+              "method": "OCR",
+              "text": "ODO 123456 km\nService 2026-10-27",
+              "raster_size": [
+                1000,
+                260
+              ],
+              "blocks": [
+                {
+                  "text": "ODO 123456 km",
+                  "confidence": 0.9858036637306213,
+                  "source": {
+                    "kind": "RASTER_POLYGON",
+                    "points": [
+                      [
+                        31,
+                        61
+                      ],
+                      [
+                        434,
+                        63
+                      ],
+                      [
+                        433,
+                        120
+                      ],
+                      [
+                        31,
+                        118
+                      ]
+                    ]
+                  }
+                },
+                {
+                  "text": "Service 2026-10-27",
+                  "confidence": 0.9989988803863525,
+                  "source": {
+                    "kind": "RASTER_POLYGON",
+                    "points": [
+                      [
+                        30,
+                        151
+                      ],
+                      [
+                        501,
+                        151
+                      ],
+                      [
+                        501,
+                        210
+                      ],
+                      [
+                        30,
+                        210
+                      ]
+                    ]
+                  }
+                }
+              ]
+            }
+          ],
+          "status": "EXTRACTED",
+          "requires_confirmation": true,
+          "image_recognition_performed": true,
+          "all_pages_processed": true
+        }
+      },
+      "real_user_accuracy_accepted": false,
+      "closed": true
+    },
+    "memory_peak_bytes": 869060608,
+    "cleanup_complete": true,
+    "sources_unchanged": true
+  },
+  "configuration": {
+    "compose_override_config_quiet_passed": true,
+    "compose_stack_started": false,
+    "migration_count": 64,
+    "tables": 132,
+    "contract_operations": 362,
+    "historical_four_kind_operations": 317,
+    "explicit_verdicts": 45
+  },
+  "unverified": [
+    "Real Chinese/user/complex documents and model accuracy",
+    "Combined public-owner API + actual model + actual storage/scanner",
+    "WeChat identity, physical iOS/Android and production integrations",
+    "Original material retention and owner erasure policy",
+    "All 362 APIs in same final-version four-kind execution",
+    "Full stack recovery/capacity/security/production deployment",
+    "R5 embedding/vector retrieval; current retrieval remains KEYWORD"
+  ]
+}

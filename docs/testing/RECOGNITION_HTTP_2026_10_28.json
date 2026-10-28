@@ -1,0 +1,178 @@
+{
+  "version": 1,
+  "date": "2026-10-28",
+  "phase": "R6b1 VIN/license HTTP evidence",
+  "selected_checks_passed": true,
+  "full_api_acceptance_passed": false,
+  "production_acceptance_passed": false,
+  "source_sha256": "58de7866f3ba895a0241f303f8056653b62540471b32827be98698abbaf382f1",
+  "actual_http": {
+    "passed": true,
+    "source_sha256": "c8b00e260a64660324bcfdf7d24a233ff33f7a9e35c897dd53ac3a0a015cb1ac",
+    "full_api_acceptance_passed": false,
+    "production_acceptance_passed": false,
+    "execution_mode": "EXECUTED",
+    "suites": [
+      {
+        "name": "vin",
+        "passed": true,
+        "requests": 6,
+        "tests": 5,
+        "coverage": {
+          "POST /api/vehicle/vin-decode": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "checks": {
+          "no_archive_write": true,
+          "candidate_requires_confirmation": true,
+          "no_vehicle_write": true
+        },
+        "mysql_container_id": "339ab8cbf52083cdd1f5571a7a1b7ea7c97f7c30b5aac835bacffa01c4f32beb",
+        "source_sha256": "c8b00e260a64660324bcfdf7d24a233ff33f7a9e35c897dd53ac3a0a015cb1ac",
+        "raw_sha256": "9018b1ecc4cb8bbac6bc0ff17c3a7e5767fba0da096d2d688f4213c64e366aea"
+      },
+      {
+        "name": "license",
+        "passed": true,
+        "requests": 7,
+        "tests": 5,
+        "coverage": {
+          "POST /api/vehicle/license-recognition": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        },
+        "checks": {
+          "no_archive_write": true,
+          "candidate_requires_confirmation": true,
+          "no_vehicle_write": true
+        },
+        "mysql_container_id": "7cc05b35dbff1b03af251a0eb559bd135bc0d72a7872a39afa1f44baf085ced7",
+        "source_sha256": "c8b00e260a64660324bcfdf7d24a233ff33f7a9e35c897dd53ac3a0a015cb1ac",
+        "raw_sha256": "19dc5895bd5b708b0f52e39db90e976eb4a095994a23d2691d6a605aee31f1e9"
+      }
+    ],
+    "maven_exit_code": 0,
+    "owned_databases_removed": true,
+    "sources_unchanged": true,
+    "duration_seconds": 379.672
+  },
+  "python_audit_tests": 5,
+  "default_regression": {
+    "version": 1,
+    "finished_at": "2026-10-28T14:32:20.307487+00:00",
+    "selected_checks_passed": true,
+    "source_sha256": "58de7866f3ba895a0241f303f8056653b62540471b32827be98698abbaf382f1",
+    "sources_unchanged": true,
+    "backend_requested": false,
+    "backend_runtime_verified": false,
+    "production_acceptance_passed": false,
+    "boundaries": [
+      "Synthetic identities and LOCAL_TEST funds in backend integration tests.",
+      "No real WeChat/SMS/payment/model provider or mobile-device acceptance.",
+      "Builds and unit tests do not certify rendered page interactions.",
+      "Selected regression checks are not all-API business or performance acceptance."
+    ],
+    "checks": [
+      {
+        "name": "miniapp-unit",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 2.906,
+        "log": "miniapp-unit.log"
+      },
+      {
+        "name": "python-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 120.016,
+        "log": "python-regression.log"
+      },
+      {
+        "name": "ocr-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 21.812,
+        "log": "ocr-regression.log"
+      },
+      {
+        "name": "asr-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 5.516,
+        "log": "asr-regression.log"
+      },
+      {
+        "name": "document-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 9.781,
+        "log": "document-regression.log"
+      },
+      {
+        "name": "embedding-regression",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 9.812,
+        "log": "embedding-regression.log"
+      },
+      {
+        "name": "wechat-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 17.516,
+        "log": "wechat-build.log"
+      },
+      {
+        "name": "h5-build",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 17.063,
+        "log": "h5-build.log"
+      },
+      {
+        "name": "openapi-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.39,
+        "log": "openapi-consistency.log"
+      },
+      {
+        "name": "migration-mounts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.156,
+        "log": "migration-mounts.log"
+      },
+      {
+        "name": "handover-consistency",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.391,
+        "log": "handover-consistency.log"
+      },
+      {
+        "name": "contract-verdicts",
+        "status": "passed",
+        "exit_code": 0,
+        "duration_seconds": 0.188,
+        "log": "contract-verdicts.log"
+      }
+    ]
+  },
+  "recorded_new_http_requests": 13,
+  "selected_java_executions": 10,
+  "boundaries": [
+    "Real TCP/controller/JWT/MySQL; VIN/OCR/storage/scanner are explicit synthetic providers.",
+    "Two new methods plus inherited core journeys; 13 is the reviewed new HTTP inventory, not all HTTP traffic in those classes.",
+    "Vehicle/archive counts unchanged after recognition; candidate still requires manual confirmation.",
+    "No real NHTSA coverage, document accuracy, real storage/scanner provider, mobile device or production acceptance.",
+    "Other eight recognition endpoints remain scheduled; no change to historical/global API coverage counts."
+  ]
+}

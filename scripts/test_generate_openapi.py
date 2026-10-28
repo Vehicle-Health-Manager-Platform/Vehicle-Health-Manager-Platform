@@ -70,9 +70,62 @@ class OpenApiGenerationTest(unittest.TestCase):
         self.assertEqual('MILEAGE_OCR_V1',schema['properties']['consent_version']['const'])
         self.assertTrue({'400','401','403','404','409','429','503'}.issubset(item['responses']))
 
+    def test_pickup_mileage_has_independent_purpose_and_shop_scope(self):
+        item=generator.build_document()['paths']['/api/check/pickup/mileage-recognition']['post']
+        schema=item['requestBody']['content']['application/json']['schema']
+        self.assertEqual([{'bearerAuth':[]}],item['security'])
+        self.assertEqual('PICKUP_MILEAGE_OCR_V1',schema['properties']['consent_version']['const'])
+        self.assertIn('order_id',schema['required'])
+        self.assertNotIn('vehicle_id',schema['properties'])
+        self.assertFalse(schema['additionalProperties'])
+        self.assertFalse(item.get('parameters'))
+        self.assertNotEqual(item['operationId'],generator.build_document()['paths']['/api/vehicle/mileage-recognition']['post']['operationId'])
+
+    def test_license_gateway_has_independent_new_vehicle_consent_and_bounded_candidates(self):
+        paths=generator.build_document()['paths'];item=paths['/api/vehicle/license-recognition']['post']
+        self.assertEqual('license-owner-candidate-implemented-requires-document-acceptance',item['x-implementation-status'])
+        self.assertEqual([{'bearerAuth':[]}],item['security'])
+        self.assertFalse(item.get('parameters'))
+        schema=item['requestBody']['content']['application/json']['schema']
+        self.assertFalse(schema['additionalProperties'])
+        self.assertEqual(['file_id','purpose','consent','consent_version'],schema['required'])
+        self.assertEqual('NEW_VEHICLE',schema['properties']['purpose']['const'])
+        self.assertEqual('NEW_VEHICLE_LICENSE_OCR_V1',schema['properties']['consent_version']['const'])
+        self.assertNotIn('vehicle_id',schema['properties'])
+        self.assertEqual({'200','400','401','403','404','409','429','503'},set(item['responses']))
+        projection=item['responses']['200']['content']['application/json']['schema']['allOf'][1]['properties']['data']
+        self.assertFalse(projection['additionalProperties'])
+        self.assertEqual(True,projection['properties']['requires_confirmation']['const'])
+        fields=projection['properties']['fields'];self.assertEqual((2,2),(fields['minItems'],fields['maxItems']))
+        self.assertEqual(10,fields['items']['properties']['candidates']['maxItems'])
+        self.assertTrue(paths['/api/vehicle/ocr-license']['get']['deprecated'])
+
+    def test_asr_jobs_are_scoped_async_idempotent_and_confirmation_only(self):
+        paths=generator.build_document()['paths'];base='/api/recognition/asr/jobs'
+        create,read,cancel=paths[base]['post'],paths[base+'/{id}']['get'],paths[base+'/{id}/cancel']['post']
+        for item in (create,read,cancel):
+            self.assertEqual([{'bearerAuth':[]}],item['security'])
+            self.assertTrue(item['x-implementation-status'])
+            self.assertEqual('no-store',item['responses']['200']['headers']['Cache-Control']['schema']['const'])
+        self.assertTrue(any(p['name']=='Idempotency-Key' and p['required'] for p in create['parameters']))
+        self.assertTrue(any(p['name']=='Idempotency-Key' and p['required'] for p in cancel['parameters']))
+        self.assertFalse(any(p['name']=='Idempotency-Key' for p in read['parameters']))
+        body=create['requestBody']['content']['application/json']['schema']
+        self.assertFalse(body['additionalProperties'])
+        self.assertEqual(['vehicle_id','material_id','purpose','consent','consent_version'],body['required'])
+        self.assertEqual('ASR_TRANSCRIBE_V1',body['properties']['consent_version']['const'])
+        self.assertEqual(['AI','ARCHIVE'],body['properties']['purpose']['enum'])
+        self.assertEqual(0,cancel['requestBody']['content']['application/json']['schema']['maxProperties'])
+        projection=read['responses']['200']['content']['application/json']['schema']['allOf'][1]['properties']['data']
+        self.assertEqual(['QUEUED','RUNNING','SUCCEEDED','FAILED','CANCELLED','EXPIRED'],projection['properties']['state']['enum'])
+        result=projection['properties']['result']['anyOf'][1]
+        self.assertTrue(result['properties']['requires_confirmation']['const'])
+        self.assertEqual(50,result['properties']['segments']['maxItems'])
+        self.assertEqual('FASTER_WHISPER',result['properties']['source']['const'])
+
     def test_delivery_compare_remains_read_only_strict_and_authorized(self):
         document=generator.build_document();item=document['paths']['/api/check/delivery/compare']['post']
-        self.assertEqual(353,sum(len(v) for v in document['paths'].values()))
+        self.assertEqual(362,sum(len(v) for v in document['paths'].values()))
         self.assertEqual('delivery-compare-implemented',item['x-implementation-status'])
         self.assertEqual('本单车主或本店 MERCHANT/STAFF',item['x-roles'])
         self.assertEqual([{'bearerAuth':[]}],item['security'])

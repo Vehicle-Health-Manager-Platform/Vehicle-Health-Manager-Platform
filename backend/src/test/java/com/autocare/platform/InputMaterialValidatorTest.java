@@ -68,4 +68,24 @@ class InputMaterialValidatorTest {
         assertThrows(UploadException.class,()->new FileValidator().validate("doc.pdf",new ByteArrayInputStream(pdf(1))));
         assertThrows(UploadException.class,()->new FileValidator().validate("voice.mp3",new ByteArrayInputStream(audio(30))));
     }
+    static byte[] image(String format,int width,int height)throws Exception{
+        var image=new java.awt.image.BufferedImage(width,height,java.awt.image.BufferedImage.TYPE_INT_RGB);
+        try(var out=new ByteArrayOutputStream()){assertTrue(javax.imageio.ImageIO.write(image,format,out));return out.toByteArray();}finally{image.flush();}
+    }
+    @Test void auxiliaryJpegAndPngAreDecodedAndKeepSeparateMetadata()throws Exception{
+        for(String format:new String[]{"png","jpeg"}){
+            var result=check("material.image",image(format,32,16));assertEquals("image/"+format,result.file().contentType());assertEquals(1,result.pages());assertEquals(0,result.durationMs());
+        }
+        rejected("material.png",image("jpeg",32,16));rejected("material.image",image("gif",32,16));rejected("material.image",new byte[]{1,2,3});
+    }
+    @Test void auxiliaryImagesRejectDimensionPixelAndByteBudgetBeforeDecode()throws Exception{
+        rejected("material.image",image("png",4097,1));rejected("material.image",image("png",3000,2001));
+        assertEquals(413,assertThrows(UploadHttpException.class,()->check("material.image",new byte[InputMaterialValidator.IMAGE_MAX+1])).status());
+    }
+    @Test void pngAnimationChunksAndTrailingPayloadAreRefused()throws Exception{
+        byte[] png=image("png",32,16);rejected("material.image",Arrays.copyOf(png,png.length+1));
+        var out=new ByteArrayOutputStream();out.write(png,0,png.length-12);
+        var data=new DataOutputStream(out);data.writeInt(8);data.writeBytes("acTL");data.writeInt(2);data.writeInt(0);data.writeInt(0);
+        out.write(png,png.length-12,12);rejected("material.image",out.toByteArray());
+    }
 }

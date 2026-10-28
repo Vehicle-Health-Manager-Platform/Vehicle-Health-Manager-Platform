@@ -1,5 +1,15 @@
 # 微信云托管部署
 
+2026-10-26 B1a更新：用户选择微信云开发，当前尚未开通环境，短信暂缓。先按[开通与部署准备计划](../../docs/superpowers/plans/2026-10-26-b1a-cloud-deployment.md)建立隔离测试环境并运行配置预检。此目录复用已有微信callContainer/云身份头适配；创建通用CloudBase环境不自动证明该访问链路可用，须先核对选定产品的兼容性和公网隔离。下文为既有微信云托管通道说明，不是已经部署的证据；资源、调用限制和套餐以选定环境的当前官方说明为准。
+
+本地部署声明模板为`deployment.example.json`。复制成被忽略的`deployment.local`后私下填写标识；它只是本地声明，不能替代控制台/真实公网隔离检查。使用示例：
+
+```powershell
+node scripts/check-wechat-identity-readiness.mjs --cloud-deployment --env-file deploy/cloudrun/env.example --miniapp-env-file apps/miniapp/.env.example --deployment-file deploy/cloudrun/deployment.example.json
+```
+
+模板未配置时退出2并报告configurationReady=false；始终cloudDeployed=false、formalIdentityAccepted=false。退出1为参数/读取错误，0仅帮助。云手机号仍按现有客户端需要AppSecret及微信手机号权限；短信暂缓不意味着商家/受限运营可以绕过二次验证。
+
 本目录提供把 Spring Boot 后端部署到**微信云托管**的最小产物，目的是让小程序在**无需配置通讯域名、无需 ICP 备案域名**的前提下完成真实微信登录。
 
 ## 为什么能免域名
@@ -39,3 +49,11 @@
 
 - 服务端：把 `WECHAT_CLOUD_RUN_ENABLED` 设为 `false`，`/api/auth/cloud-login` 立即不存在；`/api/auth/wx-login` 不受影响。
 - 小程序：清空 `VITE_WECHAT_CLOUD_ENV_ID` 与 `VITE_WECHAT_CLOUD_SERVICE`，重新构建即回到 `uni.request` + `code2session` 通道。
+
+## 行驶证识别可选配置
+
+云托管模板提供默认关闭的LICENSE_OCR_ENABLED及后端URL/token/私有HTTP选项。只有部署好维护中的私有存储/扫描和可达的受限OCR服务、明确图片用途与保留/本人删除政策后才启用；VITE变量不能放OCR凭据。供应商期限不等于上传到识别的全流程总期限；失败保持手动录车。[配置、权限和正式验收](../../docs/api/LICENSE_RECOGNITION.md)。
+
+## ASR任务配置与限制
+
+模板新增默认关闭的ASR_ENABLED与后端私有URL/token、HTTP许可和任务/清理间隔。短请求只创建/查询/取消任务，90秒来源I/O由单独后台执行线程处理，不塞进微信云通道请求。先备份并执行V063及全部前置迁移，核对同车辆/用途材料和私有ASR可达性；离线模型、完整依赖锁/Linux镜像尚未验时不启用。VITE不包含ASR凭据。[接口与运维](../../docs/api/ASR_JOBS.md)。
