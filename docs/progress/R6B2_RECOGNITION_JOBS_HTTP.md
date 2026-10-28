@@ -1,6 +1,6 @@
 # R6b2 ASR/图文任务HTTP证据（2026-10-28）
 
-承接PR255/6d0cc3b，分支codex/recognition-job-http-evidence。按用户授权规划后实施，本批完成六个任务接口四类HTTP证据并回归上批VIN/行驶证两项。最后两类里程仍按计划待补，不合并或部署。
+承接PR255/6d0cc3b，分支codex/recognition-job-http-evidence。实现00abe39已上传[草稿PR256](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/pull/256)，依赖PR255；新head CI独立跟踪，未结束不计通过。按用户授权规划后实施，本批完成六个任务接口四类HTTP证据并回归上批VIN/行驶证两项。最后两类里程仍按计划待补，不合并或部署。
 
 ## 实现
 
