@@ -11,7 +11,7 @@ final class EmbeddingExecutor implements AutoCloseable {
  List<double[]> call(List<String> texts){
   if(texts==null||texts.isEmpty()||texts.size()>64)throw new Failed("LIMIT_EXCEEDED");var inputs=List.copyOf(texts);Future<List<double[]>> future=null;
   try{
-   future=executor.submit(()->{var out=new ArrayList<double[]>();for(int i=0;i<inputs.size();i+=4){var batch=inputs.subList(i,Math.min(i+4,inputs.size()));try{out.addAll(EmbeddingVectors.validate(provider.embed(profile,batch),profile,batch.size()));}catch(IllegalArgumentException e){throw new Failed("INVALID_VECTOR");}}return List.copyOf(out);});
+   future=executor.submit(()->{var out=new ArrayList<double[]>();for(int i=0;i<inputs.size();i+=4){var batch=inputs.subList(i,Math.min(i+4,inputs.size()));try{out.addAll(EmbeddingVectors.validate(provider.embed(profile,batch),profile,batch.size()));}catch(EmbeddingProvider.Failed e){throw new Failed(e.code());}catch(IllegalArgumentException e){throw new Failed("INVALID_VECTOR");}}return List.copyOf(out);});
    return future.get(deadline.toMillis(),TimeUnit.MILLISECONDS);
   }catch(InterruptedException e){Thread.currentThread().interrupt();throw new Failed("UNAVAILABLE");}
   catch(ExecutionException e){if(e.getCause() instanceof Failed failed)throw failed;throw new Failed("UNAVAILABLE");}

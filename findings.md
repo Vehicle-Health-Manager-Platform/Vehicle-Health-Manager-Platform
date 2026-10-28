@@ -904,3 +904,7 @@ R5a：LicensedKnowledge.trusted核对原payload哈希、最新事件及审计；
 R5a测试发现：V065增加两表，旧schema总数门禁需134/65；已同步当前Java/脚本，不改历史证据。gstack运营页面冷登录复现actorId=0：setOperatorSession先写actor再expiry，flush:sync的operatorToken监听按旧expiry=0清掉半写入身份。改为expiry先行，保留token最后发布，新增挂载同步watch回归。索引rank另用LEFT JOIN识别成功任务全部缺块，并按文档缓存当前授权复检，避免每块重复SQL。
 
 R5a收口额外发现：前置PR249/b1完整2399项只有RealMaterialWorkbench unknown_kind仍用image并期望400；R4b已支持image，MP3伪装正确422。改webp保持不支持类型400，不削弱校验；独立小修5aacb52已回传PR249，本阶段真实ClamAV/MinIO材料+工作台59项通过。恢复新SQL夹具纳入执行摘要，缺输入也落安全失败报告，17项runner guard通过。
+
+R5b官方核对：BAAI/bge-small-zh-v1.5 revision7999e1d3359715c523056ef9478215996d62a620，safetensors95827648字节、LFS354763b9...；MIT/512维/CLS+L2，查询前缀与正文区分。官方无ONNX，因此选原始安全权重+固定CPU Torch/Transformers，不用第三方转换。官方示例truncation=True不适用项目整批预算承诺，须显式关闭并拒绝超token。小文件以Gitblob对照再SHA256锁，真实模型与领域效果分开。
+
+R5b最终：固定BAAI safetensors11文件与Linux CPU wheel24文件；实际模型16项和Java/MySQL31项通过，默认12组通过，源码稳定及自有资源清理。公开检索/AI仍KEYWORD，领域准确率/容量/真机未验。初轮源码漂移报告未采用；巨大整数边界及可选模型核心排除断言已修复。

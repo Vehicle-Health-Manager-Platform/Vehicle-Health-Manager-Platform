@@ -16,7 +16,7 @@ class DocumentRunnerTest(unittest.TestCase):
         pom=ET.parse(runner.ROOT/'backend/pom.xml').getroot()
         profile=next(p for p in pom.findall('m:profiles/m:profile',ns) if p.findtext('m:id',namespaces=ns)=='core-coverage')
         excludes=[p.text for p in profile.findall('.//m:excludes/m:exclude',ns)]
-        self.assertEqual(excludes,['**/RealAsrModelJourneyTest.java'])
+        self.assertEqual(excludes,['**/RealAsrModelJourneyTest.java','**/RealEmbeddingIndexJourneyTest.java'])
         scope=json.loads((runner.ROOT/'scripts/core_coverage_scope.json').read_text())
         self.assertNotIn('RealAsrModelJourneyTest',scope['local_tests'])
 

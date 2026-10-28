@@ -27,7 +27,7 @@ BOUNDARIES = [
 def source_digest(root):
     """Bind evidence to code/config, excluding generated outputs and private env files."""
     paths = [root / 'package.json', root / 'package-lock.json', root / 'backend/pom.xml']
-    for directory in ('backend/src', 'scripts', 'services/ocr', 'services/asr', 'services/documents', 'docs/sql/migrations'):
+    for directory in ('backend/src', 'scripts', 'services/ocr', 'services/asr', 'services/documents', 'services/embedding', 'docs/sql/migrations'):
         paths += [p for p in (root / directory).rglob('*') if p.is_file()
                   and (p.suffix in ('.py', '.java', '.sql', '.js', '.mjs', '.cjs', '.yml', '.yaml', '.json', '.txt', '.in', '.sh', '.ps1')
                        or p.name.startswith('Dockerfile'))]
@@ -50,6 +50,7 @@ def steps(root, backend=False):
         ('ocr-regression', [sys.executable, '-m', 'unittest', 'discover', '-s', 'services/ocr', '-p', 'test_*.py'], root),
         ('asr-regression', [sys.executable, '-m', 'unittest', 'discover', '-s', 'services/asr', '-p', 'test_*.py'], root),
         ('document-regression', [sys.executable, '-m', 'unittest', 'discover', '-s', 'services/documents', '-p', 'test_*.py'], root),
+        ('embedding-regression', [sys.executable, '-m', 'unittest', 'discover', '-s', 'services/embedding', '-p', 'test_*.py'], root),
         ('wechat-build', [npm, 'run', 'build:miniapp'], root),
         ('h5-build', [npm, 'run', 'build:h5', '--workspace', '@autocare/miniapp'], root),
         ('openapi-consistency', [sys.executable, 'scripts/generate_openapi.py', '--check'], root),
