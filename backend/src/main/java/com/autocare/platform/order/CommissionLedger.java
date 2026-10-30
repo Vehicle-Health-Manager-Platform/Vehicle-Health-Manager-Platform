@@ -30,8 +30,8 @@ public class CommissionLedger {
         if(sources.size()!=1||db.jdbc.queryForObject("SELECT COUNT(*) FROM merchant_application_review WHERE merchant_id=? AND decision='APPROVED'",Long.class,merchant)!=1)return null;
         return p;
     }
-    static void booking(ReservationStore db,long id){
-        transaction();var o=db.one("SELECT * FROM `order` WHERE id=? FOR UPDATE",id);insertSnapshot(db,o,false);
+    static Map<String,Object> booking(ReservationStore db,long id){
+        transaction();var o=db.one("SELECT * FROM `order` WHERE id=? FOR UPDATE",id);insertSnapshot(db,o,false);return o;
     }
     static Map<String,Object> snapshot(ReservationStore db,Map<String,Object> o){
         var rows=db.jdbc.queryForList("SELECT * FROM order_commission_snapshot WHERE order_id=? FOR UPDATE",o.get("id"));

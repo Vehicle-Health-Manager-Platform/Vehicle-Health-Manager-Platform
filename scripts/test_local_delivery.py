@@ -112,6 +112,20 @@ class LocalDeliveryTest(unittest.TestCase):
             self.assertEqual([r['status'] for r in rows], ['failed', 'failed'])
             self.assertEqual(rows[1]['exit_code'], 3)
 
+    def test_complete_backend_is_not_killed_by_short_check_deadline(self):
+        calls = []
+        def execute(command, **kwargs):
+            calls.append(kwargs['timeout'])
+            return SimpleNamespace(returncode=0)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            rows = run_steps([('backend-mysql-http', ['core-runner'], root),
+                              ('independent', ['ok'], root)], root, {}, execute)
+            self.assertEqual([row['status'] for row in rows], ['passed', 'passed'])
+            # The complete runner owns Maven and cleanup. Killing only that
+            # wrapper can orphan its JVM and invalidate the following audit.
+            self.assertEqual(calls, [None, 5400])
+
     def test_backend_invalidates_stale_junit_evidence(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

@@ -915,3 +915,95 @@ R6b3实现08a8a85已上传草稿PR257，依赖PR256。十项识别补证及统�
 
 # 2026-10-28 集成准备
 用户授权上传及合并，覆盖PR238–257；所有20个最终head均为f3a6a4b祖先，45阶段提交。创建codex/merge-2026-10-28，独立安全/覆盖审查无确认阻断，216重点测试通过。最终集成CI与main验证待执行，不部署生产；详见MERGE_2026_10_28.md。
+
+## 2026-10-29 本轮启动
+- 核对最新交接/统一运行器/历史路线，按用户范围继续本地开发与验收。
+- 使用planning-with-files、investigate和browse流程；不重复要求已经授权的本地开发/测试审批。
+
+## 2026-10-29 中间验证
+- 完整后端在隔离Linux JVM运行；未改变后端源码、契约或迁移。
+- 数据库恢复PASS（19项检查，最终项数以报告为准），默认12组新执行PASS；不抹去首轮环境依赖失败。
+- 配置摘要回归：先失败后通过；既有统一入口13项/严格覆盖率14项通过。扩展最终回归继续。
+
+## 2026-10-29 活跃进程（持续工作记录）
+- 完整后端Docker clean verify：exec session 70105，日志.cache/delivery-20261029-backend-final.log，初始-D参数失败另存旧日志。backend/src及迁移未修改。
+- 29业务HTTP冻结副本：session 41712，日志.cache/delivery-20261029-api.log，副本.cache/delivery-20261029-api-snapshot。原auth_sessions主进程重审FAIL已定位修复并独立新库PASS，其余继续。
+- 本地缓存Compose项目delivery20261029仍在运行，已种合成身份，测试口令仅.cache/stack.env私有文件；清理须核对项目归属再down，不能动其他容器。
+- 浏览器Node前台守护session43046，H5只读/未配置服务23610(port5178)、联调93720(port5179)。全部测试完成后清理自有服务。
+- 第四次默认12组PASS：.cache/local-delivery-67e9d4deec8e/report.json（此后仅Nginx健康配置变更，需最后一次默认或配置定向补验）。
+
+## 2026-10-29 中断后恢复与最终增量
+- 05:20 UTC恢复核查：原29业务执行完，28PASS+auth_sessions主进程审计FAIL；该项修复后独立新库PASS。原完整Docker批次249套/2574项，18错误+1失败（11次连接路径问题含写入503、8次host.docker.internal不满足公开上传端点约束），不能计通过。
+- Docker网关/host网络实验无法连接Ryuk；均保留失败，不放宽生产端点校验。主验收改为已有宿主JDK/Maven，独立考核45项已通过。
+- 有限重试在隔离副本98项通过后集成；默认关闭、瞬时错误、退避、持久审计配额、撤回拒绝/并发和审计失败回滚。修复索引清理轮询刷新FAILED时间导致退避失效；原始失败与修复复跑日志分开。
+- 已将原backend/target整体保留.cache/delivery-20261029-backend-first-target。最终源码完整宿主core profile正在重新执行：.cache/delivery-20261029-backend-native-final.log；原运行脚本生成core-coverage-run.json和严格summary，不伪造绿色。
+- 新增Docker主验收入口撤回；完整适配器必须宿主Java/Maven，原工具--docker仅供选定core范围。提供显式离线/预建镜像/本地Maven仓库选项，缺资源仍失败。
+- Compose七服务、同栈102/341及三角色页面先前通过，资源已清理；最终增量完成后需更新文档/默认回归及当前证据。
+
+### 2026-10-29 最终回归与交接索引
+- 有限重试三套隔离98项通过后集成；最终宿主完整core执行继续，源码冻结，未复用失败的嵌套Docker结果。
+- 最终默认12组PASS：.cache/local-delivery-663339cf8f97/report.json，1237小程序、610 Python、81 OCR（Windows1个Linux专属跳过）、40 ASR、26图文、27嵌入及构建/契约检查。新增三变量后的旧生成索引导致前次1项失败，重生成150模板记录后独立8项/最终整套通过。
+- 当前103个后端静态配置读取项与索引完全一致，377处交接链接无缺失。最终社区/知识HTTP回归采用独立源码副本，source_digest与主工作区一致，独立target避免污染完整测试。
+- 29业务原汇总保留FAIL（28套通过，3162业务/9744匿名/40030断言），会话修复独立45业务149断言+348匿名1044断言PASS。两次来源分别记录，不拼作同次全API通过。
+- 脱敏证据已归档docs/testing/evidence/2026-10-29，检查12个已知私有凭据值未泄漏到当时10份公开JSON；后续追加证据仍需重查。仅有当前完整测试的MySQL及Ryuk在运行，无早前残留。
+
+### 2026-10-29 宿主连接问题与重新全量
+- 原宿主完整执行到131套/1617项，3错误均在JdbcKnowledgeEmbeddingRuntimeTest继承公共准备/清理的DriverManagerDataSource建连阶段，无业务断言失败；停掉已核实路径/命令行的自有Surefire JVM50512，父runner非零退出。原target归档.cache/delivery-20261029-backend-native-first-target，公开backend-native-stopped.json明确completed_full_suite=false。
+- 隔离改Hikari后原生命周期42、重试49、向量47、配置2，共140项0/0/0；此比较不证明Windows网络具体起因。实际TIME_WAIT3357/动态端口16384，不能写成已证端口耗尽。三公共基类预约/公开评价/社区改有限池并AfterAll关闭，新增JdbcTestDataSourceTest两项实际MySQL验证连接复用、关闭拒绝、回滚和自动提交恢复，通过。
+- 新严格完整执行会话33267，日志.cache/delivery-20261029-backend-native-pooled-final.log，Surefire JVM28880。backend/src、pom、scope、migrations再次冻结，待完整结果；不可复用旧target/摘要。
+- 完整入口原普通5400秒外层超时可能遗留Maven，且首轮2h38超过该值。新增回归真红1→绿14，backend组改由专用runner等待，其他组仍5400。此脚本变化不影响正在运行的后端digest。
+- 默认12组池修复后1d6974ddb0c3全PASS，新增等待回归后最终再次执行会话1102，日志.cache/delivery-20261029-local-deadline-final.log，预期611 Python，以实际结果为准。最终community API业务source_hash仍不变，完整输入digest因测试/工具变更不同，文档已区分。
+
+### 2026-10-29 最终功能/证据与有保留交接
+- 最终native full252套/2627项0失败0错误0跳过，22强制核心套件齐，maven0/source unchanged，5913.64秒。根代码保持dee2903bd5c720d778ef5aae8a81588e08fab396b54de69934f80a51d74e4b7f；默认最终13c96d21544c为12组/611 Python/1237小程序PASS。
+- 覆盖率原门禁正确失败：Java17 Windows中文agent参数解码错误，destfile变乱码且append=false截断到,a，数据写到历史误编码目录。原文件3会话（10/27、10/28、本次），已读取并只选start1793256543409/dump1793262419924当前完整会话；9136运行时记录（835项目含测试），原完整class快照422主类、无mismatch，严格声明范围行96.58/方法94.07七组均70以上。原缺文件失败保留，恢复来源/哈希独立记录，未混入历史。相同POM/JDK/依赖在ASCII可写根native-coverage-probe的一项代理测试成功生成exec/XML，后续指南要求ASCII工作路径；历史错误目录保留不整体删。
+- 核心3旅程复核PASS。最终root统一API .cache/business-api-acceptance-2e3371db4ec0 PASS：社区176新HTTP+348匿名，再审同次full七文件/奖励518+识别70；83项完整四类，all362仍false。原29套28通过与auth修复独立通过分开，不改写原FAIL。
+- 500并发pool40全部门限FAIL：P95home418.041/merchant597.973/order615.646ms，P99读542.979/648.688；零请求错误、订单/占位/幂等1520一致、清理真。仅pool20对照也FAIL：417.257/528.767/876.095，写退化不采纳。容量P1开放，CPU/池采样仅1–2点，不能冒充已定位唯一根因；后续分层/JFR/SQL/独立负载机步骤已写容量手册，不归外部账号阻塞。
+- 七类交接已齐、103实际配置、150模板记录/108页、当前部署回退SOP/四角色手册已更新；最后文档修订重生成索引并独立8项检查。完整业务与默认摘要/API摘要/输入均与最终代码匹配；已查332当前链接无缺失和23份JSON无凭证格式，最终再扫包括cleanup。容器/卷/网络6类只读检查全0。
+- 本阶段本地功能/主要流程与交接标准完成，但不称所有性能或生产验收通过。正式微信/SMS/激活/支付/消息/生产、授权真实领域样本及手机、保留/删除政策、长期稳定性与生产容灾继续独立登记。
+
+2026-10-29原文对照核查完成：F01–F20逐项报告docs/delivery/DELIVERY_SPEC_PROGRESS_AUDIT_2026_10_29.md。当前后端/默认/API摘要现场再核对均匹配，未重跑业务测试。新指出§4配色与现设计差异、§5.7辅助入口未齐、原文性能门限冲突、安全/全API/真机/运维证据缺口；正式短信适配/商家激活及资金/官方传播不仅是填密钥。PC按后续决策取消，ASR/VIN/图文/VECTOR/本地财务旧未实现标签不再沿用。报告20编号与全部本地链接校验通过；未修改业务代码。
+
+## 2026-10-29 范围1/3/4/5继续实施（进行中）
+- 保留当前配色，新增优惠/二手车/新车落地与目录对比，共111页；本地VIN规则含SHA/授权有效期/合成标识/唯一精确车型候选与人工确认。
+- 初始新增/报价17项、目标后端59项、前端1243项通过；最终全量待新依赖与改动冻结后重跑，不能复用此前2627项作为新版结果。
+- npm完整补丁后实际audit0漏洞；Spring Boot3.5.16、Jackson/Tomcat/加密等传递修补及Pillow13已更新，待最终SBOM/运行回归；两项Spring视图/SSE包告警保留并做触发面测试。
+- 性能：SQL优化Windows商家P95降至297ms；80池不采纳。Linux40同等500负载：首页215.141/商家190.622/订单595.411ms，0错误、DB1520一致、清理通过，写仍失败。正验证订单省去验证码二次UPDATE及重复订单读的等价修复。
+- JaCoCo Windows中文路径根因可用ASCII临时agent数据路径规避，原工作区数据成功落盘；runner16项在允许临时文件清理环境通过，待完整clean verify。
+- 未完成：最终500写门槛、全面当前源码集成/API/安全/页面回归、证据和交接更新。
+
+## 2026-10-30 当前长跑与已完成复验
+- 严格500 Linux稳态PASS：3轮预热、读各10轮/写5轮；P95首页205.573ms、商家161.523ms、创建382.508ms；12500计时样本/17500HTTP，0错误；DB订单/名额/幂等各4020，4项清理全部通过。证据.cache/phase2-performance-linux-steady.json；保留所有Windows/短预热FAIL。
+- 订单少两次DB往返后预约/券/安全触发面64项全部通过；新增候选目录刷新/恢复/取消跨身份回归通过。npm完整修补后0漏洞。
+- 完整后端/9组覆盖率在后台运行：.cache/phase2-full-backend.log（session12461），原工作区中文路径，agent仅临时ASCII落盘自动复制；禁止改backend/src、POM、core scope/runner/checker直到结束。
+- 安全初扫完整执行.cache/security-audit-68e88d3569fb/report.json：npm0/SAST0ERROR+216WARNING；Java2个SpringMVC包级CRITICAL（Xslt/SSE应用未用，333处理器运行断言通过），可选模型运行时transformers4HIGH+其余中低告警（锁定可信模型，非上游补丁清零）。新增UI脚本后须最终再扫/核验来源，不能把旧报告当当前完整安全通过。
+- 正启动scripts/run_car_life_ui_acceptance.py：真实独立DB/后端+隔离H5测试桥，gstack交互，合成身份非正式微信，最后必须finish清理。
+
+- 浏览器发现依赖升级后uni3.4与Vue3.5编译/运行混用，构建成功但页面slot属性只读报错。仅恢复编译器仍失败；现固定miniapp Vue/runtime-core3.4.21并移除跨版本Vue覆盖，根工程Vue3.5.44与SSR安全补丁保留，npm实际复扫0，待新一轮浏览器确认。失败报告.cache/car-life-ui-6bce2eedbc27及cd93e47eec10保留，不算通过。
+- 全量后端持续运行（12461，PID51980），113套1101项时0失败；源Java/POM/core工具冻结，后续UI/文档不影响该后端摘要。
+
+- uni空白页根因进一步确证：共享库3.4的def保留既有slot._可写性，根3.5显式设false，直接重现同样异常。新增scripts/uni-vue-compat.mjs将miniapp的@vue/shared绑定到uni声明版本；slot语义回归通过；原配置uni ESM/CJS也做归一化，隔离H5改为复用正常配置。待浏览器重跑。
+
+## 2026-10-30 最终冻结回归
+
+- 全量255套2641项0失败/错误/跳过；九组LINE96.27%/METHOD94.01%。Windows中文路径直接采集成功，原始target保存.cache/phase2-full-backend-target。
+- 最终默认12组全部通过且源码稳定（1246/617/81含Windows1skip/40/26/27及双平台构建/一致性）。.cache/local-delivery-08a8dac48717。
+- 修复uni Vue共享函数slot只读白屏、管理员catalog默认apiRuntime对象/工厂错误、回归包装将中文目录设TEMP的问题；实际浏览器和回归补证。
+- 最终gstack/UI .cache/car-life-ui-a2edfd029547：113游客页、录车唯一新增/503重试、外车主记录不变、管理员真实关闭503、390/1440无溢出，清理通过。
+- Linux真实OCR Pillow13/81项及资源/网络过滤通过；安全最终ccdaf8781e32完整，npm0、SAST216WARNING；Java2CRITICAL/模型4HIGH等仍开放，门禁false。
+- 全29业务API逐套新库正在执行，父报告.cache/business-api-acceptance-2a85398c7f7d；七旅程/7识别套件严格复核已通过。继续等待最终结果，不提前验收。
+- 交接入口docs/delivery/SCOPE_1345_HANDOVER_2026_10_30.md，最终API结果仍待写回测试报告。
+
+
+## 2026-10-30 最终交接收尾
+
+原全37项父运行29业务及7旅程全部通过，3207业务HTTP/10092匿名；仅末尾识别汇总误判vin/local-vin重复接口。原失败.cache/business-api-acceptance-2a85398c7f7d保持false。
+
+修复仅汇总/审计工具，新增6项正反向回归，32项选定工具测试通过；.cache/current-api-reaudit-da8eb47cd08a严格重审29套私有上下文/原始请求响应/DB检查及7旅程/识别，37项通过，327/362四类完整，其余35有明确边界。origin全AUDIT_EXISTING，0次新业务HTTP；原本轮执行3207+10092不变，审计业务HTTP总3802。
+
+最终默认12组.cache/local-delivery-2975176275fc全通过，Python623；安全.cache/security-audit-8d87562bf150完整且来源稳定，npm0、SAST216WARNING、Java2CRITICAL/Python4HIGH等保留。后端完整2641、性能JAR和两轮最终UI证明仍匹配当前产品实现；资料及公开证据已更新，不把原失败改成绿色。
+
+
+## 2026-10-30 GitHub交付准备
+
+远端main=2cee948，建立codex/local-stage-1345-delivery。三项独立覆盖/后端安全性能/前端对抗审查发现2个P2，均最小修复并补回归。当前21选定Java、1248前端/623工具的12组回归、500并发(194.184/131.313/464.547ms P95)、实际H5挂起恢复和录车回读均通过；安全剩余风险保留。审查前2641/327记录未改写，补验见GITHUB_MERGE_VALIDATION_2026_10_30.md。源文件及公开证据隐私扫描无令牌/私有路径文件，待上传PR及准确head CI/合并核对。

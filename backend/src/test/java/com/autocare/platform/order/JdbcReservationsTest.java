@@ -21,12 +21,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
 class JdbcReservationsTest {
+    static com.zaxxer.hikari.HikariDataSource schemaPool;
+    @AfterAll static void closeSchemaPool(){if(schemaPool!=null){schemaPool.close();schemaPool=null;}}
     @Container static MySQLContainer<?> mysql=new MySQLContainer<>("mysql:8.0").withCommand("--log-bin-trust-function-creators=1");
     static JdbcTemplate jdbc;
     static class Time extends Clock {Instant value=Instant.now().truncatedTo(ChronoUnit.SECONDS);public ZoneId getZone(){return ZoneOffset.UTC;}public Clock withZone(ZoneId zone){return this;}public Instant instant(){return value;}}
     Time clock;ReservationStore db;ReservationSlots slots;ReservationOrders orders;ReservationExpiry expiry;MerchantActor shop;VehicleOwner a,b;
     @BeforeAll static void schema()throws Exception{
-        var ds=new DriverManagerDataSource(mysql.getJdbcUrl(),mysql.getUsername(),mysql.getPassword());jdbc=new JdbcTemplate(ds);
+        var ds=com.autocare.platform.TestMysqlDataSource.open(mysql);schemaPool=ds;jdbc=new JdbcTemplate(ds);
         try(var c=ds.getConnection();var paths=java.nio.file.Files.list(Path.of("..","docs","sql","migrations"))){for(var file:paths.filter(p->p.toString().endsWith(".sql")).sorted().toList())ScriptUtils.executeSqlScript(c,new FileSystemResource(file));ScriptUtils.executeSqlScript(c,new FileSystemResource(Path.of("..","docs","sql","migrations","V007__reservation_orders.sql")));}
     }
     @BeforeEach void setup(){
@@ -116,6 +118,13 @@ class JdbcReservationsTest {
     @Test void concurrentWorkersReleaseExactlyOnce()throws Exception{long slot=slot(1);order(a,slot);clock.value=clock.value.plusSeconds(901);var pool=Executors.newFixedThreadPool(2);try{var first=pool.submit(expiry::sweep);var second=pool.submit(new ReservationExpiry(db)::sweep);first.get(20,TimeUnit.SECONDS);second.get(20,TimeUnit.SECONDS);assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM audit_log WHERE action='ORDER_EXPIRE'",Integer.class));assertEquals(0,jdbc.queryForObject("SELECT reserved_count FROM appointment_slot WHERE id=?",Integer.class,slot));}finally{pool.shutdownNow();}}
     @Test void invalidWindowAndMerchantOwnership(){assertEquals(400,assertThrows(ResponseStatusException.class,()->slots.publish(shop,key(),new ReservationInput.Slot(1,clock.value.minusSeconds(10),clock.value.plusSeconds(10),1))).getStatusCode().value());long slot=slot(1);var foreign=new MerchantActor(1,2,shop.session(),shop.expires());assertEquals(401,assertThrows(ResponseStatusException.class,()->slots.close(foreign,key(),slot)).getStatusCode().value());assertEquals(400,assertThrows(ResponseStatusException.class,()->slots.available(a,1,1,"2000-01-01",1,20)).getStatusCode().value());}
 
+    @Test void creationAuditMatchesPersistedDetailAndAppointmentCode()throws Exception {
+        long slot=slot(2),id=order(a,slot);
+        assertTrue(jdbc.queryForObject("SELECT verify_code FROM `order` WHERE id=?",String.class,id).matches("[0-9]{6}"));
+        String after=jdbc.queryForObject("SELECT after_state FROM audit_log WHERE action='ORDER_CREATE' AND resource_id=?",String.class,id);
+        assertEquals(db.mapper.readTree(db.mapper.writeValueAsString(orders.detail(a,id))),db.mapper.readTree(after));
+        assertEquals(1,count("order_commission_snapshot"));assertEquals(1,jdbc.queryForObject("SELECT reserved_count FROM appointment_slot WHERE id=?",Integer.class,slot));
+    }
     @Test void actualBookingCreatesOneFrozenSnapshotAndReplaysOnce(){long slot=slot(2);String k=key();var result=orders.create(a,k,booking(a,slot));assertEquals(result,orders.create(a,k,booking(a,slot)));assertEquals(1,count("order_commission_snapshot"));assertEquals("WAIT_POLICY",jdbc.queryForObject("SELECT state FROM order_commission_snapshot",String.class));}
     @Test void snapshotWriteFailureRollsBackBookingAndCapacity(){long slot=slot(2);jdbc.execute("CREATE TRIGGER reject_reservation_audit BEFORE INSERT ON order_commission_snapshot FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='snapshot failure'");assertEquals(503,assertThrows(ResponseStatusException.class,()->orders.create(a,key(),booking(a,slot))).getStatusCode().value());assertEquals(0,count("order"));assertEquals(0,count("order_commission_snapshot"));assertEquals(0,jdbc.queryForObject("SELECT reserved_count FROM appointment_slot",Integer.class));}
 }

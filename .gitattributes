@@ -2,3 +2,7 @@
 deploy/**/*.sh text eol=lf
 scripts/*.sh text eol=lf
 deploy/clamav/*.conf text eol=lf
+
+# Evidence SHA256 values describe original bytes on Windows and Linux.
+# Preserve report bytes instead of converting their line endings on checkout.
+docs/testing/evidence/**/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

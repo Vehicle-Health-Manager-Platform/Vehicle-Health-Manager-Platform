@@ -16,8 +16,10 @@ import math
 import multiprocessing
 import os
 import platform
+import queue
 import re
 import secrets
+import shutil
 import socket
 import subprocess
 import sys
@@ -32,6 +34,7 @@ JAR = ROOT / 'backend/target/platform-backend-0.1.0-SNAPSHOT.jar'
 LABEL = 'autocare.performance.run'
 MYSQL_IMAGE = 'mysql:8.0'
 RUNTIME_IMAGE = 'maven:3.9-eclipse-temurin-17'
+LOAD_IMAGE = 'python:3.11-slim-bookworm@sha256:f06d01d4ba3f8ad5af45a3ec87df19c1d317d8e8961edc0fabda61811af6f7cf'
 MAVEN_CACHE = 'autocare-maven-cache'
 DATABASE = 'perf_baseline'
 ISSUER = 'vehicle-health-manager'
@@ -146,7 +149,14 @@ def memory_mb():
         return None
 
 
-def build_dataset(sessions, refresh_hash):
+def planned_slot_base(options):
+    # Keep sequential preflight slots outside all warmup/measured rounds and align
+    # their shop mapping with perform(). Supports explicit longer JVM warmup.
+    timed=(options.warmup_rounds+options.write_rounds)*options.concurrency
+    return math.ceil(timed/MERCHANTS)*MERCHANTS
+
+
+def build_dataset(sessions, refresh_hash, slot_count=SLOTS):
     """Deterministic synthetic dataset: fixed ids keep worker-to-resource mapping reproducible."""
     chunks, users, vehicles, archives, files, links, slots = [], [], [], [], [], [], []
     for owner in range(1, HOME_OWNERS + 1):
@@ -179,7 +189,7 @@ def build_dataset(sessions, refresh_hash):
                       f'VALUES({index},{index},1,{100 + index}.00,1);')
         chunks.append('INSERT INTO merchant_project_version(id,merchant_project_id,version,price,on_shelf) '
                       f'VALUES({index},{index},1,{100 + index}.00,1);')
-    for index in range(1, SLOTS + 1):
+    for index in range(1, slot_count + 1):
         slots.append(f"({index},{(index - 1) % MERCHANTS + 1},1,"
                      f"DATE_ADD(UTC_TIMESTAMP(),INTERVAL {2880 + index * 7} MINUTE),"
                      f"DATE_ADD(UTC_TIMESTAMP(),INTERVAL {2940 + index * 7} MINUTE),1,0)")
@@ -358,7 +368,17 @@ class Backend(Owned):
                                + ' '.join(line[:120] for line in logs.splitlines()[-5:]))
 
 
-def build_jar():
+def build_jar(native=False, repository=None):
+    if native:
+        maven=shutil.which('mvn.cmd' if os.name=='nt' else 'mvn')
+        require(maven is not None,'Native performance build requires Maven on PATH')
+        command=[maven,'-B','clean','package','-DskipTests']
+        if repository is not None:command.append('-Dmaven.repo.local='+str(repository.resolve()))
+        log=ROOT/'.cache/performance-native-build.private.log';log.parent.mkdir(exist_ok=True)
+        with log.open('wb') as stream:
+            result=subprocess.run(command,cwd=ROOT/'backend',stdout=stream,stderr=subprocess.STDOUT,timeout=1200)
+        require(result.returncode==0 and JAR.is_file(),'Native backend build failed; see private build log')
+        return
     Docker.run(['run', '--rm', '--mount', f'type=bind,source={ROOT},target=/workspace',
                 '--mount', f'type=volume,source={MAVEN_CACHE},target=/root/.m2',
                 '-e', 'JAVA_TOOL_OPTIONS=-Dapi.version=1.44', '-w', '/workspace/backend',
@@ -503,19 +523,77 @@ class LoadClients:
 
     def round(self, round_index):
         self.state[0] = round_index
-        self.start.wait()
+        self.start.wait(timeout=120)
         started = time.perf_counter()
-        self.done.wait()
+        self.done.wait(timeout=120)
         elapsed = time.perf_counter() - started
         results = [(round(self.latency[index], 3), self.codes[index]) for index in range(self.concurrency)]
         return results, elapsed
 
     def stop(self):
         self.state[1] = 1
-        self.start.wait()
+        self.start.wait(timeout=120)
         for handle in self.handles:
             handle.join(timeout=30)
         require(not any(handle.is_alive() for handle in self.handles), 'Load client process did not exit')
+
+
+class LinuxLoadRuntime(Owned):
+    """Direct Linux-network control; uses exactly the same worker and payload functions."""
+    def __init__(self, run, network, backend, options, work):
+        super().__init__(run,'linux_load_runtime',f'autocare-perf-{run[:12]}-load',{LABEL:run,'autocare.performance.role':'linux_load_runtime'})
+        self.network,self.backend,self.options,self.work=network,backend,options,work
+    def start(self):
+        args=['run','--detach','--rm','--name',self.name,'--network',self.network.name,
+              '--pids-limit','2048','--ulimit','nofile=8192:8192',
+              '--label',f'{LABEL}={self.run}','--label','autocare.performance.role=linux_load_runtime',
+              '--mount',f'type=bind,source={ROOT / "scripts"},target=/scripts,readonly',LOAD_IMAGE,'sleep','infinity']
+        self.id=Docker.run(args).stdout.decode().strip();self.guard()
+    def config(self,tokens,mode):
+        return {'host':self.backend.name,'port':8080,'concurrency':self.options.concurrency,
+                'processes':self.options.client_processes,'tokens':tokens,'mode':mode,'slot_base':planned_slot_base(self.options)}
+    def preflight(self,tokens,mode):
+        self.guard()
+        raw=Docker.run(['exec','-i',self.id,'python','/scripts/performance_linux_client.py','--preflight'],
+                       (json.dumps(self.config(tokens,mode))+'\n').encode(),timeout=180)
+        return json.loads(raw.stdout)
+    def clients(self,tokens,mode):return LinuxLoadClients(self,tokens,mode)
+
+
+class LinuxLoadClients:
+    def __init__(self,runtime,tokens,mode):
+        runtime.guard();self.stopped=False;self.concurrency=runtime.options.concurrency
+        self.log=(runtime.work/f'linux-client-{mode}.private.log').open('wb')
+        self.process=subprocess.Popen(['docker','exec','-i',runtime.id,'python','/scripts/performance_linux_client.py'],
+                                      stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=self.log,text=True,encoding='utf-8',bufsize=1)
+        self.output=queue.Queue()
+        def read():
+            try:
+                for line in self.process.stdout:self.output.put(line)
+            finally:self.output.put(None)
+        threading.Thread(target=read,daemon=True).start()
+        self.send(runtime.config(tokens,mode));require(self.receive()=={'ready':True},'Linux load workers did not become ready')
+    def send(self,value):self.process.stdin.write(json.dumps(value)+'\n');self.process.stdin.flush()
+    def receive(self):
+        try:raw=self.output.get(timeout=180)
+        except queue.Empty:raise PerformanceError('Linux load observation timeout')
+        require(raw is not None,'Linux load process exited without an observation')
+        return json.loads(raw)
+    def round(self,index):
+        self.send({'round':index});result=self.receive();samples=result.get('samples')
+        require(isinstance(samples,list) and len(samples)==self.concurrency,'Incomplete Linux load round')
+        require(all(isinstance(s,list) and len(s)==2 and type(s[0]) in (int,float) and math.isfinite(s[0]) and s[0]>0
+                    and type(s[1]) is int and s[1]>=0 for s in samples),'Invalid Linux load observations')
+        return samples,result['elapsed']
+    def stop(self):
+        if self.stopped:return
+        try:
+            self.send({'stop':True});require(self.receive()=={'stopped':True},'Linux load workers did not stop')
+            self.process.stdin.close();require(self.process.wait(timeout=30)==0,'Linux load process failed')
+        finally:
+            self.stopped=True
+            if self.process.poll() is None:self.process.kill();self.process.wait(timeout=10)
+            self.log.close()
 
 
 def call(connection, method, path, token_value, body=None, key=None):
@@ -551,13 +629,13 @@ def call(connection, method, path, token_value, body=None, key=None):
     return [], parsed.get('data')
 
 
-def preflight(port, mode, tokens, requests=PREFLIGHT_REQUESTS, slot_base=0):
+def preflight(port, mode, tokens, requests=PREFLIGHT_REQUESTS, slot_base=0, host='127.0.0.1'):
     """Sequential probe before any concurrency: makes cold-start and per-request cost visible."""
-    plan = {'host': '127.0.0.1', 'port': port, 'mode': mode, 'concurrency': CONCURRENCY,
+    plan = {'host': host, 'port': port, 'mode': mode, 'concurrency': CONCURRENCY,
             'slot_base': slot_base,
             'tokens': tokens if mode != 'order' else None,
             'write_tokens': tokens if mode == 'order' else None}
-    connection = http.client.HTTPConnection('127.0.0.1', port, timeout=60)
+    connection = http.client.HTTPConnection(host, port, timeout=60)
     samples, kinds = [], {}
     try:
         for index in range(requests):
@@ -748,7 +826,7 @@ def run_stack(report, options):
     work = ROOT / '.cache' / ('performance-baseline-' + run_id[:12])
     work.mkdir(parents=True)
     network = Owned(run_id, 'network', f'autocare-perf-{run_id[:12]}', {LABEL: run_id}, kind='network')
-    mysql, backend, clients = MySQL(run_id, network), None, None
+    mysql, backend, clients, linux_runtime = MySQL(run_id, network), None, None, None
     started = time.monotonic()
     files = migration_files()
     report['migrations'] = {p.name: digest(p.read_bytes()) for p in files}
@@ -768,22 +846,25 @@ def run_stack(report, options):
         report['tables'] = count
         secret = secrets.token_hex(24)
         sessions = {owner: str(uuid.uuid4()) for owner in range(1, HOME_OWNERS + WRITE_OWNERS + 1)}
-        sql, counts = build_dataset(sessions, lambda owner: digest(sessions[owner].encode()))
+        slot_base=planned_slot_base(options);slot_count=slot_base+PREFLIGHT_REQUESTS
+        sql, counts = build_dataset(sessions, lambda owner: digest(sessions[owner].encode()),slot_count)
         print('Performance: seed ' + str(counts['rows_total']) + ' rows', flush=True)
         mysql.seed(sql)
         require(int(mysql.text(f'SELECT COUNT(*) FROM vehicle WHERE user_id=1;')) == HOME_VEHICLES,
                 'Seed verification failed for the home owner')
-        require(int(mysql.text('SELECT COUNT(*) FROM appointment_slot;')) == SLOTS, 'Seed verification failed for slots')
-        require(SLOTS >= (options.warmup_rounds + options.write_rounds) * options.concurrency,
+        require(int(mysql.text('SELECT COUNT(*) FROM appointment_slot;')) == slot_count, 'Seed verification failed for slots')
+        require(slot_base >= (options.warmup_rounds + options.write_rounds) * options.concurrency,
                 'Not enough slots for the requested write rounds')
         report['dataset'] = counts
         print('Performance: build backend jar', flush=True)
-        build_jar()
+        build_jar(options.native_build,options.maven_repository)
         port = free_port()
         backend = Backend(run_id, network, port, secret, options.pool_size)
         print('Performance: start backend on 127.0.0.1:' + str(port), flush=True)
         backend.start(mysql)
         backend.wait_healthy()
+        if options.linux_client:
+            linux_runtime=LinuxLoadRuntime(run_id,network,backend,options,work);linux_runtime.start()
         report['environment'] = {
             'host_platform': platform.platform(),
             'host_cpu_model': platform.processor() or platform.machine(),
@@ -791,9 +872,11 @@ def run_stack(report, options):
             'host_memory_mb': memory_mb(),
             'python': platform.python_version(),
             'docker_server': Docker.run(['version', '--format', '{{.Server.Version}}']).stdout.decode().strip(),
-            'client_position': 'load client in this process, separate from the server container, same host',
+            'client_position': 'owned Linux container on direct Docker network, separate from backend, same host' if options.linux_client else 'load client in this process, separate from the server container, same host',
+            'load_client_image': LOAD_IMAGE if options.linux_client else None,
             'backend_publish': f'127.0.0.1:{port} -> 8080',
             'runtime_image': RUNTIME_IMAGE, 'jvm_options': '-Xms512m -Xmx512m',
+            'backend_build': 'host-native-clean' if options.native_build else 'docker-maven',
             'mysql_image': MYSQL_IMAGE, 'mysql_version': mysql.text('SELECT VERSION();'),
             'mysql_max_connections': mysql.text('SELECT @@max_connections;'),
             'mysql_pool_size': options.pool_size,
@@ -812,9 +895,9 @@ def run_stack(report, options):
                          for share in range(WRITE_OWNERS)]
         report['preflight'] = {}
         for name in ('owner_home', 'merchant_list', 'order_create'):
-            report['preflight'][name] = preflight(
+            report['preflight'][name] = linux_runtime.preflight(writer_tokens if name=='order_create' else reader_tokens,MODES[name]) if linux_runtime else preflight(
                 port, MODES[name], writer_tokens if name == 'order_create' else reader_tokens,
-                slot_base=MERCHANTS * 5 if name == 'order_create' else 0)
+                slot_base=slot_base if name == 'order_create' else 0)
             require(report['preflight'][name]['errors'] == 0,
                     'Preflight request failed for ' + name + '; fix the stack before measuring')
         print('Performance: preflight ' + json.dumps(
@@ -826,7 +909,7 @@ def run_stack(report, options):
             print('Performance: scenario ' + name, flush=True)
             if clients is not None:
                 clients.stop()
-            clients = LoadClients('127.0.0.1', port, options.concurrency, options.client_processes,
+            clients = linux_runtime.clients(tokens,MODES[name]) if linux_runtime else LoadClients('127.0.0.1', port, options.concurrency, options.client_processes,
                                   tokens, MODES[name])
             record = scenario_record(name, *run_scenario(clients, name_rounds(name, options),
                                                          options.warmup_rounds, port,
@@ -863,7 +946,7 @@ def run_stack(report, options):
                 clients.stop()
             except Exception:
                 report['cleanup'].append({'role': 'load_client', 'passed': False})
-        for owned in (backend, mysql, network):
+        for owned in (linux_runtime, backend, mysql, network):
             if owned is None:
                 continue
             try:
@@ -889,7 +972,11 @@ def main():
                         help="'all' enforces latency targets; 'errors' only enforces the error budget")
     parser.add_argument('--report', type=Path, help='Write the evidence report to this path as well')
     parser.add_argument('--check-only', type=Path, help='Validate an existing report without running the stack')
+    parser.add_argument('--native-build', action='store_true', help='Build from current sources with host Maven/Java, retaining a private build log.')
+    parser.add_argument('--linux-client', action='store_true', help='Use the same workers in a separately owned Linux container on the test network.')
+    parser.add_argument('--maven-repository', type=Path, help='Host dependency cache; only with --native-build.')
     options = parser.parse_args()
+    if options.maven_repository and not options.native_build:parser.error('--maven-repository requires --native-build')
     if options.check_only:
         report = validate(options.check_only)
         print('Performance evidence: ' + ('PASS' if report['passed'] else 'FAIL')
@@ -904,12 +991,14 @@ def main():
                   'single host with MySQL and backend containers; not a production capacity proof',
                   'no soak, spike decay or fault injection; no cold-start or real-network measurement',
                   'order creation is spread over synthetic shops; one shop still serialises on its row lock']}
-    inputs = [ROOT / 'scripts/run_performance_baseline.py'] + migration_files()
+    inputs = [ROOT / 'scripts/run_performance_baseline.py', ROOT / 'scripts/performance_linux_client.py', ROOT / 'backend/pom.xml'] + migration_files()
+    inputs += sorted(p for p in (ROOT / 'backend/src/main').rglob('*') if p.is_file())
     report['implementation_inputs_sha256'] = {p.relative_to(ROOT).as_posix(): digest(p.read_bytes()) for p in inputs}
     work = None
     try:
         report['started_from_commit'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
         work = run_stack(report, options)
+        report['backend_jar_sha256'] = digest(JAR.read_bytes())
         report['implementation_sources_unchanged'] = report['implementation_inputs_sha256'] == {
             p.relative_to(ROOT).as_posix(): digest(p.read_bytes()) for p in inputs}
         require(report['implementation_sources_unchanged'], 'Performance implementation changed during execution')

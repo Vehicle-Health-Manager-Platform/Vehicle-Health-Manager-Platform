@@ -30,7 +30,7 @@ export function catalogBody(kind, form, current = null) {
   if (current) { body.revision = current.revision; body.status = current.status }
   return body
 }
-export function createCatalogApi({ baseUrl = apiOrigin, runtime = apiRuntime } = {}) {
+export function createCatalogApi({ baseUrl = apiOrigin, runtime = () => apiRuntime } = {}) {
   function call(path, method, token, data, key, validate) {
     if (!token) return Promise.reject(new CatalogError('unauthorized', '请先登录运营账号'))
     const bridge = runtime(), endpoint = typeof baseUrl === 'function' ? baseUrl() : baseUrl

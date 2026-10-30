@@ -11,6 +11,7 @@ import static com.autocare.platform.order.ReservationStore.*;
 final class KnowledgeVectorIndex implements AutoCloseable {
  record Hit(long documentId,String reference,long revision,int ordinal,int start,int end,double score){}
  private final ReservationStore db;private final LicensedKnowledge knowledge;private final EmbeddingProfile profile;private final String profileHash,profileJson;private final boolean enabled;private final EmbeddingExecutor executor,queries;
+ private long cleanupCursor;
  KnowledgeVectorIndex(ReservationStore db,LicensedKnowledge knowledge,EmbeddingProfile profile,EmbeddingProvider provider,boolean enabled){this(db,knowledge,profile,provider,enabled,Duration.ofSeconds(30));}
  KnowledgeVectorIndex(ReservationStore db,LicensedKnowledge knowledge,EmbeddingProfile profile,EmbeddingProvider provider,boolean enabled,Duration deadline){this.db=db;this.knowledge=knowledge;this.profile=Objects.requireNonNull(profile);this.profileHash=profile.fingerprint();this.profileJson=profile.json();this.enabled=enabled;this.executor=provider==null?null:new EmbeddingExecutor(profile,provider,deadline);this.queries=provider==null?null:new EmbeddingExecutor(profile,provider,deadline.compareTo(Duration.ofSeconds(12))<0?deadline:Duration.ofSeconds(12));}
  private void guard(){db.one("SELECT id FROM knowledge_control WHERE id=1 FOR UPDATE");}
@@ -29,10 +30,13 @@ final class KnowledgeVectorIndex implements AutoCloseable {
   if(reenable)db.jdbc.update("UPDATE knowledge_embedding_job SET state='QUEUED',error_code=NULL,updated_at=? WHERE id=? AND state='CANCELLED' AND error_code='FEATURE_DISABLED' AND NOT EXISTS(SELECT 1 FROM knowledge_embedding_chunk WHERE job_id=?)",time(db.now()),id,id);
   return id;
  });}
- void cleanup(){db.transactions.executeWithoutResult(t->{guard();
-  var jobs=db.jdbc.queryForList("SELECT * FROM knowledge_embedding_job WHERE profile_hash=? AND state<>'CANCELLED' ORDER BY updated_at,id LIMIT 100 FOR UPDATE",profileHash);
-  for(var job:jobs){long id=number(job,"id");if(!enabled||!same(job))invalidate(id,enabled?"SOURCE_CHANGED":"FEATURE_DISABLED");else if("RUNNING".equals(job.get("state"))&&!instant(job.get("lease_until")).isAfter(db.now()))db.jdbc.update("UPDATE knowledge_embedding_job SET state='FAILED',error_code='WORKER_LOST',lease_token=NULL,lease_until=NULL,updated_at=? WHERE id=?",time(db.now()),id);else db.jdbc.update("UPDATE knowledge_embedding_job SET updated_at=? WHERE id=?",time(db.now()),id);}
- });}
+ synchronized void cleanup(){Long next=db.transactions.execute(t->{guard();
+  var jobs=db.jdbc.queryForList("SELECT * FROM knowledge_embedding_job WHERE profile_hash=? AND state<>'CANCELLED' AND id>? ORDER BY id LIMIT 100 FOR UPDATE",profileHash,cleanupCursor);
+  if(jobs.isEmpty()&&cleanupCursor!=0)jobs=db.jdbc.queryForList("SELECT * FROM knowledge_embedding_job WHERE profile_hash=? AND state<>'CANCELLED' ORDER BY id LIMIT 100 FOR UPDATE",profileHash);
+  if(jobs.isEmpty())return 0L;
+  for(var job:jobs){long id=number(job,"id");if(!enabled||!same(job))invalidate(id,enabled?"SOURCE_CHANGED":"FEATURE_DISABLED");else if("RUNNING".equals(job.get("state"))&&!instant(job.get("lease_until")).isAfter(db.now()))db.jdbc.update("UPDATE knowledge_embedding_job SET state='FAILED',error_code='WORKER_LOST',lease_token=NULL,lease_until=NULL,updated_at=? WHERE id=?",time(db.now()),id);}
+  return number(jobs.get(jobs.size()-1),"id");
+ });cleanupCursor=next;}
  Map<String,Object> claim(){if(!enabled||executor==null)return null;cleanup();return db.transactions.execute(t->{guard();
   // The private model has one execution slot. Admission is serialized by the
   // existing control lock across all application instances, not just one JVM.

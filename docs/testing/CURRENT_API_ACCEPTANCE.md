@@ -1,4 +1,8 @@
+> 2026-10-30：29业务本轮真实新库执行通过3207业务/10092匿名HTTP；末尾VIN来源汇总误判已修复，随后严格复核37项通过、四类去重327/362。原失败报告保留，最终复核不是新执行。见[本轮报告](SCOPE_1345_ACCEPTANCE_2026_10_30.md)。静态api-coverage.json的current_run_operations=0表示该静态工具不执行请求，不覆盖独立执行记录。
+
 # 当前版API统一运行器
+
+2026-10-29执行与故障修复见[阶段报告](STAGE_ACCEPTANCE_2026_10_29.md)：29业务首轮保留原失败汇总，会话重审修复后新库通过，最终源码社区/知识HTTP已单独复跑。十项识别HTTP补证已有独立入口，有限索引重试亦已实现；下方R6a“下一批”描述为当时计划。完整后端使用宿主Java/Maven的严格core入口，不能以本工具的局部PASS代替。
 
 入口：scripts/run_business_api_acceptance.py。完整业务范围仍以[统一验收清单](../delivery/FINAL_ACCEPTANCE_2026_10_28.md)为准；此工具的PASS只表示所选套件及证据通过，不代表全部362操作、正式身份、真实资金、真机、模型领域效果或生产验收。
 
@@ -36,6 +40,8 @@ run模式重新执行，audit模式标为AUDIT_EXISTING并检查当前源码绑�
 
 子进程和审计诊断留在本次*.private.log、*.audit.private.log及原运行器私有日志中。汇总只输出安全摘要，不包含令牌、完整请求/资料正文或原始异常文本。发布前另按交接流程审阅，不上传整个.cache目录。
 
+2026-10-29修复：会话刷新套件的私有环境另保存仅本次随机生成的 `_audit_jwt_secret`，供独立主进程重审实际JWT签名。它与合成token一样只留本机私有证据，不进入汇总；缺失或错误时拒绝审计，不能借用seed进程的全局变量。旧证据缺该字段须重新执行会话套件，不能补写虚假上下文或跳过验签。
+
 操作覆盖按operation_id和normal/boundary/error/unauthorized去重。重复29次匿名探测不会变成更多接口；未选四类只表示本次范围未覆盖。缺口附带CONTRACT_VERDICTS中的独立结论，具体解释查该文件，不能把45项或局部缺口都当未开发功能。两个正式支付/退款回调依赖商户证书，仍属外部后置事项。
 
 ## 中断与互斥
@@ -57,3 +63,6 @@ python scripts/run_business_api_acceptance.py --suites community --journeys none
 --recognition audit只复核已有当前源码的十项记录，不声称新请求或新清理。适配器重审每份JUnit/现场证据及源码/清理，把规范方法和路径匹配到现行OpenAPI operation_id，未知或重复映射失败。局部报告只汇总该次实际选择，不把旧317历史数相加冒充本轮全库覆盖。
 
 识别的六组证据来自五个测试类，里程两组共享同一JUnit/数据库；执行项和数据库数量去重统计。识别模型、图片元数据/材料和存储为明确替身，不能当成真实供应商或仪表效果。结果见[R6b3报告](../progress/R6B3_MILEAGE_HTTP.md)。
+
+
+编排工具变更后的严格复核入口：`python scripts/reaudit_current_api_acceptance.py --source-run <本仓库.cache内原完整父报告>`。只接受全部29业务原始执行成功、来源稳定、业务实现/SQL/业务脚本哈希未变，并逐套重审私有原始证据；不修改原父报告，新的计数origin为AUDIT_EXISTING。业务实现或请求定义变化必须重新执行对应完整验收，不能用此入口洗成新执行。

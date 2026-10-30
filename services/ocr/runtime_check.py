@@ -12,7 +12,7 @@ import sys
 import threading
 from model_assets import verify_models
 
-VERSIONS = {'paddleocr': '3.7.0', 'paddlepaddle': '3.3.1', 'Pillow': '12.3.0'}
+VERSIONS = {'paddleocr': '3.7.0', 'paddlepaddle': '3.3.1', 'Pillow': '13.0.0'}
 
 def checked_result(result):
     if result['status'] not in ('CANDIDATE', 'LOW_CONFIDENCE') or len(result['candidates']) != 1 or result['candidates'][0]['mileage_km'] != 123456 or result['requires_confirmation'] is not True:

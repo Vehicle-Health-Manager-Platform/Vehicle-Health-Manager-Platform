@@ -924,3 +924,41 @@ R6b1：VIN与行驶证现场四类HTTP证据完成，13显式请求/两类10执�
 R6b2：ASR/图文六接口和VIN/行驶证回归共八项53显式HTTP请求，四类22执行项零失败错误跳过、四MySQL移除，源码稳定。8审计及最终12组595Python/1237miniapp通过，OCR80+1平台跳过。修正创建回执误断言state导致留下QUEUED夹具并污染两单worker旅程的问题，增加仅材料93失败清理和唯一任务SQL核对。首轮失败未计通过，最后两类里程及统一覆盖仍待；上游材料/模型明确替身，不合并部署。
 
 R6b3：车主8/接车9里程请求补齐，拒绝场景模型调用计数不增加、里程/接车/档案无自动写入。全部十识别70请求、五类28执行项零失败错误跳过，五MySQL移除；默认12组603Python/1237miniapp全过（OCR80+1平台跳过）。统一入口可选recognition run/audit/none接通，真实社区176+识别70和348匿名、当前去重33项四类。11识别审计/26运行器测试通过，源稳定；未修改业务逻辑、未重跑全后端/全362API、不合并部署。下一步可靠性/保留删除/容量及领域真机仍待。
+
+## 2026-10-29 当前核查
+- 基线工作区干净；已有362项契约、65迁移/134表。
+- 现有开发范围已覆盖三角色核心流程和识别/向量；最新记录仍缺同版全量API、整栈、容量/恢复等证据，保留删除政策/重试为独立待核对项。
+- 沙箱内Docker命名管道拒绝；需通过工具受控升级执行本地Docker测试，不修改正式账号或生产。
+
+## 2026-10-29 增量发现
+- 当前65迁移备份/跨实例恢复/迁移失败回退/重放通过：.cache/database-recovery-5ae82481b10c/report.json。
+- 首轮12组仅Python缺pypdf失败；补装锁定requirements-export-qa.txt后第二轮12/12通过：.cache/local-delivery-a5fcc571ca3a/report.json。OCR一个Linux专属检查在Windows明确跳过。
+- 已复现并修复源码摘要未包含后端.properties：新回归修复前断言失败、修复后通过；统一--backend现复用完整严格core覆盖率门禁，新增--docker-backend。
+- 初次完整后端命令被PowerShell拆分-D参数，未运行测试；引号修正后正在真实执行。浏览器沙箱启动受限，受控升级后gstack正常。
+
+## 2026-10-29 运行证据与已修复问题
+- 统一会话重审误报：auth_sessions.audit依赖seed子进程SECRET，主进程为空；改为本次私有上下文，不跳过验签。新回归先失败后通过；新库修复复跑PASS：.cache/delivery-20261029-auth-fixed/.cache/business-api-acceptance-5a0126caf9e7/report.json。
+- Compose Nginx健康缺陷：同容器localhost wget exit1、127.0.0.1 exit0；修复根Compose健康URL。缓存测试七服务/结构/鉴权11项回归PASS。
+- 生产Dockerfile构建失败于Docker Hub连接超时；新增cached-test.yml仅用于本地已有镜像和固定当前JAR，绝不等同生产镜像构建通过。OCR缓存镜像需覆盖为当前src/server.py默认关闭入口，不能假称实际模型开启。
+- 同一Compose栈实际履约102请求/341断言、16操作四类、6数据库不变量PASS：.cache/delivery-20261029-compose-business.json。身份/CLEAN元数据合成，资金LOCAL_TEST。
+- gstack Windows需真实bun.exe目录进入当前进程PATH，否则后台spawn bun ENOENT；独立Node前台守护保留日志可定位。QA脚本需等待具体渲染及使用可见picker项；首次脚本失败不是产品缺陷。
+- H5实际录车提交成功（最终截图vehicle-saved-final.png），SQL证明仅一条owner=1/model=1/mileage=23456新增车，另一车主里程保持12345。
+
+2026-10-29补充：早期提出的--docker-backend已撤销，完整上传适配器需宿主回环端点，--docker --full明确拒绝。实际宿主路径复核45项和隔离重试98项通过，最终完整执行单独记录。新增三配置后须重生成miniapp交接清单；旧147与新150不一致由门禁正确拒绝，最终610 Python和全部12组已通过。
+
+2026-10-29宿主连接对照：3次错误发生于非池化测试准备的getConnection而非业务断言。已改三组公用测试数据源为有限Hikari并关闭，隔离140项及两项资源/事务测试通过。TIME_WAIT3357并未耗尽16384动态端口，具体Windows抖动原因未证，不写虚假根因。统一后端外层5400秒不适配实际2h38完整测试，新增红绿回归后取消仅该包装层超时，避免遗留Maven。
+
+原交付文档进度核查：原文§1.4/§5.11的PC运营要求已被2026-10-09决策取消；当前应独立列范围变更。原文§9.3读P95<300、写<500与§12.1核心接口统一<300存在差异，500并发均未达标。旧2026-10-23审计中VIN/ASR/图文/向量及本地财务未实现已过期，不能照搬；需以现行代码和10月29证据判断。
+
+### 2026-10-30 复验补充
+- 性能短测预热不足的证据：读代码未改时Linux首页P95从215波动至359；明确增加至3轮预热、各10轮读/5轮写后按原500门槛通过。新轮次拥有独立槽位且预检不与计时重叠，4020笔均真实提交并核对容量/幂等。
+- 当前安全清单完整覆盖Java93组件、Linux模型运行时91组件和npm520包；npm0，Java2个视图/SSE条件告警，transformers4个高危需VEX/后续升级记录，安全门槛不冒称通过。
+- UI测试使用.cache隔离配置注入合成会话，普通构建无桥；启动夹具曾因参数格式、CJS/ESM互操作和非PTY stdin EOF失败，均保留FAIL/清理证据；不计为产品功能验证通过。
+
+## 2026-10-30 浏览器与工具根因
+
+uni-h5-vue定制3.4.21渲染器需其声明的@vue/shared3.4.21，workspace误取root3.5.44的def函数会将slots._设不可写；Node精确重现+浏览器原始失败均保留。vite解析别名使用uni-cli-shared依赖的共享函数，miniapp维持Vue3.4.21，安全更新的其余依赖保留。不能用构建成功替代页面运行。
+
+catalog-governance默认runtime=apiRuntime为对象，但call内部执行runtime()；注入函数的单测未覆盖真实默认值。已改为()=>apiRuntime并加入真实共享适配器测试，浏览器请求到达真实后端。功能默认关闭503与JS类型错误明确区分。
+
+run_local_delivery把TEMP重设到中文workspace导致core runner测试拒绝；使用系统独占TemporaryDirectory，退出清理。无需改变已完成全后端的core runner或伪造源码一致性。

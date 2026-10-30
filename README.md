@@ -1,3 +1,13 @@
+当前GitHub交付补验：[合并前验证及证据边界](docs/testing/GITHUB_MERGE_VALIDATION_2026_10_30.md)。
+
+## 2026-10-30 按1、3、4、5项完善
+
+当前入口：[本轮交接](docs/delivery/SCOPE_1345_HANDOVER_2026_10_30.md)、[测试与修复](docs/testing/SCOPE_1345_ACCEPTANCE_2026_10_30.md)、[安全剩余发现](docs/testing/SECURITY_FINDINGS_2026_10_30.md)。保留现有配色；新增汽车生活入口和本地授权VIN候选链路。Linux500并发稳态达原文9.3门槛，完整后端2641项通过。正式服务/真机/生产、统一P95<300写入和未消除的依赖风险分别移交，不能据此宣称全部原文验收通过。以下保留历史。
+
+## 2026-10-29 本地阶段交接
+
+当前入口：[本轮统一交接](docs/delivery/STAGE_HANDOVER_2026_10_29.md)、[测试与修复记录](docs/testing/STAGE_ACCEPTANCE_2026_10_29.md)、[实际配置读取点](docs/delivery/CONFIGURATION_REFERENCE.md)。正式微信身份、短信、生产发布及真实支付渠道继续后置。合成身份、LOCAL_TEST和替身识别不代表真实服务通过；本轮实际范围、已知限制和未验项以测试报告为准。以下保留阶段历史。
+
 ## 2026-10-28 阶段更新合并
 
 本次将 PR238–257 的代码和交接资料完整集成至 main，保留全部阶段提交历史。[合并范围、门禁与提交覆盖](docs/progress/MERGE_2026_10_28.md)记录20个原 PR、已有测试和未验边界；实际合并状态以 GitHub 为准。包括 VIN/行驶证、ASR、图文/PDF、真实私有embedding与公开向量检索，以及10项识别接口HTTP补证；不部署生产环境。

@@ -96,19 +96,22 @@ def add_r9_contract_updates(document, operation):
     paths[path]={'post':pickup}
 
     path='/api/vehicle/vin-decode'
-    vin=operation('post',path,'车主明确同意后查询NHTSA有限覆盖VIN候选，人工选车型','F03')
+    vin=operation('post',path,'车主同意来源用途后查询VIN候选，人工确认车型','F03')
     vin.pop('parameters',None)
     vin['x-implementation-status']='vin-owner-candidate-implemented-requires-provider-acceptance'
     vin['x-roles']='当前有效OWNER会话；VIN_DECODE_ENABLED默认false，显式NHTSA_VPIC来源'
     vin['description']='仅POST JSON正文，禁止query，不自动登记车辆。VIN_VPIC_V1同意将VIN/可选年款发送美国NHTSA；仅美国市场登记覆盖，不保证中国车辆或内部车型精确匹配。调用前后复核会话/账号（失败也复核）；共享数据库每车主每UTC分钟5次，实例并发2。供应商10秒总期限、64KiB响应、不重定向、无应用级重试。返回需人工核对的CANDIDATE/PARTIAL/NO_MATCH，不提供model_id。旧GET未提供业务实现，应迁移本POST。'
     vin['requestBody']={'required':True,'content':{'application/json':{'schema':{'type':'object','additionalProperties':False,'required':['vin','consent','consent_version'],'properties':{
         'vin':{'type':'string','description':'首尾空白可去除，原始ASCII合法17位；服务端规范为大写','pattern':'^[ \\t\\r\\n]*[A-HJ-NPR-Za-hj-npr-z0-9]{17}[ \\t\\r\\n]*$'},
-        'model_year':{'type':'integer','minimum':1980,'maximum':2100},'consent':{'const':True},'consent_version':{'const':'VIN_VPIC_V1'}}}}}}
+        'model_year':{'type':'integer','minimum':1980,'maximum':2100},'consent':{'const':True},'consent_version':{'enum':['VIN_VPIC_V1','VIN_LOCAL_V1']}}}}}}
     content=copy.deepcopy(vin['responses']['200']['content'])
     vin['responses']={code:{'description':desc,'content':copy.deepcopy(content),'headers':{'Cache-Control':{'schema':{'const':'no-store'}}}} for code,desc in [
         ('200','vin/model_year_hint(整数或null)/status(CANDIDATE|PARTIAL|NO_MATCH)/source=NHTSA_VPIC/coverage=US_MARKET_REGISTRATION_ONLY/requires_confirmation=true/fields。fields仅make/model/model_year/trim/vehicle_type非空文本；完整候选需make/model/model_year；NO_MATCH为空。'),
         ('400','VIN/年款/用途同意无效，额外字段/重复键/尾随JSON/query均拒绝'),('401','会话失效或账号停用/删除'),('403','非OWNER角色'),('429','每车主分钟限额或本实例并发满'),('503','关闭、来源不可用/超时/响应无效或数据库不可用') ]}
     paths[path]['post']=vin
+    vin['x-roles']='当前有效OWNER会话；默认关闭。NHTSA_VPIC或LOCAL_LICENSED两种服务端固定来源，客户端用途同意必须一致'
+    vin['description']+=' LOCAL_LICENSED模式使用VIN_LOCAL_V1同意，仅加载服务端配置的SHA256固定本地授权规则，逐次核验授权期及文件。额外返回source_revision/synthetic/catalog_candidates；source为LOCAL_LICENSED或LOCAL_SYNTHETIC，coverage=PINNED_LOCAL_RULES_ONLY。目录候选仅在品牌/车系/年款/配置文本精确匹配且全链有效且唯一时返回一个，否则为空；须人工确认，保存时仍重新校验目录。无授权的真实车牌反查未接入，合成测试结果不表示真实国内车型覆盖。'
+    vin['responses']['200']['description']+=' 本地模式另含source_revision(修订标识)/synthetic(布尔)/catalog_candidates(0或1项：model_id/series_id/brand_id/brand_name/series_name/year/config_name)。'
     paths[path]['get']['deprecated']=True
     paths[path]['get']['description']='旧GET没有解码实现；迁移POST并提供VIN_VPIC_V1用途同意，勿将VIN置于查询参数。'
 

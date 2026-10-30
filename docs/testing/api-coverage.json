@@ -15345,7 +15345,7 @@
       "operation_id": "post_api_vehicle_vin_decode",
       "method": "POST",
       "path": "/api/vehicle/vin-decode",
-      "roles": "当前有效OWNER会话；VIN_DECODE_ENABLED默认false，显式NHTSA_VPIC来源",
+      "roles": "当前有效OWNER会话；默认关闭。NHTSA_VPIC或LOCAL_LICENSED两种服务端固定来源，客户端用途同意必须一致",
       "protected": true,
       "implementation_status": "vin-owner-candidate-implemented-requires-provider-acceptance",
       "defined_kinds": [],
@@ -15486,6 +15486,6 @@
       ]
     }
   ],
-  "contract_sha256": "a6a8a6b4d6f9e9fe748a9a6f99855b9739122682d2235f1c065199abda5fbfdd",
+  "contract_sha256": "47a0f1d0eee32c548ef49bead025f64b20d5edb8ae91386f5f3fe882ac39557d",
   "input_hash_policy": "Input SHA256 uses CRLF-to-LF normalization. Historical raw collection digests must match its LF or CRLF byte form; content changes are rejected."
 }

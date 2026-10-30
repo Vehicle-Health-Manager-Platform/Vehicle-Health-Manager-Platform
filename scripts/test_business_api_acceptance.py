@@ -236,12 +236,31 @@ class RecognitionIntegrationTest(unittest.TestCase):
         self.proof=dict(passed=True,test_class='FixtureTest',tests=6,requests=4,coverage={'GET /api/one':list(runner.KINDS)})
         self.report=dict(passed=True,sources_unchanged=True,source_sha256='source',execution_mode='EXECUTED',maven_exit_code=0,owned_databases_removed=True,suites=[dict(name='fixture',**self.proof)])
         self.module=SimpleNamespace(__file__=str(self.root/'helper.py'),SPECS={'fixture':('FixtureTest','test','/api/one')},source_digest=lambda:'source',audit=lambda *a:self.proof)
+        self.cat=CAT
     def execute(self,mode='run',exit_code=0,count=1):
         def child(*args):
             for i in range(count):
                 path=self.root/'.cache'/('recognition-http-'+str(i));path.mkdir();(path/'report.json').write_text(json.dumps(self.report))
             return exit_code
-        with patch.object(runner,'ROOT',self.root),patch.object(runner.importlib,'import_module',return_value=self.module),patch.object(runner,'run_child',side_effect=child):return runner.execute_recognition(mode,self.work,CAT,{})
+        with patch.object(runner,'ROOT',self.root),patch.object(runner.importlib,'import_module',return_value=self.module),patch.object(runner,'run_child',side_effect=child):return runner.execute_recognition(mode,self.work,self.cat,{})
+    def test_reviewed_vin_providers_share_one_operation_and_keep_both_request_counts(self):
+        self.cat={'vin':dict(method='POST',path='/api/vehicle/vin-decode',protected=True)}
+        self.proof['coverage']={'POST /api/vehicle/vin-decode':list(runner.KINDS)}
+        self.module.SPECS={name:('FixtureTest','test','/api/vehicle/vin-decode') for name in ['vin','local-vin']}
+        self.report['suites']=[dict(name=name,**self.proof) for name in self.module.SPECS]
+        result=self.execute()
+        self.assertEqual(1,result['scope_count']);self.assertEqual(8,result['requests'])
+        self.assertEqual({'vin':sorted(runner.KINDS)},result['coverage'])
+    def test_duplicate_other_operations_remain_rejected(self):
+        self.module.SPECS={name:('FixtureTest','test','/api/one') for name in ['vin','local-vin']}
+        self.report['suites']=[dict(name=name,**self.proof) for name in self.module.SPECS]
+        with self.assertRaises(ValueError):self.execute()
+    def test_unreviewed_vin_provider_duplicate_is_rejected(self):
+        self.cat={'vin':dict(method='POST',path='/api/vehicle/vin-decode',protected=True)}
+        self.proof['coverage']={'POST /api/vehicle/vin-decode':list(runner.KINDS)}
+        self.module.SPECS={name:('FixtureTest','test','/api/vehicle/vin-decode') for name in ['vin','unreviewed']}
+        self.report['suites']=[dict(name=name,**self.proof) for name in self.module.SPECS]
+        with self.assertRaises(ValueError):self.execute()
     def test_optional_plan_keeps_default_scope_and_adds_only_one_batch(self):
         self.assertEqual(36,len(runner.plan(list(runner.SUITES),'run')))
         self.assertEqual([('business','owner'),('recognition','recognition')],runner.plan(['owner'],'none','run'))

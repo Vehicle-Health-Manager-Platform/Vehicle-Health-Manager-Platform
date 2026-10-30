@@ -115,7 +115,7 @@ test('operator embedding status is optional, strict and never implies public VEC
  assert.ok(validKnowledgeEmbedding({state:'DISABLED',error_code:null,profile_hash:null,updated_at:null}))
  for(const state of ['NOT_ALLOWED','NOT_QUEUED'])assert.ok(validKnowledgeEmbedding({...enabled,state,updated_at:null}))
  for(const error_code of ['WORKER_LOST','UNAVAILABLE','INVALID_VECTOR','LIMIT_EXCEEDED'])assert.ok(validKnowledgeEmbedding({...enabled,state:'FAILED',error_code}))
- assert.match(embeddingStateLabel('SUCCEEDED'),/已生成/);assert.match(embeddingStateLabel('FAILED'),/不自动重试/)
+ assert.match(embeddingStateLabel('SUCCEEDED'),/已生成/);assert.match(embeddingStateLabel('FAILED'),/生成失败/)
  for(const bad of [{...enabled,state:'VECTOR'},{...enabled,error_code:'UNAVAILABLE'},{...enabled,profile_hash:'bad'},{...enabled,updated_at:null},{...enabled,vector:[1]},{...enabled,state:'FAILED',error_code:'private diagnostic'},{...enabled,state:'DISABLED'},{...enabled,state:'CANCELLED',error_code:'LIMIT_EXCEEDED'},null])assert.equal(validKnowledgeEmbedding(bad),false)
 })
 test('admin list validates new embedding state while legacy receipts stay accepted',async()=>{

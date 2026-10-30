@@ -11,7 +11,7 @@ VIN_DECODE_ENABLED=true
 VIN_DECODER_PROVIDER=NHTSA_VPIC
 ```
 
-来源启用时必须显式匹配 NHTSA_VPIC，否则启动失败。默认关闭返回 503，仍可手动录车。供应商固定 `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/`，不支持任意 URL。需要 DNS/TLS 和 HTTPS 出口；不得在 URL/日志/监控中记录请求 VIN 或供应商正文。供应商会接收 VIN 与可选年款，启用前须核实用途说明、数据传输与适用覆盖的接受情况；测试合成 VIN 不发送真实来源。
+来源启用时必须显式选择 NHTSA_VPIC 或 LOCAL_LICENSED，否则启动失败。下述供应商出口说明适用于NHTSA模式，本地模式无该出口。默认关闭返回 503，仍可手动录车。供应商固定 `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/`，不支持任意 URL。需要 DNS/TLS 和 HTTPS 出口；不得在 URL/日志/监控中记录请求 VIN 或供应商正文。供应商会接收 VIN 与可选年款，启用前须核实用途说明、数据传输与适用覆盖的接受情况；测试合成 VIN 不发送真实来源。
 
 当前有效 OWNER Bearer 会话，`Content-Type: application/json`，禁止任何 query，无幂等写键：
 
@@ -27,7 +27,7 @@ VIN_DECODER_PROVIDER=NHTSA_VPIC
 {"vin":"LTEST223456789012","model_year_hint":2026,"status":"CANDIDATE","source":"NHTSA_VPIC","coverage":"US_MARKET_REGISTRATION_ONLY","requires_confirmation":true,"fields":{"make":"Synthetic","model":"Test","model_year":"2026"}}
 ```
 
-仅示例，不表示真实识别。status 为 CANDIDATE/PARTIAL/NO_MATCH；fields 只允许 make、model、model_year、trim、vehicle_type 非空文本。完整候选必须有品牌/车系/年款；NO_MATCH 为空。无内部 model_id 或车型精确映射，不生成置信度。响应关联原 VIN 与年款提示，Cache-Control 为 no-store。
+仅示例，不表示真实识别。status 为 CANDIDATE/PARTIAL/NO_MATCH；fields 只允许 make、model、model_year、trim、vehicle_type 非空文本。完整候选必须有品牌/车系/年款；NO_MATCH 为空。NHTSA模式无内部 model_id 或精确映射，不生成置信度；本地模式见下方增补。响应关联原 VIN 与年款提示，Cache-Control 为 no-store。
 
 ## 权限、错误与资源
 
@@ -45,3 +45,12 @@ VIN_DECODER_PROVIDER=NHTSA_VPIC
 输入、年款、用途同意、账号或模式改变以及页面隐藏/卸载，取消接收并丢弃迟到结果；运行时支持abort时同时中止传输，否则服务端已准入查询仍可能执行并计入限额。候选经账号绑定、仅内存60秒单次消费的 prefill 传递，摘要不自动选择车型。候选展示与确认都不等于车辆已保存。
 
 真实接入所需资料：获准查询的 VIN/实车年款与对照车型样本、来源条款/用途说明及地区覆盖确认、后端出口与错误预算。验收需获授权真实样本成功/部分/无匹配、年份冲突、超时/限流、关闭降级及跨账号撤销，核对保存结果。NHTSA 以美国市场登记为主，国内车型需另选授权来源和内部目录映射验收，不能借本地替身测试关闭该任务。当前测试结果见 [R2a记录](../progress/RECOGNITION_R2A_VIN_GATEWAY.md)。
+
+
+## 2026-10-30 本地授权模式
+
+后端配置LOCAL_LICENSED，前端VITE_VIN_PROVIDER=LOCAL_LICENSED，使用consent_version=VIN_LOCAL_V1；错误来源同意版本返回400，不自动调用NHTSA。源文件路径/SHA/有效期/合成开关见[接入手册](../operations/VIN_LOCAL_SOURCE.md)。权限、分钟/并发限制、确认和no-store边界继续有效。
+
+200响应保留上方7字段，source为LOCAL_LICENSED或LOCAL_SYNTHETIC，coverage=PINNED_LOCAL_RULES_ONLY；另加source_revision（固定来源修订）、synthetic（布尔）、catalog_candidates（唯一精确在用目录匹配时1项，否则空）。候选项包含brand_id/brand_name/series_id/series_name/year/model_id/config_name，全部来自当前目录，不代替最终登记。歧义规则返回NO_MATCH；过期、SHA变化、移除、未允许合成来源等返回503。
+
+接口仍不写vehicle。用户核对后进入手动页，主动选入候选时再读取当前完整分页目录并校验名称/ID，停用、改名、取消或换账号则拒绝旧结果。最终保存走原登记接口及幂等键；合成来源不能计为真实国内VIN识别验收。浏览器和真实HTTP证据见[本轮测试](../testing/SCOPE_1345_ACCEPTANCE_2026_10_30.md)。

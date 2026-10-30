@@ -237,13 +237,23 @@ def execute_recognition(mode, work, cat, env):
             or report.get('source_sha256')!=module.source_digest() or report.get('execution_mode')!=origin
             or mode=='run' and (report.get('maven_exit_code')!=0 or report.get('owned_databases_removed') is not True)):
         raise ValueError('Recognition source/execution/cleanup failed')
-    audited=[];coverage={};routes={v['method']+' '+v['path']:k for k,v in cat.items()}
+    audited=[];coverage={};providers={};routes={v['method']+' '+v['path']:k for k,v in cat.items()}
     for name,(cls,_,_) in module.SPECS.items():
         proof=module.audit(name,ROOT/'backend/target/surefire-reports'/('TEST-com.autocare.platform.order.'+cls+'.xml'),ROOT/'backend/target'/(name+'-http-evidence.json'))
         audited.append(dict(name=name,**proof))
         for route,kinds in proof['coverage'].items():
-            if route not in routes or routes[route] in coverage:raise ValueError('Unknown or duplicate recognition operation')
-            coverage[routes[route]]=kinds
+            if route not in routes:raise ValueError('Unknown recognition operation')
+            operation=routes[route]
+            if operation in coverage:
+                # These two reviewed provider journeys exercise the same HTTP
+                # contract. Count the operation once without dropping either
+                # source's requests or accepting arbitrary duplicate evidence.
+                seen=providers[operation]
+                if route!='POST /api/vehicle/vin-decode' or name in seen or seen|{name}!={'vin','local-vin'}:
+                    raise ValueError('Duplicate recognition operation')
+                coverage[operation]=sorted(set(coverage[operation])|set(kinds))
+            else:coverage[operation]=kinds
+            providers.setdefault(operation,set()).add(name)
     if audited!=report.get('suites'):raise ValueError('Recognition raw evidence differs')
     return dict(kind='recognition',name='recognition',passed=True,origin=origin,
                 requests=sum(v['requests'] for v in audited),coverage=coverage,

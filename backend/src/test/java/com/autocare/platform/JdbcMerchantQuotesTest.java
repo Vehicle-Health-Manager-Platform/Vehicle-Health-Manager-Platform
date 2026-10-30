@@ -33,6 +33,7 @@ class JdbcMerchantQuotesTest {
             for(String file:List.of("V001__baseline.sql","V003__auth_lifecycle.sql","V022__catalog_governance.sql","V006__merchant_project_versions.sql"))
                 ScriptUtils.executeSqlScript(connection,new FileSystemResource(Path.of("..","docs","sql","migrations",file)));
         }
+        jdbc.execute("ALTER TABLE merchant ADD COLUMN region_code VARCHAR(6) DEFAULT NULL");
     }
     @BeforeEach void setup(){
         jdbc.execute("DROP TRIGGER IF EXISTS reject_quote_audit");
@@ -74,6 +75,23 @@ class JdbcMerchantQuotesTest {
         assertEquals(404,assertThrows(ResponseStatusException.class,()->quotes.save(b,key(),input("1.00",0))).getStatusCode().value());
         quotes.save(a,key(),input("1.00",0));assertEquals(2,count("merchant_project_version"));
         assertEquals(404,assertThrows(ResponseStatusException.class,()->quotes.ownerList(owner,1,"price_asc",1,20)).getStatusCode().value());
+    }
+    @Test void ownerPagesRequireHistoryAndChooseVersionNotInsertionOrder(){
+        quotes.save(a,key(),input("100.00",1));quotes.save(a,key(),input("100.00",1));
+        quotes.save(b,key(),input("100.00",1));
+        long quote=jdbc.queryForObject("SELECT id FROM merchant_project WHERE merchant_id=1",Long.class);
+        long latest=jdbc.queryForObject("SELECT id FROM merchant_project_version WHERE merchant_project_id=? AND version=2",Long.class,quote);
+        jdbc.update("INSERT INTO merchant_project_version(merchant_project_id,version,price,on_shelf,actor_staff_id) VALUES(?,0,100,1,1)",quote);
+        jdbc.update("UPDATE merchant SET region_code='110000' WHERE id=1");
+        var page=quotes.ownerList(owner,1,"price_asc",1,1,"110000");
+        assertEquals(1L,page.get("total"));
+        var item=(Map<?,?>)((List<?>)page.get("items")).get(0);
+        assertEquals(latest,item.get("version_id"));assertEquals(2L,item.get("version"));
+        assertTrue(((List<?>)quotes.ownerList(owner,1,"price_desc",2,1,"110000").get("items")).isEmpty());
+        jdbc.update("DELETE FROM merchant_project_version WHERE merchant_project_id=?",quote);
+        assertEquals(0L,quotes.ownerList(owner,1,"price_asc",1,20,"110000").get("total"));
+        assertEquals(1L,total());
+        jdbc.update("UPDATE merchant SET status=0 WHERE id=2");assertEquals(0L,total());
     }
     @Test void cachedWriteRechecksRevocationAndMerchantAvailability(){
         String key=key();quotes.save(a,key,input("1.00",1));jdbc.update("UPDATE auth_session SET revoked_at=UTC_TIMESTAMP() WHERE id=?",a.session());

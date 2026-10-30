@@ -1,0 +1,490 @@
+{
+  "version": 1,
+  "kind": "performance-baseline",
+  "passed": false,
+  "image": "mysql:8.0",
+  "started_at": "2026-10-29T11:10:02.416659+00:00",
+  "scenarios": [
+    {
+      "id": "owner_home",
+      "title": "车主首页（车辆列表 + 最新档案）",
+      "scope": "读",
+      "concurrency": 500,
+      "rounds": 3,
+      "warmup_requests": 500,
+      "http_requests_per_sample": 2,
+      "http_requests": 3000,
+      "requests": 1500,
+      "errors": 0,
+      "error_kinds": {},
+      "error_rate": 0.0,
+      "duration_seconds": 1.485,
+      "throughput_samples_per_second": 1010.35,
+      "latency_ms": {
+        "samples": 1500,
+        "min_ms": 48.507,
+        "mean_ms": 305.672,
+        "p50_ms": 311.603,
+        "p90_ms": 402.194,
+        "p95_ms": 418.041,
+        "p99_ms": 542.979,
+        "max_ms": 568.952
+      },
+      "thresholds": {
+        "p95_ms": 300.0,
+        "p99_ms": 800.0
+      },
+      "checks": [
+        {
+          "name": "requests_completed",
+          "value": 1500,
+          "expected": 1500,
+          "passed": true
+        },
+        {
+          "name": "error_rate_below_0.1%",
+          "value": 0.0,
+          "expected": 0.001,
+          "passed": true
+        },
+        {
+          "name": "p95_target",
+          "value": 418.041,
+          "expected": 300.0,
+          "passed": false
+        },
+        {
+          "name": "p99_target",
+          "value": 542.979,
+          "expected": 800.0,
+          "passed": true
+        }
+      ],
+      "server_metrics": {
+        "samples": 1,
+        "peaks": {
+          "hikaricp_connections_active": 4.0,
+          "hikaricp_connections_pending": 0.0,
+          "hikaricp_connections_max": 40.0,
+          "tomcat_threads_busy_threads": 6.0,
+          "tomcat_threads_current_threads": 10.0
+        },
+        "container_cpu_percent_peak": {
+          "backend": 1020.9,
+          "mysql": 502.5
+        }
+      },
+      "latency_target_met": false,
+      "passed": false,
+      "enforced_checks": [
+        "requests_completed",
+        "error_rate_below_0.1%",
+        "p95_target",
+        "p99_target"
+      ]
+    },
+    {
+      "id": "merchant_list",
+      "title": "商家列表（项目报价分页）",
+      "scope": "读",
+      "concurrency": 500,
+      "rounds": 3,
+      "warmup_requests": 500,
+      "http_requests_per_sample": 1,
+      "http_requests": 1500,
+      "requests": 1500,
+      "errors": 0,
+      "error_kinds": {},
+      "error_rate": 0.0,
+      "duration_seconds": 1.93,
+      "throughput_samples_per_second": 777.21,
+      "latency_ms": {
+        "samples": 1500,
+        "min_ms": 21.861,
+        "mean_ms": 334.77,
+        "p50_ms": 338.92,
+        "p90_ms": 564.147,
+        "p95_ms": 597.973,
+        "p99_ms": 648.688,
+        "max_ms": 661.098
+      },
+      "thresholds": {
+        "p95_ms": 300.0,
+        "p99_ms": 800.0
+      },
+      "checks": [
+        {
+          "name": "requests_completed",
+          "value": 1500,
+          "expected": 1500,
+          "passed": true
+        },
+        {
+          "name": "error_rate_below_0.1%",
+          "value": 0.0,
+          "expected": 0.001,
+          "passed": true
+        },
+        {
+          "name": "p95_target",
+          "value": 597.973,
+          "expected": 300.0,
+          "passed": false
+        },
+        {
+          "name": "p99_target",
+          "value": 648.688,
+          "expected": 800.0,
+          "passed": true
+        }
+      ],
+      "server_metrics": {
+        "samples": 2,
+        "peaks": {
+          "hikaricp_connections_active": 40.0,
+          "hikaricp_connections_pending": 50.0,
+          "hikaricp_connections_max": 40.0,
+          "tomcat_threads_busy_threads": 97.0,
+          "tomcat_threads_current_threads": 200.0
+        },
+        "container_cpu_percent_peak": {
+          "backend": 670.8,
+          "mysql": 1104.9
+        }
+      },
+      "latency_target_met": false,
+      "passed": false,
+      "enforced_checks": [
+        "requests_completed",
+        "error_rate_below_0.1%",
+        "p95_target",
+        "p99_target"
+      ]
+    },
+    {
+      "id": "order_create",
+      "title": "创建预约订单",
+      "scope": "写",
+      "concurrency": 500,
+      "rounds": 2,
+      "warmup_requests": 500,
+      "http_requests_per_sample": 1,
+      "http_requests": 1000,
+      "requests": 1000,
+      "errors": 0,
+      "error_kinds": {},
+      "error_rate": 0.0,
+      "duration_seconds": 1.28,
+      "throughput_samples_per_second": 781.47,
+      "latency_ms": {
+        "samples": 1000,
+        "min_ms": 39.55,
+        "mean_ms": 331.155,
+        "p50_ms": 318.212,
+        "p90_ms": 574.555,
+        "p95_ms": 615.646,
+        "p99_ms": 636.048,
+        "max_ms": 648.572
+      },
+      "thresholds": {
+        "p95_ms": 500.0,
+        "p99_ms": null
+      },
+      "checks": [
+        {
+          "name": "requests_completed",
+          "value": 1000,
+          "expected": 1000,
+          "passed": true
+        },
+        {
+          "name": "error_rate_below_0.1%",
+          "value": 0.0,
+          "expected": 0.001,
+          "passed": true
+        },
+        {
+          "name": "p95_target",
+          "value": 615.646,
+          "expected": 500.0,
+          "passed": false
+        }
+      ],
+      "server_metrics": {
+        "samples": 2,
+        "peaks": {
+          "hikaricp_connections_active": 12.0,
+          "hikaricp_connections_pending": 0.0,
+          "hikaricp_connections_max": 40.0,
+          "tomcat_threads_busy_threads": 13.0,
+          "tomcat_threads_current_threads": 200.0
+        },
+        "container_cpu_percent_peak": {
+          "backend": 553.2,
+          "mysql": 377.0
+        }
+      },
+      "latency_target_met": false,
+      "passed": false,
+      "enforced_checks": [
+        "requests_completed",
+        "error_rate_below_0.1%",
+        "p95_target"
+      ]
+    }
+  ],
+  "cleanup": [
+    {
+      "role": "backend",
+      "passed": true
+    },
+    {
+      "role": "mysql",
+      "passed": true
+    },
+    {
+      "role": "network",
+      "passed": true
+    }
+  ],
+  "boundaries": [
+    "synthetic owners/vehicles/archives and one synthetic project; no production data",
+    "core HTTP endpoints only; no AI, WeChat, SMS or real payment provider in the timed path",
+    "single host with MySQL and backend containers; not a production capacity proof",
+    "no soak, spike decay or fault injection; no cold-start or real-network measurement",
+    "order creation is spread over synthetic shops; one shop still serialises on its row lock"
+  ],
+  "implementation_inputs_sha256": {
+    "scripts/run_performance_baseline.py": "3b82a62fb056025586afb92b37802b328edca59e256aeac83b399635bde2ef4f",
+    "docs/sql/migrations/V001__baseline.sql": "e29a99c73fe549d23c00367557ecb16cbae76f1fcdd73c3c503662c2bcc0c540",
+    "docs/sql/migrations/V002__staff_wechat_identity.sql": "33b70f444b01c9829965ab836d7fe2ef6eb9a9e159a45af5661818f4167612f4",
+    "docs/sql/migrations/V003__auth_lifecycle.sql": "c637d1cdd71c017d3e47aafde37553f3498c466295e786d8b6232ea67f76de9d",
+    "docs/sql/migrations/V004__upload_http.sql": "c97e202cc31b95153f3ace7dbba9e170a9f06cff1efcf6869d1891f3c012f7c3",
+    "docs/sql/migrations/V005__vehicle_archive_files.sql": "76fd75ae351264e968ac945c2e6a9dfadbd889d117a3a480212a1c863f8c32c8",
+    "docs/sql/migrations/V006__merchant_project_versions.sql": "f61e1983788e8d0e4ff0cd57df73179b12b5613a83bbf30b3647f2f5db0eebdf",
+    "docs/sql/migrations/V007__reservation_orders.sql": "bde32fba46cf0694543e91bb0a3925d25a4e120f61e052bdb7d52791b7b29cd3",
+    "docs/sql/migrations/V008__payment_foundation.sql": "44cf544e2d227ef3ea3d046b566a22167fd2104d1cc21be4b60cdc953bd645dc",
+    "docs/sql/migrations/V009__order_fulfillment_states.sql": "3201956105ac802986793bf0a28b5d05e0496e63e9442a2d5b596a220b68f66f",
+    "docs/sql/migrations/V010__pickup_inspection.sql": "7af0c7af546d4b5e220f0f6f04c4d891396d00722da97e7d0a3d03a9e7d7a734",
+    "docs/sql/migrations/V011__pickup_owner_decision.sql": "f78a5a0a6ad6bea9506f1ee65564f37e57879053a4907f8930b888bddb11375a",
+    "docs/sql/migrations/V012__technician_dispatch.sql": "e35494639489662a4ce2d2664954ffcb6660c35434323c6e7a964ca640001b3e",
+    "docs/sql/migrations/V013__dispute_resolution.sql": "d2b6086edbe8a41dd51763ed9e051cccf59de141b6acfb4910654ff546a7cad7",
+    "docs/sql/migrations/V014__service_work.sql": "aa7b279d0d4accec6fb548ad2d58e2a364f8c413a2d58419afba898b1ef97451",
+    "docs/sql/migrations/V015__order_redemption.sql": "d48e46dbb23adb73aea7e3b3eb4fcfd72e3ddf0f0f94f2a2b61ef3ef2b6af846",
+    "docs/sql/migrations/V016__order_reviews.sql": "b606da4afeefab268e048628a31f7401a3e35a0bf861fe585090b8fbae7e5eaf",
+    "docs/sql/migrations/V017__service_archive_jobs.sql": "4663dbd221d76e028048a2a977cc3c92e31aff0e9ab8589c68349c608f977043",
+    "docs/sql/migrations/V018__experience_cards.sql": "25ccaa141fe5018aaac4f885fbae8b07e6859b00969c09c349093431ec4fe30f",
+    "docs/sql/migrations/V019__experience_moderation.sql": "88d8f2f0ac057c22f1320be1982972ddf0a9edaf5bd626daf5553c52356f41ef",
+    "docs/sql/migrations/V020__merchant_onboarding.sql": "0078132eac6cc12e8722d1dacc555fc3ec5f69a08487f092195da613ec5e94df",
+    "docs/sql/migrations/V021__merchant_staff_store.sql": "c01a5906c1d7e653328004436e3d63e791e83ce42eb1e9d2c364636c00554432",
+    "docs/sql/migrations/V022__catalog_governance.sql": "a07a8f7ceb673224f390e61f88f18a5e516c7b1c10ff1f3bc76f379fde72d812",
+    "docs/sql/migrations/V023__completion_archive_jobs.sql": "3717790eb76b55c8c13079cd01ee4d10a256415a0e5af717b9b27929802c22ba",
+    "docs/sql/migrations/V024__payment_query_recovery.sql": "2a6ea19de4d4368504c1f99bf0b75f5c2a1f493859f6475746944aa9d2f76941",
+    "docs/sql/migrations/V025__order_refunds.sql": "3497b20dd3a204d7244922f2376cac34179d95bb70e00db240cd110074c20fa7",
+    "docs/sql/migrations/V026__commission_ledger.sql": "6c7c0134567856b40ed56b26c0075a9cf9529412ffd048018223b06d42a601a5",
+    "docs/sql/migrations/V027__archive_report_shares.sql": "c012312cf4d4c6e92d84cf46d0ee80583f4eee49174ff6a48e1704aec2a7fa76",
+    "docs/sql/migrations/V028__archive_reminders.sql": "11815741dd6e939f9ea57807101bcc37b02ce52b940949aa1aa88fefd7700eae",
+    "docs/sql/migrations/V029__archive_structured_details.sql": "834435949553e1757022e4f99bbd420d9493492179d234a7e37e2210e9799209",
+    "docs/sql/migrations/V030__vehicle_health_observations.sql": "e03a886a00e38f8752ecaea842077b447bc0e566dbe429e43462e362b5bed540",
+    "docs/sql/migrations/V031__vehicle_health_observation_history.sql": "804638901d061f95c738c6b8cf3b82fef712a5de1412712335a6307f426b77c1",
+    "docs/sql/migrations/V032__merchant_location.sql": "2667594da3f65ac8935ad27b0ba770a752e0608b44918df30805ae93b503b337",
+    "docs/sql/migrations/V033__review_publication.sql": "f2d85fa2bd51c080aa117bcffb6aa55e58b97a37247556db829f4ef486933d56",
+    "docs/sql/migrations/V034__public_review_text.sql": "757fcd0fd1ace08f5e6eebb2f3ae402daf8c5937e8f3813b0a4d82018832fb3e",
+    "docs/sql/migrations/V035__review_summary_consent.sql": "3096fef4796a6c650b31308af397b6450d68e5d57cf3d4626692c9e62035f146",
+    "docs/sql/migrations/V036__project_model_applicability.sql": "eb09b5e37e56a7b84ec46ba51fe2730c0870e6afc5e9eb725fd1f8f4a37c136c",
+    "docs/sql/migrations/V037__health_policies_and_confirmations.sql": "1286e1354787db8dab8a39e1c4da8983a0e6367f04f424583eaade4603602802",
+    "docs/sql/migrations/V038__coupon_inventory_and_claims.sql": "c667fe68a5726a11f416704715f22e99eb9b8559d4fdfc0ba378cdcf696298f7",
+    "docs/sql/migrations/V039__coupon_transactions.sql": "4a5e7a251f2dda50e092317f2c0777afed0bb55ec0a38256efac37a9e70b19eb",
+    "docs/sql/migrations/V040__invitation_attribution.sql": "aba24bf24f847842ce3254d4afc6f1fdb9554634c914cb6bb65ef69ae94ec9cf",
+    "docs/sql/migrations/V041__invitation_reward_policies.sql": "762ff3244fddd8ca337d17114fc5745de3698411376e321a26dda60fb1c77e24",
+    "docs/sql/migrations/V042__invitation_reward_delivery.sql": "ed849ed9bf56bb9d5b763ab4dc06d2aaa96340ac64854843fb234a7ff7a2222d",
+    "docs/sql/migrations/V043__invitation_diagnosis_unlock.sql": "d6f3246e382b7b7bab87bbce5d4cb2f6eea10ee30d272d5c66338481f7868e94",
+    "docs/sql/migrations/V044__order_archive_grants.sql": "1772cd8a11d37c82b6a1568a711b9641b138af81d6a49dbd4c61a60341b19246",
+    "docs/sql/migrations/V045__service_notification_outbox.sql": "55631f6cfb7e8e74473fc701de989734c7d13b62f20b0da0147d6504a4321707",
+    "docs/sql/migrations/V046__async_diagnosis.sql": "01280905afef8275ea1845944b677905a2c30a1ee5775c1fb33c61e5727ce375",
+    "docs/sql/migrations/V047__order_notification_sources.sql": "914541c96812beaa7f32dcf82ed18484eee16977931ea230c52329be55c5eeb8",
+    "docs/sql/migrations/V048__diagnosis_notifications.sql": "fd5ff9018e42df1c5eb0cc3e2c06060d613f767e0fe91d1ff0a670d30193b57b",
+    "docs/sql/migrations/V049__point_task_policies.sql": "dac308e2ada2193cae5e01eafdffc64dd8ff934fbe29805d7aac89ddce85da3a",
+    "docs/sql/migrations/V050__verified_points_ledger.sql": "d1290fd55f86a17876bd67f066cf127bdaf31c351596d3675efbdc132ea98933",
+    "docs/sql/migrations/V051__point_exchange_catalog.sql": "6a5b65f48ed40382794e856456c7ae61bd20c5414a56c58619626413bbff3b1e",
+    "docs/sql/migrations/V052__atomic_point_exchange.sql": "af839efccbcfd3497b29f5d01775b193f48416504b3cad68c6ea4e3cb3ba62fb",
+    "docs/sql/migrations/V053__assessment_policies.sql": "b88faa531a3a934aff831fbf57456d5b2d11bf58ccbb0be34719764c80d89bb5",
+    "docs/sql/migrations/V054__assessment_monthly_snapshots.sql": "fd16dbabf0b1e76b7bbfcc4a70d306391a1a4de48fbb1a48e6e82502543bb631",
+    "docs/sql/migrations/V055__business_dashboard_permission.sql": "56c7bdaa8193235a9ad9f682ba61174be6c67ce54921b0fd46de66619b8084b5",
+    "docs/sql/migrations/V056__price_monitor_policies.sql": "751306246222ff26598229260e5ff44376d909136fe18aec9d78652fb52f09c9",
+    "docs/sql/migrations/V057__curated_experiences.sql": "83d684c43ae4e30378727dbee73ebaac59436e2dc6c810fb162b044fd1e07e1e",
+    "docs/sql/migrations/V058__private_community_questions.sql": "12471412bcfd8719c881d03b63e057001ccae7a2d1e8bdfbd774f406737f79f9",
+    "docs/sql/migrations/V059__public_community_questions.sql": "2080998ec8917a07aaf3ffe942713094e5e7d5b0e19c8605902b7fdddc26e3b9",
+    "docs/sql/migrations/V060__public_image_copies.sql": "4e741cdf07b36cf9dd2fcfd44d26eb0386043a77206560ab5df11df3a65d288c",
+    "docs/sql/migrations/V061__licensed_knowledge.sql": "ac325ff9cd9bc9545d124077efa600caa74b120ed1a0b043edb4c3103c0fe2f8",
+    "docs/sql/migrations/V062__input_material.sql": "f3df4a442d5684872437a8b282c1f5348b90bdd8ddf006e6f189365d672881aa",
+    "docs/sql/migrations/V063__recognition_job.sql": "90b25e2a8a364f554be815900331b682439c69817c78b961afa17dc22e1ddb0d",
+    "docs/sql/migrations/V064__document_candidate_jobs.sql": "1692b13910a38bd875e6e17036fc4568f03054ded682d389491a1a03a89e013c",
+    "docs/sql/migrations/V065__knowledge_embedding_index.sql": "3e9be38092518c865ff5ba321ce47622aebd4344097948c62177a5dae99a9a99"
+  },
+  "started_from_commit": "2cee948bc57ead6b50cca58e7d9dbdf6e50f6c82",
+  "migrations": {
+    "V001__baseline.sql": "e29a99c73fe549d23c00367557ecb16cbae76f1fcdd73c3c503662c2bcc0c540",
+    "V002__staff_wechat_identity.sql": "33b70f444b01c9829965ab836d7fe2ef6eb9a9e159a45af5661818f4167612f4",
+    "V003__auth_lifecycle.sql": "c637d1cdd71c017d3e47aafde37553f3498c466295e786d8b6232ea67f76de9d",
+    "V004__upload_http.sql": "c97e202cc31b95153f3ace7dbba9e170a9f06cff1efcf6869d1891f3c012f7c3",
+    "V005__vehicle_archive_files.sql": "76fd75ae351264e968ac945c2e6a9dfadbd889d117a3a480212a1c863f8c32c8",
+    "V006__merchant_project_versions.sql": "f61e1983788e8d0e4ff0cd57df73179b12b5613a83bbf30b3647f2f5db0eebdf",
+    "V007__reservation_orders.sql": "bde32fba46cf0694543e91bb0a3925d25a4e120f61e052bdb7d52791b7b29cd3",
+    "V008__payment_foundation.sql": "44cf544e2d227ef3ea3d046b566a22167fd2104d1cc21be4b60cdc953bd645dc",
+    "V009__order_fulfillment_states.sql": "3201956105ac802986793bf0a28b5d05e0496e63e9442a2d5b596a220b68f66f",
+    "V010__pickup_inspection.sql": "7af0c7af546d4b5e220f0f6f04c4d891396d00722da97e7d0a3d03a9e7d7a734",
+    "V011__pickup_owner_decision.sql": "f78a5a0a6ad6bea9506f1ee65564f37e57879053a4907f8930b888bddb11375a",
+    "V012__technician_dispatch.sql": "e35494639489662a4ce2d2664954ffcb6660c35434323c6e7a964ca640001b3e",
+    "V013__dispute_resolution.sql": "d2b6086edbe8a41dd51763ed9e051cccf59de141b6acfb4910654ff546a7cad7",
+    "V014__service_work.sql": "aa7b279d0d4accec6fb548ad2d58e2a364f8c413a2d58419afba898b1ef97451",
+    "V015__order_redemption.sql": "d48e46dbb23adb73aea7e3b3eb4fcfd72e3ddf0f0f94f2a2b61ef3ef2b6af846",
+    "V016__order_reviews.sql": "b606da4afeefab268e048628a31f7401a3e35a0bf861fe585090b8fbae7e5eaf",
+    "V017__service_archive_jobs.sql": "4663dbd221d76e028048a2a977cc3c92e31aff0e9ab8589c68349c608f977043",
+    "V018__experience_cards.sql": "25ccaa141fe5018aaac4f885fbae8b07e6859b00969c09c349093431ec4fe30f",
+    "V019__experience_moderation.sql": "88d8f2f0ac057c22f1320be1982972ddf0a9edaf5bd626daf5553c52356f41ef",
+    "V020__merchant_onboarding.sql": "0078132eac6cc12e8722d1dacc555fc3ec5f69a08487f092195da613ec5e94df",
+    "V021__merchant_staff_store.sql": "c01a5906c1d7e653328004436e3d63e791e83ce42eb1e9d2c364636c00554432",
+    "V022__catalog_governance.sql": "a07a8f7ceb673224f390e61f88f18a5e516c7b1c10ff1f3bc76f379fde72d812",
+    "V023__completion_archive_jobs.sql": "3717790eb76b55c8c13079cd01ee4d10a256415a0e5af717b9b27929802c22ba",
+    "V024__payment_query_recovery.sql": "2a6ea19de4d4368504c1f99bf0b75f5c2a1f493859f6475746944aa9d2f76941",
+    "V025__order_refunds.sql": "3497b20dd3a204d7244922f2376cac34179d95bb70e00db240cd110074c20fa7",
+    "V026__commission_ledger.sql": "6c7c0134567856b40ed56b26c0075a9cf9529412ffd048018223b06d42a601a5",
+    "V027__archive_report_shares.sql": "c012312cf4d4c6e92d84cf46d0ee80583f4eee49174ff6a48e1704aec2a7fa76",
+    "V028__archive_reminders.sql": "11815741dd6e939f9ea57807101bcc37b02ce52b940949aa1aa88fefd7700eae",
+    "V029__archive_structured_details.sql": "834435949553e1757022e4f99bbd420d9493492179d234a7e37e2210e9799209",
+    "V030__vehicle_health_observations.sql": "e03a886a00e38f8752ecaea842077b447bc0e566dbe429e43462e362b5bed540",
+    "V031__vehicle_health_observation_history.sql": "804638901d061f95c738c6b8cf3b82fef712a5de1412712335a6307f426b77c1",
+    "V032__merchant_location.sql": "2667594da3f65ac8935ad27b0ba770a752e0608b44918df30805ae93b503b337",
+    "V033__review_publication.sql": "f2d85fa2bd51c080aa117bcffb6aa55e58b97a37247556db829f4ef486933d56",
+    "V034__public_review_text.sql": "757fcd0fd1ace08f5e6eebb2f3ae402daf8c5937e8f3813b0a4d82018832fb3e",
+    "V035__review_summary_consent.sql": "3096fef4796a6c650b31308af397b6450d68e5d57cf3d4626692c9e62035f146",
+    "V036__project_model_applicability.sql": "eb09b5e37e56a7b84ec46ba51fe2730c0870e6afc5e9eb725fd1f8f4a37c136c",
+    "V037__health_policies_and_confirmations.sql": "1286e1354787db8dab8a39e1c4da8983a0e6367f04f424583eaade4603602802",
+    "V038__coupon_inventory_and_claims.sql": "c667fe68a5726a11f416704715f22e99eb9b8559d4fdfc0ba378cdcf696298f7",
+    "V039__coupon_transactions.sql": "4a5e7a251f2dda50e092317f2c0777afed0bb55ec0a38256efac37a9e70b19eb",
+    "V040__invitation_attribution.sql": "aba24bf24f847842ce3254d4afc6f1fdb9554634c914cb6bb65ef69ae94ec9cf",
+    "V041__invitation_reward_policies.sql": "762ff3244fddd8ca337d17114fc5745de3698411376e321a26dda60fb1c77e24",
+    "V042__invitation_reward_delivery.sql": "ed849ed9bf56bb9d5b763ab4dc06d2aaa96340ac64854843fb234a7ff7a2222d",
+    "V043__invitation_diagnosis_unlock.sql": "d6f3246e382b7b7bab87bbce5d4cb2f6eea10ee30d272d5c66338481f7868e94",
+    "V044__order_archive_grants.sql": "1772cd8a11d37c82b6a1568a711b9641b138af81d6a49dbd4c61a60341b19246",
+    "V045__service_notification_outbox.sql": "55631f6cfb7e8e74473fc701de989734c7d13b62f20b0da0147d6504a4321707",
+    "V046__async_diagnosis.sql": "01280905afef8275ea1845944b677905a2c30a1ee5775c1fb33c61e5727ce375",
+    "V047__order_notification_sources.sql": "914541c96812beaa7f32dcf82ed18484eee16977931ea230c52329be55c5eeb8",
+    "V048__diagnosis_notifications.sql": "fd5ff9018e42df1c5eb0cc3e2c06060d613f767e0fe91d1ff0a670d30193b57b",
+    "V049__point_task_policies.sql": "dac308e2ada2193cae5e01eafdffc64dd8ff934fbe29805d7aac89ddce85da3a",
+    "V050__verified_points_ledger.sql": "d1290fd55f86a17876bd67f066cf127bdaf31c351596d3675efbdc132ea98933",
+    "V051__point_exchange_catalog.sql": "6a5b65f48ed40382794e856456c7ae61bd20c5414a56c58619626413bbff3b1e",
+    "V052__atomic_point_exchange.sql": "af839efccbcfd3497b29f5d01775b193f48416504b3cad68c6ea4e3cb3ba62fb",
+    "V053__assessment_policies.sql": "b88faa531a3a934aff831fbf57456d5b2d11bf58ccbb0be34719764c80d89bb5",
+    "V054__assessment_monthly_snapshots.sql": "fd16dbabf0b1e76b7bbfcc4a70d306391a1a4de48fbb1a48e6e82502543bb631",
+    "V055__business_dashboard_permission.sql": "56c7bdaa8193235a9ad9f682ba61174be6c67ce54921b0fd46de66619b8084b5",
+    "V056__price_monitor_policies.sql": "751306246222ff26598229260e5ff44376d909136fe18aec9d78652fb52f09c9",
+    "V057__curated_experiences.sql": "83d684c43ae4e30378727dbee73ebaac59436e2dc6c810fb162b044fd1e07e1e",
+    "V058__private_community_questions.sql": "12471412bcfd8719c881d03b63e057001ccae7a2d1e8bdfbd774f406737f79f9",
+    "V059__public_community_questions.sql": "2080998ec8917a07aaf3ffe942713094e5e7d5b0e19c8605902b7fdddc26e3b9",
+    "V060__public_image_copies.sql": "4e741cdf07b36cf9dd2fcfd44d26eb0386043a77206560ab5df11df3a65d288c",
+    "V061__licensed_knowledge.sql": "ac325ff9cd9bc9545d124077efa600caa74b120ed1a0b043edb4c3103c0fe2f8",
+    "V062__input_material.sql": "f3df4a442d5684872437a8b282c1f5348b90bdd8ddf006e6f189365d672881aa",
+    "V063__recognition_job.sql": "90b25e2a8a364f554be815900331b682439c69817c78b961afa17dc22e1ddb0d",
+    "V064__document_candidate_jobs.sql": "1692b13910a38bd875e6e17036fc4568f03054ded682d389491a1a03a89e013c",
+    "V065__knowledge_embedding_index.sql": "3e9be38092518c865ff5ba321ce47622aebd4344097948c62177a5dae99a9a99"
+  },
+  "migration_last": "V065__knowledge_embedding_index.sql",
+  "tables": 134,
+  "dataset": {
+    "owners": 1050,
+    "vehicles": 1100,
+    "archives": 4000,
+    "archive_files": 4000,
+    "merchants": 300,
+    "quotes": 300,
+    "slots": 1520,
+    "auth_sessions": 1050,
+    "rows_total": 13320
+  },
+  "environment": {
+    "host_platform": "Windows-10-10.0.26200-SP0",
+    "host_cpu_model": "",
+    "host_cpu_logical": 24,
+    "host_memory_mb": 16095,
+    "python": "3.11.15",
+    "docker_server": "29.6.2",
+    "client_position": "load client in this process, separate from the server container, same host",
+    "backend_publish": "127.0.0.1:57747 -> 8080",
+    "runtime_image": "maven:3.9-eclipse-temurin-17",
+    "jvm_options": "-Xms512m -Xmx512m",
+    "mysql_image": "mysql:8.0",
+    "mysql_version": "8.0.46",
+    "mysql_max_connections": "400",
+    "mysql_pool_size": 40,
+    "tomcat_mbean_registry": true
+  },
+  "method": {
+    "concurrency": 500,
+    "read_rounds": 3,
+    "write_rounds": 2,
+    "warmup_rounds": 1,
+    "percentile": "nearest-rank",
+    "client_keep_alive": true,
+    "client_processes": 10,
+    "measurement": "perf_counter around one round trip per sample; per-round barrier release",
+    "order_distribution": "500 concurrent orders spread over 300 synthetic shops"
+  },
+  "preflight": {
+    "owner_home": {
+      "requests": 20,
+      "errors": 0,
+      "error_kinds": {},
+      "latency_ms": {
+        "samples": 20,
+        "min_ms": 14.497,
+        "mean_ms": 36.486,
+        "p50_ms": 17.895,
+        "p90_ms": 30.045,
+        "p95_ms": 32.148,
+        "p99_ms": 363.943,
+        "max_ms": 363.943
+      }
+    },
+    "merchant_list": {
+      "requests": 20,
+      "errors": 0,
+      "error_kinds": {},
+      "latency_ms": {
+        "samples": 20,
+        "min_ms": 10.082,
+        "mean_ms": 11.802,
+        "p50_ms": 11.63,
+        "p90_ms": 12.658,
+        "p95_ms": 13.201,
+        "p99_ms": 16.399,
+        "max_ms": 16.399
+      }
+    },
+    "order_create": {
+      "requests": 20,
+      "errors": 0,
+      "error_kinds": {},
+      "latency_ms": {
+        "samples": 20,
+        "min_ms": 20.093,
+        "mean_ms": 27.346,
+        "p50_ms": 23.269,
+        "p90_ms": 27.629,
+        "p95_ms": 31.003,
+        "p99_ms": 93.696,
+        "max_ms": 93.696
+      }
+    }
+  },
+  "database_after_load": {
+    "orders": 1520,
+    "reserved_slots": 1520,
+    "idempotency_records": 1520
+  },
+  "duration_seconds": 151.25,
+  "implementation_sources_unchanged": true,
+  "gates": "all",
+  "finished_at": "2026-10-29T11:12:33.742361+00:00"
+}
