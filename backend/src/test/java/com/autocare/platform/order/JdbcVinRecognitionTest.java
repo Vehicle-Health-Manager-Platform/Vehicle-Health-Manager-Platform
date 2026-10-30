@@ -30,7 +30,7 @@ class JdbcVinRecognitionTest {
     static final VinDecoder.Result ANSWER=new VinDecoder.Result(VinDecoder.Status.CANDIDATE,"NHTSA_VPIC",Map.of("make","Synthetic","model","Test","model_year","2026"),true);
     @BeforeAll static void schema()throws Exception{
         var ds=new DriverManagerDataSource(mysql.getJdbcUrl(),mysql.getUsername(),mysql.getPassword());jdbc=new JdbcTemplate(ds);
-        try(var connection=ds.getConnection()){for(String name:List.of("V001__baseline.sql","V003__auth_lifecycle.sql"))ScriptUtils.executeSqlScript(connection,new FileSystemResource(Path.of("..","docs/sql/migrations",name)));}
+        try(var connection=ds.getConnection()){for(String name:List.of("V001__baseline.sql","V003__auth_lifecycle.sql","V022__catalog_governance.sql"))ScriptUtils.executeSqlScript(connection,new FileSystemResource(Path.of("..","docs/sql/migrations",name)));}
     }
     ReservationStore db(){var tx=new DataSourceTransactionManager(jdbc.getDataSource());return new ReservationStore(jdbc,mapper,new WriteIntegrityService(jdbc,mapper,tx),Clock.systemUTC(),tx);}
     @BeforeEach void setup(){
@@ -43,10 +43,55 @@ class JdbcVinRecognitionTest {
     }
     int status(Runnable call){return assertThrows(ResponseStatusException.class,call::run).getStatusCode().value();}
     JsonNode run(){return service.recognize(owner,VinRecognition.input(RAW));}
+    @Test void localSourceExactCatalogCandidateRechecksAvailabilityAndConsent()throws Exception {
+        Path fixture=Path.of("../docs/testing/fixtures/vin-local-synthetic.json");
+        String sha=java.util.HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256").digest(java.nio.file.Files.readAllBytes(fixture)));
+        service=new VinRecognition(db(),new com.autocare.platform.vehicle.vin.LocalVinDecoder(fixture,sha,true),true);
+        assertEquals(400,status(this::run));
+        var input=VinRecognition.input(RAW.replace("VIN_VPIC_V1","VIN_LOCAL_V1"));
+        jdbc.update("INSERT INTO brand(id,name) VALUES(901,'合成测试品牌')");
+        jdbc.update("INSERT INTO series(id,brand_id,name) VALUES(901,901,'合成测试车系')");
+        jdbc.update("INSERT INTO model(id,series_id,year,config_name) VALUES(901,901,'2026','合成配置A')");
+        try {
+            var result=service.recognize(owner,input);assertEquals("LOCAL_SYNTHETIC",result.path("source").asText());assertTrue(result.path("synthetic").asBoolean());
+            assertEquals(901,result.path("catalog_candidates").get(0).path("model_id").asInt());
+            assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM vehicle",Integer.class));
+            jdbc.update("UPDATE model SET status=0 WHERE id=901");assertTrue(service.recognize(owner,input).path("catalog_candidates").isEmpty());
+            jdbc.update("UPDATE model SET status=1,config_name='合成配置a' WHERE id=901");assertTrue(service.recognize(owner,input).path("catalog_candidates").isEmpty());
+            jdbc.update("UPDATE model SET config_name='合成配置A' WHERE id=901");jdbc.update("INSERT INTO model(id,series_id,year,config_name) VALUES(902,901,'2026','合成配置A')");
+            assertTrue(service.recognize(owner,input).path("catalog_candidates").isEmpty());
+        } finally {jdbc.update("DELETE FROM model WHERE series_id=901");jdbc.update("DELETE FROM series WHERE id=901");jdbc.update("DELETE FROM brand WHERE id=901");}
+    }
     @Test void canonical_input_and_optional_integer_year(){
         assertEquals(VIN,VinRecognition.input(RAW.replace(VIN," "+VIN.toLowerCase(Locale.ROOT)+" ")).vin());
         assertNull(VinRecognition.input(RAW).modelYear());
         assertEquals(2026,VinRecognition.input(RAW.replace("}",",\"model_year\":2026}")).modelYear());
+    }
+    @Test void local_source_revoked_after_decode_returns_safe_503_and_recovers(){
+        var input=VinRecognition.input(RAW.replace("VIN_VPIC_V1","VIN_LOCAL_V1"));
+        var before=jdbc.queryForList("SELECT * FROM vehicle");
+        for(RuntimeException failure:List.of(new VinDecoder.Unavailable(),new IllegalStateException("private-license-path "+VIN))){
+            var decoder=org.mockito.Mockito.mock(com.autocare.platform.vehicle.vin.LocalVinDecoder.class);
+            var answer=new VinDecoder.Result(VinDecoder.Status.CANDIDATE,"LOCAL_SYNTHETIC",
+                Map.of("make","Synthetic","model","Test","model_year","2026","trim","Test trim"),true);
+            org.mockito.Mockito.when(decoder.decode(VIN,null,true)).thenReturn(answer);
+            // Simulate revocation precisely between decode and the second source
+            // read, without sleeps or a filesystem timing race.
+            org.mockito.Mockito.when(decoder.evidence()).thenThrow(failure)
+                .thenReturn(new com.autocare.platform.vehicle.vin.LocalVinDecoder.Evidence("test-revision",true));
+            service=new VinRecognition(db(),decoder,true);
+            var error=assertThrows(ResponseStatusException.class,()->service.recognize(owner,input));
+            assertEquals(503,error.getStatusCode().value());assertNull(error.getCause());
+            assertEquals("VIN解码未配置或暂不可用，请手动确认车型",error.getReason());
+            assertFalse(error.toString().contains(VIN));assertFalse(error.toString().contains("private-license-path"));
+            assertEquals(before,jdbc.queryForList("SELECT * FROM vehicle"));
+            for(String table:List.of("vehicle_archive","audit_log","idempotency_record"))
+                assertEquals(0,jdbc.queryForObject("SELECT COUNT(*) FROM "+table,Integer.class));
+            // The failed metadata read must also release the admission permit.
+            var recovered=service.recognize(owner,input);assertEquals("test-revision",recovered.path("source_revision").asText());
+            org.mockito.Mockito.verify(decoder,org.mockito.Mockito.times(2)).decode(VIN,null,true);
+            org.mockito.Mockito.verify(decoder,org.mockito.Mockito.times(2)).evidence();
+        }
     }
     @Test void malformed_duplicate_extra_consent_and_year_refused_before_io(){
         for(String raw:List.of("{}",RAW+"{}",RAW.replace("true","false"),RAW.replace("VIN_VPIC_V1","OTHER"),RAW.replace(VIN,"I".repeat(17)),RAW.replace(VIN,"A".repeat(15)+"ß"),RAW.replace("}",",\"vin\":\""+VIN+"\"}"),RAW.replace("}",",\"url\":\"x\"}"),RAW.replace("}",",\"model_year\":null}"),RAW.replace("}",",\"model_year\":2026.0}"),RAW.replace("}",",\"model_year\":1979}"),RAW.replace("}",",\"model_year\":2101}"),RAW.replace("}",",\"model_year\":4294967297}")))assertEquals(400,status(()->VinRecognition.input(raw)));

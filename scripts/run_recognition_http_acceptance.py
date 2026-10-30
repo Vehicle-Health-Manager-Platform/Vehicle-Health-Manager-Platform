@@ -11,24 +11,32 @@ import uuid
 import xml.etree.ElementTree as ET
 ROOT=Path(__file__).resolve().parents[1]
 SPECS={'vin':('VinHttpJourneyTest','vin_four_kind_http_evidence','/api/vehicle/vin-decode'),
+       'local-vin':('LocalVinHttpJourneyTest','local_vin_four_kind_http_evidence','/api/vehicle/vin-decode'),
        'license':('LicenseHttpJourneyTest','license_four_kind_http_evidence','/api/vehicle/license-recognition'),
        'asr':('AsrHttpJourneyTest','asr_four_kind_http_evidence','/api/recognition/asr/jobs'),
        'document':('DocumentHttpJourneyTest','document_four_kind_http_evidence','/api/recognition/documents/jobs'),
        'mileage':('PickupMileageHttpJourneyTest','mileage_four_kind_http_evidence','/api/vehicle/mileage-recognition'),
        'pickup':('PickupMileageHttpJourneyTest','pickup_four_kind_http_evidence','/api/check/pickup/mileage-recognition')}
 CHECKS={'no_vehicle_write','no_archive_write','candidate_requires_confirmation'}
+LOCAL_VIN_CHECKS={'synthetic_only','no_vehicle_write','tamper_fails_closed'}
 MILEAGE_CHECKS={'no_vehicle_write','no_archive_write','mileage_unchanged','candidate_requires_confirmation','rejected_requests_no_model_calls'}
 JOB_CHECKS={'no_vehicle_write','no_archive_write','job_binding_verified','cancelled_result_withheld','idempotent_replay_verified'}
 
 def source_digest():
-    paths=[p for directory,pattern in [('backend/src','*.java'),('docs/sql/migrations','*.sql')] for p in (ROOT/directory).rglob(pattern) if p.is_file()]
+    paths=[p for directory in ('backend/src','docs/sql/migrations') for p in (ROOT/directory).rglob('*') if p.is_file()]
     paths += [ROOT/'backend/pom.xml',Path(__file__)]
+    paths += [ROOT/'docs/testing/fixtures/vin-local-synthetic.json']
     h=hashlib.sha256()
     for p in sorted(paths,key=lambda p:p.relative_to(ROOT).as_posix()):h.update(p.relative_to(ROOT).as_posix().encode());h.update(p.read_bytes())
     return h.hexdigest()
 
 def inventory(name,bindings=None):
     path=SPECS[name][2]
+    if name=='local-vin':
+        rows=[('local_candidate','normal','owner',path,200),('disabled_catalog','boundary','owner',path,200),
+              ('wrong_consent_source','error','owner',path,400),('query_refused','error','owner',path+'?unexpected=1',400),
+              ('anonymous','unauthorized','anonymous',path,401),('wrong_role','unauthorized','merchant',path,403),('tampered_source','error','owner',path,503)]
+        return [dict(name=n,kind=k,role=r,method='POST',operation=path,path=p,status=status,passed=True) for n,k,r,p,status in rows]
     if name in ('mileage','pickup'):
         role='owner' if name=='mileage' else 'merchant'
         rows=[('candidate','normal',role,path,200),('repeat','boundary',role,path,200),('no_consent','error',role,path,400),('query','error',role,path+'?unexpected=1',400),('anonymous','unauthorized','anonymous',path,401),('wrong_role','unauthorized','merchant' if name=='mileage' else 'owner',path,403),('foreign_owner' if name=='mileage' else 'foreign_shop','unauthorized','foreign' if name=='mileage' else 'other_merchant',path,404),('foreign_file','unauthorized',role,path,404)]
@@ -70,6 +78,7 @@ def audit(name,junit,evidence):
     for row,want in zip(actual,expected):
         if set(row)!=set(want)|{'request_sha256','response_sha256'} or any(row.get(k)!=v for k,v in want.items()) or any(not re.fullmatch('[a-f0-9]{64}',str(row.get(k,''))) for k in ('request_sha256','response_sha256')):raise ValueError('Observed HTTP differs from reviewed inventory')
     required=JOB_CHECKS if name in ('asr','document') else (MILEAGE_CHECKS|({'no_pickup_write','order_state_preserved'} if name=='pickup' else set()) if name in ('mileage','pickup') else CHECKS)
+    if name=='local-vin':required=LOCAL_VIN_CHECKS
     if set(d.get('checks',{}))!=required or any(v is not True for v in d['checks'].values()):raise ValueError('SQL or confirmation checks missing')
     if not re.fullmatch('[a-f0-9]{64}',str(d.get('mysql_container_id',''))):raise ValueError('Missing owned database identity')
     coverage={}

@@ -11,7 +11,7 @@ def prepare():
     if platform.system() != 'Linux' or platform.machine() != 'x86_64':
         raise ValueError('This runtime lock requires Linux x86_64')
     if os.environ.get('OCR_ENABLED') != 'true': raise ValueError('Runtime requires explicit OCR_ENABLED=true')
-    expected = {'paddleocr': '3.7.0', 'paddlepaddle': '3.3.1', 'Pillow': '12.3.0'}
+    expected = {'paddleocr': '3.7.0', 'paddlepaddle': '3.3.1', 'Pillow': '13.0.0'}
     if any(version(name) != value for name, value in expected.items()): raise ValueError('Runtime versions mismatch')
     models = verify_models(Path('/models'))
     os.environ['OCR_DETECTION_MODEL_DIR'] = models['PP-OCRv5_mobile_det']

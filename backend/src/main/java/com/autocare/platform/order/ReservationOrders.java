@@ -44,12 +44,13 @@ public class ReservationOrders {
             var merchant=Map.of("merchant_id",q.get("merchant_id"),"merchant_name",q.get("name"),"address",q.get("address"));
             var price=Map.of("merchant_project_id",input.quote(),"quote_version_id",input.version(),"version",q.get("version"),"price",q.get("price").toString());
             var appointment=Map.of("slot_id",input.slot(),"starts_at",start.toString(),"ends_at",ReservationStore.iso(slot.get("ends_at")));
-            long id=db.insert("INSERT INTO `order`(order_no,user_id,vehicle_id,merchant_id,project_id,amount,pay_amount,status,appointment_at,project_snapshot,merchant_snapshot,price_snapshot,slot_id,expires_at,merchant_project_id,quote_version_id,appointment_snapshot,created_at) VALUES(?,?,?,?,?,?,?,'PENDING_PAYMENT',?,?,?,?,?,?,?,?,?,?)",orderNo,owner.id(),input.vehicle(),q.get("merchant_id"),q.get("project_id"),q.get("price"),cash,ReservationStore.time(start),db.json(project),db.json(merchant),db.json(price),input.slot(),ReservationStore.time(deadline),input.quote(),input.version(),db.json(appointment),ReservationStore.time(now));
+            long id=db.insert("INSERT INTO `order`(order_no,user_id,vehicle_id,merchant_id,project_id,amount,pay_amount,status,appointment_at,project_snapshot,merchant_snapshot,price_snapshot,slot_id,expires_at,merchant_project_id,quote_version_id,appointment_snapshot,created_at,verify_code) VALUES(?,?,?,?,?,?,?,'PENDING_PAYMENT',?,?,?,?,?,?,?,?,?,?,?)",orderNo,owner.id(),input.vehicle(),q.get("merchant_id"),q.get("project_id"),q.get("price"),cash,ReservationStore.time(start),db.json(project),db.json(merchant),db.json(price),input.slot(),ReservationStore.time(deadline),input.quote(),input.version(),db.json(appointment),ReservationStore.time(now),AppointmentCodes.create());
             if(selected!=null)CouponTransactions.reserve(db,id,owner.id(),selected,deadline,key,coupon);
-            CommissionLedger.booking(db,id);
-            db.jdbc.update("UPDATE `order` SET verify_code=? WHERE id=?",AppointmentCodes.create(),id);
+            // The commission step already reads and locks the newly persisted row after
+            // coupon reservation. Reuse it for audit; the slot update does not change it.
+            var persisted=CommissionLedger.booking(db,id);
             db.jdbc.update("UPDATE appointment_slot SET reserved_count=reserved_count+1 WHERE id=?",input.slot());
-            var result=Map.<String,Object>of("order_id",id,"order_no",orderNo,"amount_due",cash.toString(),"status","PENDING_PAYMENT","expires_at",deadline.toString());return new Change("ORDER_CREATE","order",id,Map.of(),db.orderRow(db.one("SELECT * FROM `order` WHERE id=? FOR UPDATE",id),true),result);
+            var result=Map.<String,Object>of("order_id",id,"order_no",orderNo,"amount_due",cash.toString(),"status","PENDING_PAYMENT","expires_at",deadline.toString());return new Change("ORDER_CREATE","order",id,Map.of(),db.orderRow(persisted,true),result);
         });
     }
     public Map<String,Object> list(VehicleOwner owner,String status,int page,int size){

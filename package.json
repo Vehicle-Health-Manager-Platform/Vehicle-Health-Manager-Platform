@@ -2,7 +2,9 @@
   "name": "vehicle-health-manager-platform",
   "private": true,
   "type": "module",
-  "workspaces": ["apps/*"],
+  "workspaces": [
+    "apps/*"
+  ],
   "scripts": {
     "dev:owner": "npm run dev --workspace @autocare/owner",
     "dev:merchant": "npm run dev --workspace @autocare/merchant",
@@ -20,10 +22,37 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.0",
-    "vite": "^7.1.0"
+    "vite": "^7.3.7"
   },
   "dependencies": {
-    "vue": "^3.5.0",
+    "vue": "^3.5.44",
     "vue-router": "^4.5.0"
+  },
+  "overrides": {
+    "adm-zip": "0.6.1",
+    "jpeg-js": "0.4.4",
+    "ws": "8.21.0",
+    "postcss": "8.5.32",
+    "source-map-js": "1.2.2",
+    "express": "4.22.3",
+    "body-parser": "1.20.9",
+    "path-to-regexp": "0.1.13",
+    "rollup": "4.63.5",
+    "@dcloudio/vite-plugin-uni": {
+      "vite": "6.4.5"
+    },
+    "@dcloudio/uni-h5-vite": {
+      "vite": "6.4.5"
+    },
+    "vue-i18n": "11.4.16",
+    "@intlify/core-base": "11.4.16",
+    "@intlify/shared": "11.4.16",
+    "@intlify/message-compiler": "11.4.16",
+    "@vue/server-renderer": "3.5.44",
+    "@intlify/message-resolver": "9.1.11",
+    "@babel/core": "^7.29.1",
+    "esbuild": ">=0.25.0 <0.26.0",
+    "postcss-selector-parser": "^6.1.5",
+    "phin": "3.7.1"
   }
 }

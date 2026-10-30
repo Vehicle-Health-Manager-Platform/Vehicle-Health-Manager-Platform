@@ -1,0 +1,225 @@
+{
+  "passed": true,
+  "source_sha256": "eaf2ed34672a60cf3649059e7c9370cb99b1f91608548850ba6c3d11d7117335",
+  "full_api_acceptance_passed": false,
+  "production_acceptance_passed": false,
+  "execution_mode": "AUDIT_EXISTING",
+  "suites": [
+    {
+      "name": "vin",
+      "passed": true,
+      "test_class": "VinHttpJourneyTest",
+      "requests": 6,
+      "tests": 5,
+      "coverage": {
+        "POST /api/vehicle/vin-decode": [
+          "boundary",
+          "error",
+          "normal",
+          "unauthorized"
+        ]
+      },
+      "checks": {
+        "no_archive_write": true,
+        "candidate_requires_confirmation": true,
+        "no_vehicle_write": true
+      },
+      "bindings": {},
+      "mysql_container_id": "c8e9930cab2bf6e1781c79fa6e1bdd3b17b999b360643633cfab039e2ba07209",
+      "source_sha256": "eaf2ed34672a60cf3649059e7c9370cb99b1f91608548850ba6c3d11d7117335",
+      "raw_sha256": "67fe173b50f5a85232be86dd15f1f7d15046631fb3d2eca50c53fcc6ceb1a748"
+    },
+    {
+      "name": "local-vin",
+      "passed": true,
+      "test_class": "LocalVinHttpJourneyTest",
+      "requests": 7,
+      "tests": 4,
+      "coverage": {
+        "POST /api/vehicle/vin-decode": [
+          "boundary",
+          "error",
+          "normal",
+          "unauthorized"
+        ]
+      },
+      "checks": {
+        "tamper_fails_closed": true,
+        "no_vehicle_write": true,
+        "synthetic_only": true
+      },
+      "bindings": {},
+      "mysql_container_id": "00111fb470b54e73cf68d11d03ca4ed6b617061806cbacb1726affd5e76cbdb8",
+      "source_sha256": "eaf2ed34672a60cf3649059e7c9370cb99b1f91608548850ba6c3d11d7117335",
+      "raw_sha256": "038c1ce88c7fe186df6f697b187303b77605ad13af9364e783c88563541560f4"
+    },
+    {
+      "name": "license",
+      "passed": true,
+      "test_class": "LicenseHttpJourneyTest",
+      "requests": 7,
+      "tests": 5,
+      "coverage": {
+        "POST /api/vehicle/license-recognition": [
+          "boundary",
+          "error",
+          "normal",
+          "unauthorized"
+        ]
+      },
+      "checks": {
+        "no_archive_write": true,
+        "candidate_requires_confirmation": true,
+        "no_vehicle_write": true
+      },
+      "bindings": {},
+      "mysql_container_id": "a37795dd5c01981ce5d6324362ff785bc8c43d8cbc5eab6f7448ef7288e92fc4",
+      "source_sha256": "eaf2ed34672a60cf3649059e7c9370cb99b1f91608548850ba6c3d11d7117335",
+      "raw_sha256": "35159476db241bf83783a6024df3830a4c19999ccffd0365a4383ce7a86c854f"
+    },
+    {
+      "name": "asr",
+      "passed": true,
+      "test_class": "AsrHttpJourneyTest",
+      "requests": 20,
+      "tests": 6,
+      "coverage": {
+        "POST /api/recognition/asr/jobs": [
+          "boundary",
+          "error",
+          "normal",
+          "unauthorized"
+        ],
+        "GET /api/recognition/asr/jobs/{id}": [
+          "boundary",
+          "error",
+          "normal",
+          "unauthorized"
+        ],
+        "POST /api/recognition/asr/jobs/{id}/cancel": [
+          "boundary",
+          "error",
+          "normal",
+          "unauthorized"
+        ]
+      },
+      "checks": {
+        "job_binding_verified": true,
+        "cancelled_result_withheld": true,
+        "idempotent_replay_verified": true,
+        "no_archive_write": true,
+        "no_vehicle_write": true
+      },
+      "bindings": {
+        "job_id": 1
+      },
+      "mysql_container_id": "aa63881435839846f90bef29845e33bd503a16fd55761056bd2aa09230d3174e",
+      "source_sha256": "eaf2ed34672a60cf3649059e7c9370cb99b1f91608548850ba6c3d11d7117335",
+      "raw_sha256": "a38ab63bec581316452f795545bf8a8d2aaef74f0c38555359e003204b167a35"
+    },
+    {
+      "name": "document",
+      "passed": true,
+      "test_class": "DocumentHttpJourneyTest",
+      "requests": 20,
+      "tests": 6,
+      "coverage": {
+        "POST /api/recognition/documents/jobs": [
+          "boundary",
+          "error",
+          "normal",
+          "unauthorized"
+        ],
+        "GET /api/recognition/documents/jobs/{id}": [
+          "boundary",
+          "error",
+          "normal",
+          "unauthorized"
+        ],
+        "POST /api/recognition/documents/jobs/{id}/cancel": [
+          "boundary",
+          "error",
+          "normal",
+          "unauthorized"
+        ]
+      },
+      "checks": {
+        "job_binding_verified": true,
+        "cancelled_result_withheld": true,
+        "idempotent_replay_verified": true,
+        "no_archive_write": true,
+        "no_vehicle_write": true
+      },
+      "bindings": {
+        "job_id": 1
+      },
+      "mysql_container_id": "9720aaffa5187bbfc15f3fd6d7868c49d5e2679df8d4e268f8c756719dda7d16",
+      "source_sha256": "eaf2ed34672a60cf3649059e7c9370cb99b1f91608548850ba6c3d11d7117335",
+      "raw_sha256": "0c49ab19de08e5d36f609337a157edc5240c7630acee88efb3a1afab72060c48"
+    },
+    {
+      "name": "mileage",
+      "passed": true,
+      "test_class": "PickupMileageHttpJourneyTest",
+      "requests": 8,
+      "tests": 6,
+      "coverage": {
+        "POST /api/vehicle/mileage-recognition": [
+          "boundary",
+          "error",
+          "normal",
+          "unauthorized"
+        ]
+      },
+      "checks": {
+        "candidate_requires_confirmation": true,
+        "rejected_requests_no_model_calls": true,
+        "no_archive_write": true,
+        "no_vehicle_write": true,
+        "mileage_unchanged": true
+      },
+      "bindings": {
+        "vehicle_id": 5,
+        "file_id": 51
+      },
+      "mysql_container_id": "fd07b43583b9435911f18a81061f09e23e69691ad4dd3134bfd17749ed9df491",
+      "source_sha256": "eaf2ed34672a60cf3649059e7c9370cb99b1f91608548850ba6c3d11d7117335",
+      "raw_sha256": "277881857d9278473e48c34e926ab838081547e4e5d0fbbbf1717c55acf7f075"
+    },
+    {
+      "name": "pickup",
+      "passed": true,
+      "test_class": "PickupMileageHttpJourneyTest",
+      "requests": 9,
+      "tests": 6,
+      "coverage": {
+        "POST /api/check/pickup/mileage-recognition": [
+          "boundary",
+          "error",
+          "normal",
+          "unauthorized"
+        ]
+      },
+      "checks": {
+        "mileage_unchanged": true,
+        "order_state_preserved": true,
+        "no_vehicle_write": true,
+        "no_pickup_write": true,
+        "candidate_requires_confirmation": true,
+        "rejected_requests_no_model_calls": true,
+        "no_archive_write": true
+      },
+      "bindings": {
+        "order_id": 506,
+        "vehicle_id": 3,
+        "file_id": 52
+      },
+      "mysql_container_id": "fd07b43583b9435911f18a81061f09e23e69691ad4dd3134bfd17749ed9df491",
+      "source_sha256": "eaf2ed34672a60cf3649059e7c9370cb99b1f91608548850ba6c3d11d7117335",
+      "raw_sha256": "9ce6d0b188d180b12d4d572246876c6ef13439d3ad47dc1de6d933a8a3e09c5b"
+    }
+  ],
+  "sources_unchanged": true,
+  "selected_java_executions": 32,
+  "duration_seconds": 1.016
+}

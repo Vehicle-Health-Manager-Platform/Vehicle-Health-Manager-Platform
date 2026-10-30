@@ -1,5 +1,7 @@
 # R5c1 自动索引运行与维护
 
+2026-10-29增量：已实现默认关闭的有限瞬时重试和事务审计，配置及边界见下文。清理巡检不再刷新失败时间，避免退避永不到期；FAILED文案保持“生成失败”，具体重试以服务端配置为准。实现及最终测试见[本轮报告](../testing/STAGE_ACCEPTANCE_2026_10_29.md)。
+
 R5c2增量：[公开向量检索与精确片段协议](../api/KNOWLEDGE_VECTOR_RETRIEVAL.md)。KNOWLEDGE_VECTOR_ENABLED=false默认关闭；开启必须同时启用知识及索引、配置私有模型且关闭维护清理。索引配置并不自动打开公开VECTOR。下方公开KEYWORD描述为R5c1阶段范围，其余索引操作仍适用。
 
 默认关闭。此阶段接通MySQL持久任务的自动发现、受限执行、运营状态和清理；公开知识检索/AI仍KEYWORD。用户无需改变原操作；运营人员在资料列表点“刷新并核对资料”查看本地私有索引状态。索引成功不代表资料真实性、诊断或领域效果合格。
@@ -33,7 +35,11 @@ docker compose --env-file .env -f deploy/compose/compose.yml -f deploy/compose/e
 
 数据库控制锁和持久租约在应用实例间限制一个活跃索引任务；专用调度线程与其他业务定时器隔离。网络不在数据库事务内，整体30秒，单次私有调用25秒/模型20秒。生成前后复核来源，任一后续批失败不写部分块。控制锁入队仅一个独立事务，不嵌套持锁事务。
 
-FAILED（UNAVAILABLE/INVALID_VECTOR/LIMIT_EXCEEDED/WORKER_LOST）不自动重试；修复服务/资源后，当前版本暂需发布新的独立资料版本或明确新profile生成新任务。没有“点击刷新就重试”的行为，不建议直接修改数据库重置。有限重试/管理员审计重排队后续单独设计。活跃租约最长180秒；实例退出后超期任务标失败，不误计成功。
+默认FAILED仍不自动重试。显式设置KNOWLEDGE_EMBEDDING_RETRY_ENABLED=true后，仅UNAVAILABLE/WORKER_LOST可由后台有限重排；必须同时配置并启用索引，维护清理模式不能启用重试。KNOWLEDGE_EMBEDDING_RETRY_LIMIT为1–3，默认2（不含首次调用）；KNOWLEDGE_EMBEDDING_RETRY_DELAY_SECONDS为60–3600，默认60，后续逐次翻倍。非法启用参数阻止启动。
+
+每轮最多扫描20个失败候选；在数据库控制锁中复核当前来源/版本/模型、许可和剩余配额，排队与system审计同事务提交。审计失败不消费配额、不调用模型；多实例及重启不重置配额。INVALID_VECTOR/LIMIT_EXCEEDED、撤回/停用/过期/取消或残留块不一致的任务不自动重试。达到配额仍为FAILED，修复根因后可按原流程发布新资料版本/配置；禁止手工改任务状态或删审计增加预算。显式维护重建是独立操作，不等于自动重试预算。
+
+刷新只查询，不触发重排；重试发生后等待后台再核对状态。任务保留期间须保留KNOWLEDGE_EMBEDDING_RETRY审计，软删除不会释放配额。审计只有任务/状态/固定错误码/次数/策略，没有原文、向量、token或供应商诊断。活跃租约最长180秒；超期任务转WORKER_LOST后再从实际失败时间退避。
 
 ## 撤回、停用和跨配置清理
 
@@ -47,15 +53,15 @@ FAILED（UNAVAILABLE/INVALID_VECTOR/LIMIT_EXCEEDED/WORKER_LOST）不自动重试
 
 复用GET /api/admin/knowledge/documents及既有独立can_knowledge权限。列表每行可选embedding对象，仅state/error_code/profile_hash/updated_at；旧响应兼容，写回执原结构不变。没有新增公开路由或迁移。默认两开关关闭不添加状态字段。
 
-状态：DISABLED关闭；NOT_ALLOWED当前来源未获准；NOT_QUEUED等待发现；QUEUED排队；RUNNING生成；SUCCEEDED任务完成；FAILED失败不自动重试；CANCELLED取消。只显示当前profile/来源任务，不显示向量/内部模型响应/凭据。运营页不展示原始profile hash；更新时间表示任务最后写入时间，不是最近巡检或质量评估时间。对未知字段、错误码/状态组合和时间格式，前端拒绝展示旧结果。状态表示任务元数据，不替代每次查询的完整性/许可重验。
+状态：DISABLED关闭；NOT_ALLOWED当前来源未获准；NOT_QUEUED等待发现；QUEUED排队；RUNNING生成；SUCCEEDED任务完成；FAILED失败（按配置有限重试）；CANCELLED取消。只显示当前profile/来源任务，不显示向量/内部模型响应/凭据。运营页不展示原始profile hash；更新时间表示任务最后写入时间，不是最近巡检或质量评估时间。对未知字段、错误码/状态组合和时间格式，前端拒绝展示旧结果。状态表示任务元数据，不替代每次查询的完整性/许可重验。
 
 ## 复现与交接
 
 ```powershell
-mvn -f backend/pom.xml -Dtest=KnowledgeEmbeddingConfigurationTest,JdbcKnowledgeEmbeddingRuntimeTest,JdbcKnowledgeVectorIndexTest,EmbeddingHttpClientTest,EmbeddingFoundationTest,KnowledgeEmbeddingHttpJourneyTest test
+mvn -f backend/pom.xml "-Dtest=KnowledgeEmbeddingConfigurationTest,JdbcKnowledgeEmbeddingRuntimeTest,JdbcKnowledgeVectorIndexTest,JdbcKnowledgeEmbeddingRetriesTest,KnowledgeEmbeddingRetryPolicyTest,EmbeddingHttpClientTest,EmbeddingFoundationTest,KnowledgeEmbeddingHttpJourneyTest" test
 python scripts/run_local_delivery.py
 ```
 
 真实模型运行器支持原--java-maven/--maven-repository选项，现增加实际生命周期生成/状态/撤回检查，共32个Java执行项（4项实际模型方法及28项继承回归，其中本轮新增1项生命周期方法）；身份和许可仍为合成夹具。调度线程的实际Spring定时触发另以受控回调测试，不冒称完整真实模型Compose自动旅程已跑。
 
-[本轮测试报告](../progress/RECOGNITION_R5C1_EMBEDDING_LIFECYCLE.md)、[统一交接](../delivery/LOCAL_HANDOVER.md)。后续R5c2公开VECTOR/明确KEYWORD降级/AI引用重验，随后授权语料质量、容量/并发、真机、任务重试及生产监控。正式微信、短信、支付、生产办理继续由外部负责人处理。
+[R5c1历史报告](../progress/RECOGNITION_R5C1_EMBEDDING_LIFECYCLE.md)、[2026-10-29测试报告](../testing/STAGE_ACCEPTANCE_2026_10_29.md)、[统一交接](../delivery/STAGE_HANDOVER_2026_10_29.md)。公开VECTOR和有限重试均已有实现；授权语料质量、手机及生产监控仍独立验收。正式微信、短信、支付、生产办理继续由外部负责人处理。

@@ -102,8 +102,8 @@ class CoverageRunnerTest(unittest.TestCase):
     def junit(self,skipped='0'):
         folder=self.target/'surefire-reports';folder.mkdir(exist_ok=True)
         ET.ElementTree(ET.Element('testsuite',name='fixture.CoreTest',tests='1',failures='0',errors='0',skipped=skipped)).write(folder/'TEST-core.xml')
-    def run_with(self,action,digests=None):
-        with patch.object(run_core_coverage,'ROOT',self.root),patch('sys.argv',['run_core_coverage.py']),patch.object(run_core_coverage.subprocess,'check_output',return_value='synthetic-source-head'),patch.object(run_core_coverage.subprocess,'run',side_effect=action) as command:
+    def run_with(self,action,digests=None,arguments=None):
+        with patch.object(run_core_coverage,'ROOT',self.root),patch('sys.argv',['run_core_coverage.py',*(arguments or [])]),patch.object(run_core_coverage.shutil,'which',return_value=None),patch.object(run_core_coverage.subprocess,'check_output',return_value='synthetic-source-head'),patch.object(run_core_coverage.subprocess,'run',side_effect=action) as command:
             if digests:
                 with patch.object(run_core_coverage,'digest_sources',side_effect=digests):code=run_core_coverage.main()
             else:code=run_core_coverage.main()
@@ -117,6 +117,24 @@ class CoverageRunnerTest(unittest.TestCase):
             return SimpleNamespace(returncode=0)
         code,command=self.run_with(execute);self.assertEqual(0,code);self.assertEqual(2,command.call_count)
         self.assertTrue(json.loads((self.target/'core-coverage-run.json').read_text())['sources_unchanged'])
+    def test_full_cached_run_keeps_all_tests_and_requires_explicit_image_opt_in(self):
+        repository=self.root/'maven-cache'
+        def execute(command,**kwargs):
+            if command[0]=='mvn':
+                self.assertFalse(any(value.startswith('-Dtest=') for value in command))
+                self.assertIn('-o',command)
+                self.assertIn('-Dupload.test.images.prebuilt=true',command)
+                self.assertIn('-Dmaven.repo.local='+str(repository.resolve()),command)
+                self.junit()
+            return SimpleNamespace(returncode=0)
+        code,command=self.run_with(execute,arguments=['--full','--offline','--prebuilt-upload-images','--maven-repository',str(repository)])
+        self.assertEqual(0,code);self.assertEqual(2,command.call_count)
+        self.assertTrue(json.loads((self.target/'core-coverage-run.json').read_text(encoding='utf-8'))['full_suite'])
+    def test_nested_docker_full_mode_fails_before_tests_and_removes_old_green(self):
+        with self.assertRaises(SystemExit) as result:
+            self.run_with(None,arguments=['--full','--docker'])
+        self.assertEqual(2,result.exception.code)
+        self.assertFalse((self.target/'core-coverage-summary.json').exists())
     def test_failed_skipped_or_changing_tests_do_not_run_coverage_checker(self):
         for failure,skipped,digests in [(1,'0',None),(0,'1',None),(0,'0',['before','after'])]:
             with self.subTest(failure=failure,skipped=skipped):

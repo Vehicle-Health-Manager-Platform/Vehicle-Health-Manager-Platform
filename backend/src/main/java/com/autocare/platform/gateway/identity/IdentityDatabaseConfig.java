@@ -31,6 +31,10 @@ public class IdentityDatabaseConfig {
         source.setUsername(user);
         source.setPassword(password);
         source.setMaximumPoolSize(poolSize(poolSize));
+        // Reuse parsed statements per pooled connection; keep server transaction/lock semantics.
+        source.addDataSourceProperty("cachePrepStmts","true");
+        source.addDataSourceProperty("prepStmtCacheSize","250");
+        source.addDataSourceProperty("prepStmtCacheSqlLimit","4096");
         return source;
     }
 

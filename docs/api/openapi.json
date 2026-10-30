@@ -394,7 +394,7 @@
         "description": "旧GET没有解码实现；迁移POST并提供VIN_VPIC_V1用途同意，勿将VIN置于查询参数。"
       },
       "post": {
-        "summary": "车主明确同意后查询NHTSA有限覆盖VIN候选，人工选车型",
+        "summary": "车主同意来源用途后查询VIN候选，人工确认车型",
         "operationId": "post_api_vehicle_vin_decode",
         "tags": [
           "vehicle"
@@ -404,7 +404,7 @@
         ],
         "responses": {
           "200": {
-            "description": "vin/model_year_hint(整数或null)/status(CANDIDATE|PARTIAL|NO_MATCH)/source=NHTSA_VPIC/coverage=US_MARKET_REGISTRATION_ONLY/requires_confirmation=true/fields。fields仅make/model/model_year/trim/vehicle_type非空文本；完整候选需make/model/model_year；NO_MATCH为空。",
+            "description": "vin/model_year_hint(整数或null)/status(CANDIDATE|PARTIAL|NO_MATCH)/source=NHTSA_VPIC/coverage=US_MARKET_REGISTRATION_ONLY/requires_confirmation=true/fields。fields仅make/model/model_year/trim/vehicle_type非空文本；完整候选需make/model/model_year；NO_MATCH为空。 本地模式另含source_revision(修订标识)/synthetic(布尔)/catalog_candidates(0或1项：model_id/series_id/brand_id/brand_name/series_name/year/config_name)。",
             "content": {
               "application/json": {
                 "schema": {
@@ -538,7 +538,10 @@
                     "const": true
                   },
                   "consent_version": {
-                    "const": "VIN_VPIC_V1"
+                    "enum": [
+                      "VIN_VPIC_V1",
+                      "VIN_LOCAL_V1"
+                    ]
                   }
                 }
               }
@@ -546,8 +549,8 @@
           }
         },
         "x-implementation-status": "vin-owner-candidate-implemented-requires-provider-acceptance",
-        "x-roles": "当前有效OWNER会话；VIN_DECODE_ENABLED默认false，显式NHTSA_VPIC来源",
-        "description": "仅POST JSON正文，禁止query，不自动登记车辆。VIN_VPIC_V1同意将VIN/可选年款发送美国NHTSA；仅美国市场登记覆盖，不保证中国车辆或内部车型精确匹配。调用前后复核会话/账号（失败也复核）；共享数据库每车主每UTC分钟5次，实例并发2。供应商10秒总期限、64KiB响应、不重定向、无应用级重试。返回需人工核对的CANDIDATE/PARTIAL/NO_MATCH，不提供model_id。旧GET未提供业务实现，应迁移本POST。"
+        "x-roles": "当前有效OWNER会话；默认关闭。NHTSA_VPIC或LOCAL_LICENSED两种服务端固定来源，客户端用途同意必须一致",
+        "description": "仅POST JSON正文，禁止query，不自动登记车辆。VIN_VPIC_V1同意将VIN/可选年款发送美国NHTSA；仅美国市场登记覆盖，不保证中国车辆或内部车型精确匹配。调用前后复核会话/账号（失败也复核）；共享数据库每车主每UTC分钟5次，实例并发2。供应商10秒总期限、64KiB响应、不重定向、无应用级重试。返回需人工核对的CANDIDATE/PARTIAL/NO_MATCH，不提供model_id。旧GET未提供业务实现，应迁移本POST。 LOCAL_LICENSED模式使用VIN_LOCAL_V1同意，仅加载服务端配置的SHA256固定本地授权规则，逐次核验授权期及文件。额外返回source_revision/synthetic/catalog_candidates；source为LOCAL_LICENSED或LOCAL_SYNTHETIC，coverage=PINNED_LOCAL_RULES_ONLY。目录候选仅在品牌/车系/年款/配置文本精确匹配且全链有效且唯一时返回一个，否则为空；须人工确认，保存时仍重新校验目录。无授权的真实车牌反查未接入，合成测试结果不表示真实国内车型覆盖。"
       }
     },
     "/api/vehicle/ocr-license": {

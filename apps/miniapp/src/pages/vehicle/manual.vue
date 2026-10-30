@@ -8,17 +8,18 @@ import { createVehicleFlow, initialVehicleState } from '../../services/vehicle-f
 import { vehicleEntryPrefill } from '../../services/vehicle-entry-session.js'
 import InputCandidateReview from '../../components/InputCandidateReview.vue'
 import {candidateFields} from '../../services/input-candidates.js'
-import {vinSummary} from '../../services/vin-candidate.js'
+import {vinSummary,vinSourceLabel} from '../../services/vin-candidate.js'
+const exactCandidate=ref(null)
 const sourceMessage = ref('')
 const state = reactive(initialVehicleState())
 const flow = createVehicleFlow({ state, api: vehicleApi, token: () => ownerSession.accessToken, newKey: imageRequestKey })
 const years = computed(() => [...new Set(state.model.map(model => model.year))])
 const configs = computed(() => state.model.filter(model => model.year === state.year))
 const locked = computed(() => state.busy || Boolean(state.saved) || ['unauthorized', 'forbidden'].includes(state.failureKind))
-watch(() => ownerSession.accessToken, () => { flow.reset(); sourceMessage.value = '' }, { flush: 'sync' })
+watch(() => ownerSession.accessToken, () => { flow.reset(); sourceMessage.value = ''; exactCandidate.value=null }, { flush: 'sync' })
 onLoad(() => {
  const incoming=vehicleEntryPrefill.take(ownerSession.accessToken)
- if(incoming){state.plate=incoming.plate;state.vin=incoming.vin;sourceMessage.value=incoming.vinFacts?`NHTSA候选（需人工选车型）：${vinSummary(incoming.vinFacts)}。美国市场登记数据可能不完整，请对照实车选择品牌、车系、年款与配置。`:{plate:'车牌已带入，请确认车型与里程后保存。',vin:'VIN已校验并带入，请手动选择确认车型。',license:'请核对证件车牌/VIN与本人修改，手动选择车型和里程；照片未作为档案附件带入。'}[incoming.source]}
+ if(incoming){state.plate=incoming.plate;state.vin=incoming.vin;exactCandidate.value=incoming.vinFacts?.catalog_candidates?.[0]||null;sourceMessage.value=incoming.vinFacts?`${vinSourceLabel(incoming.vinFacts)}（需人工确认）：${vinSummary(incoming.vinFacts)}。请对照实车选择品牌、车系、年款与配置。`:{plate:'车牌已带入，请确认车型与里程后保存。',vin:'VIN已校验并带入，请手动选择确认车型。',license:'请核对证件车牌/VIN与本人修改，手动选择车型和里程；照片未作为档案附件带入。'}[incoming.source]}
 })
 onShow(() => {
   if (state.saved) return
@@ -44,6 +45,7 @@ function retryCatalog() { if (state.catalogRetry) flow.load(state.catalogRetry.k
     <view v-if="!ownerSession.accessToken" class="panel"><text>请先登录车主账号</text><button @tap="login">前往登录</button></view>
     <view v-else class="panel">
       <text v-if="sourceMessage" class="note">{{ sourceMessage }}</text>
+      <button v-if="exactCandidate" class="more" :disabled="locked" @tap="flow.selectCandidate(exactCandidate)">我已核对，选入此精确车型候选</button>
       <InputCandidateReview :actor="ownerSession.accessToken" :scope="'vehicle:new:'+state.modelId" scene="vehicle" :fields="candidateFields.vehicle" :values="state" :disabled="locked" @apply="Object.assign(state,$event)" />
       <text class="label">品牌</text>
       <picker :disabled="locked || !state.brand.length" :range="state.brand" range-key="name" @change="pickBrand"><view class="field">{{ state.brand.find(item => item.id === state.brandId)?.name || '请选择品牌' }}</view></picker>

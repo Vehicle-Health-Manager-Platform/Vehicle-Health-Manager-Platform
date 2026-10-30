@@ -8,18 +8,22 @@ import static com.autocare.platform.order.ReservationStore.*;
 /** Explicit, bounded lifecycle. Never changes knowledge payloads, receipts or business rows. */
 final class KnowledgeEmbeddingRuntime implements AutoCloseable {
  private final ReservationStore db;private final LicensedKnowledge knowledge;private final EmbeddingProfile profile;
- private final boolean enabled,cleanup,publicEnabled;private final KnowledgeVectorIndex index;
+ private final boolean enabled,cleanup,publicEnabled;private final KnowledgeVectorIndex index;private final KnowledgeEmbeddingRetries retries;
  private final AtomicBoolean busy=new AtomicBoolean();private volatile boolean closed,cycleFailed;
  private long documentCursor,cleanupCursor;
  KnowledgeEmbeddingRuntime(ReservationStore db,LicensedKnowledge knowledge,EmbeddingProfile profile,EmbeddingProvider provider,boolean enabled,boolean cleanup){
   this(db,knowledge,profile,provider,enabled,cleanup,false);
  }
  KnowledgeEmbeddingRuntime(ReservationStore db,LicensedKnowledge knowledge,EmbeddingProfile profile,EmbeddingProvider provider,boolean enabled,boolean cleanup,boolean publicEnabled){
+  this(db,knowledge,profile,provider,enabled,cleanup,publicEnabled,KnowledgeEmbeddingRetries.Policy.disabled());
+ }
+ KnowledgeEmbeddingRuntime(ReservationStore db,LicensedKnowledge knowledge,EmbeddingProfile profile,EmbeddingProvider provider,boolean enabled,boolean cleanup,boolean publicEnabled,KnowledgeEmbeddingRetries.Policy retryPolicy){
   if(enabled&&(profile==null||provider==null))throw new IllegalArgumentException("Embedding runtime not configured");
   if(enabled&&cleanup)throw new IllegalArgumentException("Cleanup-only maintenance cannot run with indexing");
   if(publicEnabled&&!enabled)throw new IllegalArgumentException("Vector retrieval requires embedding configuration");
   this.db=db;this.knowledge=knowledge;this.profile=profile;this.enabled=enabled;this.cleanup=cleanup||enabled;
   this.publicEnabled=publicEnabled;index=enabled?new KnowledgeVectorIndex(db,knowledge,profile,provider,true):null;
+  retries=new KnowledgeEmbeddingRetries(db,index,profile,retryPolicy);
  }
  boolean publicConfigured(){return publicEnabled;}
  boolean vectorActive(){return publicEnabled&&enabled&&!closed;}
@@ -40,7 +44,7 @@ final class KnowledgeEmbeddingRuntime implements AutoCloseable {
  boolean cycleFailed(){return cycleFailed;}
  void tick(){
   if(closed||!configured()||!busy.compareAndSet(false,true))return;
-  try{purge();if(enabled&&!closed){discover();if(!closed)index.workOne();}cycleFailed=false;}
+  try{purge();if(enabled&&!closed){retries.tick();discover();if(!closed)index.workOne();}cycleFailed=false;}
   catch(RuntimeException ignored){cycleFailed=true;/* Only safe state; no provider diagnostics or document data. */}
   finally{busy.set(false);}
  }

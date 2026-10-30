@@ -19,6 +19,7 @@ class AuthSessionsEvidenceTest(unittest.TestCase):
         self.collection,self.manifest=assets();(ROOT/'.cache').mkdir(exist_ok=True)
         self.temp=tempfile.TemporaryDirectory(prefix='auth-session-evidence-',dir=ROOT/'.cache');self.addCleanup(self.temp.cleanup);self.path=Path(self.temp.name)/'report.json'
         self.tokens={r+'_token':'synthetic-'+r for r in ROLES}
+        self.tokens['_audit_jwt_secret']=SECRET
         for label in ('owner','merchant','technician','expired','revoked','wrong_app','disabled_owner','disabled_tech','operator'):self.tokens[label+'_refresh']='old-'+label+'x'*(43-len(label)-4)
         self.responses={};self.bound=dict(self.tokens)
         for i,(label,role) in enumerate([('owner','OWNER'),('merchant','MERCHANT'),('technician','TECHNICIAN')],1):

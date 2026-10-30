@@ -1,0 +1,26 @@
+# LOCAL TEST ONLY. This overlay does not validate the production Dockerfiles.
+# Build a fresh source-bound jar first; never point at an unverified old artifact.
+# Use --no-build --pull never. All three images must already exist locally.
+services:
+  backend:
+    image: maven:3.9-eclipse-temurin-17
+    pull_policy: never
+    entrypoint: ["java", "-jar", "/app/local-test.jar"]
+    command: []
+    volumes:
+      - type: bind
+        source: ${LOCAL_TEST_BACKEND_JAR:?Set an absolute path to the current verified test jar}
+        target: /app/local-test.jar
+        read_only: true
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8080/actuator/health"]
+  minio:
+    image: autocare-upload-minio-ci:latest
+    pull_policy: never
+  ocr:
+    image: autocare-ocr-runtime:acceptance
+    pull_policy: never
+    # Exercise the ordinary disabled-service protocol, not runtime_entry's model gate.
+    command: ["python", "server.py"]
+    volumes:
+      - ../../services/ocr/src:/app:ro

@@ -1,0 +1,53 @@
+rules:
+  - id: java-runtime-shell
+    languages: [java]
+    severity: ERROR
+    message: Review command execution for untrusted input and argument boundaries.
+    pattern-either:
+      - pattern: Runtime.getRuntime().exec(...)
+      - pattern: new ProcessBuilder(...)
+  - id: java-unsafe-deserialization
+    languages: [java]
+    severity: ERROR
+    message: Native object deserialization or polymorphic JSON needs an explicit trust boundary.
+    pattern-either:
+      - pattern: $O.readObject(...)
+      - pattern: $M.enableDefaultTyping(...)
+      - pattern: $M.activateDefaultTyping(...)
+  - id: java-concatenated-jdbc
+    languages: [java]
+    severity: WARNING
+    message: Check concatenated SQL fragments; runtime values must use bound parameters.
+    pattern-either:
+      - pattern: $J.query($A + $B, ...)
+      - pattern: $J.queryForList($A + $B, ...)
+      - pattern: $J.update($A + $B, ...)
+      - pattern: $J.execute($A + $B)
+  - id: python-shell-or-deserialization
+    languages: [python]
+    severity: ERROR
+    paths:
+      exclude: ["**/test_*.py"]
+    message: Shell evaluation or unsafe deserialization requires removal or a documented boundary.
+    pattern-either:
+      - pattern: subprocess.$F(..., shell=True, ...)
+      - pattern: pickle.loads(...)
+      - pattern: pickle.load(...)
+      - pattern: eval(...)
+      - pattern: exec(...)
+      - pattern: yaml.unsafe_load(...)
+  - id: python-tls-verification-disabled
+    languages: [python]
+    severity: ERROR
+    message: Keep TLS certificate verification enabled.
+    pattern: requests.$F(..., verify=False, ...)
+  - id: javascript-code-or-html-evaluation
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: Review code/HTML evaluation and preserve user-input escaping.
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: new Function(...)
+      - pattern: $E.innerHTML = $X
+      - pattern: $E.outerHTML = $X
+      - pattern: document.write(...)

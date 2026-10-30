@@ -1,0 +1,850 @@
+{
+  "passed": true,
+  "evidence": {
+    "requests": 102,
+    "assertions": 341,
+    "failures": 0,
+    "coverage": {
+      "post_api_merchant_slots": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "get_api_order_quote_id": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_order_create": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "get_api_order_id": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "get_api_merchant_orders_id": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_payments_create": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_payments_callback_LOCAL_TEST": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_check_pickup_submit": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_merchant_orders_id_assign": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_check_pickup_confirm": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_tech_orders_id_accept": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_tech_report_submit": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_check_protection_upload": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_tech_sign": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "post_api_merchant_orders_id_redeem": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ],
+      "get_api_archive_list": [
+        "boundary",
+        "error",
+        "normal",
+        "unauthorized"
+      ]
+    },
+    "cases": [
+      {
+        "name": "slot_publish",
+        "operation_id": "post_api_merchant_slots",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "slot_publish_replay",
+        "operation_id": "post_api_merchant_slots",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "slot_publish_malformed",
+        "operation_id": "post_api_merchant_slots",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "slot_publish_anonymous",
+        "operation_id": "post_api_merchant_slots",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "slot_publish_wrong_role",
+        "operation_id": "post_api_merchant_slots",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "slot_capacity_overflow",
+        "operation_id": "post_api_merchant_slots",
+        "kind": "boundary",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "quote",
+        "operation_id": "get_api_order_quote_id",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "quote_missing",
+        "operation_id": "get_api_order_quote_id",
+        "kind": "boundary",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "quote_invalid",
+        "operation_id": "get_api_order_quote_id",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "quote_anonymous",
+        "operation_id": "get_api_order_quote_id",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "quote_wrong_role",
+        "operation_id": "get_api_order_quote_id",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "booking_foreign_vehicle",
+        "operation_id": "post_api_order_create",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "booking_stale_quote",
+        "operation_id": "post_api_order_create",
+        "kind": "error",
+        "status": 409,
+        "passed": true
+      },
+      {
+        "name": "booking",
+        "operation_id": "post_api_order_create",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "booking_replay",
+        "operation_id": "post_api_order_create",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "booking_malformed",
+        "operation_id": "post_api_order_create",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "booking_anonymous",
+        "operation_id": "post_api_order_create",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "booking_wrong_role",
+        "operation_id": "post_api_order_create",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "booking_changed_intent",
+        "operation_id": "post_api_order_create",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "owner_order",
+        "operation_id": "get_api_order_id",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "owner_order_missing",
+        "operation_id": "get_api_order_id",
+        "kind": "boundary",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "owner_order_invalid",
+        "operation_id": "get_api_order_id",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "owner_order_anonymous",
+        "operation_id": "get_api_order_id",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "owner_order_wrong_role",
+        "operation_id": "get_api_order_id",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "owner_order_foreign",
+        "operation_id": "get_api_order_id",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "merchant_order",
+        "operation_id": "get_api_merchant_orders_id",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "merchant_order_missing",
+        "operation_id": "get_api_merchant_orders_id",
+        "kind": "boundary",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "merchant_order_invalid",
+        "operation_id": "get_api_merchant_orders_id",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "merchant_order_anonymous",
+        "operation_id": "get_api_merchant_orders_id",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "merchant_order_wrong_role",
+        "operation_id": "get_api_merchant_orders_id",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "merchant_order_foreign",
+        "operation_id": "get_api_merchant_orders_id",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "wechat_payment_unconfigured",
+        "operation_id": "post_api_payments_create",
+        "kind": "error",
+        "status": 503,
+        "passed": true
+      },
+      {
+        "name": "payment_foreign_owner",
+        "operation_id": "post_api_payments_create",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "payment",
+        "operation_id": "post_api_payments_create",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "payment_replay",
+        "operation_id": "post_api_payments_create",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "payment_malformed",
+        "operation_id": "post_api_payments_create",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "payment_anonymous",
+        "operation_id": "post_api_payments_create",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "payment_wrong_role",
+        "operation_id": "post_api_payments_create",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "callback_bad_signature",
+        "operation_id": "post_api_payments_callback_LOCAL_TEST",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "callback_expired",
+        "operation_id": "post_api_payments_callback_LOCAL_TEST",
+        "kind": "boundary",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "callback_malformed",
+        "operation_id": "post_api_payments_callback_LOCAL_TEST",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "callback_paid",
+        "operation_id": "post_api_payments_callback_LOCAL_TEST",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "callback_replay",
+        "operation_id": "post_api_payments_callback_LOCAL_TEST",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "order_paid",
+        "operation_id": "get_api_order_id",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "pickup_foreign_merchant",
+        "operation_id": "post_api_check_pickup_submit",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "pickup_negative_mileage",
+        "operation_id": "post_api_check_pickup_submit",
+        "kind": "boundary",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "pickup",
+        "operation_id": "post_api_check_pickup_submit",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "pickup_replay",
+        "operation_id": "post_api_check_pickup_submit",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "pickup_malformed",
+        "operation_id": "post_api_check_pickup_submit",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "pickup_anonymous",
+        "operation_id": "post_api_check_pickup_submit",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "pickup_wrong_role",
+        "operation_id": "post_api_check_pickup_submit",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "assignment_before_confirmation",
+        "operation_id": "post_api_merchant_orders_id_assign",
+        "kind": "error",
+        "status": 409,
+        "passed": true
+      },
+      {
+        "name": "confirmation_foreign_owner",
+        "operation_id": "post_api_check_pickup_confirm",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "confirmation",
+        "operation_id": "post_api_check_pickup_confirm",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "confirmation_replay",
+        "operation_id": "post_api_check_pickup_confirm",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "confirmation_malformed",
+        "operation_id": "post_api_check_pickup_confirm",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "confirmation_anonymous",
+        "operation_id": "post_api_check_pickup_confirm",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "confirmation_wrong_role",
+        "operation_id": "post_api_check_pickup_confirm",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "assignment_foreign_merchant",
+        "operation_id": "post_api_merchant_orders_id_assign",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "assignment",
+        "operation_id": "post_api_merchant_orders_id_assign",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "assignment_replay",
+        "operation_id": "post_api_merchant_orders_id_assign",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "assignment_malformed",
+        "operation_id": "post_api_merchant_orders_id_assign",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "assignment_anonymous",
+        "operation_id": "post_api_merchant_orders_id_assign",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "assignment_wrong_role",
+        "operation_id": "post_api_merchant_orders_id_assign",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "accept",
+        "operation_id": "post_api_tech_orders_id_accept",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "accept_replay",
+        "operation_id": "post_api_tech_orders_id_accept",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "accept_malformed",
+        "operation_id": "post_api_tech_orders_id_accept",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "accept_anonymous",
+        "operation_id": "post_api_tech_orders_id_accept",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "accept_wrong_role",
+        "operation_id": "post_api_tech_orders_id_accept",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "report_before_protection",
+        "operation_id": "post_api_tech_report_submit",
+        "kind": "error",
+        "status": 409,
+        "passed": true
+      },
+      {
+        "name": "protection_foreign_merchant",
+        "operation_id": "post_api_check_protection_upload",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "protection",
+        "operation_id": "post_api_check_protection_upload",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "protection_replay",
+        "operation_id": "post_api_check_protection_upload",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "protection_malformed",
+        "operation_id": "post_api_check_protection_upload",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "protection_anonymous",
+        "operation_id": "post_api_check_protection_upload",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "protection_wrong_role",
+        "operation_id": "post_api_check_protection_upload",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "report_foreign_file",
+        "operation_id": "post_api_tech_report_submit",
+        "kind": "unauthorized",
+        "status": 422,
+        "passed": true
+      },
+      {
+        "name": "report_negative_hours",
+        "operation_id": "post_api_tech_report_submit",
+        "kind": "boundary",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "report",
+        "operation_id": "post_api_tech_report_submit",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "report_replay",
+        "operation_id": "post_api_tech_report_submit",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "report_malformed",
+        "operation_id": "post_api_tech_report_submit",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "report_anonymous",
+        "operation_id": "post_api_tech_report_submit",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "report_wrong_role",
+        "operation_id": "post_api_tech_report_submit",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "signature",
+        "operation_id": "post_api_tech_sign",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "signature_replay",
+        "operation_id": "post_api_tech_sign",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "signature_malformed",
+        "operation_id": "post_api_tech_sign",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "signature_anonymous",
+        "operation_id": "post_api_tech_sign",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "signature_wrong_role",
+        "operation_id": "post_api_tech_sign",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "signature_foreign_file",
+        "operation_id": "post_api_tech_sign",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "redemption_foreign_merchant",
+        "operation_id": "post_api_merchant_orders_id_redeem",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "redemption",
+        "operation_id": "post_api_merchant_orders_id_redeem",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "redemption_replay",
+        "operation_id": "post_api_merchant_orders_id_redeem",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "redemption_malformed",
+        "operation_id": "post_api_merchant_orders_id_redeem",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "redemption_anonymous",
+        "operation_id": "post_api_merchant_orders_id_redeem",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "redemption_wrong_role",
+        "operation_id": "post_api_merchant_orders_id_redeem",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "name": "order_completed",
+        "operation_id": "get_api_order_id",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "archives",
+        "operation_id": "get_api_archive_list",
+        "kind": "normal",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "archives_empty_page",
+        "operation_id": "get_api_archive_list",
+        "kind": "boundary",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "name": "archives_missing_vehicle",
+        "operation_id": "get_api_archive_list",
+        "kind": "error",
+        "status": 400,
+        "passed": true
+      },
+      {
+        "name": "archives_foreign_owner",
+        "operation_id": "get_api_archive_list",
+        "kind": "unauthorized",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "name": "archives_anonymous",
+        "operation_id": "get_api_archive_list",
+        "kind": "unauthorized",
+        "status": 401,
+        "passed": true
+      },
+      {
+        "name": "archives_wrong_role",
+        "operation_id": "get_api_archive_list",
+        "kind": "unauthorized",
+        "status": 403,
+        "passed": true
+      }
+    ],
+    "signed_callback_and_exact_replay_verified": true
+  },
+  "database": {
+    "row_counts": {
+      "orders": 1,
+      "payments": 1,
+      "payment_events": 1,
+      "pickups": 1,
+      "assignments": 1,
+      "protections": 1,
+      "reports": 1,
+      "redemptions": 1,
+      "archive_jobs": 1,
+      "archives": 1
+    },
+    "checks": {
+      "order_completed": true,
+      "local_payment_only": true,
+      "redemption_test_mode": true,
+      "report_signed": true,
+      "foreign_vehicle_unchanged": true,
+      "no_foreign_orders": true
+    }
+  },
+  "boundaries": [
+    "Same cached Compose stack with current backend; actual HTTP/JWT/MySQL",
+    "Synthetic users/staff/CLEAN file metadata and LOCAL_TEST signed payments; no actual WeChat/SMS/payment provider or physical devices",
+    "102 HTTP requests/341 assertions; 16 operation normal/boundary/error/unauthorized evidence; not all APIs"
+  ]
+}

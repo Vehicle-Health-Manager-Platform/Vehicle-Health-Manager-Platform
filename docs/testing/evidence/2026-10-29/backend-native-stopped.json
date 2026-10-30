@@ -1,0 +1,56 @@
+{
+  "passed": false,
+  "completed_full_suite": false,
+  "origin": "First native host complete-suite attempt, stopped after three actual connection errors; no business assertions relaxed.",
+  "counts": {
+    "tests": 1617,
+    "failures": 0,
+    "errors": 3,
+    "skipped": 0
+  },
+  "suites_completed": 131,
+  "failed_cases": [
+    {
+      "suite": "com.autocare.platform.order.JdbcKnowledgeEmbeddingRuntimeTest",
+      "case": "discoveryWrapsPastAnIneligiblePage"
+    },
+    {
+      "suite": "com.autocare.platform.order.JdbcKnowledgeEmbeddingRuntimeTest",
+      "case": "generatedStateIsRestrictedAndDoesNotChangeKnowledgeAuditOrReceipts"
+    },
+    {
+      "suite": "com.autocare.platform.order.JdbcKnowledgeEmbeddingRuntimeTest",
+      "case": "stoppedSourcesArePurgedWithoutWaitingForSuccessfulQueries"
+    }
+  ],
+  "stopped_reason": "Three JDBC connect timeouts in per-statement unpooled test setup; isolated pooled comparison 140 passed. Stopped only verified owned Surefire JVM to fix fixtures and restart clean full suite.",
+  "run": {
+    "version": 1,
+    "started_from_commit": "2cee948bc57ead6b50cca58e7d9dbdf6e50f6c82",
+    "finished_at": "2026-10-29T06:43:35.961148+00:00",
+    "command": [
+      "D:\\python\\汽车健康管家平台全栈开发\\.cache\\host-tools\\maven\\bin\\mvn.cmd",
+      "-B",
+      "-Pcore-coverage",
+      "clean",
+      "verify",
+      "-o",
+      "-Dupload.test.images.prebuilt=true",
+      "-Dmaven.repo.local=D:\\python\\汽车健康管家平台全栈开发\\.cache\\host-tools\\m2"
+    ],
+    "full_suite": true,
+    "maven_exit_code": 1,
+    "tests": {
+      "tests": 0,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "duration_seconds": 3539.75,
+    "host_system": "Windows-10-10.0.26200-SP0",
+    "host_logical_cpus": 24,
+    "backend_sources_sha256": "7167ca928c6ff38e2cd779ea22f9e096995be36f90ad81eca077ac6a33557fcb",
+    "sources_unchanged": true,
+    "test_report_error": "Missing, failed or skipped tests cannot establish coverage"
+  }
+}

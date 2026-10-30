@@ -20,10 +20,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
 class JdbcPublicReviewTextsTest {
+    static com.zaxxer.hikari.HikariDataSource schemaPool;
+    @AfterAll static void closeSchemaPool(){if(schemaPool!=null){schemaPool.close();schemaPool=null;}}
     @Container static MySQLContainer<?> mysql=new MySQLContainer<>("mysql:8.0").withCommand("--log-bin-trust-function-creators=1");
     static JdbcTemplate jdbc;PublicRatings ratings;PublicReviewTexts texts,disabled;VehicleOwner owner,other;OperatorActor operator;
     @BeforeAll static void schema()throws Exception{
-        var ds=new DriverManagerDataSource(mysql.getJdbcUrl(),mysql.getUsername(),mysql.getPassword());jdbc=new JdbcTemplate(ds);
+        var ds=com.autocare.platform.TestMysqlDataSource.open(mysql);schemaPool=ds;jdbc=new JdbcTemplate(ds);
         try(var c=ds.getConnection();var paths=Files.list(Path.of("..","docs","sql","migrations"))){for(var p:paths.filter(p->p.toString().endsWith(".sql")).sorted().toList())ScriptUtils.executeSqlScript(c,new FileSystemResource(p));ScriptUtils.executeSqlScript(c,new FileSystemResource(Path.of("..","docs","sql","migrations","V034__public_review_text.sql")));}
     }
     @BeforeEach void setup(){

@@ -70,6 +70,9 @@ def digest(value):return hashlib.sha256(value.encode()).hexdigest()
 def seed(mysql,secret):
     global SECRET
     SECRET=secret;tokens=identity_seed(mysql,secret)
+    # Kept only in the run's private environment, never in shared evidence.
+    # A later audit process has not executed seed() and cannot use its globals.
+    tokens['_audit_jwt_secret']=secret
     mysql.sql("""INSERT INTO user(id,openid,status) VALUES(3,'synthetic-disabled-session-owner',2);
 INSERT INTO staff_account(id,merchant_id,role,account,status) VALUES(4,1,'TECHNICIAN','synthetic-disabled-session-tech','DISABLED');
 INSERT INTO staff_wechat_identity(id,app_id,openid,staff_account_id) VALUES(2,'fulfillment-cases','synthetic-disabled-session-binding',4);
@@ -133,11 +136,14 @@ def render(raw,tokens):
 
 def audit(path,collection,manifest,tokens):
     from run_api_acceptance import audit_owner_cases
+    secret=tokens.get('_audit_jwt_secret')
+    if not isinstance(secret,str) or not 32<=len(secret.encode('utf-8'))<=512:
+        raise ValueError('Missing private JWT audit context')
     rows={e['item']['name']:e for e in json.loads(path.read_text(encoding='utf-8'))['run']['executions']}
     bound=dict(tokens)
     for label in ('owner','merchant','technician'):
         data=response_json(rows['refresh_'+label]).get('data',{})
-        validate_rotation(data,tokens[label+'_token'],tokens[label+'_refresh'],SECRET)
+        validate_rotation(data,tokens[label+'_token'],tokens[label+'_refresh'],secret)
         bound[label+'_new_token']=data['access_token'];bound[label+'_next_refresh']=data['refresh_token'];ROTATED[label]=digest(data['refresh_token'])
     result=audit_owner_cases(path,collection,manifest,bound,expected_operations=OPERATION_COUNT)
     for item in collection['item']:

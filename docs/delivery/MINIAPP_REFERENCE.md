@@ -2,7 +2,7 @@
 
 由 `python scripts/miniapp_handover.py` 生成；请修改来源后重生成。
 
-注册页面110项，三份环境模板共147条变量记录（同名跨模板分别计数）。
+注册页面113项，三份环境模板共155条变量记录（同名跨模板分别计数）。
 这是源码存在性与文档链接核对，不是入口可达性、权限、视觉、真实身份或真机通过证明。按目录归入阅读指南，共用页可能服务多个角色，实际权限以服务端为准。
 
 [车主](../user-guides/OWNER.md) · [商家](../user-guides/MERCHANT.md) · [技师](../user-guides/TECHNICIAN.md) · [受限运营](../user-guides/OPERATOR.md) · [剩余验收](REMAINING_ACCEPTANCE.md)
@@ -10,6 +10,9 @@
 ## 注册页面
 
 - `pages/index/index` — 汽车健康管家；[源码](../../apps/miniapp/src/pages/index/index.vue)；[阅读指南](../../docs/user-guides/OWNER.md)。
+- `pages/mine/services` — 汽车生活；[源码](../../apps/miniapp/src/pages/mine/services.vue)；[阅读指南](../../docs/user-guides/OWNER.md)。
+- `pages/mine/partner` — 合作服务；[源码](../../apps/miniapp/src/pages/mine/partner.vue)；[阅读指南](../../docs/user-guides/OWNER.md)。
+- `pages/mine/model-compare` — 车型配置对比；[源码](../../apps/miniapp/src/pages/mine/model-compare.vue)；[阅读指南](../../docs/user-guides/OWNER.md)。
 - `pages/operator/finance` — 资金记录；[源码](../../apps/miniapp/src/pages/operator/finance.vue)；[阅读指南](../../docs/user-guides/OPERATOR.md)。
 - `pages/merchant/commissions` — 本店佣金账单；[源码](../../apps/miniapp/src/pages/merchant/commissions.vue)；[阅读指南](../../docs/user-guides/MERCHANT.md)。
 - `pages/community/knowledge` — 有来源专业资料；[源码](../../apps/miniapp/src/pages/community/knowledge.vue)；[阅读指南](../../docs/user-guides/OWNER.md)。
@@ -203,6 +206,9 @@
 - `KNOWLEDGE_EMBEDDING_TOKEN`。
 - `KNOWLEDGE_EMBEDDING_ALLOW_PRIVATE_HTTP`；模板值 `false`。
 - `KNOWLEDGE_EMBEDDING_DELAY_MS`。
+- `KNOWLEDGE_EMBEDDING_RETRY_ENABLED`；模板值 `false`。
+- `KNOWLEDGE_EMBEDDING_RETRY_LIMIT`。
+- `KNOWLEDGE_EMBEDDING_RETRY_DELAY_SECONDS`。
 - `MILEAGE_OCR_ENABLED`；模板值 `false`。
 - `MILEAGE_OCR_URL`。
 - `MILEAGE_OCR_SERVICE_TOKEN`。
@@ -211,6 +217,9 @@
 - `OCR_WHEELHOUSE_ROOT`。
 - `VIN_DECODE_ENABLED`；模板值 `false`。
 - `VIN_DECODER_PROVIDER`。
+- `VIN_LOCAL_DATA_PATH`。
+- `VIN_LOCAL_DATA_SHA256`。
+- `VIN_LOCAL_ALLOW_SYNTHETIC`；模板值 `false`。
 - `LICENSE_OCR_ENABLED`；模板值 `false`。
 - `LICENSE_OCR_URL`。
 - `LICENSE_OCR_SERVICE_TOKEN`。
@@ -238,6 +247,8 @@
 - `VITE_API_BASE_URL`。
 - `VITE_WECHAT_CLOUD_ENV_ID`。
 - `VITE_WECHAT_CLOUD_SERVICE`。
+- `VITE_VIN_PROVIDER`。
+- `VITE_CAR_LIFE_PARTNERS`。
 
 ### deploy/cloudrun/env.example
 

@@ -18,6 +18,9 @@ const groups = [
     { title: '输入好友邀请码', hint: '填写后完成绑定', url: '/pages/welfare/invite-entry' },
   ] },
   { label: '合作与账号', items: [
+    { title: '专属优惠', hint: '平台券与加油、充电、洗车、车险服务', url: '/pages/mine/services?kind=benefits' },
+    { title: '二手车服务', hint: '车辆档案、估值、卖车与过户', url: '/pages/mine/services?kind=used' },
+    { title: '新车选购', hint: '车型配置、目录对比与新车保险', url: '/pages/mine/services?kind=new' },
     { title: '商家入驻申请', hint: '提交门店开通资料', url: '/pages/owner/onboarding' },
   ] },
 ]

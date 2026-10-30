@@ -12,6 +12,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 import uuid
 
@@ -28,9 +29,9 @@ def source_digest(root):
     """Bind evidence to code/config, excluding generated outputs and private env files."""
     paths = [root / 'package.json', root / 'package-lock.json', root / 'backend/pom.xml']
     paths += [root / '.env.example'] if (root / '.env.example').is_file() else []
-    for directory in ('backend/src', 'scripts', 'services/ocr', 'services/asr', 'services/documents', 'services/embedding', 'deploy/compose', 'docs/sql/migrations'):
+    for directory in ('backend/src', 'scripts', 'services/ocr', 'services/asr', 'services/documents', 'services/embedding', 'deploy/compose', 'docs/sql/migrations', 'docs/testing/fixtures'):
         paths += [p for p in (root / directory).rglob('*') if p.is_file()
-                  and (p.suffix in ('.py', '.java', '.sql', '.js', '.mjs', '.cjs', '.yml', '.yaml', '.json', '.txt', '.in', '.sh', '.ps1')
+                  and (p.suffix in ('.py', '.java', '.sql', '.js', '.mjs', '.cjs', '.yml', '.yaml', '.json', '.txt', '.in', '.sh', '.ps1', '.properties', '.xml')
                        or p.name.startswith('Dockerfile'))]
     for app in (root / 'apps').iterdir():
         for name in ('src', 'test', 'preview'):
@@ -61,7 +62,7 @@ def steps(root, backend=False):
     ]
     if backend:
         commands += [
-            ('backend-mysql-http', [shutil.which('mvn') or 'mvn', '-B', 'test'], root / 'backend'),
+            ('backend-mysql-http', [sys.executable, str(root / 'scripts/run_core_coverage.py'), '--full'], root / 'backend'),
             ('core-journeys-evidence', [sys.executable, 'scripts/run_isolated_journeys.py', '--check-only'], root),
         ]
     return commands
@@ -79,8 +80,12 @@ def run_steps(commands, output, env, execute=subprocess.run):
                 for path in (cwd / 'target/surefire-reports').glob('TEST-*.xml'):
                     path.unlink()
             with log.open('wb') as stream:
+                # The complete runner owns Maven and resource cleanup. A full
+                # adapter run can exceed the ordinary 90-minute check deadline;
+                # killing only its Python wrapper can leave its JVM running.
+                deadline = None if name == 'backend-mysql-http' else 5400
                 result = execute(command, cwd=cwd, env=env, stdout=stream,
-                                 stderr=subprocess.STDOUT, timeout=5400, shell=False)
+                                 stderr=subprocess.STDOUT, timeout=deadline, shell=False)
             status = 'passed' if result.returncode == 0 else 'failed'
             code = result.returncode
         except (OSError, subprocess.TimeoutExpired) as exc:
@@ -110,12 +115,15 @@ def main(argv=None):
     args = parser.parse_args(argv)
     output = ROOT / '.cache' / ('local-delivery-' + uuid.uuid4().hex[:12])
     output.mkdir(parents=True)
-    temporary = output / 'tmp'
-    temporary.mkdir()
-    env = dict(os.environ, PYTHONUTF8='1', TEMP=str(temporary), TMP=str(temporary), TMPDIR=str(temporary))
     before = source_digest(ROOT)
-    rows = run_steps(steps(ROOT, args.backend), output, env)
-    record = report(rows, before, source_digest(ROOT), args.backend)
+    backend = args.backend
+    # Inherit the host temporary root. A workspace containing Chinese characters
+    # must not become Java's agent destination through this wrapper's TEMP.
+    with tempfile.TemporaryDirectory(prefix='autocare-local-delivery-') as temporary:
+        env = dict(os.environ, PYTHONUTF8='1', TEMP=temporary, TMP=temporary, TMPDIR=temporary)
+        rows = run_steps(steps(ROOT, backend), output, env)
+    record = report(rows, before, source_digest(ROOT), backend)
+    record['backend_execution'] = 'host' if backend else 'not-requested'
     (output / 'report.json').write_text(json.dumps(record, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     print('Evidence: ' + str(output / 'report.json'))
     return 0 if record['selected_checks_passed'] else 1

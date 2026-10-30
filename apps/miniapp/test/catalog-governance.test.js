@@ -6,6 +6,20 @@ import { createPublicationApi } from '../src/services/experience-publication.js'
 const key = '01234567-89ab-4cde-8fab-0123456789ab'
 const brand = { id: 1, name: '授权品牌', status: 0, revision: 1, sort_order: 0, source_note: '授权测试来源' }
 const fixture = (result, requests = [], status = 200) => createCatalogApi({ baseUrl: 'https://test', runtime: () => ({ request(r) { requests.push(r); r.success({ statusCode: status, data: { code: 0, data: result } }) } }) })
+
+test('catalog default runtime sends requests through the real shared adapter', async () => {
+  const previous = globalThis.uni, requests = []
+  globalThis.uni = { request(options) {
+    requests.push(options)
+    options.success({ statusCode: 200, data: { code: 0, data: { items: [brand], total: 1, page: 1, page_size: 20 } } })
+  } }
+  try {
+    const result = await createCatalogApi({ baseUrl: 'https://test' }).list('operator-token', 'brands')
+    assert.equal(result.items[0].id, brand.id)
+    assert.equal(requests[0].url, 'https://test/api/admin/catalog/brands?page=1&page_size=20')
+    assert.equal(requests[0].header.Authorization, 'Bearer operator-token')
+  } finally { if (previous === undefined) delete globalThis.uni; else globalThis.uni = previous }
+})
 test('catalog protocols reject unknown identity and malformed states', () => {
   assert.equal(validCatalogRow('brands', brand), true)
   for (const row of [{ ...brand, operator_id: 2 }, { ...brand, status: 2 }, { ...brand, revision: 0 }, { ...brand, id: '1' }, { ...brand, sort_order: -1 }]) assert.equal(validCatalogRow('brands', row), false)

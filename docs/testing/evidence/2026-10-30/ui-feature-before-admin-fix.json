@@ -1,0 +1,1485 @@
+{
+  "passed": true,
+  "source_inputs_sha256": {
+    "backend/pom.xml": "c781e4c191fe5c0052bd02f0918fe6005b8a2f01a15463df6dac66db20760fda",
+    "backend/src/main/java/com/autocare/platform/admin/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/main/java/com/autocare/platform/ai/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/main/java/com/autocare/platform/ai/AiChatController.java": "4fb7fbb379980885bb2d0454eb594a23ccff598c06e0483b98aa01ebc8337ad4",
+    "backend/src/main/java/com/autocare/platform/ai/AiConfiguration.java": "699e84e5b860d9b94a440ac3370c8a77bef9751a4edc58b7c39e54719034da5f",
+    "backend/src/main/java/com/autocare/platform/ai/AiContextProvider.java": "d99e736c31709a1ad93d03d39869156249b2e91778bf76f1ce62fb0be78428db",
+    "backend/src/main/java/com/autocare/platform/ai/AiUpstreamException.java": "9f76b34a56cfc1ad962efea1ff39fbe90883694c2f47d8681dee1eb5872dfb17",
+    "backend/src/main/java/com/autocare/platform/ai/DeepSeekClient.java": "ff1673fae3091c18d695b7869ea092b53d347ce32c941082049b777592134cd5",
+    "backend/src/main/java/com/autocare/platform/check/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/main/java/com/autocare/platform/common/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/main/java/com/autocare/platform/common/ApiExceptionHandler.java": "0a4e8b46103f45dc11df004ae1b11578f7bafce1487b147f8e6df44ee4f452dd",
+    "backend/src/main/java/com/autocare/platform/common/ApiResponse.java": "d5201944a47f4165451bf8cac25982714d17f121f4ae4c4047fe437711bab2f6",
+    "backend/src/main/java/com/autocare/platform/common/write/WriteIntegrityConfiguration.java": "1e5b34411dc62c53f177cbea222f245415419a6e9a593521debc3dc28a7a7832",
+    "backend/src/main/java/com/autocare/platform/common/write/WriteIntegrityService.java": "1e4cf65a6ae4c9b26019b38ce7026678d808339640fa2f1aa6180d4b954af204",
+    "backend/src/main/java/com/autocare/platform/community/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/main/java/com/autocare/platform/coupon/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/main/java/com/autocare/platform/file/ClamdVirusScanner.java": "8a2881b4ab046f1464e035e14f0595b7cf70ba650f81dea26cf6d7f57271db7b",
+    "backend/src/main/java/com/autocare/platform/file/FileMetadataRepository.java": "d5a22e77a20ff1d45318bc5ea6f71f04cc9380343d5e97d98a35b598b0e6fb50",
+    "backend/src/main/java/com/autocare/platform/file/FileValidator.java": "baa70391d7368cc9cc494715d0f9088cfd8af1097279e920d471124178062747",
+    "backend/src/main/java/com/autocare/platform/file/InputMaterialController.java": "2ce1af63a8eaf248d75dfc84b94d2c788b0956d1b47f290f8822fb38a29eac5a",
+    "backend/src/main/java/com/autocare/platform/file/InputMaterialScope.java": "c01fd091c9882841084ca852c7c0a04481877017e095ad7718d34a3efcc3f423",
+    "backend/src/main/java/com/autocare/platform/file/InputMaterialService.java": "a619be728424531393f2154445efdc7cb48438e11b1335ffe151084bad2075d7",
+    "backend/src/main/java/com/autocare/platform/file/InputMaterialValidator.java": "b858bf40c416d02296d2aa35232183b89e06ba475d4a95dc966fceaa11e77474",
+    "backend/src/main/java/com/autocare/platform/file/JdbcFileMetadataRepository.java": "f99abce7ee59dfd9e541444ec23a0cad2174a1fed35d186ee31c7299e5f8527c",
+    "backend/src/main/java/com/autocare/platform/file/JdbcUploadRequests.java": "8fc488b00808fe814fdfb09132219745141e7bd82ca926f5d981765b5b607572",
+    "backend/src/main/java/com/autocare/platform/file/MinioPrivateObjectStore.java": "46933fb175fa8d493aa2700c41c233eb02ecfa043048951f150feb64dbdbee50",
+    "backend/src/main/java/com/autocare/platform/file/PrivateFileAccessService.java": "9048a880396cf3d56dbcdb4a13aab9fac11f8e981edb1fe48affafe50f7bf7b5",
+    "backend/src/main/java/com/autocare/platform/file/PrivateObjectStore.java": "ba018549ce5f2cde5d8527f465cc15ab9edc8b89eac4148c374c22201265e6ed",
+    "backend/src/main/java/com/autocare/platform/file/PrivateUploadConfiguration.java": "fa60366d8cc2e28139483c960ef3e0e9192afbb3c0c2e47a4b73e692c9a9a4c0",
+    "backend/src/main/java/com/autocare/platform/file/PrivateUploadService.java": "3be4a0982ffb4d51900c46fc9e2603e57fa55c341e3b2693eec2f763af8daf11",
+    "backend/src/main/java/com/autocare/platform/file/PublicImageRenderer.java": "85b906bd527f9b7477c8b8c658521a2b97f461f45f58ba81f386bc4bd85a0b6c",
+    "backend/src/main/java/com/autocare/platform/file/SignedObjectStore.java": "5796c4268eb061aca939c1146fe8367a916db98489a6dcccb4e62df8899e8eb0",
+    "backend/src/main/java/com/autocare/platform/file/UploadAdapterConfiguration.java": "c9e5a8253b6644a73e6c08fda0d9ec9513f7743ec05dfbfe7b8d52774354b297",
+    "backend/src/main/java/com/autocare/platform/file/UploadAdmissionFilter.java": "87b75fda0b28ad9d4f804be153b02a56491740c8fd7cb284ab9c4bcb930b7961",
+    "backend/src/main/java/com/autocare/platform/file/UploadEndpoints.java": "750a8de6ef272d12645ba59ae7ab9de4a1d9b35351ec241a21cf0388da5365c2",
+    "backend/src/main/java/com/autocare/platform/file/UploadException.java": "81032576fc15a79d79eab32244ca3c772040686f31d6dda5c0d477e28382cd26",
+    "backend/src/main/java/com/autocare/platform/file/UploadHttpConfiguration.java": "9c16908f9f4c77fdc4b22252e5b78050177f16844c62e58aff0460a0df108abd",
+    "backend/src/main/java/com/autocare/platform/file/UploadHttpController.java": "bcdac5c772a434d6a13c0123fbd5f5d87365f9520410334dc7b603eb2cca91f0",
+    "backend/src/main/java/com/autocare/platform/file/UploadHttpException.java": "e6a690219b553f6ecd98d0f5b499d72ab129e020cc149fb64aabb05b10fa9177",
+    "backend/src/main/java/com/autocare/platform/file/UploadHttpService.java": "bcc66b0c0c351d93451e5026feb75e280ce46a2969a85e5c974e5eff7fe42502",
+    "backend/src/main/java/com/autocare/platform/file/UploadOwner.java": "26c43ff50196a411763f253e59f15af40e9952825d992965c97be8dadcd5ac1c",
+    "backend/src/main/java/com/autocare/platform/file/VirusScanner.java": "84ae38f10e679a4012d39c585527dc8d9239186b5bec9c0b4a88b3033eb2f18d",
+    "backend/src/main/java/com/autocare/platform/gateway/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/AuthRateLimiter.java": "cb3b07611df3a6533f1ed3554640c594590cfe4183e076f3878578a5eef58f62",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/AuthSessionRepository.java": "c755a11c111f0f4187a87fb4f7765339669b82479a2b2b762ec73a861b4963c3",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/AuthTokens.java": "88202ec611beb7600d9f6550c3f73d1c13d136d576762449c66ecd8c7e844926",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/CloudRunAuthController.java": "6a5acb2c3eac4bea2fdbdebe71d8658d99d773ca94c5557a6f5431ff22cb8342",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/IdentityDatabaseConfig.java": "96e0a7993acb321d710908ba0554bcca1056d1ea59d8dcf84ea4decb2a7226ab",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/IdentityRepository.java": "c90d778881f0196f26dcf18b00a97245dafd1e9b4d7a9fd0a7cc1b047821e89e",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/JdbcAuthSessionRepository.java": "75c6841947bf54159ec68e8fbe04a75023f168f3f119a73f2924ba3e5d31ddb3",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/JdbcIdentityRepository.java": "03bdbb1cf2651b00fd264a278e814a1b2e02a73bea257694f34246b044a1f156",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/JdbcMerchantIdentityRepository.java": "208e0604524afe24ff125906bc7f7678419558acb3970eab82d199e7c40057d4",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/MerchantAuthController.java": "1f39f2d9c59e26f26cb276b30f2f0e921ae099e8abf780201d3525b9d0f3e0f1",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/MerchantIdentityRepository.java": "9c95f88dec115983943e3822934b5a89d4244b305f56d0b4a07b3e8b5dc41334",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/MerchantSmsSender.java": "489134b5f3a4f8dda70012fc3598b7f61f748363bee5fa7ab151a2664c335b6b",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/OperatorActor.java": "aee940a2f663256371c1122a9c40a575d7e219eefb4769d0fb1f65e5e255268b",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/OperatorAdminCli.java": "09e84757d0f9133bd2aefed4d1b5969d023d058a6bd0b20062f5759da2559d2c",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/OperatorAuthController.java": "127e8f3bcdfbc9e611a012c0a5e9cfacce7f86557acbba9e02b8a8d90a1b6ff8",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/OperatorIdentity.java": "2344a9ba19840d9a08752afe601cd02274d6c0706559d33ae4833aa66a0dee84",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/OperatorInput.java": "8bcec5ad129b7bc2fc098582b31cd9d1d9bd87b2a3a7da6cae051326dc3e8e9d",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/OperatorSmsSender.java": "91c37e1f1539b55c2cee94ca32751d7594b1290b6c61467423e230dcfd7a507e",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/StaffCodeCli.java": "717b1731bc24d5e979356f9b5dccf3755fece8edce309ce38406321feb8b01df",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/StaffCodeOperations.java": "b5e5ac1cb229fd11d3ab44c366015c637908b0fcafa55470bc54b47cb1578ae0",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/TechnicianIdentityLocks.java": "6de702e245c095bfe5f5e7bd61fe5bbabd5e7041d2a6c55a5e26aaf0e776315a",
+    "backend/src/main/java/com/autocare/platform/gateway/identity/WechatAuthController.java": "c5c7ce36615bd45faedeb83b0f59a80af6ca27aa6a9a9d79eaf26d44b566ed88",
+    "backend/src/main/java/com/autocare/platform/gateway/LocalTokenController.java": "dd6af8cdb439add686e380041983e201e4fdf10442bc9876b9b7504c331cfb29",
+    "backend/src/main/java/com/autocare/platform/gateway/SecurityConfig.java": "e407d898208ef62325e27ba8d23ebcc12bb635a09c8b3d8e42073d61d3a945ac",
+    "backend/src/main/java/com/autocare/platform/gateway/wechat/WechatCode2SessionClient.java": "609a00df408d40551023ca49b10432a0a501f5a1292d0ed4a0975e9504792e4e",
+    "backend/src/main/java/com/autocare/platform/gateway/wechat/WechatExchangeException.java": "9108846a9a24f53a05e2c92bf8165d939e3eddd38a0bc258825629f4bb542ae9",
+    "backend/src/main/java/com/autocare/platform/gateway/wechat/WechatPhoneClient.java": "f61d09b4a434169e6423350d99a8552d55cf6bd9ba115650f391e573a30894c6",
+    "backend/src/main/java/com/autocare/platform/gateway/wechat/WechatSession.java": "4cb77cc29495448880c658bed861c67db61448ebda24073fa5937261c3acb5aa",
+    "backend/src/main/java/com/autocare/platform/job/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/main/java/com/autocare/platform/merchant/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/main/java/com/autocare/platform/merchant/MerchantLocation.java": "a85d7b1c24662b776f1751c95501d4706bd2997229b2806a3e89209c0775bd62",
+    "backend/src/main/java/com/autocare/platform/merchant/MerchantLocationController.java": "401455f29c899d1ae508a8f966b11bcfaa4d40057ec9fa30950efcc9c38af76d",
+    "backend/src/main/java/com/autocare/platform/merchant/MerchantProfile.java": "9e120b12226913ddb075273897c4e9cdac5deb4821cdd748580ad8b122f62c67",
+    "backend/src/main/java/com/autocare/platform/merchant/MerchantProfileController.java": "19d7151fa743a28ffa01ab4182fe61427e2b1c9931051582b5733cfa465df3c3",
+    "backend/src/main/java/com/autocare/platform/merchant/MerchantStaff.java": "0a111122dcc9043223355615945b593ac22f1a804d3844fab22cda25151b38dd",
+    "backend/src/main/java/com/autocare/platform/merchant/MerchantStaffConfiguration.java": "5f2514075b40792fe15dbbef78ee0f7338fbb084436df076eb36c2bbb22bbfd6",
+    "backend/src/main/java/com/autocare/platform/merchant/MerchantStaffController.java": "be9fb43579905af29af576e813424e87165c220aaa598eb3464505b55ab3502d",
+    "backend/src/main/java/com/autocare/platform/merchant/MerchantStaffInput.java": "2f0699d2b51a5504a15d402ebb6f9cb25f14d2ae19db5ce37219e7980fe563a9",
+    "backend/src/main/java/com/autocare/platform/order/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/main/java/com/autocare/platform/order/AiServicePlans.java": "b0e2ebd8b1c98a9a7c0e3db4729f67d1857e50b92454391315afdc58e74fc0ae",
+    "backend/src/main/java/com/autocare/platform/order/AiServicePlansController.java": "5a45dbaa5ffd5ac5b66078c147980a0319700e72dfee24ff168997e7bf947df4",
+    "backend/src/main/java/com/autocare/platform/order/AppointmentCodes.java": "ae3e818c6cd89f756235f3334a422bf7bd54c21c7b73d041b142ab1712357ed3",
+    "backend/src/main/java/com/autocare/platform/order/AsrHttpClient.java": "6a62d0d0fc34f161cec0813449850a2b975faa06de6da371579f7af9a2f14719",
+    "backend/src/main/java/com/autocare/platform/order/AsrJobs.java": "e2712bf968e873030a34cfc736d03230c4bcccbda88e29bbfe4aca74a1c7bb82",
+    "backend/src/main/java/com/autocare/platform/order/AsrJobsConfiguration.java": "c952363609154e7d15a44b922e474f8d554708042dcd2d6c9d25d3d90b094964",
+    "backend/src/main/java/com/autocare/platform/order/AsrJobsController.java": "21e041aa0caec486a3543a1ee5aad2c412ddf2fceec5bfa6fa876f58e71e5876",
+    "backend/src/main/java/com/autocare/platform/order/AsrJobWorker.java": "4643a8de2f85b815a42fb89d9b164347fc2bac83750c79919ac03facda4a857d",
+    "backend/src/main/java/com/autocare/platform/order/AsrProvider.java": "30dfafee781bc2357a1485b0003ec959a685f389550442bdf38aeec07d8fd06b",
+    "backend/src/main/java/com/autocare/platform/order/AsrResult.java": "93ee57b47ff0b15fe3fee730b64bc0ec21d412e84fb99079c28f3fa219ff8449",
+    "backend/src/main/java/com/autocare/platform/order/AssessmentCalculation.java": "625989daa9f30025f0cd36822bf35cfd780c819f62e46871f6d2fde3813e637f",
+    "backend/src/main/java/com/autocare/platform/order/AssessmentFacts.java": "de5451de7d0098e205bece12bdc7fb903618bcb3058676c748ffa5d61573c411",
+    "backend/src/main/java/com/autocare/platform/order/AssessmentPolicies.java": "951da70983ebe212b4ce84dc027178b7272965d89890c171cb1b0fc57fd12bc4",
+    "backend/src/main/java/com/autocare/platform/order/AssessmentPolicyController.java": "c97ba5a9d303d67695423598e97f8235ac6a71918f7eaa629cce6a4e893d4898",
+    "backend/src/main/java/com/autocare/platform/order/AssessmentPolicyInput.java": "4f4eb8704a22421140c270fae1f295c90cd9d32456491bfa2fe94b851c994946",
+    "backend/src/main/java/com/autocare/platform/order/AssessmentSnapshotController.java": "a5a551b9f0f80456dcecc97f09c4cb52ef5f33d35c5f56eafdc030afdef6a3df",
+    "backend/src/main/java/com/autocare/platform/order/AssessmentSnapshots.java": "fe145ae1cd53bf767b3b5ac30db436b3e6343b67f59686adbcab9636263625aa",
+    "backend/src/main/java/com/autocare/platform/order/AssessmentViewController.java": "ae3d25f714c1d41c7afdc12d83fc7ddcb4cd8eb43250d52e0047f6178ff0e8fd",
+    "backend/src/main/java/com/autocare/platform/order/AssessmentViews.java": "0c398cac217e17efe754270a4994ab1cd61268c20b815c794fa93704ca91c31f",
+    "backend/src/main/java/com/autocare/platform/order/BusinessDashboard.java": "c5a9d6ef6f35ec7bcc1d0267a4245d7b3feffd53709ce34ec58f90ab29c045ec",
+    "backend/src/main/java/com/autocare/platform/order/BusinessDashboardController.java": "57f84dfa3b22861954ec17e878cba3eb2777c76f24b25b2a7f61840a174becd9",
+    "backend/src/main/java/com/autocare/platform/order/CandidateJobs.java": "0d19db7a4a4933fd7e1ef7c288d6073b7d5f5dbc327ab4df95e4296a7d8ec8b3",
+    "backend/src/main/java/com/autocare/platform/order/CommissionController.java": "b913c9331a60756b9fac1a765d4de28f63a3a8e8a4fc6af200c7b718bf0b6c6e",
+    "backend/src/main/java/com/autocare/platform/order/CommissionLedger.java": "b864c428554b0f970d4b60226f07d1c75ee57d2277efd6aa8d056504ac294bc2",
+    "backend/src/main/java/com/autocare/platform/order/CommunityQuestionController.java": "7a6eee49c1c9d036111f99a6ddba4ffac7eab1079c5fc0aba126323247919f60",
+    "backend/src/main/java/com/autocare/platform/order/CommunityQuestionPolicies.java": "492d59c612a5a6578126b61d3065ca1d9418f32709ef7d8aaf2365985cbbc849",
+    "backend/src/main/java/com/autocare/platform/order/CommunityQuestions.java": "cca566cbf37ced6fa14e9e15c1ac0448eccf363a2447d15ef3da48ddc2c62290",
+    "backend/src/main/java/com/autocare/platform/order/CommunityQuestionSource.java": "235a5108f4fdcdbd7a01fda75ed8cf7fe018948fb4f475abf3df8d67969fcf43",
+    "backend/src/main/java/com/autocare/platform/order/CouponController.java": "143b9bf2ba5d0eec7830de26b9ca3747dc5488e8fb5fda83b94ffe9f1b6e30f5",
+    "backend/src/main/java/com/autocare/platform/order/CouponInput.java": "557f3b832be871844593aa6778df9986e6f0faf160016ec0c3afbc878d70edbb",
+    "backend/src/main/java/com/autocare/platform/order/CouponInventory.java": "f5c51f575afd95aa49b8346969460140fa38cba1cf85cad4a773d11a11d94773",
+    "backend/src/main/java/com/autocare/platform/order/CouponOrderInput.java": "eaeb159affad6cee52079c4a2aef79cb5f0723f2423799a1e564137fabd3602b",
+    "backend/src/main/java/com/autocare/platform/order/CouponRecovery.java": "08a1e089bcb7fac648fef0ee3d0d8655621b1cb299ebb1fd905c4b19ace021c6",
+    "backend/src/main/java/com/autocare/platform/order/CouponServiceRedemption.java": "4a31dab0bad10c5b009e000f49122f73f3a2afb6b725381a2e40838fb2a3b1b2",
+    "backend/src/main/java/com/autocare/platform/order/CouponTransactions.java": "f3cb729a75a28268a4ee538aa6bb2d2a4e2a89f5a30b6905c5dfbf46de0cf3fd",
+    "backend/src/main/java/com/autocare/platform/order/CouponTransactionsController.java": "c167ef416d6c08c10237e12dcb98fac92730fa342b005dffe86edf15291c5f9e",
+    "backend/src/main/java/com/autocare/platform/order/CustomerRelations.java": "8a835e281fb37f5d552a87b2d2aeb57df5aa75de1e68026cb66b774aed94e877",
+    "backend/src/main/java/com/autocare/platform/order/CustomerRelationsController.java": "0ac791705a85bc5397f3bdadf95dec4a77191ca413f0b36f9c7797516156a791",
+    "backend/src/main/java/com/autocare/platform/order/DeliveryCompare.java": "62fc9ab1af30f8241fb58bca8efb0780060d404664994f98e5dd25dd8d3b5f20",
+    "backend/src/main/java/com/autocare/platform/order/DeliveryCompareController.java": "eb84062d89e5d93936e6caf97ed78543c107d18172385caa58607dc77d189b3b",
+    "backend/src/main/java/com/autocare/platform/order/DiagnosisCases.java": "154bb93462e507a8d7655079159a586b38ccbcaa8708522b6a2f65a01f52efaa",
+    "backend/src/main/java/com/autocare/platform/order/DiagnosisController.java": "5304c78de6841d1739c1dede00b71f17796b183cfae06e98673b19bc3ce15ecf",
+    "backend/src/main/java/com/autocare/platform/order/DiagnosisNotificationController.java": "0a69e16adca2729877b783ffca98f60d16038099ce92f98ef1e24a3c0d75239c",
+    "backend/src/main/java/com/autocare/platform/order/DiagnosisNotifications.java": "bab1679334671b31f7e897174d6d620d19fbcd45c5d2b8f6e329daed2e5e362a",
+    "backend/src/main/java/com/autocare/platform/order/DiagnosisServicePolicies.java": "47ff02dbca68296e3b233517cffc99682a39e4473036368e9e1826872a836dca",
+    "backend/src/main/java/com/autocare/platform/order/DocumentHttpClient.java": "b13450557ebe2ca41219a5abcabccb166224ce10a28131c91cd2a1ee9b1b7394",
+    "backend/src/main/java/com/autocare/platform/order/DocumentJobs.java": "34bcd95062d8a85b72c34f068fc1b0943ac5def65c1a3658dfb6c6907430077c",
+    "backend/src/main/java/com/autocare/platform/order/DocumentJobsConfiguration.java": "09da8ed207f4d25d744743b2935360a8282272a6eb0ad6a6e13743f9b6d3315c",
+    "backend/src/main/java/com/autocare/platform/order/DocumentJobsController.java": "619c04510c0c314b20a37447069ee2060077a0062ab3266d91fdd13701e92046",
+    "backend/src/main/java/com/autocare/platform/order/DocumentJobWorker.java": "afb4c33cfec2f6b2a6526321ad2d214ff3a791bc98907183031a76f013475670",
+    "backend/src/main/java/com/autocare/platform/order/DocumentProvider.java": "99e22c03a3f0b9e7642f89b4f23499a5cef05b9e5a7ad55ff6b467658920079e",
+    "backend/src/main/java/com/autocare/platform/order/DocumentResult.java": "78cd2b70a9b64cc12b61078b31c55e248d72b8a131cb1e9dd8819ab6f8195c95",
+    "backend/src/main/java/com/autocare/platform/order/EmbeddingExecutor.java": "d0d2db37b77895a11dd4810e111d0d176adf1e737866b657b9b05a54ab38aaf9",
+    "backend/src/main/java/com/autocare/platform/order/EmbeddingHttpClient.java": "a394fb41bcb5d469b2d25e2d91901905f9e9f5366ce03b273d44b67b6e3ff0c4",
+    "backend/src/main/java/com/autocare/platform/order/EmbeddingProfile.java": "9146cbb973f6a01f731c698c856dc6b698a0faf0c2cc3d729282013c3ea53ac5",
+    "backend/src/main/java/com/autocare/platform/order/EmbeddingProvider.java": "dffef31309793dfc5b5d371038774b3d16959443afd7ca13a4f4d152bf6e2cde",
+    "backend/src/main/java/com/autocare/platform/order/EmbeddingVectors.java": "b11b9c1d0e91afb5f67c8e4aa73c0e87bb9d7564631533791cc9ae0b2e90eefa",
+    "backend/src/main/java/com/autocare/platform/order/ExperienceCardInput.java": "18257c44004d2524d26c37f0d3e865eea49bcab366bdd9419e13bf1dbbd05770",
+    "backend/src/main/java/com/autocare/platform/order/ExperienceCards.java": "edded8a1d224215e3fcd27a5efa893f52ba87f0ffa0c26fddcb2b2fa48747b5d",
+    "backend/src/main/java/com/autocare/platform/order/ExperienceCardsController.java": "6787c28d29db501459084137d8c073a48d5894ce1a53ad3c46b14180f2f8e46f",
+    "backend/src/main/java/com/autocare/platform/order/ExperienceCurationController.java": "03cef358addf60b727c12e6f0fd4b2e55d0dc6d2c6dad7ad9e87b195565cfc60",
+    "backend/src/main/java/com/autocare/platform/order/ExperienceCurations.java": "cc7910e35445798fc60721446652192fc9a1a9bd5af5237ff5af8ce9157ceec1",
+    "backend/src/main/java/com/autocare/platform/order/ExperienceModeration.java": "a39368c47fb0783fdeace5f38faeee67ea796db66db2cbc119f973b92f07376d",
+    "backend/src/main/java/com/autocare/platform/order/ExperienceModerationController.java": "346db8039fc100bfdd49ef95172d495c8929390a4532824a55a780f5e7f21de0",
+    "backend/src/main/java/com/autocare/platform/order/ExperienceModerationInput.java": "4b9211a7bb127661b023c472ea516b7716244dd695b498f5ecdebfd7ab443eac",
+    "backend/src/main/java/com/autocare/platform/order/FulfillmentConflict.java": "0d154b5120c642cdce781e708a462e45c8ea25aaacfbb485551a8a9bf545037b",
+    "backend/src/main/java/com/autocare/platform/order/HealthDashboard.java": "f47555db6191ac36d84f353ecd141421d3b2e40dcbd57d173b8025beed9d1d20",
+    "backend/src/main/java/com/autocare/platform/order/HealthDashboardController.java": "ceb94cda5a34a3356e4fc54136a04cfbfd1198e04b3802b4387cf14c304be22f",
+    "backend/src/main/java/com/autocare/platform/order/HealthPolicies.java": "f324e9c027cedaac6248f17f496fd8e9850d56566ebd9b8c691779a38eab2c60",
+    "backend/src/main/java/com/autocare/platform/order/HealthPolicyInput.java": "7a77ec8ebf2c86c54872f4c01c7ca9db8f0f0a0a19652e2f1587634b8406e6b1",
+    "backend/src/main/java/com/autocare/platform/order/InvitationController.java": "e7f2abef0a5cfaad366df32052e2954d31039cc9761f27a8c67768ddd1933eb5",
+    "backend/src/main/java/com/autocare/platform/order/InvitationInput.java": "0ae7e5d4852f426f73fbdf709ea96cdb2295345b139ca6424054ec62ca55f606",
+    "backend/src/main/java/com/autocare/platform/order/InvitationRegistration.java": "709b0d48bf85aa537cbb8d6b7fbdcdc48b6d60b5379d56cc4f02d8f88f2b43bd",
+    "backend/src/main/java/com/autocare/platform/order/InvitationRewardController.java": "68a2c7b15e2f2674f7ba00bb6288d78e9b0c2fa2f8edb40c50234ed49e31b391",
+    "backend/src/main/java/com/autocare/platform/order/InvitationRewards.java": "7d69aab1e6e6bbe8c2fa1efe33d42133cbd882ef6f1e4399db166f92fef824d8",
+    "backend/src/main/java/com/autocare/platform/order/Invitations.java": "255ecabba1b5b25e715d797f7d706bfde6d3af76f524a672f2d2e023bf6d6973",
+    "backend/src/main/java/com/autocare/platform/order/InviteDiagnosisController.java": "412e772b8e2e7c89363c1b8e566654474c6d75918512bf29854fd609d536e774",
+    "backend/src/main/java/com/autocare/platform/order/InviteDiagnosisPolicies.java": "5153d9d1b7edc8f20ba9fa23002485a1b011fb59d847ad71d4e3f11f6a658803",
+    "backend/src/main/java/com/autocare/platform/order/InvitePolicyController.java": "c0418f7abc0b819c98508e778ad77b3ede1e168bde9fb345f92913e4e332c681",
+    "backend/src/main/java/com/autocare/platform/order/InvitePolicyInput.java": "01b26eca4659db6c6fe97e34e403325dbbdd0efdc1312be823f07a8dbf106d35",
+    "backend/src/main/java/com/autocare/platform/order/InviteRewardPolicies.java": "2208319bafc7d84d2439f4eb6dde9a3ac3a57cd6a09299a141ea685611038350",
+    "backend/src/main/java/com/autocare/platform/order/KnowledgeChunks.java": "8dfbf776873fb90ecb0c9cb78a07f88fbf4d7b8055b1b88b565e853920ee9977",
+    "backend/src/main/java/com/autocare/platform/order/KnowledgeEmbeddingConfiguration.java": "a0edfa4b4f85d63f29ecd79c101b0507c2c860570ff429730e05269126ea4b51",
+    "backend/src/main/java/com/autocare/platform/order/KnowledgeEmbeddingRetries.java": "27cb1ff9fcc10a83ae218a7e1e3e091f32d339294098f4468415b365ce6342e9",
+    "backend/src/main/java/com/autocare/platform/order/KnowledgeEmbeddingRuntime.java": "c1aea808937cd42cac3b1b56866067e61819a3b603321e55eafef85c0bfa8fec",
+    "backend/src/main/java/com/autocare/platform/order/KnowledgeInput.java": "7697ba5bdbf724c7fc81e00bcb57b6ab4585fa936a1b8ea7bf9d072b8e11ff19",
+    "backend/src/main/java/com/autocare/platform/order/KnowledgeVectorIndex.java": "dea205be27e632409f0a48a8880c5b4f13ced4d4cfec8ff8b58988e688a9051f",
+    "backend/src/main/java/com/autocare/platform/order/LicensedKnowledge.java": "8a6e63722c33787029e8bb9032540705d668f2002d0aa2fa4975ecff5187d17a",
+    "backend/src/main/java/com/autocare/platform/order/LicensedKnowledgeController.java": "ec8aff3fc739134272d7365cd50fa3bca67753530a80de39a8d4438cfbd43950",
+    "backend/src/main/java/com/autocare/platform/order/LicenseRecognition.java": "3c8d4dd779917bab7781243134814bb1398adab25337b403037d2b58fc7d4f11",
+    "backend/src/main/java/com/autocare/platform/order/LicenseRecognitionConfiguration.java": "8143a68d3469df13e5ef94ef68f2cacfe96df374c97bd46cdb0ec67a15b51c28",
+    "backend/src/main/java/com/autocare/platform/order/LicenseRecognitionController.java": "2d0fa39e8e0ba2ca082261738b53c229827ebc3207e800fcb5e8a13f0ecd6a75",
+    "backend/src/main/java/com/autocare/platform/order/LicenseResult.java": "424056b3ea242ca5a1ed9f3d551178691760b00b6046ef9487c47bd8145bb2d9",
+    "backend/src/main/java/com/autocare/platform/order/LocalFinance.java": "a327fcb69ee42860ee984f9f6233fade0587650219a217e91ede1b2a3a3debfe",
+    "backend/src/main/java/com/autocare/platform/order/LocalFinanceController.java": "be1246ed0a628927559f6fa9fdd63d3e89b66b946e8c0715f3f7e77cec28a3e0",
+    "backend/src/main/java/com/autocare/platform/order/LocalTestPaymentChannel.java": "5de270e2370a16593f195373221748ade9572f68a3bfd39404b20f094a8d78d5",
+    "backend/src/main/java/com/autocare/platform/order/LocalTestRefundChannel.java": "430d17ff12d98255616933d46f31711e7179299800914662de44a7e123cdbd74",
+    "backend/src/main/java/com/autocare/platform/order/MerchantApplicationController.java": "6c9e9bafb92ee26158bd9b3846c7a9cffaa212e59c63568d0675c154d50ee87b",
+    "backend/src/main/java/com/autocare/platform/order/MerchantOnboarding.java": "68cc881f2df5f659438d28d003570b6a1d52f543d55dd744a798ab99a37d7fc6",
+    "backend/src/main/java/com/autocare/platform/order/MerchantOnboardingAdminController.java": "b426be8a35e2a6cdc99e6b2858044da111ba617f20e60b5146e96439ee3f928a",
+    "backend/src/main/java/com/autocare/platform/order/MerchantOnboardingInput.java": "86dedfc9c3058f4529c6ca458ca9f0ac1a6d65039c966c09fa5dc35657f49c1b",
+    "backend/src/main/java/com/autocare/platform/order/MerchantOrders.java": "eb55e5dc74102fce7417698edcb17b9ff9bc20ca0908b2d74828fc29432a5fc7",
+    "backend/src/main/java/com/autocare/platform/order/MerchantOrdersController.java": "ca8200460ff980422a7af054d01e4725757da745269e4713265fce2ffdfecf7e",
+    "backend/src/main/java/com/autocare/platform/order/MileageOcrClient.java": "76c842cff47fbbd9ad93bcf2bb6d8ff1596e2eb72971cb38eb7173217b106e38",
+    "backend/src/main/java/com/autocare/platform/order/MileageRecognition.java": "9c16a866762c165e8fa3c564a59a343a055d42249e1a820e9f8704ea746a29c5",
+    "backend/src/main/java/com/autocare/platform/order/MileageRecognitionConfiguration.java": "ac8c17c1c459443b842370a26e2a330cd9da18dd2a98ad1d37e6bd965915d94d",
+    "backend/src/main/java/com/autocare/platform/order/MileageRecognitionController.java": "289f8b8c3c20cfc7e1454eab6761d36c92db0e8b9c5ffae93683be25888526f9",
+    "backend/src/main/java/com/autocare/platform/order/OrderArchiveGrants.java": "64f937e253da8063aad0eed441849d56ca79c747c33916242f8ca8790cf5c9bc",
+    "backend/src/main/java/com/autocare/platform/order/OrderDisputes.java": "80066fb6a9df24b60b6227f7c419f1a947beba48a09a5af1f0d680ec902b68fb",
+    "backend/src/main/java/com/autocare/platform/order/OrderDisputesController.java": "c43d073aecd2b5c6b344895cb7f9f971e296552df292a74681e502b755eb4d31",
+    "backend/src/main/java/com/autocare/platform/order/OrderFulfillment.java": "40fe44afee633254a5ffaeb80a40369a4f5562a3bc80f136ebc2a46f3931e53d",
+    "backend/src/main/java/com/autocare/platform/order/OrderRedemption.java": "5aa9535cb53848f9ee91e157f0edb05cf850b1c75c522cb31d306768c82a2827",
+    "backend/src/main/java/com/autocare/platform/order/OrderRedemptionController.java": "4462c0224a399c33cb145e2ebf26319d36bf48cf7e2ac8623926bf06e65263bd",
+    "backend/src/main/java/com/autocare/platform/order/OrderRefunds.java": "4585dfa59a5661a3e0a24a37248c8c75050773c01d433ccc65b6442b02a0b549",
+    "backend/src/main/java/com/autocare/platform/order/OrderRefundsController.java": "afb1c01292aadf745824561d04b08d5db6301856e6485685077e0eaceaeac841",
+    "backend/src/main/java/com/autocare/platform/order/OrderReviewInput.java": "5311802f9d93a54c778a816c08adb1b21b48f3ba9a7f34a499c22c50cdf9472f",
+    "backend/src/main/java/com/autocare/platform/order/OrderReviews.java": "ef5d72cfe0dded5e08d70ca05104b94f5e6b538d5c65704dabd75e85df052e5d",
+    "backend/src/main/java/com/autocare/platform/order/OrderReviewsController.java": "b1401fc3d1ae88fe43bb70cae31df415d523cc635bc13a3f3917df63bcaecad7",
+    "backend/src/main/java/com/autocare/platform/order/OrderStatus.java": "51fa4d98b27511962edf4f567b9578888cb89638182ec71e6ebb7ff1639138ff",
+    "backend/src/main/java/com/autocare/platform/order/OwnerServiceEvidence.java": "29f08379768f610e2b41b76d4b12a422b46d25d5886e64c2be44b03615449290",
+    "backend/src/main/java/com/autocare/platform/order/OwnerServiceEvidenceController.java": "363e2efd3ad0e979ba1d3bcd4299bce75ee998a88cbefa61fb2e91385f81de0f",
+    "backend/src/main/java/com/autocare/platform/order/PaymentChannel.java": "2bc2a471d6e4c1cc235ba6cf53eb20699d3b1aa2cbbe192d1cd930f133bac08f",
+    "backend/src/main/java/com/autocare/platform/order/PaymentChannels.java": "bcdc0cb81aeeac53cdb217c37274e33ad88c85e6a36cb2f8f686c80d3e11a6b7",
+    "backend/src/main/java/com/autocare/platform/order/PaymentConfiguration.java": "b241ad887cc9162014ec64255199d69d6bbd0d5a6c7bc9dea25c11d7dff5e89a",
+    "backend/src/main/java/com/autocare/platform/order/PaymentController.java": "b292d720b8f0834248927583148541b71a45d33e33af7f5463a85fa7d6b83a65",
+    "backend/src/main/java/com/autocare/platform/order/PaymentNotice.java": "75bfbec000d3a2997fe711e06254bef4a921a821c35bb4665828cec3b3e9388b",
+    "backend/src/main/java/com/autocare/platform/order/PaymentQuery.java": "241b52d975f83b4addba9eb486304b99398bb560fcdfcbe036da772ddbcf4a80",
+    "backend/src/main/java/com/autocare/platform/order/PaymentRecovery.java": "366e3fc0cf98aa225199e5c503e53f1f0694ac63afff7fad14c09c4566037bbd",
+    "backend/src/main/java/com/autocare/platform/order/PaymentService.java": "572587786bf00c81341f68b6a4f110007c23c57bdfbf9838bf80d5a09282204d",
+    "backend/src/main/java/com/autocare/platform/order/PickupController.java": "acf445d965575f3dc4f8eef6651399b5e8d42fc18acb42efcbdedf6a0500e7d6",
+    "backend/src/main/java/com/autocare/platform/order/PickupInput.java": "f43b8553bf8af9899ee3b8a0528f01f1d4d0e622a2f1ee1bbd1b48806f898822",
+    "backend/src/main/java/com/autocare/platform/order/PickupInspection.java": "85f8e5de01cc6e231af2dfd0dba695ac4888e37ef83d18f2074639ea32a798be",
+    "backend/src/main/java/com/autocare/platform/order/PlanBookingContext.java": "773d96e25e38b9fae372668e4e6dc47f000b76601a886bcfffa1c0ac4d7e17e5",
+    "backend/src/main/java/com/autocare/platform/order/PlanBookingContextController.java": "77c438ce2460e4dc462c8d7e87fa1820cc07d281f9614006b8b26ab471e1d22b",
+    "backend/src/main/java/com/autocare/platform/order/PointExchangeCatalog.java": "1fa9f5cbcef681634733d1821c6577c15bfbf90f3d66a8d3e188a63dcb8dbf45",
+    "backend/src/main/java/com/autocare/platform/order/PointExchangeCatalogController.java": "9078eb245500ce2617ebee0c47ae87291d8b2d579e772b0393fbc81ac33d8285",
+    "backend/src/main/java/com/autocare/platform/order/PointExchangeController.java": "20388c08cb1ebc1bfd30780b7ab973ca320e0520dd76a9fdd6e1cc2c42a5b7ba",
+    "backend/src/main/java/com/autocare/platform/order/PointExchangeOffers.java": "116970c15af213a15ea62eb2588158633cdae8b20e6cb2ac6e120324847adc1e",
+    "backend/src/main/java/com/autocare/platform/order/PointExchangeOffersController.java": "f1fbccf468165739dbd46421382217317a0ecb0187356d5fa57b33b05e93b292",
+    "backend/src/main/java/com/autocare/platform/order/PointExchanges.java": "dfd7f618f8e59705311d4c064d450c63976fe8ba08c65176bcd7c8510bad6fec",
+    "backend/src/main/java/com/autocare/platform/order/PointLedger.java": "d9ac9a40e63349509e74897fd332929540e70926cb9db0de4cf6a3c320b62f01",
+    "backend/src/main/java/com/autocare/platform/order/PointLedgerController.java": "df38316f47eb5fbb08cc99520bdd084f1462fafe9eb2892dd854922fecd83d53",
+    "backend/src/main/java/com/autocare/platform/order/PointTaskPolicies.java": "4f17e021561f8d1a1f6735851c8fbe1bbdb01e0fc699d737a064ac057f36dde3",
+    "backend/src/main/java/com/autocare/platform/order/PointTaskPolicyController.java": "9605d9277d6be77dd128a54cff871826d0b70e97cb79b721f66d6125d7673739",
+    "backend/src/main/java/com/autocare/platform/order/PriceComparisonController.java": "dd7f73a2461715df6ac213f64cdfba0d5d53b756db7315d785dd67d6dc642eaf",
+    "backend/src/main/java/com/autocare/platform/order/PriceComparisons.java": "be9f97e3c3c9ca39248931813f1abf0f1c1398328d9c1da8024c107023f3889a",
+    "backend/src/main/java/com/autocare/platform/order/PricePolicies.java": "c3b05f56f7a325b61267e36576def53bc31cc3b20272ea576e3c90ea3b4965c3",
+    "backend/src/main/java/com/autocare/platform/order/PricePolicyController.java": "434f1f3e9af5fb3df3bc6e284e3373c1910d39b7a89dd3e78b685b59aa4c110d",
+    "backend/src/main/java/com/autocare/platform/order/PricePolicyInput.java": "abc765c04e8012653ffe12a4ae9a854962011be599574cdeb9ca6a193960e820",
+    "backend/src/main/java/com/autocare/platform/order/PublicCommunityQuestionController.java": "c8e21418fc3ed2fe795cc5e39bdf3e7592276cd1ed1b51967ae8b0e26df52dfb",
+    "backend/src/main/java/com/autocare/platform/order/PublicCommunityQuestions.java": "aa93674b8c5edf10bd0d6a7f2b74e795d8879894aaca811e15898348c05cf511",
+    "backend/src/main/java/com/autocare/platform/order/PublicImageController.java": "a416f383592365ff7a4ac6e62eb6c596ec4c33a238bbd3ed973ddcaa5592c6ff",
+    "backend/src/main/java/com/autocare/platform/order/PublicImages.java": "cc5816a0836108aa290568ac0c0e6c356f197307e24bf2192fd7ce6bacd98939",
+    "backend/src/main/java/com/autocare/platform/order/PublicRatings.java": "79ec1fb8a40939741ea70b878d73a74754544e819e18274b5f7d69721045cc96",
+    "backend/src/main/java/com/autocare/platform/order/PublicRatingsController.java": "9b3efc31852f946c4a34830aa5679a8a09f3550494ee117c77b1057ad3e58e31",
+    "backend/src/main/java/com/autocare/platform/order/PublicReviewTextInput.java": "9e84766bb4a755c91feee03fe7519021cbb98e07c163a1cd232fbbda37a9773a",
+    "backend/src/main/java/com/autocare/platform/order/PublicReviewTexts.java": "8b795e1c7f1687084b0e11212e40f5884c2c0ea316df1d1fe40ea4c10ce7fc47",
+    "backend/src/main/java/com/autocare/platform/order/PublicReviewTextsController.java": "deacacd45e01b4a2238df6196f4f051e067c8d6fc4a7513688fcda63c238b0ef",
+    "backend/src/main/java/com/autocare/platform/order/RefundChannel.java": "251b9645095967bb2b5c4f8d910b5c19847736e4d9291fbc43fcb75f05040c2e",
+    "backend/src/main/java/com/autocare/platform/order/RefundChannels.java": "b4426696f44704fb1e0dfc83d8d429e74167257c9d11737393c70de85580da4a",
+    "backend/src/main/java/com/autocare/platform/order/RefundRecovery.java": "587ae234e7cb787ca25c94ae308c37a1a121689c5a13ca2b76cfe74dc009e3be",
+    "backend/src/main/java/com/autocare/platform/order/ReservationConfiguration.java": "a486d92702f0d4363be5331b328ba1b39664d90e238130e2c01427fab5a650e6",
+    "backend/src/main/java/com/autocare/platform/order/ReservationConflict.java": "0dfad2d88d6693d351c168ce91acaad334c8bd45487e189c61d66768610e9154",
+    "backend/src/main/java/com/autocare/platform/order/ReservationController.java": "4df7ef5aff08e4642d71a694d0954f5190746dc3f5462b5155b435a78fe38644",
+    "backend/src/main/java/com/autocare/platform/order/ReservationExpiry.java": "5f6dae11822acf26395d210077f835b9e624b1a695533a0bf6c88f404268a03c",
+    "backend/src/main/java/com/autocare/platform/order/ReservationInput.java": "d5800f815da4a7a0faec3d58f208a3b21007b88f99d335fb4259c48441996ff6",
+    "backend/src/main/java/com/autocare/platform/order/ReservationOrders.java": "140d639a4333dd17e4d9c7f0d7178d26e68f5da7f095f6a222d42acd454db9b8",
+    "backend/src/main/java/com/autocare/platform/order/ReservationSlots.java": "7bcc88af1a2935d8079ba50ef43bd43fc4f1ec78f70f854ef8e472a97aed29be",
+    "backend/src/main/java/com/autocare/platform/order/ReservationStore.java": "be7c2f43f6a42140cba90b97617a398f1e283da07a294bf024221c733978cb80",
+    "backend/src/main/java/com/autocare/platform/order/ReviewSummaries.java": "5b20847ae8865f2be1f00089197aa64229be090f02c799958540194ade846540",
+    "backend/src/main/java/com/autocare/platform/order/ReviewSummariesController.java": "130716e92c498ff75034a4fbc97010eda18f7317cb780f9b1aa4b3baa6e3b9ca",
+    "backend/src/main/java/com/autocare/platform/order/ServiceArchiveJobs.java": "61cc5be2b7aa630a8d75b43605d39f7d074ce3068e36aba2a6f65750fe002146",
+    "backend/src/main/java/com/autocare/platform/order/ServiceNotificationController.java": "9aacc332ce2a027fc0b554995ed1c2eaf6ccf1d3f1b255f6ee57546ba32be47d",
+    "backend/src/main/java/com/autocare/platform/order/ServiceNotifications.java": "46aeed2498000003a47d19182b2ed866e9fd6eae0221ac7bea691a02d8063e46",
+    "backend/src/main/java/com/autocare/platform/order/ServiceSearch.java": "217f0e5df31463227303a361881e3deb6325e756a7f425dfba98d587022250db",
+    "backend/src/main/java/com/autocare/platform/order/ServiceSearchController.java": "bb8e3131bc3a14cee70796cb53baa93353a6533c250d6b0be4e89f68c813f4ce",
+    "backend/src/main/java/com/autocare/platform/order/ServiceTaskScope.java": "f9248c3b9aef2d5f1bf81f3e92b19893bdf2bb1d72ad925ea032ba933005a4d6",
+    "backend/src/main/java/com/autocare/platform/order/ServiceWork.java": "820a7a6bea1c92646ec88bc097c54f3bb3fe9408fdf7f300e1cad132483e7246",
+    "backend/src/main/java/com/autocare/platform/order/ServiceWorkbench.java": "e4d029affc73029ace1e797084063849ad492b1fe6908c0e9ef492e0b79423c0",
+    "backend/src/main/java/com/autocare/platform/order/ServiceWorkController.java": "2a78fcfdd8c885aa60b3c9aac029c4795320e6ce9dff4982fab1b93915758233",
+    "backend/src/main/java/com/autocare/platform/order/ServiceWorkInput.java": "006bcf70e249d208021e5067fafe76ee92b8deb2c32e79f58f320854b4f6efd6",
+    "backend/src/main/java/com/autocare/platform/order/ServiceWorkspaceController.java": "e92a32f95ad4673c4d6d7e2885fc4a70ffb80c9c53b7d9cd7b358aad7538822a",
+    "backend/src/main/java/com/autocare/platform/order/TechnicianActor.java": "d152f17e9ccc7b2f0b3436331ad554d06a656b05069de93c23820709a6c6de39",
+    "backend/src/main/java/com/autocare/platform/order/TechnicianAssignments.java": "e8849519dd500c3ea47c96fa17584460db05d94ae8bbb3957ee09583d9d436a4",
+    "backend/src/main/java/com/autocare/platform/order/TechnicianAssignmentsController.java": "cf39aa2b249ee10b7fb766f06f8491a24cee8d4173afd566306f8faeb1551924",
+    "backend/src/main/java/com/autocare/platform/order/VehiclePlanEvidence.java": "134b993502206264468a91f993c4847ed3b91d08e589a56de3a40bf2809a953a",
+    "backend/src/main/java/com/autocare/platform/order/VehiclePlanEvidenceController.java": "f6a8bacc86a3fbc8ec5ec209913b7efd884ebcce82496f7548684a2e9ebcc0c0",
+    "backend/src/main/java/com/autocare/platform/order/VinRecognition.java": "6ebfa3c9361226d3ed26754537eb64aea9d8c983974eb88e5c70244ad2eaba78",
+    "backend/src/main/java/com/autocare/platform/order/VinRecognitionConfiguration.java": "def60921a9c44e3e0e621c1254624d0ebfbe6d1347073887b097d20f1830a515",
+    "backend/src/main/java/com/autocare/platform/order/VinRecognitionController.java": "b51ab0d3e10db5082c76607807de42ccbdb973200be286e5edf6c19ff9c19191",
+    "backend/src/main/java/com/autocare/platform/PlatformApplication.java": "9f2af66ee1e748f62e1bab49d7202d55b302fa29ddb35d08f2f1a657a83f90bb",
+    "backend/src/main/java/com/autocare/platform/point/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/main/java/com/autocare/platform/recognition/DocumentPdfMain.java": "33104d71fc3c05c8fe366f1856c146823bebbd3ec7875263d10762594417df2c",
+    "backend/src/main/java/com/autocare/platform/recognition/DocumentPdfPlan.java": "cfe6f8d2957abe893d9d0a4e816533bee0e2e016fce660c104ad797dd518eccb",
+    "backend/src/main/java/com/autocare/platform/service/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/main/java/com/autocare/platform/service/CatalogGovernance.java": "09cf364691abf1512fdd8de628abe97a9714fafb4679e5c6b23a848cb554d990",
+    "backend/src/main/java/com/autocare/platform/service/CatalogGovernanceController.java": "8969418ca444f3cfff591e90de695941c35db0aac3d3313e6a81dacbf28b94dd",
+    "backend/src/main/java/com/autocare/platform/service/CatalogInput.java": "16efdb2d979ccaf136927732f42dd7a66e9eb865a12c975180131aa6cae5ebf2",
+    "backend/src/main/java/com/autocare/platform/service/CatalogQuery.java": "7025d713be155bfe71b830d59b84c789bcdfa7961a29a9d076c3e2458d5aac54",
+    "backend/src/main/java/com/autocare/platform/service/LocationInput.java": "fd6c7d637dc0f762aceda7b7551b8037f4d72ac0b3b66b4102e682ffef1da2c8",
+    "backend/src/main/java/com/autocare/platform/service/MerchantActor.java": "464b86c08bfc942f5739704130865c635d656252d67d9b75e6c131c1cacc3d3d",
+    "backend/src/main/java/com/autocare/platform/service/MerchantDiscovery.java": "71527866e4593f988163721bdc86f258ee0c38ff6fc5f9f065006b6e0fe19f52",
+    "backend/src/main/java/com/autocare/platform/service/MerchantDiscoveryController.java": "1833e6c0caf62451a9f0540be6611101ad5ad6bc183323bc18cc2895c26bf128",
+    "backend/src/main/java/com/autocare/platform/service/MerchantQuotes.java": "acba66820d77a4776718def41a7063c982f0b6f4c352b5aff64b89449872c8cd",
+    "backend/src/main/java/com/autocare/platform/service/MerchantQuotesController.java": "d4b304068437bd2b5026f6f4bdb84173fa154c60b7b27cada8a0bedf8e2b86be",
+    "backend/src/main/java/com/autocare/platform/service/NearbyMerchants.java": "771ba227cb99108c001f21f5fcdf85dcb40bcac8a1d2ee75c8555a6f63e197cf",
+    "backend/src/main/java/com/autocare/platform/service/NearbyMerchantsController.java": "63d1d27235d5d0886b8b4cb9908cda47af40c9fbb1daddc6d43816d7d909e92a",
+    "backend/src/main/java/com/autocare/platform/service/QuoteInput.java": "43eec831781aa986f2221bd5718ac51074f8b747d13ee7bf8fcfaf18fcfbb1cd",
+    "backend/src/main/java/com/autocare/platform/service/ServiceCatalog.java": "7e1fd1ef53ec972ba61912fddd9861711b89e9af7caf07cdefc8643c0a113487",
+    "backend/src/main/java/com/autocare/platform/service/ServiceCatalogConfiguration.java": "f5b871b9ffb5349af57cf15bcbd4a9fada1b3b57355271746bc32a773d2d48a8",
+    "backend/src/main/java/com/autocare/platform/service/ServiceCatalogController.java": "e650dad8cb83373f5f192fb6af5cd0e2eef11171a7233fbb852c7e3767ee884a",
+    "backend/src/main/java/com/autocare/platform/user/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/main/java/com/autocare/platform/vehicle/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/main/java/com/autocare/platform/vehicle/ArchiveConfiguration.java": "0d5fbce4d266f302bd61e05b6dac5e2d102f644f6612bb60f935c5e697eab0d8",
+    "backend/src/main/java/com/autocare/platform/vehicle/ArchiveController.java": "fb3d48dbc19037eb984015890b98ee6961407733ae47932c1bcc34b5820cd7e7",
+    "backend/src/main/java/com/autocare/platform/vehicle/ArchiveEvidenceController.java": "e4d64d04a6579a9d19b633baaef14fabd1c02eafb4b3acb108e3aff2af2f0fb6",
+    "backend/src/main/java/com/autocare/platform/vehicle/ArchiveInput.java": "c4269c02742b26c11d8704ffff22a7157baaa1ca9ef278cb64b7baa0ce24f083",
+    "backend/src/main/java/com/autocare/platform/vehicle/ArchiveReminderController.java": "cc9051e2fd7fb461c9d3770743c93cf39e73459008a76af19c7e47dd53b6cec8",
+    "backend/src/main/java/com/autocare/platform/vehicle/ArchiveReminderInput.java": "2e5ce23202970ff1b3f5f5dd346f86e31a67bd01975e94b845af772d218e9b24",
+    "backend/src/main/java/com/autocare/platform/vehicle/ArchiveReminderService.java": "81e31d8a9872a6d66f4cadc062c94dae0e666b8a04b17b300f6bfb44114dfe75",
+    "backend/src/main/java/com/autocare/platform/vehicle/ArchiveReminderStatus.java": "081843a47354c3dacae2c4bbe62ef3cb5f127c0befb4715a1c394892e5d64126",
+    "backend/src/main/java/com/autocare/platform/vehicle/ArchiveReport.java": "52fbbae6cde49a1359adc4499ce9e46e269aae4b82c2aeeae87891e1db8cefa9",
+    "backend/src/main/java/com/autocare/platform/vehicle/ArchiveReportFilter.java": "14d585279281e56484f06a96b467b8f26d16e98eff21795947d6baca33c941dd",
+    "backend/src/main/java/com/autocare/platform/vehicle/ArchiveReportPdfRenderer.java": "da47d76a1116e2aedfd9e0de019c6c974b007736beb769d3ca8fc9acfee76e41",
+    "backend/src/main/java/com/autocare/platform/vehicle/ArchiveReportService.java": "e018ca40b80618522e36db9e8f3e29acdf15588ca3c4354ea5f6a99467329fe0",
+    "backend/src/main/java/com/autocare/platform/vehicle/ArchiveService.java": "1675548c9b9022990c175d291d56c202f063d8014af50c2064713a807a0c2859",
+    "backend/src/main/java/com/autocare/platform/vehicle/ArchiveShareController.java": "515cdb1e4a12b36445648aedce3ed45d710364c1b583c255b52d07a2714e8ec6",
+    "backend/src/main/java/com/autocare/platform/vehicle/ArchiveShareInput.java": "00b1705d0c429f1829c7bebf4d1d6e2545bce6638a746e1b03be26616d05307f",
+    "backend/src/main/java/com/autocare/platform/vehicle/ArchiveShareService.java": "4c27f7c075b2d641418d3f2237b6be19816b30693db28b7e54319dc5a3b5fc87",
+    "backend/src/main/java/com/autocare/platform/vehicle/ArchiveShareSummary.java": "ce7dee7598e9c6c2e8c2a5865784ecf94e4ddfb71f40acf893c2471c6788024b",
+    "backend/src/main/java/com/autocare/platform/vehicle/ArchiveShareTokens.java": "aecf4b2379fc4b8b52d665f5ffc623b980ab35997388f20801372cc517bf131f",
+    "backend/src/main/java/com/autocare/platform/vehicle/ArchiveStructuredController.java": "e419c77bd011e204d7706f29d256a6b2085088e2ee5ed9a09ebd405cf448aa4e",
+    "backend/src/main/java/com/autocare/platform/vehicle/ArchiveStructuredInput.java": "13515e4cb681501f84e59b3a2a0e0dec7dfd8b6eb04e000d00bc89e8c634f493",
+    "backend/src/main/java/com/autocare/platform/vehicle/ArchiveStructuredService.java": "aff1dc296619b9d9168ded182febb9d9a35d90e24b1f487c0165092d3b835c55",
+    "backend/src/main/java/com/autocare/platform/vehicle/HealthObservationController.java": "1a32de21a42ca1b9915f5c4461af41e69ff7f6e518302de77e8027b66eac1b48",
+    "backend/src/main/java/com/autocare/platform/vehicle/HealthObservationInput.java": "7b5b09df0185a0f373d5ed640da481bc0bf09babcfef572ca0e7f08a39e60084",
+    "backend/src/main/java/com/autocare/platform/vehicle/HealthObservationService.java": "bda0b2a9926dc7834dc541d81bbce74ce281dbbca38a0ea0ace0a3392642ceca",
+    "backend/src/main/java/com/autocare/platform/vehicle/LocalMileageController.java": "fb47bb4aac6f2db96df8a858dca7aa2fe16be293a4d4b8bf75f82395758b6b8a",
+    "backend/src/main/java/com/autocare/platform/vehicle/LocalMileageService.java": "6fd229fbf6687c21525c8e1329d59f04ee6be306e1d2abd2c5177c19fef50b49",
+    "backend/src/main/java/com/autocare/platform/vehicle/LocalVehicleController.java": "e887316eb1038cf69e95ff8224c45f6327c2923b5dc6367a521c0ab90f8b1976",
+    "backend/src/main/java/com/autocare/platform/vehicle/OwnerArchiveQuery.java": "6fe606dfeeb073150b686eb76a97f9d4c52e9d78e963215440c0d3eba6755a8a",
+    "backend/src/main/java/com/autocare/platform/vehicle/VehicleConfiguration.java": "f4f4aab5c6483221fc9472f5ba3e8bd75848b092425d0f1bf80dfc9837eb4cb5",
+    "backend/src/main/java/com/autocare/platform/vehicle/VehicleController.java": "c31c17c26408828bbf036d9515c584a40b5896a990da1fe17135440837b72499",
+    "backend/src/main/java/com/autocare/platform/vehicle/VehicleInput.java": "4c6b8c67f26010aacc464e9e839ea77f95ee2242b6b4043b672e9f99b1a0a3ef",
+    "backend/src/main/java/com/autocare/platform/vehicle/VehicleOwner.java": "f0553f38e238cff867f01a99deb8745300017a3bc962ee96d713f57fcdf6f7cb",
+    "backend/src/main/java/com/autocare/platform/vehicle/VehicleService.java": "1acf5ac8a909f0d48cfe4f8b4c97d541c1719d8254f8bbb3ea90156c674cacc7",
+    "backend/src/main/java/com/autocare/platform/vehicle/vin/LocalVinDecoder.java": "b3a0ddcf9e660b2abd714a84ee33944206acbbe4f4afc65a01ff843ed195096c",
+    "backend/src/main/java/com/autocare/platform/vehicle/vin/VinDecoder.java": "f03f1865d8294916349a9da1c31a3dfb3b896b074fc8308ac7e6be421203aeb4",
+    "backend/src/main/java/com/autocare/platform/vehicle/vin/VpicVinDecoder.java": "7fc8dd59ade78f729f5b9d986a7dd7440fd4b42524edaf93b5357fe80ab59ea9",
+    "backend/src/main/java/com/autocare/platform/vehicle/vin/VpicVinResponse.java": "a698c4137b016ad14451d0328f96e81cc9a626ecfa5784237a09a9cb26408e00",
+    "backend/src/main/resources/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/src/main/resources/application.yml": "012fe3c6c3c213b905ea3275dadff7765033a76f66aca17b052530d1527ade9f",
+    "backend/src/main/resources/fonts/NotoSansSC-OFL.txt": "7accca2f29220c9ab44e4950799b821f36ebf5bbe6b5fb5342724b32228a8daf",
+    "backend/src/main/resources/fonts/NotoSansSC-Regular.ttf": "d45f67f0a7c0ca3f256950777ce6a61cc7ce5f9696d02900cbbaac25f8aa7d16",
+    "docs/sql/migrations/V001__baseline.sql": "e29a99c73fe549d23c00367557ecb16cbae76f1fcdd73c3c503662c2bcc0c540",
+    "docs/sql/migrations/V002__staff_wechat_identity.sql": "33b70f444b01c9829965ab836d7fe2ef6eb9a9e159a45af5661818f4167612f4",
+    "docs/sql/migrations/V003__auth_lifecycle.sql": "c637d1cdd71c017d3e47aafde37553f3498c466295e786d8b6232ea67f76de9d",
+    "docs/sql/migrations/V004__upload_http.sql": "c97e202cc31b95153f3ace7dbba9e170a9f06cff1efcf6869d1891f3c012f7c3",
+    "docs/sql/migrations/V005__vehicle_archive_files.sql": "76fd75ae351264e968ac945c2e6a9dfadbd889d117a3a480212a1c863f8c32c8",
+    "docs/sql/migrations/V006__merchant_project_versions.sql": "f61e1983788e8d0e4ff0cd57df73179b12b5613a83bbf30b3647f2f5db0eebdf",
+    "docs/sql/migrations/V007__reservation_orders.sql": "bde32fba46cf0694543e91bb0a3925d25a4e120f61e052bdb7d52791b7b29cd3",
+    "docs/sql/migrations/V008__payment_foundation.sql": "44cf544e2d227ef3ea3d046b566a22167fd2104d1cc21be4b60cdc953bd645dc",
+    "docs/sql/migrations/V009__order_fulfillment_states.sql": "3201956105ac802986793bf0a28b5d05e0496e63e9442a2d5b596a220b68f66f",
+    "docs/sql/migrations/V010__pickup_inspection.sql": "7af0c7af546d4b5e220f0f6f04c4d891396d00722da97e7d0a3d03a9e7d7a734",
+    "docs/sql/migrations/V011__pickup_owner_decision.sql": "f78a5a0a6ad6bea9506f1ee65564f37e57879053a4907f8930b888bddb11375a",
+    "docs/sql/migrations/V012__technician_dispatch.sql": "e35494639489662a4ce2d2664954ffcb6660c35434323c6e7a964ca640001b3e",
+    "docs/sql/migrations/V013__dispute_resolution.sql": "d2b6086edbe8a41dd51763ed9e051cccf59de141b6acfb4910654ff546a7cad7",
+    "docs/sql/migrations/V014__service_work.sql": "aa7b279d0d4accec6fb548ad2d58e2a364f8c413a2d58419afba898b1ef97451",
+    "docs/sql/migrations/V015__order_redemption.sql": "d48e46dbb23adb73aea7e3b3eb4fcfd72e3ddf0f0f94f2a2b61ef3ef2b6af846",
+    "docs/sql/migrations/V016__order_reviews.sql": "b606da4afeefab268e048628a31f7401a3e35a0bf861fe585090b8fbae7e5eaf",
+    "docs/sql/migrations/V017__service_archive_jobs.sql": "4663dbd221d76e028048a2a977cc3c92e31aff0e9ab8589c68349c608f977043",
+    "docs/sql/migrations/V018__experience_cards.sql": "25ccaa141fe5018aaac4f885fbae8b07e6859b00969c09c349093431ec4fe30f",
+    "docs/sql/migrations/V019__experience_moderation.sql": "88d8f2f0ac057c22f1320be1982972ddf0a9edaf5bd626daf5553c52356f41ef",
+    "docs/sql/migrations/V020__merchant_onboarding.sql": "0078132eac6cc12e8722d1dacc555fc3ec5f69a08487f092195da613ec5e94df",
+    "docs/sql/migrations/V021__merchant_staff_store.sql": "c01a5906c1d7e653328004436e3d63e791e83ce42eb1e9d2c364636c00554432",
+    "docs/sql/migrations/V022__catalog_governance.sql": "a07a8f7ceb673224f390e61f88f18a5e516c7b1c10ff1f3bc76f379fde72d812",
+    "docs/sql/migrations/V023__completion_archive_jobs.sql": "3717790eb76b55c8c13079cd01ee4d10a256415a0e5af717b9b27929802c22ba",
+    "docs/sql/migrations/V024__payment_query_recovery.sql": "2a6ea19de4d4368504c1f99bf0b75f5c2a1f493859f6475746944aa9d2f76941",
+    "docs/sql/migrations/V025__order_refunds.sql": "3497b20dd3a204d7244922f2376cac34179d95bb70e00db240cd110074c20fa7",
+    "docs/sql/migrations/V026__commission_ledger.sql": "6c7c0134567856b40ed56b26c0075a9cf9529412ffd048018223b06d42a601a5",
+    "docs/sql/migrations/V027__archive_report_shares.sql": "c012312cf4d4c6e92d84cf46d0ee80583f4eee49174ff6a48e1704aec2a7fa76",
+    "docs/sql/migrations/V028__archive_reminders.sql": "11815741dd6e939f9ea57807101bcc37b02ce52b940949aa1aa88fefd7700eae",
+    "docs/sql/migrations/V029__archive_structured_details.sql": "834435949553e1757022e4f99bbd420d9493492179d234a7e37e2210e9799209",
+    "docs/sql/migrations/V030__vehicle_health_observations.sql": "e03a886a00e38f8752ecaea842077b447bc0e566dbe429e43462e362b5bed540",
+    "docs/sql/migrations/V031__vehicle_health_observation_history.sql": "804638901d061f95c738c6b8cf3b82fef712a5de1412712335a6307f426b77c1",
+    "docs/sql/migrations/V032__merchant_location.sql": "2667594da3f65ac8935ad27b0ba770a752e0608b44918df30805ae93b503b337",
+    "docs/sql/migrations/V033__review_publication.sql": "f2d85fa2bd51c080aa117bcffb6aa55e58b97a37247556db829f4ef486933d56",
+    "docs/sql/migrations/V034__public_review_text.sql": "757fcd0fd1ace08f5e6eebb2f3ae402daf8c5937e8f3813b0a4d82018832fb3e",
+    "docs/sql/migrations/V035__review_summary_consent.sql": "3096fef4796a6c650b31308af397b6450d68e5d57cf3d4626692c9e62035f146",
+    "docs/sql/migrations/V036__project_model_applicability.sql": "eb09b5e37e56a7b84ec46ba51fe2730c0870e6afc5e9eb725fd1f8f4a37c136c",
+    "docs/sql/migrations/V037__health_policies_and_confirmations.sql": "1286e1354787db8dab8a39e1c4da8983a0e6367f04f424583eaade4603602802",
+    "docs/sql/migrations/V038__coupon_inventory_and_claims.sql": "c667fe68a5726a11f416704715f22e99eb9b8559d4fdfc0ba378cdcf696298f7",
+    "docs/sql/migrations/V039__coupon_transactions.sql": "4a5e7a251f2dda50e092317f2c0777afed0bb55ec0a38256efac37a9e70b19eb",
+    "docs/sql/migrations/V040__invitation_attribution.sql": "aba24bf24f847842ce3254d4afc6f1fdb9554634c914cb6bb65ef69ae94ec9cf",
+    "docs/sql/migrations/V041__invitation_reward_policies.sql": "762ff3244fddd8ca337d17114fc5745de3698411376e321a26dda60fb1c77e24",
+    "docs/sql/migrations/V042__invitation_reward_delivery.sql": "ed849ed9bf56bb9d5b763ab4dc06d2aaa96340ac64854843fb234a7ff7a2222d",
+    "docs/sql/migrations/V043__invitation_diagnosis_unlock.sql": "d6f3246e382b7b7bab87bbce5d4cb2f6eea10ee30d272d5c66338481f7868e94",
+    "docs/sql/migrations/V044__order_archive_grants.sql": "1772cd8a11d37c82b6a1568a711b9641b138af81d6a49dbd4c61a60341b19246",
+    "docs/sql/migrations/V045__service_notification_outbox.sql": "55631f6cfb7e8e74473fc701de989734c7d13b62f20b0da0147d6504a4321707",
+    "docs/sql/migrations/V046__async_diagnosis.sql": "01280905afef8275ea1845944b677905a2c30a1ee5775c1fb33c61e5727ce375",
+    "docs/sql/migrations/V047__order_notification_sources.sql": "914541c96812beaa7f32dcf82ed18484eee16977931ea230c52329be55c5eeb8",
+    "docs/sql/migrations/V048__diagnosis_notifications.sql": "fd5ff9018e42df1c5eb0cc3e2c06060d613f767e0fe91d1ff0a670d30193b57b",
+    "docs/sql/migrations/V049__point_task_policies.sql": "dac308e2ada2193cae5e01eafdffc64dd8ff934fbe29805d7aac89ddce85da3a",
+    "docs/sql/migrations/V050__verified_points_ledger.sql": "d1290fd55f86a17876bd67f066cf127bdaf31c351596d3675efbdc132ea98933",
+    "docs/sql/migrations/V051__point_exchange_catalog.sql": "6a5b65f48ed40382794e856456c7ae61bd20c5414a56c58619626413bbff3b1e",
+    "docs/sql/migrations/V052__atomic_point_exchange.sql": "af839efccbcfd3497b29f5d01775b193f48416504b3cad68c6ea4e3cb3ba62fb",
+    "docs/sql/migrations/V053__assessment_policies.sql": "b88faa531a3a934aff831fbf57456d5b2d11bf58ccbb0be34719764c80d89bb5",
+    "docs/sql/migrations/V054__assessment_monthly_snapshots.sql": "fd16dbabf0b1e76b7bbfcc4a70d306391a1a4de48fbb1a48e6e82502543bb631",
+    "docs/sql/migrations/V055__business_dashboard_permission.sql": "56c7bdaa8193235a9ad9f682ba61174be6c67ce54921b0fd46de66619b8084b5",
+    "docs/sql/migrations/V056__price_monitor_policies.sql": "751306246222ff26598229260e5ff44376d909136fe18aec9d78652fb52f09c9",
+    "docs/sql/migrations/V057__curated_experiences.sql": "83d684c43ae4e30378727dbee73ebaac59436e2dc6c810fb162b044fd1e07e1e",
+    "docs/sql/migrations/V058__private_community_questions.sql": "12471412bcfd8719c881d03b63e057001ccae7a2d1e8bdfbd774f406737f79f9",
+    "docs/sql/migrations/V059__public_community_questions.sql": "2080998ec8917a07aaf3ffe942713094e5e7d5b0e19c8605902b7fdddc26e3b9",
+    "docs/sql/migrations/V060__public_image_copies.sql": "4e741cdf07b36cf9dd2fcfd44d26eb0386043a77206560ab5df11df3a65d288c",
+    "docs/sql/migrations/V061__licensed_knowledge.sql": "ac325ff9cd9bc9545d124077efa600caa74b120ed1a0b043edb4c3103c0fe2f8",
+    "docs/sql/migrations/V062__input_material.sql": "f3df4a442d5684872437a8b282c1f5348b90bdd8ddf006e6f189365d672881aa",
+    "docs/sql/migrations/V063__recognition_job.sql": "90b25e2a8a364f554be815900331b682439c69817c78b961afa17dc22e1ddb0d",
+    "docs/sql/migrations/V064__document_candidate_jobs.sql": "1692b13910a38bd875e6e17036fc4568f03054ded682d389491a1a03a89e013c",
+    "docs/sql/migrations/V065__knowledge_embedding_index.sql": "3e9be38092518c865ff5ba321ce47622aebd4344097948c62177a5dae99a9a99"
+  },
+  "frontend_inputs_sha256": {
+    "apps/miniapp/src/App.vue": "08d58da299b0cb2e1f16a43fe24177b0684dace2bba56544b7a3900af2d174f5",
+    "apps/miniapp/src/components/ArchiveReminderList.vue": "6cbeb8a126aa4b9597dc887f97182c34b704993f0e0532e486a442bc0ca4d1c5",
+    "apps/miniapp/src/components/AsrPendingRequests.vue": "1c163272963961d4f24b75e07852c301dfeefd1501bbb142e9a023446e4581fe",
+    "apps/miniapp/src/components/AsrTranscription.vue": "1fd331381670dfae0048f523638d29638b3c943255f02c71c9528d6e6f1d028a",
+    "apps/miniapp/src/components/AssessmentResult.vue": "1d7d816ecdf5baddff6ba134340e5942a7f39bce973748bacbc56e4af795aed9",
+    "apps/miniapp/src/components/BusinessDashboardView.vue": "5730461b5200fbc0f432c5a266df5c868fae6c5e73540f20a9d07d6ad3814a77",
+    "apps/miniapp/src/components/CouponExpiryOverview.vue": "56e0b5ad7d678523d39078002a75b224b7a2a8c2be4fe26c1ae7ce739352a6d8",
+    "apps/miniapp/src/components/CouponOrderSummary.vue": "34a00cf68675aca64debf289d1c33bd45e0925f2477597f4bd9e91a13b377ffc",
+    "apps/miniapp/src/components/CouponTerms.vue": "276035efc543737f44c0d6dbdca769987887f409b83021525bbdbd220b1bd03e",
+    "apps/miniapp/src/components/DocumentExtraction.vue": "bbba5ab7912062d24e08efc5a1da77f3d3e72d82a7d93c17211795b49a133a67",
+    "apps/miniapp/src/components/DocumentPendingRequests.vue": "172bcffed6bc5719a21fbd14925a659b8f846969d6fc5c567bf84507696c4936",
+    "apps/miniapp/src/components/HealthOverview.vue": "351a0f0dff53ef1e74c75dd11c619eeb592182189510b31677b3367ef45cb524",
+    "apps/miniapp/src/components/HealthScore.vue": "54d31046d125ed03f400f53bf989746d82a0c83c65fbed79651f4a4a765c9d15",
+    "apps/miniapp/src/components/HealthTrend.vue": "5bed8f02aa475fbac1ae83502c305567889b3b529a6028041b247a0eb38665df",
+    "apps/miniapp/src/components/InputCandidateReview.vue": "381a2f80ce8cbd92b3fa1c8aea35c16ce334e4ffdb9e44623ccc90ba1d40aee6",
+    "apps/miniapp/src/components/InvitationOverview.vue": "6516d48f20a9b2c1a35df20c40c9b0ee12b3da2011d07891f15d6bb8fe18db88",
+    "apps/miniapp/src/components/InvitationPanel.vue": "dc5809808eccb33ab706c3e09f5b11bd320bc3fd2bc906d2d6fe94b9b8244a73",
+    "apps/miniapp/src/components/InvitationPoster.vue": "399322ed81d27c0870207413eff9324c0d3d04b83d7424211e0b3a0728fef094",
+    "apps/miniapp/src/components/InvitationRewards.vue": "67894148a3379e5557d1a55db39ba98c4a5c530c4f0ebf3fac6c29e075693c22",
+    "apps/miniapp/src/components/InviteDiagnosisEligibility.vue": "402dd6b35a94c187a8dd869d265c85b8d27e902ae880b87b1113db7d3b2055d9",
+    "apps/miniapp/src/components/LicenseRecognition.vue": "8e03a77bc151a73da3c6a9979b6ef93c36cdcc36f99194090c6f827ea0b6b3b9",
+    "apps/miniapp/src/components/LocalInputMaterials.vue": "321b6ff0b16d041500348f062fb9587819fcaca6088dbd5fead0375fe05a8aae",
+    "apps/miniapp/src/components/ModelComparisonPicker.vue": "a7591f9050c383b6de68af423484a23f0adfb984ecbdc2859c01af2fa40fdf8e",
+    "apps/miniapp/src/components/OwnerTabShell.vue": "d038e2073b4b7f736a7c62e96945fb6393935f8886f97c7c4a06487b71247296",
+    "apps/miniapp/src/components/PickupQr.vue": "d19cc5bf79146f86620be2cb99975b3fedef7a97933a32d1031e0bd98b2d65c6",
+    "apps/miniapp/src/components/PriceComparisonResult.vue": "30e46ac642c4fcfb493292ee403574153bc317a2ed4a43c245d92f0c7397ab9f",
+    "apps/miniapp/src/components/QuestionConfirmation.vue": "0a64cfc67ea61fd60660e02d8cd75f4cf2a7251fbb502231b4055353a681d736",
+    "apps/miniapp/src/components/QuestionRecovery.vue": "996d2d8e38636970c2a09cfbd7f182add215251ed8511bf7004f1a98bac3438a",
+    "apps/miniapp/src/components/RoleLanding.vue": "02ed07333e2454eabbca95bfa3676076ca587f9210a75a89ad656b4c85c95e8c",
+    "apps/miniapp/src/components/ServiceArchiveRecord.vue": "51d5062ac5189dc0a2c63289d7ecc93d3598a230bbf72fa59c50b96a35e1121c",
+    "apps/miniapp/src/components/ServiceCouponQr.vue": "51ae27ddf100bf9d8a44e037435c4a0bc4aee8d5347bbb2f9b3e9e7ac55a3cde",
+    "apps/miniapp/src/components/SignaturePad.vue": "5910e42ee29ed1381db4a4752b8832b5cd8a2305f043decf26a1b82f63731898",
+    "apps/miniapp/src/components/VehicleList.vue": "dc7de32f4208cbc6c3fe9f89321e2d67d355d0bc77023a2c7528f1c6c2dcb29e",
+    "apps/miniapp/src/components/WorkPhotos.vue": "f0395c1de7f8ff9ece41c85ff242c68db2d0cf0bed2be3c9ec923f1eeea9023a",
+    "apps/miniapp/src/components/WorkspaceImagePreview.vue": "32ec76dc49e86130188d5ba56f0f23cce95d78e59ebf89b92bcba4197b61d6f0",
+    "apps/miniapp/src/main.js": "7b2cc31b92020efcd14917c72cd003f06ac95582f4e705a50d0cc4260dbdb178",
+    "apps/miniapp/src/manifest.json": "ed040105a1aa5b85bf65d955f3a6313d2aaf918c9fa35721973ad84da365abe2",
+    "apps/miniapp/src/pages/ai/index.vue": "620efb57e8f2a4023cd3a10251a1ec9555827b174c8dee9dde03676a88bc45dd",
+    "apps/miniapp/src/pages/ai/plan-booking.vue": "e210fe324c64cf0bcbaf53bdd4642a8f22b0b0f7ccd56870fdec5e13ec96a595",
+    "apps/miniapp/src/pages/ai/service-plan.vue": "0d91d5475ec7401425d197611824df7bb453eb2ac48e9185f9a1a8ee22d1bcba",
+    "apps/miniapp/src/pages/archive/health-history.vue": "0ed1090ff725a4bda22ea558e0965f245aaf831358b4a4d49ede3b53e139bc32",
+    "apps/miniapp/src/pages/archive/health-observation.vue": "dd7cd5be155388ab8055ce888c2b37c03bca8a301af7bde0382a4818d31df372",
+    "apps/miniapp/src/pages/archive/health.vue": "06b82032b7060bdcd77ca4deda4df3c7b7ee5d0c28defc968b2c88520e45041c",
+    "apps/miniapp/src/pages/archive/index.vue": "19c399d660413dde54b77cf9887c903b325cefec60adcd116fe1902d0953dd5f",
+    "apps/miniapp/src/pages/archive/record-add.vue": "6edba4ac4f9b41ad5e727d7290a8d034e02b22c82bd76bcd2a48367b5d41bfd6",
+    "apps/miniapp/src/pages/archive/reminder-preference.vue": "0f3bd4f151f4e44bfa0829dcbcc8d1cbb17788f04617da9fec1f752e19e93d1a",
+    "apps/miniapp/src/pages/archive/reminder.vue": "99ef5fa20b20d5f1efe4cb383fdcba5e3810bd1e668181636050bf676bbc483f",
+    "apps/miniapp/src/pages/archive/reminders.vue": "1959f8a259efa366c351ec0af7ce9f6073c77b10b2102bee864ef97098c95336",
+    "apps/miniapp/src/pages/archive/shared.vue": "2d8d9b5f47edd4b3b6ba37c4556ccbb89752ea4aa4d84762d3f5aca7d7077555",
+    "apps/miniapp/src/pages/archive/shares.vue": "ced50c245ac53c529a508c62fc1d4ca828500f3d70769bcf1cbd65c42f178d05",
+    "apps/miniapp/src/pages/archive/structured.vue": "45de5d04bfe2c478ed0bf441505c53e668696c83fd3e05536de4989f3b15bfe3",
+    "apps/miniapp/src/pages/check/pickup-detail.vue": "f582f3984c05dbce07738d8bcb7b99bb08e83348f799c0e9a69b9a5fd45642be",
+    "apps/miniapp/src/pages/community/experiences.vue": "9505410a46a7a8927a0f669f6b0bfa71b9e34a658c2b9a60341603fd182cda5e",
+    "apps/miniapp/src/pages/community/knowledge.vue": "9ee3db2455db7b4645a2d23b2caf0ba9d62029d5395d1a2a2e0d007bc83e3a9d",
+    "apps/miniapp/src/pages/community/my-cards.vue": "38f2e24029378dea6c6eb8342d1b9e23a41a1c7a3555833082c0d9baedf1e7d6",
+    "apps/miniapp/src/pages/community/public-images.vue": "136c7bdde5612b2864c60450956fdd7de45b34ebd21e90e937d5f8e71541d856",
+    "apps/miniapp/src/pages/community/public-questions.vue": "2008581440dfd2c125d2c88f40c35015903839cee953ce145e22f016537c15ff",
+    "apps/miniapp/src/pages/community/question.vue": "83789be93f29d1271548f96abc7ef42f5ab3c97a61d7cc4f51a2d49d21f27895",
+    "apps/miniapp/src/pages/community/questions.vue": "b4d6832bc113f85cef60a4a322411289de2da464b21dd844d1e7018a37cbaee9",
+    "apps/miniapp/src/pages/coupon/mine.vue": "c449812f191087889dcb095d5a7c8681645944cce6d00d69184b27249091712b",
+    "apps/miniapp/src/pages/coupon/offers.vue": "45658b9e6caa2882239563961089883ec7f4cd86bd01cc132f13e1dc7fe409e9",
+    "apps/miniapp/src/pages/coupon/service.vue": "5066cb4556776a658a5d86fc0db6f80bbd6b00bb29f4be2e652a525ef5b7ad97",
+    "apps/miniapp/src/pages/diagnosis/detail.vue": "1d4a3d8d6c5c69db7e3cebaa122c6f53a17d5c0bb7396563110c3d933b2ed1cc",
+    "apps/miniapp/src/pages/diagnosis/mine.vue": "717c0109775d1c20ad0febc65d8ba5967d657fba06d42e6439a0164f8294c540",
+    "apps/miniapp/src/pages/diagnosis/notifications.vue": "74fd4a9e090b3900c52a699034342a09f9bd074d25dd476361c29d42d978bf0f",
+    "apps/miniapp/src/pages/home/index.vue": "08f76d45fdaaa043aa27a8dc736db9cbe5bd5454af8c0cc8a5c154964fb42447",
+    "apps/miniapp/src/pages/index/index.vue": "9ce1ed28c8580cd45564e2925a13848d385f12f6ab7f151b84d4a204d8424cbb",
+    "apps/miniapp/src/pages/merchant/assessment.vue": "8e57d99b8241e7ab5b8060401d9f5ec7daaa6f5898b1347a953e5edf17c1c120",
+    "apps/miniapp/src/pages/merchant/business-dashboard.vue": "8d6c707d20b5a1fd0ffd9d8481ff82cf4a1e16db5d5fb2676eac331372a0bf57",
+    "apps/miniapp/src/pages/merchant/commissions.vue": "15db6f97b3da2b16fc1cbf20459b6b4a604194ab29f71b422c61085338522601",
+    "apps/miniapp/src/pages/merchant/coupon-redeem.vue": "b60c2a1754cee68219ff4883b0a9e31c3c2002709da557bc148666182b305590",
+    "apps/miniapp/src/pages/merchant/coupons.vue": "c9de849b93db4c47fb2e2687978715045dc747c8a3b38bb91decdb0f44482352",
+    "apps/miniapp/src/pages/merchant/customer-relation.vue": "7a1ed9fd7d89667e10c0cb5ed5a888f1835d6597e735d4efaa027f0854f9daa8",
+    "apps/miniapp/src/pages/merchant/customers.vue": "e560111251f21e4c984ecac545c725ba77764e08c71443dd2dd80ebb06794387",
+    "apps/miniapp/src/pages/merchant/dispatch.vue": "7d2ba0363955cdcc54d2058ce371937e705f05b0a7818e114c35c41a61d91aae",
+    "apps/miniapp/src/pages/merchant/index.vue": "16c6226e887a81884012711bc9cbba96ba166c5ba519a863e542f3e7b0010fcb",
+    "apps/miniapp/src/pages/merchant/invite.vue": "79ae4e99b15618d046725fbfc66ebf1bf8154298925f18a248849d9d19fb9e8b",
+    "apps/miniapp/src/pages/merchant/location.vue": "5d6a45c26697a4474ae031ed7b3bae3b182fb4bb788068f4c2258a6a0e568008",
+    "apps/miniapp/src/pages/merchant/order-detail.vue": "a26b6092e64549720118eeeee0b86aebe109eeced5e20d5a9ba99a900d70238d",
+    "apps/miniapp/src/pages/merchant/orders.vue": "7b8783e48d2631640e877d736486138d73988a6415928aee74026ce26ecbc3f4",
+    "apps/miniapp/src/pages/merchant/pickup.vue": "dbda78776e2445710878334091b49442423d6347f8d095be2ddd1f1b8acd1b99",
+    "apps/miniapp/src/pages/merchant/profile.vue": "9aecefc671beffce091d35ba3a13bcd8020cb6fa1c1cd7acef18475206e29d9f",
+    "apps/miniapp/src/pages/merchant/projects.vue": "64a9e17886b11ef3cdc47f8e01745056cc7c24994b024b11ce50b8a39fbebfee",
+    "apps/miniapp/src/pages/merchant/protection.vue": "708a03d8b155cd384fa7b88ba751f079352bd9dfd71ec07662d866411b9b22ec",
+    "apps/miniapp/src/pages/merchant/redeem.vue": "2c61f2c21c0e916c5f1f38139975eb899dcdd512db70cc62e816513428dc24e7",
+    "apps/miniapp/src/pages/merchant/slots.vue": "7af1904895d416494c5df8a364d466f1b075661bc998197902836dc839062cbd",
+    "apps/miniapp/src/pages/merchant/staff.vue": "e14ea144fbe59e6281f1c86ddcd94401588d9d2abe7232f8c10a8d6a8b35ea4b",
+    "apps/miniapp/src/pages/mine/index.vue": "23948889ef57708fd71653bc8e6f1ad5981e110ed0ca88223a357299e14b573f",
+    "apps/miniapp/src/pages/mine/model-compare.vue": "d8c75573bf8f51c9dde4ca81e63c0f05047f33926af5b0024d5eceff5972bbdd",
+    "apps/miniapp/src/pages/mine/partner.vue": "2388172df89af55bbd9cd0aa4f27c5eb3bf880de00b2a502f1f8a4e3d34a0463",
+    "apps/miniapp/src/pages/mine/services.vue": "509b04b2047fb80ab4dfc334e04f7b0318a74f57643e9a2ec875b315a778df22",
+    "apps/miniapp/src/pages/operator/assessment-policies.vue": "240b8058b825a0cee675db5c696dfd3f5779e32ef48e1d8d7b44c2f8826a5f4d",
+    "apps/miniapp/src/pages/operator/business-dashboard.vue": "d2bc05f659230f89c9a2533443fa70fbc51121778c737303aa7928da0ec52e5a",
+    "apps/miniapp/src/pages/operator/catalog.vue": "7f4f66e4385ece7867a80011aa1a051ae60c18644671b0cf7902f65db332c341",
+    "apps/miniapp/src/pages/operator/coupons.vue": "6a304e5297abea2286f41825b9ea183a5d2b2a608bc66cb302d7f34a552ce9d2",
+    "apps/miniapp/src/pages/operator/diagnosis-cases.vue": "fcfb844829b76aaee1f0e87d6f13f797600d0cb559c095554b90886dc60906d0",
+    "apps/miniapp/src/pages/operator/diagnosis-policies.vue": "78b977ef36d32d2c988cbe7e39bbfa9cbfc89ea60df280b4f4c43a174f45e772",
+    "apps/miniapp/src/pages/operator/diagnosis-service.vue": "983014bbc63ce8e365afc374c396e2cdc9ded9cfaef070ecf554c5fe1f490f05",
+    "apps/miniapp/src/pages/operator/experience-curations.vue": "17b3fc891847da2f538dde42b486c7d343f5905ec016b02c6dcfcc352fcdf0e8",
+    "apps/miniapp/src/pages/operator/finance.vue": "c28c9b829721a652640a84aec331e53f2f3b1a8900b2d47f7a2d899754d7c29b",
+    "apps/miniapp/src/pages/operator/health-policies.vue": "bc914f5186817788ff3ce45c82edaed1b282093de53ae0fd22558d86ec389d08",
+    "apps/miniapp/src/pages/operator/invite-policies.vue": "2374a80623a008f5b983a42358c1c24adbd5298367b78ae3d9f02c06cc4364ce",
+    "apps/miniapp/src/pages/operator/knowledge.vue": "c6384b99dd6b9c979075b05250bdf260bce8a9fe14e14357cc9844aa4c5ab7f7",
+    "apps/miniapp/src/pages/operator/login.vue": "be3027dadb6ba2d391807fc88d4a5b97e85620103142063d4defa5917477e610",
+    "apps/miniapp/src/pages/operator/monthly-assessment.vue": "336399a73bc48941073736788d74b1ee5ec16c4dc7c252ced7015bad939f6ad8",
+    "apps/miniapp/src/pages/operator/onboarding.vue": "d03457de92b5aecbf23bc1bafb6ea422098e6c9b5cebfa5eb7e51ee983f447ff",
+    "apps/miniapp/src/pages/operator/points-exchange.vue": "45bce53db0da670c2dc58c23dc4080fb3d45b2b787a587ae3eeb3506723ab338",
+    "apps/miniapp/src/pages/operator/points-policies.vue": "8e036e793a2e95efde5dc0b5ff4c4313c6ac3c1b014612be39400aac97a6f265",
+    "apps/miniapp/src/pages/operator/price-comparison.vue": "a8f094e242677e6fc8a665ab0c87e9d94c7846be1416d823e42bdcb5d2b8edfc",
+    "apps/miniapp/src/pages/operator/price-comparisons.vue": "7435f082af9da5570731c13d5543a6a78fca662cdfacfa110e59a02ad676940e",
+    "apps/miniapp/src/pages/operator/price-policies.vue": "fef4d0563caa124ed12c9a9e2cf4b3a73bb81ae09c034d9adb97115d1afc5fa7",
+    "apps/miniapp/src/pages/operator/project-applicability.vue": "5d8348dbf2848ea9a73ab6f0495efbd5af317121ec353e2a3f016025f23848bb",
+    "apps/miniapp/src/pages/operator/question-service.vue": "467b9fed6c8bc704cc14780ef1fb6b7b71ffc0ed0fcb6ddb450644e2f35cd9d8",
+    "apps/miniapp/src/pages/operator/questions.vue": "7ac7f4efbc82e3ed8a309c076a531a46e0c246700a6921740052209ea713e59c",
+    "apps/miniapp/src/pages/operator/quotas.vue": "a3c54cde4a02dd21332769039fcb67d7987241d80a394dcc0be6976ad2bf823b",
+    "apps/miniapp/src/pages/operator/review-texts.vue": "614fe2647fcc46125fa2b6990e6ea718d5f69c25973cf495887e528aec20e33d",
+    "apps/miniapp/src/pages/operator/review.vue": "08ff1a2a7824f51cb4f19ba16bfbe0379a407942fac42ca579672ffc7ae79002",
+    "apps/miniapp/src/pages/order/archive-grants.vue": "62c11af0723b4afd182bc3bf0a7dc624b4042e7240c5d51885d4769cc2f509c4",
+    "apps/miniapp/src/pages/order/book.vue": "e41f71b65a855e4c4bad9407e48fbb23fe8f7d8a67e6582242d39beca643cc43",
+    "apps/miniapp/src/pages/order/coupon-book.vue": "e24c2fe56b2743c59c284de708bf0eb340f6f6373615b78cef9ab3d698b3be32",
+    "apps/miniapp/src/pages/order/delivery-compare.vue": "d65fa5c20aa79c69b03a7d031fde44df41df15edc8c3d0bc49f8f9d28d5299be",
+    "apps/miniapp/src/pages/order/detail.vue": "ab1d9ae6754f5a8fd20c4a3f933a53b7fb9dfd7a20cd97a1d0e993a024917066",
+    "apps/miniapp/src/pages/order/list.vue": "dda8fc57a9634d616a0b70d4d6a3f5ab0f2378279029718a4497d0f3e48bd85f",
+    "apps/miniapp/src/pages/order/public-review-text.vue": "8c4dbbc233342544bced9caa4a54202552785751301a03229dff84f0e8100f64",
+    "apps/miniapp/src/pages/order/refund.vue": "d1b9b9b56d350c5ff152a23d71dae2cdf16e334eeca00a2e7da3ee1d8edb5c87",
+    "apps/miniapp/src/pages/order/review-publication.vue": "f7c5096f4bd335277cc1e2d1eb22c1881b6154a71ea93398dd3dbe36eba7227c",
+    "apps/miniapp/src/pages/order/review-summary-consent.vue": "5b62486b5e6ed69909f0794a53788efd9c75471c9be993ce69587975b609481f",
+    "apps/miniapp/src/pages/order/review.vue": "7e2b8d1fa5583db3b1d6ad5dd36fa3d444886fd618ef85a90da9608e915e4361",
+    "apps/miniapp/src/pages/order/work-evidence.vue": "691a7d3bf3a0210bd68a73c3698b0c62274e7f4e56ed8f8a9c540e6e5bf27f17",
+    "apps/miniapp/src/pages/owner/index.vue": "95e363f1805fc31b818b0e2df09c8308902ee6e8315222fa190e8b714e1f10f9",
+    "apps/miniapp/src/pages/owner/onboarding.vue": "928ba89471255256bcacbb2d0495791cd831470d32e1be66149a0f0f95a2507e",
+    "apps/miniapp/src/pages/points/exchange.vue": "ca706534bade433703c9caf93f6b3928e19ac9d6698286dc1fb529696e23cea4",
+    "apps/miniapp/src/pages/points/index.vue": "b5bfc529d44613b705695873c000f33acbb2ae8bf78285645ccb0d3261330c8a",
+    "apps/miniapp/src/pages/service/detail.vue": "a75c82aaa666a7f878dd6ddf9f987d917233500bb28d5f249d5d4fef3ea41f10",
+    "apps/miniapp/src/pages/service/index.vue": "16efb1e87742353b9b35261565e8da60c3ef21d96970b5d43499a28e687955d6",
+    "apps/miniapp/src/pages/service/merchant.vue": "ef8320e4da95e1779d4f1ba0bc163bebd6df13314df4418df495d8f70677628a",
+    "apps/miniapp/src/pages/service/ratings.vue": "42c1c166c17636acbdc02fe41f50edc5c6565a7e3d96d6b485702079de434445",
+    "apps/miniapp/src/pages/service/review-summary.vue": "59c97d25f5945ef3ff83457ead6acb0f00b6432c068ec9d3659ae20dbc29f706",
+    "apps/miniapp/src/pages/service/review-texts.vue": "f32cafbaba973e691e20d3c48f23b25a795fb9ec4c1af7b7521129914556d7ee",
+    "apps/miniapp/src/pages/technician/index.vue": "2f02f5338a4cce0f194ad64b6fe4924f0491029d0e817732aa779af58641116d",
+    "apps/miniapp/src/pages/technician/order-detail.vue": "b8d7643d6858f8680dd72b4cf36af720e8926cafc23b4e0aaaf3898d5a658ccd",
+    "apps/miniapp/src/pages/technician/orders.vue": "dd94ec021678d3865c45dcedc64c7bb28056e44fab3eb76af0e402b2ace0229d",
+    "apps/miniapp/src/pages/technician/work.vue": "e275081a1013876794cd12539dce30fa897d1d1b3f5348428fdadbc8a87dce9b",
+    "apps/miniapp/src/pages/vehicle/entry.vue": "c8e96a79ea730f660ec7724ceadf47244c92ee596ae36992b7491624c168bf60",
+    "apps/miniapp/src/pages/vehicle/manual.vue": "08b8ed17aaafa96b98f0c8457984946b21525e8e3c2bdb9b9387791a14357014",
+    "apps/miniapp/src/pages/welfare/invite-entry.vue": "09386fa44ce6e06d8c1b62cfafa96e0c8161b608201e86aab9c16da77cd93899",
+    "apps/miniapp/src/pages/welfare/invite.vue": "f18fca0611b18499400077664716b5e07cbfedb23bdc83b800ff8a88bace6e6b",
+    "apps/miniapp/src/pages/workspace/context.vue": "e1bdb6772683076a12af964d478ad9af661bad3129df3eee12718c5d59b286aa",
+    "apps/miniapp/src/pages/workspace/notifications.vue": "c45b11ea072e7129b354645efa8d50e641677fa16f660cc09b90bcbd0949ba6d",
+    "apps/miniapp/src/pages/workspace/tasks.vue": "df53f7b0719179fec4debe506b682ea5469d880b35aeeb0063178646e08be828",
+    "apps/miniapp/src/pages.json": "5e35571b4dfab100984a1865cd8e92afd4cc1c96fb82f3f4755f0f70cc8ce0e5",
+    "apps/miniapp/src/roles.js": "6f1bd12684a4dfc4bbaa94c32a48b1554b4a619460ddba4ea24eba9f8394f304",
+    "apps/miniapp/src/services/ai-chat-flow.js": "044fa008c4c5019e38de1015757d0f694f0ae39b99b10758d7ac44936d317afb",
+    "apps/miniapp/src/services/ai-chat.js": "81d8a4dba59daccc39462809b4cd86454f9ad7ae6e35ada394c9a577bfc7a85c",
+    "apps/miniapp/src/services/ai-service-plan.js": "5f0cc4c0afec41bede738026e989fb61b9237da5bf67a03456834b549e98395f",
+    "apps/miniapp/src/services/api-config.js": "a81a6f1dc4a77fc669cdc8e2bb00c023884c0e970bf268441884251be7f09a4b",
+    "apps/miniapp/src/services/api-runtime.js": "b1d9c2759df01721295fc23f9d3f37a674ee23bac0721623bf312d6e163d173e",
+    "apps/miniapp/src/services/archive-entry-mode.js": "7d3ea38f4667f4fe6ec522145220214e725a5b37c0dfe9ceab1516c1e7f0c37d",
+    "apps/miniapp/src/services/archive-flow.js": "64866c54e2e6568c7e5778e4e7172ed59f05d68ba654b91a84ae348b97bc139b",
+    "apps/miniapp/src/services/archive-reminder-flow.js": "62c07933fc8fb9759ec662de609b46758c3b1532ef622b2d05d32f83b0a75079",
+    "apps/miniapp/src/services/archive-reminders.js": "561f1afb27c9edac242d97b464603065169d5875bdcce05d97bc13deed0cc909",
+    "apps/miniapp/src/services/archive-report-flow.js": "bae630cc8798f983ecfbc855606dbb9c0d102d818dc90aea7d74cb1b362c3ed6",
+    "apps/miniapp/src/services/archive-report.js": "3ee9ab50cbe8efb092023c599822d751d886a7e34fa52c8f8016fc3cdd0e481a",
+    "apps/miniapp/src/services/archive-share-reader.js": "9e71e1fa17fb74fb2b04a9a93c84fb1c291ef0c4bb4289943071d2c19069bcb4",
+    "apps/miniapp/src/services/archive-shares.js": "ac40255cb6cc96f4a72014f67d87aa4ec21f773f0a194e09e7a9f9a8962f1c2e",
+    "apps/miniapp/src/services/archive-structured-fields.js": "7ad69f5037bb5255a812d0e364b69e581080cc3eb7f9e33b5a332ed486d46c5d",
+    "apps/miniapp/src/services/archive-structured-flow.js": "af4eca7ffb179e213a17534d72ab913ed02e5c791bd60c22cefb59308119509c",
+    "apps/miniapp/src/services/archive-structured.js": "699c6b967842d5ea8c8062fe7e5c7baa21b0e96a08f9a317188a8c487a988160",
+    "apps/miniapp/src/services/archives.js": "1c668a91c80d46b4cd4178444eb12fd6d076083c57f939c0cffe88e35b06d4d7",
+    "apps/miniapp/src/services/asr-flow.js": "44e95909acaa123ad5bf9a73ccb003216c17a0a14c2e7a0814ee5179aeace06c",
+    "apps/miniapp/src/services/asr-jobs.js": "94c942d5b0d77b2c888cbd965ba7b6a1f176ccab420eb7844fde4aea75f3c315",
+    "apps/miniapp/src/services/assessment-policies.js": "c1511bb36364a2e20fa49067fdc898c1469d350a4235de4802149e492fb9deb3",
+    "apps/miniapp/src/services/assessment-policy-recovery.js": "1c7ff1b23a6f7b065e6032709a8322d1e5fd26f09f95e378547151a42dfef5c0",
+    "apps/miniapp/src/services/async-diagnosis.js": "1ece01ffccc9069cb756757f2649835be9c25bbe7cee56aaf9b6141a34100bd8",
+    "apps/miniapp/src/services/business-dashboard.js": "d837a3d898b63c709c886a40a4010d10314814cb4d92fe5fb3327e745d222213",
+    "apps/miniapp/src/services/car-life.js": "2cc5c3393d7ade4c4e9330bf68de62ed08603d3192e32e9ab15c54386bf7f173",
+    "apps/miniapp/src/services/catalog-flow.js": "427a009f911c550b190416b839586519864acace220e1674da8c7feaebc573e9",
+    "apps/miniapp/src/services/catalog-governance.js": "a9508a1b426283627a99daf5a8323a58f61c405b24359cf764306aa4e6baedaf",
+    "apps/miniapp/src/services/commissions.js": "e2dcc4ab0e99a46b0f8e3449f8f23b12350c5b61f96fea568bf78f4191765570",
+    "apps/miniapp/src/services/community-question-recovery.js": "ecf4cc062293a874c38b936a70f24d2a5b6c7dfaeef234394ac3121850ae47fe",
+    "apps/miniapp/src/services/community-questions.js": "744e5f03790eefa81d95dcff093c9aa442ed2a229bfbabe6fff871701fdbf387",
+    "apps/miniapp/src/services/coupon-transactions.js": "5b27293e19682d2dadb926eeeb7fd811fde2b4bdc444d945e1dabd976e2e19ac",
+    "apps/miniapp/src/services/coupons.js": "41f42cc5a919ce0537a88f81f847d5e18ef3c435b784dee0f2abd9b28dfb8aa1",
+    "apps/miniapp/src/services/curation-recovery.js": "2bec4ffd3ea974599d7808bf650db74d07dc9be97a07f1a9ac5364ff7b6c7893",
+    "apps/miniapp/src/services/customer-relations.js": "49a4df72ff1b3decb18f7ca605622307df42c982393472bba7e8f30c90396cb1",
+    "apps/miniapp/src/services/delivery-compare-display.js": "25cadb03b62aa2075d897a659df2717421f1fa424e0caaf2c19a4cccf6e384c7",
+    "apps/miniapp/src/services/delivery-compare.js": "291ce7845365c53bb5082d237e0859e8e944198845c62869e935128335628e64",
+    "apps/miniapp/src/services/diagnosis-notifications.js": "12478c49b7b192aaa0b53c32184af25521237ad218e807fe5887d43d8aa3861b",
+    "apps/miniapp/src/services/diagnosis-recovery.js": "438845470d5149579ba4f2d8c3b700bd597ecd3ad4f5e9f10256b7703a3d54b5",
+    "apps/miniapp/src/services/dispute.js": "30a93a2e3f8566a846b0300a81bbc2157d9464709997e45428b4dfacfb2504af",
+    "apps/miniapp/src/services/document-flow.js": "94d2f74e78a30346dc1ed05e56c6063fa8b5a5a706183a639c9067fcc980db72",
+    "apps/miniapp/src/services/document-jobs.js": "6c28a2d10cfe61bbcfce37995bbe11743025b74e50e741a0a42680a2e22d649e",
+    "apps/miniapp/src/services/document-result.js": "8fad5a6bc770d5953089150abb0c345e633aa01ed92ff59379294d858731d0cd",
+    "apps/miniapp/src/services/experience-cards.js": "f9ed9a7ff873ed3a179b98d015ba570b55af11973944a2a5f4cdd534069d9e83",
+    "apps/miniapp/src/services/experience-curations.js": "bfb6680112e6ff5619f78bee63bbe8749800f8d4f4fef0c085be7e9878c807bd",
+    "apps/miniapp/src/services/experience-detail.js": "83e98bf1d60f86bd238010f82fd55c819d19d4730cb774089b435b111fd54ded",
+    "apps/miniapp/src/services/experience-publication.js": "69b43676fe54d0441600665d41ece48184123ef3ce0df4820e3d90c364255149",
+    "apps/miniapp/src/services/governed-content-api.js": "5443e25ad8590c9d1dd165db7bd4650f0a7f03c57266c11a62c9f7573deed882",
+    "apps/miniapp/src/services/health-dashboard.js": "dd87eb2844d379274b6aec302e6e9a8e36c9d567327857aac2d70ab1181e7e3f",
+    "apps/miniapp/src/services/health-history-flow.js": "6cc24f757f4cfa27636ce51d8f4282e75eedd610d0193b91e600ab12c77b0dbc",
+    "apps/miniapp/src/services/health-observation-flow.js": "fde8d277ade049cd65080376b897da974c60b607d75941c282cca304b1814246",
+    "apps/miniapp/src/services/health-observations.js": "87f969b29583b2c1ae3cf3e8618775987d7d974f1382811e22a30b54fdc11715",
+    "apps/miniapp/src/services/health-trend-plot.js": "8ce7df9b5bc8afaf915ce5a5572681ff00ca7ea43666a65d409cd92863e24a4d",
+    "apps/miniapp/src/services/home-summary-flow.js": "353692d9eb0bda23e8affef834e06ff5bd61969756742df56789ed5174593612",
+    "apps/miniapp/src/services/image-flow.js": "e0c44cf194a008f29637551897b35035d26a569881d6f9bacdd6610c397f9bd8",
+    "apps/miniapp/src/services/input-candidates.js": "cb0d3406b5b95fbc9431f5c2f5c9acbd5fad9e707b81518b8f87111bf1c6f38c",
+    "apps/miniapp/src/services/input-material-upload.js": "afa3ed6c4c15ad40fda2ebc3a860d4ec6dbfcafa10d5b20fb9c127f8fcba31e6",
+    "apps/miniapp/src/services/invitation-context.js": "a48e99a0b5317d07856fb216f36a3105cd6a5cc0e143256ee0e72d835ee37aa0",
+    "apps/miniapp/src/services/invitation-overview.js": "e4910ca5d4ae26bc7037e38fe7a68bd32c97fb39641d29917a284e41b741426f",
+    "apps/miniapp/src/services/invitation-poster.js": "020c8cfc9e43df7a1142fba1efe947f55d46bfcfe9b54f6eaf89a84bc7bd408c",
+    "apps/miniapp/src/services/invitation-rewards.js": "a71e415a20e86a324807410a87b19d9b7b50f81437379a5955cf4b9935ce51bb",
+    "apps/miniapp/src/services/invitations.js": "30f4ceaa449f1fec96fd53bc01b19dc5f774c050151a2054f861eadc9c755603",
+    "apps/miniapp/src/services/invite-diagnosis.js": "4ffefed6537a7ee7c2e1220bdb1a090880e9af825ab9ff8b8d1a1662d6cd64b4",
+    "apps/miniapp/src/services/invite-policies.js": "d075122d4c2c5b6380646359cfda7eb56d25bdb602bb00baa4eb8d246006f390",
+    "apps/miniapp/src/services/license-recognition.js": "7d2f1b5695e70d95a7243b20e8895ed61b8ced0c4f21f5e0c0ced01dd340c569",
+    "apps/miniapp/src/services/licensed-knowledge.js": "7ed49661beb2153202720a73790e405b4f1ac11ae511293683ec9d46166cf3f8",
+    "apps/miniapp/src/services/local-finance.js": "ad0f6f73b8f223f2ddaab94986a16629da5537736ca286db2e5a159023bd076e",
+    "apps/miniapp/src/services/local-input-materials.js": "3814a889e26d2189ee7fc1edabcdf766173833c582df027c3ab245b3f3148be6",
+    "apps/miniapp/src/services/merchant-coupon-issue-display.js": "d9195e8879924e10b94c935a0ca68f134e326328c4efa565474435206a2a2275",
+    "apps/miniapp/src/services/merchant-discovery-flow.js": "e2751a4ce92b1eb861dca1c75ab4482d8c6d9a30f6e528e7a73ce6e02b89e3ac",
+    "apps/miniapp/src/services/merchant-discovery.js": "69a1c6fa965ae12627fb9f9e3acdf838619a665c5c765bdca072e9fe36ac5640",
+    "apps/miniapp/src/services/merchant-location.js": "c8e5f9ef476ba28f1059dba6ad0eddf45be3de0987f46b6c7bee911e7d69fa35",
+    "apps/miniapp/src/services/merchant-onboarding.js": "ed1974a74019534ac2b47c7a4d91aabb0e6e4143f305c11280fbf563c489ce2c",
+    "apps/miniapp/src/services/merchant-order-display.js": "86efcec3e27b74d167e3f24b764846c9751a2aee56e1d48991cacfe62e6920bb",
+    "apps/miniapp/src/services/merchant-orders.js": "90e9eb806c345a264741d64cf774fd27cbd2d28c96b7694ecab870da09eac98f",
+    "apps/miniapp/src/services/merchant-profile.js": "1c123492326a06c5e1e68d31535282a37ab87295dcb09ddcf482659f94929e59",
+    "apps/miniapp/src/services/merchant-protection-display.js": "cbc53a8bf907f14c1276d38706bbae5e409697f8fd82ccd36a26ee63759d6073",
+    "apps/miniapp/src/services/merchant-quotes.js": "9a65e051e849dc1dbe94dcbf02c260849d9e0b9443021c57720365047c43b45a",
+    "apps/miniapp/src/services/merchant-redemption-display.js": "13c52a911fa65ac663965619a4a40cc734d71ce0b4b88e195b967b85bc8e4b91",
+    "apps/miniapp/src/services/merchant-scheduling-display.js": "0164c5f75c730a4cc5ca6d004bb7c1fa960f0f029ba728a821de56315884c572",
+    "apps/miniapp/src/services/merchant-session.js": "4e9ac73c293c3db041ae6043eaf2c9f07af1a9cc756ba9b3ac65353992496281",
+    "apps/miniapp/src/services/merchant-staff-display.js": "adc973f548184f4094c061e7462e7e68a2aa4e20f486b17fe88846ff1b67fb43",
+    "apps/miniapp/src/services/merchant-staff.js": "0616b47abb7ebf1966ec9bf586417584862e19688f4862eb5dcfec83646fe457",
+    "apps/miniapp/src/services/mileage-recognition.js": "503097932959aec14c6d1a0210915c015592085a75a7cbf0ed0fe01decb316ae",
+    "apps/miniapp/src/services/monthly-assessment-pages.js": "1f38d799a022e70396588b0be7d2d75958d58b786e3d5f1b75b80d17d0da4fc7",
+    "apps/miniapp/src/services/monthly-assessment-recovery.js": "eb5ed7e60de318d14a645701c3b85f8256a3352a66016f417c4f4134afcd7ae4",
+    "apps/miniapp/src/services/monthly-assessment.js": "f0e2bc79c178a5d0e419c0140dd8108c56fd83f22323085adbb3311c041d939c",
+    "apps/miniapp/src/services/nearby-merchants.js": "5629b4a099b07d340958990ce3d403d5bf5a8f949398c531a668986018aa776c",
+    "apps/miniapp/src/services/notifications.js": "2c2a7e2312500b78dcac9f74be8ee3c26986c7384804026fd49142ce9738dde9",
+    "apps/miniapp/src/services/operator-session.js": "2ad2aa4fc70df024c45b9edf0d7be84b8eb764e9b226409ee0c9da7b7cfc89d1",
+    "apps/miniapp/src/services/order-redemption.js": "3b252a2af5a87ce724f149188dd5c47324a65e1d387a096be2e8a4b53d000684",
+    "apps/miniapp/src/services/order-refund-display.js": "5b302ebc55b7ce8afe45920878f8b352fe68e5f1fb1aa1e0e1c4fd71b1b7bf54",
+    "apps/miniapp/src/services/order-refunds.js": "c02f0bf7896af4ce63c4871c8415d6a02522c4b96711d41d544906eb74b21da8",
+    "apps/miniapp/src/services/order-reviews.js": "8ccefc79b1cc028114c89f4733f1c889c3fa60bb61632c2c1856bb3ca5dc050f",
+    "apps/miniapp/src/services/order-status.js": "a720c9ce8ed515a71212806e6cc2a3fb3efc0787faab029e6f9ab99cc0546fdb",
+    "apps/miniapp/src/services/owner-point-exchanges.js": "01d23d1f246f18827b8fc3879cf0f448ece2198b97c0adfd221805640c76e672",
+    "apps/miniapp/src/services/owner-session.js": "f885bec20eff90d1e0e80246a0838b75c9eae62434d14fffc73a86468a8e6d6f",
+    "apps/miniapp/src/services/owner-vehicle-selection.js": "0029bb14e46fa40322b8e9817812063160d3e3eab914ba57de32488586843fea",
+    "apps/miniapp/src/services/owner-work-evidence.js": "704a060e0fae2f6880dc0a52af49fb7742bcdb717e52ea8857a76ee07008f327",
+    "apps/miniapp/src/services/payment-contract.js": "4b3dfbedf56988d623b9fc1ffb712e0bfd4983e06f7099dd627d59c494e81061",
+    "apps/miniapp/src/services/payments.js": "25af21ea217b8a1b97389d3379fb34219e2cf8772d7b6a91235b12ac7773fb1b",
+    "apps/miniapp/src/services/pickup-display.js": "045797359b0e5fae25beec10821a54800acdeea415f49acb1e0e596d2b91271d",
+    "apps/miniapp/src/services/pickup-scan.js": "b5dcd721786959d94dd0127f87cd0a02816bad676e2d481cca2d9a0619cacbdc",
+    "apps/miniapp/src/services/pickup.js": "15f2c4fbef622345326ee2884c9a0c93fe2be6955706ad7704d6d73e5fcc1b0d",
+    "apps/miniapp/src/services/plan-booking-handoff.js": "befb4e38b797d5f4680019eb5f4183d85b3a69b1a384723727db91104d298e84",
+    "apps/miniapp/src/services/plan-booking.js": "eb16e4bd53a0622b22fdd3066eecff7a44d463efee4e950f51cdd43c56dd86df",
+    "apps/miniapp/src/services/point-exchange-catalog.js": "4a8a6af1005c48dcee9cb7625630497ce5a7465a47f633e52324090dcd530497",
+    "apps/miniapp/src/services/point-exchange-recovery.js": "0eeeb9acd91fadfccb5af3c53baa42fdece685f66000c4dee85ac17d646db448",
+    "apps/miniapp/src/services/point-policy-recovery.js": "7ad8a95ff5cf0217e21d9573495bf1e7f5aa1fc687e689eeb106115fefb7d9c9",
+    "apps/miniapp/src/services/point-task-policies.js": "c407f729aea9852bc1fe16b4f808b71b73d15ba8b334cff4b0c81422f297be88",
+    "apps/miniapp/src/services/points-ledger.js": "ba4a2cf59cd73e9a1ec06bfc9ce0eb40db47e139e03f703e0274763502e0e637",
+    "apps/miniapp/src/services/price-comparisons.js": "f3059d152eb8152779f4dc17b1f5e64e36973db037fdf09d6d082763ce46f647",
+    "apps/miniapp/src/services/price-policies.js": "23e501d59eb751b675a9c7723a8f59847bd839eb8e2ab39c4fbc8c36d547f173",
+    "apps/miniapp/src/services/price-policy-recovery.js": "22115b15735498cab32cd2c6e901b118b3e6af036e0a1e5e368d91701c9b956b",
+    "apps/miniapp/src/services/private-images.js": "6ae4f8360f49eb2874321fbe022a81d3dfcc5f317fdb78e654b049e71610537e",
+    "apps/miniapp/src/services/profile-flow.js": "11e9928dfaa153e5ad66987424ecd40e482cf941e51896788e3d5ad80013d17a",
+    "apps/miniapp/src/services/public-community-questions.js": "696ac2670c83c74f0cacb73e932e52379723912cb3ce671b20cfe99683ae69c7",
+    "apps/miniapp/src/services/public-images.js": "b9be8896d63963a0b87d62020f8f0fcbdbb73f8d956aeaeb2debea33ca4c28e9",
+    "apps/miniapp/src/services/public-ratings.js": "6d6090794205e6c3eac79337df621a40665ee91b817637f32ea3a31fb2b55b86",
+    "apps/miniapp/src/services/public-review-display.js": "82fb0e831432293ab0d2a6cc24641e9afc455b6c4d080edcea8e365bb318514c",
+    "apps/miniapp/src/services/public-review-texts.js": "d32b484dbfbf3dcd91296b26598a5e910f4897556cc92c5aa0b471ef4b62e7d7",
+    "apps/miniapp/src/services/quote-flow.js": "ee8e2364c9fee0a9bac596d4d2cb16f4e356f59c4c36a867b17acc3a1589b70c",
+    "apps/miniapp/src/services/rated-quotes.js": "3b532766418c7dbb0613b46a2caa5a69f45dafe96f5be6f6e2691730562c1828",
+    "apps/miniapp/src/services/reservations.js": "f940acae76aa3568b89da92600a2b6920b6b040f33da165e4800cd98c44bfbb1",
+    "apps/miniapp/src/services/review-summary.js": "b2769bab6d56c4a85c83d90c51101b742e4cd210fcdd407237ac3074221b7ea3",
+    "apps/miniapp/src/services/role-identity.js": "cf3bdcc031b7e36cbca0b1857d75ca033af2b1edca04debf08310b4ea59e4674",
+    "apps/miniapp/src/services/scoped-intent-recovery.js": "28ab541fcbae38a8eff622d0aa3f7e7393aabe9e8b1f1cbfda71c316e185d795",
+    "apps/miniapp/src/services/service-catalog-flow.js": "dce1fbb817b9db733b707af52393ee5303b5a9c2bea885f1dcfb58a4813271fd",
+    "apps/miniapp/src/services/service-catalog.js": "6c71de47748fa9b72b8df3e45a2564013d8c8028a353cef9d312d4680c25cbb6",
+    "apps/miniapp/src/services/service-login-return.js": "a91305c3dfdac41dabdfe30b321b2f8795d564700c453fe619669f02310dc271",
+    "apps/miniapp/src/services/service-search.js": "f45d2a1b7dd0bbdb2e16197fbcc5f7b0fffc0f0c2c18c85e303a04f044858fc4",
+    "apps/miniapp/src/services/service-work.js": "531e8047720bdb5f31e388bebf45785c031b718f4824e33f55b9271592f70c22",
+    "apps/miniapp/src/services/service-workspace.js": "5fd77c254ae3ee8067f46b52e25afc9f7967db59b2cfd8a5867b679332ee00f8",
+    "apps/miniapp/src/services/signature-pad.js": "afe06835b100be5b35b484981054b11cd34b005f24b222b351ba1eec920ac29c",
+    "apps/miniapp/src/services/staff-flow.js": "91b6949b233a6625083cb5af5961b5a90ad4cd9a337d8785b016b84efe78f0cb",
+    "apps/miniapp/src/services/symptom-handoff.js": "5336ae10a9b59ef39b386c1d90c80663a07f55695c2a3ad518e7043dae0e837b",
+    "apps/miniapp/src/services/technician-dispatch.js": "bbbe9a15f847e25136bdaf891124c53f98a1441d49ef1a178aa53cc50ca445b0",
+    "apps/miniapp/src/services/technician-session.js": "9531b67a2d5b11d76e1895a1037eeea4d64153f5e3960705a808a39811875b9c",
+    "apps/miniapp/src/services/ui-tone.js": "5d315f626a6fd7d0cd461e4ed83ddc1be4735063bf72bf607501adf2d5755d4f",
+    "apps/miniapp/src/services/vehicle-entry-session.js": "53b944d981bc9e860b3cfdb2b6f07b065a3d3b73ded35f2138bba6d59e28d6a8",
+    "apps/miniapp/src/services/vehicle-entry.js": "45c32f4752c2a4ba0fedbcbb13c89e501d480685baf57926311fc6d2858acb69",
+    "apps/miniapp/src/services/vehicle-flow.js": "fb6e5ad2c1dbfc474a66fd588195d3ee28ff23c154c4a9aaafd0e37f6813e260",
+    "apps/miniapp/src/services/vehicle-plan-evidence.js": "bf7535daf892e6a76acec7a54656ea356ea66986656724e242c8959a775e94de",
+    "apps/miniapp/src/services/vehicles.js": "0fe6410e9366befa89197da188ef4c50aa9b9fd1d33050ca2fb2a489b2f96a31",
+    "apps/miniapp/src/services/vin-candidate.js": "42600f1168585ef6c4051b2c3654e7a9a4a7d3464820773f0ddffdb3e0187dd5",
+    "apps/miniapp/src/services/vin-decode.js": "532a3e7ed1ba9b5ba47727229a95369bdb73a41d0e7d430a7e94dccf26942c05",
+    "apps/miniapp/src/services/wechat-auth.js": "e0cd668b994fd6c90c54ba75002be9cc07fef5b888d9d69e7d95caf2359c74d0",
+    "apps/miniapp/src/services/work-image-flow.js": "af71cd4e6faceaef678f36b42d19222be42bd3b965bf66d64178d019c2b6dc55",
+    "apps/miniapp/src/services/work-recovery.js": "662ca832e3feacbd0cb3a262fbac300e717f39c1869cbe22cf0c59b2ea68f745",
+    "apps/miniapp/src/shime-uni.d.ts": "88d401029dfeba68fe56958a52c0947ae8b230cb35441b9d514b1807659e7d29",
+    "apps/miniapp/src/styles/design-system.css": "ad0f2eccb42dc0ace72eda2950ed41b4ca9b4d6f51c70b8161732e69ad6fcbf0",
+    "apps/miniapp/src/styles/reservations.css": "bcb4a0b52d2e2a96fc51f45edd0960cd7759ce90e0a1bfdcf1580a4ba377e1c3",
+    "apps/miniapp/src/uni.scss": "7c7534884bd1c34787dd5ebf4b5aaef86ba94ed7823869e96470ca7a8f941dd9",
+    "package-lock.json": "b07daa4e4dadc1e75d06f4d02e4e7754eca8a8a483335ac06a7e5478d172da3e",
+    "apps/miniapp/package.json": "4da5cc9ef21d0ac3666e48b8f3077bb2e305352d66fba9c4b3dc661c89d16487",
+    "apps/miniapp/vite.config.js": "ac0f1cca5a7bc40389896ad02dfd505f278bb5a52b91e360b640b4d5af717637"
+  },
+  "synthetic_identities": true,
+  "official_wechat_verified": false,
+  "native_device_verified": false,
+  "checks": [
+    {
+      "name": "guest_login_gate_and_owner_new_entries",
+      "passed": true,
+      "notes": "Actual guest gate and owner menu observed in gstack."
+    },
+    {
+      "name": "local_synthetic_vin_explicit_confirm_and_503_retry",
+      "passed": true,
+      "notes": "Actual LOCAL_SYNTHETIC candidate, human confirmation, current catalog revalidation, mileage 421, proxy 503 message and retry; final DB checked separately."
+    },
+    {
+      "name": "partner_disclosure_cancel_no_external_navigation",
+      "passed": true,
+      "notes": "Visible synthetic provider/domain modal cancelled using snapshot reference; modal display none and zero iframes. Real partner not contacted."
+    },
+    {
+      "name": "comparison_current_catalog_and_same_model_notice",
+      "passed": true,
+      "notes": "Both pickers selected through actual DOM controls and HTTP catalogs; exact four fields and same-model notice shown; mobile width 390 no overflow."
+    },
+    {
+      "name": "registered_pages_guest_smoke",
+      "passed": true,
+      "notes": "113 registered routes visited at mobile 390x844 using gstack; explicit gate or meaningful body, detailed JSON evaluated separately. This is guest smoke, not all signed-in branches or native-device acceptance."
+    },
+    {
+      "name": "life_three_groups_and_responsive",
+      "passed": true,
+      "notes": "Benefits, used-car and new-car landing content observed; 390 and 1440 widths no overflow, existing palette retained."
+    },
+    {
+      "name": "four_role_session_menus",
+      "passed": true,
+      "notes": "Owner/merchant/technician menus and operator permissioned review/catalog workspace observed using synthetic genuine JWT sessions, not official login."
+    }
+  ],
+  "cleanup": [
+    {
+      "role": "backend",
+      "passed": true
+    },
+    {
+      "role": "mysql",
+      "passed": true
+    },
+    {
+      "role": "network",
+      "passed": true
+    }
+  ],
+  "origin": "http://127.0.0.1:59365",
+  "vehicles_before": 1100,
+  "foreign_vehicles_before": 2,
+  "vehicles_after": 1101,
+  "foreign_vehicles_after": 2,
+  "new_vehicle_count": 1,
+  "frontend_sources_unchanged": true,
+  "browser_commands": [
+    {
+      "command": "goto",
+      "exit_code": 0,
+      "sha256": "4aafe5ec14aefd1a8ad3c95e57aa793a41aeda61ee531e40aaae644ac54aa139"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "d072e1407fd7c77a1420aba4a82e060b4449a880e02599447f2a2e14347445a4"
+    },
+    {
+      "command": "eval",
+      "exit_code": 0,
+      "sha256": "f29764cefd36a95c5bd5e6c2997a9b82e0c751d468a2e3c9aa43eccf4518fe02"
+    },
+    {
+      "command": "goto",
+      "exit_code": 0,
+      "sha256": "4f952cca7188d3e1c08695fcded33afb66ac795ec42c06b4aeb9b6a6afdb32ad"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "f98bc9919377aac6d6a907448196bc1c0dba541c8d4aaabe4fe9be44022d2a79"
+    },
+    {
+      "command": "goto",
+      "exit_code": 0,
+      "sha256": "b1e95f3f7cc558eecdf5432c5ee3e0abb2d10f72b5929849d5af83ce175ab981"
+    },
+    {
+      "command": "snapshot",
+      "exit_code": 0,
+      "sha256": "f3abbbc02ccd033a8377a2a479523158ef0e045fc2059f73eab64b2bece9201a"
+    },
+    {
+      "command": "click",
+      "exit_code": 0,
+      "sha256": "fb1716c300628dadd269d4ad1e9c8a2818e2646e0bc62700a8a6f727be12f286"
+    },
+    {
+      "command": "fill",
+      "exit_code": 1,
+      "sha256": "8ee190b1390444d44ea2a1ff32b4fb1d105650b5e5eca346e1358e1a10821228"
+    },
+    {
+      "command": "click",
+      "exit_code": 0,
+      "sha256": "3e9d6cd5149fc5af254db8807ab64333abbeed062294922875083a483e8b78e2"
+    },
+    {
+      "command": "click",
+      "exit_code": 0,
+      "sha256": "1d0ddee8f8e0c05e1ede6e5de2f75c2e81a8e3ca30c63c2edc4006fe7eebd476"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "734d13757fd48a915b610d7e9efedb544d7048be04997cf5a79c15e51016e728"
+    },
+    {
+      "command": "snapshot",
+      "exit_code": 0,
+      "sha256": "87e4ec44f93cac7ea069cc1058d030329ef2a3397533a6b852b1a42f0d6186c7"
+    },
+    {
+      "command": "js",
+      "exit_code": 0,
+      "sha256": "62d26db3790390ff381b2038467dfbbf5dd4919bb73d372244965ffe431effcb"
+    },
+    {
+      "command": "fill",
+      "exit_code": 0,
+      "sha256": "0d584e858e9cd8545669734378c0cb1be03526c3749b5b0a08201b36e3907435"
+    },
+    {
+      "command": "click",
+      "exit_code": 0,
+      "sha256": "1d0ddee8f8e0c05e1ede6e5de2f75c2e81a8e3ca30c63c2edc4006fe7eebd476"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "15f4c69a3a05a47e3f473cf34e125e8827a437aadc3f87c6b77d4459f9866595"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "9337045fec8d16cc8c50b137105ddf9bfe578c3af5cb182b8a5ca326c992011c"
+    },
+    {
+      "command": "click",
+      "exit_code": 0,
+      "sha256": "72bf2b5ae154a7d6e1b7a654dc7f669141f99ae779d403f485e295bc4158e6bf"
+    },
+    {
+      "command": "click",
+      "exit_code": 0,
+      "sha256": "64758455f0246cd814c199432abc38370062312eeef4e260396a37bde8ce071d"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "0ff335cd65da72020708d1f363974638bf9911a803f9ae4d52f3383336c62792"
+    },
+    {
+      "command": "snapshot",
+      "exit_code": 0,
+      "sha256": "bbff2a58b42fda521f859ffb5e172dbe9858a8d3953341eb3e8bbbee9990d6be"
+    },
+    {
+      "command": "click",
+      "exit_code": 0,
+      "sha256": "a00ccec9e5955afd916ee525cbeac05f0d73143139c2f809d02f5069c4ae15f7"
+    },
+    {
+      "command": "fill",
+      "exit_code": 0,
+      "sha256": "ece8a27845addff3a8bf80becd4e9893aed7d6392049f831e94ccccf8a8ab7d9"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "1e357318e73dd175471960e457a2eb6d24441589091d558d2e8f5fa7d60e12d4"
+    },
+    {
+      "command": "click",
+      "exit_code": 0,
+      "sha256": "601227e07a4b15a7b53383d3af51bb8cfd1ffbc3a14122903207203499000ce9"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "961055debafc646bc84ea26b2165c7b6d12ca92fa48f608fe1c5d2ec5e242544"
+    },
+    {
+      "command": "click",
+      "exit_code": 0,
+      "sha256": "601227e07a4b15a7b53383d3af51bb8cfd1ffbc3a14122903207203499000ce9"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "b44bd94305b4a2f5cb17ea6042bab689eaa4862b2e9c0cb32353ed9497114a70"
+    },
+    {
+      "command": "goto",
+      "exit_code": 0,
+      "sha256": "95165c79c98b7624eeda01ebcb6ecf562c3371e58c1a9276e25e11a8c62e9984"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "907a07b561f4d0d729fb9023236f514f67d7c20a87e7c4ab28936345ebfdb471"
+    },
+    {
+      "command": "goto",
+      "exit_code": 0,
+      "sha256": "cda7f7c1a94457753be954159eaa101a2c8ca97866e5fcc18019d08a60f33b92"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "4d92483aa2d41054db91c47ab87dd1154c563b60791eaf0a665b7b19abef868f"
+    },
+    {
+      "command": "click",
+      "exit_code": 1,
+      "sha256": "9224c3b7792c4b560d1a356d8551f1405985cac603b5d38b58dc2350bce6b789"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "4d92483aa2d41054db91c47ab87dd1154c563b60791eaf0a665b7b19abef868f"
+    },
+    {
+      "command": "click",
+      "exit_code": 0,
+      "sha256": "69d31d27914b9da1ddf9985aa44b2bdb4741dd785c5af6dcf23e9889e3b9c008"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "566d15a6654ff6dc0a51f13a0b7f23c269c0672f3f649b5e849391765e38ed07"
+    },
+    {
+      "command": "click",
+      "exit_code": 0,
+      "sha256": "80eb10dcb39ec6694426456a7cf50a9b2a6a97ae8dd030e02b4e99ebf4b673bc"
+    },
+    {
+      "command": "goto",
+      "exit_code": 0,
+      "sha256": "f036262e34fd4f450f43b30d3ba171d2d0eab6f5da0e36d69833edaa9d80510c"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "804392930c9b870ba00398283a3dc13fe51895ee72433ca6bd4ba27a19ca06b2"
+    },
+    {
+      "command": "goto",
+      "exit_code": 0,
+      "sha256": "4fb39cfe5bdbeb4f998253819a4dad4e42dd51c10f881e560e7a4352f9e84812"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "8cebf46d915511ce65afe6a4a0732caaba8877866729f722992c11aface50faf"
+    },
+    {
+      "command": "js",
+      "exit_code": 0,
+      "sha256": "43e5fe08467eadb0a0b0e5ef1bcd5bdd969e693811155728825fc2a74c1c28a0"
+    },
+    {
+      "command": "js",
+      "exit_code": 0,
+      "sha256": "cf86622b0e2ada5aad56a6e3f97d43336c8395867866251d2edfb37fc852c960"
+    },
+    {
+      "command": "js",
+      "exit_code": 0,
+      "sha256": "377b50a14365d442c0909b0a5392cb6180d50c8979f04fb6ea517debe2c944e8"
+    },
+    {
+      "command": "click",
+      "exit_code": 1,
+      "sha256": "8ee190b1390444d44ea2a1ff32b4fb1d105650b5e5eca346e1358e1a10821228"
+    },
+    {
+      "command": "goto",
+      "exit_code": 0,
+      "sha256": "4f952cca7188d3e1c08695fcded33afb66ac795ec42c06b4aeb9b6a6afdb32ad"
+    },
+    {
+      "command": "click",
+      "exit_code": 1,
+      "sha256": "8ee190b1390444d44ea2a1ff32b4fb1d105650b5e5eca346e1358e1a10821228"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "cf12a318d3ffb4e5786e7f9b1693bbbf08a297ff2cf79bbfb75cd4ea729c44a2"
+    },
+    {
+      "command": "js",
+      "exit_code": 0,
+      "sha256": "5c3a5961f8b8bcc8f205186a6ed222534fff83edd8d28567c530df75f19f5593"
+    },
+    {
+      "command": "viewport",
+      "exit_code": 0,
+      "sha256": "d0d9f9fea252e22df1b9aeb0b25a9465a583d9fde94a883cfad7d143545f9ad6"
+    },
+    {
+      "command": "screenshot",
+      "exit_code": 0,
+      "sha256": "4ed9955c1788d4cb58273ff6ede27671684081241a9c358cfd953e918347e9a7"
+    },
+    {
+      "command": "click",
+      "exit_code": 1,
+      "sha256": "8ee190b1390444d44ea2a1ff32b4fb1d105650b5e5eca346e1358e1a10821228"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "cf12a318d3ffb4e5786e7f9b1693bbbf08a297ff2cf79bbfb75cd4ea729c44a2"
+    },
+    {
+      "command": "goto",
+      "exit_code": 0,
+      "sha256": "e7db0d0a9000b9037fc601d8ec1484e069ee4492f3fba64c828c7b6f75f05bd2"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "0c2eab1556c7f1010afddabe54a0387a600248990c2825f93d6148920566eae3"
+    },
+    {
+      "command": "snapshot",
+      "exit_code": 0,
+      "sha256": "bc1cfcaabed49f747677bddb44a313a0e70551248a39a89dcff7b2ed80c78f28"
+    },
+    {
+      "command": "js",
+      "exit_code": 0,
+      "sha256": "7eea84f179a2fece59c7fee210a59c0f4283e5e84e8d975bb419d99b232c8163"
+    },
+    {
+      "command": "click",
+      "exit_code": 0,
+      "sha256": "c463b3b40c07a33119bd8411c86b5b3c7817fcf5fc8bd97865c659457fd9deb4"
+    },
+    {
+      "command": "snapshot",
+      "exit_code": 0,
+      "sha256": "36126698581e7cc29c36762e8999d532feb4dc6f3d9fc28aa773c70e94b5ff55"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "08611ab0874d74651e486d6d3ad19fda5e7b5cc6864e3645abaf01cf587ecbe6"
+    },
+    {
+      "command": "click",
+      "exit_code": 0,
+      "sha256": "83b9b0bd39fad4e8b2f33bd20ef58b25709897360968175d6fe79eefa74dc2de"
+    },
+    {
+      "command": "js",
+      "exit_code": 0,
+      "sha256": "d644ec98c4177a8aa00e107aa8c26ada506c97102d2c00ddc12d7db3ea3c58dd"
+    },
+    {
+      "command": "js",
+      "exit_code": 0,
+      "sha256": "dba5166ad9db9ba648c1032ebbd34dcd0d085b50023b839ef5c68ca1db93a563"
+    },
+    {
+      "command": "js",
+      "exit_code": 0,
+      "sha256": "c1b7c04d0267f7bc9def690df1e78ab7257dc4b2d64bc632c3efaa315d1e4e92"
+    },
+    {
+      "command": "eval",
+      "exit_code": 0,
+      "sha256": "dba5166ad9db9ba648c1032ebbd34dcd0d085b50023b839ef5c68ca1db93a563"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "4c955a833ba963ebbb6f6eb3918480a92fe192cd2012a8ae7209705515e60076"
+    },
+    {
+      "command": "js",
+      "exit_code": 0,
+      "sha256": "7f29e5175a736e04839986f5c05c9bd2106f22c314eb846048af3ec8f956f964"
+    },
+    {
+      "command": "screenshot",
+      "exit_code": 0,
+      "sha256": "08e1863d169e041f70c66e7b71678dd56ac039c9c956f75bc629f24f75b8862b"
+    },
+    {
+      "command": "goto",
+      "exit_code": 0,
+      "sha256": "cda7f7c1a94457753be954159eaa101a2c8ca97866e5fcc18019d08a60f33b92"
+    },
+    {
+      "command": "click",
+      "exit_code": 0,
+      "sha256": "69d31d27914b9da1ddf9985aa44b2bdb4741dd785c5af6dcf23e9889e3b9c008"
+    },
+    {
+      "command": "snapshot",
+      "exit_code": 0,
+      "sha256": "1871087a6195eb1724f27a635f3f308cb5236aed8993332e4d0a36192633cfe0"
+    },
+    {
+      "command": "click",
+      "exit_code": 0,
+      "sha256": "86b7eaf51e456bf9c3cd9ae91e3d2b527bc10595c42a710906e1452fbff0fbcf"
+    },
+    {
+      "command": "js",
+      "exit_code": 0,
+      "sha256": "6a2f1501d52a365ce92199a5ff93424cbc52a5163c5e94e39a4549baf289b3c4"
+    },
+    {
+      "command": "goto",
+      "exit_code": 0,
+      "sha256": "4f952cca7188d3e1c08695fcded33afb66ac795ec42c06b4aeb9b6a6afdb32ad"
+    },
+    {
+      "command": "js",
+      "exit_code": 0,
+      "sha256": "dba5166ad9db9ba648c1032ebbd34dcd0d085b50023b839ef5c68ca1db93a563"
+    },
+    {
+      "command": "snapshot",
+      "exit_code": 0,
+      "sha256": "eb89a06077cdf0cc5a4820923aabcdb54baf1dacdfd0b15520209a96c1d4e401"
+    },
+    {
+      "command": "click",
+      "exit_code": 0,
+      "sha256": "bcf8f0f4929b7219a79621b3619c2ce8a4b74e9be6bd3869a6199e6edb90c6ec"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "4494aa21a0f123dc84b48a4950c46215e878a207e0cc3c8ebc41892cb5a21278"
+    },
+    {
+      "command": "eval",
+      "exit_code": 0,
+      "sha256": "7521446567703ff95118ddd54701dac8a2fb4558c6eaacb39fc90574ac67f5d0"
+    },
+    {
+      "command": "eval",
+      "exit_code": 0,
+      "sha256": "97361b84c4a9dc1af8f20b2465c92e852a33da7e4e8e5f4c985b10683e5a59c1"
+    },
+    {
+      "command": "eval",
+      "exit_code": 0,
+      "sha256": "4a6e5390c803f059d046d2cf70d33f084882ca6da05d9f686e83608916f15881"
+    },
+    {
+      "command": "eval",
+      "exit_code": 0,
+      "sha256": "8458d9d9fd76c299d97f820c3e3fafd6fb0c5a7e866aee60b7d90454b0048a1b"
+    },
+    {
+      "command": "eval",
+      "exit_code": 0,
+      "sha256": "f25db9d0c16e13e556c294aa47b4db1c49e39b8e016357223a5f9c049752391c"
+    },
+    {
+      "command": "eval",
+      "exit_code": 0,
+      "sha256": "b0ffc5e30e61063838a1f1288da4a8c648e3cf4202cec64c9f698f0853ee5a74"
+    },
+    {
+      "command": "eval",
+      "exit_code": 0,
+      "sha256": "f29764cefd36a95c5bd5e6c2997a9b82e0c751d468a2e3c9aa43eccf4518fe02"
+    },
+    {
+      "command": "goto",
+      "exit_code": 0,
+      "sha256": "4f952cca7188d3e1c08695fcded33afb66ac795ec42c06b4aeb9b6a6afdb32ad"
+    },
+    {
+      "command": "js",
+      "exit_code": 0,
+      "sha256": "5e4d41e41b98ab3f353d52caa1a6f619598e21af7456fd03752d34764fcb9019"
+    },
+    {
+      "command": "snapshot",
+      "exit_code": 0,
+      "sha256": "eb89a06077cdf0cc5a4820923aabcdb54baf1dacdfd0b15520209a96c1d4e401"
+    },
+    {
+      "command": "click",
+      "exit_code": 0,
+      "sha256": "f1d0b7c46e3e2fa2e7e052737a836a075261d338667764ae3b6334007760ac29"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "7df2b6856aa8945070ccfc136aeb122555acc209f9fd38fbf2f1d8369b5fe3ee"
+    },
+    {
+      "command": "screenshot",
+      "exit_code": 0,
+      "sha256": "66e6f748b4ff1ed19c96fed338a99489e3fb5c7fab5774bfac386d32695b9c71"
+    },
+    {
+      "command": "viewport",
+      "exit_code": 0,
+      "sha256": "f9be603c8ae2b52b8f025f261f9c26efa81ac412a121e69edbcd02c1f77bcd83"
+    },
+    {
+      "command": "js",
+      "exit_code": 0,
+      "sha256": "9627609a4bfb324d9302c4ce1246e36b6e3ce3b29ce24f0aeeee2d6ce584a215"
+    },
+    {
+      "command": "screenshot",
+      "exit_code": 0,
+      "sha256": "d559f0501ddba1e125d642080159a9e681e660b3343f65807aaec9db2a09bb7d"
+    },
+    {
+      "command": "eval",
+      "exit_code": 0,
+      "sha256": "f29764cefd36a95c5bd5e6c2997a9b82e0c751d468a2e3c9aa43eccf4518fe02"
+    },
+    {
+      "command": "goto",
+      "exit_code": 0,
+      "sha256": "b638171e8d7d10a2856008dfcbf89ba0fbfe8a8fef5eee1b83bcef69b916c9e8"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "2f6d4310890781573987507ab6e9f854c4b58b302b5de30fb9d60c725bbdadd0"
+    },
+    {
+      "command": "eval",
+      "exit_code": 0,
+      "sha256": "f29764cefd36a95c5bd5e6c2997a9b82e0c751d468a2e3c9aa43eccf4518fe02"
+    },
+    {
+      "command": "goto",
+      "exit_code": 0,
+      "sha256": "f11872431effabcd4dd7b4fddee3c6fc09fed73fc8843261f3465501fc3928b8"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "5357dd128a15838135a1e171b5d4de0f3b073d85eb1291d4872fac3e908e00d6"
+    },
+    {
+      "command": "eval",
+      "exit_code": 0,
+      "sha256": "f29764cefd36a95c5bd5e6c2997a9b82e0c751d468a2e3c9aa43eccf4518fe02"
+    },
+    {
+      "command": "goto",
+      "exit_code": 0,
+      "sha256": "1b8a6cc9f15f9840f4fab951457d0aa11e0b965532782b68c1d3d768040800d6"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "365c9ab26a5f7711caffd7a983a0f9fa2f2919bd1a2dec5a6e5b9cdc66e0dd8c"
+    },
+    {
+      "command": "goto",
+      "exit_code": 0,
+      "sha256": "6a352381e1c0b00ef5977b56e0ec4aec1b127662bf24a34e634c475c63429e04"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "d12364f2a42e94d42a93fc57f7e138b506f5320cd2d106bd69228c765839a7c8"
+    },
+    {
+      "command": "goto",
+      "exit_code": 0,
+      "sha256": "eb376b366661596dda9da8d41b2eb3e7e3ae98ba457170fea84a2f91077001e9"
+    },
+    {
+      "command": "text",
+      "exit_code": 0,
+      "sha256": "00ea1238dc148686f885eee84819687baf1903250a42d8e2071b2f4eca8d62e0"
+    },
+    {
+      "command": "goto",
+      "exit_code": 0,
+      "sha256": "7eefda783dac3a935f368ca582a87268ca11f1581e9253a092f8a9a79df92b78"
+    },
+    {
+      "command": "js",
+      "exit_code": 0,
+      "sha256": "9c4569cc5ebfeb131983e539598fe91cd4dfaeac24f995297d9c4811a433bb6e"
+    }
+  ],
+  "http_observations": [
+    {
+      "method": "POST",
+      "path": "/api/vehicle/vin-decode",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/brand/list",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/brand/list",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/series/list",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/model/list",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/vehicle/add",
+      "status": 503,
+      "synthetic_proxy_fault": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/vehicle/add",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/brand/list",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/brand/list",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/series/list",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/model/list",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/series/list",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/model/list",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/brand/list",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/vehicle/list",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/invite/rewards",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/invite/progress",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/brand/list",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/invite/reward-policy",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/vehicle/list",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/coupon/mine",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/vehicle/list",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/invite/diagnosis-eligibility",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/vehicle/list",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/vehicle/1/health-dashboard",
+      "status": 200,
+      "synthetic_proxy_fault": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/experience-cards",
+      "status": 503,
+      "synthetic_proxy_fault": false
+    }
+  ]
+}

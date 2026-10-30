@@ -28,6 +28,12 @@ public class ArchiveService {
 
     private void authorize(VehicleOwner owner, boolean lock) {
         if (!Instant.now().isBefore(owner.expires())) throw expired();
+        if(!lock) {
+            var active=jdbc.query("SELECT s.id FROM auth_session s JOIN user u ON u.id=s.subject_id WHERE s.id=? AND s.subject_id=? "
+                +"AND s.subject_type='user' AND s.role='OWNER' AND s.revoked_at IS NULL AND s.expires_at>UTC_TIMESTAMP() AND u.status=1 AND u.is_deleted=0",
+                (rs,n)->rs.getString(1),owner.session(),owner.id());
+            if(active.isEmpty())throw expired();return;
+        }
         String suffix = lock ? " FOR UPDATE" : "";
         boolean session = !jdbc.query("SELECT id FROM auth_session WHERE id=? AND subject_type='user' AND subject_id=? "
             + "AND role='OWNER' AND revoked_at IS NULL AND expires_at>UTC_TIMESTAMP()" + suffix,

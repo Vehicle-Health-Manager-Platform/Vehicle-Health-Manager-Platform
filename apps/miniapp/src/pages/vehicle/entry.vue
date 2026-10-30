@@ -7,7 +7,7 @@ import {initialVehicleEntryState,createVehicleEntryFlow} from '../../services/ve
 import {vehicleEntryPrefill} from '../../services/vehicle-entry-session.js'
 import {selectOwnerVehicle} from '../../services/owner-vehicle-selection.js'
 import {initialVinState,createVinFlow} from '../../services/vin-decode.js'
-import {VIN_DISCLOSURE,vinSummary} from '../../services/vin-candidate.js'
+import {VIN_DISCLOSURE,vinSummary,vinSourceLabel} from '../../services/vin-candidate.js'
 import LicenseRecognition from '../../components/LicenseRecognition.vue'
 const state=reactive(initialVehicleEntryState())
 const flow=createVehicleEntryFlow({state,api:vehicleApi,token:()=>ownerSession.accessToken,prefill:vehicleEntryPrefill})
@@ -50,7 +50,7 @@ function choose(row){try{selectOwnerVehicle(flow.select(row));uni.switchTab({url
     <button :disabled="!vinState.consent||vinState.busy" :loading="vinState.busy" @tap="vinFlow.recognize">查询VIN候选</button>
     <button v-if="vinState.busy" class="secondary" @tap="vinFlow.invalidate">取消查询</button>
     <view v-if="vinState.candidate&&vinState.candidate.status!=='NO_MATCH'" class="match">
-     <text class="heading">{{vinState.candidate.status==='PARTIAL'?'部分候选信息':'车型候选信息'}}</text><text class="copy">来源：NHTSA（美国市场登记）</text><text class="copy">{{vinSummary(vinState.candidate)}}</text>
+     <text class="heading">{{vinState.candidate.status==='PARTIAL'?'部分候选信息':'车型候选信息'}}</text><text class="copy">来源：{{vinSourceLabel(vinState.candidate)}}</text><text class="copy">{{vinSummary(vinState.candidate)}}</text>
      <checkbox-group @change="vinState.reviewed=$event.detail.value.includes('yes')"><label class="copy"><checkbox value="yes" :checked="vinState.reviewed" />我已核对，继续手动选择车型</label></checkbox-group>
      <button :disabled="!vinState.reviewed" @tap="confirmedVin">带入VIN和候选摘要</button>
     </view>

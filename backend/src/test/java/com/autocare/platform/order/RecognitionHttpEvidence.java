@@ -31,7 +31,8 @@ final class RecognitionHttpEvidence {
  }
  static String sourceDigest()throws Exception{
   Path root=Path.of("..").toAbsolutePath().normalize();var files=new ArrayList<Path>();
-  for(String dir:List.of("backend/src","docs/sql/migrations"))try(var stream=Files.walk(root.resolve(dir))){stream.filter(Files::isRegularFile).filter(p->p.toString().endsWith(dir.equals("backend/src")?".java":".sql")).forEach(files::add);}
+  for(String dir:List.of("backend/src","docs/sql/migrations"))try(var stream=Files.walk(root.resolve(dir))){stream.filter(Files::isRegularFile).forEach(files::add);}
+  files.add(root.resolve("docs/testing/fixtures/vin-local-synthetic.json"));
   files.add(root.resolve("backend/pom.xml"));files.add(root.resolve("scripts/run_recognition_http_acceptance.py"));files.sort(Comparator.comparing(p->root.relativize(p).toString().replace('\\','/')));
   var digest=MessageDigest.getInstance("SHA-256");for(var file:files){digest.update(root.relativize(file).toString().replace('\\','/').getBytes(StandardCharsets.UTF_8));digest.update(Files.readAllBytes(file));}return HexFormat.of().formatHex(digest.digest());
  }

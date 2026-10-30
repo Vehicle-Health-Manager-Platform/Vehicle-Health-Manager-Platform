@@ -13,6 +13,12 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 @ConditionalOnProperty("MYSQL_HOST")
 public class KnowledgeEmbeddingConfiguration {
  static boolean flag(String value){if(!Set.of("true","false").contains(value))throw new IllegalArgumentException("Invalid knowledge embedding flag");return value.equals("true");}
+ static KnowledgeEmbeddingRetries.Policy retryPolicy(Environment env){
+  if(!flag(env.getProperty("KNOWLEDGE_EMBEDDING_RETRY_ENABLED","false")))return KnowledgeEmbeddingRetries.Policy.disabled();
+  String limit=env.getProperty("KNOWLEDGE_EMBEDDING_RETRY_LIMIT","2"),delay=env.getProperty("KNOWLEDGE_EMBEDDING_RETRY_DELAY_SECONDS","60");
+  if(!limit.matches("[1-3]")||!delay.matches("[0-9]{2,4}"))throw new IllegalArgumentException("Invalid embedding retry policy");
+  return new KnowledgeEmbeddingRetries.Policy(true,Integer.parseInt(limit),java.time.Duration.ofSeconds(Long.parseLong(delay)));
+ }
  static EmbeddingProfile profile(String raw){try{
   if(raw==null||raw.length()>4096)throw new IllegalArgumentException();
   var mapper=new ObjectMapper(JsonFactory.builder().enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION).build()).enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
@@ -33,7 +39,7 @@ public class KnowledgeEmbeddingConfiguration {
    p=profile(env.getProperty("KNOWLEDGE_EMBEDDING_PROFILE_JSON",""));
    provider=new EmbeddingHttpClient(env.getProperty("KNOWLEDGE_EMBEDDING_URL",""),env.getProperty("KNOWLEDGE_EMBEDDING_TOKEN",""),flag(env.getProperty("KNOWLEDGE_EMBEDDING_ALLOW_PRIVATE_HTTP","false")),p);
   }
-  var runtime=new KnowledgeEmbeddingRuntime(db,knowledge,p,provider,enabled,cleanup,vector);knowledge.embeddingRuntime(runtime);return runtime;
+  var runtime=new KnowledgeEmbeddingRuntime(db,knowledge,p,provider,enabled,cleanup,vector,retryPolicy(env));knowledge.embeddingRuntime(runtime);return runtime;
  }
  @Bean EmbeddingSchedule embeddingSchedule(KnowledgeEmbeddingRuntime runtime){return new EmbeddingSchedule(runtime);}
  static final class EmbeddingSchedule {
