@@ -1,0 +1,113 @@
+name: Bug 报告
+description: 报告可复现的问题（安全漏洞请勿走此入口）
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈。请尽量把信息填完整——缺信息的问题通常只能停在"无法复现"。
+
+        **安全问题请不要在这里提交**，请按 [SECURITY.md](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/blob/main/SECURITY.md) 的私密渠道报告。
+
+  - type: checkboxes
+    id: precheck
+    attributes:
+      label: 提交前确认
+      options:
+        - label: 我已搜索过现有 Issue，没有重复
+          required: true
+        - label: 我的描述中不含 token、密钥、手机号、车牌、VIN 或真实用户数据
+          required: true
+
+  - type: dropdown
+    id: runtime
+    attributes:
+      label: 运行形态
+      description: 问题出现在哪一层
+      options:
+        - 微信小程序（开发者工具模拟器）
+        - 微信小程序（真机）
+        - 后端 API（直连 uni.request）
+        - 后端 API（微信云托管 callContainer）
+        - 历史网页原型 apps/owner|merchant|technician|admin
+        - 本地脚本 / 构建 / CI
+        - 文档不准确
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: 功能域
+      options:
+        - 登录与身份
+        - 车辆与档案
+        - 服务与预约
+        - 订单履约（接车/派工/施工/核销）
+        - 支付与退款
+        - 券 / 积分 / 邀请
+        - 问答与内容
+        - 识别（OCR / ASR / 文档 / VIN）
+        - AI 管家
+        - 数据库与迁移
+        - 构建与部署
+        - 其他
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      placeholder: |
+        1. 以车主身份登录
+        2. 进入「服务」→ 选择某门店
+        3. 点击「预约」并提交
+        4. 出现 ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望结果
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际结果
+      description: 包含错误文案、HTTP 状态与业务码（如 50300 / 43007）
+    validations:
+      required: true
+
+  - type: input
+    id: request_id
+    attributes:
+      label: request_id（可选但强烈建议）
+      description: 后端错误响应体里的 `request_id`，便于定位日志
+      placeholder: 0f8f0000-0000-4000-8000-000000000000
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志或截图
+      description: 请先脱敏。截图需来自真实运行的项目。
+      render: text
+
+  - type: input
+    id: env
+    attributes:
+      label: 环境
+      description: 操作系统、Node/Java/Maven/MySQL 版本、是否使用 Compose、相关开关是否为 true
+      placeholder: Windows 11 / Node 22.22 / Java 17 / MySQL 8.0 (Compose) / MERCHANT_STAFF_ENABLED=false
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: 补充说明
+      description: 例如是否只在第二次提交时出现、切换账号后是否仍复现
