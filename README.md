@@ -1,5 +1,14 @@
 # 汽车健康管家平台（Vehicle Health Manager Platform）
 
+[![CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/workflows/ci.yml/badge.svg)](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/workflows/ci.yml)
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
+![Java](https://img.shields.io/badge/Java-17-ED8B00.svg)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-6DB33F.svg)
+![Node.js](https://img.shields.io/badge/Node.js-22.x-339933.svg)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1.svg)
+![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB.svg)
+![uni-app](https://img.shields.io/badge/uni--app-3-2B9939.svg)
+
 面向**车主、汽车服务门店与技师**的汽车健康管理与服务履约平台。当前交付形态是**一个微信小程序（三角色 + 受限运营入口）加一套共用后端**，覆盖"录车建档 → 健康读数与提醒 → 服务发现与预约 → 支付 → 接车 → 派工 → 施工 → 质检 → 核销 → 归档 → 评价"的完整闭环。
 
 > **阅读提示**
@@ -12,16 +21,15 @@
 
 - [1. 项目介绍](#1-项目介绍)
 - [2. 三端介绍](#2-三端介绍)
-- [3. 界面预览](#3-界面预览)
-- [4. 技术架构](#4-技术架构)
-- [5. 目录结构](#5-目录结构)
-- [6. 快速开始](#6-快速开始)
-- [7. 使用说明与业务闭环](#7-使用说明与业务闭环)
-- [8. 接口接入说明](#8-接口接入说明)
-- [9. 微信小程序上线指南](#9-微信小程序上线指南)
-- [10. 部署与维护](#10-部署与维护)
-- [11. 能力现状：已实现 / 部分实现 / 计划](#11-能力现状已实现--部分实现--计划)
-- [12. 文档导航](#12-文档导航)
+- [3. 技术架构](#3-技术架构)
+- [4. 目录结构](#4-目录结构)
+- [5. 快速开始](#5-快速开始)
+- [6. 使用说明与业务闭环](#6-使用说明与业务闭环)
+- [7. 接口接入说明](#7-接口接入说明)
+- [8. 微信小程序上线指南](#8-微信小程序上线指南)
+- [9. 部署与维护](#9-部署与维护)
+- [10. 能力现状：已实现 / 部分实现 / 计划](#10-能力现状已实现--部分实现--计划)
+- [11. 文档导航](#11-文档导航)
 
 ---
 
@@ -139,26 +147,9 @@ flowchart TD
 
 ---
 
-## 3. 界面预览
+## 3. 技术架构
 
-以下截图来自**微信开发者工具模拟器**的真实运行画面，原图存放在 [docs/ui/screenshots](docs/ui/screenshots)，来源与更新方式见 [截图说明](docs/ui/screenshots/README.md)。派工画面使用合成订单与合成技师数据；这些截图不代表真机或生产环境验收。
-
-| 车主入口 | 门店派工确认 | 运营登录 |
-| --- | --- | --- |
-| [<img src="docs/ui/screenshots/owner-entry.png" alt="微信小程序车主入口，展示工作流程提示与微信登录按钮" width="230">](docs/ui/screenshots/owner-entry.png) | [<img src="docs/ui/screenshots/merchant-dispatch.png" alt="微信小程序门店派工确认弹窗，使用合成订单和技师数据" width="230">](docs/ui/screenshots/merchant-dispatch.png) | [<img src="docs/ui/screenshots/operator-login.png" alt="微信小程序运营登录表单，包含账号、密码与短信验证码输入框" width="230">](docs/ui/screenshots/operator-login.png) |
-| 车主工作入口与登录提示 | 派工确认与技师接单说明 | 受限运营两步登录 |
-
-**关于"动态流程展示"的说明（已核实）**
-
-- GitHub 在 Markdown / Issue / PR / Wiki 中支持 Mermaid 代码块渲染（[GitHub 官方文档](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams)，核验日期 2026-10-30）。它渲染的是**静态 SVG**：GitHub 不执行 README 中的 JavaScript，Mermaid 也不会产生逐帧动画。
-- 因此本仓库用**多张静态 Mermaid 图**表达流程（架构图、三端协作时序图、业务状态机），不把 Mermaid 描述成"会动的流程图"。
-- 若需要真正的动画，只能放**仓库内可直接展示的 GIF**（GitHub 会当图片播放）。本次**没有新增 GIF**：当前环境未安装微信开发者工具（已核实其 `cli.bat` 不存在），无法从真实运行的项目中录屏；用生成图片冒充项目截图会失真，故不提供。补充真实 GIF 的方法写在 [截图说明](docs/ui/screenshots/README.md)。
-
----
-
-## 4. 技术架构
-
-### 4.1 技术栈
+### 3.1 技术栈
 
 | 层 | 技术 | 依据 |
 | --- | --- | --- |
@@ -171,7 +162,7 @@ flowchart TD
 | 识别服务 | 独立 Python 服务：`services/ocr`、`services/asr`、`services/documents`、`services/embedding` | 各 `README.md`、`Dockerfile` |
 | 测试与门禁 | Maven + JUnit + Testcontainers、Node `--test`、Python `unittest`、GitHub Actions 8 个作业 | `.github/workflows/ci.yml` |
 
-### 4.2 系统架构图
+### 3.2 系统架构图
 
 ```mermaid
 flowchart LR
@@ -217,7 +208,9 @@ flowchart LR
     B4 --> D4
 ```
 
-### 4.3 服务之间的关系
+> **关于图示**：README 里的图都是 Mermaid 代码块，GitHub 会渲染成**静态 SVG**——它不执行 README 中的 JavaScript，Mermaid 也不会产生逐帧动画（[GitHub 官方文档](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams)，核验日期 2026-10-30）。界面截图不在正文内嵌，原图与更新规范见 [docs/ui/screenshots](docs/ui/screenshots/README.md)；确实需要动画时只能放仓库内的 GIF，录制方法写在同目录说明中。
+
+### 3.3 服务之间的关系
 
 - **单体优先**：`backend/src/main/java/com/autocare/platform/` 下的 `gateway`、`vehicle`、`order`、`coupon`、`point`、`community` 等是**包，不是独立微服务**，同一进程、同一数据库。
 - **识别/AI 是可选外部进程**：后端只配置内网 URL 与 token 去调用 `services/*`，凭据只留在服务端；默认 `false` 时相关接口返回明确的未启用状态。
@@ -226,7 +219,7 @@ flowchart LR
 
 ---
 
-## 5. 目录结构
+## 4. 目录结构
 
 ```text
 .
@@ -266,9 +259,9 @@ flowchart LR
 
 ---
 
-## 6. 快速开始
+## 5. 快速开始
 
-### 6.1 环境要求
+### 5.1 环境要求
 
 版本依据 CI 与实测文档（`.github/workflows/ci.yml`、[docs/delivery/LOCAL_SETUP.md](docs/delivery/LOCAL_SETUP.md)）：
 
@@ -282,9 +275,9 @@ flowchart LR
 | Docker | Linux Engine / Desktop | Compose 基础设施；后端完整测试需要容器化 MySQL/MinIO |
 | 微信开发者工具 | 稳定版 | 导入编译产物、模拟器与真机调试 |
 
-> 不需要微信账号也能跑通大部分检查（见 6.8）。但**真实登录、真机与上线必须有正式 AppID 与后台配置**。
+> 不需要微信账号也能跑通大部分检查（见 5.8）。但**真实登录、真机与上线必须有正式 AppID 与后台配置**。
 
-### 6.2 安装依赖
+### 5.2 安装依赖
 
 在仓库根目录执行（npm workspaces 会一次装好 `apps/*`）：
 
@@ -300,7 +293,7 @@ python -m venv .cache/qa-runtime
 .cache/qa-runtime/Scripts/python.exe -m pip install -r scripts/requirements-export-qa.txt
 ```
 
-### 6.3 初始化数据库
+### 5.3 初始化数据库
 
 **方式 A：Compose 自动初始化（推荐本地）**
 
@@ -320,7 +313,7 @@ docker compose --env-file .env -f deploy/compose/compose.yml up -d mysql
 
 > `docs/sql/init.sql` 与 `V001__baseline.sql` 由 `python scripts/build_init_sql.py` 从同一批迁移源生成，CI 会校验两者与追踪表一致。`docs/sql/seed_test.sql` **只用于测试环境**，不会被 Compose 自动导入。
 
-### 6.4 配置环境变量
+### 5.4 配置环境变量
 
 根目录 `.env.example` 是**模板**，其中的值是占位符；裸 Java 进程**不会自动加载** `.env`。
 
@@ -354,7 +347,7 @@ cp apps/miniapp/.env.example apps/miniapp/.env.local
 # 填入可访问的后端地址，例如 http://127.0.0.1:8080
 ```
 
-### 6.5 启动后端
+### 5.5 启动后端
 
 ```bash
 cd backend
@@ -366,7 +359,7 @@ mvn spring-boot:run
 - 服务端持久化时间按 **UTC** 运行，业务月份/自然日按 Asia/Shanghai 规则计算；Windows 本地建议在当前终端设置 `JAVA_TOOL_OPTIONS=-Duser.timezone=UTC`。
 - 完整后端测试：`mvn test`（`-Pcore-coverage` 生成覆盖率），需要可用 Docker。
 
-### 6.6 构建与导入微信小程序
+### 5.6 构建与导入微信小程序
 
 ```bash
 npm run build:miniapp
@@ -397,7 +390,7 @@ node scripts/miniapp_lan_helper.cjs --restore         # 用完恢复回环地址
 
 细节见 [真机登录清单](docs/operations/LAN_DEVICE_LOGIN_RUNBOOK.md)。
 
-### 6.7 初始化数据与账号
+### 5.7 初始化数据与账号
 
 仓库**不提供默认可登录账号**，也没有 HTTP 注册/提权入口。按角色分别准备：
 
@@ -430,7 +423,7 @@ java -jar app.jar --spring.profiles.active=staff-admin \
 
 > 文档与示例中不包含任何真实账号、手机号或密钥；请勿把员工码、运营密码写入仓库、日志或工单。
 
-### 6.8 一键本地检查（无需微信/短信账号）
+### 5.8 一键本地检查（无需微信/短信账号）
 
 ```bash
 python scripts/run_local_delivery.py            # 小程序测试、Python 回归、构建、OpenAPI、迁移挂载等
@@ -441,9 +434,9 @@ python scripts/run_local_delivery.py --backend  # 追加真实 MySQL/HTTP 后端
 
 ---
 
-## 7. 使用说明与业务闭环
+## 6. 使用说明与业务闭环
 
-### 7.1 车主闭环
+### 6.1 车主闭环
 
 1. **登录**：微信登录 → 首次自动建号 → 可选绑定手机号。
 2. **录车**：车型四级选择（品牌/车系/车型）→ 里程必填且为非负整数 → 车牌/VIN 可选（服务端二次校验格式）。
@@ -456,15 +449,15 @@ python scripts/run_local_delivery.py --backend  # 追加真实 MySQL/HTTP 后端
 9. **取车与评价**：取车对比 → 核销 → 自动归档 → 评价（可分别授权公开星级、公开文字、AI 摘要）。
 10. **权益**：券、积分、邀请奖励按开关生效；未开启时页面显示不可用而不是伪造成功。
 
-### 7.2 门店闭环
+### 6.2 门店闭环
 
 入驻申请 → 运营审核开店 → 维护服务项目/报价版本/时段 → 接收预约 → 接车检查 → 派工 → 施工防护与报工 → 质检签字 → 核销 → 佣金与经营看板。
 
-### 7.3 技师闭环
+### 6.3 技师闭环
 
 员工码绑定 → 查看本人派工 → 接单 → 按单报工（照片 + 故障件）→ 质检提交 → 完成。
 
-### 7.4 三端协作时序
+### 6.4 三端协作时序
 
 ```mermaid
 sequenceDiagram
@@ -493,7 +486,7 @@ sequenceDiagram
     O->>B: 评价与公开授权
 ```
 
-### 7.5 核心业务状态机（与代码一致）
+### 6.5 核心业务状态机（与代码一致）
 
 状态定义与迁移表在 `backend/src/main/java/com/autocare/platform/order/OrderStatus.java`：
 
@@ -526,14 +519,14 @@ stateDiagram-v2
 
 ---
 
-## 8. 接口接入说明
+## 7. 接口接入说明
 
-### 8.1 接口地址
+### 7.1 接口地址
 
 - 后端所有业务接口以 **`/api/`** 开头，默认端口 8080；Compose 中后端不直接暴露，经 Nginx 的 `/api/` 反代。
 - 小程序侧地址由 `apps/miniapp/src/services/api-config.js` 解析：云托管模式用固定哨兵 origin + `callContainer`，否则用 `VITE_API_BASE_URL`。未配置时登录会提示"登录服务尚未配置"。
 
-### 8.2 认证方式
+### 7.2 认证方式
 
 | 场景 | 接口 | 凭证 |
 | --- | --- | --- |
@@ -548,7 +541,7 @@ stateDiagram-v2
 
 JWT 细节（`SecurityConfig`、`AuthTokens`）：HS256、issuer `vehicle-health-manager`、访问令牌 **15 分钟**、刷新凭证 **30 天且轮换**（旧凭证立即失效）；注销、禁用、解绑都会让旧访问令牌在下次请求时失效。
 
-### 8.3 请求头
+### 7.3 请求头
 
 | 头 | 何时必需 | 说明 |
 | --- | --- | --- |
@@ -558,7 +551,7 @@ JWT 细节（`SecurityConfig`、`AuthTokens`）：HS256、issuer `vehicle-health
 
 写接口**拒绝查询参数**（例如 `/api/vehicle/match-plate` 带 query 直接 400），这是刻意的防混淆设计。
 
-### 8.4 响应格式与错误处理
+### 7.4 响应格式与错误处理
 
 统一响应体（`common/ApiResponse.java`）：
 
@@ -588,7 +581,7 @@ JWT 细节（`SecurityConfig`、`AuthTokens`）：HS256、issuer `vehicle-health
 
 业务细分码会出现在具体契约里，例如派工争议阻断 `43007`、AI 未配置 `50301`。响应普遍带 `Cache-Control: no-store`。
 
-### 8.5 代表性请求示例
+### 7.5 代表性请求示例
 
 > 以下均为**格式示例**，`<...>` 是占位符；请勿提交真实 token、AppSecret 或手机号。
 
@@ -638,7 +631,7 @@ curl -X POST "$API_BASE/api/vehicle/add" \
 
 更多接口（预约、支付、派工、券、积分、问答等）以 [docs/api](docs/api/README.md) 与 [openapi.json](docs/api/openapi.json) 为准；`openapi.json` 是**生成物**，由 `python scripts/generate_openapi.py` 产出，CI 会校验可复现性。
 
-### 8.6 三端如何连接后端 / 环境切换
+### 7.6 三端如何连接后端 / 环境切换
 
 ```mermaid
 flowchart LR
@@ -653,7 +646,7 @@ flowchart LR
 - **切换不需要改代码**：只有 `src/services/api-config.js` 读取这两个变量，业务服务层统一通过 `apiRuntime` 发请求。
 - Vite 环境变量会打进产物，**只能放公开配置**；`WECHAT_APP_SECRET`、短信、MinIO、AI 密钥一律只放服务端。
 
-### 8.7 第三方服务配置位置
+### 7.7 第三方服务配置位置
 
 | 第三方 | 后端变量 | 代码位置 | 仓库现状 |
 | --- | --- | --- | --- |
@@ -669,11 +662,11 @@ flowchart LR
 
 ---
 
-## 9. 微信小程序上线指南
+## 8. 微信小程序上线指南
 
 > 本章区分**仓库里已经具备的**与**使用者必须自行申请/完成的**。平台政策会变，以下外部要求均标注来源与核验日期 **2026-10-30**，执行前请以官方页面当时内容为准。
 
-### 9.1 三种运行形态
+### 8.1 三种运行形态
 
 | 形态 | 如何得到 | 能用什么域名 | 典型用途 |
 | --- | --- | --- | --- |
@@ -681,13 +674,13 @@ flowchart LR
 | 体验版 | 开发者工具「上传」→ 后台「版本管理」设为体验版 → 添加体验成员 | 必须是已配置的 **HTTPS 合法域名** | 内部试用、真机验收 |
 | 正式版 | 体验版验证通过 → 「提交审核」→ 审核通过后「发布」 | 同上 | 对外发布 |
 
-### 9.2 账号与 AppID
+### 8.2 账号与 AppID
 
 - 仓库 `apps/miniapp/src/manifest.json` 里写的是**公开测试号 AppID**，只能用于开发调试，不能提审上线。
 - 上线前需把 `manifest.json` 的 `mp-weixin.appid` 换成自己的 AppID，并在小程序后台完成主体认证。
 - 若拆成三个独立小程序，需要先建立 `(app_id, openid)` 身份映射再分别构建验证——当前代码按单 AppID 设计（`IdentityRepository` 以 `app_id + openid` 定位技师绑定）。
 
-### 9.3 合法域名与 HTTPS（必须自备）
+### 8.3 合法域名与 HTTPS（必须自备）
 
 开发者工具之外的请求必须走已配置的 HTTPS 域名。官方要求（[微信官方文档 · 网络](https://developers.weixin.qq.com/miniprogram/dev/framework/ability/network.html)，核验日期 2026-10-30）：
 
@@ -707,7 +700,7 @@ flowchart LR
 
 > 若采用**微信云托管**（`deploy/cloudrun`），请求走 `wx.cloud.callContainer`，可以免配通讯域名；但必须关闭服务公网访问，否则网关注入的身份头可被伪造。
 
-### 9.4 备案、类目、隐私与权限
+### 8.4 备案、类目、隐私与权限
 
 | 事项 | 仓库是否已具备 | 使用者需完成 |
 | --- | --- | --- |
@@ -719,15 +712,15 @@ flowchart LR
 | 订阅消息 | 否（当前为站内通知 outbox） | 若要发微信订阅消息，需自建模板与授权流程 |
 | 支付 | 仅隔离测试渠道 | 需商户号、证书、回调域名，按微信支付官方文档接入后替换 `PaymentChannel` 实现 |
 
-### 9.5 后端部署（上线前）
+### 8.5 后端部署（上线前）
 
-1. 按第 10 章构建后端镜像或可执行 JAR，配置生产 `MYSQL_*`、`JWT_SECRET`（≥32 字节随机）、`WECHAT_APP_ID/SECRET`。
+1. 按第 9 章构建后端镜像或可执行 JAR，配置生产 `MYSQL_*`、`JWT_SECRET`（≥32 字节随机）、`WECHAT_APP_ID/SECRET`。
 2. 数据库按序完成全部迁移，**不要**用初始化脚本覆盖已有库。
 3. 通过 Nginx/网关暴露 HTTPS，并把 `/api/` 反代到后端；上传接口需放开 `client_max_body_size 11m`（仓库 `deploy/nginx/default.conf` 已有该配置）。
 4. 按需开启业务开关；**默认关闭的开关不是故障**，逐项按运维手册开启并验收。
 5. 验证 `GET /actuator/health`、匿名请求返回 401、一次真实登录。
 
-### 9.6 上传、体验、提审、发布
+### 8.6 上传、体验、提审、发布
 
 1. 确认 `apps/miniapp/.env.local`（或构建环境）指向**生产 HTTPS 地址**，然后 `npm run build:miniapp`。
 2. 开发者工具导入 `dist/build/mp-weixin`，在「详情 → 本地设置」关闭"不校验合法域名"，跑一遍主流程。
@@ -740,9 +733,9 @@ flowchart LR
 
 ---
 
-## 10. 部署与维护
+## 9. 部署与维护
 
-### 10.1 生产构建
+### 9.1 生产构建
 
 ```bash
 npm ci
@@ -752,7 +745,7 @@ cd backend && mvn -B clean package -DskipTests
 
 产物：`apps/*/dist`（历史网页，供 Nginx 静态托管）、`apps/miniapp/dist/build/mp-weixin`（小程序）、`backend/target/*.jar`。
 
-### 10.2 Compose（本地/过渡环境）
+### 9.2 Compose（本地/过渡环境）
 
 ```bash
 cp .env.example .env    # 替换全部占位口令
@@ -770,7 +763,7 @@ docker compose --env-file .env -f deploy/compose/compose.yml up --build -d
 
 **这不是已验证的生产部署方案**：Nginx 托管的是历史网页原型，小程序上传/提审/HTTPS 都未在此配置。CI 的 `compose-smoke` 只验证容器能起来且基本权限生效。
 
-### 10.3 部署顺序
+### 9.3 部署顺序
 
 1. 备份数据库（见 [数据库恢复手册](docs/operations/DATABASE_RECOVERY_RUNBOOK.md)）。
 2. 按 `V0xx` 顺序应用新增迁移，校验表结构。
@@ -778,13 +771,13 @@ docker compose --env-file .env -f deploy/compose/compose.yml up --build -d
 4. 部署/更新前端静态资源或小程序版本。
 5. 按需打开新功能开关，观察错误与指标。
 
-### 10.4 数据库迁移
+### 9.4 数据库迁移
 
 - 迁移文件命名 `V0NN__描述.sql`，编号必须连续且唯一；`python scripts/verify_compose_migrations.py` 校验挂载与编号一致。
 - 已有数据卷不会自动执行新迁移，必须手工按序执行。
 - 迁移脚本与 `init.sql`、`V001__baseline.sql`、追踪表之间存在生成关系（`scripts/build_init_sql.py`、`scripts/generate_traceability.py`），改表后要同步重新生成并提交，否则 CI 会失败。
 
-### 10.5 日志与排查
+### 9.5 日志与排查
 
 - 后端控制台日志为 ECS 结构化格式（`logging.structured.format.console: ecs`），每条错误响应都带 `request_id`，可用它串起一次请求。
 - 指标：`/actuator/prometheus`（Prometheus 配置见 `deploy/monitoring/prometheus.yml`）。
@@ -803,9 +796,9 @@ docker compose --env-file .env -f deploy/compose/compose.yml up --build -d
 
 ---
 
-## 11. 能力现状：已实现 / 部分实现 / 计划
+## 10. 能力现状：已实现 / 部分实现 / 计划
 
-### 11.1 已实现（代码与测试均在仓库内）
+### 10.1 已实现（代码与测试均在仓库内）
 
 - 身份：微信登录、技师绑定、手机号绑定、刷新/退出、商家与运营两步登录、云托管身份入口、会话撤销与限流。
 - 车辆与档案：手动录车、结构化档案、健康读数与历史、提醒与偏好、PDF 导出、限时分享与撤销。
@@ -814,7 +807,7 @@ docker compose --env-file .env -f deploy/compose/compose.yml up --build -d
 - 内容：私有问答、公开问答授权审核、同款经验、运营精选、公开图片副本、许可资料与检索、AI 引用重验。
 - 工程：8 个 CI 作业（前端构建、小程序测试与构建、后端真实 MySQL 回归、Schema 与 OCR、MySQL schema、备份恢复、Compose 冒烟、性能基线）。
 
-### 11.2 部分实现（代码在，但缺外部条件或未验收）
+### 10.2 部分实现（代码在，但缺外部条件或未验收）
 
 | 能力 | 缺什么 |
 | --- | --- |
@@ -826,7 +819,7 @@ docker compose --env-file .env -f deploy/compose/compose.yml up --build -d
 | 性能 | 500 并发下错误预算达标，**延迟门禁未达标**；历史实测读 P95 约 590–684 ms、写 P95 约 614 ms（阈值 300/300/500 ms），见 `docs/testing/` 报告 |
 | 生产部署 | Compose 为过渡方案；生产镜像构建与上线未验收 |
 
-### 11.3 计划/未开始
+### 10.3 计划/未开始
 
 - 正式微信主体、类目、备案、隐私指引与提审发布；
 - 订阅消息、正式资金对账与结算；
@@ -837,9 +830,9 @@ docker compose --env-file .env -f deploy/compose/compose.yml up --build -d
 
 ---
 
-## 12. 文档导航
+## 11. 文档导航
 
-### 12.1 仓库协作
+### 11.1 仓库协作
 
 | 文档 | 内容 |
 | --- | --- |
@@ -848,7 +841,7 @@ docker compose --env-file .env -f deploy/compose/compose.yml up --build -d
 | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | 社区行为规范与处理方式 |
 | [LICENSE](LICENSE) | MIT License，版权署名为 `Vehicle-Health-Manager-Platform`（2026） |
 
-### 12.2 项目文档
+### 11.2 项目文档
 
 | 入口 | 内容 |
 | --- | --- |
@@ -861,13 +854,14 @@ docker compose --env-file .env -f deploy/compose/compose.yml up --build -d
 | [docs/testing/README.md](docs/testing/README.md) | 验收与复现记录 |
 | [docs/progress/CURRENT_STATUS.md](docs/progress/CURRENT_STATUS.md) | 当前进度与缺口 |
 | [docs/STRUCTURE.md](docs/STRUCTURE.md) | 目录与包职责的更详细说明 |
+| [docs/ui/screenshots](docs/ui/screenshots/README.md) | 界面截图与更新规范（正文不再内嵌，按需查阅） |
 | [backend/README.md](backend/README.md) | 后端接口与配置细节 |
 | [deploy/README.md](deploy/README.md) | 部署配置与限制 |
 | [docs/progress/README_HISTORY_ARCHIVE.md](docs/progress/README_HISTORY_ARCHIVE.md) | 重构前的旧版 README 原文留档（阶段流水账，仅作历史参考） |
 
 > 仓库根目录的 `findings.md`、`progress.md`、`task_plan.md` 是开发阶段的逐日记录（合计约 430 KB），保留当时的 PR 编号、CI 快照与验收结论。它们描述的是**阶段状态**，不是当前功能清单；判断现状请以下面的 `CURRENT_STATUS.md` 与代码为准。
 
-### 12.3 待确认事项
+### 11.3 待确认事项
 
 1. **许可证署名**：仓库此前没有 `LICENSE`，`package.json` 无 `author`/`license` 字段、`pom.xml` 无 `developers`，无法从代码确认版权持有人。本次按项目方确认，以 **MIT + 署名 `Vehicle-Health-Manager-Platform`（2026）** 新增 [LICENSE](LICENSE)；若实际权利人是其他主体，请更正该文件首行署名。
 2. **生产环境地址与凭据**：全部为占位符，仓库内不含可用的生产配置。
