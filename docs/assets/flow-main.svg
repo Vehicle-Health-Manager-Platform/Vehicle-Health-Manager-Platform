@@ -1,0 +1,182 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1032 300" width="1032" height="300" role="img" aria-labelledby="flowTitle flowDesc">
+  <title id="flowTitle">Vehicle Health Manager core flow: booking to archive</title>
+  <desc id="flowDesc">Seven animated stages: owner booking, shop reception inspection, owner sign-off, technician service work, pickup redemption, owner review, and system archive with experience card. A dashed branch returns from redemption to service work when a dispute is raised.</desc>
+
+  <style>
+    :root {
+      --card: #ffffff;
+      --border: #d0d7de;
+      --title: #1f2328;
+      --muted: #59636e;
+      --line: #8c959f;
+      --dot: #0969da;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --card: #161b22;
+        --border: #30363d;
+        --title: #e6edf3;
+        --muted: #9198a1;
+        --line: #6e7681;
+        --dot: #58a6ff;
+      }
+    }
+    text {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .card { fill: var(--card); stroke: var(--border); stroke-width: 1; }
+    .halo { fill: none; stroke-width: 1.5; opacity: 0; animation: halo 4.8s ease-in-out infinite; }
+    .t-title { fill: var(--title); font-size: 13px; font-weight: 600; }
+    .t-sub { fill: var(--muted); font-size: 9.5px; }
+    .t-step { fill: var(--muted); font-size: 8.5px; letter-spacing: .08em; opacity: .75; }
+    .t-role { font-size: 8.5px; font-weight: 700; letter-spacing: .1em; }
+    .t-note { fill: var(--muted); font-size: 9px; }
+    .t-head { fill: var(--title); font-size: 12.5px; font-weight: 600; }
+    .t-headsub { fill: var(--muted); font-size: 10px; }
+    .flow {
+      fill: none;
+      stroke: var(--line);
+      stroke-width: 1.5;
+      stroke-dasharray: 5 5;
+      animation: dash 1.1s linear infinite;
+    }
+    .branch {
+      fill: none;
+      stroke: var(--line);
+      stroke-width: 1.2;
+      stroke-dasharray: 4 5;
+      opacity: .85;
+      animation: dash 1.6s linear infinite;
+    }
+    .dot { fill: var(--dot); }
+    .acc-owner { fill: #0969da; }
+    .acc-shop { fill: #1a7f37; }
+    .acc-tech { fill: #8250df; }
+    .acc-sys { fill: #bf8700; }
+    @media (prefers-color-scheme: dark) {
+      .acc-owner { fill: #4493f8; }
+      .acc-shop { fill: #3fb950; }
+      .acc-tech { fill: #ab7df8; }
+      .acc-sys { fill: #d29922; }
+    }
+    #arrow path { fill: var(--line); }
+    @keyframes dash { to { stroke-dashoffset: -32; } }
+    @keyframes halo {
+      0%   { opacity: 0; }
+      18%  { opacity: .5; }
+      55%  { opacity: 0; }
+      100% { opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .flow, .branch, .halo { animation: none; }
+      .halo { opacity: .3; }
+    }
+  </style>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 8 8" refX="6.4" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0.6 1.2 L 6.4 4 L 0.6 6.8 z"/>
+    </marker>
+  </defs>
+
+  <text class="t-head" x="6" y="28">Core flow: booking to archive</text>
+  <text class="t-headsub" x="6" y="46">Seven stages, four actors - owner, shop, technician, system</text>
+
+  <!-- connectors -->
+  <path class="flow" d="M 124 140 L 152 140" marker-end="url(#arrow)"/>
+  <path class="flow" d="M 274 140 L 302 140" marker-end="url(#arrow)"/>
+  <path class="flow" d="M 424 140 L 452 140" marker-end="url(#arrow)"/>
+  <path class="flow" d="M 574 140 L 602 140" marker-end="url(#arrow)"/>
+  <path class="flow" d="M 724 140 L 752 140" marker-end="url(#arrow)"/>
+  <path class="flow" d="M 874 140 L 902 140" marker-end="url(#arrow)"/>
+
+  <!-- traveling packets -->
+  <circle class="dot" r="2.6"><animateMotion dur="1.1s" begin="0s" repeatCount="indefinite" path="M 124 140 L 152 140"/></circle>
+  <circle class="dot" r="2.6"><animateMotion dur="1.1s" begin="0.2s" repeatCount="indefinite" path="M 274 140 L 302 140"/></circle>
+  <circle class="dot" r="2.6"><animateMotion dur="1.1s" begin="0.4s" repeatCount="indefinite" path="M 424 140 L 452 140"/></circle>
+  <circle class="dot" r="2.6"><animateMotion dur="1.1s" begin="0.6s" repeatCount="indefinite" path="M 574 140 L 602 140"/></circle>
+  <circle class="dot" r="2.6"><animateMotion dur="1.1s" begin="0.8s" repeatCount="indefinite" path="M 724 140 L 752 140"/></circle>
+  <circle class="dot" r="2.6"><animateMotion dur="1.1s" begin="1s" repeatCount="indefinite" path="M 874 140 L 902 140"/></circle>
+
+  <!-- 01 Booking -->
+  <g>
+    <rect class="halo" x="2" y="92" width="126" height="96" rx="13" stroke="#0969da" style="animation-delay:0s"/>
+    <rect class="card" x="6" y="96" width="118" height="88" rx="10"/>
+    <rect class="acc-owner" x="6" y="96" width="118" height="3" rx="1.5"/>
+    <text class="t-step" x="16" y="118">01</text>
+    <text class="t-title" x="16" y="136">Booking</text>
+    <text class="t-sub" x="16" y="153">slot + payment</text>
+    <text class="t-role acc-owner" x="16" y="173">OWNER</text>
+  </g>
+
+  <!-- 02 Reception -->
+  <g>
+    <rect class="halo" x="152" y="92" width="126" height="96" rx="13" stroke="#1a7f37" style="animation-delay:0.68s"/>
+    <rect class="card" x="156" y="96" width="118" height="88" rx="10"/>
+    <rect class="acc-shop" x="156" y="96" width="118" height="3" rx="1.5"/>
+    <text class="t-step" x="166" y="118">02</text>
+    <text class="t-title" x="166" y="136">Reception</text>
+    <text class="t-sub" x="166" y="153">5-photo check</text>
+    <text class="t-role acc-shop" x="166" y="173">SHOP</text>
+  </g>
+
+  <!-- 03 Sign-off -->
+  <g>
+    <rect class="halo" x="302" y="92" width="126" height="96" rx="13" stroke="#0969da" style="animation-delay:1.36s"/>
+    <rect class="card" x="306" y="96" width="118" height="88" rx="10"/>
+    <rect class="acc-owner" x="306" y="96" width="118" height="3" rx="1.5"/>
+    <text class="t-step" x="316" y="118">03</text>
+    <text class="t-title" x="316" y="136">Sign-off</text>
+    <text class="t-sub" x="316" y="153">owner confirms</text>
+    <text class="t-role acc-owner" x="316" y="173">OWNER</text>
+  </g>
+
+  <!-- 04 Service -->
+  <g>
+    <rect class="halo" x="452" y="92" width="126" height="96" rx="13" stroke="#8250df" style="animation-delay:2.04s"/>
+    <rect class="card" x="456" y="96" width="118" height="88" rx="10"/>
+    <rect class="acc-tech" x="456" y="96" width="118" height="3" rx="1.5"/>
+    <text class="t-step" x="466" y="118">04</text>
+    <text class="t-title" x="466" y="136">Service</text>
+    <text class="t-sub" x="466" y="153">work + QC sign</text>
+    <text class="t-role acc-tech" x="466" y="173">TECH</text>
+  </g>
+
+  <!-- 05 Redeem -->
+  <g>
+    <rect class="halo" x="602" y="92" width="126" height="96" rx="13" stroke="#1a7f37" style="animation-delay:2.72s"/>
+    <rect class="card" x="606" y="96" width="118" height="88" rx="10"/>
+    <rect class="acc-shop" x="606" y="96" width="118" height="3" rx="1.5"/>
+    <text class="t-step" x="616" y="118">05</text>
+    <text class="t-title" x="616" y="136">Redeem</text>
+    <text class="t-sub" x="616" y="153">code + settle</text>
+    <text class="t-role acc-shop" x="616" y="173">SHOP</text>
+  </g>
+
+  <!-- 06 Review -->
+  <g>
+    <rect class="halo" x="752" y="92" width="126" height="96" rx="13" stroke="#0969da" style="animation-delay:3.4s"/>
+    <rect class="card" x="756" y="96" width="118" height="88" rx="10"/>
+    <rect class="acc-owner" x="756" y="96" width="118" height="3" rx="1.5"/>
+    <text class="t-step" x="766" y="118">06</text>
+    <text class="t-title" x="766" y="136">Review</text>
+    <text class="t-sub" x="766" y="153">rating + grants</text>
+    <text class="t-role acc-owner" x="766" y="173">OWNER</text>
+  </g>
+
+  <!-- 07 Archive -->
+  <g>
+    <rect class="halo" x="902" y="92" width="126" height="96" rx="13" stroke="#bf8700" style="animation-delay:4.08s"/>
+    <rect class="card" x="906" y="96" width="118" height="88" rx="10"/>
+    <rect class="acc-sys" x="906" y="96" width="118" height="3" rx="1.5"/>
+    <text class="t-step" x="916" y="118">07</text>
+    <text class="t-title" x="916" y="136">Archive</text>
+    <text class="t-sub" x="916" y="153">record + card</text>
+    <text class="t-role acc-sys" x="916" y="173">SYSTEM</text>
+  </g>
+
+  <!-- dispute branch: redemption can send work back for resumed fulfillment -->
+  <path class="branch" d="M 665 184 C 665 246 515 246 515 192" marker-end="url(#arrow)"/>
+  <text class="t-note" x="590" y="260" text-anchor="middle">dispute raised - work resumes, never silently closed</text>
+</svg>
