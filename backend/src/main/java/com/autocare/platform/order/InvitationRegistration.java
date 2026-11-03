@@ -46,10 +46,11 @@ public class InvitationRegistration {
     private LoginResult register(String openid, String code, String source, String appId) {
             // Upsert instead of INSERT IGNORE: on a duplicate openid IGNORE only takes a shared
             // lock, so the following FOR UPDATE upgrades S to X on the same record and two
-            // concurrent logins deadlock. ON DUPLICATE KEY UPDATE takes the exclusive lock here.
-            // Only 1 affected row means this transaction created the account; the duplicate path
-            // reports 2 or 0 depending on CLIENT_FOUND_ROWS, so never compare against 0.
-            boolean created = db.jdbc.update("INSERT INTO `user`(openid) VALUES(?) ON DUPLICATE KEY UPDATE openid=openid", openid) == 1;
+            // concurrent logins deadlock. ON DUPLICATE KEY UPDATE takes the exclusive lock here,
+            // matching JdbcIdentityRepository.createOwnerOrRead. Only 1 affected row means this
+            // transaction created the account; the duplicate path reports 2 or 0 depending on
+            // CLIENT_FOUND_ROWS, so never compare against 0.
+            boolean created = db.jdbc.update("INSERT INTO `user` (openid) VALUES (?) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)", openid) == 1;
             var owner = db.one("SELECT id,status,is_deleted FROM `user` WHERE openid=? FOR UPDATE", openid);
             long id = ReservationStore.number(owner, "id");
             if (ReservationStore.number(owner,"status") != 1 || ReservationStore.number(owner,"is_deleted") != 0)
