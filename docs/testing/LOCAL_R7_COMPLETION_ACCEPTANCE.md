@@ -26,4 +26,4 @@ R7源码及其余门禁完成后，所有编辑代码/迁移/测试/文档同批
 
 本机`.cache/r7-completion-{backend,miniapp,mp,h5,web,schema}.log`及`r7-upload-images.log`仅本机保留，不提交生成依赖/缓存日志。完整后端运行期间不并行启动写同一target的另一次Maven测试。
 
-R7a/b/c局部失败定位与定向复验保留在原阶段文档；收口首次旧预期失败、检查脚本调用错误及修正见`findings.md`。正式供应商、短信/微信身份、真实资金、物理设备及生产发布仍R9，不能用本次自动化代替。
+R7a/b/c局部失败定位与定向复验保留在原阶段文档（[R7a](../progress/R7A_OWNER_EVIDENCE_EXECUTION.md)、[R7b](../progress/R7B_WORKSPACE_EXECUTION.md)、[R7c1–c3](../progress/R7C3_RECOVERY_EXECUTION.md)、[全阶段收口](../progress/R7_COMPLETION_EXECUTION.md)）；收口期间的首跑旧预期失败与命令名称误用均不计成功，只以修复后重跑结果为准。正式供应商、短信/微信身份、真实资金、物理设备及生产发布仍R9，不能用本次自动化代替。
