@@ -28,12 +28,12 @@ public class InvitationRegistration {
         if (code != null && !code.matches("[0-9a-f]{32}")) throw InvitationInput.bad();
         for (int attempt = 1; ; attempt++) {
             try {
-                return db.transactions.execute(tx -> register(openid, code, source, appId));
+                return db.transactions.execute(tx -> registerOnce(openid, code, source, appId));
             } catch (ConcurrencyFailureException contended) {
-                // Two logins of one openid race the INSERT IGNORE against the following FOR UPDATE
-                // and the server may pick one as deadlock victim. A deadlock only ever rolls this
-                // transaction back, so retrying re-reads the same unique row and converges on the
-                // single registration instead of failing the login with 500.
+                // Two logins of one openid can still contend on the same unique row and the server
+                // may pick one as deadlock victim. A deadlock only ever rolls this transaction
+                // back, so retrying re-reads the same row and converges on the single registration
+                // instead of failing the login.
                 if (attempt >= ATTEMPTS) throw contended;
                 backoff(attempt);
             }
@@ -43,7 +43,7 @@ public class InvitationRegistration {
         try { Thread.sleep(5L * attempt); }
         catch (InterruptedException interrupted) { Thread.currentThread().interrupt(); throw new IllegalStateException(interrupted); }
     }
-    private LoginResult register(String openid, String code, String source, String appId) {
+    private LoginResult registerOnce(String openid, String code, String source, String appId) {
             // Upsert instead of INSERT IGNORE: on a duplicate openid IGNORE only takes a shared
             // lock, so the following FOR UPDATE upgrades S to X on the same record and two
             // concurrent logins deadlock. ON DUPLICATE KEY UPDATE takes the exclusive lock here,
