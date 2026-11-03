@@ -3,12 +3,15 @@ package com.autocare.platform.order;
 import com.autocare.platform.gateway.identity.AuthTokens;
 import java.time.ZoneId;
 import java.util.*;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 /** Server-side first-registration and phone evidence. No public attribution mutation. */
 public class InvitationRegistration {
     public static final String RULE = "R6A_INVITE_V1";
+    /** Deadlocks and lock-wait timeouts are resolved by the server rolling the whole transaction back. */
+    private static final int ATTEMPTS = 3;
     private final ReservationStore db;
     private final InvitationRewards rewards;
     public InvitationRegistration(ReservationStore db) { this(db,null); }
@@ -23,9 +26,31 @@ public class InvitationRegistration {
             || appId == null || appId.length() > 64 || !Set.of("VERIFIED_WECHAT", "UNKNOWN", "TEST").contains(source))
             throw new IllegalArgumentException("Invalid server identity evidence");
         if (code != null && !code.matches("[0-9a-f]{32}")) throw InvitationInput.bad();
-        return db.transactions.execute(tx -> {
+        for (int attempt = 1; ; attempt++) {
+            try {
+                return db.transactions.execute(tx -> registerOnce(openid, code, source, appId));
+            } catch (ConcurrencyFailureException contended) {
+                // Two logins of one openid deadlock here: when INSERT IGNORE finds the duplicate it
+                // holds a shared lock, and the following SELECT ... FOR UPDATE has to upgrade that S
+                // to X, so both waiters block each other. The server picks one as victim and rolls
+                // its whole transaction back, which leaves nothing half-written, so a bounded retry
+                // re-reads the same unique row and converges on the single registration.
+                if (attempt >= ATTEMPTS) throw contended;
+                backoff(attempt);
+            }
+        }
+    }
+    private static void backoff(int attempt) {
+        try { Thread.sleep(5L * attempt); }
+        catch (InterruptedException interrupted) { Thread.currentThread().interrupt(); throw new IllegalStateException(interrupted); }
+    }
+    private LoginResult registerOnce(String openid, String code, String source, String appId) {
             // INSERT IGNORE returns 1 only for the first creator. The unique openid
             // serializes concurrent logins without upgrading existing accounts.
+            // Keep it: its 1/0 return is the only reliable created/existing signal we have.
+            // An upsert was tried instead and could not be used, because under Connector/J's
+            // CLIENT_FOUND_ROWS the duplicate branch also reports one affected row, which made
+            // existing accounts look new and wrote a second invite_registration row.
             int fresh = db.jdbc.update("INSERT IGNORE INTO `user`(openid) VALUES(?)", openid);
             var owner = db.one("SELECT id,status,is_deleted FROM `user` WHERE openid=? FOR UPDATE", openid);
             long id = ReservationStore.number(owner, "id");
@@ -49,8 +74,8 @@ public class InvitationRegistration {
                 id,UUID.randomUUID().toString(),appId,source,promo==null?null:promo.get("id"),promo==null?null:promo.get("actor_type"),promo==null?null:promo.get("actor_id"),promo==null?null:promo.get("merchant_id"),outcome,state,ReservationStore.time(db.now()),RULE);
             audit(id,"INVITE_REGISTER",Map.of("attribution_result",outcome,"qualification_status",state,"rule_version",RULE));
             return new LoginResult(id,outcome);
-        });
     }
+
 
     public void bindPhone(long owner, String phone, String appId, boolean verified) {
         bindPhone(owner,phone,appId,verified,()->{});
