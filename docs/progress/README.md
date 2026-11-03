@@ -1,6 +1,6 @@
 # 当前核查与实施入口（2026-10-26）
 
-[门面双语化（2026-11-03）](REPO_FRONT_PAGE_2026_11_03.md)：英文 `README.md` 为首页、中文改为 `README.zh-CN.md` 对照，新增七段主链路动画 SVG 与相对链接检查器；Mermaid 10 块与链接已校验，SVG 在 GitHub 网页端的播放未实测。
+[门面双语化与精简（2026-11-03）](REPO_FRONT_PAGE_2026_11_03.md)：英文 `README.md`（111 行）为首页、中文 `README.zh-CN.md`（103 行）对照，长版归档为 `README_FULL_ARCHIVE_2026-11-03.md`；新增七段主链路动画 SVG 与相对链接检查器。链接已校验，SVG 在 GitHub 网页端的播放未实测。
 
 [根目录工作笔记移出仓库（2026-11-03）](ROOT_WORKING_NOTES_PRUNE_2026_11_03.md)：两遍判定复查全仓文档，移除根目录 `findings.md`/`progress.md`/`task_plan.md`（422 KB / 3087 行，本地保留、不入版本库）；CI 校验路径、四件套文档与 80 个零入链文件均保留。
 
