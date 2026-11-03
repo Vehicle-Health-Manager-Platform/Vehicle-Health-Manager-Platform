@@ -27,7 +27,7 @@ README 872 行、`CONTRIBUTING.md`、`SECURITY.md`、`CODE_OF_CONDUCT.md`、`LIC
 | --- | --- |
 | 精简英文首页，111 行 | `README.md` |
 | 精简中文对照，103 行 | `README.zh-CN.md` |
-| 中文长版原样归档（正文未删改，相对链接加 `../../`） | `docs/progress/README_FULL_ARCHIVE_2026-11-03.md` |
+| 中文长版原样归档（正文未删改，相对链接加 `../../`；仅在 881 行追加一条日期后记说明根目录笔记已移出） | `docs/progress/README_FULL_ARCHIVE_2026-11-03.md` |
 | 七段主链路动画图，正文唯一一张图 | `docs/assets/flow-main.svg` |
 | 相对链接检查器 | `scripts/check_markdown_links.py` |
 

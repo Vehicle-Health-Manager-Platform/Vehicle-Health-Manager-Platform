@@ -879,6 +879,8 @@ docker compose --env-file .env -f deploy/compose/compose.yml up --build -d
 | [docs/progress/README_HISTORY_ARCHIVE.md](../../docs/progress/README_HISTORY_ARCHIVE.md) | 重构前的旧版 README 原文留档（阶段流水账，仅作历史参考） |
 
 > 仓库根目录的 `findings.md`、`progress.md`、`task_plan.md` 是开发阶段的逐日记录（合计约 430 KB），保留当时的 PR 编号、CI 快照与验收结论。它们描述的是**阶段状态**，不是当前功能清单；判断现状请以下面的 `CURRENT_STATUS.md` 与代码为准。
+>
+> 2026-11-03 后记：上面这段是归档当日的事实。三份日志已在同日清理中移出版本库（本地保留，见[根目录工作笔记移出仓库](ROOT_WORKING_NOTES_PRUNE_2026_11_03.md)），仓库根目录不再包含它们；判断现状仍以 `CURRENT_STATUS.md` 与代码为准。
 
 ### 11.3 待确认事项
 
