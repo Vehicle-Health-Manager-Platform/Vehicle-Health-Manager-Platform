@@ -3,12 +3,15 @@ package com.autocare.platform.order;
 import com.autocare.platform.gateway.identity.AuthTokens;
 import java.time.ZoneId;
 import java.util.*;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 /** Server-side first-registration and phone evidence. No public attribution mutation. */
 public class InvitationRegistration {
     public static final String RULE = "R6A_INVITE_V1";
+    /** Deadlocks and lock-wait timeouts are resolved by the server rolling the whole transaction back. */
+    private static final int ATTEMPTS = 3;
     private final ReservationStore db;
     private final InvitationRewards rewards;
     public InvitationRegistration(ReservationStore db) { this(db,null); }
@@ -23,15 +26,35 @@ public class InvitationRegistration {
             || appId == null || appId.length() > 64 || !Set.of("VERIFIED_WECHAT", "UNKNOWN", "TEST").contains(source))
             throw new IllegalArgumentException("Invalid server identity evidence");
         if (code != null && !code.matches("[0-9a-f]{32}")) throw InvitationInput.bad();
-        return db.transactions.execute(tx -> {
-            // INSERT IGNORE returns 1 only for the first creator. The unique openid
-            // serializes concurrent logins without upgrading existing accounts.
-            int fresh = db.jdbc.update("INSERT IGNORE INTO `user`(openid) VALUES(?)", openid);
+        for (int attempt = 1; ; attempt++) {
+            try {
+                return db.transactions.execute(tx -> register(openid, code, source, appId));
+            } catch (ConcurrencyFailureException contended) {
+                // Two logins of one openid race the INSERT IGNORE against the following FOR UPDATE
+                // and the server may pick one as deadlock victim. A deadlock only ever rolls this
+                // transaction back, so retrying re-reads the same unique row and converges on the
+                // single registration instead of failing the login with 500.
+                if (attempt >= ATTEMPTS) throw contended;
+                backoff(attempt);
+            }
+        }
+    }
+    private static void backoff(int attempt) {
+        try { Thread.sleep(5L * attempt); }
+        catch (InterruptedException interrupted) { Thread.currentThread().interrupt(); throw new IllegalStateException(interrupted); }
+    }
+    private LoginResult register(String openid, String code, String source, String appId) {
+            // Upsert instead of INSERT IGNORE: on a duplicate openid IGNORE only takes a shared
+            // lock, so the following FOR UPDATE upgrades S to X on the same record and two
+            // concurrent logins deadlock. ON DUPLICATE KEY UPDATE takes the exclusive lock here.
+            // Only 1 affected row means this transaction created the account; the duplicate path
+            // reports 2 or 0 depending on CLIENT_FOUND_ROWS, so never compare against 0.
+            boolean created = db.jdbc.update("INSERT INTO `user`(openid) VALUES(?) ON DUPLICATE KEY UPDATE openid=openid", openid) == 1;
             var owner = db.one("SELECT id,status,is_deleted FROM `user` WHERE openid=? FOR UPDATE", openid);
             long id = ReservationStore.number(owner, "id");
             if (ReservationStore.number(owner,"status") != 1 || ReservationStore.number(owner,"is_deleted") != 0)
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN,"账号不可用");
-            if (fresh == 0) return new LoginResult(id,"EXISTING_ACCOUNT");
+            if (!created) return new LoginResult(id,"EXISTING_ACCOUNT");
             Map<String,Object> promo = null;
             String outcome = "NO_CODE";
             if (code != null) {
@@ -49,8 +72,8 @@ public class InvitationRegistration {
                 id,UUID.randomUUID().toString(),appId,source,promo==null?null:promo.get("id"),promo==null?null:promo.get("actor_type"),promo==null?null:promo.get("actor_id"),promo==null?null:promo.get("merchant_id"),outcome,state,ReservationStore.time(db.now()),RULE);
             audit(id,"INVITE_REGISTER",Map.of("attribution_result",outcome,"qualification_status",state,"rule_version",RULE));
             return new LoginResult(id,outcome);
-        });
     }
+
 
     public void bindPhone(long owner, String phone, String appId, boolean verified) {
         bindPhone(owner,phone,appId,verified,()->{});

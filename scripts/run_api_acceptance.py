@@ -66,6 +66,31 @@ def source_hash():
     return value.hexdigest()
 
 
+def report_newman_failures(path, limit=12):
+    """Echo only synthetic fixture names and assertion sources for a red run.
+
+    Request/response bodies, ids and values stay in the local private report; the job log
+    gets just enough to name the failing case, so a red gate is diagnosable without
+    publishing request or response data.
+    """
+    try:
+        raw = json.loads(path.read_text(encoding='utf-8'))
+    except Exception:
+        print('API acceptance: no newman json report to summarise', flush=True)
+        return
+    failed = []
+    for execution in (raw.get('run') or {}).get('executions') or []:
+        item = (execution.get('item') or {}).get('name') or 'unnamed'
+        for assertion in execution.get('assertions') or []:
+            if assertion.get('error'):
+                failed.append((item, str(assertion.get('assertion') or '')[:160]))
+    print(f'API acceptance: {len(failed)} failing assertion(s)', flush=True)
+    for item, assertion in failed[:limit]:
+        print(f'API acceptance:   [{item}] {assertion}', flush=True)
+    if len(failed) > limit:
+        print(f'API acceptance:   ... {len(failed) - limit} more in the private report', flush=True)
+
+
 def audit_newman(path, expected):
     report = json.loads(path.read_text(encoding='utf-8'))
     run = report['run']
@@ -224,7 +249,9 @@ def main():
         with (work / 'newman.log').open('wb') as log:
             result = subprocess.run(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, timeout=600, shell=False)
         report['newman_exit_code'] = result.returncode
-        if result.returncode: raise ValueError('Newman failed; inspect this run newman.log/json')
+        if result.returncode:
+            report_newman_failures(raw)
+            raise ValueError('Newman failed; inspect this run newman.log/json')
         report['evidence'] = audit_newman(raw, expected)
         prepared_raw = work / 'prepared-disabled.json'
         prepared_command = [str(OUTPUT / 'prepared.postman_collection.json') if value == str(OUTPUT / 'anonymous.postman_collection.json')
@@ -258,7 +285,9 @@ def main():
             with (work / (suite+'-newman.private.log')).open('wb') as log:
                 business = subprocess.run(business_command,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT,timeout=600,shell=False)
             report[suite+'_newman_exit_code'] = business.returncode
-            if business.returncode: raise ValueError('Business Newman scenarios failed; inspect local private report')
+            if business.returncode:
+                report_newman_failures(business_raw)
+                raise ValueError('Business Newman scenarios failed; inspect local private report')
             check = getattr(business_module,'audit',audit_owner_cases)
             report[suite+'_evidence'] = check(business_raw,business_collection,business_manifest,business_tokens)
             if hasattr(business_module,'verify_ui'):
