@@ -30,10 +30,11 @@ public class InvitationRegistration {
             try {
                 return db.transactions.execute(tx -> registerOnce(openid, code, source, appId));
             } catch (ConcurrencyFailureException contended) {
-                // Two logins of one openid can still contend on the same unique row and the server
-                // may pick one as deadlock victim. A deadlock only ever rolls this transaction
-                // back, so retrying re-reads the same row and converges on the single registration
-                // instead of failing the login.
+                // Two logins of one openid deadlock here: when INSERT IGNORE finds the duplicate it
+                // holds a shared lock, and the following SELECT ... FOR UPDATE has to upgrade that S
+                // to X, so both waiters block each other. The server picks one as victim and rolls
+                // its whole transaction back, which leaves nothing half-written, so a bounded retry
+                // re-reads the same unique row and converges on the single registration.
                 if (attempt >= ATTEMPTS) throw contended;
                 backoff(attempt);
             }
@@ -44,18 +45,18 @@ public class InvitationRegistration {
         catch (InterruptedException interrupted) { Thread.currentThread().interrupt(); throw new IllegalStateException(interrupted); }
     }
     private LoginResult registerOnce(String openid, String code, String source, String appId) {
-            // Upsert instead of INSERT IGNORE: on a duplicate openid IGNORE only takes a shared
-            // lock, so the following FOR UPDATE upgrades S to X on the same record and two
-            // concurrent logins deadlock. ON DUPLICATE KEY UPDATE takes the exclusive lock here,
-            // matching JdbcIdentityRepository.createOwnerOrRead. Only 1 affected row means this
-            // transaction created the account; the duplicate path reports 2 or 0 depending on
-            // CLIENT_FOUND_ROWS, so never compare against 0.
-            boolean created = db.jdbc.update("INSERT INTO `user` (openid) VALUES (?) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)", openid) == 1;
+            // INSERT IGNORE returns 1 only for the first creator. The unique openid
+            // serializes concurrent logins without upgrading existing accounts.
+            // Keep it: its 1/0 return is the only reliable created/existing signal we have.
+            // An upsert was tried instead and could not be used, because under Connector/J's
+            // CLIENT_FOUND_ROWS the duplicate branch also reports one affected row, which made
+            // existing accounts look new and wrote a second invite_registration row.
+            int fresh = db.jdbc.update("INSERT IGNORE INTO `user`(openid) VALUES(?)", openid);
             var owner = db.one("SELECT id,status,is_deleted FROM `user` WHERE openid=? FOR UPDATE", openid);
             long id = ReservationStore.number(owner, "id");
             if (ReservationStore.number(owner,"status") != 1 || ReservationStore.number(owner,"is_deleted") != 0)
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN,"账号不可用");
-            if (!created) return new LoginResult(id,"EXISTING_ACCOUNT");
+            if (fresh == 0) return new LoginResult(id,"EXISTING_ACCOUNT");
             Map<String,Object> promo = null;
             String outcome = "NO_CODE";
             if (code != null) {
