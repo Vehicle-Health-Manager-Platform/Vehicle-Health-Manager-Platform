@@ -20,6 +20,10 @@ permission boundary.
 
 <img src="docs/assets/flow-main.svg" alt="Seven stages: booking, reception inspection, owner sign-off, service work, redemption, review, archive, with a dispute branch back to service work" width="100%">
 
+<img src="docs/assets/flow-roles.svg" alt="Three swimlanes — owner, shop, technician — across the same six stages, with six numbered hand-offs between the lanes and a shared-backend band underneath" width="100%">
+
+<sub>Swimlanes: what each of the three ends does in every stage, where it hands the order to another end, and the shared backend all of them run on. Catalogue, policy and reconciliation live behind a separate restricted operator entry.</sub>
+
 ## What it does
 
 | | |
