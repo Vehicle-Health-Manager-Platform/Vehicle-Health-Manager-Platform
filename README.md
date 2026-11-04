@@ -14,15 +14,30 @@ One WeChat Mini Program (three roles + a restricted operator entry) on one share
 a car's after-sales record from the first symptom to the archived history:
 **book → receive → dispatch → repair → quality check → redeem → archive → review.**
 
-Today the vehicle's history lives in paper invoices, chat threads and each shop's own system. This
-project puts it in one model, with every step executed by a different role under a server-side
-permission boundary.
-
 <img src="docs/assets/flow-main.svg" alt="Seven stages: booking, reception inspection, owner sign-off, service work, redemption, review, archive, with a dispute branch back to service work" width="100%">
 
 <img src="docs/assets/flow-roles.svg" alt="Three swimlanes — owner, shop, technician — across six stages, with six numbered hand-offs between the lanes and a shared-backend band underneath" width="100%">
 
 <sub>Swimlanes: what each of the three ends does in every stage, where it hands the order to another end, and the shared backend all of them run on. Catalogue, policy and reconciliation live behind a separate restricted operator entry.</sub>
+
+## Why this project
+
+A car's after-sales record is produced by people who share no system: the invoice stays with the owner,
+the job sheet with the shop, the photos in a chat thread, the warranty in someone's memory. Nothing
+travels with the car, and nothing proves what it looked like before the work started.
+
+| What goes wrong today | What this repository does instead |
+| --- | --- |
+| The history belongs to whoever wrote it down; change shop and it restarts at zero | One order / archive model that all three roles write into, so the record follows the car, not the shop |
+| Hand-offs are verbal — reception, dispatch, QC, hand-over | Every hand-off is a recorded act with a named actor: the owner confirms or objects to the reception sheet, the technician signs QC personally, the shop redeems a code the owner shows |
+| A dispute has no baseline to argue from | Intake, protection, process, faulty-part and finished-work photos are captured per stage; the pickup view compares intake against done, and missing evidence is displayed as missing, never backfilled |
+| "Share my history" is all or nothing | Archive access is granted per record and revocable one by one; a shop that was never granted it cannot read it |
+| The car can be released without the owner's word | Redemption requires the six-digit code the owner holds, and the order cannot be closed without it |
+| A stub returning plausible data hides the real gap | Each optional capability is switch-gated and off by default; when off it returns an explicit `503` instead of fabricated data |
+
+This is not another shop-management tool. It exists because the same record is written by three parties
+that do not trust each other by default, so the things usually left implicit — permission, evidence,
+consent, hand-over — have to be made explicit in the model.
 
 ## What it does
 
