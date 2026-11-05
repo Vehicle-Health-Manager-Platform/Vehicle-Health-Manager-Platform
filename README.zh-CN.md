@@ -1,14 +1,8 @@
 # 汽车健康管家平台
 
-[English](README.md) | **简体中文**
+[English](README.md) | **简体中文** | [繁體中文](README.zh-TW.md)
 
-[![CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/workflows/ci.yml/badge.svg)](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/workflows/ci.yml)
-![License](https://img.shields.io/badge/License-MIT-blue.svg)
-![Java](https://img.shields.io/badge/Java-17-ED8B00.svg)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-6DB33F.svg)
-![Node.js](https://img.shields.io/badge/Node.js-22.x-339933.svg)
-![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1.svg)
-![uni-app](https://img.shields.io/badge/uni--app-3-2B9939.svg)
+[![CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/workflows/ci.yml/badge.svg)](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/workflows/ci.yml) ![License](https://img.shields.io/badge/License-MIT-blue.svg) ![Java](https://img.shields.io/badge/Java-17-ED8B00.svg) ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-6DB33F.svg) ![Node.js](https://img.shields.io/badge/Node.js-22.x-339933.svg) ![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1.svg) ![uni-app](https://img.shields.io/badge/uni--app-3-2B9939.svg)
 
 一个微信小程序（三角色 + 受限运营入口）加一套共用 Java 后端，把一辆车的售后记录从第一次症状送到归档：
 **预约 → 接车 → 派工 → 施工 → 质检 → 核销 → 归档 → 评价。**

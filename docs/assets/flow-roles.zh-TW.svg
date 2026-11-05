@@ -1,0 +1,320 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 788" width="1180" height="788" role="img" aria-labelledby="rolesTitle rolesDesc">
+  <title id="rolesTitle">三端一張圖：各自做什麼，彼此怎麼交接</title>
+  <desc id="rolesDesc">車主、商家、技師在同一套服務端權限邊界上的協作</desc>
+
+  <style>
+    :root {
+      --card: #ffffff; --lane: #f6f8fa; --border: #d0d7de;
+      --title: #1f2328; --muted: #59636e; --line: #8c959f; --dot: #0969da;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --card: #161b22; --lane: #10151b; --border: #30363d;
+        --title: #e6edf3; --muted: #9198a1; --line: #6e7681; --dot: #58a6ff;
+      }
+      .acc-owner { fill: #4493f8; }
+      .acc-merchant { fill: #3fb950; }
+      .acc-technician { fill: #ab7df8; }
+      .acc-shared { fill: #d29922; }
+    }
+    text {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .acc-owner { fill: #0969da; }
+    .acc-merchant { fill: #1a7f37; }
+    .acc-technician { fill: #8250df; }
+    .acc-shared { fill: #bf8700; }
+    .lane { fill: var(--lane); stroke: var(--border); stroke-width: 1; }
+    .chip { fill: var(--card); stroke: var(--border); stroke-width: 1; }
+    .badge { fill: var(--card); stroke-width: 1.2; }
+    .note { fill: none; stroke: var(--border); stroke-width: 1; stroke-dasharray: 3 4; }
+    .t-head { fill: var(--title); font-size: 14px; font-weight: 600; }
+    .t-headsub { fill: var(--muted); font-size: 10.5px; }
+    .t-stage { fill: var(--title); font-size: 11.5px; font-weight: 600; }
+    .t-stagenum { fill: var(--muted); font-size: 9px; letter-spacing: .1em; }
+    .t-role { fill: var(--title); font-size: 12.5px; font-weight: 700; }
+    .t-rolesub { fill: var(--muted); font-size: 8.8px; }
+    .t-chip { fill: var(--title); font-size: 10px; }
+    .t-note { fill: var(--muted); font-size: 9.5px; font-style: italic; }
+    .t-hand { fill: var(--muted); font-size: 9px; }
+    .t-badge { font-size: 9px; font-weight: 700; }
+    .t-legend { fill: var(--muted); font-size: 9.5px; }
+    .t-caption { fill: var(--muted); font-size: 9.5px; }
+    .hand { fill: none; stroke: var(--line); stroke-width: 1.4; }
+    .hand-dash { fill: none; stroke: var(--line); stroke-width: 1.2; stroke-dasharray: 4 4; opacity: .9; animation: dash 1.6s linear infinite; }
+    .arw-head { fill: var(--line); }
+    .dot { fill: var(--dot); }
+    @keyframes dash { to { stroke-dashoffset: -24; } }
+    @media (prefers-reduced-motion: reduce) {
+      .hand-dash { animation: none; }
+      .pkt { display: none; }
+    }
+  </style>
+
+  <defs>
+    <marker id="arw" viewBox="0 0 8 8" refX="6.4" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path class="arw-head" d="M 0.6 1.2 L 6.4 4 L 0.6 6.8 z"/>
+    </marker>
+  </defs>
+
+  <text class="t-head" x="8" y="26">三端一張圖：各自做什麼，彼此怎麼交接</text>
+  <text class="t-headsub" x="8" y="43">車主、商家、技師在同一套服務端權限邊界上的協作</text>
+
+  <!-- stages -->
+  <text class="t-stagenum" x="222" y="64" text-anchor="middle">01</text>
+  <text class="t-stage" x="222" y="80" text-anchor="middle">預約 · 報價</text>
+  <text class="t-stagenum" x="394" y="64" text-anchor="middle">02</text>
+  <text class="t-stage" x="394" y="80" text-anchor="middle">接車 · 確認</text>
+  <text class="t-stagenum" x="566" y="64" text-anchor="middle">03</text>
+  <text class="t-stage" x="566" y="80" text-anchor="middle">派工 · 施工</text>
+  <text class="t-stagenum" x="738" y="64" text-anchor="middle">04</text>
+  <text class="t-stage" x="738" y="80" text-anchor="middle">質檢 · 簽字</text>
+  <text class="t-stagenum" x="910" y="64" text-anchor="middle">05</text>
+  <text class="t-stage" x="910" y="80" text-anchor="middle">核銷 · 取車</text>
+  <text class="t-stagenum" x="1082" y="64" text-anchor="middle">06</text>
+  <text class="t-stage" x="1082" y="80" text-anchor="middle">評價 · 歸檔</text>
+
+  <!-- lane: owner -->
+  <g>
+    <rect class="lane" x="8" y="96" width="1164" height="138" rx="10"/>
+    <rect class="acc-owner" x="8" y="96" width="3" height="138" rx="1.5"/>
+    <text class="t-role" x="22" y="161.0">車主端</text>
+    <text class="t-rolesub" x="22" y="177.0">微信小程式</text>
+    <rect class="chip" x="144" y="106" width="156" height="34" rx="6"/>
+    <rect x="144" y="106" width="2.5" height="34" rx="1.25" fill="#0969da" opacity=".85"/>
+    <text class="t-chip" x="155" y="126.6">錄車：手動 / VIN / 行駛證</text>
+
+    <rect class="chip" x="144" y="148" width="156" height="34" rx="6"/>
+    <rect x="144" y="148" width="2.5" height="34" rx="1.25" fill="#0969da" opacity=".85"/>
+    <text class="t-chip" x="155" y="168.6">門店報價與版本</text>
+
+    <rect class="chip" x="144" y="190" width="156" height="34" rx="6"/>
+    <rect x="144" y="190" width="2.5" height="34" rx="1.25" fill="#0969da" opacity=".85"/>
+    <text class="t-chip" x="155" y="210.6">選時段下單，券後支付</text>
+
+    <rect class="chip" x="316" y="106" width="156" height="34" rx="6"/>
+    <rect x="316" y="106" width="2.5" height="34" rx="1.25" fill="#0969da" opacity=".85"/>
+    <text class="t-chip" x="327" y="126.6">核對接車單：照片·里程</text>
+
+    <rect class="chip" x="316" y="148" width="156" height="34" rx="6"/>
+    <rect x="316" y="148" width="2.5" height="34" rx="1.25" fill="#0969da" opacity=".85"/>
+    <text class="t-chip" x="327" y="168.6">確認，或填寫異議</text>
+
+    <rect class="chip" x="488" y="106" width="156" height="34" rx="6"/>
+    <rect x="488" y="106" width="2.5" height="34" rx="1.25" fill="#0969da" opacity=".85"/>
+    <text class="t-chip" x="499" y="126.6">查看施工進度與照片</text>
+
+    <rect class="chip" x="488" y="148" width="156" height="34" rx="6"/>
+    <rect x="488" y="148" width="2.5" height="34" rx="1.25" fill="#0969da" opacity=".85"/>
+    <text class="t-chip" x="499" y="168.6">逐條授權歷史檔案</text>
+
+    <rect class="chip" x="660" y="106" width="156" height="34" rx="6"/>
+    <rect x="660" y="106" width="2.5" height="34" rx="1.25" fill="#0969da" opacity=".85"/>
+    <text class="t-chip" x="671" y="126.6">查看質檢照片與缺陷</text>
+
+    <rect class="chip" x="832" y="106" width="156" height="34" rx="6"/>
+    <rect x="832" y="106" width="2.5" height="34" rx="1.25" fill="#0969da" opacity=".85"/>
+    <text class="t-chip" x="843" y="126.6">出示六位核銷碼</text>
+
+    <rect class="chip" x="832" y="148" width="156" height="34" rx="6"/>
+    <rect x="832" y="148" width="2.5" height="34" rx="1.25" fill="#0969da" opacity=".85"/>
+    <text class="t-chip" x="843" y="168.6">取車對比：接車 vs 完工</text>
+
+    <rect class="chip" x="832" y="190" width="156" height="34" rx="6"/>
+    <rect x="832" y="190" width="2.5" height="34" rx="1.25" fill="#0969da" opacity=".85"/>
+    <text class="t-chip" x="843" y="210.6">缺證據顯示缺失</text>
+
+    <rect class="chip" x="1004" y="106" width="156" height="34" rx="6"/>
+    <rect x="1004" y="106" width="2.5" height="34" rx="1.25" fill="#0969da" opacity=".85"/>
+    <text class="t-chip" x="1015" y="126.6">評價：星級 / 文字 / 圖片</text>
+
+    <rect class="chip" x="1004" y="148" width="156" height="34" rx="6"/>
+    <rect x="1004" y="148" width="2.5" height="34" rx="1.25" fill="#0969da" opacity=".85"/>
+    <text class="t-chip" x="1015" y="168.6">檔案 · 健康報告 · 提醒</text>
+
+  </g>
+
+  <!-- lane: merchant -->
+  <g>
+    <rect class="lane" x="8" y="286" width="1164" height="138" rx="10"/>
+    <rect class="acc-merchant" x="8" y="286" width="3" height="138" rx="1.5"/>
+    <text class="t-role" x="22" y="351.0">商家端</text>
+    <text class="t-rolesub" x="22" y="367.0">門店工作台</text>
+    <rect class="chip" x="144" y="296" width="156" height="34" rx="6"/>
+    <rect x="144" y="296" width="2.5" height="34" rx="1.25" fill="#1a7f37" opacity=".85"/>
+    <text class="t-chip" x="155" y="316.6">上架服務與定價</text>
+
+    <rect class="chip" x="144" y="338" width="156" height="34" rx="6"/>
+    <rect x="144" y="338" width="2.5" height="34" rx="1.25" fill="#1a7f37" opacity=".85"/>
+    <text class="t-chip" x="155" y="358.6">配置時段與容量</text>
+
+    <rect class="chip" x="316" y="296" width="156" height="34" rx="6"/>
+    <rect x="316" y="296" width="2.5" height="34" rx="1.25" fill="#1a7f37" opacity=".85"/>
+    <text class="t-chip" x="327" y="316.6">核對預約碼與本店訂單</text>
+
+    <rect class="chip" x="316" y="338" width="156" height="34" rx="6"/>
+    <rect x="316" y="338" width="2.5" height="34" rx="1.25" fill="#1a7f37" opacity=".85"/>
+    <text class="t-chip" x="327" y="358.6">接車：環車照·油量·損傷</text>
+
+    <rect class="chip" x="316" y="380" width="156" height="34" rx="6"/>
+    <rect x="316" y="380" width="2.5" height="34" rx="1.25" fill="#1a7f37" opacity=".85"/>
+    <text class="t-chip" x="327" y="400.6">發起車主確認</text>
+
+    <rect class="chip" x="488" y="296" width="156" height="34" rx="6"/>
+    <rect x="488" y="296" width="2.5" height="34" rx="1.25" fill="#1a7f37" opacity=".85"/>
+    <text class="t-chip" x="499" y="316.6">派工：按本單有效員工</text>
+
+    <rect class="chip" x="488" y="338" width="156" height="34" rx="6"/>
+    <rect x="488" y="338" width="2.5" height="34" rx="1.25" fill="#1a7f37" opacity=".85"/>
+    <text class="t-chip" x="499" y="358.6">施工防護照片</text>
+
+    <rect class="chip" x="488" y="380" width="156" height="34" rx="6"/>
+    <rect x="488" y="380" width="2.5" height="34" rx="1.25" fill="#1a7f37" opacity=".85"/>
+    <text class="t-chip" x="499" y="400.6">跟蹤報工與材料</text>
+
+    <rect class="chip" x="660" y="296" width="156" height="34" rx="6"/>
+    <rect x="660" y="296" width="2.5" height="34" rx="1.25" fill="#1a7f37" opacity=".85"/>
+    <text class="t-chip" x="671" y="316.6">複核質檢證據</text>
+
+    <rect class="chip" x="832" y="296" width="156" height="34" rx="6"/>
+    <rect x="832" y="296" width="2.5" height="34" rx="1.25" fill="#1a7f37" opacity=".85"/>
+    <text class="t-chip" x="843" y="316.6">六位碼核銷</text>
+
+    <rect class="chip" x="832" y="338" width="156" height="34" rx="6"/>
+    <rect x="832" y="338" width="2.5" height="34" rx="1.25" fill="#1a7f37" opacity=".85"/>
+    <text class="t-chip" x="843" y="358.6">交接取車與紀錄</text>
+
+    <rect class="chip" x="1004" y="296" width="156" height="34" rx="6"/>
+    <rect x="1004" y="296" width="2.5" height="34" rx="1.25" fill="#1a7f37" opacity=".85"/>
+    <text class="t-chip" x="1015" y="316.6">評價管理</text>
+
+    <rect class="chip" x="1004" y="338" width="156" height="34" rx="6"/>
+    <rect x="1004" y="338" width="2.5" height="34" rx="1.25" fill="#1a7f37" opacity=".85"/>
+    <text class="t-chip" x="1015" y="358.6">經營看板 · 客戶關係</text>
+
+    <rect class="chip" x="1004" y="380" width="156" height="34" rx="6"/>
+    <rect x="1004" y="380" width="2.5" height="34" rx="1.25" fill="#1a7f37" opacity=".85"/>
+    <text class="t-chip" x="1015" y="400.6">員工 · 服務 · 佣金帳單</text>
+
+  </g>
+
+  <!-- lane: technician -->
+  <g>
+    <rect class="lane" x="8" y="476" width="1164" height="138" rx="10"/>
+    <rect class="acc-technician" x="8" y="476" width="3" height="138" rx="1.5"/>
+    <text class="t-role" x="22" y="541.0">技師端</text>
+    <text class="t-rolesub" x="22" y="557.0">工位工作台</text>
+    <rect class="chip" x="488" y="486" width="156" height="34" rx="6"/>
+    <rect x="488" y="486" width="2.5" height="34" rx="1.25" fill="#8250df" opacity=".85"/>
+    <text class="t-chip" x="499" y="506.6">員工碼綁定 · 本人接單</text>
+
+    <rect class="chip" x="488" y="528" width="156" height="34" rx="6"/>
+    <rect x="488" y="528" width="2.5" height="34" rx="1.25" fill="#8250df" opacity=".85"/>
+    <text class="t-chip" x="499" y="548.6">過程 / 故障件 / 完工照</text>
+
+    <rect class="chip" x="488" y="570" width="156" height="34" rx="6"/>
+    <rect x="488" y="570" width="2.5" height="34" rx="1.25" fill="#8250df" opacity=".85"/>
+    <text class="t-chip" x="499" y="590.6">報工：方案·配件·工時</text>
+
+    <rect class="chip" x="660" y="486" width="156" height="34" rx="6"/>
+    <rect x="660" y="486" width="2.5" height="34" rx="1.25" fill="#8250df" opacity=".85"/>
+    <text class="t-chip" x="671" y="506.6">本人質檢簽名</text>
+
+    <rect class="chip" x="660" y="528" width="156" height="34" rx="6"/>
+    <rect x="660" y="528" width="2.5" height="34" rx="1.25" fill="#8250df" opacity=".85"/>
+    <text class="t-chip" x="671" y="548.6">送待核銷，紀錄鎖定</text>
+
+    <rect class="note" x="144" y="486" width="328" height="42" rx="6"/>
+    <text class="t-note" x="153" y="510.4">本階段不參與：接車由商家完成</text>
+
+    <rect class="note" x="832" y="486" width="328" height="42" rx="6"/>
+    <text class="t-note" x="841" y="510.4">本階段不參與：核銷由商家憑車主碼完成</text>
+
+  </g>
+
+  <!-- shared backend -->
+  <g>
+    <rect class="lane" x="8" y="640" width="1164" height="100" rx="10"/>
+    <rect class="acc-shared" x="8" y="640" width="3" height="100" rx="1.5"/>
+    <text class="t-role" x="22" y="684.0">共用後端</text>
+    <text class="t-rolesub" x="22" y="699.0">單一權限模型</text>
+    <rect class="chip" x="144" y="654" width="156" height="34" rx="6"/>
+    <rect x="144" y="654" width="2.5" height="34" rx="1.25" fill="#bf8700" opacity=".85"/>
+    <text class="t-chip" x="155" y="674.6">身分 · 角色 · 權限邊界</text>
+
+    <rect class="chip" x="316" y="654" width="156" height="34" rx="6"/>
+    <rect x="316" y="654" width="2.5" height="34" rx="1.25" fill="#bf8700" opacity=".85"/>
+    <text class="t-chip" x="327" y="674.6">冪等寫入 · 稽核留痕</text>
+
+    <rect class="chip" x="488" y="654" width="156" height="34" rx="6"/>
+    <rect x="488" y="654" width="2.5" height="34" rx="1.25" fill="#bf8700" opacity=".85"/>
+    <text class="t-chip" x="499" y="674.6">檔案授權：逐條 · 可撤銷</text>
+
+    <rect class="chip" x="660" y="654" width="156" height="34" rx="6"/>
+    <rect x="660" y="654" width="2.5" height="34" rx="1.25" fill="#bf8700" opacity=".85"/>
+    <text class="t-chip" x="671" y="674.6">通知：站內訊息 · 扇出</text>
+
+    <rect class="chip" x="832" y="654" width="156" height="34" rx="6"/>
+    <rect x="832" y="654" width="2.5" height="34" rx="1.25" fill="#bf8700" opacity=".85"/>
+    <text class="t-chip" x="843" y="674.6">訂單與檔案單一模型</text>
+
+    <rect class="chip" x="1004" y="654" width="156" height="34" rx="6"/>
+    <rect x="1004" y="654" width="2.5" height="34" rx="1.25" fill="#bf8700" opacity=".85"/>
+    <text class="t-chip" x="1015" y="674.6">OCR / ASR 預設關閉</text>
+
+    <text class="t-caption" x="22" y="718">受限營運入口：目錄治理 · 政策與考核配置 · 內容審核 · 對帳 —— 僅內部帳號，獨立權限</text>
+  </g>
+
+  <!-- hand-offs -->
+  <g>
+    <path class="hand" d="M 222 240 L 222 280" marker-end="url(#arw)"/>
+    <circle class="pkt" r="2.4" cx="0" cy="0"><animateMotion dur="2.4s" begin="0.30s" repeatCount="indefinite" path="M 222 240 L 222 280"/></circle>
+    <circle class="badge" cx="222" cy="260.0" r="7.5" stroke="#0969da"/>
+    <text class="t-badge" x="222" y="263.2" text-anchor="middle" fill="#0969da">1</text>
+    <text class="t-hand" x="210" y="263.2" text-anchor="end">預約與支付 → 商家</text>
+  </g>
+  <g>
+    <path class="hand-dash" d="M 394 280 L 394 240" marker-end="url(#arw)"/>
+    <circle class="pkt" r="2.4" cx="0" cy="0"><animateMotion dur="2.4s" begin="0.60s" repeatCount="indefinite" path="M 394 280 L 394 240"/></circle>
+    <circle class="badge" cx="394" cy="260.0" r="7.5" stroke="#0969da"/>
+    <text class="t-badge" x="394" y="263.2" text-anchor="middle" fill="#0969da">2</text>
+    <text class="t-hand" x="382" y="263.2" text-anchor="end">接車單 → 車主確認</text>
+  </g>
+  <g>
+    <path class="hand" d="M 566 430 L 566 470" marker-end="url(#arw)"/>
+    <circle class="pkt" r="2.4" cx="0" cy="0"><animateMotion dur="2.4s" begin="0.90s" repeatCount="indefinite" path="M 566 430 L 566 470"/></circle>
+    <circle class="badge" cx="566" cy="450.0" r="7.5" stroke="#1a7f37"/>
+    <text class="t-badge" x="566" y="453.2" text-anchor="middle" fill="#1a7f37">3</text>
+    <text class="t-hand" x="554" y="453.2" text-anchor="end">派工 → 技師接單</text>
+  </g>
+  <g>
+    <path class="hand" d="M 738 470 L 738 430" marker-end="url(#arw)"/>
+    <circle class="pkt" r="2.4" cx="0" cy="0"><animateMotion dur="2.4s" begin="1.20s" repeatCount="indefinite" path="M 738 470 L 738 430"/></circle>
+    <circle class="badge" cx="738" cy="450.0" r="7.5" stroke="#1a7f37"/>
+    <text class="t-badge" x="738" y="453.2" text-anchor="middle" fill="#1a7f37">4</text>
+    <text class="t-hand" x="726" y="453.2" text-anchor="end">質檢簽字 → 待核銷</text>
+  </g>
+  <g>
+    <path class="hand" d="M 910 240 L 910 280" marker-end="url(#arw)"/>
+    <circle class="pkt" r="2.4" cx="0" cy="0"><animateMotion dur="2.4s" begin="1.50s" repeatCount="indefinite" path="M 910 240 L 910 280"/></circle>
+    <circle class="badge" cx="910" cy="260.0" r="7.5" stroke="#0969da"/>
+    <text class="t-badge" x="910" y="263.2" text-anchor="middle" fill="#0969da">5</text>
+    <text class="t-hand" x="898" y="263.2" text-anchor="end">六位核銷碼 → 商家</text>
+  </g>
+  <g>
+    <path class="hand" d="M 1082 280 L 1082 240" marker-end="url(#arw)"/>
+    <circle class="pkt" r="2.4" cx="0" cy="0"><animateMotion dur="2.4s" begin="1.80s" repeatCount="indefinite" path="M 1082 280 L 1082 240"/></circle>
+    <circle class="badge" cx="1082" cy="260.0" r="7.5" stroke="#0969da"/>
+    <text class="t-badge" x="1082" y="263.2" text-anchor="middle" fill="#0969da">6</text>
+    <text class="t-hand" x="1070" y="263.2" text-anchor="end">核銷完成 → 自動歸檔</text>
+  </g>
+
+  <!-- legend -->
+  <path class="hand" d="M 22 765 L 54 765" marker-end="url(#arw)"/>
+  <text class="t-legend" x="62" y="768">主鏈路交接</text>
+  <path class="hand-dash" d="M 143.5 765 L 175.5 765" marker-end="url(#arw)"/>
+  <text class="t-legend" x="183.5" y="768">確認 / 異議回環</text>
+  <circle class="dot" cx="305.605" cy="765" r="2.6"/>
+  <text class="t-legend" x="329.605" y="768">請求或資料流動</text>
+</svg>
