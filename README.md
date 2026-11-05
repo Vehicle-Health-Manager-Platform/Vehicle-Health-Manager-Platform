@@ -1,14 +1,8 @@
 # Vehicle Health Manager Platform
 
-**English** | [简体中文](README.zh-CN.md)
+**English** | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md)
 
-[![CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/workflows/ci.yml/badge.svg)](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/workflows/ci.yml)
-![License](https://img.shields.io/badge/License-MIT-blue.svg)
-![Java](https://img.shields.io/badge/Java-17-ED8B00.svg)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-6DB33F.svg)
-![Node.js](https://img.shields.io/badge/Node.js-22.x-339933.svg)
-![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1.svg)
-![uni-app](https://img.shields.io/badge/uni--app-3-2B9939.svg)
+[![CI](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/workflows/ci.yml/badge.svg)](https://github.com/Vehicle-Health-Manager-Platform/Vehicle-Health-Manager-Platform/actions/workflows/ci.yml) ![License](https://img.shields.io/badge/License-MIT-blue.svg) ![Java](https://img.shields.io/badge/Java-17-ED8B00.svg) ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-6DB33F.svg) ![Node.js](https://img.shields.io/badge/Node.js-22.x-339933.svg) ![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1.svg) ![uni-app](https://img.shields.io/badge/uni--app-3-2B9939.svg)
 
 One WeChat Mini Program (three roles + a restricted operator entry) on one shared Java backend, carrying
 a car's after-sales record from the first symptom to the archived history:
