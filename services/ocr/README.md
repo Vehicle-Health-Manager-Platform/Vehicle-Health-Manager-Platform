@@ -49,7 +49,7 @@ python services/ocr/model_assets.py --output .cache/ocr-prepared --check
 
 模型准备工具离线运行，不会联网或覆盖已有输出。先检查固定压缩包摘要，再只读取精确清单中的普通文件，拒绝路径穿越、链接、额外/重复文件，在临时目录验证成功后才发布完整模型目录。重复使用已有目录请执行 `--check`；发生篡改或丢失时校验失败。
 
-`requirements-runtime.txt` 固定直接依赖 PaddleOCR 3.7.0、CPU PaddlePaddle 3.3.1和Pillow 12.3.0；它不是所有平台的传递依赖锁。本轮另按安装解析报告记录71个Windows CPython3.11运行wheel的完整版本与SHA-256到 `requirements-runtime-windows.lock.txt`，上述命令只面向该平台；包含运行依赖setuptools 79.0.1，不包含安装工具pip，不能作为Linux锁使用。其他平台需重新解析并验收，Windows本地成功不能替代Linux镜像验收。普通Dockerfile继续只安装默认关闭服务所需依赖，不自动加入大型推理引擎或开启网关。
+`requirements-runtime.txt` 固定直接依赖 PaddleOCR 3.7.0、CPU PaddlePaddle 3.3.1和Pillow 12.3.0；它不是所有平台的传递依赖锁。本轮另按安装解析报告记录71个Windows CPython3.11运行wheel的完整版本与SHA-256到 `requirements-runtime-windows.lock.txt`，上述命令只面向该平台；包含运行依赖 setuptools 84.2.1，不包含安装工具pip，不能作为Linux锁使用。其他平台需重新解析并验收，Windows本地成功不能替代Linux镜像验收。普通Dockerfile继续只安装默认关闭服务所需依赖，不自动加入大型推理引擎或开启网关。
 
 自检先核对直接依赖版本和模型文件，再初始化真实引擎，对程序生成的 `ODO 123456 km` 图片执行真实推理，直接调用和临时回环HTTP /recognize均须返回唯一正确里程、保留人工确认且HTTP no-store才报告成功；临时服务结束后关闭，凭据为进程内随机值，不写报告；失败报告会覆盖旧报告，不把缺依赖/模型或识别失败当成功。生成图片不含个人材料，该检查不能证明车主仪表识别准确率、人工核对流程或微信旅程通过。自检只设置跳过模型来源可用性探测，不能据此声称已完成第三方库网络出口隔离。
 
