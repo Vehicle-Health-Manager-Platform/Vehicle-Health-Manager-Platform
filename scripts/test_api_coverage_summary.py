@@ -425,12 +425,36 @@ class TrackedCoverageTest(unittest.TestCase):
             return result
         with mock.patch.object(coverage_module,'load',side_effect=altered),self.assertRaises(ValueError):build()
 
+    def test_recognition_http_reconciles_ten_fixture_only_operations(self):
+        result = build()
+        suite = next(row for row in result['suites'] if row['name'] == 'recognition_http')
+        recognized = [row for row in result['operations']
+                      if any(source['suite'] == 'recognition_http' for source in row['sources'])]
+        self.assertEqual(10, suite['operations'])
+        self.assertEqual(77, suite['request_count'])
+        self.assertEqual('AUDIT_EXISTING', suite['execution_mode'])
+        self.assertTrue(suite['provider_fixture'])
+        self.assertFalse(suite['real_provider_verified'])
+        self.assertEqual(10, len(recognized))
+        self.assertTrue(all(set(row['historical_kinds']) == set(KINDS) for row in recognized))
+        self.assertFalse(result['full_api_acceptance_passed'])
+
+    def test_recognition_http_rejects_an_incomplete_report(self):
+        original = coverage_module.load
+        def altered(path):
+            result = original(path)
+            if path.name == 'R9_A4D47_RECOGNITION_HTTP_2026_10_30.json':
+                result['suites'].pop()
+            return result
+        with mock.patch.object(coverage_module, 'load', side_effect=altered), self.assertRaises(ValueError):
+            build()
+
     def test_all_selected_repository_sources_reconcile_without_current_pass_claim(self):
         result = build()
         self.assertEqual(362, result['counts']['contract_operations'])
-        self.assertEqual(36, result['counts']['suites'])
-        self.assertEqual(317, result['counts']['historical_four_kind_operations'])
-        self.assertEqual(45, result['counts']['without_complete_historical_evidence'])
+        self.assertEqual(37, result['counts']['suites'])
+        self.assertEqual(327, result['counts']['historical_four_kind_operations'])
+        self.assertEqual(35, result['counts']['without_complete_historical_evidence'])
         self.assertFalse(result['full_api_acceptance_passed'])
         self.assertEqual(result, json.loads(OUTPUT.read_text(encoding='utf-8')))
         self.assertEqual(render(result), SUMMARY.read_text(encoding='utf-8'))

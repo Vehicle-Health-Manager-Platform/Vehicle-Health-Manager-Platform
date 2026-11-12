@@ -48,6 +48,7 @@ JOURNEYS = {
     'merchant_onboarding_files': ('run_merchant_onboarding_files_acceptance', 'R9_A4D19_MERCHANT_ONBOARDING_FILES_2026_10_22.json'),
     'community_images': ('run_community_images_acceptance', 'R9_A4D15_COMMUNITY_IMAGES_2026_10_22.json'),
     'invitation_rewards': ('run_reward_acceptance', 'R9_A4D14_INVITATION_REWARDS_2026_10_22.json'),
+    'recognition_http': ('run_recognition_http_acceptance', 'R9_A4D47_RECOGNITION_HTTP_2026_10_30.json'),
 }
 DEFAULT_JOURNEY_CLEANUP=frozenset({'initializer','clamav','minio','mysql','network'})
 UPLOAD_CHECKS = set('anonymous_object_denied tampered_signature_denied expired_signature_denied only_three_clean_files three_successful_uploads three_scan_rejections one_owned_archive_attachment'.split())
@@ -258,6 +259,125 @@ def journey_evidence(expected, report, catalog, expected_checks=None, expected_c
     return definitions, definitions
 
 
+def recognition_evidence(module, report, catalog):
+    """Reconcile the recognition runner's source-bound JUnit/HTTP audit snapshot."""
+    names = list(module.SPECS)
+
+    def bindings_for(name, bindings):
+        if name in ('asr', 'document'):
+            require(set(bindings) == {'job_id'} and type(bindings['job_id']) is int and
+                    0 < bindings['job_id'] <= 9007199254740991, 'Invalid recognition job binding')
+        elif name in ('mileage', 'pickup'):
+            expected = {'vehicle_id', 'file_id'} | ({'order_id'} if name == 'pickup' else set())
+            require(set(bindings) == expected and all(type(value) is int and
+                    0 < value <= 9007199254740991 for value in bindings.values()),
+                    'Invalid recognition scope binding')
+        else:
+            require(bindings == {}, 'Unexpected recognition binding')
+
+    def required_checks(name):
+        if name in ('asr', 'document'):
+            return module.JOB_CHECKS
+        if name in ('mileage', 'pickup'):
+            return module.MILEAGE_CHECKS | ({'no_pickup_write', 'order_state_preserved'} if name == 'pickup' else set())
+        if name == 'local-vin':
+            return module.LOCAL_VIN_CHECKS
+        return module.CHECKS
+
+    definitions = {}
+    if report is None:
+        for name in names:
+            for case in module.inventory(name):
+                candidates = [op for op, item in catalog.items()
+                              if item['method'] == case['method'] and item['path'] == case['operation']]
+                require(len(candidates) == 1, 'Recognition operation does not match one contract operation')
+                definitions.setdefault(candidates[0], set()).add(case['kind'])
+        return {op: sorted(kinds) for op, kinds in definitions.items()}, {}
+
+    successful(report)
+    require(report.get('execution_mode') in ('EXECUTED', 'AUDIT_EXISTING'),
+            'Unknown recognition evidence mode')
+    require(report.get('full_api_acceptance_passed') is False and
+            report.get('production_acceptance_passed') is False,
+            'Recognition evidence cannot certify full API or production acceptance')
+    if report['execution_mode'] == 'EXECUTED':
+        require(type(report.get('maven_exit_code')) is int and report['maven_exit_code'] == 0 and
+                report.get('owned_databases_removed') is True,
+                'Executed recognition evidence lacks successful Maven/cleanup proof')
+
+    recorded = report.get('suites')
+    require(isinstance(recorded, list) and len(recorded) == len(names),
+            'Recognition suite list is incomplete')
+    rows = named(recorded)
+    require(set(rows) == set(names), 'Recognition suite names differ from runner inventory')
+    providers = {}
+    test_counts = {}
+    container_ids = set()
+    for name in names:
+        suite = rows[name]
+        require(set(suite) == {'name', 'passed', 'test_class', 'requests', 'tests', 'coverage',
+                               'checks', 'bindings', 'mysql_container_id', 'source_sha256', 'raw_sha256'},
+                'Unexpected recognition report fields')
+        test_class = module.SPECS[name][0]
+        require(suite.get('passed') is True and suite.get('test_class') == test_class and
+                suite.get('source_sha256') == report['source_sha256'],
+                'Recognition suite source or JUnit result differs')
+        bindings = suite.get('bindings')
+        require(isinstance(bindings, dict), 'Missing recognition bindings')
+        bindings_for(name, bindings)
+        cases = module.inventory(name, bindings)
+        require(type(suite.get('requests')) is int and suite['requests'] == len(cases) and
+                type(suite.get('tests')) is int and suite['tests'] > 0,
+                'Recognition request or JUnit count differs')
+        require(test_class not in test_counts or test_counts[test_class] == suite['tests'],
+                'Shared recognition JUnit class has inconsistent test counts')
+        test_counts[test_class] = suite['tests']
+
+        checks = suite.get('checks')
+        require(isinstance(checks, dict) and set(checks) == set(required_checks(name)) and
+                all(value is True for value in checks.values()),
+                'Recognition database/confirmation checks are incomplete')
+        require(bool(re.fullmatch(r'[a-f0-9]{64}', str(suite.get('mysql_container_id', '')))) and
+                bool(re.fullmatch(r'[a-f0-9]{64}', str(suite.get('raw_sha256', '')))),
+                'Recognition raw evidence or database identity hash is invalid')
+        container_ids.add(suite['mysql_container_id'])
+
+        expected_coverage = {}
+        for case in cases:
+            candidates = [op for op, item in catalog.items()
+                          if item['method'] == case['method'] and item['path'] == case['operation']]
+            require(len(candidates) == 1, 'Recognition operation does not match one contract operation')
+            operation = candidates[0]
+            expected_coverage.setdefault(item_route(catalog[operation]), set()).add(case['kind'])
+            existing = providers.get(operation, set())
+            if existing and name not in existing:
+                route = item_route(catalog[operation])
+                require(route == 'POST /api/vehicle/vin-decode' and name not in existing and
+                        existing | {name} == {'vin', 'local-vin'},
+                        'Duplicate recognition operation is not the reviewed VIN provider pair')
+            definitions.setdefault(operation, set()).add(case['kind'])
+            providers.setdefault(operation, set()).add(name)
+        normalized = {key: sorted(kinds) for key, kinds in expected_coverage.items()}
+        require(suite.get('coverage') == normalized and all(set(kinds) == set(KINDS)
+                for kinds in normalized.values()), 'Recognition four-kind coverage differs from inventory')
+
+    require(type(report.get('selected_java_executions')) is int and
+            report['selected_java_executions'] == sum(test_counts.values()),
+            'Recognition Java execution count differs')
+    if report['execution_mode'] == 'EXECUTED':
+        require(type(report.get('owned_database_count')) is int and
+                report['owned_database_count'] == len(container_ids),
+                'Recognition owned database cleanup count differs')
+    require(all(set(kinds) == set(KINDS) for kinds in definitions.values()),
+            'Recognition operation is missing a four-kind category')
+    reconciled = {op: sorted(kinds) for op, kinds in definitions.items()}
+    return reconciled, reconciled
+
+
+def item_route(item):
+    return item['method'] + ' ' + item['path']
+
+
 def summarize(spec, suites):
     catalog = {op['operationId']: {'operation_id': op['operationId'], 'method': method, 'path': path,
                                  'roles': op.get('x-roles'), 'protected': protected,
@@ -314,9 +434,20 @@ def build(root=ROOT):
                        'inputs': provenance([manifest, collection, report_path])})
     for name, (module_name, filename) in sorted(JOURNEYS.items()):
         module = importlib.import_module(module_name)
-        inventory = module.inventory()
         report_path = path('docs/testing/reports/' + filename)
         report = load(report_path) if report_path.is_file() else None
+        if name == 'recognition_http':
+            defined, historical = recognition_evidence(module, report, catalog)
+            suites.append({'name': name, 'type': 'http-journey', 'defined': defined, 'historical': historical,
+                           'evidence_status': 'HISTORICAL_RECONCILED' if report else 'MISSING_REPORT',
+                           'recorded_source_sha256': report.get('source_sha256') if report else None,
+                           'execution_mode': report.get('execution_mode') if report else None,
+                           'provider_fixture': True, 'real_provider_verified': False,
+                           'request_count': sum(v.get('requests', 0) for v in report.get('suites', [])) if report else 0,
+                           'operations': len(defined),
+                           'inputs': provenance([path('scripts/' + module_name + '.py'), report_path])})
+            continue
+        inventory = module.inventory()
         if name == 'community_images' and report is not None:
             require(report.get('proof', {}).get('actual_requests_bound_to_responses') is True, 'Community image response binding proof missing')
         defined, historical = journey_evidence(inventory, report, catalog, getattr(module, 'CHECKS', UPLOAD_CHECKS), getattr(module, 'CLEANUP_ROLES', None))
@@ -339,6 +470,8 @@ def render(summary):
              f"- 所选记录中未获完整四类证据：{c['without_complete_historical_evidence']} 项；汇总过程新发起接口：0 项（各套实际执行见来源报告）。", '',
              '历史证据不等于当前版本重跑通过，不等于完整权限矩阵或真实身份/资金验收。',
              '匿名401不算业务四类覆盖；未列历史证据不等于功能未开发。',
+             '识别接口报告使用明确的本地 provider fixture 与合成请求；不代表真实模型、车型上游或生产服务已验收。',
+             '性能门限 A5 与接口覆盖为独立验收项；当前采用 §9.3 分项压测、§12.1 严格发布门槛，详情见 [决议记录](../operations/PERFORMANCE_THRESHOLD_DECISION_2026_11_12.md)。',
              f"本工具只索引明确选定的{c['suites']}套记录，不否认其他单元、HTTP或历史验证；后续可增加经过校验的证据适配器。",
              '全API验收仍为false。结构化来源、哈希及逐项状态见 [api-coverage.json](api-coverage.json)。',
              '下方每一项缺口的结案结论（已被替代/内部完成/外部阻塞/未实现/无成功路径/仅演示）见 [契约逐项结论](../api/CONTRACT_RECONCILIATION.md)，由 `python scripts/reconcile_contract.py` 生成。', '',

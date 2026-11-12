@@ -19,7 +19,7 @@ KINDS = OrderedDict([
     ('dev-only', '仅本地演示或开发端点'),
 ])
 TOTAL_CONTRACT = 362
-MIN_EVIDENCED = 317
+MIN_EVIDENCED = 327
 
 
 def require(condition, message):

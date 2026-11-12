@@ -7,11 +7,11 @@
   "counts": {
     "contract_operations": 362,
     "protected_operations": 348,
-    "four_kind_definitions": 317,
-    "historical_four_kind_operations": 317,
-    "without_complete_historical_evidence": 45,
+    "four_kind_definitions": 327,
+    "historical_four_kind_operations": 327,
+    "without_complete_historical_evidence": 35,
     "current_run_operations": 0,
-    "suites": 36
+    "suites": 37
   },
   "suites": [
     {
@@ -381,6 +381,21 @@
       "inputs": {
         "scripts/run_pickup_work_files_acceptance.py": "2020723c3cff373dda5a09d09d5905b693060ecea3e5f30075ecc0faae0babac",
         "docs/testing/reports/R9_A4D9_PICKUP_WORK_FILES_2026_10_21.json": "f72826dd255268f3a93e8dc8afa29e463b364136c21537978e4e30c7bf913de8"
+      }
+    },
+    {
+      "name": "recognition_http",
+      "type": "http-journey",
+      "evidence_status": "HISTORICAL_RECONCILED",
+      "recorded_source_sha256": "eaf2ed34672a60cf3649059e7c9370cb99b1f91608548850ba6c3d11d7117335",
+      "execution_mode": "AUDIT_EXISTING",
+      "provider_fixture": true,
+      "real_provider_verified": false,
+      "request_count": 77,
+      "operations": 10,
+      "inputs": {
+        "scripts/run_recognition_http_acceptance.py": "39394d6c0c1aa24b66828c4f9c4f06e11a0550bfc893ccb940fc880107533f99",
+        "docs/testing/reports/R9_A4D47_RECOGNITION_HTTP_2026_10_30.json": "d9a23fc6fe193bd40536c680ff54352887ab0a573861d8ca712794f30c7bddfc"
       }
     },
     {
@@ -6001,22 +6016,38 @@
       "roles": "本店有效MERCHANT/STAFF会话、PAID订单、仍归订单车主的车辆、当前员工本人CLEAN JPEG/PNG",
       "protected": true,
       "implementation_status": "pickup-mileage-recognition-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "recognition_http",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_check_pickup_submit",
@@ -13575,22 +13606,38 @@
       "roles": "当前有效OWNER；本人车辆/同用途CLEAN input_material音频；ASR_ENABLED默认false",
       "protected": true,
       "implementation_status": "asr-durable-job-create-implemented-requires-model-acceptance",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "recognition_http",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_recognition_asr_jobs_id",
@@ -13599,22 +13646,38 @@
       "roles": "当前有效OWNER；本人车辆/同用途CLEAN input_material音频；ASR_ENABLED默认false",
       "protected": true,
       "implementation_status": "asr-durable-job-read-implemented-requires-model-acceptance",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "recognition_http",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_recognition_asr_jobs_id_cancel",
@@ -13623,22 +13686,38 @@
       "roles": "当前有效OWNER；本人当前车辆与任务；新有效会话可取消自己的旧任务",
       "protected": true,
       "implementation_status": "asr-durable-job-cancel-implemented",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "recognition_http",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_recognition_documents_jobs",
@@ -13647,22 +13726,38 @@
       "roles": "当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
       "protected": true,
       "implementation_status": "document-durable-job-implemented-local",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "recognition_http",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_recognition_documents_jobs_id",
@@ -13671,22 +13766,38 @@
       "roles": "当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
       "protected": true,
       "implementation_status": "document-durable-job-implemented-local",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "recognition_http",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_recognition_documents_jobs_id_cancel",
@@ -13695,22 +13806,38 @@
       "roles": "当前有效OWNER；本人同车辆同AI/ARCHIVE用途CLEAN辅助材料；DOCUMENT_ENABLED默认false；不接受任意file_id",
       "protected": true,
       "implementation_status": "document-durable-job-implemented-local",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "recognition_http",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "post_api_refunds_callback_LOCAL_TEST",
@@ -15117,22 +15244,38 @@
       "roles": "当前有效OWNER会话；本人CLEAN JPEG/PNG 1..4MiB；LICENSE_OCR_ENABLED默认false",
       "protected": true,
       "implementation_status": "license-owner-candidate-implemented-requires-document-acceptance",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "recognition_http",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_vehicle_list",
@@ -15236,22 +15379,38 @@
       "roles": "当前有效OWNER会话、本人有效车辆、本人CLEAN JPEG/PNG；MILEAGE_OCR_ENABLED默认false",
       "protected": true,
       "implementation_status": "mileage-recognition-gateway-implemented-requires-model",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "recognition_http",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_vehicle_ocr_license",
@@ -15348,22 +15507,38 @@
       "roles": "当前有效OWNER会话；默认关闭。NHTSA_VPIC或LOCAL_LICENSED两种服务端固定来源，客户端用途同意必须一致",
       "protected": true,
       "implementation_status": "vin-owner-candidate-implemented-requires-provider-acceptance",
-      "defined_kinds": [],
-      "historical_kinds": [],
-      "missing_definition_kinds": [
+      "defined_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
-      "missing_historical_kinds": [
+      "historical_kinds": [
         "boundary",
         "error",
         "normal",
         "unauthorized"
       ],
+      "missing_definition_kinds": [],
+      "missing_historical_kinds": [],
       "current_acceptance": "NOT_RUN",
-      "sources": []
+      "sources": [
+        {
+          "suite": "recognition_http",
+          "defined_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ],
+          "historical_kinds": [
+            "boundary",
+            "error",
+            "normal",
+            "unauthorized"
+          ]
+        }
+      ]
     },
     {
       "operation_id": "get_api_vehicle_vehicle_health_dashboard",

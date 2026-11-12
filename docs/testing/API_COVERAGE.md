@@ -3,12 +3,14 @@
 本文件由 `python scripts/summarize_api_coverage.py` 生成。
 
 - 当前契约：362 项；受保护接口：348 项。
-- 四类用例定义覆盖：317 项；有匹配历史四类执行记录：317 项（接口去重）。
-- 所选记录中未获完整四类证据：45 项；汇总过程新发起接口：0 项（各套实际执行见来源报告）。
+- 四类用例定义覆盖：327 项；有匹配历史四类执行记录：327 项（接口去重）。
+- 所选记录中未获完整四类证据：35 项；汇总过程新发起接口：0 项（各套实际执行见来源报告）。
 
 历史证据不等于当前版本重跑通过，不等于完整权限矩阵或真实身份/资金验收。
 匿名401不算业务四类覆盖；未列历史证据不等于功能未开发。
-本工具只索引明确选定的36套记录，不否认其他单元、HTTP或历史验证；后续可增加经过校验的证据适配器。
+识别接口报告使用明确的本地 provider fixture 与合成请求；不代表真实模型、车型上游或生产服务已验收。
+性能门限 A5 与接口覆盖为独立验收项；当前采用 §9.3 分项压测、§12.1 严格发布门槛，详情见 [决议记录](../operations/PERFORMANCE_THRESHOLD_DECISION_2026_11_12.md)。
+本工具只索引明确选定的37套记录，不否认其他单元、HTTP或历史验证；后续可增加经过校验的证据适配器。
 全API验收仍为false。结构化来源、哈希及逐项状态见 [api-coverage.json](api-coverage.json)。
 下方每一项缺口的结案结论（已被替代/内部完成/外部阻塞/未实现/无成功路径/仅演示）见 [契约逐项结论](../api/CONTRACT_RECONCILIATION.md)，由 `python scripts/reconcile_contract.py` 生成。
 
@@ -38,10 +40,6 @@
 - `POST /api/auth/staff-login`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。
 - `POST /api/auth/technician/bind`：缺 boundary, error, normal, unauthorized；实现标记 `core-implemented`。
 - `POST /api/auth/wx-login`：缺 boundary, error, normal, unauthorized；实现标记 `core-implemented`。
-
-### api/check（1项）
-
-- `POST /api/check/pickup/mileage-recognition`：缺 boundary, error, normal, unauthorized；实现标记 `pickup-mileage-recognition-implemented`。
 
 ### api/coupon（2项）
 
@@ -85,24 +83,12 @@
 
 - `POST /api/payments/callback/{channel}`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。
 
-### api/recognition（6项）
-
-- `POST /api/recognition/asr/jobs`：缺 boundary, error, normal, unauthorized；实现标记 `asr-durable-job-create-implemented-requires-model-acceptance`。
-- `GET /api/recognition/asr/jobs/{id}`：缺 boundary, error, normal, unauthorized；实现标记 `asr-durable-job-read-implemented-requires-model-acceptance`。
-- `POST /api/recognition/asr/jobs/{id}/cancel`：缺 boundary, error, normal, unauthorized；实现标记 `asr-durable-job-cancel-implemented`。
-- `POST /api/recognition/documents/jobs`：缺 boundary, error, normal, unauthorized；实现标记 `document-durable-job-implemented-local`。
-- `GET /api/recognition/documents/jobs/{id}`：缺 boundary, error, normal, unauthorized；实现标记 `document-durable-job-implemented-local`。
-- `POST /api/recognition/documents/jobs/{id}/cancel`：缺 boundary, error, normal, unauthorized；实现标记 `document-durable-job-implemented-local`。
-
 ### api/refunds（2项）
 
 - `POST /api/refunds/callback/{channel}`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。
 - `POST /api/refunds/create`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。
 
-### api/vehicle（5项）
+### api/vehicle（2项）
 
-- `POST /api/vehicle/license-recognition`：缺 boundary, error, normal, unauthorized；实现标记 `license-owner-candidate-implemented-requires-document-acceptance`。
-- `POST /api/vehicle/mileage-recognition`：缺 boundary, error, normal, unauthorized；实现标记 `mileage-recognition-gateway-implemented-requires-model`。
 - `GET /api/vehicle/ocr-license`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。
 - `GET /api/vehicle/vin-decode`：缺 boundary, error, normal, unauthorized；实现标记 `unspecified`。
-- `POST /api/vehicle/vin-decode`：缺 boundary, error, normal, unauthorized；实现标记 `vin-owner-candidate-implemented-requires-provider-acceptance`。
