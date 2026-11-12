@@ -1,5 +1,9 @@
 # 部署与运维文档
 
+> [API 覆盖索引维护](API_COVERAGE_RECONCILIATION.md)：覆盖/逐项结论的重生成、`--check` 与历史识别证据边界。
+
+> [A5 性能门限裁决记录](PERFORMANCE_THRESHOLD_DECISION_2026_11_12.md)：§9.3/§12.1 原文、既有发布政策、最新留存压测对照及当前源码复测门禁。
+
 > 2026-10-17当前：[R8公开图片与许可资料操作](PUBLIC_IMAGES_AND_KNOWLEDGE.md)：逐图独立授权、人工审核、来源失效拒绝新读取、许可范围及独立can_knowledge；新开关默认关闭。
 
 > [R8c1b3a公开问答后端操作](PUBLIC_COMMUNITY_QUESTIONS.md)：V059/124表、独立默认关闭公开开关；旧/测试消息不补正式来源，现有can_review仅审核公开预览，不读取私有详情。
