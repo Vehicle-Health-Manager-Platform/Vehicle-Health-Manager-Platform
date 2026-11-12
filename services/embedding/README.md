@@ -6,7 +6,7 @@ R5c1已增加主后端默认关闭的自动任务/运营状态，配置变量与
 
 ## 固定资源与本地复现
 
-Python准备工具仅使用标准库。运行模型要求Linux x86_64、CPython3.11、Docker及已准备的ASR守卫镜像。Dockerfile从固定Python基础镜像安装24个带哈希的CPU wheel，从`autocare-asr-runtime:acceptance`复制libgomp/libseccomp两个库，不复制ASR Python包。先按[ASR指南](../asr/README.md)构建该镜像；正式交付镜像仍须固定守卫镜像/操作系统库供应链并复验。验收报告记录实际镜像和库摘要。
+Python准备工具仅使用标准库。运行模型要求Linux x86_64、CPython3.11、Docker及已准备的ASR守卫镜像。Dockerfile从固定Python基础镜像安装36个带哈希的CPU wheel，从`autocare-asr-runtime:acceptance`复制libgomp/libseccomp两个库，不复制ASR Python包。先按[ASR指南](../asr/README.md)构建该镜像；正式交付镜像仍须固定守卫镜像/操作系统库供应链并复验。验收报告记录实际镜像和库摘要。
 
 在仓库根目录执行：
 
@@ -29,7 +29,7 @@ python scripts/run_linux_embedding_acceptance.py --allow-isolated-linux-embeddin
 
 模型为[BAAI/bge-small-zh-v1.5](https://huggingface.co/BAAI/bge-small-zh-v1.5)，MIT，精确revision `7999e1d3359715c523056ef9478215996d62a620`；11个文件的来源、SHA256和字节数见[模型锁](models.lock.json)。原始safetensors权重95,827,648字节，SHA256 `354763b9b1357bc9c44f62c6be2276321081ed2567773608c0d0785b61d5a026`。不得用仓库中的旧pickle权重替代。
 
-[完整Linux wheel锁](runtime-wheels-linux.json)和[安装锁](requirements-runtime-linux.lock.txt)固定PyTorch2.8.0+cpu、Transformers4.52.4、tokenizers0.21.4、safetensors0.5.3等24个依赖。准备阶段已按官方PyTorch/PyPI摘要核验；许可合规交接还须保存各依赖许可证与NOTICE，MIT模型许可不替代知识资料的嵌入授权。
+[完整Linux wheel锁](runtime-wheels-linux.json)和[安装锁](requirements-runtime-linux.lock.txt)固定PyTorch 2.13.0+cpu、Transformers 5.22.1、tokenizers 0.23.3、safetensors 0.8.0 等36个依赖。准备阶段已按官方PyTorch/PyPI摘要核验；许可合规交接还须保存各依赖许可证与NOTICE，MIT模型许可不替代知识资料的嵌入授权。
 
 固定BERT/FP32/eval/CLS/L2、512维。查询由Java索引加一次`为这个句子生成表示以用于检索相关文章：`，文档不加。精确tokenizer包含CLS/SEP，不超过512 token；关闭自动截断。任一文本超限整批失败，不返回部分结果。Unicode分块上限不等于token上限。
 
@@ -49,7 +49,7 @@ python scripts/run_linux_embedding_acceptance.py --allow-isolated-linux-embeddin
 {"version":1,"profile_hash":"<当前配置SHA256>","texts":["合成资料文本"]}
 ```
 
-成功返回精确三字段`version:1`、相同`profile_hash`、`vectors`矩阵，每行512有限单位值。响应≤128KiB。配置指纹包含模型、revision、维度、查询前缀、归一化/分块/encoder策略及模型/依赖/推理代码摘要。Java旧四参数profile保留旧JSON/指纹，新runtime字段成对出现，不能混用新旧索引。
+成功返回精确三字段`version:1`、相同`profile_hash`、`vectors`矩阵，每行512有限单位值。响应≤128KiB。配置指纹包含模型、revision、维度、查询前缀、归一化/分块/encoder策略及模型/依赖/推理代码摘要。Java旧四参数profile保留旧JSON/指纹，新runtime字段成对出现，不能混用新旧索引。 升级依赖后使用新镜像验收报告生成的 profile，按维护手册重建新 profile 的索引。旧向量保留原指纹，按既有清理步骤处置。
 
 错误为安全JSON：401 unauthorized；404 not_found；411 length_required；415 json_required；429 busy；413 LIMIT_EXCEEDED；422 INVALID_REQUEST/INVALID_RESULT；503 UNAVAILABLE或embedding_not_configured。错误不回显文本、路径、凭据或底层异常。Java将预算错误保留为LIMIT_EXCEEDED、非法结果映射INVALID_VECTOR、其余不可用，不重试或跟随重定向。
 

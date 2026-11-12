@@ -44,7 +44,7 @@ def records(kind,locks=LOCKS):
             if url.netloc=='files.pythonhosted.org':
                 if not url.path.startswith('/packages/'):raise ValueError('Unexpected wheel source')
             elif url.netloc in ('download.pytorch.org','download-r2.pytorch.org'):
-                if row['name']!='torch' or row['version']!='2.8.0+cpu' or not url.path.startswith('/whl/cpu/'):raise ValueError('Unexpected CPU source')
+                if row['name']!='torch' or row['version']!='2.13.0+cpu' or not url.path.startswith('/whl/cpu/'):raise ValueError('Unexpected CPU source')
             else:raise ValueError('Unexpected wheel source')
             if row['name'].lower().startswith(('nvidia','triton')):raise ValueError('GPU dependencies not allowed')
         names.add(name)

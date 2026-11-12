@@ -15,7 +15,7 @@ class AssetsTest(unittest.TestCase):
         model=records('model');wheels=records('wheels')
         self.assertEqual(11,len(model['files']))
         self.assertEqual(512,model['dimension'])
-        self.assertEqual('2.8.0+cpu',next(r['version'] for r in wheels['files'] if r['name']=='torch'))
+        self.assertEqual('2.13.0+cpu',next(r['version'] for r in wheels['files'] if r['name']=='torch'))
         self.assertEqual(64,len(fingerprint(profile())))
     def test_default_cli_never_downloads(self):
         with tempfile.TemporaryDirectory() as folder,patch('prepare_assets.download') as fetch:
