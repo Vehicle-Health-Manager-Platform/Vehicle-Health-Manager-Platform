@@ -1,3 +1,13 @@
+## 2026-11-12 A1 API 覆盖口径收敛
+
+API 覆盖生成器已登记识别 HTTP 套件，逐项结论与覆盖索引统一为 **362 项契约、327 项历史四类证据、35 项未获完整证据的明确结论**。定向回归 35/35 与 11/11 通过，两个生成物 `--check` 通过；全 API 验收和生产验收仍为 false。
+
+识别证据是 2026-10-30 的 `AUDIT_EXISTING` 历史快照，使用本地 provider fixture，不代表真实模型或供应商验收。2026-11-12 当前代码重跑因 Docker Desktop Linux Engine 不可用而未启动 Maven。
+
+A2/A3 已由 11 月 6 日安全修复报告关闭：Transformers 5.22.1、Spring Boot 4.0.9 / Spring MVC 7.0.10，漏洞门禁无发现，后端全量 2,642 项回归通过；生产安全接受仍为 false。A5 已依据既有路线图收口：§9.3 是分项压测门限，§12.1 的 P95 `<300ms` 是最终发布门槛。下一步在当前源码复测 A4，未达最终门槛时再优化。见[安全修复复验](../testing/SECURITY_REMEDIATION_2026_11_06.md)、[性能门限裁决记录](../operations/PERFORMANCE_THRESHOLD_DECISION_2026_11_12.md)和[剩余执行计划](REMAINING_PLAN_2026_11_06.md)。
+
+2026-11-12 A4 环境诊断补充：Docker Desktop 应用虽报告已运行，但 Linux Engine 管道缺失，`com.docker.service` 为停止状态且当前执行权限无法启动；性能容器和当前源码基线均未启动。恢复条件与复测命令见[性能门限裁决记录](../operations/PERFORMANCE_THRESHOLD_DECISION_2026_11_12.md)。
+
 ## 2026-10-26 当前状态与下一步
 
 B1a本地准备已完成：用户选择微信云开发、短信后接，并确认环境尚未开通。[开通/部署计划](../superpowers/plans/2026-10-26-b1a-cloud-deployment.md)与配置预检已实施，小程序1088/1088、普通/离线云通道微信构建及交付索引通过，见[阶段记录](B1A_CLOUD_DEPLOYMENT_READINESS.md)。未创建收费资源或执行真实部署；复用Java/MySQL和小程序callContainer，真实云调用、手机号、私有文件及手机仍待验，商家/受限运营短信不绕过。
