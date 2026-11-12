@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import time
 import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -115,10 +116,24 @@ def main(argv=None):
         report['guard_image_id'] = json.loads(docker(['image','inspect','autocare-asr-runtime:acceptance']).stdout)[0]['Id']
         report['guard_library_sha256'] = docker(['exec',name,'sha256sum','/usr/lib/x86_64-linux-gnu/libgomp.so.1','/usr/lib/x86_64-linux-gnu/libseccomp.so.2']).stdout.splitlines()
         report['os_packages'] = docker(['exec', name, 'dpkg-query', '-W', '-f=${Package}=${Version}\n']).stdout.splitlines()
-        result = docker(['exec', name, 'python', '/workspace/services/embedding/linux_acceptance.py'], timeout=400, required=False)
+        # Docker Desktop can drop a long-running exec response while the worker
+        # is still healthy. Run the check in the container and poll its status.
+        docker(['exec', '-d', name, 'sh', '-c',
+            'python /workspace/services/embedding/linux_acceptance.py >/tmp/acceptance.json 2>/tmp/acceptance.stderr; '
+            'printf "%s\\n" "$?" >/tmp/acceptance.pending && mv /tmp/acceptance.pending /tmp/acceptance.exit'])
+        deadline = time.monotonic() + 400
+        while time.monotonic() < deadline:
+            if docker(['exec', name, 'test', '-f', '/tmp/acceptance.exit'], required=False).returncode == 0:
+                break
+            time.sleep(2)
+        else:
+            raise RuntimeError('Real-model checks timed out')
+        status = docker(['exec', name, 'cat', '/tmp/acceptance.exit']).stdout.strip()
+        result = docker(['exec', name, 'cat', '/tmp/acceptance.json'])
         if result.stdout.strip():
             report['runtime'] = json.loads(result.stdout)
-        if result.returncode or not report.get('runtime', {}).get('passed'):
+        if status != '0' or not report.get('runtime', {}).get('passed'):
+            docker(['exec', name, 'cat', '/tmp/acceptance.stderr'], required=False)
             raise RuntimeError('Real-model checks did not pass')
         if args.java_maven:
             from embedding_java_bridge import Bridge,TOKEN
